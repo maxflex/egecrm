@@ -2,7 +2,7 @@
 
 	// Контроллер
 	class ApiController extends Controller
-	{ 
+	{  
 		// Ключ API, проверяется при каждом запросе к API
 		const API_KEY = "qfJTcVaMsUm278qHUfEm";
 		
