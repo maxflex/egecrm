@@ -1,0 +1,25 @@
+RewriteEngine On
+
+RewriteBase /egecrm
+
+# На эти папки не использовать правила
+RewriteRule ^(css|js|img|fonts|compass)($|/) - [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d 
+
+###### Правила ######
+
+# Вход, регистрация
+RewriteRule ^register$ index.php?controller=login&action=register [QSA,L]
+RewriteRule ^logout$ index.php?controller=login&action=logout [QSA,L]
+RewriteRule ^login$ index.php?controller=login&action=login [QSA,L]
+
+# Заявки
+RewriteRule ^requests/edit/([0-9]+)$ index.php?controller=request&action=edit&id=$1 [QSA,L]
+RewriteRule ^requests/([a-zA-Z]+)[/]?$ index.php?controller=request&action=$1 [QSA,L]
+RewriteRule ^requests[/]?$ index.php?controller=request&action=list [QSA,L]
+
+# Загрузки
+RewriteRule ^upload/contract/([0-9]+)[/]?$ index.php?controller=upload&action=AjaxContract&contract_id=$1 [QSA,L]
+RewriteRule ^upload[/]?$ index.php?controller=upload [QSA,L]

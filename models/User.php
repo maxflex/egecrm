@@ -8,9 +8,69 @@
 		public static $mysql_table	= "users";
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
-		
+	
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
+		
+		
+		/**
+		 * Вернуть пароль, как в репетиторах
+		 * 
+		 */
+		public static function password($password)
+		{
+			$password = md5($password."_rM");
+            $password = md5($password."Mr");  
+			
+			return $password;
+		}
+		
+		/*
+		 * Функция определяет соединение БД
+		 */
+		public static function dbConnection()
+		{
+			// Открываем соединение с основной БД		
+			$db_repetitors = new mysqli('localhost', "root", "root", "repetitors");
+			
+			// Установлено ли соединение
+			if (mysqli_connect_errno($db_repetitors))
+			{
+				die("Failed to connect to USER {$id_user} MySQL: " . mysqli_connect_error());
+			}
+			
+			// Устанавливаем кодировку
+			$db_repetitors->set_charset("utf8");
+			
+			return $db_repetitors;	
+		}
+		
+		
+		/**
+		 * Список пользователей.
+		 * $selected – ID пользователя (!НЕ ПОРЯДКОВЫЙ НОМЕР В МАССИВЕ), выбранный по умолчанию
+		 * $all -- получить всех пользователей (или только работающих)?
+		 */
+		public static function buildSelector($selected = false, $name = "id_user", $all = false)
+		{
+			$Users = $all ? self::findAll() : self::findAll(["condition" => "worktime=1"]);
+			
+			// Находим выбранного пользователя
+			if ($selected) {
+				$SelectedUser = array_pop(array_filter($Users, function($e) use ($selected) {
+					return $e->id == $selected;
+				}));
+			}
+			
+			echo "<script src='js/user-color-control.js' type='text/javascript'></script>";
+			echo "<select class='form-control' id='user-list' name='$name' ".($selected ? "style='background-color: {$SelectedUser->color}'" : "").">";
+				echo "<option selected disabled>пользователь</option>";
+				echo "<option disabled>──────────────</option>";
+			foreach ($Users as $User) {
+				echo "<option ".($User->id == $selected ? "selected" : "")." style='background-color: {$User->color}' value='{$User->id}'>{$User->login}</option>";
+			}
+			echo "</select>";
+		}
 		
 		/*
 		 * Автовход по Remember-me
@@ -22,7 +82,7 @@
 			// 1) Первые 16 символов MD5-хэш
 			// 2) Остальные символы – id_user (код пользователя)
 			// $cookie_hash = mb_strimwidth($_COOKIE["ratie_token"], 0, 32); // Нам не надо получать хэш из кук -- мы создаем новый здесь для сравнения
-			$cookie_user = substr($_COOKIE["login_token"], 32);
+			$cookie_user = substr($_COOKIE["egecrm_token"], 32);
 			
 			// Получаем пользователя по ID (чтобы из его параметров генерировать хэш)
 			$User = User::findById($cookie_user);
@@ -31,7 +91,7 @@
 			if ($User) {
 				// Генерируем хэш для сравнения с хешем в БД
 				$hash = md5(self::SALT . $User->id . $User->password . self::SALT);
-				
+
 				// Пытаемся найти пользователя
 				$RememberMeUser = self::find(array(
 					"condition"	=> "id=".$cookie_user." AND token='{$hash}'",
@@ -111,7 +171,7 @@
 			
 			// Remember me token в КУКУ
 			$cookie_time = time() + 3600 * 24 * 30 * 3; // час - сутки - месяц * 3 = КУКА на 3 месяца
-			setcookie("login_token", $this->token . $this->id, $cookie_time);	// КУКА ТОКЕНА (первые 16 символов - токен, последние - id_user)
+			setcookie("egecrm_token", $this->token . $this->id, $cookie_time);	// КУКА ТОКЕНА (первые 16 символов - токен, последние - id_user)
 		}
 		
 

@@ -19,10 +19,10 @@
 	/*
 	 * Возвращает соединение DB_SETTINGS
 	 */
-	function dbSettings()
+	function dbConnection()
 	{
-		global $db_settings;
-		return $db_settings;
+		global $db_connection;
+		return $db_connection;
 	}
 	
 	/*
@@ -139,7 +139,7 @@
 	 */
 	function angInit($name, $Object)
 	{
-		return $name." = ".htmlspecialchars(json_encode($Object, JSON_NUMERIC_CHECK));
+		return $name." = ".htmlspecialchars(json_encode($Object, JSON_NUMERIC_CHECK)) ."; ";
 	}
 	
 	/*
@@ -322,5 +322,15 @@
 	function toJson($response)
 	{
 		echo json_encode($response);
+	}
+	
+	/**
+	 * Проверить есть ли хотя бы одно значение в массиве.
+	 * 
+	 */
+	function hasValues($array)
+	{
+	//	echo "HAS_VALS=".(count(array_filter($array)))."<br>";
+		return count(array_filter($array));
 	}
 ?>

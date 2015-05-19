@@ -1,0 +1,223 @@
+	// Цвета
+	$placeholder_gray 	: #999999;
+	$blue				: #337AB7;
+	$hr_gray 			: #eee;
+
+body {
+	margin-top: 20px !important;
+	overflow-x: hidden;
+	background-color: #eee;
+	background-image: url("../img/background/bg.jpg");
+}
+
+#fileupload {
+//	position: fixed;
+//	overflow: hidden;
+//	left: -999999px;
+}
+
+.page-title {
+	margin-top: 0;
+}
+
+.o3 {
+	opacity: .3 !important;
+}
+
+h4 {
+	font-weight: bold;
+}
+
+.glyphicon {
+	margin-right: 5px;
+}
+
+.list-group-item.active {
+	cursor: default;
+}
+
+#user-list {
+	color: black;
+}
+
+.glyphicon {
+	&.glyphicon-middle {
+		top: 3px;
+	}
+}
+
+.input-red-bg {
+	background: #ffcccc;
+}
+
+.link-text {
+  color: #337ab7;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link-like {
+  color: #337ab7;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link-like:hover {
+  color: #23527c;
+  text-decoration: underline;
+}
+
+.payment-line input, .payment-line select {
+	width: 105px;
+	display: inline-block;
+	margin: 0 5px;
+}
+
+.center {
+	margin: 0 auto;
+	text-align: center;
+}
+
+.row-split {
+	border-top: 1px dashed #ccc;
+	margin-top: 10px;
+}
+
+.btn-default-hovered {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+
+.svg-metro {
+	height: 15px;
+	width: 15px;
+	margin-right: 5px;
+	position: relative;
+	top: 3px;
+}
+
+.form-group-side-label {
+	padding: 7px 0;
+}
+
+.half-field {
+	width: 49%; 
+	display: inline-block;
+}
+
+.save-coordinates {
+	text-align: right; 
+	padding-top: 20px; 
+	font-size: 12px; 
+	color: $placeholder_gray;
+	font-style: italic;
+}
+
+.save-coordinates-2 {
+	text-align: right; 
+	padding-top: 20px; 
+	color: $placeholder_gray;
+}
+
+thead {
+//	font-weight: bold;
+//	font-size: 12px;
+}
+
+.add-subject-group td {
+	padding: 1px;
+	border-top: 0;
+}
+
+.opacity-pointer {
+	opacity: .5;
+	cursor: pointer;
+	&:hover {
+		opacity: 1;
+	}
+}
+
+.timepair {
+	border-top: 1px dashed $hr_gray;
+	margin-top: 20px;
+	padding-top: 10px;
+}
+
+.timepair input {
+	width: 56px; 
+	text-align: center; 
+	margin: 0 5px;
+}
+
+.glyphicon-th, .no-margin-right {
+	margin-right: 0 !important;
+}
+
+.datepicker-dropdown {
+	margin-top: 26px !important;
+}
+
+.rubble-addon {
+  font-weight: bold;
+  padding: 0 15px;
+}
+
+.btn-group-freetime {
+	margin-bottom: 12px;
+}
+
+.btn-group-freetime > .btn {
+	padding: 6px 8px;
+	outline: none !important;
+}
+
+.day-chosen {
+  color: #333 !important;
+  background-color: #e6e6e6 !important;
+  border-color: #adadad !important;
+}
+
+.add-freetime-block {
+/*
+	-webkit-transition: opacity linear .3s;
+	opacity: .2;
+	&:hover {
+		opacity: 1;
+	}
+*/
+}
+
+.bottom-dashed {
+	border-bottom: 1px dashed #eee;
+	padding-bottom: 5px;
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+/* make sidebar nav vertical */ 
+@media (min-width: 768px) {
+  .sidebar-nav .navbar .navbar-collapse {
+    padding: 0;
+    max-height: none;
+  }
+  .sidebar-nav .navbar ul {
+    float: none;
+  }
+  .sidebar-nav .navbar ul:not {
+    display: block;
+  }
+  .sidebar-nav .navbar li {
+    float: none;
+    display: block;
+  }
+  .sidebar-nav .navbar li a {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  
+  .modal-dialog {
+	  margin: 15% auto;
+	}
+  
+}

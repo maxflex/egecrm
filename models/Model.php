@@ -15,12 +15,15 @@
 		// Если есть сериализованные данные в БД, то указать здесь для авто сериализации/ансериализации
 		protected $_serialized = array();
 		
+		// Числа через запятую, для хранения чекбоксов и других значений ( строка "1, 2, 5" => array (1, 2, 5))
+		protected $_inline_data = array();
+		
 		// Переменные
 		public $isNewRecord = true;			// Новая запись
 		
 		// Конструктор
 		public function __construct($array = false)
-		{
+		{	
 			// Запрос к текущей БД на показ столбцов
 			$Query = static::dbConnection()->query("SHOW COLUMNS FROM ".static::$mysql_table);
 						
@@ -56,6 +59,16 @@
 					}
 				}
 			}
+			
+			// Если есть inline-данные
+			if (count($this->_inline_data)) {
+				foreach ($this->_inline_data as $inline_data_field) {
+					// Читать описание выше, для сериализованных данных
+					if (!is_array($this->{$inline_data_field})) {
+						$this->{$inline_data_field} = explode(",", $this->{$inline_data_field});
+					}
+				} 
+			}
 		}
 		
 		/*
@@ -72,7 +85,7 @@
 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
 				);
-	
+			
 			// Если успешно получили и (что-то есть или нужно просто подсчитать)
 			if ($result && ($result->num_rows || $count))
 			{
@@ -113,7 +126,7 @@
 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
 				." LIMIT 1");
 	
-			// Если успешно получили
+			// Если запрос без ошибок и что-то нашлось
 			if ($result->num_rows)
 			{
 				// Создаем объект
@@ -139,8 +152,8 @@
 			// Получаем все данные из таблицы
 			$result = static::dbConnection()->query("SELECT * FROM ".static::$mysql_table." WHERE id=".$id);
 					
-			// Если успешно получили
-			if ($result)
+			// Если запрос без ошибок и что-то нашлось
+			if ($result->num_rows)
 			{
 				// Создаем объект
 				$array = $result->fetch_assoc();
@@ -172,7 +185,37 @@
 		 */
 		public static function dbConnection()
 		{
-			return dbSettings();	// По умолчанию возвращает подключение к бд Settings
+			return dbConnection();	// По умолчанию возвращает подключение к бд Settings
+		}
+		
+		
+		/**
+		 * Подогнать данные из массива в объект.
+		 * @example Object $A = {level: 7, name: "Bloodseeker"} и $_POST[a] = array ('level' => 7, name => 'Bloodseeker') 
+		 *
+		 * $save - сохранять сразу полсе обновления?  
+		 */
+		public function update(array $data, $save = true)
+		{
+			// Если в массиве нет никаких данных
+			if (!hasValues($data)) {
+				return false;
+			}
+			foreach ($data as $key => $value) {
+				if (in_array($key, $this->mysql_vars)) {
+					if (in_array($key, $this->_inline_data)) {
+						$this->{$key} = implode(",", array_keys($value));
+					} else {
+						// Обновление обычных данных
+						$this->{$key} = $value;	
+					}
+				}
+			}
+			
+			// Если надо сразу сохранить
+			if ($save) {
+				$this->save();
+			}
 		}
 		
 		/*
@@ -204,7 +247,9 @@
 				 		// Если текущее поле в формате serialize
 				 		if (in_array($field, $this->_serialized)) {
 					 		$values[]	= "'".serialize($this->{$field})."'";		// Сериализуем значение обратно
-				 		} else {
+				 		} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
+					 		$values[]	= "'".implode(",", $this->{$field})."'";		// inline-данные назад в строку
+					 	} else {
 					 		$values[]	= "'".$this->{$field}."'";					// Оборачиваем значение в кавычки		
 				 		}				 		
 			 		}
@@ -242,6 +287,8 @@
 				 		// Если текущее поле в формате serialize
 					 	if (in_array($field, $this->_serialized)) {
 					 		$query[] = $field." = '".serialize($this->{$field})."'";	// Сериализуем значение
+					 	} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
+					 		$query[] = $field." = '".implode(",", $this->{$field})."'";	// Превращаем в строку
 					 	} else {
 						 	$query[] = $field." = '".$this->{$field}."'";
 					 	}
@@ -259,7 +306,6 @@
 				}
 			}	
 		 }
-		 
 		 
 		 /*
 		  * Перед сохранением
@@ -298,6 +344,15 @@
 			// Удаляем из БД
 			static::dbConnection()->query("DELETE FROM ".static::$mysql_table." WHERE id=".$id);
 		}
+		
+		/*
+		 * Удалить несколько записей
+		 */
+		public static function deleteAll($params)
+		{
+			// Удаляем из БД
+			static::dbConnection()->query("DELETE FROM ".static::$mysql_table." WHERE ".$params["condition"]);	
+		}
 		 
 		 /*
 		 * Возвращает массив с сохраняемой в БД информацией 
@@ -326,6 +381,53 @@
 			return $return;
 		}
 		
+		
+		/**
+		 * Создать и сохранить объект текущего класса + сохранить.
+		 * 
+		 */
+		public static function add($array = false) {
+			// Если значений у массива нет – выйти
+			if (!hasValues($array)) {
+				return false;
+			}
+			
+			// Получаем название класса, из которого была вызвана функция
+			$calledClassName = get_called_class(); 
+			
+			// Создаем объект этого класса
+			$Object = new $calledClassName($array);
+			
+			// Сохраняем объект
+			$Object->save();
+			
+			// Возвращаем объект
+			return $Object;
+		}
+		
+		
+		/**
+		 * Добавить взаимосвязь с другим объектом.
+		 * 
+		 * $name – имя связи (будет доступен по $InitialObject->Name)
+		 * $save - сохранить ссылку на взаимосвязь в БД?
+		 */
+		public function addRelation($name, $Object, $save = false)
+		{
+			// Преобразуем название в нижний регистр
+			$name = strtolower($name);
+			
+			// Добавляем взаимосвязь с объектом (название переменной с большой буквы)
+			$this->{ucfirst($name)} = $Object;
+			
+			// Добавляем ID взаимосвязи
+			$this->{"id_" . $name} = $Object->id;
+			
+			// если нужно сохранить
+			if ($save) {
+				$this->save("id_" . $name);
+			} 
+		}	
 	}
 
 ?>

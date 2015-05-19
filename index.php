@@ -34,15 +34,14 @@
 	/* Основные действия */	
 	$_controllerName = ucfirst(strtolower($_controller))."Controller";	// Преобразуем название контроллера в NameController
 	$_actionName	 = "action".ucfirst(strtolower($_action));			// Преобразуем название экшена в actionName
-	
-	
+		
 	$IndexController = new $_controllerName;	// Создаем объект контроллера
 	
 	// Запускаем BeforeAction, если существует
 	if (method_exists($IndexController, "beforeAction")) {
 		$IndexController->beforeAction();
 	}
-	
+
 	// Если указанный _actionName существует – запускаем его
 	if (method_exists($IndexController, $_actionName))
 	{

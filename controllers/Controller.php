@@ -5,8 +5,11 @@
 		public $defaultAction = "Main";
 		
 		// Заголовок по умолчанию
-		protected $_html_title	= "Ratie | Анонимные мнения о друзьях, комментарии и оценки";
-		protected $_add_title	= " | Анонимные мнения о друзьях, комментарии и оценки"; // Будет добавляться к TITLE текущей страницы
+		protected $_html_title	= "ЕГЭ Центр";
+		protected $_add_title	= " | "; // Будет добавляться к TITLE текущей страницы
+		
+		// Заголовок таба
+		private $_tab_title = "";
 		
 		// Папка VIEWS
 		protected $_viewsFolder	= "";
@@ -36,12 +39,14 @@
 		
 		/*
 		 * Отобразить view
+		 * $layout – кастомный лэйаут, по умолчанию меню
+		 * @todo: изменить футер под кастомный лэйаут
 		 */
-		protected function render($view, $vars = array())
+		protected function render($view, $vars = array(), $layout = "menu")
 		{
 			// Рендер лэйаута
 			include_once(BASE_ROOT."/layouts/header.php");
-			include_once(BASE_ROOT."/layouts/menu.php");	
+			include_once(BASE_ROOT."/layouts/{$layout}.php");	
 
 			// Если передаем переменные в рендер, то объявляем их здесь (иначе будут недоступны)
 			if (!empty($vars)) {
@@ -54,7 +59,7 @@
 			include_once(BASE_ROOT."/views/".(!empty($this->_viewsFolder) ? $this->_viewsFolder."/" : "")."{$view}.php");
 			
 			// Рендер лэйаута
-			include_once(BASE_ROOT."/layouts/footer.php");
+			include_once(BASE_ROOT."/layouts/{$layout}_footer.php");
 		}
 		
 		
@@ -112,5 +117,19 @@
 			}
 		}
 		
+		
+		/**
+		 * Установить заголовок таба.
+		 * 
+		 */
+		protected function setTabTitle($title)
+		{
+			$this->_tab_title = $title;
+		}
+		
+		public function tabTitle()
+		{
+			return $this->_tab_title;
+		}
 	}
 ?>

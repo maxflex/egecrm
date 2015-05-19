@@ -1,12 +1,8 @@
 <?php
 	/* Файл конфигурации */
-	
 	// Настройки
 	$GLOBALS["settings"] = (object)[
-		"version" 			=> "1.1",				// Версия сайта (нужная для обновления кэша JS и CSS)
-		"ADJECTIVE_LIMIT"	=> 999,					// Максимальное кол-во прилагательных подряд для одного IP
-		"COMMENT_LIMIT"		=> 999,					// Максимальное кол-во комментариев подряд для одного IP
-		"MESSAGE_LIMIT"		=> 999,					// Лимит сообщений
+		"version" 			=> "1.0",				// Версия сайта (нужная для обновления кэша JS и CSS)
 	];
 	
 	// Константы
@@ -15,7 +11,7 @@
 		"DB_PASSWORD"	=> "root",
 		"DB_HOST"		=> "localhost",
 		"DB_PREFIX"		=> "",
-		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/ratie.ru",
+		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/egecrm/",
 	);
 
 	/*// Контроллеры и модели 
@@ -38,21 +34,27 @@
 	}
 		
 	// Конфигурация ошибок (error_reporing(0) - отключить вывод ошибок)
-	error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	error_reporting(81);
 		
 	// Открываем соединение с основной БД
-	$db_settings = new mysqli(DB_HOST, DB_LOGIN, DB_PASSWORD, DB_PREFIX."settings");
-	
+	$db_connection = new mysqli(DB_HOST, DB_LOGIN, DB_PASSWORD, DB_PREFIX."egecrm");
+
 	// Установлено ли соединение
-	if (mysqli_connect_errno($db_settings))
+	if (mysqli_connect_errno($db_connection))
 	{
 		die("Failed to connect to MySQL: " . mysqli_connect_error());
 	}
 	
 	// Устанавливаем кодировку БД
-	$db_settings->set_charset("utf8");
+	$db_connection->set_charset("utf8");
 	
 	include_once("functions.php");				// Подключаем основные функции
+	
+	// Подключаем расширения
+	foreach (glob("extentions/*.php") as $filename)
+	{
+	    include $filename;
+	}
 	
 	require_once("models/Model.php");			// Подключаем основную модель
 	require_once("controllers/Controller.php");	// Подключаем основной контроллер
@@ -72,6 +74,12 @@
 		if (strpos($filename, "_Template") || strpos($filename, "/Controller.php")) {
 			continue;
 		}
+	    include $filename;
+	}
+	
+	// Подключаем Factory
+	foreach (glob("factory/*.php") as $filename)
+	{
 	    include $filename;
 	}
 ?>
