@@ -224,9 +224,10 @@
 	    <div class="col-sm-12">
 		    <h4>Договоры</h4>
 		    <div class="row">
-			    <div class="col-sm-4" ng-class="{'o3' : !contract_active}">
+			    <div class="col-sm-4" ng-class="{'o3' : contract_cancelled}">
 				    <div class="form-group">
-					    <input ng-model="contract_active" ng-value="contract_active" ng-init="<?= angInit("contract_active", $Request->Contract->active) ?>" name="Contract[active]" type="hidden">
+					    <input ng-model="contract_cancelled" ng-value="contract_cancelled" 
+					    	ng-init="<?= angInit("contract_cancelled", $Request->Contract->cancelled) ?>" name="Contract[cancelled]" type="hidden">
 					    <table class="table">
 							<thead>
 								<tr>
@@ -266,6 +267,7 @@
 			            </div>
 		            </div>
 		            <div class="form-group">
+<!-- 						<input class="form-control bs-date-top" id="contract-date" placeholder="дата заключения" name="Contract[date]" value="<?= $Request->Contract->date ?>"> на  -->
 		               <?= 
 						   Html::date([
 						   	"id" 			=> "contract-date",
@@ -273,7 +275,7 @@
 			               	"placeholder"	=> "дата заключения",
 			               	"name"			=> "Contract[date]",
 			               	"value"			=> $Request->Contract->date
-			               ]); 
+			               ], true); 
 			            ?>
 		            </div>
 <!--
@@ -289,10 +291,10 @@
 				    <div class="form-group form-group-side-label">
 					    <a href="#"><span class="glyphicon glyphicon-middle glyphicon-print"></span>печать договора</a>
 				    </div>
-					<div class="form-group form-group-side-label link-like" ng-show="contract_active" ng-click="contractActive(0)">
+					<div class="form-group form-group-side-label link-like" ng-show="!contract_cancelled" ng-click="contractCancelled(1)">
 					    <span class="glyphicon glyphicon-middle glyphicon-remove"></span>расторгнуть договор
 				    </div>
-					<div class="form-group form-group-side-label link-like" ng-show="!contract_active" ng-click="contractActive(1)">
+					<div class="form-group form-group-side-label link-like" ng-show="contract_cancelled" ng-click="contractCancelled(0)">
 					    <span class="glyphicon glyphicon-middle glyphicon-ok"></span>отменить расторжение договора
 				    </div>
 				    <div class="form-group form-group-side-label link-text">
@@ -325,7 +327,7 @@
 								ng-value="id_status"
 							>{{title}}</option>
 					    </select> от
-					    <input class="form-control bs-date" id="payment-date-{{$index}}" value="{{payment.date}}"  name="Payment[{{$index}}][date]"> на 
+					    <input class="form-control bs-date-top" id="payment-date-{{$index}}" value="{{payment.date}}"  name="Payment[{{$index}}][date]"> на 
 					    <input type="text" class="form-control" id="payment-sum-{{$index}}" value="{{payment.sum}}"  name="Payment[{{$index}}][sum]"> руб.
 						<span class="save-coordinates-2">({{payment.user_login}} {{formatDate(payment.first_save_date) | date:'yyyy.MM.dd в HH:mm'}})
 							<span class="glyphicon glyphicon-remove glyphicon-middle text-danger opacity-pointer" ng-click="removePayment($index)"></span>
@@ -333,7 +335,7 @@
 				  	</div>
 			    </div>
 				<?= Payment::buildSelector(false, false, ["ng-model" => "new_payment.id_status"]) ?> от 
-				<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date"> на 
+				<input class="form-control bs-date-top" id="payment-date" ng-model="new_payment.date"> на 
 				<input type="text" class="form-control" id="payment-sum" ng-model="new_payment.sum"  ng-keydown="watchEnter($event)"> руб.
 				<a style="margin-left: 10px; cursor: pointer" ng-click="addPayment()">
 					<span class="glyphicon glyphicon-plus"></span>добавить

@@ -170,7 +170,7 @@
 			$this->token = md5(self::SALT . $this->id . $this->password . self::SALT);
 			
 			// Remember me token в КУКУ
-			$cookie_time = time() + 3600 * 24 * 30 * 3; // час - сутки - месяц * 3 = КУКА на 3 месяца
+			$cookie_time = time() + 3600 * 24 * 30 * 3; 						// час - сутки - месяц * 3 = КУКА на 3 месяца
 			setcookie("egecrm_token", $this->token . $this->id, $cookie_time);	// КУКА ТОКЕНА (первые 16 символов - токен, последние - id_user)
 		}
 		

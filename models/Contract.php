@@ -24,10 +24,10 @@
 		public function beforeSave()
 		{
 			// Если расторгаем договор
-			// (если сейчас НЕ АКТИВ)
-			if (!$this->active) {
-				// если изменили статус (а был АКТИВ)
-				if (self::findById($this->id)->active) {
+			// (если расторгнут)
+			if ($this->cancelled) {
+				// если изменили статус (а был НЕ расторгнут)
+				if (!self::findById($this->id)->cancelled) {
 					// сохраняем данные пользователя, который сделал расторжение договора
 					$this->cancelled_by 	= User::fromSession()->id;
 					$this->cancelled_date	= now();

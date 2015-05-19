@@ -11,7 +11,7 @@
 
 	<div class="row" style="margin-top: 10px">
 		<div class="col-sm-12">
-			<div ng-repeat="request in requests | filter:{id_status : chosen_list}">
+			<div ng-repeat="request in requests | reverse | filter:{id_status : chosen_list}">
 				<a href="requests/edit/{{request.id}}">Заявка #{{request.id}}</a>
 			</div>
 		</div>

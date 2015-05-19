@@ -1,4 +1,9 @@
 	angular.module("Request", ["ngAnimate"])
+		.filter('reverse', function() {
+			return function(items) {
+				return items.slice().reverse();
+			};
+		})
 		/*
 			
 			Контроллер списка заявок
@@ -117,15 +122,13 @@
 			/**
 			 * Расторгнуть договор/отменить расторжение
 			 * 
-			 * @var mixed
-			 * @access public
 			 */
-			$scope.contractActive = function(contract_active) {
+			$scope.contractCancelled = function(contract_cancelled) {
 				// отменить расторжение
-				if (contract_active) {
+				if (!contract_cancelled) {
 					bootbox.confirm("Вы уверены, что хотите отменить расторжение?", function(result) {
 						if (result === true) {
-							$scope.contract_active = 1
+							$scope.contract_cancelled = 0
 							$scope.$apply()
 						}
 					})
@@ -133,7 +136,7 @@
 					// расторгнуть
 					bootbox.confirm("Вы уверены, что хотите расторгнуть договор?", function(result) {
 						if (result === true) {
-							$scope.contract_active = 0
+							$scope.contract_cancelled = 1
 							$scope.$apply()
 						}
 					})

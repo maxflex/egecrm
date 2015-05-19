@@ -5,7 +5,17 @@
 	  
 	<div class="list-group">
     <a href="#" class="list-group-item active">Меню</a>
-    <a href="requests" class="list-group-item">Заявки <span class="badge pull-right">23</span></a>
+    <a href="requests" class="list-group-item">Заявки 
+	    <?php
+			// Количество новых заявок
+			$new_request_count = Request::countNew();
+			
+			// Если есть новые заявки
+			if ($new_request_count) {
+				echo '<span class="badge pull-right">'. $new_request_count .'</span>';
+			}
+		?>
+	</a>
     <a href="#" class="list-group-item">Ученики</a>
     <a href="#" class="list-group-item">Преподователи</a>
     <a href="#" class="list-group-item">Группы</a>

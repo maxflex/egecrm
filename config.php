@@ -11,6 +11,7 @@
 		"DB_PASSWORD"	=> "root",
 		"DB_HOST"		=> "localhost",
 		"DB_PREFIX"		=> "",
+		"BASE_ADDON"	=> "/egecrm/",
 		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/egecrm/",
 	);
 

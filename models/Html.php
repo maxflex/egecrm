@@ -10,17 +10,12 @@
 		 * Датапикер.
 		 * 
 		 */
-		public static function date($attrs)
+		public static function date($attrs, $top = false)
 		{
-			echo "	<div class='input-group date' id='date-{$attrs['id']}'>
+			echo "	<div class='input-group date bs-date".($top ? "-top" : "")."' id='date-{$attrs['id']}'>
 						<input ".self::generateAttrs($attrs)." type='text' data-date-format='yyyy.mm.dd' class='form-control'>
 						<span class='input-group-addon'><i class='glyphicon glyphicon-th'></i></span>
 					</div>";
-			echo "<script>$('#date-{$attrs['id']}').datepicker({
-				language	: 'ru',
-				orientation	: 'top left',
-				autoclose	: true
-			})</script>";
 		}
 		
 		/**

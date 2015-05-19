@@ -13,6 +13,9 @@ body {
 h4 {
   font-weight: bold; }
 
+.datepicker {
+  padding: 10px; }
+
 .glyphicon {
   margin-right: 5px; }
 
