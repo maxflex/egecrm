@@ -10,9 +10,9 @@
 		 * Датапикер.
 		 * 
 		 */
-		public static function date($attrs, $top = false)
+		public static function date($attrs, $bs_date_addon = false)
 		{
-			echo "	<div class='input-group date bs-date".($top ? "-top" : "")."' id='date-{$attrs['id']}'>
+			echo "	<div class='input-group date bs-date".($bs_date_addon ? "-$bs_date_addon" : "")."' id='date-{$attrs['id']}'>
 						<input ".self::generateAttrs($attrs)." type='text' data-date-format='yyyy.mm.dd' class='form-control'>
 						<span class='input-group-addon'><i class='glyphicon glyphicon-th'></i></span>
 					</div>";
@@ -26,7 +26,8 @@
 		{
 			echo "<input ".self::generateAttrs($attrs)." type='text' class='timepair'>";
 			echo "<script>$('#{$attrs['id']}').timepicker({
-				'timeFormat': 'H:i'
+				'timeFormat': 'H:i',
+				'scrollDefault'	: '09:30'
 			})</script>";
 		}
 		

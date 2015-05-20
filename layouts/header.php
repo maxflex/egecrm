@@ -16,6 +16,7 @@
 	<script type="text/javascript" src="js/mask.js"></script>
 	<script type="text/javascript" src="js/angular.js"></script>
 	<script type="text/javascript" src="js/angular-animate.js"></script>
+	<script type="text/javascript" src="js/ngmap.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/bootbox.min.js"></script>
 	<script type="text/javascript" src="js/notify.js"></script>

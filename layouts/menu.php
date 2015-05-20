@@ -16,6 +16,7 @@
 			}
 		?>
 	</a>
+	<a href="notifications" class="list-group-item">Напоминания</a>
     <a href="#" class="list-group-item">Ученики</a>
     <a href="#" class="list-group-item">Преподователи</a>
     <a href="#" class="list-group-item">Группы</a>

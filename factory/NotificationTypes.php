@@ -5,13 +5,16 @@
 	class NotificationTypes extends Factory {
 		
 		# Список 
-		const TYPE1		= 1;
-		const TYPE2		= 2;
+		const CALL		= 1;
+		const MEETING	= 2;
 		
 		# Все 
 		static $all = [
-			self::TYPE1	=> "тип 1",
-			self::TYPE2	=> "тип 2",
+			self::CALL		=> "звонок",
+			self::MEETING	=> "встреча",
 		];
+		
+		# Заголовок
+		static $title = "тип напоминания";
 		
 	}

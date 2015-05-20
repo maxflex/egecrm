@@ -4,7 +4,7 @@
 	/*
 	 * Пре-тайп
 	 */
-	function preType($anything, $exit = false)
+	function preType($anything, $exit = NULL)
 	{
 		echo "<pre>";
 		print_r($anything);

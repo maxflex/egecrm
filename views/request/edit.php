@@ -1,19 +1,48 @@
-    <h4 class="page-title">Данные по заявке с сайта</h4>
-
 	<form id="request-edit" ng-app="Request" ng-controller="EditCtrl"
 		ng-init="<?= 
-			 angInit("contract_loaded", $Request->contractLoaded())
+			 angInit("contract_file", $Request->Contract->file)
 			.angInit("subjects", ContractSubject::getContractSubjects($Request->Contract->id))
 			.angInit("freetime", Freetime::getStudentFreeTime($Request->Student->id))
 			.angInit("payment_statuses", Payment::$all)
 			.angInit("payments", $Request->getPayments())
 			.angInit("user", $User->dbData())
+			.angInit("server_markers", $Request->Student->getMarkers())
 		?>"
 	>
+		
+		<!-- КАРТА И ЛАЙТБОКС -->
+		<div class="lightbox"></div>
+		<div class="lightbox-element lightbox-map">
+			<map zoom="10" disable-default-u-i="true" scale-control="true" zoom-control="true" zoom-control-options="{style:'SMALL'}"></map>
+			<button class="btn btn-default map-save-button" onclick="lightBoxHide()">Сохранить</button>
+		</div>
+		<!-- КОНЕЦ /КАРТА И ЛАЙТБОКС -->
+		
+	
+	<!-- Скрытые поля -->
+	<input type="hidden" name="id_request" value="<?= $Request->id ?>">	
+	<input type="hidden" id="freetime_json" name="freetime_json">
+	<input ng-model="contract_cancelled" ng-value="contract_cancelled" 
+		ng-init="<?= angInit("contract_cancelled", $Request->Contract->cancelled) ?>" name="Contract[cancelled]" type="hidden">
+	<input type="hidden" id="subjects_json" name="subjects_json">
+	<input type="hidden" id="payments_json" name="payments_json">
+	
+	<input type="hidden" ng-value="markerData() | json"  name="marker_data">
+	<!-- Конец /скрытые поля -->
+
+		
+	<div class="row page-title">
+		<div class="col-sm-9">
+			<h4>Данные по заявке с сайта</h4>
+		</div>
+		<div class="col-sm-3">
+			<h4>Напоминание</h4>
+		</div>
+	</div>
+	
     <div class="row">
         <div class="col-sm-12">
             <div class="row">
-	           <input type="hidden" name="id_request" value="<?= $Request->id ?>">
                <?= Subjects::buildColSelector($Request->subjects, "Request[subjects]") ?>
                 <div class="col-sm-3">
                     <div class="form-group">
@@ -37,23 +66,37 @@
                     </div>
 
                     <div class="form-group">
-                        <?= Branches::buildSvgSelector($Request->id_branch, "Request[id_branch]") ?>
+                        <?= Branches::buildSvgSelector($Request->id_branch, ["id" => "request-branch", "name" => "Request[id_branch]"]) ?>
                         </div>
                 </div>
 
-<!--
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <?= NotificationTypes::buildSelector() ?>
+                        <?= NotificationTypes::buildSelector($Request->Notification->id_type, "Notification[id_type]") ?>
                     </div>
                     <div class="form-group">
-                        <input 
+						<?=
+						   Html::date([
+								"id" 			=> "notification-date",
+								"class"			=> "form-control",
+								"name"			=> "Notification[date]",
+								"placeholder"	=> "дата",
+								"value"			=> $Request->Notification->date,
+			               ], "now"); 
+			            ?>
                     </div>
-                    <div class="form-group">
-                        <?= NotificationTypes::buildSelector() ?>
+					<div class="form-group">
+						<?=
+						   Html::time([
+								"id" 			=> "notification-time",
+								"class"			=> "form-control",
+								"name"			=> "Notification[time]",
+								"placeholder"	=> "время",
+								"value"			=> $Request->Notification->time,
+			               ]); 
+			            ?>
                     </div>
                 </div>
--->
             </div>
         </div>
     </div>
@@ -86,10 +129,10 @@
                 <?= Grades::buildSelector($Request->Student->grade, "Student[grade]") ?>
             </div>
             <div class="form-group">
-	            <a href="#"><span class="glyphicon glyphicon-map-marker"></span>Школа местонахождение</a>
+	            <span class="link-like" ng-click="showMap('school')"><span class="glyphicon glyphicon-map-marker"></span>Школа местонахождение</span>
             </div>
             <div class="form-group">
-	            <a href="#"><span class="glyphicon glyphicon-map-marker"></span>Факт местонахождение</a>
+	            <span class="link-like" ng-click="showMap('home')"><span class="glyphicon glyphicon-map-marker"></span>Факт местонахождение</span>
             </div>
 	    </div>
 	    <div class="col-sm-3">
@@ -175,19 +218,10 @@
 		    <h4>Свободное время</h4>
 		     <div class="form-group">
 			    <div class="btn-group btn-group-xs btn-group-freetime">
-					<button type="button" class="btn" ng-click="chooseDay(1)" 
-						ng-class="{'day-chosen' : adding_day == 1, 'btn-success' : hasFreetime(1), 'btn-default' : !hasFreetime(1)}">ПН</button>
-					<button type="button" class="btn" ng-click="chooseDay(2)" 
-						ng-class="{'day-chosen' : adding_day == 2, 'btn-success' : hasFreetime(2), 'btn-default' : !hasFreetime(2)}">ВТ</button>
-					<button type="button" class="btn" ng-click="chooseDay(3)" 
-						ng-class="{'day-chosen' : adding_day == 3, 'btn-success' : hasFreetime(3), 'btn-default' : !hasFreetime(3)}">СР</button>
-					<button type="button" class="btn" ng-click="chooseDay(4)" 
-						ng-class="{'day-chosen' : adding_day == 4, 'btn-success' : hasFreetime(4), 'btn-default' : !hasFreetime(4)}">ЧТ</button>
-					<button type="button" class="btn" ng-click="chooseDay(5)" 
-						ng-class="{'day-chosen' : adding_day == 5, 'btn-success' : hasFreetime(5), 'btn-default' : !hasFreetime(5)}">ПТ</button>
-					<button type="button" class="btn" ng-click="chooseDay(6)" 
-						ng-class="{'day-chosen' : adding_day == 6, 'btn-success' : hasFreetime(6), 'btn-default' : !hasFreetime(6)}">СБ</button>
-					
+					<button ng-repeat="weekday in weekdays" type="button" class="btn" ng-click="chooseDay($index + 1)" 
+						ng-class="{'day-chosen' : adding_day == ($index + 1), 'btn-success' : hasFreetime($index + 1), 'btn-default' : !hasFreetime($index + 1)}">
+						{{weekday}}
+					</button>				
 			    </div>
             </div>
             
@@ -195,10 +229,7 @@
 	            <div id="free-time-list" ng-repeat="ft in freetime | filter:{day : adding_day}">
 		             <span class="label label-success">{{ft.start}}</span> — <span class="label label-success">{{ft.end}}</span>
 	            </div>
-            </div>
-            
-            <input type="hidden" id="freetime_json" name="freetime_json">
-            
+            </div>            
             
             <div ng-show="adding_day" class="add-freetime-block">
 	            <div id="timepair" class="timepair">
@@ -212,7 +243,10 @@
     </div>
     <div class="row">
 	    <div class="col-sm-9">
-		    <div class="form-group">
+			<div class="form-group">
+	            <?= Branches::buildSvgSelector($Request->Student->branches, ["name" => "Student[branches][]", "id" => "student-branches"], true) ?>
+            </div>
+			<div class="form-group">
 		    	<textarea placeholder="любая другая информация в произвольной форме" class="form-control"></textarea>
 		    </div>
 	    </div>
@@ -226,8 +260,6 @@
 		    <div class="row">
 			    <div class="col-sm-4" ng-class="{'o3' : contract_cancelled}">
 				    <div class="form-group">
-					    <input ng-model="contract_cancelled" ng-value="contract_cancelled" 
-					    	ng-init="<?= angInit("contract_cancelled", $Request->Contract->cancelled) ?>" name="Contract[cancelled]" type="hidden">
 					    <table class="table">
 							<thead>
 								<tr>
@@ -257,7 +289,6 @@
 								</tr>
 							</tbody>
 						</table>
-						<input type="hidden" id="subjects_json" name="subjects_json">
 <!-- 		                <input type="text" placeholder="предметы" class="form-control" name="Contract[subjects]" value="<?= $Request->Contract->subjects ?>"> -->
 		            </div>
 		            <div class="form-group">
@@ -275,7 +306,7 @@
 			               	"placeholder"	=> "дата заключения",
 			               	"name"			=> "Contract[date]",
 			               	"value"			=> $Request->Contract->date
-			               ], true); 
+			               ], "top"); 
 			            ?>
 		            </div>
 <!--
@@ -288,8 +319,8 @@
 -->
 			    </div>
 			    <div class="col-sm-5">
-				    <div class="form-group form-group-side-label">
-					    <a href="#"><span class="glyphicon glyphicon-middle glyphicon-print"></span>печать договора</a>
+				    <div class="form-group form-group-side-label link-like">
+					    <span class="glyphicon glyphicon-middle glyphicon-print"></span>печать договора
 				    </div>
 					<div class="form-group form-group-side-label link-like" ng-show="!contract_cancelled" ng-click="contractCancelled(1)">
 					    <span class="glyphicon glyphicon-middle glyphicon-remove"></span>расторгнуть договор
@@ -298,13 +329,13 @@
 					    <span class="glyphicon glyphicon-middle glyphicon-ok"></span>отменить расторжение договора
 				    </div>
 				    <div class="form-group form-group-side-label link-text">
-						<span ng-hide="contract_loaded">
+						<span ng-hide="contract_file">
 							<span class="glyphicon glyphicon-middle glyphicon-paperclip"></span>прикрепить электронную версию договора
 						</span>
-						<span ng-show="contract_loaded">
-							<a href="files/contracts/<?= $Request->id ?>.doc"><span class="glyphicon glyphicon-file glyphicon-middle"></span>электронная версия договора</a>
+						<span ng-show="contract_file">
+							<a href="files/contracts/{{contract_file}}"><span class="glyphicon glyphicon-file glyphicon-middle"></span>электронная версия договора</a>
 						</span>
-						<input id="fileupload" type="file" name="contract_digital" data-url="upload/contract/<?= $Request->id ?>">
+						<input id="fileupload" type="file" name="contract_digital" data-url="upload/contract/<?= $Request->Contract->id ?>">
 				    </div>
 			    </div>
 		    </div>
@@ -315,8 +346,8 @@
 		    <h4>Платежи</h4>
 		    <div class="form-group payment-line">
 			    <div ng-repeat="payment in payments" ng-hide="payment.deleted">
-				    <input type="hidden" name="Payment[{{$index}}][id]" value="{{payment.id}}">
-				    <input type="hidden" name="Payment[{{$index}}][deleted]" value="{{payment.deleted}}">
+			    	<input type="hidden" name="Payment[{{$index}}][id]" value="{{payment.id}}">
+					<input type="hidden" name="Payment[{{$index}}][deleted]" value="{{payment.deleted}}">
 				  	<div class="bottom-dashed">
 					    <select class="form-control" name="Payment[{{$index}}][id_status]" ng-class="{'input-red-bg' : (payment.id_status == 2)}">
 						    <option selected disabled><?= Payment::$title ?></option>
@@ -341,7 +372,6 @@
 					<span class="glyphicon glyphicon-plus"></span>добавить
 				</a>
 		    </div>
-		    <input type="hidden" id="payments_json" name="payments_json">
 	    </div>
     </div>
     <div class="row" ng-show="<?= ($Request->id_first_save_user ? "true" : "false") ?>">

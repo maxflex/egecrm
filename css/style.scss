@@ -16,7 +16,45 @@ body {
 //	left: -999999px;
 }
 
-.page-title {
+.map-save-button {
+    position: absolute;
+    bottom: 3%;
+    text-transform: uppercase;
+    left: calc(50% - 55px);
+    
+}
+
+.gmnoprint {
+//	display: none;
+}
+
+
+.lightbox {
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 99;
+	background: rgba(0, 0, 0, 0.4);
+	display: none;
+}
+
+.lightbox-element {
+	display: none;
+}
+
+.lightbox-map {
+	position: fixed;
+	height: 90%;
+	width: 90%;
+	left: 5%;
+	top: 5%;
+	z-index: 100;
+	box-shadow: 0 0 150px 2px black;
+}
+
+.page-title h4 {
 	margin-top: 0;
 }
 
@@ -57,7 +95,6 @@ h4 {
 .link-text {
   color: #337ab7;
   text-decoration: none;
-  cursor: pointer;
 }
 
 .link-like {
@@ -172,7 +209,7 @@ thead {
 }
 
 .btn-group-freetime > .btn {
-	padding: 6px 8px;
+	padding: 5px 6px;
 	outline: none !important;
 }
 

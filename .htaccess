@@ -20,6 +20,10 @@ RewriteRule ^requests/edit/([0-9]+)$ index.php?controller=request&action=edit&id
 RewriteRule ^requests/([a-zA-Z]+)[/]?$ index.php?controller=request&action=$1 [QSA,L]
 RewriteRule ^requests[/]?$ index.php?controller=request&action=list [QSA,L]
 
+# Уведомления
+RewriteRule ^notifications[/]?$ index.php?controller=notification&action=list [QSA,L]
+
+
 # Загрузки
 RewriteRule ^upload/contract/([0-9]+)[/]?$ index.php?controller=upload&action=AjaxContract&contract_id=$1 [QSA,L]
 RewriteRule ^upload[/]?$ index.php?controller=upload [QSA,L]

@@ -18,6 +18,7 @@
 			$this->Student 			= Student::findById($this->id_student);
 			$this->Representative	= Representative::findById($this->id_representative);
 			$this->Contract			= Contract::findById($this->id_contract);
+			$this->Notification 	= Notification::findById($this->id_notification);
 		}
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -34,12 +35,21 @@
 			], true);
 		}
 		
-		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
-		public function contractLoaded()
+		/**
+		 * Получить количество заявок из каждого списка.
+		 * 
+		 */
+		public static function getAllStatusesCount()
 		{
-			return file_exists(UploadController::CONTRACTS_DIR . $this->id . ".doc");
+			foreach (RequestStatuses::$all as $id => $status) {
+				$result[$id] = self::count(["condition" => "id_status=".$id]);
+			}
+			
+			return $result;
 		}
+		
+		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
 		/**
 		 * Найти все платежи заявки.

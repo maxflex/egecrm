@@ -170,6 +170,23 @@
 			}
 		}
 		
+		
+		/**
+		 * Подсчитать количество записей.
+		 * 
+		 */
+		public static function count($params = array())
+		{
+			// Получаем количество из условия
+			$result = static::dbConnection()->query("SELECT COUNT(*) as c FROM ".static::$mysql_table."
+				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
+			);
+			
+			// Возвращаем кол-во
+			return $result->fetch_object()->c;
+		}
+		
+		
 		/*
 		 * Получаем ID последней записи
 		 */
@@ -202,14 +219,8 @@
 				return false;
 			}
 			foreach ($data as $key => $value) {
-				if (in_array($key, $this->mysql_vars)) {
-					if (in_array($key, $this->_inline_data)) {
-						$this->{$key} = implode(",", array_keys($value));
-					} else {
-						// Обновление обычных данных
-						$this->{$key} = $value;	
-					}
-				}
+				// Обновление обычных данных
+				$this->{$key} = $value;
 			}
 			
 			// Если надо сразу сохранить
@@ -427,7 +438,28 @@
 			if ($save) {
 				$this->save("id_" . $name);
 			} 
-		}	
+		}
+		
+		
+		/**
+		 * Найти и добавить связь с другой таблицей, если она не указана.
+		 * 
+		 * @access public
+		 * @param mixed $ClassName
+		 * @return void
+		 */
+		public function getRelation($ClassName)
+		{
+			// Название добавляемого поля поля (id_request, например)
+			$id_string = "id_" . strtolower($ClassName);
+			$id_current = "id_" . strtolower(get_called_class());
+			
+			$result = static::dbConnection()->query("SELECT id FROM ".$ClassName::$mysql_table." WHERE $id_current=".$this->id);
+			
+			if ($result->num_rows) {
+				$this->{$id_string} = $result->fetch_row()[0];	
+			}
+		}
 	}
 
 ?>

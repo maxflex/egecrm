@@ -1,4 +1,4 @@
-	angular.module("Request", ["ngAnimate"])
+	angular.module("Request", ["ngAnimate", "ngMap"])
 		.filter('reverse', function() {
 			return function(items) {
 				return items.slice().reverse();
@@ -20,7 +20,133 @@
 			}
 		})
 		.controller("EditCtrl", function ($scope) {
+			// значение "Платежи" по умолчанию (иначе подставляет пустое значение)
 			$scope.new_payment = {id_status : 0}
+			// Маркеры
+			$scope.markers 	= [];
+			// ID маркера
+			$scope.marker_id= 1;
+			// Дни недели
+			$scope.weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"]
+			
+			// Возвращаем структурированные данные по маркерам
+			// для передачи на сохранение
+			$scope.markerData = function() {
+				if ($scope.markers.length) {
+					marker_data = [] // инициалицазия
+					// генерируем данные
+					$.each($scope.markers, function(index, marker) {
+						marker_data.push({
+							"lat" 	: marker.position.lat(),
+							"lng" 	: marker.position.lng(),
+							"type"	: marker.type
+						});	
+					})
+					
+					return marker_data 
+				} else {
+					return ""
+				}
+			}
+			
+			// Показать карту
+			$scope.showMap = function(type) {
+				// устанавливаем тип метки
+				$scope.marker_type = type
+				
+				// Показываем карту
+				lightBoxShow()
+				google.maps.event.trigger($scope.gmap, 'resize')
+				
+				// Зум и центр карты по умолчанию
+				$scope.gmap.setCenter(new google.maps.LatLng(55.7387, 37.6032))
+				$scope.gmap.setZoom(10)
+				
+				// Если уже есть добавленные маркеры
+				if ($scope.markers.length) {
+					// отображать только метки с выбранным типом
+					bounds = new google.maps.LatLngBounds()
+					// есть отображаемые маркеры
+					has_markers = false
+					// отображаем маркеры по одному
+					$.each($scope.markers, function(index, marker) {
+						if (marker.type != type) {
+							marker.setVisible(false)
+						} else {
+							has_markers = true // отображаемые маркеры есть
+							marker.setVisible(true)
+							bounds.extend(marker.position) // границы карты в зависимости от поставленных меток
+						}	
+					})
+					
+					// если отображаемые маркеры есть, делаем зум на них
+					if (has_markers) {
+						$scope.gmap.setZoom(20)
+						$scope.gmap.fitBounds(bounds)
+						$scope.gmap.panToBounds(bounds)	
+					}
+				}
+			}
+			
+			// Добавляем ивент удаления маркера
+			$scope.bindMarkerDelete = function(marker) {
+				google.maps.event.addListener(marker, "dblclick", function(event) {
+					// удаляем маркер с карты
+					marker.setMap(null)
+					
+					// удаляем маркер из коллекции
+					$.each($scope.markers, function(index, m) {
+						if (angular.equals(marker, m)) {
+							$scope.markers.splice(index, 1)
+						}
+					})
+				})	
+			}
+			
+			// Загрузить маркеры, уже сохраненные на серваке и загруженные оттуда
+			$scope.loadServerMarkers = function() {
+				$.each($scope.server_markers, function(index, marker) {
+					// Создаем маркер
+					var marker = newMarker($scope.marker_id++, marker.type, new google.maps.LatLng(marker.lat, marker.lng))
+										
+					// Добавляем маркер в маркеры
+					$scope.markers.push(marker)
+					
+					// Добавляем маркер на карту
+					marker.setMap($scope.map)
+					
+					// Добавляем ивент удаления маркера
+					$scope.bindMarkerDelete(marker)
+				})
+				
+				// применяем изменения (ОБЯЗАТЕЛЬНО, иначе слетят метки без изменений)
+				$scope.$apply()
+			}
+			
+			// ПОСЛЕ ЗАГРУЗКИ КАРТЫ
+			$scope.$on('mapInitialized', function(event, map) {
+				// Запоминаем карту после инициалицации
+				$scope.gmap = map
+				
+				// Добавляем существующие метки
+				$scope.loadServerMarkers();
+				
+				// События добавления меток
+				google.maps.event.addListener(map, 'click', function(event) {
+					
+					// Создаем маркер
+					var marker = newMarker($scope.marker_id++, $scope.marker_type, event.latLng)
+										
+					// Добавляем маркер в маркеры
+					$scope.markers.push(marker)
+					
+					// Добавляем маркер на карту
+					marker.setMap(map)
+					
+					// Добавляем ивент удаления маркера
+					$scope.bindMarkerDelete(marker)
+				})
+		    });
 			
 			// Выбор дня и начало добавления свободного времени
 			$scope.chooseDay = function(day) {
@@ -214,11 +340,12 @@
 				
 				// загрузка файла договора
 				$('#fileupload').fileupload({
+					dataType: 'json',
 			        done: function (i, response) {
 				        console.log(i, response)
-						if (response.result == "OK") {
+						if (response.result !== "ERROR") {
 							bootbox.alert("Договор загружен")
-							$scope.contract_loaded = 1
+							$scope.contract_file = response.result.file // Получаем расширение загруженного файла
 							$scope.$apply()
 						} else {
 							bootbox.alert("Ошибка загрузки")

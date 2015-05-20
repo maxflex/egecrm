@@ -46,20 +46,29 @@
 		
 		/**
 		 * Построить селектор с кружочками метро
-		 * 
+		 * $multiple - множественный выбор
 		 */
-		public static function buildSvgSelector($selected = false, $name)
+		public static function buildSvgSelector($selected = false, $attrs, $multiple = false)
 		{	
-			echo "<select class='form-control' id='branch-select' name='$name'>";
-			if (static::$title) {
+			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
+			
+			// Заголовок
+			if (!$multiple) {
 				echo "<option selected disabled style='cursor: default; outline: none'>". static::$title ."</option>";
 				echo "<option disabled style='cursor: default'>──────────────</option>";
 			}
+
 			foreach (static::$all as $id => $value) {
-				echo "<option ".($selected == $id ? "selected" : "")." value='$id' data-content='".self::metroSvg($id)."$value'></option>";
+				// если это массив выбранных элементов (при $multiple = true)
+				if (is_array($selected)) {
+					$option_selected = in_array($id, $selected);
+				} else {
+					$option_selected = ($selected == $id);
+				}
+				echo "<option ".($option_selected ? "selected" : "")." value='$id' data-content='".self::metroSvg($id)."$value'></option>";
 			}
 			echo "</select>";
-			echo "<script>$('#branch-select').selectpicker()</script>";
+			echo "<script>$('#{$attrs['id']}').selectpicker()</script>";
 		}
 		
 		
