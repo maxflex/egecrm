@@ -6,7 +6,7 @@
 			.angInit("payment_statuses", Payment::$all)
 			.angInit("payments", $Request->getPayments())
 			.angInit("user", $User->dbData())
-			.angInit("server_markers", $Request->Student->getMarkers())
+			.($Request->Student ? angInit("server_markers", $Request->Student->getMarkers()) : "")
 		?>"
 	>
 		
@@ -280,7 +280,7 @@
 									<td style="padding: 1px; border-top: 0"><?= Subjects::buildSelector() ?></td>
 									<td style="padding: 1px; border-top: 0" class="center" width="70">
 										<center>
-											<input id="add-subject-count" class="form-control" type="text" style="width: 50px; text-align: center" ng-keydown="watchEnter($event)">
+											<input id="add-subject-count" class="form-control digits-only" type="text" style="width: 50px; text-align: center" ng-keydown="watchEnter($event)">
 										</center>
 									</td>
 									<td class="pull-right" style="border-top: 0">
@@ -365,9 +365,15 @@
 						</span>
 				  	</div>
 			    </div>
-				<?= Payment::buildSelector(false, false, ["ng-model" => "new_payment.id_status"]) ?> от 
-				<input class="form-control bs-date-top" id="payment-date" ng-model="new_payment.date"> на 
-				<input type="text" class="form-control" id="payment-sum" ng-model="new_payment.sum"  ng-keydown="watchEnter($event)"> руб.
+			    <div class="form-group inline-block">
+					<?= Payment::buildSelector(false, false, ["ng-model" => "new_payment.id_status"]) ?> от
+			    </div>
+				<div class="form-group inline-block">
+					<input class="form-control bs-date-top" id="payment-date" ng-model="new_payment.date"> на 
+				</div>
+				<div class="form-group inline-block">
+					<input type="text" class="form-control digits-only" id="payment-sum" ng-model="new_payment.sum"  ng-keydown="watchEnter($event)"> руб.
+				</div>
 				<a style="margin-left: 10px; cursor: pointer" ng-click="addPayment()">
 					<span class="glyphicon glyphicon-plus"></span>добавить
 				</a>

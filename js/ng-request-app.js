@@ -304,9 +304,39 @@
 		
 			// Добавить платеж
 			$scope.addPayment = function() {
-				if (!$scope.payments) {
-					$scope.payments = []
+				// Инициализация если не установлено
+				$scope.payments = initIfNotSet($scope.payments);
+				
+				// Получаем элементы (я знаю, что по-хорошему нужно получить их один раз вне функции
+				// а не каждый раз, когда функция вызывается, искать их заново. Но забей. Хочу их внутри когда
+				payment_date	= $("#payment-date")
+				payment_sum 	= $("#payment-sum")
+				payment_select	= $("#payment-select")
+				
+				// Установлена ли сумма платежа?
+				if (!$scope.new_payment.id_status) {
+					payment_select.focus().parent().addClass("has-error")
+					return
+				} else {
+					payment_select.parent().removeClass("has-error")
 				}
+				
+				// Установлена ли дата платежа?
+				if (!$scope.new_payment.date) {
+					payment_date.focus().parent().addClass("has-error")
+					return
+				} else {
+					payment_date.parent().removeClass("has-error")
+				}
+				
+				// Установлена ли сумма платежа?
+				if (!$scope.new_payment.sum) {
+					payment_sum.focus().parent().addClass("has-error")
+					return
+				} else {
+					payment_sum.parent().removeClass("has-error")
+				}
+
 				
 				// Добавляем дополнительные данные в new_payment
 				$scope.new_payment.user_login		= $scope.user.login

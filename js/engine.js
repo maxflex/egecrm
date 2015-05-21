@@ -25,6 +25,9 @@
 			orientation	: 'bottom auto',
 		})
 		
+		// REGEX для полей типа "число" и "1-5"
+		$(".digits-only-float").inputmask("Regex", {regex: "[0-9]*[.]?[0-9]+"});
+		$(".digits-only").inputmask("Regex", {regex: "[0-9]+"});
 		
 		
 		// Маска телефонов
@@ -37,14 +40,6 @@
 			lightBoxHide()
 		}
 	});
-	
-	/**
-	 * Преобразовать координаты LATLNG в строку.
-	 * 
-	 */
-	function latLngString(event) {
-		return event.latLng.lat() + "-" + event.latLng.lng()
-	}
 	
 	/**
 	 * Инициализировать array перед push, если он не установлен, чтобы не было ошибки.

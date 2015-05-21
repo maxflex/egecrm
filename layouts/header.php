@@ -3,7 +3,14 @@
   <head>
   	<meta charset="utf-8"> 
     <title><?= $this->_html_title ?></title>
-    <base href="http://localhost:8080/egecrm/">
+    <?php
+	    // Дебаг
+	    if (DEBUG) {
+		    echo '<base href="http://localhost:8080/egecrm/">';
+	    } else {
+		    echo '/egecrm/">';
+	    }
+	?>
 <!--     <link href="css/jquery.datetimepicker.css" rel="stylesheet"> -->
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet">
     <link href="css/jquery.timepicker.css" rel="stylesheet">
@@ -14,6 +21,7 @@
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/mask.js"></script>
+	<script type="text/javascript" src="js/inputmask.js"></script>
 	<script type="text/javascript" src="js/angular.js"></script>
 	<script type="text/javascript" src="js/angular-animate.js"></script>
 	<script type="text/javascript" src="js/ngmap.min.js"></script>

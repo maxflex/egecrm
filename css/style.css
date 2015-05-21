@@ -10,6 +10,9 @@ body {
   text-transform: uppercase;
   left: calc(50% - 55px); }
 
+.inline-block {
+  display: inline-block; }
+
 .lightbox {
   position: fixed;
   left: 0;

@@ -13,6 +13,7 @@
 		"DB_PREFIX"		=> "",
 		"BASE_ADDON"	=> "/egecrm/",
 		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/egecrm/",
+		"DEBUG"			=> true,
 	);
 
 	/*// Контроллеры и модели 
