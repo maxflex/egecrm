@@ -1,14 +1,4 @@
-	<form id="request-edit" ng-app="Request" ng-controller="EditCtrl"
-		ng-init="<?= 
-			 angInit("contract_file", $Request->Contract->file)
-			.angInit("subjects", ContractSubject::getContractSubjects($Request->Contract->id))
-			.angInit("freetime", Freetime::getStudentFreeTime($Request->Student->id))
-			.angInit("payment_statuses", Payment::$all)
-			.angInit("payments", $Request->getPayments())
-			.angInit("user", $User->dbData())
-			.($Request->Student ? angInit("server_markers", $Request->Student->getMarkers()) : "")
-		?>"
-	>
+	<form id="request-edit" enctype="multipart/form-data" ng-app="Request" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>" >
 		
 		<!-- КАРТА И ЛАЙТБОКС -->
 		<div class="lightbox"></div>
@@ -22,8 +12,6 @@
 	<!-- Скрытые поля -->
 	<input type="hidden" name="id_request" value="<?= $Request->id ?>">	
 	<input type="hidden" id="freetime_json" name="freetime_json">
-	<input ng-model="contract_cancelled" ng-value="contract_cancelled" 
-		ng-init="<?= angInit("contract_cancelled", $Request->Contract->cancelled) ?>" name="Contract[cancelled]" type="hidden">
 	<input type="hidden" id="subjects_json" name="subjects_json">
 	<input type="hidden" id="payments_json" name="payments_json">
 	
@@ -138,28 +126,28 @@
 	    <div class="col-sm-3">
 		    <h4>Представитель</h4>
 		    <div class="form-group">
-                <input type="text" placeholder="имя" class="form-control" name="Representative[first_name]" value="<?= $Request->Representative->first_name ?>">
+                <input type="text" placeholder="имя" class="form-control" name="Representative[first_name]" value="<?= $Request->Student->Representative->first_name ?>">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="фамилия" class="form-control" name="Representative[last_name]" value="<?= $Request->Representative->last_name ?>">
+                <input type="text" placeholder="фамилия" class="form-control" name="Representative[last_name]" value="<?= $Request->Student->Representative->last_name ?>">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="отчество" class="form-control" name="Representative[middle_name]" value="<?= $Request->Representative->middle_name ?>">
+                <input type="text" placeholder="отчество" class="form-control" name="Representative[middle_name]" value="<?= $Request->Student->Representative->middle_name ?>">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="e-mail" class="form-control" name="Representative[email]" value="<?= $Request->Representative->email ?>">
+                <input type="text" placeholder="e-mail" class="form-control" name="Representative[email]" value="<?= $Request->Student->Representative->email ?>">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="сотовый 1" class="form-control phone-masked" name="Representative[phone_main]" value="<?= $Request->Representative->phone_main ?>">
+                <input type="text" placeholder="сотовый 1" class="form-control phone-masked" name="Representative[phone_main]" value="<?= $Request->Student->Representative->phone_main ?>">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="сотовый 2" class="form-control phone-masked" name="Representative[phone_additional]" value="<?= $Request->Representative->phone_additional ?>">
+                <input type="text" placeholder="сотовый 2" class="form-control phone-masked" name="Representative[phone_additional]" value="<?= $Request->Student->Representative->phone_additional ?>">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="домашний" class="form-control phone-masked" name="Representative[phone_home]" value="<?= $Request->Representative->phone_home ?>">
+                <input type="text" placeholder="домашний" class="form-control phone-masked" name="Representative[phone_home]" value="<?= $Request->Student->Representative->phone_home ?>">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="рабочий" class="form-control phone-masked" name="Representative[phone_work]" value="<?= $Request->Representative->phone_work ?>">
+                <input type="text" placeholder="рабочий" class="form-control phone-masked" name="Representative[phone_work]" value="<?= $Request->Student->Representative->phone_work ?>">
             </div>
 	    </div>
 	    <div class="col-sm-3">
@@ -172,7 +160,7 @@
 					   "class"			=> "form-control half-field",
 					   "id"				=> "passport-series",
 					   "name"			=> "Passport[series]",
-					   "value"			=> $Request->Representative->Passport->series,
+					   "value"			=> $Request->Student->Representative->Passport->series,
 				    ], "9999");
 				    
 					// Номер
@@ -181,7 +169,7 @@
 					   "class"			=> "form-control half-field pull-right",
 					   "id"				=> "passport-number",
 					   "name"			=> "Passport[number]",
-					   "value"			=> $Request->Representative->Passport->number,
+					   "value"			=> $Request->Student->Representative->Passport->number,
 				    ], "999999");
 				?>
             </div>
@@ -192,12 +180,12 @@
 			               	"class"			=> "form-control",
 			               	"name"			=> "Passport[date_birthday]",
 			               	"placeholder"	=> "дата рождения",
-			               	"value"			=> $Request->Representative->Passport->date_birthday,
+			               	"value"			=> $Request->Student->Representative->Passport->date_birthday,
 			               ]); 
 			            ?>
             </div>
             <div class="form-group">
-                <textarea rows="5" placeholder="кем выдан" class="form-control" name="Passport[issued_by]"><?= $Request->Representative->Passport->issued_by ?></textarea>
+                <textarea rows="5" placeholder="кем выдан" class="form-control" name="Passport[issued_by]"><?= $Request->Student->Representative->Passport->issued_by ?></textarea>
             </div>
             <div class="form-group">
 						<?= 
@@ -206,12 +194,12 @@
 			               	"class"			=> "form-control",
 			               	"name"			=> "Passport[date_issued]",
 			               	"placeholder"	=> "когда",
-			               	"value"			=> $Request->Representative->Passport->date_issued
+			               	"value"			=> $Request->Student->Representative->Passport->date_issued
 			               ]); 
 			            ?>
             </div>
             <div class="form-group">
-                <textarea rows="5" placeholder="адрес" class="form-control" name="Passport[address]"><?= $Request->Representative->Passport->address ?></textarea>
+                <textarea rows="5" placeholder="адрес" class="form-control" name="Passport[address]"><?= $Request->Student->Representative->Passport->address ?></textarea>
             </div>
 	    </div>
 		<div class="col-sm-3" style="text-align: center">
@@ -237,10 +225,11 @@
 		             до 
 		            <input type="text" class="time end" ng-model="free_time_end" id="free_time_end">
 	            </div>
-	            <button class="btn btn-primary" style="margin-top: 10px; width: 148px" ng-click="addFreetime()"><span class="glyphicon glyphicon-plus"></span>Добавить</button>
+	            <button class="btn btn-default" style="margin-top: 10px; width: 148px" ng-click="addFreetime()"><span class="glyphicon glyphicon-plus"></span>Добавить</button>
             </div>
 	    </div>
     </div>
+    
     <div class="row">
 	    <div class="col-sm-9">
 			<div class="form-group">
@@ -251,15 +240,17 @@
 		    </div>
 	    </div>
     </div>
-    <div class="row">
-
-    </div>
+    
     <div class="row">
 	    <div class="col-sm-12">
-		    <h4>Договоры</h4>
-		    <div class="row">
-			    <div class="col-sm-4" ng-class="{'o3' : contract_cancelled}">
-				    <div class="form-group">
+		    <h4>Договоры 
+			    <button class="btn btn-default btn-xs" ng-click="addContract()"><span class="glyphicon glyphicon-plus no-margin-right"></span></button>
+			</h4>
+		    <div class="row" ng-repeat="contract in contracts | reverse" ng-class="{'border-top-separator' : $index > 0}">
+			    <input type="hidden" ng-value="contract.cancelled" name="Contract[{{contract.id}}][cancelled]">
+				<div class="col-sm-4" ng-class="{'o3' : contract.cancelled}">
+					<div class="form-group">
+										    <div class="form-group">
 					    <table class="table">
 							<thead>
 								<tr>
@@ -268,74 +259,94 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="subject in subjects">
+								<tr ng-repeat="subject in contract.subjects">
+									<input type="hidden" name="Contract[{{contract.id}}][subjects][{{$index}}][id_subject]" ng-value="subject.id_subject">
+									<input type="hidden" name="Contract[{{contract.id}}][subjects][{{$index}}][count]" 		ng-value="subject.count">
 									<td>{{subject.name}}</td>
 									<td class="center" width="70">{{subject.count}}</td>
 									<td class="pull-right">
-										<span class="glyphicon glyphicon-remove text-danger opacity-pointer" ng-click="removeSubject($index)"></span>
+										<span class="glyphicon glyphicon-remove text-danger opacity-pointer" ng-click="removeSubject(contract, $index)"></span>
 									</td>
 								</tr>
 								<tr><td colspan="3"></td></tr>
 								<tr class="add-subject-group">
-									<td style="padding: 1px; border-top: 0"><?= Subjects::buildSelector() ?></td>
+									<td style="padding: 1px; border-top: 0">
+										<select id="subjects-select{{contract.id}}" class="form-control">
+										    <option selected disabled><?= Subjects::$title ?></option>
+											<option disabled>──────────────</option>
+										    <option 
+										    	ng-repeat='(id_subject, title) in <?= toJson(Subjects::$all) ?>' 
+												ng-value="id_subject"
+											>{{title}}</option>
+										</select>
+									</td>
 									<td style="padding: 1px; border-top: 0" class="center" width="70">
 										<center>
-											<input id="add-subject-count" class="form-control digits-only" type="text" style="width: 50px; text-align: center" ng-keydown="watchEnter($event)">
+											<input id="add-subject-count{{contract.id}}"  item="{{contract.id}}"
+												class="form-control digits-only" type="text" style="width: 50px; text-align: center" ng-keydown="watchEnter($event)">
 										</center>
 									</td>
 									<td class="pull-right" style="border-top: 0">
-										<span class="glyphicon glyphicon-plus text-success opacity-pointer" ng-click="addSubject()"></span>
+										<span class="glyphicon glyphicon-plus text-success opacity-pointer" ng-click="addSubject(contract)"></span>
 									</td>
 								</tr>
 							</tbody>
 						</table>
-<!-- 		                <input type="text" placeholder="предметы" class="form-control" name="Contract[subjects]" value="<?= $Request->Contract->subjects ?>"> -->
-		            </div>
-		            <div class="form-group">
-			            <div class="input-group">
-			                <input type="text" placeholder="сумма" class="form-control" name="Contract[sum]" value="<?= $Request->Contract->sum ?>">
-			                <span class="input-group-addon rubble-addon">₽</span>
-			            </div>
-		            </div>
-		            <div class="form-group">
-<!-- 						<input class="form-control bs-date-top" id="contract-date" placeholder="дата заключения" name="Contract[date]" value="<?= $Request->Contract->date ?>"> на  -->
-		               <?= 
-						   Html::date([
-						   	"id" 			=> "contract-date",
-			               	"class"			=> "form-control",
-			               	"placeholder"	=> "дата заключения",
-			               	"name"			=> "Contract[date]",
-			               	"value"			=> $Request->Contract->date
-			               ], "top"); 
-			            ?>
-		            </div>
-<!--
-		            <div class="form-group">
-		                <input type="text" placeholder="количество занятий" class="form-control" name="Contract[lessons_count]"  value="<?= $Request->Contract->lessons_count ?>">
-		            </div>
-		            <div class="form-group">
-		                <input type="text" placeholder="" class="form-control" name="Contract[additional]"  value="<?= $Request->Contract->additional ?>">
-		            </div>
--->
-			    </div>
-			    <div class="col-sm-5">
+		            </div>		        
+						<div class="input-group">
+						    <input type="text" placeholder="сумма" class="form-control digits-only" name="Contract[{{contract.id}}][sum]" ng-model="contract.sum" ng-value="contract.sum">
+						    <span class="input-group-addon rubble-addon">₽</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group date bs-date">
+							<input class="form-control" data-date-format='yyyy.mm.dd' 
+								name="Contract[{{contract.id}}][date]" placeholder="когда" type="text" ng-model="contract.date" ng-value="contract.date">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+						</div>            
+					</div>
+				</div>
+				  <div class="col-sm-8">
 				    <div class="form-group form-group-side-label link-like">
 					    <span class="glyphicon glyphicon-middle glyphicon-print"></span>печать договора
 				    </div>
-					<div class="form-group form-group-side-label link-like" ng-show="!contract_cancelled" ng-click="contractCancelled(1)">
+					<div class="form-group form-group-side-label link-like" ng-show="!contract.cancelled" ng-click="contractCancelled(contract, 1)">
 					    <span class="glyphicon glyphicon-middle glyphicon-remove"></span>расторгнуть договор
 				    </div>
-					<div class="form-group form-group-side-label link-like" ng-show="contract_cancelled" ng-click="contractCancelled(0)">
+					<div class="form-group form-group-side-label link-like" ng-show="contract.cancelled" ng-click="contractCancelled(contract, 0)">
 					    <span class="glyphicon glyphicon-middle glyphicon-ok"></span>отменить расторжение договора
 				    </div>
 				    <div class="form-group form-group-side-label link-text">
-						<span ng-hide="contract_file">
+	<!--
+					<span ng-hide="contract_file">
 							<span class="glyphicon glyphicon-middle glyphicon-paperclip"></span>прикрепить электронную версию договора
 						</span>
-						<span ng-show="contract_file">
-							<a href="files/contracts/{{contract_file}}"><span class="glyphicon glyphicon-file glyphicon-middle"></span>электронная версия договора</a>
+-->
+<!--
+						<span ng-show="contract.file && !contract.uploaded_file">
+							<a href="files/contracts/{{contract.file}}">
+								<span class="glyphicon glyphicon-file glyphicon-middle"></span>электронная версия договора
+							</a>
 						</span>
-						<input id="fileupload" type="file" name="contract_digital" data-url="upload/contract/<?= $Request->Contract->id ?>">
+-->					
+						<div class="form-group form-group-side-label">
+							<span class="btn-file link-like">
+								<span class="glyphicon glyphicon-middle glyphicon-paperclip"></span><span ng-hide="contract.file && !contract.uploaded_file">прикрепить электронную версию договора</span><span ng-show="contract.file && !contract.uploaded_file">прикрепить новую электронную версию</span>
+								<input name="contract_file" type="file" id="fileupload{{contract.id}}" data-url="upload/contract/">
+								<input type="hidden" ng-value="contract.file" name="Contract[{{contract.id}}][file]">
+							</span>
+							<div ng-show="contract.uploaded_file" class="loaded-file">
+								<span class="glyphicon glyphicon-file"></span>{{contract.uploaded_file}}
+							</div>
+						</div>
+						
+						<div class="form-group form-group-side-label" ng-show="contract.file && !contract.uploaded_file">		
+							<a href="files/contracts/{{contract.file}}" target="_blank">
+								<span class="glyphicon glyphicon-download"></span>электронная версия договора
+							</a>
+						</div>
+
+<!-- 						<input id="fileupload" type="file" name="contract_digital" data-url="upload/contract/{{contract.id}}"> -->
 				    </div>
 			    </div>
 		    </div>
@@ -353,7 +364,7 @@
 						    <option selected disabled><?= Payment::$title ?></option>
 							<option disabled>──────────────</option>
 						    <option 
-						    	ng-repeat="(id_status, title) in payment_statuses" 
+						    	ng-repeat='(id_status, title) in <?= toJson(Payment::$all) ?>' 
 								ng-selected="payment.id_status == id_status" 
 								ng-value="id_status"
 							>{{title}}</option>

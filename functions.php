@@ -137,9 +137,30 @@
 	/*
 	 * В формат ангуляра
 	 */
-	function angInit($name, $Object)
+	function angInitSingle($name, $Object)
 	{
 		return $name." = ".htmlspecialchars(json_encode($Object, JSON_NUMERIC_CHECK)) ."; ";
+	}
+	
+	/*
+	 * Инициализация переменных ангуляра
+	 * $array – [var_name = {var_values}; ...]
+	 * @return строка вида 'a = {test: true}; b = {var : 12};' 
+	 */
+	function angInit($array)
+	{
+		foreach ($array as $var_name => $var_value) {
+			// Если значение не установлено, то это пустой массив по умолчанию
+			if (!$var_value) {
+				$var_value = "[]";
+			} else {
+				// иначе кодируем объект в JSON
+				$var_value = htmlspecialchars(json_encode($var_value, JSON_NUMERIC_CHECK)); 
+			}
+			$return .= $var_name." = ". $var_value ."; ";
+		}
+		
+		return $return;
 	}
 	
 	/*
@@ -314,6 +335,17 @@
 	  $code = dechex(crc32($str));
 	  $code = substr($code, 0, 6);
 	  return $code;
+	}
+	
+	
+	
+	/**
+	 * Является ли строка JSON-объектом.
+	 * 
+	 */
+	function isJson($string) {
+		json_decode($string);
+		return (json_last_error() == JSON_ERROR_NONE);
 	}
 	
 	/*

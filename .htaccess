@@ -25,7 +25,7 @@ RewriteRule ^notifications[/]?$ index.php?controller=notification&action=list [Q
 
 
 # Загрузки
-RewriteRule ^upload/contract/([0-9]+)[/]?$ index.php?controller=upload&action=AjaxContract&contract_id=$1 [QSA,L]
+RewriteRule ^upload/([a-zA-Z]+)[/]?$ index.php?controller=upload&action=Ajax$1 [QSA,L]
 RewriteRule ^upload[/]?$ index.php?controller=upload [QSA,L]
 
 # Если шо, переводим на логин

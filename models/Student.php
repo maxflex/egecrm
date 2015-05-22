@@ -13,26 +13,63 @@
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
+		public function __construct($array)
+		{
+			parent::__construct($array);
+			
+			// Добавляем связи
+			$this->Representative	= Representative::findById($this->id_representative);
+		}
+		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
+		
+		/**
+		 * Получить договоры студента.
+		 * 
+		 */
+		public function getContracts()
+		{
+			return Contract::findAll([
+				"condition"	=> "id_student=" . $this->id
+			]);	
+		}
+		
+		/**
+		 * Найти все платежи студента (клиента).
+		 * 
+		 */
+		public function getPayments()
+		{
+			return Payment::findAll([
+				"condition" => "deleted=0 AND id_student=" . $this->id
+			]);
+		}
+		
+		
+		/**
+		 * Получить свободное время ученика.
+		 * 
+		 */
+		public function getFreetime()
+		{
+			return Freetime::findAll([
+				"condition"	=> "id_student=" . $this->id
+			]);
+		}
+		
+		/**
+		 * Получить метки студента.
+		 * 
+		 */
 		public function getMarkers()
 		{
 			// Получаем все маркеры
 			return Marker::findAll([
 				"condition" => "owner='". self::MARKER_OWNER ."' AND id_owner=".$this->id
 			]);
-			
-/*
-			foreach ($Markers as $id => $Marker) {
-				$ReturnMarkers[] = [
-					"id"	=> $id,
-					"lat"	=> $Marker->lat,
-					"lng"	=> $Marker-
-				]
-			}
-*/
 		}
 		
 		// Добавить маркеры студентов

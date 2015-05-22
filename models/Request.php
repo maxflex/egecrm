@@ -14,10 +14,13 @@
 		{
 			parent::__construct($array);
 			
+			// Если после создания нет ученика
+			if (!$this->id_student) {
+				$this->id_student = Student::add()->id;
+			}
+			
 			// Включаем связи
 			$this->Student 			= Student::findById($this->id_student);
-			$this->Representative	= Representative::findById($this->id_representative);
-			$this->Contract			= Contract::findById($this->id_contract);
 			$this->Notification 	= Notification::findById($this->id_notification);
 		}
 		
@@ -51,15 +54,39 @@
 		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
+		
 		/**
-		 * Найти все платежи заявки.
+		 * Создать ученика для заявки. Пустой ученик создается обязательно вместе с новой заявкой
+		 * Это нужно по ряду вещей: чтобы заявки сливались, чтобы сохранялись поля в редактировании и т.д.
+		 */
+		public function createStudent()
+		{
+			// Перед созданием ученика заявки смотрим, может быть
+			// это дублирующаяся заявка и ученик уже существует
+			if (!$this->bindToExistingStudent()) {
+				// если заявка от нового ученика, создаем нового пустого ученика
+				$this->id_student = Student::add()->id;
+			}
+		}
+		
+		/**
+		 * Привязать заявку к существующему студенту по номеру телефона.
 		 * 
 		 */
-		public function getPayments()
+		public function bindToExistingStudent()
 		{
-			return Payment::findAll([
-				"condition" => "deleted=0 AND id_request=" . $this->id
+			// Ищем заявку с таким же номером телефона
+			$Request = Request::find([
+				"condition"	=> "phone='".$this->phone."'"
 			]);
+			
+			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+			if ($Request) {
+				$this->id_student = $Request->id_student;
+				return true;
+			} else {
+				return false;
+			}
 		}
-	
+		
 	}

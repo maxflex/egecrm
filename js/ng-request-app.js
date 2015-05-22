@@ -28,6 +28,9 @@
 			$scope.marker_id= 1;
 			// Дни недели
 			$scope.weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"]
+			// ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
+			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
+			$scope.new_contract_id = -1;
 			
 			// Возвращаем структурированные данные по маркерам
 			// для передачи на сохранение
@@ -195,10 +198,10 @@
 			}
 			
 			// Добавить предмет к договору
-			$scope.addSubject = function() {
+			$scope.addSubject = function(contract) {
 				// HTML-элементы предмета и кол-ва предметов
-				subject 		= $("#subjects-select")
-				subject_count	= $("#add-subject-count")
+				subject 		= $("#subjects-select" + contract.id)
+				subject_count	= $("#add-subject-count" + contract.id)
 				
 				// Если предмет или кол-во не установлено
 				if (!subject.val()) {
@@ -215,46 +218,39 @@
 					subject_count.parent().removeClass("has-error")
 				}
 				
-				if (!$scope.subjects) {
-					$scope.subjects = []
-				}
+				// Инициализируем, если не установлено
+				contract.subjects = initIfNotSet(contract.subjects)
 				
 				// Добавляем предмет
-				$scope.subjects.push({
-					"id_subject": $("#subjects-select").val(),
-					"name"		: $("#subjects-select option:selected").text(),
-					"count"		: $("#add-subject-count").val()
+				contract.subjects.push({
+					"id_subject": subject.val(),
+					"name"		: $("#subjects-select" + contract.id  + " option:selected").text(),
+					"count"		: subject_count.val()
 				})
 				
+				
 				// Обнуляем значения
-				$('#subjects-select option:first-child').attr("selected", "selected")
-				$("#add-subject-count").val("")
-				
-				// Добавляем JSON
-				$("#subjects_json").val(JSON.stringify($scope.subjects));
-				
+				$('#subjects-select' + contract.id  + ' option:first-child').attr("selected", "selected")
+				subject_count.val("")
 			}
 			
 			// Удалить предмет из договора
-			$scope.removeSubject = function(index) {
-				$scope.subjects.splice(index, 1);
-				$scope.$apply();
-				
-				// Добавляем JSON
-				$("#subjects_json").val(JSON.stringify($scope.subjects));
+			$scope.removeSubject = function(contract, index) {
+				contract.subjects.splice(index, 1);
 			}
 			
 			
 			/**
 			 * Расторгнуть договор/отменить расторжение
-			 * 
+			 *
+			 * status расторжения  [0/1 активен/расторгнут]
 			 */
-			$scope.contractCancelled = function(contract_cancelled) {
+			$scope.contractCancelled = function(contract, status) {
 				// отменить расторжение
-				if (!contract_cancelled) {
+				if (contract.cancelled) {
 					bootbox.confirm("Вы уверены, что хотите отменить расторжение?", function(result) {
 						if (result === true) {
-							$scope.contract_cancelled = 0
+							contract.cancelled = 0
 							$scope.$apply()
 						}
 					})
@@ -262,7 +258,7 @@
 					// расторгнуть
 					bootbox.confirm("Вы уверены, что хотите расторгнуть договор?", function(result) {
 						if (result === true) {
-							$scope.contract_cancelled = 1
+							contract.cancelled = 1
 							$scope.$apply()
 						}
 					})
@@ -283,23 +279,49 @@
 			
 			// Добавление по нажатию ENTER
 			$scope.watchEnter = function($event) {
-				console.log($event.currentTarget.id)
+				// получаем ID элемента
+				item_id = $($event.currentTarget).attr("item")
+				
 				if ($event.keyCode == 13) {
 					$event.currentTarget.blur();
 					
 					// выполняем функцию в зависимости от ID
 					switch ($event.currentTarget.id) {
-						case "add-subject-count": {
+						case "add-subject-count" + item_id: {
 							// добавление предмета
-							$scope.addSubject()
+							$.each($scope.contracts, function(index, contract) {
+								if (contract.id == item_id) {
+									$scope.addSubject(contract)
+								}
+							})
+							
 							break
 						}
 						case "payment-sum": {
 							// добавление платежа
 							$scope.addPayment()
+							
+							break
 						}
 					}
 				}
+			}
+			
+			// Добавить контракт
+			$scope.addContract = function() {
+				// Новый контракт
+				new_contract = {"id" : $scope.new_contract_id--}
+				
+				// Добавляем в коллекцию контрактов
+				$scope.contracts.push(new_contract)
+				
+				// Вешаем маску даты на новый элемент
+				rebindMasks()
+				
+				// Вешаем файлаплоад на новый элемент
+				setTimeout(function() {
+					$scope.bindFileUpload(new_contract)
+				}, 100)
 			}
 		
 			// Добавить платеж
@@ -345,12 +367,15 @@
 				$scope.payments.push($scope.new_payment)
 				
 				$scope.new_payment = {id_status : 0}
+				
+				// Выборка дат на новый платеж
+				rebindMasks()
 			}
 			
 			// Удаляем предмет
 			$scope.removePayment = function(index) {
 				$scope.payments[index].deleted = 1;
-				$scope.$apply();
+				$scope.$apply()
 			}
 			
 			// форматировать дату	
@@ -358,53 +383,51 @@
 		        var dateOut = new Date(date);
 		        return dateOut;
 		    };
+		    
+		    // Превратить в файлаплоад
+		    $scope.bindFileUpload = function(contract) {
+				// загрузка файла договора
+				$('#fileupload' + contract.id).fileupload({
+					dataType: 'json',
+			        done: function (i, response) {
+						if (response.result !== "ERROR") {
+							contract.file 			= response.result.file 			// Получаем временное имя загруженного файла
+							contract.uploaded_file	= response.result.uploaded_file	// Получаем имя загруженного файла
+							$scope.$apply()
+						} else {
+							notifyError("Ошибка загрузки")
+						}
+			        }
+			    })
+		    }
 			
 			$(document).ready(function() {
 				// Добавляем JSON
-				$("#subjects_json").val(JSON.stringify($scope.subjects));
-				// Добавляем JSON
 				$("#freetime_json").val(JSON.stringify($scope.freetime));
 				
-				datePair();
+				// Биндим загрузку к уже имеющимся дагаварам
+				$.each($scope.contracts, function(index, contract) {
+					$scope.bindFileUpload(contract)
+				})
 				
+				// Если дагаваров нет, добавляем один по умолчанию
+				if ($scope.contracts.length == 0) {
+					$scope.addContract()
+				}
 				
-				// загрузка файла договора
-				$('#fileupload').fileupload({
-					dataType: 'json',
-			        done: function (i, response) {
-				        console.log(i, response)
-						if (response.result !== "ERROR") {
-							bootbox.alert("Договор загружен")
-							$scope.contract_file = response.result.file // Получаем расширение загруженного файла
-							$scope.$apply()
-						} else {
-							bootbox.alert("Ошибка загрузки")
-						}
-			        }
-			    });
+				// Биндим пару-время к свободному времени
+				datePair()
+				
 				
 				// Кнопка сохранения
 				$("#save-button").on("click", function() {
-					data = $("#request-edit").serializeArray();
-
+					data = $("#request-edit").serializeArray()
 					$.post("requests/ajaxSave", data)
 						.success(function() {
-							$.notify({message: "Данные сохранены", icon: "glyphicon glyphicon-ok"}, {
-								type : "success",
-								allow_dismiss : false,
-								placement: {
-									from: "top",
-								}
-							});
+							notifySuccess("Данные сохранены")
 						})
 						.error(function() {
-							$.notify({message: "Ошибка сохранения", icon: "glyphicon glyphicon-remove"}, {
-								type : "danger",
-								allow_dismiss : false,
-								placement: {
-									from: "top",
-								}
-							});
+							notifyError("Ошибка сохранения")
 						})
 				});
 				

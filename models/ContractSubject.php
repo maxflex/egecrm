@@ -25,11 +25,11 @@
 			]);
 			
 			// Если предметы нашлись, сопостовляем ID предметов названиям
+			// и сразу же убираем ненужные данные, только dbData
 			if ($ContractSubjects) {
 				foreach ($ContractSubjects as &$ContractSubject) {
 					$ContractSubject = $ContractSubject->dbData();
 					$ContractSubject['name'] = Subjects::$all[$ContractSubject['id_subject']];
-				//	$ContractSubject->name = Subjects::$all[$ContractSubject->id_subject];
 				}
 				// Возвращаем с названиями предметов
 				return $ContractSubjects;
@@ -39,16 +39,13 @@
 		}
 		
 		/**
-		 * Добавить предметы из angular-json-данных.
+		 * Добавить предметы в договор.
 		 * 
 		 */
-		public static function addData($json_array, $id_contract) 
+		public static function addData($subjects_data, $id_contract) 
 		{
-			// Сначала декодируем данные
-			$subjects_data = json_decode($json_array, true);
-			
 			// Если никаких данных нет
-			if ($subjects_data === false) {
+			if (!count($subjects_data)) {
 				return false;
 			}
 			
@@ -60,11 +57,7 @@
 			
 			// Сохраняем данные
 			foreach ($subjects_data as $subject_data) {
-				unset($subject_data["id"]); //  удаляем ID, потому что заново передобавляем 
-				
-				$SubjectData = new self($subject_data);
-				$SubjectData->id_contract = $id_contract;
-				$SubjectData->save();
+				self::add($subject_data + ["id_contract" => $id_contract]);
 			}
 		}
 				

@@ -60,7 +60,7 @@
 		 * Добавить платежи
 		 * 
 		 */
-		public static function addData($payments_array, $id_request) 
+		public static function addData($payments_array, $id_student) 
 		{	
 			// Сохраняем данные
 			foreach ($payments_array as $id => $one_payment) {
@@ -71,7 +71,7 @@
 				} else {
 					// иначе добавляем новый платеж
 					$Payment = new self($one_payment);
-					$Payment->id_request	= $id_request;
+					$Payment->id_student	= $id_student;
 					$Payment->id_user		= User::fromSession()->id;
 					$Payment->first_save_date = now();
 					$Payment->save();

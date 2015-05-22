@@ -1,12 +1,8 @@
 <div ng-app="Request" ng-controller="ListCtrl" 
-	ng-init="<?= 
-			 angInit("requests", $Requests)
-			.angInit("request_statuses_count", $RequestStatusesCount) 
-		?>
-	">
+	ng-init="<?= $ang_init_data ?>">
 	<div class="row">
 		<div class="col-sm-12">
-			<ul class="nav nav-tabs" ng-init="<?= angInit("request_statuses", RequestStatuses::$all) ?>">
+			<ul class="nav nav-tabs">
 				<li ng-class="{'active' : $index == 0}" ng-repeat="(key, value) in request_statuses">
 					<a href="#{{key}}" ng-click="changeList(key)" data-toggle="tab" aria-expanded="{{$index == 0}}">
 						{{value}} ({{request_statuses_count[key]}})

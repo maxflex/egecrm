@@ -1,9 +1,4 @@
-<div ng-app="Notification" ng-controller="ListCtrl" 
-	ng-init="<?= 
-			 angInit("notifications", $Notifications)
-			.angInit("noitfication_types", NotificationTypes::$all)
-		?>"
->
+<div ng-app="Notification" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="notification-line" ng-repeat="notification in notifications">

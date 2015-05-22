@@ -8,7 +8,7 @@
 	    if (DEBUG) {
 		    echo '<base href="http://localhost:8080/egecrm/">';
 	    } else {
-		    echo '/egecrm/">';
+		    echo '<base href="/egecrm/">';
 	    }
 	?>
 <!--     <link href="css/jquery.datetimepicker.css" rel="stylesheet"> -->

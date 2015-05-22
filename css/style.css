@@ -4,11 +4,57 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+.loaded-file {
+  font-size: 12px;
+  margin-top: 3px;
+  color: #999999; }
+
+.no-outline {
+  outline: none !important; }
+
+.btn {
+  outline: none !important; }
+
+/*
+.btn-primary:focus {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+*/
+.btn-default:focus {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc; }
+
+.btn-file {
+  position: relative;
+  overflow: hidden; }
+
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  cursor: pointer;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  background: white;
+  cursor: inherit;
+  display: block; }
+
 .map-save-button {
   position: absolute;
   bottom: 3%;
   text-transform: uppercase;
   left: calc(50% - 55px); }
+
+.border-top-separator {
+  border-top: 1px dashed #eee;
+  margin-top: 20px;
+  padding-top: 10px; }
 
 .inline-block {
   display: inline-block; }
@@ -153,7 +199,7 @@ h4 {
   margin-bottom: 12px; }
 
 .btn-group-freetime > .btn {
-  padding: 5px 6px;
+  padding: 4px 5px;
   outline: none !important; }
 
 .day-chosen {

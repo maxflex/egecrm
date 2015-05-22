@@ -12,18 +12,7 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
-		
-		/**
-		 * Получить свободное время студента.
-		 * 
-		 */
-		public static function getStudentFreetime($id_student)
-		{
-			return self::findAll([
-				"condition" => "id_student=$id_student",
-			]);
-		}
-		
+
 		/**
 		 * Добавить свободное время из angular-json-данных.
 		 * 

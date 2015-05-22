@@ -225,7 +225,26 @@
 			
 			// Если надо сразу сохранить
 			if ($save) {
-				$this->save();
+				return $this->save();
+			} else {
+				return true;
+			}
+		}
+		
+		
+		/**
+		 * Обновить по ID и сохранить.
+		 * 
+		 */
+		public static function updateById($id, $data)
+		{
+			$Object = self::findById($id); // находим объект
+			
+			// если найден, сохраняем
+			if ($Object) {
+				$Object->update($data);
+			} else {
+				return false;
 			}
 		}
 		
