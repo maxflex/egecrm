@@ -196,6 +196,34 @@
 		 		->query("SELECT * FROM ".static::$mysql_table." ORDER BY id DESC LIMIT 1")
 		 		->fetch_assoc()["id"];
 		}
+		
+		
+		/**
+		 * Получить только ID объектов по условию.
+		 * 
+		 */
+		public static function getIds($params)
+		{
+			// Получаем все данные из таблицы + доп условие, если есть
+			$result = static::dbConnection()->query("
+				SELECT id FROM ".static::$mysql_table." 
+				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
+				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
+				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
+				);
+			
+			// Если запрос без ошибок и что-то нашлось
+			if ($result->num_rows) {
+				// Создаем массив айдишников
+				while ($array = $result->fetch_assoc()) {
+					$ids[] = $array["id"];
+				}
+				
+				return $ids;
+			} else {
+				return false;
+			}
+		}
 		 
 		/*
 		 * Функция определяет соединение БД
@@ -215,7 +243,7 @@
 		public function update(array $data, $save = true)
 		{
 			// Если в массиве нет никаких данных
-			if (!hasValues($data)) {
+			if (is_array($data) && !hasValues($data)) {
 				return false;
 			}
 			foreach ($data as $key => $value) {
@@ -417,8 +445,8 @@
 		 * 
 		 */
 		public static function add($array = false) {
-			// Если значений у массива нет – выйти
-			if (!hasValues($array)) {
+			// Если передан массив и значений у массива нет – выйти
+			if (is_array($array) && !hasValues($array)) {
 				return false;
 			}
 			

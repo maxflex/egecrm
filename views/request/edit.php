@@ -236,7 +236,7 @@
 	            <?= Branches::buildSvgSelector($Request->Student->branches, ["name" => "Student[branches][]", "id" => "student-branches"], true) ?>
             </div>
 			<div class="form-group">
-		    	<textarea placeholder="любая другая информация в произвольной форме" class="form-control"></textarea>
+		    	<textarea placeholder="любая другая информация в произвольной форме" class="form-control" name="Student[other_info]"><?= trim($Request->Student->other_info) ?></textarea>
 		    </div>
 	    </div>
     </div>
@@ -342,7 +342,7 @@
 						
 						<div class="form-group form-group-side-label" ng-show="contract.file && !contract.uploaded_file">		
 							<a href="files/contracts/{{contract.file}}" target="_blank">
-								<span class="glyphicon glyphicon-download"></span>электронная версия договора
+								<span class="glyphicon glyphicon-file"></span>электронная версия договора
 							</a>
 						</div>
 

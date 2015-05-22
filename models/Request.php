@@ -56,6 +56,40 @@
 		
 		
 		/**
+		 * Получить ID заявок от этого же ученика.
+		 *
+		 */
+		public function getDuplicates()
+		{
+			return self::getIds([
+				"condition"	=> "id_student=".$this->id_student." AND id!=".$this->id
+			]);
+		}
+		
+		
+		/**
+		 * Сгенерировать HTML дубликатов через запятую.
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public function generateDuplicatesHtml()
+		{
+			// Ищем дубликаты
+			$request_duplicates = $this->getDuplicates();
+			
+			// Если дубликаты нашлись
+			if ($request_duplicates) {
+				foreach ($request_duplicates as $id_request) {
+					$html .= "<a class='link-white' href='requests/edit/$id_request'>$id_request</a>, ";
+				}
+				// Удаляем последнюю запятую
+				$html = rtrim($html, ", ");
+				return "<span class='pull-right'>Другие заявки этого клиента: $html</span>";
+			}
+		}
+		
+		/**
 		 * Создать ученика для заявки. Пустой ученик создается обязательно вместе с новой заявкой
 		 * Это нужно по ряду вещей: чтобы заявки сливались, чтобы сохранялись поля в редактировании и т.д.
 		 */
