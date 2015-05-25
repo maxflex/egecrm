@@ -322,6 +322,10 @@ thead {
 	display: inline-block;
 }
 
+.printable {
+	display: none
+}
+
 /* make sidebar nav vertical */ 
 @media (min-width: 768px) {
   .sidebar-nav .navbar .navbar-collapse {
@@ -346,5 +350,4 @@ thead {
   .modal-dialog {
 	  margin: 15% auto;
 	}
-  
 }

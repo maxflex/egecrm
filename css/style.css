@@ -243,6 +243,9 @@ h4 {
   margin-bottom: 5px;
   display: inline-block; }
 
+.printable {
+  display: none; }
+
 /* make sidebar nav vertical */
 @media (min-width: 768px) {
   .sidebar-nav .navbar .navbar-collapse {

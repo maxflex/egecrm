@@ -1,4 +1,4 @@
-	<form id="request-edit" enctype="multipart/form-data" ng-app="Request" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>" >
+	<form id="request-edit" ng-app="Request" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>" >
 		
 		<!-- КАРТА И ЛАЙТБОКС -->
 		<div class="lightbox"></div>
@@ -99,13 +99,13 @@
 	    <div class="col-sm-3">
 		    <h4>Ученик</h4>
 		    <div class="form-group">
-                <input type="text" placeholder="имя" class="form-control" name="Student[first_name]" value="<?= $Request->Student->first_name ?>">
+                <input type="text" placeholder="имя" class="form-control" name="Student[first_name]" ng-model="student.first_name">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="фамилия" class="form-control" name="Student[last_name]" value="<?= $Request->Student->last_name ?>">
+                <input type="text" placeholder="фамилия" class="form-control" name="Student[last_name]" ng-model="student.last_name">
             </div>
             <div class="form-group">
-                <input type="text" placeholder="отчество" class="form-control" name="Student[middle_name]" value="<?= $Request->Student->middle_name ?>">
+                <input type="text" placeholder="отчество" class="form-control" name="Student[middle_name]" ng-model="student.middle_name">
             </div>
             <div class="form-group">
                 <input type="text" placeholder="e-mail" class="form-control" name="Student[email]" value="<?= $Request->Student->email ?>">
@@ -240,7 +240,7 @@
 		    </div>
 		    
 		    <div class="form-group">
-			    <?= Comment::display(Comment::PLACE_REQUEST_EDIT, $Request->id) ?>
+			    <?= Comment::display(Comment::PLACE_REQUEST_EDIT, $Request->Student->id) ?>
 		    </div>
 		    
 	    </div>
@@ -312,8 +312,9 @@
 					</div>
 				</div>
 				  <div class="col-sm-8">
-				    <div class="form-group form-group-side-label link-like">
+				    <div class="form-group form-group-side-label link-like" ng-click="printContract(contract.id)">
 					    <span class="glyphicon glyphicon-middle glyphicon-print"></span>печать договора
+						<?= partial("contract_print") ?>
 				    </div>
 					<div class="form-group form-group-side-label link-like" ng-show="!contract.cancelled" ng-click="contractCancelled(contract, 1)">
 					    <span class="glyphicon glyphicon-middle glyphicon-remove"></span>расторгнуть договор

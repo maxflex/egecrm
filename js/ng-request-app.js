@@ -32,6 +32,16 @@
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
 			$scope.new_contract_id = -1;
 			
+			
+			
+			/**
+			 * Печать договора 
+			 * 
+			 */
+			$scope.printContract = function(id_contract) {
+				printDiv("contract-print-" + id_contract);
+			}
+			
 			// Возвращаем структурированные данные по маркерам
 			// для передачи на сохранение
 			$scope.markerData = function() {
