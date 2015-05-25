@@ -238,6 +238,11 @@
 			<div class="form-group">
 		    	<textarea placeholder="любая другая информация в произвольной форме" class="form-control" name="Student[other_info]"><?= trim($Request->Student->other_info) ?></textarea>
 		    </div>
+		    
+		    <div class="form-group">
+			    <?= Comment::display(Comment::PLACE_REQUEST_EDIT, $Request->id) ?>
+		    </div>
+		    
 	    </div>
     </div>
     
@@ -371,7 +376,7 @@
 					    </select> от
 					    <input class="form-control bs-date-top" id="payment-date-{{$index}}" value="{{payment.date}}"  name="Payment[{{$index}}][date]"> на 
 					    <input type="text" class="form-control" id="payment-sum-{{$index}}" value="{{payment.sum}}"  name="Payment[{{$index}}][sum]"> руб.
-						<span class="save-coordinates-2">({{payment.user_login}} {{formatDate(payment.first_save_date) | date:'yyyy.MM.dd в HH:mm'}})
+						<span class="save-coordinates-big">({{payment.user_login}} {{formatDate(payment.first_save_date) | date:'yyyy.MM.dd в HH:mm'}})
 							<span class="glyphicon glyphicon-remove glyphicon-middle text-danger opacity-pointer" ng-click="removePayment($index)"></span>
 						</span>
 				  	</div>

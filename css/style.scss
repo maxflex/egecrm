@@ -10,6 +10,22 @@ body {
 	background-image: url("../img/background/bg.jpg");
 }
 
+.comment-block .glyphicon {
+	color: #337ab7;
+}
+
+#comment-add-field {
+  outline: none;
+  border: 0;
+  border-bottom: 1px solid $hr_gray;
+  width: 300px;
+  display: none;
+}
+
+#comment-add {
+	margin-top: 2px;
+}
+
 #fileupload {
 //	position: fixed;
 //	overflow: hidden;
@@ -225,7 +241,7 @@ h4 {
 	font-style: italic;
 }
 
-.save-coordinates-2 {
+.save-coordinates-big {
 	text-align: right; 
 	padding-top: 20px; 
 	color: $placeholder_gray;

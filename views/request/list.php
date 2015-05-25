@@ -18,13 +18,5 @@
 			</div>
 		</div>
 	</div>
-
-<!--
-	<div class="row" ng-repeat="request in requests">
-		<div class="col-sm-12">
-		<a href="requests/edit/{{request.id}}">Заявка #{{request.id}}</a>
-		</div>
-	</div>
--->
 </div>
 

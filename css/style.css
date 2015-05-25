@@ -4,6 +4,19 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+.comment-block .glyphicon {
+  color: #337ab7; }
+
+#comment-add-field {
+  outline: none;
+  border: 0;
+  border-bottom: 1px solid #eee;
+  width: 300px;
+  display: none; }
+
+#comment-add {
+  margin-top: 2px; }
+
 .loaded-file {
   font-size: 12px;
   margin-top: 3px;
@@ -168,7 +181,7 @@ h4 {
   color: #999999;
   font-style: italic; }
 
-.save-coordinates-2 {
+.save-coordinates-big {
   text-align: right;
   padding-top: 20px;
   color: #999999; }

@@ -17,7 +17,7 @@
 	// Получаем названия контроллеров и экшена	
 	$_controller	 = $_GET["controller"];	// Получаем название контроллера
 	$_action		 = $_GET["action"];		// Получаем название экшена
-	
+		
 	/* // Проверка на аякс-запрос
 	if (strtolower(mb_strimwidth($_action, 0, 4)) == "ajax") {
 		
@@ -34,7 +34,10 @@
 	/* Основные действия */	
 	$_controllerName = ucfirst(strtolower($_controller))."Controller";	// Преобразуем название контроллера в NameController
 	$_actionName	 = "action".ucfirst(strtolower($_action));			// Преобразуем название экшена в actionName
-		
+	
+//		preType([$_GET, $_controller, $_action, $_controllerName, $_actionName]);
+
+	
 	$IndexController = new $_controllerName;	// Создаем объект контроллера
 	
 	// Запускаем BeforeAction, если существует
