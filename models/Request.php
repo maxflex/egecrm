@@ -33,9 +33,9 @@
 		 */
 		public static function countNew()
 		{
-			return self::findAll([
+			return self::count([
 				"condition"	=> "id_status=".RequestStatuses::NEWR
-			], true);
+			]);
 		}
 		
 		
@@ -81,7 +81,7 @@
 			// Если дубликаты нашлись
 			if ($request_duplicates) {
 				foreach ($request_duplicates as $id_request) {
-					$html .= "<a class='link-white' href='requests/edit/$id_request'>$id_request</a>, ";
+					$html .= "<a class='link-white' href='requests/edit/$id_request'>#$id_request</a>, ";
 				}
 				// Удаляем последнюю запятую
 				$html = rtrim($html, ", ");

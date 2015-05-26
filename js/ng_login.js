@@ -50,7 +50,8 @@
 				}, function(response) {
 					console.log(response)
 					if (response == "true") {
-						window.location = "requests";
+						// window.location = "requests";
+						location.reload()
 					} else {
 						$scope.form_errors = "Неправильная пара логин-пароль"
 						return false
