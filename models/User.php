@@ -31,7 +31,7 @@
 		public static function dbConnection()
 		{
 			// Открываем соединение с основной БД		
-			$db_repetitors = new mysqli('localhost', "root", "root", "repetitors");
+			$db_repetitors = new mysqli(DB_HOST, DB_LOGIN, DB_PASSWORD, DB_PREFIX."repetitors");
 			
 			// Установлено ли соединение
 			if (mysqli_connect_errno($db_repetitors))
