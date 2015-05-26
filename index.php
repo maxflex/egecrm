@@ -35,7 +35,6 @@
 	$_controllerName = ucfirst(strtolower($_controller))."Controller";	// Преобразуем название контроллера в NameController
 	$_actionName	 = "action".ucfirst(strtolower($_action));			// Преобразуем название экшена в actionName
 	
-//	preType([$_GET, $_controller, $_action, $_controllerName, $_actionName], true);
 	
 	// Проверяем зайден ли пользователь. Если не зайден, форсируем контроллер логина с экшеном Login
 	// (можно сделать и редирект, для этого раскомментить первую строчку)
@@ -44,6 +43,9 @@
 		$_controllerName	= "LoginController";
 		$_actionName		= "actionLogin";
 	}
+	
+//	preType([$_GET, $_controller, $_action, $_controllerName, $_actionName], true);
+
 	
 	$IndexController = new $_controllerName;	// Создаем объект контроллера
 	
