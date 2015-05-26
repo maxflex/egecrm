@@ -27,7 +27,16 @@
 			// ID маркера
 			$scope.marker_id= 1;
 			// Дни недели
-			$scope.weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"]
+			$scope.weekdays = [
+				{"short" : "ПН", "full" : "Понедельник"},
+				{"short" : "ВТ", "full" : "Вторник"},
+				{"short" : "СР", "full" : "Среда"},
+				{"short" : "ЧТ", "full" : "Четверг"},
+				{"short" : "ПТ", "full" : "Пятница"},
+				{"short" : "СБ", "full" : "Суббота"},
+				{"short" : "ВС", "full" : "Воскресенье"}
+			]
+			
 			// ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
 			$scope.new_contract_id = -1;
@@ -180,26 +189,60 @@
 					$scope.freetime = []
 				}
 				
+				// Элементы
+				free_time_start = $("#free_time_start")
+				free_time_end 	= $("#free_time_end")
+				
+				// Если есть пустые поля
+				if (!free_time_start.val()) {
+					free_time_start.focus().addClass("has-error")
+					return false
+				} else {
+					free_time_start.removeClass("has-error")
+				}
+				if (!free_time_end.val()) {
+					free_time_end.focus().addClass("has-error")
+					return false
+				} else {
+					free_time_end.removeClass("has-error")
+				}
+				
 				// Добавляем свободное время
 				$scope.freetime.push({
 					"day"	: $scope.adding_day,
-					"start"	: $("#free_time_start").val(),
-					"end"	: $("#free_time_end").val()
+					"start"	: free_time_start.val(),
+					"end"	: free_time_end.val()
 				});
 				
 				// Добавляем JSON
 				$("#freetime_json").val(JSON.stringify($scope.freetime));
 				
 				// Обнуляем значения в добавлении
-				$("#free_time_start").val("")
-				$("#free_time_end").val("")
+				free_time_start.val("")
+				free_time_end.val("")
+			}
+			
+			// Удаление свободного времени
+			$scope.removeFreetime =  function(freetime) {
+				$.each($scope.freetime, function(index, ft) {
+					if (angular.equals(freetime, ft)) {
+						//$scope.freetime.splice(index, 1)
+						// все уже имеющиеся в базе с deleted = true будут удаляться из базы
+						// все новые с deleted = true добавляться не будут
+						$scope.freetime[index].deleted = true
+						// Добавляем JSON
+						$("#freetime_json").val(JSON.stringify($scope.freetime))
+						$scope.$apply()
+						return true
+					}
+				})
 			}
 			
 			// Подсчет кол-ва свободного времени конкретного дня
 			$scope.hasFreetime = function(day) {
 				count = 0
 				angular.forEach($scope.freetime, function(freetime) {
-					if (freetime.day == day) {
+					if (freetime.day == day && !freetime.deleted) {
 						count++;
 					}
 				})

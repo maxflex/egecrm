@@ -208,24 +208,26 @@
 			    <div class="btn-group btn-group-xs btn-group-freetime">
 					<button ng-repeat="weekday in weekdays" type="button" class="btn" ng-click="chooseDay($index + 1)" 
 						ng-class="{'day-chosen' : adding_day == ($index + 1), 'btn-success' : hasFreetime($index + 1), 'btn-default' : !hasFreetime($index + 1)}">
-						{{weekday}}
+						{{weekday.short}}
 					</button>				
 			    </div>
             </div>
             
             <div ng-show="adding_day">
-	            <div id="free-time-list" ng-repeat="ft in freetime | filter:{day : adding_day}">
+	            <h5 style="text-align: center">{{weekdays[adding_day - 1].full}}:</h5>
+	            <div class="free-time-list" ng-repeat="ft in freetime | filter:{day : adding_day}" ng-hide="ft.deleted">
 		             <span class="label label-success">{{ft.start}}</span> — <span class="label label-success">{{ft.end}}</span>
+		             <span class="glyphicon glyphicon-remove glyphicon-middle text-danger opacity-pointer" ng-click="removeFreetime(ft)"></span>
 	            </div>
             </div>            
             
             <div ng-show="adding_day" class="add-freetime-block">
 	            <div id="timepair" class="timepair">
-		            <input type="text" class="time start" ng-model="free_time_start" id="free_time_start"> 
+		            <input type="text" class="form-control time start" ng-model="free_time_start" id="free_time_start">
 		             до 
-		            <input type="text" class="time end" ng-model="free_time_end" id="free_time_end">
+		            <input type="text" class="form-control time end" ng-model="free_time_end" id="free_time_end">
 	            </div>
-	            <button class="btn btn-default" style="margin-top: 10px; width: 148px" ng-click="addFreetime()"><span class="glyphicon glyphicon-plus"></span>Добавить</button>
+	            <button class="btn btn-default" style="margin-top: 10px; width: 156px" ng-click="addFreetime()"><span class="glyphicon glyphicon-plus"></span>Добавить</button>
             </div>
 	    </div>
     </div>
