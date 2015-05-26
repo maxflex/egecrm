@@ -72,22 +72,6 @@
 		}
 		
 		/*
-		 * Редирект на предыдущую страницу
-		 */
-		protected function refererRedirect()
-		{
-			header("Location: {$_SERVER['HTTP_REFERER']}");
-		}
-		
-		/*
-		 * Обновить текущую страницу
-		 */
-		protected function refresh()
-		{
-			header('Location: '.$_SERVER['REQUEST_URI']);
-		}
-		
-		/*
 		 * Указываем заголовк HTML
 		 * $add_website_name – добавлять $_add_title к указанному $title 
 		 */

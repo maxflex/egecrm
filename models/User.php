@@ -31,7 +31,7 @@
 		public static function dbConnection()
 		{
 			// Открываем соединение с основной БД		
-			$db_repetitors = new mysqli(DB_HOST, DB_LOGIN, DB_PASSWORD, DB_PREFIX."repetitors");
+			$db_repetitors = new mysqli('localhost', "root", "root", "repetitors");
 			
 			// Установлено ли соединение
 			if (mysqli_connect_errno($db_repetitors))
@@ -74,8 +74,9 @@
 		
 		/*
 		 * Автовход по Remember-me
+		 * $redirect – нужно ли редиректить на главную страницу пользователя в случае автовхода?
 		 */
-		public static function rememberMeLogin()
+		public static function rememberMeLogin($redirect = true)
 		{
 			// Кука токена хранится в виде: 
 			// 1) Первые 16 символов MD5-хэш
@@ -102,12 +103,10 @@
 					// Логинимся (не обновляем токен, создаем сессию)
 					$RememberMeUser->toSession(false, true);
 					
-					return true;
-				} else {
-					return false;
+					if ($redirect) {
+						header("Location: ".$RememberMeUser->login);
+					}
 				}
-			} else {
-				return false;
 			}
 		}
 		
