@@ -74,9 +74,8 @@
 		
 		/*
 		 * Автовход по Remember-me
-		 * $redirect – нужно ли редиректить на главную страницу пользователя в случае автовхода?
 		 */
-		public static function rememberMeLogin($redirect = true)
+		public static function rememberMeLogin()
 		{
 			// Кука токена хранится в виде: 
 			// 1) Первые 16 символов MD5-хэш
@@ -103,10 +102,12 @@
 					// Логинимся (не обновляем токен, создаем сессию)
 					$RememberMeUser->toSession(false, true);
 					
-					if ($redirect) {
-						header("Location: ".$RememberMeUser->login);
-					}
+					return true;
+				} else {
+					return false;
 				}
+			} else {
+				return false;
 			}
 		}
 		

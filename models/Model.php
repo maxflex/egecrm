@@ -74,9 +74,8 @@
 		/*
 		 * Получаем все записи
 		 * $params - дополнительные параметры (condition - дополнительное условие, order - параметры сортировки)
-		 * $count - только подсчитываем кол-во найденных
 		 */
-		public static function findAll($params = array(), $count = false)
+		public static function findAll($params = array())
 		{
 			// Получаем все данные из таблицы + доп условие, если есть
 			$result = static::dbConnection()->query("
@@ -85,30 +84,21 @@
 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
 				);
-			
-			// Если успешно получили и (что-то есть или нужно просто подсчитать)
-			if ($result && ($result->num_rows || $count))
-			{
-				// Если нужно только подсчитать
-				if ($count)
-				{
-					return $result->num_rows;
-				}
 				
+			// Если успешно получили и что-то есть
+			if ($result && $result->num_rows) {
 				// Получаем имя текущего класса
 				$class_name = get_called_class();
 				
 				// Создаем массив объектов
-				while ($array = $result->fetch_assoc())
-				{
+				while ($array = $result->fetch_assoc()) {
 					$return[] = new $class_name($array);
 				}
 				
 				// Возвращаем массив объектов
 				return $return;
 			}
-			else
-			{
+			else {
 				return false;
 			}
 		}
@@ -491,9 +481,6 @@
 		/**
 		 * Найти и добавить связь с другой таблицей, если она не указана.
 		 * 
-		 * @access public
-		 * @param mixed $ClassName
-		 * @return void
 		 */
 		public function getRelation($ClassName)
 		{
