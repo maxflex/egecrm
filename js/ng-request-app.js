@@ -44,6 +44,9 @@
 			
 		})
 		.controller("EditCtrl", function ($scope, $log) {
+			// На этой странице
+			NProgress.configure({ showSpinner: true })
+			
 			// значение "Платежи" по умолчанию (иначе подставляет пустое значение)
 			$scope.new_payment = {id_status : 0}
 			// Маркеры

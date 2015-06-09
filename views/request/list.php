@@ -27,12 +27,11 @@
 			      ng-change="pageChanged()" 
 			      total-items="request_statuses_count[chosen_list]"
 			      max-size="10"
-			      boundary-links="true"
 			      items-per-page="<?= Request::PER_PAGE ?>"
 			      first-text="«"
 			      last-text="»"
-			      previous-text="<"
-			      next-text=">"
+			      previous-text="«"
+			      next-text="»"
 			    >
 			    </pagination>
 			</div>

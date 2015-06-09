@@ -11,7 +11,7 @@
 		const TRG = 1;
 		const PVN = 2;	
 		const BGT = 3;
-		const STR = 4;
+		const STR = 4;	# удалено
 		const IZM = 5;
 		const OPL = 6;
 		const RPT = 7;
@@ -21,6 +21,8 @@
 		const PRG = 11;
 		const NVG = 12;
 		const KLG = 13;
+		const BRT = 14;
+		const MLD = 15;
 		
 		
 		# Все
@@ -38,11 +40,18 @@
 			self::PRG => "Пражская",
 			self::NVG => "Новогигеево",
 			self::KLG => "Калужская",
+			self::BRT => "Братиславская",
+			self::MLD => "Молодежная",
 		];
 		
 		# title
 		static $title = "филиал";
 		
+		# удаленные станции
+		static $deleted = array(
+			self::STR
+		);
+
 		
 		/**
 		 * Построить селектор с кружочками метро
@@ -57,15 +66,21 @@
 				echo "<option selected disabled style='cursor: default; outline: none'>". static::$title ."</option>";
 				echo "<option disabled style='cursor: default'>──────────────</option>";
 			}
-
-			foreach (static::$all as $id => $value) {
+			
+			// Получаем филиалы
+			$branches = self::getBranches();
+			
+			foreach ($branches as $branch) {
 				// если это массив выбранных элементов (при $multiple = true)
 				if (is_array($selected)) {
-					$option_selected = in_array($id, $selected);
+					$option_selected = in_array($branch["id"], $selected);
 				} else {
-					$option_selected = ($selected == $id);
+					$option_selected = ($selected == $branch["id"]);
 				}
-				echo "<option ".($option_selected ? "selected" : "")." value='$id' data-content='".self::metroSvg($id)."$value'></option>";
+				// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
+				if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
+					echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}' data-content='{$branch['svg']}{$branch['name']}'></option>";	
+				}
 			}
 			echo "</select>";
 			echo "<script>$('#{$attrs['id']}').selectpicker()</script>";
@@ -75,52 +90,86 @@
 		/**
 		 * Цвет метро, СВГ-кружок.
 		 * 
+		 * $return - возвратить вес линии для сортировки
 		 */
-		public static function metroSvg($id_branch)
+		public static function metroSvg($id_branch, $return = false)
 		{
 			switch ($id_branch) {
 				# Оранжевый
 				case self::TRG: case self::KLG: {
+					if ($return) {
+						return 1;
+					}
 					$color = "#FBAA33";
 					break;
 				}
 				# Красный
 				case self::PVN: {
+					if ($return) {
+						return 2;
+					}
 					$color = "#EF1E25";
 					break;
 				}
 				# Голубой
 				case self::BGT: {
+					if ($return) {
+						return 3;
+					}
 					$color = "#019EE0";
 					break;
 				}
 				# Синий
 				case self::STR:
-				case self::IZM: {
+				case self::IZM:
+				case self::MLD: {
+					if ($return) {
+						return 4;
+					}
 					$color = "#0252A2";
 					break;
 				}
 				# Фиолетовый
 				case self::OPL:
 				case self::RPT: {
+					if ($return) {
+						return 5;
+					}
 					$color = "#B61D8E";
 					break;
 				}
 				# Зеленый
 				case self::VKS:
 				case self::ORH: {
+					if ($return) {
+						return 6;
+					}
 					$color = "#029A55";
 					break;
 				}
 				# Серый
 				case self::PRR:
 				case self::PRG: {
+					if ($return) {
+						return 8;
+					}
 					$color = "#ACADAF";
 					break;
 				}
 				# Желтый
 				case self::NVG: {
+					if ($return) {
+						return 9;
+					}
 					$color = "#FFD803";
+					break;
+				}
+				# Салатовый
+				case self::BRT: {
+					if ($return) {
+						return 7;
+					}
+					$color = "#B1D332";
 					break;
 				}
 			}
@@ -131,4 +180,38 @@
 				</svg>';
 		}
 		
+		
+		/**
+		 * Получить отсортированные по весу линий филиалы с другими параметрами (имя, свг и тд)
+		 * 
+		 */
+		public static function getBranches()
+		{
+			$branches = static::$all;
+			
+			// Генерируем филиалы
+			foreach ($branches as $id => $branch) {
+				$return[] = [
+					"id"	=> $id,
+					"name"	=> $branch,
+					"line"	=> self::metroSvg($id, true),
+					"svg"	=> self::metroSvg($id)
+				];
+			}
+			
+			// Сортируем по весу ветки метро
+			usort($return, function($a, $b) {
+				$lineWeightA = $a["line"];
+				$lineWeightB = $b["line"];
+
+				if ($lineWeightA == $lineWeightB) {
+					// Внутри одинакового цвета ветки сортируем по ID (чем меньше ID, тем выше)
+					return ($a["id"] < $b["id"]) ? -1 : 1;
+				}
+				
+				return ($lineWeightA < $lineWeightB) ? -1 : 1;
+			});
+			
+			return $return;
+		}
 	}
