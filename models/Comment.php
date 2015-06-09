@@ -57,7 +57,7 @@
 			echo "
 				</div>
 				<div style='height: 25px'>
-					<span class='glyphicon glyphicon-forward opacity-pointer no-margin-right' 
+					<span class='glyphicon glyphicon-forward pointer no-margin-right' 
 						id='comment-add' place='$place' id_place='$id_place'></span>
 					<input id='comment-add-field' type='text'>
 				</div>

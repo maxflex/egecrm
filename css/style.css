@@ -4,6 +4,12 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+.pagination {
+  margin: 0; }
+
+.pagination > .disabled > a, .pagination > .disabled > a:focus, .pagination > .disabled > a:hover, .pagination > .disabled > span, .pagination > .disabled > span:focus, .pagination > .disabled > span:hover {
+  cursor: default; }
+
 .comment-block .glyphicon {
   color: #337ab7; }
 
@@ -15,7 +21,10 @@ body {
   display: none; }
 
 #comment-add {
-  margin-top: 2px; }
+  margin-top: 5px;
+  font-size: 12px;
+  margin-left: 2px;
+  font-weight: bold; }
 
 .loaded-file {
   font-size: 12px;

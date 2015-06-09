@@ -4,6 +4,8 @@
 	
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
+		const PER_PAGE = 10; // Сколько заявок отображать на странице списка заявок
+		
 		public static $mysql_table	= "requests";
 		
 		protected $_inline_data = ["subjects"]; // Предметы (в БД хранятся строкой "1, 2, 3" – а тут в массиве
@@ -50,6 +52,24 @@
 			}
 			
 			return $result;
+		}
+		
+		
+		
+		/**
+		 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
+		 * 
+		 */
+		public static function getByPage($page, $id_status)
+		{
+			// С какой записи начинать отображение, по формуле
+			$start_from = ($page - 1) * self::PER_PAGE;
+			
+			return self::findAll([
+				"condition"	=> "id_status=".$id_status,
+				"order"		=> "id DESC",
+				"limit" 	=> $start_from. ", " .self::PER_PAGE
+			]);
 		}
 		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/

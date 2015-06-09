@@ -13,8 +13,28 @@
 
 	<div class="row" style="margin-top: 10px">
 		<div class="col-sm-12">
-			<div ng-repeat="request in requests | reverse | filter:{id_status : chosen_list}">
+			<div ng-show="!requests.length">
+				<h3 style="text-align: center; margin: 50px 0">Список заявок пуст</h3>
+			</div>
+			<div ng-repeat="request in requests">
 				<a href="requests/edit/{{request.id}}">Заявка #{{request.id}}</a>
+			</div>
+			
+			<div ng-hide="request_statuses_count[chosen_list] <= <?= Request::PER_PAGE ?>">
+				<hr style="margin-bottom: 10px">
+				<pagination 
+			      ng-model="currentPage" 
+			      ng-change="pageChanged()" 
+			      total-items="request_statuses_count[chosen_list]"
+			      max-size="10"
+			      boundary-links="true"
+			      items-per-page="<?= Request::PER_PAGE ?>"
+			      first-text="«"
+			      last-text="»"
+			      previous-text="<"
+			      next-text=">"
+			    >
+			    </pagination>
 			</div>
 		</div>
 	</div>

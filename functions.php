@@ -356,6 +356,14 @@
 		echo json_encode($response);
 	}
 	
+	/*
+	 * JSON-ответ
+	 */
+	function returnJson($response)
+	{
+		exit(json_encode($response));
+	}
+	
 	/**
 	 * Проверить есть ли хотя бы одно значение в массиве.
 	 * 

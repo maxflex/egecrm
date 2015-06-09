@@ -117,32 +117,23 @@
 	
 	
 	/**
-	 * Функция для печати контента элемента.
+	 * Анимация аякса.
 	 * 
 	 */
-	function printElem(elem)
-    {
-        printPopup($(elem).html());
-    }
-
-    function printPopup(data) 
-    {
-        var mywindow = window.open('', '', 'height=400,width=600');
-        mywindow.document.write('<html><head><title></title>');
-        /*optional stylesheet*/ //mywindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
-        mywindow.document.write('</head><body >');
-        mywindow.document.write(data);
-        mywindow.document.write('</body></html>');
-
-        mywindow.document.close(); // necessary for IE >= 10
-        mywindow.focus(); // necessary for IE >= 10
-
-        mywindow.print();
-        mywindow.close();
-
-        return true;
-    }
+	function ajaxStart()
+	{
+		NProgress.start()
+	}
+	function ajaxEnd()
+	{
+		NProgress.done()
+	}
+	
     
+    /**
+     * Печать дива.
+     * 
+     */
     function printDiv(id_div) {
             var contents = document.getElementById(id_div).innerHTML;
             var frame1 = document.createElement('iframe');

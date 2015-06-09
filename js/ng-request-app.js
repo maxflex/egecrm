@@ -1,7 +1,9 @@
-	angular.module("Request", ["ngAnimate", "ngMap"])
+	angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		.filter('reverse', function() {
 			return function(items) {
-				return items.slice().reverse();
+				if (items) {
+					return items.slice().reverse();	
+				}
 			};
 		})
 		/*
@@ -9,17 +11,39 @@
 			Контроллер списка заявок
 			
 		*/
-		.controller("ListCtrl", function($scope) {
+		.controller("ListCtrl", function($scope, $log) {
 			// chosen_list по умолчанию
 			$scope.chosen_list = 0
 			
 			// Выбрать список
 			$scope.changeList = function(key) {
-				$scope.chosen_list = key;
-				$scope.$apply()
+				// Устанавливаем список
+				$scope.chosen_list = key
+				// Получаем первую страницу задач списка
+				$scope.getByPage(1)
 			}
+			
+			// Страница изменилась
+			$scope.pageChanged = function() {
+				// Получаем задачи, соответствующие странице и списку
+				$scope.getByPage($scope.currentPage)
+			}
+			
+			// Получаем задачи, соответствующие странице и списку
+			$scope.getByPage = function(page) {
+				ajaxStart()
+				$.get("requests/ajaxGetByPage", {
+					'page'		: page, 
+					'id_status'	: $scope.chosen_list
+				}, function(response) {
+					ajaxEnd()
+					$scope.requests = response
+					$scope.$apply()
+				}, "json")
+			}
+			
 		})
-		.controller("EditCtrl", function ($scope) {
+		.controller("EditCtrl", function ($scope, $log) {
 			// значение "Платежи" по умолчанию (иначе подставляет пустое значение)
 			$scope.new_payment = {id_status : 0}
 			// Маркеры
@@ -40,8 +64,6 @@
 			// ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
 			$scope.new_contract_id = -1;
-			
-			
 			
 			/**
 			 * Печать договора 
@@ -442,7 +464,11 @@
 				// загрузка файла договора
 				$('#fileupload' + contract.id).fileupload({
 					dataType: 'json',
+					progress: function (e, data) {
+			            NProgress.set(data.loaded / data.total)
+			        },
 			        done: function (i, response) {
+				        ajaxEnd()
 						if (response.result !== "ERROR") {
 							contract.file 			= response.result.file 			// Получаем временное имя загруженного файла
 							contract.uploaded_file	= response.result.uploaded_file	// Получаем имя загруженного файла

@@ -5,7 +5,7 @@
     <title><?= $this->_html_title ?></title>
     <?php
 	    // Дебаг
-	    if (DEBUG) {
+	    if (LOCAL_DEVELOPMENT) {
 		    echo '<base href="http://localhost:8080/egecrm/">';
 	    } else {
 		    echo '<base href="/egecrm/">';
@@ -14,12 +14,15 @@
 <!--     <link href="css/jquery.datetimepicker.css" rel="stylesheet"> -->
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet">
     <link href="css/jquery.timepicker.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/hint.css"></link>
     <link href="css/bootstrap.css?ver=<?= settings()->version ?>" rel="stylesheet">
     <link href="css/animate.css?ver=<?= settings()->version ?>" rel="stylesheet">
+	<link href="css/nprogress.css" rel="stylesheet">
     <link href="css/style.css?ver=<?= settings()->version ?>" rel="stylesheet">
     <link href="css/ng-showhide.css?ver=<?= settings()->version ?>" rel="stylesheet">
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/nprogress.js"></script>
 	<script type="text/javascript" src="js/mask.js"></script>
 	<script type="text/javascript" src="js/inputmask.js"></script>
 	<script type="text/javascript" src="js/angular.js"></script>

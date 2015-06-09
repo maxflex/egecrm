@@ -12,8 +12,10 @@
 		"DB_HOST"		=> "localhost",
 		"DB_PREFIX"		=> "",
 		"BASE_ADDON"	=> "/egecrm/",
-		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/egecrm/",
-		"DEBUG"			=> true,
+		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/egecrm",
+
+		"LOCAL_DEVELOPMENT"	=> false,
+		"ERRORS"			=> 81,
 	);
 
 	/*// Контроллеры и модели 
@@ -34,9 +36,13 @@
 	{
 		define($key, $val);
 	}
-		
+	
+	// Отобразить ошибки
+	if (isset($_GET["errors"])) {
+		define("ERRORS", E_ALL);
+	}	
 	// Конфигурация ошибок (error_reporing(0) - отключить вывод ошибок)
-	error_reporting(81);
+	error_reporting(ERRORS);
 		
 	// Открываем соединение с основной БД
 	$db_connection = new mysqli(DB_HOST, DB_LOGIN, DB_PASSWORD, DB_PREFIX."egecrm");
