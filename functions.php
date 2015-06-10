@@ -151,7 +151,7 @@
 	{
 		foreach ($array as $var_name => $var_value) {
 			// Если значение не установлено, то это пустой массив по умолчанию
-			if (!isset($var_value)) {
+			if (!$var_value && !is_int($var_value)) {
 				$var_value = "[]";
 			} else {
 				// иначе кодируем объект в JSON
