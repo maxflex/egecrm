@@ -20,8 +20,7 @@ RewriteRule ^ajax/([a-zA-Z]+)[/]?$ index.php?controller=ajax&action=Ajax$1 [QSA,
 
 # Заявки
 RewriteRule ^requests/edit/([0-9]+)$ index.php?controller=request&action=edit&id=$1 [QSA,L]
-RewriteRule ^requests/ajax/([a-zA-Z]+)[/]?$ index.php?controller=request&action=Ajax$1 [QSA,L]
-RewriteRule ^requests/([a-zA-Z]+)[/]?$ index.php?controller=request&action=list&id_status=$1 [QSA,L]
+RewriteRule ^requests/([a-zA-Z]+)[/]?$ index.php?controller=request&action=$1 [QSA,L]
 RewriteRule ^requests[/]?$ index.php?controller=request&action=list [QSA,L]
 
 # Уведомления

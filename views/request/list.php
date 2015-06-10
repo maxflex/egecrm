@@ -3,9 +3,9 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<ul class="nav nav-tabs">
-				<li ng-repeat="request_status in request_statuses" ng-class="{'active' : chosen_list == request_status.id}">
-					<a class="list-link" href="#{{request_status.id}}" ng-click="changeList(request_status, true)" data-toggle="tab" aria-expanded="{{$index == 0}}">
-						{{request_status.name}} ({{request_statuses_count[request_status.id]}})
+				<li ng-class="{'active' : $index == 0}" ng-repeat="(key, value) in request_statuses">
+					<a href="#{{key}}" ng-click="changeList(key)" data-toggle="tab" aria-expanded="{{$index == 0}}">
+						{{value}} ({{request_statuses_count[key]}})
 					</a></li>
 			</ul>
 		</div>

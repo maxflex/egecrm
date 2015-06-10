@@ -12,33 +12,13 @@
 			
 		*/
 		.controller("ListCtrl", function($scope, $log) {
-			// хэндл псевдо-истории
-			window.addEventListener("popstate", function(e) {
-				// анфокус
-				$(".list-link").blur()
-				
-				// меняем список
-				if (e.state === null) {
-					$scope.changeList($scope.request_statuses[0], false)
-				} else {
-					$scope.changeList(e.state, false)
-				}
-			})
+			// chosen_list по умолчанию
+			$scope.chosen_list = 0
 			
 			// Выбрать список
-			$scope.changeList = function(request_status, push_history) {
-				//  Если нажимаем на один и тот же список -- ничего не делаем
-				if (request_status.id == $scope.chosen_list) {
-					return	
-				}
-				
+			$scope.changeList = function(key) {
 				// Устанавливаем список
-				$scope.chosen_list = request_status.id
-				
-				if (push_history) {
-					window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase());					
-				}
-				
+				$scope.chosen_list = key
 				// Получаем первую страницу задач списка
 				$scope.getByPage(1)
 			}
@@ -52,7 +32,7 @@
 			// Получаем задачи, соответствующие странице и списку
 			$scope.getByPage = function(page) {
 				ajaxStart()
-				$.get("requests/ajax/GetByPage", {
+				$.get("requests/ajaxGetByPage", {
 					'page'		: page, 
 					'id_status'	: $scope.chosen_list
 				}, function(response) {
@@ -524,7 +504,7 @@
 				// Кнопка сохранения
 				$("#save-button").on("click", function() {
 					data = $("#request-edit").serializeArray()
-					$.post("requests/ajax/Save", data)
+					$.post("requests/ajaxSave", data)
 						.success(function() {
 							notifySuccess("Данные сохранены")
 						})
