@@ -9,8 +9,9 @@
 		const UNFINISHED= 1;
 		const FINISHED	= 2;
 		const AWAITING	= 3;
-		const DENY		= 4;
-		const SPAM		= 5;
+		const SPAM		= 4;
+		const DENY		= 5;
+
 		
 		# Все 
 		static $all = [
@@ -18,8 +19,8 @@
 			self::UNFINISHED=> "невыполненные",
 			self::FINISHED	=> "выполненные",
 			self::AWAITING	=> "в ожидании",
-			self::DENY		=> "отказы",
 			self::SPAM		=> "спам",
+			self::DENY		=> "отказы",
 		];
 		
 		# Заголовок
