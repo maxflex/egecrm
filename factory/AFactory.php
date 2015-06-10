@@ -11,7 +11,10 @@
 		
 		// Заголовок коллекции
 		static $title = false;
-
+		
+		# удаленные записи коллекции
+		static $deleted = array();
+		
 		/**
 		 * Построить селектор из всех записей.
 		 * $selcted - что выбрать по умолчанию
@@ -28,7 +31,11 @@
 				echo "<option disabled>──────────────</option>";
 			}
 			foreach (static::$all as $id => $value) {
-				echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";
+				// удаленные записи коллекции отображать только в том случае, если они уже были выбраны
+				// (т.е. были использованы ранее, до удаления)
+				if (!in_array($id, static::$deleted) || ($id == $selcted)) {
+					echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";					
+				}
 			}
 			echo "</select>";
 		}
@@ -43,4 +50,29 @@
 			return angInit(strtolower(get_called_class()), static::$all);
 		}
 		
+		
+		/**
+		 * Получить с названиями констат фактории, c учетом удалений
+		 * 
+		 */
+		public static function get()
+		{
+			$A = new ReflectionClass(get_called_class());
+			
+			// получаем названия констант
+			$constants = $A->getConstants();
+			
+			foreach ($constants as $name => $value) {
+				// не показывать удаленные
+				if (!in_array($value, static::$deleted)) {
+					$return[] = [
+						"id" 		=> $value,
+						"constant"	=> $name,
+						"name"		=> static::$all[$value],
+					];	
+				}
+			}
+			
+			return $return;
+		}
 	}

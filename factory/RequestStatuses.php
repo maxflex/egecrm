@@ -19,9 +19,14 @@
 			self::FINISHED	=> "выполненные",
 			self::AWAITING	=> "в ожидании",
 			self::DENY		=> "отказы",
-			self::DENY		=> "спам",
+			self::SPAM		=> "спам",
 		];
 		
 		# Заголовок
 		static $title = "статус заявки";
+		
+		# Удаляем
+		static $deleted = [
+			self::DENY
+		];
 	}

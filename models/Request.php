@@ -30,6 +30,23 @@
 		
 		
 		/**
+		 * Получить статус задачи (список) из $_GET
+		 * 
+		 */
+		public static function getIdStatus()
+		{
+			// Получаем список
+			$id_status = constant('RequestStatuses::' . strtoupper($_GET['id_status']));
+			
+			// если ID статус пустой, то по умолчанию отображать новые заявки
+			if (empty($id_status)) {
+				$id_status = RequestStatuses::NEWR;
+			}
+			
+			return $id_status;
+		}
+		
+		/**
 		 * Подсчитать количество новых заявок.
 		 * 
 		 */
