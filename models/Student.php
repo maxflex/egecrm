@@ -32,7 +32,7 @@
 		public function getContracts()
 		{
 			return Contract::findAll([
-				"condition"	=> "id_student=" . $this->id
+				"condition"	=> "deleted=0 AND id_student=" . $this->id
 			]);	
 		}
 		

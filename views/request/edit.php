@@ -3,7 +3,12 @@
 		<!-- КАРТА И ЛАЙТБОКС -->
 		<div class="lightbox"></div>
 		<div class="lightbox-element lightbox-map">
-			<map zoom="10" disable-default-u-i="true" scale-control="true" zoom-control="true" zoom-control-options="{style:'SMALL'}"></map>
+			<map zoom="10" disable-default-u-i="true" scale-control="true" zoom-control="true" zoom-control-options="{style:'SMALL'}">
+				<transit-layer></transit-layer>
+				<custom-control position="TOP_RIGHT" index="1">
+		          <input type="text" id="map-search">
+		        </custom-control>
+			</map>
 			<button class="btn btn-default map-save-button" onclick="lightBoxHide()">Сохранить</button>
 		</div>
 		<!-- КОНЕЦ /КАРТА И ЛАЙТБОКС -->
@@ -17,7 +22,6 @@
 	
 	<input type="hidden" ng-value="markerData() | json"  name="marker_data">
 	<!-- Конец /скрытые поля -->
-
 		
 	<div class="row page-title">
 		<div class="col-sm-9">
@@ -253,8 +257,10 @@
 		    <h4>Договоры 
 			    <button class="btn btn-default btn-xs" ng-click="addContract()"><span class="glyphicon glyphicon-plus no-margin-right"></span></button>
 			</h4>
-		    <div class="row" ng-repeat="contract in contracts | reverse" ng-class="{'border-top-separator' : $index > 0}">
-			    <input type="hidden" ng-value="contract.cancelled" name="Contract[{{contract.id}}][cancelled]">
+		    <div class="row" ng-repeat="contract in contracts | reverse" ng-class="{'border-top-separator' : $index > 0, 'o3' : contract.deleted}">
+			    <input type="hidden" ng-value="contract.cancelled"	name="Contract[{{contract.id}}][cancelled]">
+			    <input type="hidden" ng-value="contract.deleted"	name="Contract[{{contract.id}}][deleted]">
+
 				<div class="col-sm-4" ng-class="{'o3' : contract.cancelled}">
 					<div class="form-group">
 										    <div class="form-group">
@@ -313,7 +319,7 @@
 						</div>            
 					</div>
 				</div>
-				  <div class="col-sm-8">
+				<div class="col-sm-7">
 				    <div class="form-group form-group-side-label link-like" ng-click="printContract(contract.id)">
 					    <span class="glyphicon glyphicon-middle glyphicon-print"></span>печать договора
 						<?= partial("contract_print") ?>
@@ -357,6 +363,16 @@
 <!-- 						<input id="fileupload" type="file" name="contract_digital" data-url="upload/contract/{{contract.id}}"> -->
 				    </div>
 			    </div>
+				<div class="col-sm-1">
+					<div class="pull-right">
+						<span class="glyphicon opacity-pointer" ng-click="deleteContract(contract)"
+							ng-class="{
+								'glyphicon-remove text-danger' : !contract.deleted,
+								'glyphicon-ok text-success' : contract.deleted
+							}">
+						</span>
+					</div>
+				</div>
 		    </div>
 	    </div>
     </div>

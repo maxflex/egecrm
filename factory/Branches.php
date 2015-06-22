@@ -17,12 +17,14 @@
 		const RPT = 7;
 		const VKS = 8;
 		const ORH = 9;
-		const PRR = 10;
+		const PRR = 10; # удалено
 		const PRG = 11;
 		const NVG = 12;
 		const KLG = 13;
 		const BRT = 14;
 		const MLD = 15;
+		const VLD = 16;
+		
 		
 		
 		# Все
@@ -42,6 +44,7 @@
 			self::KLG => "Калужская",
 			self::BRT => "Братиславская",
 			self::MLD => "Молодежная",
+			self::VLD => "Владыкино",
 		];
 		
 		# title
@@ -49,7 +52,8 @@
 		
 		# удаленные станции
 		static $deleted = array(
-			self::STR
+			self::STR,
+			self::PRR,
 		);
 
 		
@@ -149,6 +153,7 @@
 				}
 				# Серый
 				case self::PRR:
+				case self::VLD:
 				case self::PRG: {
 					if ($return) {
 						return 8;

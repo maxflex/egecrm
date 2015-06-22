@@ -63,10 +63,7 @@
 			}
 			
 		})
-		.controller("EditCtrl", function ($scope, $log) {
-			// На этой странице
-			NProgress.configure({ showSpinner: true })
-			
+		.controller("EditCtrl", function ($scope, $log) {			
 			// значение "Платежи" по умолчанию (иначе подставляет пустое значение)
 			$scope.new_payment = {id_status : 0}
 			// Маркеры
@@ -337,7 +334,6 @@
 				contract.subjects.splice(index, 1);
 			}
 			
-			
 			/**
 			 * Расторгнуть договор/отменить расторжение
 			 *
@@ -421,6 +417,25 @@
 					$scope.bindFileUpload(new_contract)
 				}, 100)
 			}
+			
+			// Удалить контракт
+			$scope.deleteContract = function(contract) {
+				if (contract.deleted) {
+					bootbox.confirm("Восстановить договор?", function(result) {
+						if (result === true) {
+							contract.deleted = 0
+							$scope.$apply()
+						}	
+					})
+				} else {
+					bootbox.confirm("Удалить договор", function(result) {
+						if (result === true) {
+							contract.deleted = 1
+							$scope.$apply()
+						}	
+					})
+				}	
+			}
 		
 			// Добавить платеж
 			$scope.addPayment = function() {
@@ -487,8 +502,17 @@
 				// загрузка файла договора
 				$('#fileupload' + contract.id).fileupload({
 					dataType: 'json',
+					// начало загрузки
+					send: function() {
+						NProgress.configure({ showSpinner: true })
+					},
+					// во время загрузки
 					progress: function (e, data) {
 			            NProgress.set(data.loaded / data.total)
+			        },
+			        // всегда по окончании загрузки (неважно, ошибка или успех)
+			        always: function() {
+				        NProgress.configure({ showSpinner: false })
 			        },
 			        done: function (i, response) {
 				        ajaxEnd()
@@ -523,12 +547,15 @@
 				
 				// Кнопка сохранения
 				$("#save-button").on("click", function() {
+					ajaxStart()
 					data = $("#request-edit").serializeArray()
 					$.post("requests/ajax/Save", data)
 						.success(function() {
+							ajaxEnd()
 							notifySuccess("Данные сохранены")
 						})
 						.error(function() {
+							ajaxEnd()
 							notifyError("Ошибка сохранения")
 						})
 				});
