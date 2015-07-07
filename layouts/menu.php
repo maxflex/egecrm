@@ -1,8 +1,18 @@
 <div class="row">
   <div class="col-sm-1">
   </div>
+  
   <div class="col-sm-2">
-	  
+	  		<form id="global-search" action="search" method="post" style="margin-bottom: 10px">
+		<div class="input-group">
+		  <input id="global-search-text" type="text" class="form-control" placeholder="Поиск..." name="text" value="<?= $_POST["text"] ?>">
+		  <span class="input-group-btn">
+		    <button class="btn btn-default" type="submit">
+		    <span class="glyphicon glyphicon-search no-margin-right"></span>
+		    </button>
+		  </span>
+		</div><!-- /input-group -->
+		</form>
 	<div class="list-group">
     <a href="#" class="list-group-item active">Меню</a>
     <a href="requests" class="list-group-item">Заявки 

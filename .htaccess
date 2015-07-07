@@ -20,6 +20,7 @@ RewriteRule ^ajax/([a-zA-Z]+)[/]?$ index.php?controller=ajax&action=Ajax$1 [QSA,
 
 # Заявки
 RewriteRule ^requests/edit/([0-9]+)$ index.php?controller=request&action=edit&id=$1 [QSA,L]
+RewriteRule ^requests/add[/]?$ index.php?controller=request&action=add [QSA,L]
 RewriteRule ^requests/ajax/([a-zA-Z]+)[/]?$ index.php?controller=request&action=Ajax$1 [QSA,L]
 RewriteRule ^requests/([a-zA-Z]+)[/]?$ index.php?controller=request&action=list&id_status=$1 [QSA,L]
 RewriteRule ^requests[/]?$ index.php?controller=request&action=list [QSA,L]
@@ -29,6 +30,12 @@ RewriteRule ^notifications[/]?$ index.php?controller=notification&action=list [Q
 
 # API
 RewriteRule ^api/([a-zA-Z]+)[/]?$ index.php?controller=api&action=$1 [QSA,L]
+
+# CRON
+RewriteRule ^cron/([a-zA-Z]+)[/]?$ index.php?controller=cron&action=$1 [QSA,L]
+
+# Поиск
+RewriteRule ^search[/]?$ index.php?controller=search [QSA,L]
 
 # Загрузки
 RewriteRule ^upload/([a-zA-Z]+)[/]?$ index.php?controller=upload&action=Ajax$1 [QSA,L]

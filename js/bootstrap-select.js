@@ -107,7 +107,7 @@
 
   // part of this is duplicated in i18n/defaults-en_US.js. Make sure to update both.
   Selectpicker.DEFAULTS = {
-    noneSelectedText: 'филиалы ученика',
+    noneSelectedText: 'удобные филиалы для ученика',
     noneResultsText: 'No results match',
     countSelectedText: function (numSelected, numTotal) {
       return (numSelected == 1) ? "{0} item selected" : "{0} items selected";
@@ -406,7 +406,8 @@
         title = typeof this.options.title !== 'undefined' ? this.options.title : this.options.noneSelectedText;
       }
 
-      this.$button.attr('title', htmlEscape(title));
+	  // баг – длинный alt
+      // this.$button.attr('title', htmlEscape(title));
       this.$newElement.find('.filter-option').html(title);
     },
 

@@ -24,6 +24,7 @@
 		// Конструктор
 		public function __construct($array = false)
 		{	
+/*
 			// Запрос к текущей БД на показ столбцов
 			$Query = static::dbConnection()->query("SHOW COLUMNS FROM ".static::$mysql_table);
 						
@@ -32,6 +33,9 @@
 			{
 				$this->mysql_vars[] = $data["Field"];
 			}
+*/
+			
+			$this->mysql_vars = self::getMysqlVars();
 						
 			// Если создаем по массиву
 			if (is_array($array))
@@ -71,6 +75,26 @@
 			}
 		}
 		
+		
+		
+		/**
+		 * Поулчить список полей MYSQL.
+		 * 
+		 */
+		public static function getMysqlVars()
+		{
+			// Запрос к текущей БД на показ столбцов
+			$Query = static::dbConnection()->query("SHOW COLUMNS FROM ".static::$mysql_table);
+						
+			// Динамически создаем переменные на основе таблицы	
+			while ($data = $Query->fetch_assoc())
+			{
+				$mysql_vars[] = $data["Field"];
+			}
+			
+			return $mysql_vars;
+		}
+		
 		/*
 		 * Получаем все записи
 		 * $params - дополнительные параметры (condition - дополнительное условие, order - параметры сортировки)
@@ -83,8 +107,8 @@
 				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
-				);
-				
+			);
+
 			// Если успешно получили и что-то есть
 			if ($result && $result->num_rows) {
 				// Получаем имя текущего класса
@@ -261,6 +285,7 @@
 			// если найден, сохраняем
 			if ($Object) {
 				$Object->update($data);
+				return $Object;
 			} else {
 				return false;
 			}
@@ -307,11 +332,12 @@
 				// echo "The query was: "."INSERT INTO ".static::$mysql_table." (".implode(",", $into).") VALUES (".implode(",", $values).")";
 				if ($result) {
 					$this->id = static::dbConnection()->insert_id; 	// Получаем ID
-					$this->isNewRecord = false;						// Уже не новая запись
+					$this->isNewRecord	= false;						// Уже не новая запись
+					$this->firstSaved	= true;							// Произошло первое сохранение
 					
 					// После сохранения 
-					if (method_exists($this, "afterSave")) {
-						$this->afterSave();								// После сохранения
+					if (method_exists($this, "afterFirstSave") && $this->firstSaved) {
+						$this->afterFirstSave(); // После первого сохранения
 					}
 					
 					return $this->id;
@@ -323,7 +349,14 @@
 			{
 				// Если изменять только одно поле в БД 
 				if ($single_field) {
-					$query[] = $single_field." = '".$this->{$single_field}."'";
+					// Если текущее поле в формате serialize
+				 	if (in_array($single_field, $this->_serialized)) {
+				 		$query[] = $single_field." = '".serialize($this->{$single_field})."'";	// Сериализуем значение
+				 	} else if (in_array($single_field, $this->_inline_data) && is_array($this->{$single_field})) {
+				 		$query[] = $single_field." = '".implode(",", $this->{$single_field})."'";	// Превращаем в строку
+				 	} else {
+					 	$query[] = $single_field." = '".$this->{$single_field}."'";
+				 	}
 				} else {
 				// Иначе сохраняем все
 					// Составляем запрос на сохранение всего
@@ -347,7 +380,10 @@
 				$result = static::dbConnection()->query("UPDATE ".static::$mysql_table." SET ".implode(",", $query)." WHERE id=".$this->id);
 				
 				if ($result) {
-					$this->afterSave();	// После сохранения
+					// После сохранения 
+					if (method_exists($this, "afterFirstSave") && $this->firstSaved) {
+						$this->afterFirstSave();	// После сохранения
+					}
 					return $this->id;
 				} else {
 					return false;
@@ -366,9 +402,10 @@
 		 /*
 		  * После сохранения
 		  */
-		 public function afterSave()
+		 public function afterFirstSave()
 		 {
-			 // Будет переопределяться в child-классах
+			// Будет переопределяться в child-классах
+			$this->firstSaved = false; // всё, afterFirstSave() больше вызываться не будет
 		 }
 		 
 		 /*
@@ -451,6 +488,32 @@
 			
 			// Возвращаем объект
 			return $Object;
+		}
+		
+		
+		/**
+		 * Поиск по всей модели.
+		 * 
+		 * $get_ids – получить только найденные ID модели
+		 */
+		public static function search($text, $params = array(), $get_ids = false)
+		{
+			$mysql_vars = self::getMysqlVars();
+			
+			foreach ($mysql_vars as $field) {
+				$sql[] = "CONVERT(`$field` USING utf8) LIKE '%$text%'";
+			}
+			
+			$search_condition = implode(" OR ", $sql);
+			
+			// Добавляем условие поиска
+			$params["condition"] = empty($params["condition"]) ? $search_condition : "(".$search_condition.") AND " . $params["condition"];
+			
+			if ($get_ids) {
+				return self::getIds($params);
+			} else {
+				return self::findAll($params);
+			}
 		}
 		
 		

@@ -28,7 +28,6 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
-		
 		/**
 		 * Получить статус задачи (список) из $_GET
 		 * 
@@ -53,7 +52,7 @@
 		public static function countNew()
 		{
 			return self::count([
-				"condition"	=> "id_status=".RequestStatuses::NEWR
+				"condition"	=> "id_status=".RequestStatuses::NEWR." and adding=0"
 			]);
 		}
 		
@@ -65,7 +64,7 @@
 		public static function getAllStatusesCount()
 		{
 			foreach (RequestStatuses::$all as $id => $status) {
-				$result[$id] = self::count(["condition" => "id_status=".$id]);
+				$result[$id] = self::count(["condition" => "adding=0 AND id_status=".$id]);
 			}
 			
 			return $result;
@@ -82,24 +81,52 @@
 			// С какой записи начинать отображение, по формуле
 			$start_from = ($page - 1) * self::PER_PAGE;
 			
-			return self::findAll([
-				"condition"	=> "id_status=".$id_status,
+			$Requests = self::findAll([
+				"condition"	=> "id_status=".$id_status." AND adding=0",
 				"order"		=> "id DESC",
 				"limit" 	=> $start_from. ", " .self::PER_PAGE
 			]);
+			
+			// Добавляем дубликаты
+			foreach ($Requests as &$Request) {
+				$Request->duplicates = $Request->getDuplicates();	
+			}
+			
+			return $Requests;
 		}
 		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
+		public function beforeSave() {
+			if ($this->isNewRecord) {
+				$this->date = now();
+			} 			
+/*
+			else {
+				// если не первое сохранение, то всё, забей – уже не добавление
+				$this->adding = 0;
+			}
+*/	
+		}
+		
+		/**
+		 * Привязать заявку к существующему ученику (склейка клиентов).
+		 * 
+		 */
+		public function bindToStudent($id_student)
+		{
+			$this->id_student = $id_student;
+			return ($this->save("id_student") > 0 ? true : false);
+		}
 		
 		/**
 		 * Получить ID заявок от этого же ученика.
-		 *
+		 * $get_self – включать свой же ID в список дубликатов?
 		 */
-		public function getDuplicates()
+		public function getDuplicates($get_self = false)
 		{
 			return self::getIds([
-				"condition"	=> "id_student=".$this->id_student." AND id!=".$this->id
+				"condition"	=> "adding=0 AND id_student=".$this->id_student.($get_self ? "" : " AND id!=".$this->id)
 			]);
 		}
 		
@@ -146,6 +173,11 @@
 		 */
 		public function bindToExistingStudent()
 		{
+			// если номер телефона не установлен
+			if (!$this->phone) {
+				return false;
+			}
+			
 			// Ищем заявку с таким же номером телефона
 			$Request = Request::find([
 				"condition"	=> "phone='".$this->phone."'"

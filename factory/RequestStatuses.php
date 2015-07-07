@@ -28,6 +28,6 @@
 		
 		# Удаляем
 		static $deleted = [
-			self::DENY
+			self::DENY,
 		];
 	}

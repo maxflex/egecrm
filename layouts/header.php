@@ -25,9 +25,12 @@
 	<script type="text/javascript" src="js/nprogress.js"></script>
 	<script type="text/javascript" src="js/mask.js"></script>
 	<script type="text/javascript" src="js/inputmask.js"></script>
+<!-- 	<script src="https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js" type="text/javascript"></script> -->
 	<script type="text/javascript" src="js/angular.js"></script>
+	<script type="text/javascript" src="js/angular-locale-ru.js"></script>
 	<script type="text/javascript" src="js/angular-animate.js"></script>
 	<script type="text/javascript" src="js/ngmap.min.js"></script>
+	<script type="text/javascript" src="js/name.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/bootbox.min.js"></script>
 	<script type="text/javascript" src="js/notify.js"></script>

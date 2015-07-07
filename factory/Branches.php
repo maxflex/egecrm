@@ -67,8 +67,8 @@
 			
 			// Заголовок
 			if (!$multiple) {
-				echo "<option selected disabled style='cursor: default; outline: none'>". static::$title ."</option>";
-				echo "<option disabled style='cursor: default'>──────────────</option>";
+				echo "<option selected style='cursor: default; outline: none' value=''>". static::$title ."</option>";
+				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
 			}
 			
 			// Получаем филиалы

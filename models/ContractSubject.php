@@ -57,6 +57,11 @@
 			
 			// Сохраняем данные
 			foreach ($subjects_data as $subject_data) {
+				// обнуляем ID и ID контракта, это обязательно,
+				// иначе из функции Contract::versionControl() не смогут создаться копии предметов договора
+				// потому что у них уже установлены ID. 
+				unset($subject_data["id"]);
+				unset($subject_data["id_contract"]);
 				self::add($subject_data + ["id_contract" => $id_contract]);
 			}
 		}

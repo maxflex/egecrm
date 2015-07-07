@@ -45,7 +45,7 @@
 			$class_name = strtolower(get_called_class());
 			echo "<select class='form-control' id='".$class_name."-select' name='".($name ? $name : $class_name)."' ".Html::generateAttrs($attrs).">";
 			if (static::$title) {
-				echo "<option selected disabled value=0>". static::$title ."</option>";
+				echo "<option selected value=0>". static::$title ."</option>";
 				echo "<option disabled>──────────────</option>";
 			}
 			foreach (static::$all as $id => $value) {

@@ -7,7 +7,9 @@
 		public static $mysql_table	= "passports";
 		
 		// Паспорт представителя
-		const TYPE_REPRESENTATIVE = 1;
+		const TYPE_REPRESENTATIVE 	= 1;
+		// Паспорт ученика
+		const TYPE_STUDENT 			= 2;
 				
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		

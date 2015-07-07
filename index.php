@@ -39,7 +39,10 @@
 	// Проверяем зайден ли пользователь. Если не зайден, форсируем контроллер логина с экшеном Login
 	// не на логин контроллер, не на апи контроллер (эти страницы доступны незалогиненным)
 	// (можно сделать и редирект, для этого раскомментить первую строчку)
-	if ((!User::loggedIn() || !User::rememberMeLogin()) && $_controllerName != "LoginController" && $_controllerName != "ApiController") {
+
+	$bypass_login = ["LoginController", "ApiController", "CronController"]; // эти страницы не требуют логина для просмотра
+	
+	if ((!User::loggedIn() || !User::rememberMeLogin()) && !in_array($_controllerName, $bypass_login)) {
 	//	$this->redirect(BASE_ADDON . "login"); // Можно сделать так же редирект на страницу входа
 		$_controllerName	= "LoginController";
 		$_actionName		= "actionLogin";

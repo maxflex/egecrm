@@ -373,4 +373,59 @@
 	//	echo "HAS_VALS=".(count(array_filter($array)))."<br>";
 		return count(array_filter($array));
 	}
+	
+	
+	/**
+		Переводит массив вида:
+		Array
+		(
+		    [0] => Array
+		        (
+		            [name] => 110_1.jpg
+		        )
+		
+		    [1] => Array
+		        (
+		            [name] => 110_2.png
+		        )
+		        
+		В массив вида:
+		)
+		Array
+		(
+		    [0] => 110_1.jpg
+		    [1] => 110_2.png
+		)
+	 */
+	function arrayLevelUp($array)
+	{
+		return array_map(function($a) {  return array_pop($a); }, $array);
+	}
+	
+	
+	/**
+	 * Форматировать дату в наш формат.
+	 * 
+	 */
+	function dateFormat($date, $notime = false)
+	{
+		$date = date_create($date);
+		return date_format($date, $notime ? "d.m.Y" : "d.m.Y в H:i");
+	}
+	
+	
+	/**
+	 * Возвратить чистый номер телефона.
+	 * 
+	 */
+	function cleanNumber($number) 
+	{
+		return preg_replace("/[^0-9]/","",$number);	
+	}
+	
+	// 10,13,9 (1)
+	// 10,9 (3)
+	// 2,15,12 (1)
+	// 2,3,7,4 (1)
+	// 7,4 (42)
 ?>

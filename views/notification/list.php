@@ -6,6 +6,9 @@
 				{{noitfication_types[notification.id_type]}}, 
 				{{notification.date}} в {{notification.time}} 
 				({{fromNow(notification.timestamp)}})
+				<span class="label label-success hint--right" data-hint="СМС доставлено" ng-show="notification.noted">
+					<span class="glyphicon glyphicon-envelope no-margin-right"></span>
+				</span>
 			</div>
 		</div>
 	</div>	

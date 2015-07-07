@@ -47,9 +47,12 @@
 			// Отображение уже имеющихся комментариев
 			foreach ($Comments as $Comment) {
 				echo "
-					<div>
-						<span class='glyphicon glyphicon-stop'></span>{$Comment->comment}
-						 <span class='save-coordinates'>(". $Comment->getCoordinates() .")</span>
+					<div id='comment-block-{$Comment->id}'>
+						<span class='glyphicon glyphicon-stop' style='float: left'></span>
+						<div style='display: initial' data-id='{$Comment->id}' id='comment-{$Comment->id}'>{$Comment->comment}</div>
+						<span class='save-coordinates'>(". $Comment->getCoordinates() .")</span>
+						<span class='glyphicon opacity-pointer glyphicon-pencil no-margin-right' onclick='editComment({$Comment->id})'></span>
+						<span class='glyphicon opacity-pointer text-danger glyphicon-remove' onclick='deleteComment({$Comment->id})'></span>
 					</div>
 				";
 			}
@@ -59,7 +62,7 @@
 				<div style='height: 25px'>
 					<span class='glyphicon glyphicon-forward pointer no-margin-right' 
 						id='comment-add' place='$place' id_place='$id_place'></span>
-					<input id='comment-add-field' type='text'>
+					<input id='comment-add-field' type='text' placeholder='Введите комментарий...'>
 				</div>
 			";
 			

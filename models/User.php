@@ -64,8 +64,8 @@
 			
 			echo "<script src='js/user-color-control.js' type='text/javascript'></script>";
 			echo "<select class='form-control' id='user-list' name='$name' ".($selected ? "style='background-color: {$SelectedUser->color}'" : "").">";
-				echo "<option selected disabled>пользователь</option>";
-				echo "<option disabled>──────────────</option>";
+				echo "<option selected value=''>пользователь</option>";
+				echo "<option disabled value=''>──────────────</option>";
 			foreach ($Users as $User) {
 				echo "<option ".($User->id == $selected ? "selected" : "")." style='background-color: {$User->color}' value='{$User->id}'>{$User->login}</option>";
 			}

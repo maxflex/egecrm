@@ -65,10 +65,12 @@
 		
 		/*
 		 * Редирект
+		 *
+		 * $from_base – редирект от базового URL
 		 */
-		protected function redirect($location)
+		protected function redirect($location, $from_base = false)
 		{
-			header("Location: {$location}");
+			header("Location: ".($from_base ? BASE_ADDON : "")."{$location}");
 		}
 		
 		/*

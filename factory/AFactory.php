@@ -27,8 +27,8 @@
 			$class_name = strtolower(get_called_class());
 			echo "<select class='form-control' id='".$class_name."-select' name='".($name ? $name : $class_name)."' ".Html::generateAttrs($attrs).">";
 			if (static::$title) {
-				echo "<option selected disabled>". static::$title ."</option>";
-				echo "<option disabled>──────────────</option>";
+				echo "<option selected value=''>". static::$title ."</option>";
+				echo "<option disabled value=''>──────────────</option>";
 			}
 			foreach (static::$all as $id => $value) {
 				// удаленные записи коллекции отображать только в том случае, если они уже были выбраны
@@ -50,6 +50,16 @@
 			return angInit(strtolower(get_called_class()), static::$all);
 		}
 		
+		
+		
+		/**
+		 * Получить название по ID.
+		 * 
+		 */
+		public static function getById($id)
+		{
+			return static::$all[$id];
+		}
 		
 		/**
 		 * Получить с названиями констат фактории, c учетом удалений

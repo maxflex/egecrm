@@ -63,9 +63,13 @@
 			}
 			
 		})
-		.controller("EditCtrl", function ($scope, $log) {			
+		.controller("EditCtrl", function ($scope, $log) {	
 			// значение "Платежи" по умолчанию (иначе подставляет пустое значение)
 			$scope.new_payment = {id_status : 0}
+			
+			// сохранение
+			$scope.saving = false
+			
 			// Маркеры
 			$scope.markers 	= [];
 			// ID маркера
@@ -84,6 +88,63 @@
 			// ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
 			$scope.new_contract_id = -1;
+			
+			// анимация загрузки RENDER ANGULAR
+			angular.element(document).ready(function() {
+				$("#request-edit").css("opacity", 1)
+				$("#panel-loading").hide()
+				
+				console.log($scope.student)
+			})
+			
+			
+			/**
+			 * Показывать в свободном времени только дни, где есть свободное время
+			 * 
+			 */
+			$scope.freetimeControl = function(day_number) {
+				return $.grep($scope.freetime, function(v, i) {
+					return (v.day == (day_number + 1) && !v.deleted)
+				}).length > 0
+			}
+			
+			
+			/**
+			 * Склеить заявки
+			 * 
+			 */
+			$scope.glue = function() {
+				ajaxStart()
+				$.post("requests/ajax/GlueRequest", {id_request: $scope.id_request, id_student: $scope.id_student_glue}, function(response) {
+					// если склеилось, то обновляем страницу
+					if (response === true) {
+						location.href = "requests/edit/" + $scope.id_request;	
+					} else {
+						notifyError("Не удалось склеить")
+					}
+				}, "json")
+			}
+			
+			
+			/**
+			 * Получить ученика для склейки
+			 * 
+			 */
+			$scope.findStudent = function() {
+				console.log($("#id-student-glue").val())
+				// если есть ID в поле, то ищем ученика по ID
+				if ($scope.id_student_glue) {
+					$.get("requests/ajax/getStudent", {id: $scope.id_student_glue}, function(response) {
+						$scope.GlueStudent = response
+						$scope.$apply()
+					}, "json")
+				} else {
+				//  иначе обнуляем ученика
+					$scope.GlueStudent = null
+				}
+			}
+			
+			
 			
 			/**
 			 * Печать договора 
@@ -119,7 +180,7 @@
 				$scope.marker_type = type
 				
 				// Показываем карту
-				lightBoxShow()
+				lightBoxShow('map')
 				google.maps.event.trigger($scope.gmap, 'resize')
 				
 				// Зум и центр карты по умолчанию
@@ -166,6 +227,23 @@
 					})
 				})	
 			}
+			
+			// следим за количеством маркеров
+			$scope.$watchCollection("markers", function(newValue, oldValue) {
+				$scope.marker_school_count 	= 0
+				$scope.marker_home_count	= 0
+				
+				// подсчитываем кол-во
+				$.each(newValue, function(i, marker) {
+					if (marker.type == "school") {
+						$scope.marker_school_count++ 
+					} else {
+						$scope.marker_home_count++
+					}
+				})
+				
+				//$scope.$apply()
+			})
 			
 			// Загрузить маркеры, уже сохраненные на серваке и загруженные оттуда
 			$scope.loadServerMarkers = function() {
@@ -236,12 +314,21 @@
 				free_time_end 	= $("#free_time_end")
 				
 				// Если есть пустые поля
+				if (!$scope.adding_day) {
+					$("[ng-model='adding_day'").addClass("has-error")
+					return
+				} else  {
+					$("[ng-model='adding_day'").removeClass("has-error")
+				}
+				
+				
 				if (!free_time_start.val()) {
 					free_time_start.focus().addClass("has-error")
 					return false
 				} else {
 					free_time_start.removeClass("has-error")
 				}
+				
 				if (!free_time_end.val()) {
 					free_time_end.focus().addClass("has-error")
 					return false
@@ -262,6 +349,7 @@
 				// Обнуляем значения в добавлении
 				free_time_start.val("")
 				free_time_end.val("")
+				$scope.adding_day = ""
 			}
 			
 			// Удаление свободного времени
@@ -292,6 +380,35 @@
 				return (count == 0 ? false : count);
 			}
 			
+			
+			// Получить общее количество предметов (для печати договора)
+			$scope.subjectCount = function(contract) {
+				count = 0
+				$.each(contract.subjects, function(i, subject) {
+					count = count + parseInt(subject.count)
+				})
+				return count	
+			}
+			
+			// Передаем функция numToText() в SCOPE
+			$scope.numToText = numToText;
+			
+			// Склонять имя в дательном падеже
+			// https://github.com/petrovich/petrovich-js		
+			$scope.contractPrintName = function(person) {
+				var person = {
+					first	: person.first_name,
+					last	: person.last_name,
+					middle	: person.middle_name,
+				};
+				
+				// склоняем в дательный падеж
+				person = petrovich(person, 'instrumental');
+				
+				// возвращаем ФИО
+				return person.last + " " + person.first + " " + person.middle;
+			}
+			
 			// Добавить предмет к договору
 			$scope.addSubject = function(contract) {
 				// HTML-элементы предмета и кол-ва предметов
@@ -300,17 +417,17 @@
 				
 				// Если предмет или кол-во не установлено
 				if (!subject.val()) {
-					subject.focus().parent().addClass("has-error")
+					subject.focus().addClass("has-error")
 					return false
 				} else {
-					subject.parent().removeClass("has-error")
+					subject.removeClass("has-error")
 				}
 				
 				if (!subject_count.val()) {
-					subject_count.focus().parent().addClass("has-error")
+					subject_count.focus().addClass("has-error")
 					return false
 				} else {
-					subject_count.parent().removeClass("has-error")
+					subject_count.removeClass("has-error")
 				}
 				
 				// Инициализируем, если не установлено
@@ -327,6 +444,16 @@
 				// Обнуляем значения
 				$('#subjects-select' + contract.id  + ' option:first-child').attr("selected", "selected")
 				subject_count.val("")
+			}
+			
+			$scope.showHistory = function(contract) {
+				if (contract._show_history) {
+					contract._show_history = false
+					$("#contract-history-" + contract.id).slideUp(300)
+				} else {
+					contract._show_history = true
+					$("#contract-history-" + contract.id).slideDown(300)
+				}
 			}
 			
 			// Удалить предмет из договора
@@ -359,11 +486,51 @@
 				}
 			}
 			
+			
+			/**
+			 * Напоминание установлено? Если установлено, то появляется иконка "удалить напоминание"
+			 * 
+			 */
+			$scope.notificationSet = function() {		
+				return ($("#notificationtypes-select").val() &&
+					$scope.notification_date && 
+					$scope.notification_time
+				) ? true : false
+			}
+			
+			/**
+			 * Удалить напоминание
+			 * 
+			 */
+			$scope.deleteNotification = function() {
+				bootbox.confirm("Удалить напоминание?", function(result) {
+					if (result === true) {
+						$('#notificationtypes-select option:first-child').attr("selected", "selected");
+						$scope.notification_date = ""
+						$scope.notification_time = ""
+						$scope.$apply()
+					}
+				})
+			}
+			
+			/**
+			 * Проверка на пустой договор. Если пустой, появляется функционал удаления
+			 * 
+			 */
+			$scope.emptyContract = function(contract) {
+				if (contract.subjects.length || contract.sum || contract.date || (contract.files && contract.files.length)) {
+					return false
+				} else {
+					return true
+				}
+			}
+			
 			// Время 
 			function datePair() {
 				$('.time').timepicker({
 				    'timeFormat'	: 'H:i',
-				    'scrollDefault'	: "15:30"
+				    'scrollDefault'	: "15:30",
+				    'unknownFirst' 	: true		// параметр "неизвестно"
 				});
 			
 				$('#timepair').datepair({
@@ -420,7 +587,7 @@
 			
 			// Удалить контракт
 			$scope.deleteContract = function(contract) {
-				if (contract.deleted) {
+/*				if (contract.deleted) {
 					bootbox.confirm("Восстановить договор?", function(result) {
 						if (result === true) {
 							contract.deleted = 0
@@ -428,13 +595,14 @@
 						}	
 					})
 				} else {
-					bootbox.confirm("Удалить договор", function(result) {
-						if (result === true) {
-							contract.deleted = 1
-							$scope.$apply()
-						}	
-					})
-				}	
+*/
+				bootbox.confirm("Удалить договор?", function(result) {
+					if (result === true) {
+						contract.deleted = 1
+						$scope.$apply()
+					}	
+				})
+//				}	
 			}
 		
 			// Добавить платеж
@@ -497,11 +665,30 @@
 		        return dateOut;
 		    };
 		    
+		    // Удалить файл из догавара
+		    $scope.deleteContractFile = function (contract, id) {
+			    contract.files.splice(id, 1)
+		    }
+		    
+		    // проверить номер телефона
+		    $scope.phoneCorrect = function(element) {
+			    // пустой номер телефона – это тоже правильный номер телефона
+			    if (!$("#" + element).val()) {
+				    return false
+			    }	
+			    	    
+			    // если есть нижнее подчеркивание, то номер заполнен не полностью
+				not_filled = $("#" + element).val().match(/_/)
+				console.log($("#" + element).val(), not_filled)
+				return not_filled == null
+		    }
+		    
 		    // Превратить в файлаплоад
 		    $scope.bindFileUpload = function(contract) {
 				// загрузка файла договора
 				$('#fileupload' + contract.id).fileupload({
 					dataType: 'json',
+					maxFileSize: 10000000, // 10 MB
 					// начало загрузки
 					send: function() {
 						NProgress.configure({ showSpinner: true })
@@ -513,16 +700,21 @@
 			        // всегда по окончании загрузки (неважно, ошибка или успех)
 			        always: function() {
 				        NProgress.configure({ showSpinner: false })
+				        ajaxEnd()
 			        },
 			        done: function (i, response) {
-				        ajaxEnd()
 						if (response.result !== "ERROR") {
-							contract.file 			= response.result.file 			// Получаем временное имя загруженного файла
-							contract.uploaded_file	= response.result.uploaded_file	// Получаем имя загруженного файла
+							contract.files = initIfNotSet(contract.files)
+							contract.files.push(response.result)
 							$scope.$apply()
 						} else {
 							notifyError("Ошибка загрузки")
 						}
+			        },
+			        fail: function (e, data) {
+						$.each(data.messages, function (index, error) {
+							notifyError(error)
+						})
 			        }
 			    })
 		    }
@@ -545,18 +737,81 @@
 				datePair()
 				
 				
+				// Биндим удаление Напоминания
+				$("#notificationtypes-select").on("change", function() {
+					if (!$(this).val()) {
+						$("#notification-date").val("").parent().hide()
+						$("#notification-time").val("").parent().hide()
+					} else {
+						$("#notification-date").parent().show()
+						$("#notification-time").parent().show()
+					}
+				})
+				
+				// если изначально напоминание не установлено, не отображаем поля
+				if (!$("#notificationtypes-select").val()) {
+					$("#notification-date").val("").parent().hide()
+					$("#notification-time").val("").parent().hide()
+				}
+				
 				// Кнопка сохранения
 				$("#save-button").on("click", function() {
+					// Проверяем все ли номера телефона заполнены
+					has_errors = false
+					
+					$(".phone-masked").filter(function() {
+						// если есть нижнее подчеркивание, то номер заполнен не полностью
+						not_filled = $(this).val().match(/_/)
+						
+						if (not_filled !== null) {
+							$(this).addClass("has-error").focus()
+							notifyError("Номер телефона указан неполностью")
+							has_errors = true
+							return false
+						} else {
+							$(this).removeClass("has-error")
+						}
+					})
+					
+					// если в предварительной проверке были ошибки
+					if (has_errors) {
+						return false	
+					}
+					
+					// если установлено уведомнелие
+					if ($("#notificationtypes-select").val()) {
+						if (!$("input[name='Notification[date]']").val()) {
+							$("input[name='Notification[date]']").addClass("has-error").focus()
+							notifyError("Не установлена дата напоминания")
+							return false
+						} else {
+							$("input[name='Notification[date]']").removeClass("has-error")
+						}
+						if (!$("input[name='Notification[time]']").val()) {
+							$("input[name='Notification[time]']").addClass("has-error").focus()
+							notifyError("Не установлено время напоминания")
+							return false
+						} else {
+							$("input[name='Notification[time]']").removeClass("has-error")
+						}
+					}
+					
+					
 					ajaxStart()
+					$scope.saving = true
+					
 					data = $("#request-edit").serializeArray()
 					$.post("requests/ajax/Save", data)
 						.success(function() {
-							ajaxEnd()
 							notifySuccess("Данные сохранены")
 						})
 						.error(function() {
-							ajaxEnd()
 							notifyError("Ошибка сохранения")
+						})
+						.complete(function() {
+							$scope.saving = false
+							$scope.$apply()
+							ajaxEnd()
 						})
 				});
 				

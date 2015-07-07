@@ -2,7 +2,14 @@
 	// Основной скрипт
 	$(document).ready(function() {
 		// Вешаем маски
-		rebindMasks()	
+		rebindMasks()
+		
+		// Предотвращаем пустой поиск
+		$("#global-search").submit(function() {
+			if (!$("#global-search-text").val()) {
+				return false
+			}
+		})
 	})
 	
 	// По нажатию ESC во всем приложении закрыть LIGHTBOX
@@ -52,14 +59,13 @@
 			
 			// REGEX для полей типа "число" и "1-5"
 			$(".digits-only-float").inputmask("Regex", {regex: "[0-9]*[.]?[0-9]+"});
-			$(".digits-only").inputmask("Regex", {regex: "[0-9]+"});
+			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
 			
 			
 			// Маска телефонов
 			$(".phone-masked").mask("+7 (999) 999-99-99", { autoclear: false })	
 		}, 100)
 	}
-	
 	
 	/**
 	 * Нотифай с сообщением об ошибке.
@@ -105,14 +111,14 @@
 	 * Скрываем/показываем лайтбоксы и элементы.
 	 * 
 	 */
-	function lightBoxShow()
+	function lightBoxShow(element)
 	{
-		$(".lightbox, .lightbox-element").fadeIn(150)
+		$(".lightbox, .lightbox-" + element).fadeIn(150)
 	}
 	
 	function lightBoxHide()
 	{
-		$(".lightbox, .lightbox-element").fadeOut(150)
+		$(".lightbox, div[class^='lightbox-'").fadeOut(150)
 	}
 	
 	
@@ -128,42 +134,106 @@
 	{
 		NProgress.done()
 	}
-	
     
     /**
      * Печать дива.
      * 
      */
     function printDiv(id_div) {
-            var contents = document.getElementById(id_div).innerHTML;
-            var frame1 = document.createElement('iframe');
-            frame1.name = "frame1";
-            frame1.style.position = "absolute";
-            frame1.style.top = "-1000000px";
+        var contents = document.getElementById(id_div).innerHTML;
+        var frame1 = document.createElement('iframe');
+        frame1.name = "frame1";
+        frame1.style.position = "absolute";
+        frame1.style.top = "-1000000px";
 /*
-			frame1.style.position = "fixed";
-			frame1.style.top = 0;
-			frame1.style.left = 0;
-			frame1.style.width = "100%";
-			frame1.style.height = "100%";
-			frame1.style.background = "white";
-			frame1.style.zIndex = 99999;
+		frame1.style.position = "fixed";
+		frame1.style.top = 0;
+		frame1.style.left = 0;
+		frame1.style.width = "100%";
+		frame1.style.height = "100%";
+		frame1.style.background = "white";
+		frame1.style.zIndex = 99999;
 */
-			
-            document.body.appendChild(frame1);
-            var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
-            frameDoc.document.open();
-            frameDoc.document.write('<html><head><title>ЕГЭ Центр</title>');
-			frameDoc.document.write('<link rel="stylesheet" href="css/bootstrap.css" type="text/css">');
-            frameDoc.document.write('<link rel="stylesheet" href="css/style.css" type="text/css">');
-            frameDoc.document.write('</head><body>');
-            frameDoc.document.write(contents);
-            frameDoc.document.write('</body></html>');
-            frameDoc.document.close();
-            setTimeout(function () {
-                window.frames["frame1"].focus();
-                window.frames["frame1"].print();
-                document.body.removeChild(frame1);
-            }, 500);
-            return false;
-        }
+		
+        document.body.appendChild(frame1);
+        var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
+        frameDoc.document.open();
+        frameDoc.document.write('<html><head><title>ЕГЭ Центр</title>');
+		frameDoc.document.write('<link rel="stylesheet" href="css/bootstrap.css" type="text/css">');
+        frameDoc.document.write('<link rel="stylesheet" href="css/style.css" type="text/css">');
+        frameDoc.document.write("<style type='text/css'>\
+        	h4 {text-align: center}\
+        	p {text-indent: 50px; margin: 0}\
+		  </style>"
+		);
+        frameDoc.document.write('</head><body>');
+        frameDoc.document.write(contents);
+        frameDoc.document.write('</body></html>');
+        frameDoc.document.close();
+        setTimeout(function () {
+            window.frames["frame1"].focus();
+            window.frames["frame1"].print();
+            document.body.removeChild(frame1);
+        }, 500);
+        return false;
+	}
+	
+	// ЧИСЛО БУКВАМИ
+	var cifir_ru= new Array("од","дв","три","четыр","пят","шест","сем","восем","девят");
+	var sotN_ru=new Array("сто","двести","триста","четыреста","пятьсот","шестьсот","семьмот","восемьсот","девятьсот");
+	var milion_ru=new Array("триллион","миллиард","миллион","тысяч");
+	var anDan_ru =new Array("","","","сорок","","","","","девяносто");
+	
+	function SPR(x){
+		var sumprop = new SPRU(x);
+		document.form1.check.value=sumprop.XS
+	}
+	
+	function SPRU(XS){
+		(XS>0? this.XS=sumPROPRU(Math.floor(XS),Math.round((XS-Math.floor(XS))*100)) : this.XS="Нулевое значение!" );
+		return this;
+	}
+	
+	function numToText(xx){
+		var scet=4;
+		var cifR='';
+		var cfR='';
+		var oboR=new Array(0);
+		//==========================
+		if (xx>999999999999999) { cfR="Пусто!"; return cfR; }
+		while(xx/1000>0){
+			yy=Math.floor(xx/1000);
+			delen=Math.round((xx/1000-yy)*1000);
+			//-------------------------------
+			sot=Math.floor(delen/100)*100;
+			des=(Math.floor(delen-sot)>9?Math.floor((delen-sot)/10)*10:0);
+			ed=Math.floor(delen-sot)-Math.floor((delen-sot)/10)*10;
+			//-------------------------------
+			forDes=(des/10==2?'а':'')
+			forEd=(ed==1?'ин': (ed==2?'е':'') );
+			ffD=(ed>4?'ь': (ed==1 || scet<3? (scet<3 && ed<2?'ин': (scet==3?'на': (scet<4? (ed==2?'а':( ed==4?'е':'')) :'на') ) ) : (ed==2?'а':( ed==4?'е':'') ) ) );
+			forTys=(des/10==1? (scet<3?'ов':'') : (scet<3? (ed==1?'': (ed>1 && ed<5?'а':'ов') ) : (ed==1?'а': (ed>1 && ed<5?'и':'') )) );
+			//===============================
+				oprSot=(sotN_ru[sot/100-1]!=null?sotN_ru[sot/100-1]:'');
+				oprDes=' '+(cifir_ru[des/10-1]!=null? (des/10==1?'': (des/10==4 || des/10==9?anDan_ru[des/10-1]:(des/10==2 || des/10==3?cifir_ru[des/10-1]+forDes+'дцать':cifir_ru[des/10-1]+'ьдесят') ) ) :'');
+				oprEd=' '+(cifir_ru[ed-1]!=null? cifir_ru[ed-1]+(des/10==1?forEd+'надцать' : ffD ) : (des==10?'десять':'') );
+				oprTys=' '+(milion_ru[scet]!=null && delen>0 ?milion_ru[scet]+forTys:'');
+			//-------------------------------
+			cifR=(oprSot.length>1?oprSot:'')+
+				 (oprDes.length>1?oprDes:'')+
+	             (oprEd.length>1?oprEd:'')+
+				 (oprTys.length>1?oprTys:'');
+			oboR[oboR.length]=cifR;
+			xx=Math.floor(xx/1000);
+			scet-=1;
+			if ( Math.floor(xx)<1 ) {	break;	}
+		}
+			oboR.reverse();
+			for (i=0; i<oboR.length; i++){
+				cfR+=oboR[i]+' ';
+			}
+			(cfR.length<3?cfR='ноль ':cfR);
+			return cfR.replace('  ',' ').replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+	}
+	
+	// \КОНЕЦ ЧИСЛО БУКВАМИ

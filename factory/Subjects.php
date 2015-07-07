@@ -46,7 +46,7 @@
 			echo '<div class="col-sm-3">';
             foreach ($subjects as $id => $subject) {
                 echo "<div class='checkbox'><label>
-                        <input ".(in_array($id, $selected_array) ? "checked" : "")." type='checkbox' name='{$name}[{$id}]' value='1'> " . $subject . "</label></div>";
+                        <input ".(in_array($id, $selected_array) ? "checked" : "")." type='checkbox' name='{$name}[{$id}]' value='$id'> " . $subject . "</label></div>";
                 // На ID 5 открываем новый див, старый закрываем
                 if ($id == 5) {
 				echo "</div><div class='col-sm-3'>";

@@ -19,11 +19,43 @@
 			
 			// Добавляем связи
 			$this->Representative	= Representative::findById($this->id_representative);
+			$this->Passport			= Passport::findById($this->id_passport);
 		}
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
+		
+		/**
+		 * Добавить паспорт.
+		 * 
+		 * $save - сохранить новое поле?
+		 */
+		public function addPassport($Passport, $save = false)
+		{
+			$this->Passport 		= $Passport;
+			$this->id_passport		= $Passport->id;
+			
+			if ($save) {
+				$this->save("id_passport");
+			}
+		}
+		
+		/**
+		 * Сколько номеров установлено.
+		 * 
+		 */
+		public function phoneLevel()
+		{
+			if (!empty($this->phone3)) {
+				return 3;
+			} else
+			if (!empty($this->phone2)) {
+				return 2;
+			} else {
+				return 1;
+			}
+		}
 		
 		/**
 		 * Получить договоры студента.

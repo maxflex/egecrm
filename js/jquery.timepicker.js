@@ -475,7 +475,15 @@
 				return settings.step;
 			}
 		}
-
+		
+		// "неизвестно" (?) в качестве первого аргумента времени
+		if (settings.hasOwnProperty("unknownFirst")) {
+			var row = $('<li />');
+			row.data('time', '?');
+			row.text('неизвестно');		
+			list.append(row);
+		}
+		
 		for (var i=start, j=0; i <= end; j++, i += stepFunc(j)*60) {
 			var timeInt = i;
 			var timeString = _int2time(timeInt, settings);
@@ -1420,7 +1428,13 @@
 	
 			var startTime = this.settings.parseTime(this.startTimeInput);
 			var endTime = this.settings.parseTime(this.endTimeInput);
-	
+			
+			// если один из аргументов – вопрос, то никаких дельта-связей между полями, 
+			// просто обновляем на установленное значение
+			if ($(this.endTimeInput).val() == "?" || $(this.startTimeInput).val() == "?") {
+				return
+			}
+			
 			if (!startTime || !endTime) {
 				if (this.settings.defaultTimeDelta !== null) {
 					if (startTime) {
@@ -1437,17 +1451,18 @@
 					return;
 				}
 			}
-	
+			
+			
 			if (this.settings.anchor == 'start' && hasClass(target, this.settings.startClass)) {
 				var newTime = new Date(startTime.getTime() + this.timeDelta);
 				this.settings.updateTime(this.endTimeInput, newTime);
-				endTime = this.settings.parseTime(this.endTimeInput);
+				endTime = this.settings.parseTime(this.endTimeInput);	
 			} else if (this.settings.anchor == 'end' && hasClass(target, this.settings.endClass)) {
 				var newTime = new Date(endTime.getTime() - this.timeDelta);
 				this.settings.updateTime(this.startTimeInput, newTime);
 				startTime = this.settings.parseTime(this.startTimeInput);
 			}
-	
+
 			var newDelta = endTime.getTime() - startTime.getTime();
 			var offset = (endTime < startTime) ? _ONE_DAY : -1 * _ONE_DAY;
 	
