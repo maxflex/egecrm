@@ -1,8 +1,11 @@
 <div ng-app="Search" ng-controller="ResultsCtrl" ng-init="<?= $ang_init_data ?>">
-	<h4>Заявки</h4>
-	<?php globalPartial("request_list") ?>
-	
-	<div ng-show="requests.length <= 0">
-		заявок не найдено
-	</div>
+	<h4>Ученики</h4>
+	<?php foreach($Students as $id=> $Student): ?>
+		<div>
+			<?= ($id + 1) ?>.
+			<a href="requests/edit/<?= $Student->getRequest()->id ?>">
+				<?= empty(trim($Student->fio())) ? "Неизвестно" : $Student->fio() ?>
+			</a>
+		</div>
+	<?php endforeach; ?>
 </div>

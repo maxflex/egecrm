@@ -7,10 +7,17 @@
 		public static $mysql_table	= "comments";
 		
 		# Места, где отображаются комментарии
-		const PLACE_REQUEST_EDIT = 'REQUEST_EDIT';
+		const PLACE_STUDENT = 'STUDENT';
+		const PLACE_REQUEST = 'REQUEST';
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
+		public function __construct($array)
+		{
+			parent::__construct($array);
+			
+			$this->coordinates = $this->getCoordinates();
+		}
 		
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -38,11 +45,9 @@
 		 * 
 		 */
 		public static function buildHtml($Comments, $place, $id_place)
-		{
-			// Подключаем скрипт-контроллер
-			echo "<script src='js/comments-app.js' type='text/javascript'></script>"; 
-			
+		{	
 			echo "<div class='comment-block'><div class='existing-comments'>";
+			echo "<script src='js/comments-app.js' type='text/javascript'></script>"; 
 			
 			// Отображение уже имеющихся комментариев
 			foreach ($Comments as $Comment) {
@@ -60,9 +65,9 @@
 			echo "
 				</div>
 				<div style='height: 25px'>
-					<span class='glyphicon glyphicon-forward pointer no-margin-right' 
+					<span class='glyphicon glyphicon-forward pointer no-margin-right comment-add' 
 						id='comment-add' place='$place' id_place='$id_place'></span>
-					<input id='comment-add-field' type='text' placeholder='Введите комментарий...'>
+					<input id='comment-add-field' class='comment-add-field' type='text' placeholder='Введите комментарий...'>
 				</div>
 			";
 			

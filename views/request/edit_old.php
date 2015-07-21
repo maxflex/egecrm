@@ -406,8 +406,9 @@
     
     <div class="row">
 	    <div class="col-sm-12">
-		    <h4>Договоры 
-			    <button class="btn btn-default btn-xs" ng-click="addContract()"><span class="glyphicon glyphicon-plus no-margin-right"></span></button>
+		    <h4 style="font-size: 16px">ДОГОВОРЫ 
+			    <a ng-click="addContract()" class="link-like like-reverse link-in-h">добавить</a>
+<!-- 			    <button class="btn btn-default btn-xs" ng-click="addContract()"><span class="glyphicon glyphicon-plus no-margin-right"></span></button> -->
 			</h4>
 			
 			<!-- ДАГАВАРА -->
@@ -631,7 +632,9 @@
     </div>
     <div class="row">
 	    <div class="col-sm-12">
-		    <h4>Платежи</h4>
+		    <h4 style="font-size: 16px">ПЛАТЕЖИ
+			    <a class="link-like like-reverse link-in-h">добавить</a>
+		    </h4>
 		    <div class="form-group payment-line">
 			    <div ng-repeat="payment in payments" ng-hide="payment.deleted">
 			    	<input type="hidden" name="Payment[{{$index}}][id]" value="{{payment.id}}">

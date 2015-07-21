@@ -122,7 +122,7 @@
     },
     selectAllText: 'Select All',
     deselectAllText: 'Deselect All',
-    multipleSeparator: ', ',
+    multipleSeparator: '&nbsp;&nbsp',
     style: 'btn-default',
     size: 'auto',
     title: null,

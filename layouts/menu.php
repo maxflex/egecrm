@@ -27,10 +27,10 @@
 		?>
 	</a>
 	<a href="notifications" class="list-group-item">Напоминания</a>
-    <a href="#" class="list-group-item">Ученики</a>
+	<a href="stats" class="list-group-item">Итоги</a>
+    <a href="clients" class="list-group-item">Клиенты</a>
     <a href="#" class="list-group-item">Преподователи</a>
     <a href="#" class="list-group-item">Группы</a>
-    <a href="#" class="list-group-item">Школы</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="#" class="list-group-item">Пользователи</a>
     <a href="logout" class="list-group-item">Выход</a>

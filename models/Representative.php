@@ -53,4 +53,17 @@
 			}
 		}
 		
+		
+		
+		/**
+		 * Получить студента.
+		 * 
+		 */
+		public function getStudent()
+		{
+			return Student::find([
+				"condition"	=> "id_representative={$this->id}"
+			]);
+		}
+		
 	}

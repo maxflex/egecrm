@@ -81,22 +81,80 @@
 			}
 		}
 		
+		/**
+		 * Добавить новые контракты и обновить старые.
+		 *
+		 * договоры с (id < 0) – это новые договоры. у новых договоров отрицательный ID, их нужно добавить
+		 * договоры с положительным ID – уже существующие, их нужно обновить
+		 */
+		public static function addNew($Contract)
+		{
+			// Создаем договор
+			$NewContract = self::add($Contract);
+			// Добавляем предметы договора
+			ContractSubject::addData($Contract["subjects"], $NewContract->id);
+			
+			echo $NewContract->id;
+		}
+		
+		public static function addNewAndReturn($Contract)
+		{
+			// Создаем договор
+			$NewContract = self::add($Contract);
+			
+			// логин пользователя
+			if ($NewContract->id_user) {
+				$NewContract->user_login = User::getCached()[$NewContract->id_user]['login'];
+			}	
+			
+			// Добавляем предметы договора
+			ContractSubject::addData($Contract["subjects"], $NewContract->id);
+			
+			return $NewContract;
+		}
+		
+		public static function edit($Contract)
+		{
+			// если нужно без проводки
+			if ($Contract["no_version_control"]) {
+				$changed = true;
+			} else {
+				// Контроль версий
+				$changed = self::versionControl($Contract);	
+			}
+			
+			// если были изменения, обновляем
+			if ($changed) {
+				// Обновляем старый договор
+				//$OriginalContract = self::updateById($Contract["id"], $Contract);
+				$OriginalContract = new Contract($Contract);
+				$OriginalContract->save();
+				
+				// Загружаем туда файлы
+				// $OriginalContract->uploadFile();
+				
+				// Добавляем предметы договора
+				ContractSubject::addData($Contract["subjects"], $Contract["id"]);	
+			}
+		}
+		
 		
 		/**
 		 * Договор был изменен?
 		 * 
 		 * @return boolean true – изменен, false – не изменен
 		 */
-		public static function changed($id, $Contract)
+		public static function changed($Contract)
 		{	
 			# Находим оригинальный доГАВАр
-			$OriginalContract = Contract::findById($id);
+			$OriginalContract = Contract::findById($Contract["id"]);
 			
 			//preType([$Contract["subjects"], $OriginalContract->subjects]);
 			
 			# ФАЙЛЫ
 			
 			// проверяем изменилось ли количество файлов
+/*
 			$original_contract_files_count = $OriginalContract->files ? count($OriginalContract->files) : 0;
 			
 			if ($original_contract_files_count != count((array)$Contract["files"])) {
@@ -116,22 +174,20 @@
 					preType($Contract["files"][$id]);
 				}
 			}
-			
-/*
-			if (serialize(arrayLevelUp($OriginalContract->files)) != serialize($Contract["files"])) {
-				h1("FILES NOT EQUAL");
-				preType($OriginalContract->files);
-				preType($Contract["files"]);
-				return true;
-			}
 */
-			# Проверяем изменились ли предметы договора
 			
+			// ансет всех FALSE
+			foreach($Contract["subjects"] as $id => $subject) {
+				if ($subject === false) {
+					unset($Contract["subjects"][$id]);
+				}
+			}
+			
+			# Проверяем изменились ли предметы договора
 			// проверяем изменилось ли количество предметов в договорах
 			if (count($Contract["subjects"]) != $OriginalContract->getSubjectCount()) {
-				var_dump($OriginalContract->subjects);
+//				var_dump($OriginalContract->subjects);
 //				echo "SUBJECTS COUNT CHANGED: ".count($Contract["subjects"])." - ".($OriginalContract->getSubjectCount())."<br>";
-//				exit();
 				return true;
 			}
 			
@@ -172,12 +228,12 @@
 		 * Создать версию договора (храним все изменения договора)
 		 * 
 		 */
-		public static function versionControl($id, $Contract)
+		public static function versionControl($Contract)
 		{
 			// если договор был изменен, то создать версию изменения
-			if (self::changed($id, $Contract)) {
+			if (self::changed($Contract)) {
 				// находим оригинальный контракт
-				$OriginalContract = Contract::findById($id);
+				$OriginalContract = Contract::findById($Contract["id"]);
 				
 				// создаем копию оригинального контракта для истории
 				$ContractCopy = clone $OriginalContract;
@@ -185,12 +241,12 @@
 				unset($ContractCopy->id);
 				$ContractCopy->isNewRecord = true;
 				$ContractCopy->id_student = null;
-				$ContractCopy->id_contract = $id;
+				$ContractCopy->id_contract = $Contract["id"];
 				
 				$ContractCopy->save();
 				
 				// Клонируем файлы. Обязательно после сохранения, когда уже есть ID
-				self::cloneFiles($OriginalContract, $ContractCopy);
+				// self::cloneFiles($OriginalContract, $ContractCopy);
 				
 				// Добавляем предметы нового договора
 				ContractSubject::addData($OriginalContract->subjects, $ContractCopy->id);
@@ -249,8 +305,9 @@
 			echo "<pre>";
 			debug_print_backtrace();
 			echo "</pre>";
-			preType($this);
 */
+			// preType($this);
+			
 			// Если сумма договора равна нулю, то ставим, будто не указана
 			// иначе если в новый договор не подставить сумму, автоматом ставится ноль
 			if (!$this->sum) {
@@ -268,7 +325,7 @@
 				if (!self::findById($this->id)->cancelled) {
 					// сохраняем данные пользователя, который сделал расторжение договора
 					$this->cancelled_by 	= User::fromSession()->id;
-					$this->cancelled_date	= now();
+				//	$this->cancelled_date	= now();
 				}
 			}
 			
@@ -280,10 +337,10 @@
 		
 		public function afterFirstSave()
 		{
-			parent::afterFirstSave();
+			// parent::afterFirstSave();
 			
 			// Загружаем файл после сохранения, т.к. нужен ID  договора
-			$this->uploadFile();
+			// $this->uploadFile();
 		}
 		
 		
@@ -311,7 +368,8 @@
 		{
 			foreach ($this->files as $id => $file) {
 				// декодируйем ДЖЕЙ(тире)СОН
-				$file = json_decode($file, true);
+				// $file = json_decode($file, true);
+				unset($file['$$hashKey']);
 				
 				// если файл уже загружен
 				if (strpos($file["name"], "tmp") === false) {

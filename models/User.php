@@ -12,6 +12,34 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		// Получить пользователей из кеша
+		public static function getCached()
+		{
+			if (LOCAL_DEVELOPMENT) {
+				$Users = self::findAll();
+				
+				foreach ($Users as $User) {
+					$return[$User->id] = $User->dbData();
+				}
+				
+				return $return;				
+			} else {
+				$Users = memcached()->get("Users");
+				
+				if (!$Users) {
+					$Users = self::findAll();
+				
+					foreach ($Users as $User) {
+						$return[$User->id] = $User->dbData();
+					}
+					
+					$Users = $return;
+					memcached()->set("Users", $Users, 2 * 24 * 3600); // кеш на 2 дня
+				}
+				
+				return $Users;
+			}
+		}
 		
 		/**
 		 * Вернуть пароль, как в репетиторах
@@ -62,8 +90,7 @@
 				}));
 			}
 			
-			echo "<script src='js/user-color-control.js' type='text/javascript'></script>";
-			echo "<select class='form-control' id='user-list' name='$name' ".($selected ? "style='background-color: {$SelectedUser->color}'" : "").">";
+			echo "<select class='form-control user-list' name='$name' ".($selected ? "style='background-color: {$SelectedUser->color}'" : "").">";
 				echo "<option selected value=''>пользователь</option>";
 				echo "<option disabled value=''>──────────────</option>";
 			foreach ($Users as $User) {

@@ -95,8 +95,9 @@
 		 * Цвет метро, СВГ-кружок.
 		 * 
 		 * $return - возвратить вес линии для сортировки
+		 * $return_color_only – возвратить только цвет вместо SVG
 		 */
-		public static function metroSvg($id_branch, $return = false)
+		public static function metroSvg($id_branch, $return = false, $return_color_only = false)
 		{
 			switch ($id_branch) {
 				# Оранжевый
@@ -179,10 +180,14 @@
 				}
 			}
 			
-			return
-				'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
-            		<circle fill="'.$color.'" r="6" cx="7" cy="7"></circle>
-				</svg>';
+			if ($return_color_only) {
+				return $color;
+			} else {
+				return
+					'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
+	            		<circle fill="'.$color.'" r="6" cx="7" cy="7"></circle>
+					</svg>';	
+			}
 		}
 		
 		

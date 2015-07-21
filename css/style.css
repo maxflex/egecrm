@@ -4,6 +4,124 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+button:disabled {
+  cursor: default !important; }
+
+.bootbox-close-button {
+  display: none; }
+
+#delete-student {
+  display: none; }
+
+.modal-footer {
+  border-top: 0; }
+
+.ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
+  transition: none !important; }
+
+.capitalize {
+  text-transform: capitalize; }
+
+h4.row-header {
+  font-size: 16px;
+  text-transform: uppercase; }
+
+.underline-hover {
+  cursor: pointer; }
+  .underline-hover:hover {
+    text-decoration: underline; }
+
+.link-black {
+  color: rgba(0, 0, 0, 0.5) !important; }
+  .link-black:hover {
+    color: rgba(0, 0, 0, 0.5) !important;
+    text-decoration: none; }
+
+.link-white {
+  color: white; }
+
+.phone-duplicate {
+  display: inline-block;
+  background: #ffcccc;
+  border-radius: 5px;
+  padding: 1px 3px;
+  color: rgba(0, 0, 0, 0.5) !important; }
+
+.label-red {
+  background: #ffcccc;
+  border-radius: 5px;
+  padding: 1px 3px;
+  color: rgba(0, 0, 0, 0.5); }
+
+.label-yellow {
+  background: #fbaa33;
+  border-radius: 5px;
+  padding: 1px 3px;
+  color: rgba(0, 0, 0, 0.5); }
+
+.numberCircle {
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  line-height: 20px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  background-color: #337AB7;
+  color: white;
+  text-align: center;
+  font-size: 14px; }
+
+.lightbox-new {
+  position: fixed;
+  z-index: 100;
+  background-color: white;
+  border-radius: 5px;
+  padding: 10px 20px;
+  display: none;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); }
+
+.lightbox-addpayment {
+  width: 670px;
+  left: calc(50% - 335px);
+  top: 25%; }
+
+.lightbox-cancelcontract {
+  width: 500px;
+  left: calc(50% - 250px); }
+  .lightbox-cancelcontract .input-group, .lightbox-cancelcontract input, .lightbox-cancelcontract select, .lightbox-cancelcontract textarea {
+    width: 300px;
+    float: right; }
+  .lightbox-cancelcontract .input-label {
+    margin-top: 7px;
+    display: inline-block; }
+
+.lightbox-addcontract {
+  width: 800px;
+  left: calc(50% - 400px); }
+  .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select {
+    width: 230px;
+    float: right; }
+  .lightbox-addcontract .input-label {
+    margin-top: 7px;
+    display: inline-block; }
+  .lightbox-addcontract .contract-subject-list.subject-line {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 10px;
+    height: 34px; }
+  .lightbox-addcontract .contract-subject-list .ios7-switch .switch {
+    font-size: 24px;
+    margin-right: 15px; }
+  .lightbox-addcontract .contract-subject-list .ios7-switch .subject-name {
+    font-weight: normal;
+    text-transform: capitalize;
+    opacity: .5; }
+  .lightbox-addcontract .contract-subject-list input[type="text"] {
+    width: 80px; }
+
+.visible {
+  visibility: visible !important; }
+
 .comment-block {
   font-size: 12px; }
 
@@ -37,7 +155,7 @@ body {
   display: no;
   left: calc(50% - 12px);
   margin: 0;
-  top: -11px;
+  top: -31px;
   color: #eee;
   font-size: 24px;
   background-color: white; }
@@ -46,10 +164,7 @@ body {
   position: absolute;
   z-index: 99;
   left: calc(50% - 16px);
-  top: 350px; }
-
-#request-edit {
-  min-height: 800px; }
+  top: 260px; }
 
 .pagination {
   margin: 0; }
@@ -61,6 +176,20 @@ body {
   .link-like:hover {
     color: #23527c;
     text-decoration: underline; }
+
+.link-reverse {
+  text-decoration: underline; }
+  .link-reverse.small {
+    margin-left: 5px;
+    font-size: 12px; }
+  .link-reverse:hover {
+    text-decoration: none; }
+
+.link-in-h {
+  font-size: 12px;
+  text-transform: lowercase;
+  font-weight: normal;
+  margin-left: 7px; }
 
 .pagination > .disabled > a, .pagination > .disabled > a:focus, .pagination > .disabled > a:hover, .pagination > .disabled > span, .pagination > .disabled > span:focus, .pagination > .disabled > span:hover {
   cursor: default; }
@@ -74,7 +203,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Optional, to align inner items 
+  /* Optional, to align inner items
                               horizontally inside the column */ }
 
 .comment-block .glyphicon {
@@ -82,14 +211,14 @@ body {
   .comment-block .glyphicon.text-danger {
     color: #ff0039; }
 
-#comment-add-field {
+.comment-add-field {
   outline: none;
   border: 0;
   border-bottom: 1px solid #eee;
   width: calc(100% - 20px);
   display: none; }
 
-#comment-add {
+.comment-add {
   margin-top: 5px;
   font-size: 12px;
   margin-left: 2px;
@@ -175,7 +304,7 @@ a.link-white {
   height: 100%;
   width: 100%;
   z-index: 99;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   display: none; }
 
 .lightbox-element {
@@ -185,7 +314,7 @@ a.link-white {
 
 .lightbox-glue {
   width: 600px;
-  height: 126px;
+  height: 174px;
   top: calc(40% - 63px);
   left: calc(50% - 300px);
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); }
@@ -215,8 +344,17 @@ h4 {
 .list-group-item.active {
   cursor: default; }
 
-#user-list {
+.user-list {
   color: black; }
+  .user-list.small {
+    width: 120px; }
+
+.half-black {
+  color: rgba(0, 0, 0, 0.5) !important; }
+
+.request-main-list hr {
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+  margin-top: 5px; }
 
 .glyphicon.glyphicon-middle {
   top: 3px; }
@@ -244,6 +382,9 @@ h4 {
   width: 105px;
   display: inline-block;
   margin: 0 5px; }
+
+.payment-line .input-group {
+  width: 140px; }
 
 .center {
   margin: 0 auto;
@@ -274,10 +415,21 @@ h4 {
 
 .save-coordinates {
   text-align: right;
-  padding-top: 20px;
   font-size: 12px;
   color: #999999;
   font-style: italic; }
+
+.text-gray {
+  color: #999999; }
+
+.phone-masked {
+  padding-right: 0; }
+
+.addon-bordered {
+  border-radius: 0 4px 4px 0 !important; }
+
+.input-group-btn button {
+  padding: 6px 9.5px; }
 
 .save-coordinates-big {
   text-align: right;
@@ -295,13 +447,16 @@ h4 {
   padding: 1px;
   border-top: 0; }
 
+.no-opacity {
+  opacity: 1 !important; }
+
 .opacity-pointer {
   opacity: .5;
   cursor: pointer; }
   .opacity-pointer:hover {
     opacity: 1; }
 
-select.has-error, input.has-error {
+select.has-error, input.has-error, textarea.has-error {
   border-color: #a94442 !important;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) !important;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) !important; }

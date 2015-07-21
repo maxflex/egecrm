@@ -6,20 +6,26 @@
 		public static $mysql_table	= "payments";
 		
 		# Список статусов
-		const PAID 		= 1;
-		const NOT_PAID 	= 2;
-		const RETURNS	= 3;
-		
+		const PAID_CARD		= 1;
+		const PAID_CASH		= 2;
+		const NOT_PAID_BILL	= 3;	
+		const PAID_BILL		= 4;
+		const CARD_ONLINE	= 5;
 		
 		# Все
-		static $all  = [
-			self::PAID		=> "оплачен",
-			self::NOT_PAID	=> "не оплачен",
-			self::RETURNS	=> "возврат",
+		static $all  = [			
+			self::PAID_CARD		=> "карта",
+			self::PAID_CASH		=> "наличные",
+			self::NOT_PAID_BILL	=> "не оплаченный счет",
+			self::PAID_BILL		=> "оплаченный счет",
+			self::CARD_ONLINE	=> "карта онлайн",
 		];
 		
+		# удаленные записи коллекции
+		static $deleted = array();
+		
 		# Заголовок
-		static $title = "статус";
+		static $title = "способ оплаты";
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
@@ -49,7 +55,11 @@
 				echo "<option disabled>──────────────</option>";
 			}
 			foreach (static::$all as $id => $value) {
-				echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";
+				// удаленные записи коллекции отображать только в том случае, если они уже были выбраны
+				// (т.е. были использованы ранее, до удаления)
+				if (!in_array($id, static::$deleted) || ($id == $selcted)) {
+					echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";
+				}
 			}
 			echo "</select>";
 		}

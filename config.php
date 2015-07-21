@@ -14,9 +14,11 @@
 		"BASE_ADDON"	=> "/egecrm/",
 		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/egecrm",
 
-		"LOCAL_DEVELOPMENT"	=> false,
+		"LOCAL_DEVELOPMENT"	=> true,
 		"ERRORS"			=> 81,
 	);
+	
+	setlocale(LC_TIME, 'ru_RU', 'russian');
 
 	/*// Контроллеры и модели 
 	$_controllers	= array(

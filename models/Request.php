@@ -1,124 +1,226 @@
 <?php
 	class Request extends Model
 	{
-	
+
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		const PER_PAGE = 20; // Сколько заявок отображать на странице списка заявок
-		
+
 		public static $mysql_table	= "requests";
-		
+
 		protected $_inline_data = ["subjects"]; // Предметы (в БД хранятся строкой "1, 2, 3" – а тут в массиве
-		
+
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
-		
-		public function __construct($array) 
+
+		public function __construct($array)
 		{
 			parent::__construct($array);
-			
+
 			// Если после создания нет ученика
-			if (!$this->id_student) {
-				$this->id_student = Student::add()->id;
+			//if (!$this->id_student) {
+			//	$this->id_student = Student::add()->id;
+			//}
+
+			// Таймстемп даты
+			$this->date_timestamp = strtotime($this->date) . "000"; // добавляем миллесекунды, чтобы JS воспринимал timestamp
+
+			if ($this->id_branch) {
+				$this->addBranchInfo();
 			}
-			
+
 			// Включаем связи
 			$this->Student 			= Student::findById($this->id_student);
 			$this->Notification 	= Notification::findById($this->id_notification);
+			$this->Comments			= Comment::findAll([
+				"condition" => "place='". Comment::PLACE_REQUEST ."' AND id_place=" . $this->id,
+			]);
 		}
-		
+
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
-		
+
 		/**
 		 * Получить статус задачи (список) из $_GET
-		 * 
+		 *
 		 */
 		public static function getIdStatus()
 		{
 			// Получаем список
 			$id_status = constant('RequestStatuses::' . strtoupper($_GET['id_status']));
-			
+
 			// если ID статус пустой, то по умолчанию отображать новые заявки
 			if (empty($id_status)) {
 				$id_status = RequestStatuses::NEWR;
 			}
-			
+
 			return $id_status;
 		}
-		
+
 		/**
 		 * Подсчитать количество новых заявок.
-		 * 
+		 *
 		 */
 		public static function countNew()
 		{
 			return self::count([
 				"condition"	=> "id_status=".RequestStatuses::NEWR." and adding=0"
-			]);
+			]); // ТОТ ЖЕ КОСТЫЛЬ
 		}
-		
-		
+
+
 		/**
 		 * Получить количество заявок из каждого списка.
-		 * 
+		 *
 		 */
 		public static function getAllStatusesCount()
 		{
 			foreach (RequestStatuses::$all as $id => $status) {
-				$result[$id] = self::count(["condition" => "adding=0 AND id_status=".$id]);
+				if ($id == RequestStatuses::ALL) {
+					$result[$id] = self::count(["condition" => "adding=0"]);
+				} else {
+					$result[$id] = self::count(["condition" => "adding=0 AND id_status=".$id]);
+				}
 			}
-			
+
 			return $result;
 		}
-		
-		
-		
+
+
+
 		/**
 		 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
-		 * 
+		 *
 		 */
 		public static function getByPage($page, $id_status)
 		{
 			// С какой записи начинать отображение, по формуле
 			$start_from = ($page - 1) * self::PER_PAGE;
-			
+
+
+
 			$Requests = self::findAll([
-				"condition"	=> "id_status=".$id_status." AND adding=0",
+				"condition"	=> "adding=0". ($id_status == RequestStatuses::ALL ? "" : " AND id_status=".$id_status) ,
 				"order"		=> "id DESC",
+				"group"		=> ($id_status == RequestStatuses::NEWR ? "id_student" : ""), // если список "неразобранные", то отображать дубликаты
 				"limit" 	=> $start_from. ", " .self::PER_PAGE
 			]);
-			
+
 			// Добавляем дубликаты
 			foreach ($Requests as &$Request) {
-				$Request->duplicates = $Request->getDuplicates();	
+				$Request->duplicates = $Request->getDuplicates();
+
+				if ($Request->duplicates) {
+					$Request->total_count = count($Request->duplicates) + 1;
+				}
+
+				if ($Request->id_status == RequestStatuses::NEWR && $id_status != RequestStatuses::ALL) {
+					$Request->list_duplicates = $Request->countListDuplicates();
+				}
 			}
-			
+
 			return $Requests;
 		}
-		
+
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-		
+
 		public function beforeSave() {
-			if ($this->isNewRecord) {
+			if ($this->isNewRecord || $this->adding) {
 				$this->date = now();
-			} 			
-/*
-			else {
-				// если не первое сохранение, то всё, забей – уже не добавление
-				$this->adding = 0;
 			}
-*/	
 		}
-		
+
+
+		public function processIncoming()
+		{
+			// Создаем нового ученика по заявке, либо привязываем к уже существующему
+			$this->createStudent();
+
+			// Устанавливаем статус заявки
+			if ($this->_phoneExists()) {
+				$this->id_status = RequestStatuses::DUPLICATE;
+			}
+		}
+
+		private function _phoneExists()
+		{
+			// если номер телефона не установлен
+			if (!$this->phone) {
+				return false;
+			}
+
+			# Ищем заявку с таким же номером телефона
+			$Request = Request::find([
+				"condition"	=> "(phone='".$this->phone."' OR phone2='".$this->phone."'
+					OR phone3='".$this->phone."') AND id_status=".RequestStatuses::NEWR,
+			]);
+
+			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+			if ($Request) {
+				return true;
+			}
+
+			# Ищем ученика с таким же номером телефона
+			$Student = Student::find([
+				"condition"	=> "(phone='".$this->phone."' OR phone2='".$this->phone."'
+				 	OR phone3='".$this->phone."')"
+			]);
+
+			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+			if ($Student && ($Student->getRequest()->id_status == RequestStatuses::NEWR)) {
+				return true;
+			}
+
+			# Ищем представителя с таким же номером телефона
+			$Representative = Representative::find([
+				"condition"	=> "(phone='".$this->phone."' OR phone2='".$this->phone."'
+				 	OR phone3='".$this->phone."')"
+			]);
+
+			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+			if ($Representative && ($Representative->getStudent()->getRequest()->id_status == RequestStatuses::NEWR)) {
+				return true;
+			}
+
+			return false;
+		}
+
+
+		/**
+		 * Сколько номеров установлено.
+		 *
+		 */
+		public function phoneLevel()
+		{
+			if (!empty($this->phone3)) {
+				return 3;
+			} else
+			if (!empty($this->phone2)) {
+				return 2;
+			} else {
+				return 1;
+			}
+		}
+
+		/**
+		 * Добавить инфо по филиалу.
+		 *
+		 */
+		public function addBranchInfo() {
+			$this->Branch = [
+				"name"	=> Branches::$all[$this->id_branch],
+				"color"	=> Branches::metroSvg($this->id_branch, false, true),
+			];
+		}
+
 		/**
 		 * Привязать заявку к существующему ученику (склейка клиентов).
-		 * 
+		 *
 		 */
 		public function bindToStudent($id_student)
 		{
 			$this->id_student = $id_student;
 			return ($this->save("id_student") > 0 ? true : false);
 		}
-		
+
 		/**
 		 * Получить ID заявок от этого же ученика.
 		 * $get_self – включать свой же ID в список дубликатов?
@@ -129,11 +231,21 @@
 				"condition"	=> "adding=0 AND id_student=".$this->id_student.($get_self ? "" : " AND id!=".$this->id)
 			]);
 		}
-		
-		
+
+		/**
+		 * Получить ID заявок от этого же ученика. Дубликаты в списке "Неразобранные"
+		 */
+		public function countListDuplicates()
+		{
+			return self::count([
+				"condition"	=> "adding=0 AND id_student=" . $this->id_student . " AND id!=" . $this->id ." AND id_status=" .RequestStatuses::NEWR,
+			]);
+		}
+
+
 		/**
 		 * Сгенерировать HTML дубликатов через запятую.
-		 * 
+		 *
 		 * @access public
 		 * @return void
 		 */
@@ -141,7 +253,7 @@
 		{
 			// Ищем дубликаты
 			$request_duplicates = $this->getDuplicates();
-			
+
 			// Если дубликаты нашлись
 			if ($request_duplicates) {
 				foreach ($request_duplicates as $id_request) {
@@ -152,7 +264,7 @@
 				return "<span class='pull-right'>Другие заявки этого клиента: $html</span>";
 			}
 		}
-		
+
 		/**
 		 * Создать ученика для заявки. Пустой ученик создается обязательно вместе с новой заявкой
 		 * Это нужно по ряду вещей: чтобы заявки сливались, чтобы сохранялись поля в редактировании и т.д.
@@ -166,10 +278,10 @@
 				$this->id_student = Student::add()->id;
 			}
 		}
-		
+
 		/**
 		 * Привязать заявку к существующему студенту по номеру телефона.
-		 * 
+		 *
 		 */
 		public function bindToExistingStudent()
 		{
@@ -177,19 +289,41 @@
 			if (!$this->phone) {
 				return false;
 			}
-			
-			// Ищем заявку с таким же номером телефона
+
+			# Ищем заявку с таким же номером телефона
 			$Request = Request::find([
-				"condition"	=> "phone='".$this->phone."'"
+				"condition"	=> "phone='".$this->phone."' OR phone2='".$this->phone."' || phone3='".$this->phone."'"
 			]);
-			
+
 			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
 			if ($Request) {
 				$this->id_student = $Request->id_student;
 				return true;
-			} else {
-				return false;
 			}
+
+			# Ищем ученика с таким же номером телефона
+			$Student = Student::find([
+				"condition"	=> "phone='".$this->phone."' OR phone2='".$this->phone."' || phone3='".$this->phone."'"
+			]);
+
+			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+			if ($Student) {
+				$this->id_student = $Student->id;
+				return true;
+			}
+
+			# Ищем представителя с таким же номером телефона
+			$Representative = Representative::find([
+				"condition"	=> "phone='".$this->phone."' OR phone2='".$this->phone."' || phone3='".$this->phone."'"
+			]);
+
+			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+			if ($Representative) {
+				$this->id_student = $Representative->getStudent()->id;
+				return true;
+			}
+
+			return false;
 		}
-		
+
 	}

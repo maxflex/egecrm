@@ -27,12 +27,15 @@
 			// Если предметы нашлись, сопостовляем ID предметов названиям
 			// и сразу же убираем ненужные данные, только dbData
 			if ($ContractSubjects) {
-				foreach ($ContractSubjects as &$ContractSubject) {
+				foreach ($ContractSubjects as $id => &$ContractSubject) {
 					$ContractSubject = $ContractSubject->dbData();
 					$ContractSubject['name'] = Subjects::$all[$ContractSubject['id_subject']];
+					
+					// Вместе 0, 1 в массиве ключами идут ID предметов. Нужно обязательно
+					$return[$ContractSubject["id_subject"]] = $ContractSubject;
 				}
 				// Возвращаем с названиями предметов
-				return $ContractSubjects;
+				return $return;
 			} else {
 				return false;
 			}
@@ -44,6 +47,8 @@
 		 */
 		public static function addData($subjects_data, $id_contract) 
 		{
+			$subjects_data = array_filter($subjects_data);
+			
 			// Если никаких данных нет
 			if (!count($subjects_data)) {
 				return false;

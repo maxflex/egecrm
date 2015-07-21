@@ -3,28 +3,28 @@
 	// Контроллер
 	class ApiController extends Controller
 	{
-		
-		
+
+
 		############################################################################################
 		##################################### ИНИЦИАЛИЗАЦИЯ ########################################
 		############################################################################################
-		
-		
+
+
 		// Ключ API, проверяется при каждом запросе к API
 		const API_KEY = "44327d40af8a93c23497047c08688a50"; // MD5 «А то ругать будут!»
-		
+
 		// Перед выполнением любого действия, устанавливаем заголовок для JSON данных API
 		public function beforeAction()
 		{
 			// Тип данных - JSON
 			header('Content-Type: application/json');
-			
+
 			// Первым делом проверяем API_KEY
 			if (trim($_POST["API_KEY"]) != self::API_KEY) {
 				self::errorMessage("Invalid API_KEY");
 			}
 		}
-		
+
 		/*
 		 * JSON-сообщение с ошибкой
 		 * $error_message – сообщение ошибки
@@ -36,56 +36,56 @@
 					"post_data"		=> $_POST,
 				)));
 		}
-		
+
 		/*
 		 * Возвратить JSON
 		 */
 		public static function returnJSON($Object)
 		{
-			echo json_encode($Object); 
+			echo json_encode($Object);
 		}
-		
-		
+
+
 		public static function getFromServer($method, $postData = array())
 		{
 			define("API_KEY", md5("Hg)9nv71Vgssdf0")); // Ключ АПИ
-			
+
 			$url = 'http://192.168.0.32:8080/api/?api_key='. API_KEY . '&action='. $method;
-			
+
 			echo $url;
-			
+
 			$ch = curl_init($url);
 			//curl_setopt($ch, CURLOPT_POST, 1);
 			//curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			
+
 			$response = curl_exec($ch);
-			
+
 			return $response;
 		}
-		
+
 		############################################################################################
 		##################################### ПОЛУЧЕНИЕ ДАННЫХ #####################################
 		############################################################################################
-		
-				
+
+
 		############################################################################################
 		#################################### ДОБАВЛЕНИЕ ДАННЫХ #####################################
 		############################################################################################
-		
+
 		// Добавляем заявку
 		public function actionAddRequest()
 		{
 			// Добавляем заявку
 			$Request = new Request($_POST);
-			
-			// Создаем нового ученика по заявке, либо привязываем к уже существующему
-			$Request->createStudent();
-			
+
+			// Обработка входящей заявки
+			$Request->processIncoming();
+
 			// Сохраняем заявку
 			$Request->save();
-		}		
-		
+		}
+
 	}

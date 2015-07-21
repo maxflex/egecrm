@@ -26,6 +26,15 @@
 	}
 	
 	/*
+	 * Возвращает соединение DB_SETTINGS
+	 */
+	function memcached()
+	{
+		global $memcached;
+		return $memcached;
+	}
+	
+	/*
 	 * Создаем подключение к БД user_x
 	 */
 	function initUserConnection($id_user)
@@ -361,7 +370,8 @@
 	 */
 	function returnJson($response)
 	{
-		exit(json_encode($response));
+		toJson($response);
+		exit();
 	}
 	
 	/**
@@ -421,6 +431,11 @@
 	function cleanNumber($number) 
 	{
 		return preg_replace("/[^0-9]/","",$number);	
+	}
+	
+	function pluralize($one, $few, $many, $n)
+	{
+		return $n%10==1&&$n%100!=11?$one:($n%10>=2&&$n%10<=4&&($n%100<10||$n%100>=20)?$few:$many);
 	}
 	
 	// 10,13,9 (1)

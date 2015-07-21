@@ -1,11 +1,8 @@
-<div ng-app="Request" ng-controller="ListCtrl" 
+<div ng-app="Request" ng-controller="ListCtrl"
 	ng-init="<?= $ang_init_data ?>">
 	<div class="row">
 		<div class="col-sm-12">
 			<ul class="nav nav-tabs">
-				<li>
-					<a href="requests/add"><span class="glyphicon glyphicon-plus"></span>создать заявку</a>
-				</li>
 				<li ng-repeat="request_status in request_statuses" ng-class="{'active' : chosen_list == request_status.id}">
 					<a class="list-link" href="#{{request_status.id}}" ng-click="changeList(request_status, true)" data-toggle="tab" aria-expanded="{{$index == 0}}">
 						{{request_status.name}} ({{request_statuses_count[request_status.id]}})
@@ -19,14 +16,13 @@
 			<div ng-show="!requests.length">
 				<h3 style="text-align: center; margin: 50px 0">Список заявок пуст</h3>
 			</div>
-			
+
 			<?php globalPartial("request_list") ?>
-			
+
 			<div ng-hide="request_statuses_count[chosen_list] <= <?= Request::PER_PAGE ?>">
-				<hr style="margin-bottom: 10px">
-				<pagination 
-			      ng-model="currentPage" 
-			      ng-change="pageChanged()" 
+				<pagination
+			      ng-model="currentPage"
+			      ng-change="pageChanged()"
 			      total-items="request_statuses_count[chosen_list]"
 			      max-size="10"
 			      items-per-page="<?= Request::PER_PAGE ?>"
@@ -40,4 +36,3 @@
 		</div>
 	</div>
 </div>
-

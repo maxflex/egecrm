@@ -20,8 +20,12 @@
 	<link href="css/nprogress.css" rel="stylesheet">
     <link href="css/style.css?ver=<?= settings()->version ?>" rel="stylesheet">
     <link href="css/ng-showhide.css?ver=<?= settings()->version ?>" rel="stylesheet">
+	<link href="css/ios7switch.css" rel="stylesheet">
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type='text/javascript' src='js/comments-app-global.js?ver=<?= settings()->version ?>'></script>
+	<script type="text/javascript" src="js/metro_data.js"></script>
+	<script type="text/javascript" src="js/floatlabel.js"></script>
 	<script type="text/javascript" src="js/nprogress.js"></script>
 	<script type="text/javascript" src="js/mask.js"></script>
 	<script type="text/javascript" src="js/inputmask.js"></script>
@@ -32,10 +36,11 @@
 	<script type="text/javascript" src="js/ngmap.min.js"></script>
 	<script type="text/javascript" src="js/name.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/bootbox.min.js"></script>
+	<script type="text/javascript" src="js/bootbox.js"></script>
 	<script type="text/javascript" src="js/notify.js"></script>
 	<script type="text/javascript" src="js/moment.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-datepicker.min.js"></script>
+	<script type="text/javascript" src="js/user-color-control.js"></script>
 <!-- 	<script type="text/javascript" src="js/jquery.datetimepicker.js"></script> -->
 	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
 	<script type="text/javascript" src="js/engine.js?ver=<?= settings()->version ?>"></script>
@@ -43,3 +48,4 @@
     <?= $this->_js_additional ?>
   </head>
   <body>
+	  <div class="lightbox"></div>

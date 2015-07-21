@@ -145,6 +145,15 @@
 			$this->_tab_title = $title;
 		}
 		
+		/**
+		 * Установить заголовок таба.
+		 * 
+		 */
+		protected function setRightTabTitle($title)
+		{
+			$this->_tab_title .= '<span class="pull-right">'. $title . '</span>';
+		}
+		
 		public function tabTitle()
 		{
 			return $this->_tab_title;

@@ -1,8 +1,18 @@
-
+	moment.lang('ru-RU');
+	var ang_scope;
+	
 	// Основной скрипт
 	$(document).ready(function() {
+		// ангуляровский scope
+		ang_scope = angular.element("[ng-app='Request']").scope()
+		
 		// Вешаем маски
 		rebindMasks()
+		
+		// закрываем лайтбокс
+		$(".lightbox").on("click", function() {
+			lightBoxHide();
+		})
 		
 		// Предотвращаем пустой поиск
 		$("#global-search").submit(function() {
@@ -19,6 +29,33 @@
 		}
 	});
 	
+	function redirect(url) {
+		window.location = url
+	}
+	
+	// Удалить заявку по ID
+	function deleteRequest(id_request) {
+		bootbox.confirm("Вы уверены, что хотите удалить заявку #" + id_request, function(result) {
+			if (result === true) {
+				ajaxStart()
+				$.post("ajax/deleteRequest", {"id_request": id_request}, function() {
+					window.history.go(-1)	
+				})
+			}
+		})
+	}
+	
+	// Удалить ученика по ID
+	function deleteStudent(id_student) {
+		bootbox.confirm("Вы уверены, что хотите удалить профиль ученика №" + id_student, function(result) {
+			if (result === true) {
+				ajaxStart()
+				$.post("ajax/deleteStudent", {"id_student": id_student}, function() {
+					window.history.go(-1)	
+				})
+			}
+		})
+	}
 	
 	/**
 	 * Вызов функции с задержкой в 100 миллисекунд, чтобы успели создаться новые элементы
@@ -63,7 +100,39 @@
 			
 			
 			// Маска телефонов
-			$(".phone-masked").mask("+7 (999) 999-99-99", { autoclear: false })	
+			$(".phone-masked")
+				.mask("+7 (999) 999-99-99", { autoclear: false })
+				.on("keyup", phoneInLoop)
+				
+			function phoneInLoop() {
+				// если есть нижнее подчеркивание, то номер заполнен не полностью
+				not_filled = $(this).val().match(/_/)
+				
+				t = $(this)
+				// если номер полностью заполнен
+				if (!not_filled) {
+					$.post("ajax/checkPhone", {'phone': $(this).val(), 'id_request': ang_scope.id_request}, function(response) {
+						if (response != "null") {
+							ang_scope.phone_duplicate = response
+							t.addClass("has-error")
+							//console.log(response)
+							//t.parent().find("button span").removeClass("glyphicon-plus").addClass("glyphicon-random")
+							// $("<h2>herererer</h2>").insertAfter(t)
+						} else {
+							ang_scope.phone_duplicate = null
+							t.removeClass("has-error")
+						}
+						ang_scope.$apply()
+					})
+				} else {
+					t.removeClass("has-error")
+					ang_scope.phone_duplicate = null
+					ang_scope.$apply()
+				}
+			}
+			
+			// FLOAT-LABEL
+			$(".floatlabel").floatlabel();
 		}, 100)
 	}
 	
@@ -95,6 +164,27 @@
 		});
 	}
 	
+	
+	/**
+	 * Получить цвет метро по названию.
+	 * 
+	 */
+	function getColorByName(name) {
+		var metro
+		
+		$.each(metro_data.stations, function (i, v) {
+			if (v.name == name) {
+				metro = v
+				return
+			}	
+		})
+		
+		line = metro_data.lines[metro.lineId]
+		
+		
+		return line.color
+	}
+	
 	/**
 	 * Инициализировать array перед push, если он не установлен, чтобы не было ошибки.
 	 * 
@@ -106,6 +196,17 @@
 		return arr	
 	}
 	
+	/**
+	 * Инициализировать array перед push, если он не установлен, чтобы не было ошибки.
+	 * 
+	 */
+	function initIfNotSetObject(obj) {
+		if (!obj) {
+			obj = {}
+		}
+		return obj	
+	}
+	
 	
 	/**
 	 * Скрываем/показываем лайтбоксы и элементы.
@@ -113,12 +214,18 @@
 	 */
 	function lightBoxShow(element)
 	{
+		if (element == "addcontract") {
+			setTimeout(function(){$(".ios7-switch.transition-control").removeClass("no-transition")}, 300)
+		}
+		
 		$(".lightbox, .lightbox-" + element).fadeIn(150)
 	}
 	
 	function lightBoxHide()
 	{
-		$(".lightbox, div[class^='lightbox-'").fadeOut(150)
+		$(".ios7-switch.transition-control").addClass("no-transition")
+		
+		$(".lightbox, div[class^='lightbox-']").fadeOut(150)
 	}
 	
 	

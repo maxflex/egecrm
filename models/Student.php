@@ -23,7 +23,28 @@
 		}
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
-
+		
+		
+		/**
+		 * Получить студентов с договорами.
+		 * 
+		 */
+		public static function getWithContract()
+		{
+			$query = dbConnection()->query("SELECT id_student FROM contracts GROUP BY id_student");
+			
+			while ($row = $query->fetch_array()) {
+				if ($row["id_student"]) {
+					$ids[] = $row["id_student"];
+				}
+			}
+			
+			
+			return self::findAll([
+				"condition"	=> "id IN (". implode(",", $ids) .")"
+			]);
+		}
+		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
 		/**
@@ -57,6 +78,13 @@
 			}
 		}
 		
+		public function getComments()
+		{
+			return Comment::findAll([
+				"condition"	=> "place='". Comment::PLACE_STUDENT ."' AND id_place=". $this->id
+			]);
+		}
+		
 		/**
 		 * Получить договоры студента.
 		 * 
@@ -66,6 +94,41 @@
 			return Contract::findAll([
 				"condition"	=> "deleted=0 AND id_student=" . $this->id
 			]);	
+		}
+		
+		/**
+		 * Получить постудний договор студента.
+		 * 
+		 */
+		public function getLastContract()
+		{
+			return Contract::find([
+				"condition"	=> "deleted=0 AND id_student=" . $this->id,
+				"order"		=> "id DESC",
+				"limit"		=> "1",
+			]);	
+		}
+		
+		
+		/**
+		 * Получить одну из заявок студента.
+		 * 
+		 */
+		public function getRequest()
+		{
+			return Request::find([
+				"condition" => "id_student={$this->id}"
+			]);
+		}
+		
+		
+		/**
+		 * ФИО.
+		 * 
+		 */
+		public function fio()
+		{
+			return $this->last_name." ".$this->first_name." ".$this->middle_name;
 		}
 		
 		/**
