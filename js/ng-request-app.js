@@ -63,9 +63,10 @@
 			// Выбрать список
 			$scope.changeList = function(request_status, push_history) {
 				//  Если нажимаем на один и тот же список -- ничего не делаем
+				/*
 				if (request_status.id == $scope.chosen_list) {
 					return
-				}
+				}*/
 
 				// Устанавливаем список
 				$scope.chosen_list = request_status.id
@@ -1081,6 +1082,12 @@
 
 
 			$(document).ready(function() {
+				
+				$("#request-edit").on('keyup change', 'input, select, textarea', function(){
+			        $scope.form_changed = true
+			        $scope.$apply()
+			    })
+				
 				// Добавляем JSON
 				$("#freetime_json").val(JSON.stringify($scope.freetime));
 
@@ -1109,12 +1116,12 @@
 					$("#notification-date").val("").parent().hide()
 					$("#notification-time").val("").parent().hide()
 				}
-
+				
 				// Кнопка сохранения
 				$("#save-button").on("click", function() {
 					// Проверяем все ли номера телефона заполнены
 					has_errors = false
-
+					
 					$(".phone-masked").filter(function() {
 						// если есть нижнее подчеркивание, то номер заполнен не полностью
 						not_filled = $(this).val().match(/_/)
@@ -1164,7 +1171,7 @@
 							if ($scope.redirect_after_save) {
 								redirect("requests/edit/" + $scope.redirect_after_save)
 							} else {
-								notifySuccess("Данные сохранены")
+							//	notifySuccess("Данные сохранены")
 							}
 						})
 						.error(function() {
@@ -1173,6 +1180,7 @@
 						.complete(function() {
 							if (!$scope.redirect_after_save) {
 								$scope.saving = false
+								$scope.form_changed = false
 								$scope.$apply()
 								ajaxEnd()
 							}

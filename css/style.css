@@ -4,7 +4,7 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
-button:disabled {
+button:disabled, select:disabled {
   cursor: default !important; }
 
 .bootbox-close-button {
@@ -345,9 +345,16 @@ h4 {
   cursor: default; }
 
 .user-list {
-  color: black; }
+  color: black;
+  outline: none; }
   .user-list.small {
+    height: 18px;
     width: 120px; }
+  .user-list.top {
+    height: 18px;
+    width: 120px;
+    margin-left: 10px;
+    font-size: 12px !important; }
 
 .half-black {
   color: rgba(0, 0, 0, 0.5) !important; }
@@ -358,6 +365,9 @@ h4 {
 
 .glyphicon.glyphicon-middle {
   top: 3px; }
+
+.glyphicon.glyphicon-2px {
+  top: 2px; }
 
 .input-red-bg {
   background: #ffcccc; }

@@ -16,7 +16,7 @@ body {
 	background-image: url("../img/background/bg.jpg");
 }
 
-button:disabled {
+button:disabled, select:disabled {
 	cursor: default !important;
 }
 
@@ -470,8 +470,16 @@ h4 {
 
 .user-list {
 	color: black;
+	outline: none;
 	&.small {
+		height: 18px;
 		width: 120px;
+	}
+	&.top {
+		height: 18px;
+		width: 120px;
+		margin-left: 10px;
+		font-size: 12px !important;
 	}
 }
 
@@ -489,6 +497,9 @@ h4 {
 .glyphicon {
 	&.glyphicon-middle {
 		top: 3px;
+	}
+	&.glyphicon-2px {
+		top: 2px;
 	}
 }
 

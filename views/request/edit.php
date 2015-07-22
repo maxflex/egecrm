@@ -79,7 +79,6 @@
 					</div>
 				</div>
 			</div>
-			<hr>
 			<center>
 				<button class="btn btn-primary" ng-click="addContractNew()">Сохранить</button>
 			</center>
@@ -103,7 +102,6 @@
 					<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
 				</div>
 			</div>
-			<hr>
 			<center>
 				<button class="btn btn-primary" ng-click="addPayment()">{{new_payment.id ? "Редактировать" : "Добавить"}}</button>
 			</center>
@@ -127,7 +125,7 @@
 
 		<!-- СКЛЕЙКА КЛИЕНТОВ -->
 		<div class="lightbox-new lightbox-glue">
-			<div style="height: 90px">
+			<div style="height: 110px">
 				<h4>Перенести в другой профиль</h4>
 			    <input id="id-student-glue" type="text" class="form-control" placeholder="ID ученика" ng-model="id_student_glue" ng-change="findStudent()">
 			    <h6 ng-show="GlueStudent" style="text-align: center">
@@ -137,7 +135,6 @@
 			    </span>
 			    </h6>
 			</div>
-		    <hr style="margin-top: 0">
 			<center>
 				<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue()">перенести</button>
 			</center>
@@ -271,12 +268,12 @@
 									<div ng-repeat="comment in request_comments">
 										<div id="comment-block-{{comment.id}}">
 											<span class="glyphicon glyphicon-stop" style="float: left"></span>
-											<div style="display: initial" id="comment-{{comment.id}}">
-												{{comment.comment}}
-											</div>
+											<div style="display: initial" id="comment-{{comment.id}}" onclick="editComment(this)" commentid="{{comment.id}}">
+												{{comment.comment}}</div>
 											<span class="save-coordinates">({{comment.coordinates}})</span>
-											<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span>
-											<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove" onclick="deleteComment(this)"></span>
+<!-- 											<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span> -->
+											<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" 
+												onclick="deleteComment(this)"></span>
 										</div>
 									</div>
 								</div>
@@ -593,12 +590,11 @@
 								<div ng-repeat="comment in student_comments">
 									<div id="comment-block-{{comment.id}}">
 										<span class="glyphicon glyphicon-stop" style="float: left"></span>
-										<div style="display: initial" id="comment-{{comment.id}}">
-											{{comment.comment}}
-										</div>
+										<div style="display: initial" id="comment-{{comment.id}}" commentid="{{comment.id}}" onclick="editComment(this)">{{comment.comment}}</div>
 										<span class="save-coordinates">({{comment.coordinates}})</span>
-										<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span>
-										<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove" onclick="deleteComment(this)"></span>
+<!-- 										<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span> -->
+										<span ng-attr-data-id="{{comment.id}}" 
+											class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
 									</div>
 								</div>
 							</div>
@@ -803,7 +799,10 @@
     </div>
     <div class="row" style="margin-top: 10px">
     	<div class="col-sm-12 center">
-	    	<button class="btn btn-primary" id="save-button" ng-disabled="saving" ng-hide="<?= $Request->adding ?>">Сохранить</button>
+	    	<button class="btn btn-primary" id="save-button" ng-disabled="saving || !form_changed" ng-hide="<?= $Request->adding ?>" style="width: 100px">
+	    		<span ng-show="form_changed">Сохранить</span>
+	    		<span ng-show="!form_changed && !saving">Сохранено</span>
+	    	</button>
 
 	    	<!-- ДОБАВЛЕНИЕ ЗАЯВКИ В ПРОФИЛЬ УЧЕНИКА -->
 	    	<button class="btn btn-primary" ng-click="addAndRedirect()" ng-disabled="saving" ng-show="<?= ($Request->adding && $_GET["id_student"]) ?>">Добавить заявку</button>

@@ -49,12 +49,11 @@
 						<div ng-repeat="comment in request.Comments">
 							<div id="comment-block-{{comment.id}}">
 								<span class="glyphicon glyphicon-stop" style="float: left"></span>
-								<div style="display: initial" id="comment-{{comment.id}}">
-									{{comment.comment}}
-								</div>
+								<div style="display: initial" id="comment-{{comment.id}}" onclick="editComment(this)"  commentid="{{comment.id}}">
+									{{comment.comment}}</div>
 								<span class="save-coordinates">({{comment.coordinates}})</span>
-								<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span>
-								<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove" onclick="deleteComment(this)"></span>
+<!-- 								<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span> -->
+								<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
 							</div>
 						</div>
 					</div>

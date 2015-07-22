@@ -26,7 +26,6 @@
 
 </div>
 
-
 <table class="table table-hover">
 	<thead style="font-weight: bold">
 		<tr>

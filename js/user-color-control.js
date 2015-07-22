@@ -19,3 +19,13 @@
 		
 		$.post("ajax/changeRequestUser", {"id_request" : id_request, "id_user_new" : id_user_new});
 	}
+	
+	
+	function setRequestListUser(elem) {
+		id_user = $(elem).val();
+		console.log("here", id_user);
+		
+		$.cookie("id_user_list", id_user, { expires: 365, path: '/' });
+		
+		$("li.active").first().children().first().click();
+	}

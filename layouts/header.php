@@ -23,6 +23,7 @@
 	<link href="css/ios7switch.css" rel="stylesheet">
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/jquery.cookie.js"></script>
 	<script type='text/javascript' src='js/comments-app-global.js?ver=<?= settings()->version ?>'></script>
 	<script type="text/javascript" src="js/metro_data.js"></script>
 	<script type="text/javascript" src="js/floatlabel.js"></script>

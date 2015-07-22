@@ -222,9 +222,6 @@
 				}
 			}
 			
-//			$stats = self::getByWeeks();
-//			preType($stats, true);
-			
 			$this->render("list", [
 				"stats" => $stats
 			]);

@@ -5,27 +5,26 @@
 	class RequestStatuses extends Factory {
 
 		# Список
-		const NEWR				= 0;
-		const UNFINISHED	= 1;
+		const NEWR			= 0;
 		const FINISHED		= 2;
 		const AWAITING		= 3;
-		const NOT_DECIDED = 6;
-		const DENY				= 5;
-		const SPAM				= 4;
+		const NOT_DECIDED 	= 6;
+		const DENY			= 5;
+		const SPAM			= 4;
 		const DUPLICATE		= 7;
-		const ALL 				= 8;
+		const ALL 			= 8;
 
 
 		# Все
 		static $all = [
-			self::NEWR				=> "невыполненные",
+			self::NEWR			=> "невыполненные",
 			self::FINISHED		=> "выполненные",
 			self::AWAITING		=> "ожидаются",
-			self::NOT_DECIDED => "не решили",
-			self::DENY				=> "отказ",
-			self::SPAM				=> "спам",
+			self::NOT_DECIDED 	=> "не решили",
+			self::DENY			=> "отказ",
+			self::SPAM			=> "спам",
 			self::DUPLICATE		=> "дубль",
-			self::ALL					=> "все",
+			self::ALL			=> "все",
 		];
 
 		# Заголовок
@@ -33,7 +32,7 @@
 
 		# Удаляем
 		static $deleted = [
-			self::UNFINISHED,
+			self::ALL,
 		];
 
 		# Не отображать в списке
@@ -55,7 +54,7 @@
 
 			foreach ($constants as $name => $value) {
 				// не показывать удаленные
-				if (!in_array($value, static::$deleted) && !in_array($value, static::$hidden)) {
+				if (!in_array($value, static::$hidden)) {
 					$return[] = [
 						"id" 		=> $value,
 						"constant"	=> $name,

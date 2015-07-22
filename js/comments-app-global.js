@@ -85,7 +85,8 @@
 	// Редактирование комментариев
 	function editComment(elem)
 	{	
-		id_comment = $(elem).data('id')
+		//id_comment = $(elem).data('id')
+		id_comment = $(elem).attr("commentid");
 		
 		comment = $("#comment-" + id_comment)
 		old_text = comment.text()

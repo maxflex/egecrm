@@ -98,7 +98,9 @@
 
 
 			$Requests = self::findAll([
-				"condition"	=> "adding=0". ($id_status == RequestStatuses::ALL ? "" : " AND id_status=".$id_status) ,
+				"condition"	=> "adding=0"
+					. ($id_status == RequestStatuses::ALL ? "" : " AND id_status=".$id_status)
+					. (empty($_COOKIE["id_user_list"]) ? "" : " AND id_user=".$_COOKIE["id_user_list"]) ,
 				"order"		=> "id DESC",
 				"group"		=> ($id_status == RequestStatuses::NEWR ? "id_student" : ""), // если список "неразобранные", то отображать дубликаты
 				"limit" 	=> $start_from. ", " .self::PER_PAGE
@@ -133,8 +135,12 @@
 		{
 			// Создаем нового ученика по заявке, либо привязываем к уже существующему
 			$this->createStudent();
-
+			
+			
 			// Устанавливаем статус заявки
+			if (time() - $this->delay_time < 10) {
+				$this->id_status = RequestStatuses::SPAM;	
+			} else
 			if ($this->_phoneExists()) {
 				$this->id_status = RequestStatuses::DUPLICATE;
 			}
