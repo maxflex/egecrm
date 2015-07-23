@@ -553,7 +553,7 @@
 			}
 		}
 
-
+		
 		/**
 		 * Найти и добавить связь с другой таблицей, если она не указана.
 		 *
@@ -569,6 +569,11 @@
 			if ($result->num_rows) {
 				$this->{$id_string} = $result->fetch_row()[0];
 			}
+		}
+		
+		public function changeId($newId, $oldId)
+		{
+			return static::dbConnection()->query("UPDATE ".static::$mysql_table." SET id=$newId WHERE id=$oldId");
 		}
 	}
 

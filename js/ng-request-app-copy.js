@@ -16,6 +16,19 @@
 				}
 			};
 		})
+		.filter('orderObjectBy', function() {
+		  return function(items, field, reverse) {
+		    var filtered = [];
+		    angular.forEach(items, function(item) {
+		      filtered.push(item);
+		    });
+		    filtered.sort(function (a, b) {
+		      return (a[field] > b[field] ? 1 : -1);
+		    });
+		    if(reverse) filtered.reverse();
+		    return filtered;
+		  };
+		})
 		/*
 
 			Контроллер списка заявок
@@ -139,8 +152,6 @@
 			$scope.toggleSubject = function(id_subject) {
 				if ($("#checkbox-subject-" + id_subject).is(":checked") == false) {
 					delete $scope.current_contract.subjects[id_subject]
-				} else {
-					$scope.current_contract.subjects[id_subject] = {'id_subject': id_subject, 'name' : $scope.subjects[id_subject], 'count' : '' }
 				}
 				// console.log($scope.current_contract.subjects[id_subject]);
 				setTimeout(function(){
@@ -777,50 +788,39 @@
 				}
 			}
 			
-			$scope.subjectChecked = function(id_subject) {
+			
+/*
+			$scope.checkedSubjectCondition = function(id_subject) {
 				checked = false
+				
 				angular.forEach($scope.current_contract.subjects, function(subject) {
 					if (subject.id_subject == id_subject) {
 						checked = true
 						return
 					}
 				})
-
+				
 				return checked
 			}
+*/
+			
 
-			$scope.getIndexByIdSubject = function(id_subject) {
-				res = false
-				angular.forEach($scope.current_contract.subjects, function(subject, i) {
-					console.log(subject, i)
-					if (subject.id_subject == id_subject) {
-						res = i
-						return
-					}
-				})
-
-				return res
-			}
 			
 			// вызывает окно редактирования контракта
 			$scope.callContractEdit = function(contract)
 			{
 				$scope.current_contract = angular.copy(contract)
-
+				
 				if ($scope.current_contract.grade === null) {
 					$scope.current_contract.grade = ""
 				}
 				
-//				$.makeArray($scope.current_contract.subjects)
-				
 				// баг-контрол!!!! надо прокомментировать
-				//if ($scope.current_contract.subjects[0]) {
-				//	$scope.current_contract.subjects.unshift("bug")
-				//}
+				if ($scope.current_contract.subjects[0]) {
+					$scope.current_contract.subjects.unshift("bug");	
+				}
 				
-				test = $scope.current_contract
-				
-				console.log($scope.current_contract.subjects)
+				console.log($scope.current_contract)
 				
 				lightBoxShow('addcontract')
 				$("select[name='grades']").removeClass("has-error")

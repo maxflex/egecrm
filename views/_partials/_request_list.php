@@ -23,7 +23,7 @@
 						{{request.grade}} класс,
 					</span>
 
-					<span ng-show="request.phone" ng-click="callSip(request.phone)" class="underline-hover inline-block">{{request.phone}}</span><span ng-show="request.phone2" ng-click="callSip(request.phone2)">, <span class="underline-hover inline-block">{{request.phone2}}</span></span><span ng-show="request.phone3" ng-click="callSip(request.phone3)">, <span class="underline-hover inline-block">{{request.phone3}}</span></span>
+					<span ng-show="request.phone"><span class="underline-hover inline-block" ng-click="callSip(request.phone)">{{request.phone}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone)"></span></span><span ng-show="request.phone2">, <span class="underline-hover inline-block" ng-click="callSip(request.phone2)">{{request.phone2}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone2)"></span></span><span ng-show="request.phone3">, <span class="underline-hover inline-block" ng-click="callSip(request.phone3)">{{request.phone3}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone3)"></span></span>
 
 				</span>
 

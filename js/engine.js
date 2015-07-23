@@ -22,6 +22,68 @@
 		})
 	})
 	
+	
+	function smsDialog(elem) {
+		var html = ""
+		
+		// если начинается с плюса, то это сразу номер телефона
+		if (elem[0] == "+") {
+			number = elem;
+		} else {
+			number = $('#' + elem).val()
+		}
+		
+		$("#sms-history").html('<center class="text-gray">загрузка истории сообщений...</center>')
+		
+		$.post("ajax/smsHistory", {"number": number}, function(response) {
+			console.log(response);
+			if (response != false) {
+				$.each(response, function(i, v) {
+					html += '<div class="clear-sms">		\
+								<div class="from-them">		\
+									' + v.message + ' 		\
+									<div class="sms-coordinates">' + v.coordinates + '</div>\
+							    </div>						\
+							</div>';	
+					})
+				$("#sms-history").html(html)
+			} else {
+			//	$("#sms-history").html("<div class='text-gray' style='text-align: center'>история сообщений пуста</div>");
+				$("#sms-history").html("")
+			}
+		}, "json")
+		
+		$("#sms-number").text(number)
+		lightBoxShow('sms')
+	}
+	
+	function sendSms() {
+		message = $("#sms-message");
+		number	= $("#sms-number").text();
+		
+		if (message.val().trim() == "") {
+			message.addClass("has-error").focus()
+			return
+		} else {
+			message.removeClass("has-error")
+		}
+		
+		$.post("ajax/sendSms", {
+			"message": message.val().trim(),
+			"number": number,
+		}, function(response) {
+			html = '\
+			<div class="clear-sms">		\
+					<div class="from-them">		\
+						' + response.message + ' 		\
+						<div class="sms-coordinates">' + response.coordinates + '</div>\
+				    </div>						\
+				</div>';	
+			$("#sms-history").prepend(html).animate({ scrollTop: 0 }, "fast");
+			message.val("")
+		}, "json");
+	}
+	
 	// По нажатию ESC во всем приложении закрыть LIGHTBOX
 	$(document).keyup(function(e) {
 		if (e.keyCode == 27) {

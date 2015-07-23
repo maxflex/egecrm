@@ -433,6 +433,20 @@
 		return preg_replace("/[^0-9]/","",$number);	
 	}
 	
+	
+	/**
+	 * Обратная функция – вернуть форматированный номер из 7290556776.
+	 * 
+	 */
+	function formatNumber($number) {
+		$part1 = substr($number, 1, 3);
+		$part2 = substr($number, 4, 3);
+		$part3 = substr($number, 7, 2);
+		$part4 = substr($number, 9, 2);
+		
+		return "+7 ($part1) $part2-$part3-$part4";
+	}
+	
 	function pluralize($one, $few, $many, $n)
 	{
 		return $n%10==1&&$n%100!=11?$one:($n%10>=2&&$n%10<=4&&($n%100<10||$n%100>=20)?$few:$many);

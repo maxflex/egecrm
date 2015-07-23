@@ -1,3 +1,24 @@
+<!-- ЛАЙТБОКС ОТПРАВКА СООБЩЕИЯ -->
+<div class="lightbox-new lightbox-sms">
+	<h4 style="text-align: center" id="sms-number">
+		<span class="text-danger">Номер не установлен!</span>
+	</h4>
+	<div class="row">
+		<div class="col-sm-12" id="sms-history">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12" style="text-align: center">
+			<div class="form-group">
+				<textarea rows="8" class="form-control" style="width: 100%" placeholder="Текст сообщения" id="sms-message"></textarea>
+			</div>
+			<button class="btn btn-primary" id="sms-send" onclick="sendSms()">Отправить</button>
+		</div>
+	</div>
+</div>
+<!-- /ЛАЙТБОКС ОТПРАВКА СООБЩЕНИЯ -->
+
+
 <div class="row">
   <div class="col-sm-1">
   </div>
@@ -29,7 +50,7 @@
 	<a href="notifications" class="list-group-item">Напоминания</a>
 	<a href="stats" class="list-group-item">Итоги</a>
     <a href="clients" class="list-group-item">Клиенты</a>
-    <a href="#" class="list-group-item">Преподователи</a>
+    <a href="sms" class="list-group-item">SMS</a>
     <a href="#" class="list-group-item">Группы</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="#" class="list-group-item">Пользователи</a>

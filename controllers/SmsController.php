@@ -1,0 +1,1 @@
+<?php	// Контроллер	class SmsController extends Controller	{		public $defaultAction = "history";				// Папка вьюх		protected $_viewsFolder	= "sms";				// Страница входа			public function actionHistory()		{				$this->setTabTitle("История СМС");						$History = SMS::findAll();						$this->render("history", [				"History" => $History,			]);		}			}

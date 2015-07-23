@@ -130,6 +130,21 @@
 				$OriginalContract = new Contract($Contract);
 				$OriginalContract->save();
 				
+				// ВРЕМЕННО! СМЕНА ID
+				if ($Contract["new_id"]) {
+					// меняем ID старых версий договора
+					$contract_ids = Contract::getIds([
+						"condition" => "id_contract=".$OriginalContract->id,
+					]);
+					
+					dbConnection()->query("update contracts set id_contract=".$Contract["new_id"]." where id IN (". implode(",", $contract_ids) .")");
+					
+					dbConnection()->query("update contract_subjects set id_contract=".$Contract["new_id"]." where id_contract=" . $OriginalContract->id);
+
+					
+					Contract::changeId($Contract["new_id"], $OriginalContract->id);
+				}
+				
 				// Загружаем туда файлы
 				// $OriginalContract->uploadFile();
 				

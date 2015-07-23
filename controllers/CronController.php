@@ -19,4 +19,33 @@
 					$Notification->notify();
 				}
 			}
+			
+			
+			/**
+			 * Обновить статусы СМС. На самом деле запускается не кроном, а сервисом sms.ru
+			 * 
+			 */
+			public static function actionUpdateSmsStatus()
+			{
+				foreach ($_POST["data"] as $entry) {
+					$lines = explode("\n",$entry);
+					if ($lines[0] == "sms_status") {
+				
+						$sms_id 	= $lines[1];
+						$sms_status = $lines[2];
+						
+						$SMS = SMS::find([
+							"condition" => "id_smsru='". $sms_id ."'"
+						]);
+						
+						if ($SMS) {
+							$SMS->id_status = $sms_status;
+							$SMS->save("id_status");
+						}
+						// "Изменение статуса. Сообщение: $sms_id. Новый статус: $sms_status";
+						// Здесь вы можете уже выполнять любые действия над этими данными.
+					}
+				}
+				exit("100"); /* Важно наличие этого блока, иначе наша система посчитает, что в вашем обработчике сбой */
+			}
 	}

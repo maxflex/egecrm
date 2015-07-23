@@ -228,4 +228,27 @@
 			// возвращается, если номера нет в базе
 			returnJson(null);
 		}
+		
+		public function actionAjaxSendSms()
+		{
+			extract($_POST);
+			
+			$SMS = SMS::send($number, $message);
+			$SMS->getCoordinates();
+			
+			returnJSON($SMS);
+		}
+		
+		public function actionAjaxSmsHistory() {
+			extract($_POST);
+			
+			$number = cleanNumber($number);
+			
+			$History = SMS::findAll([
+				"condition" => "number='$number'",
+				"order"		=> "date DESC",
+			]);
+			
+			returnJSON($History);
+		}
 	}
