@@ -13,6 +13,14 @@ button:disabled, select:disabled {
 #delete-student {
   display: none; }
 
+.gmap-search-control {
+  top: 5px !important;
+  right: 10px !important;
+  width: 200px;
+  opacity: .8; }
+  .gmap-search-control:hover {
+    opacity: 1; }
+
 .modal-footer {
   border-top: 0; }
 

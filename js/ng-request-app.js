@@ -1,4 +1,4 @@
-	var testyy;
+	var test;
 
 	angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		.config( [
@@ -34,6 +34,16 @@
 					$scope.changeList(e.state, false)
 				}
 			})
+			
+			// проверить номер телефона
+		    $scope.isMobilePhone = function(phone) {
+			    // пустой номер телефона – это тоже правильный номер телефона
+			    if (!phone) {
+				    return false
+			    }
+				
+				return !phone.indexOf("+7 (9")
+		    }
 
 			$scope.smsDialog = smsDialog;
 			
@@ -137,6 +147,9 @@
 			})
 
 			$scope.toggleSubject = function(id_subject) {
+				// если предметы не установлены
+				$scope.current_contract.subjects = initIfNotSet($scope.current_contract.subjects)
+				
 				if ($("#checkbox-subject-" + id_subject).is(":checked") == false) {
 					delete $scope.current_contract.subjects[id_subject]
 				} else {
@@ -245,36 +258,49 @@
 				// устанавливаем тип метки
 				$scope.marker_type = type
 
+				
 				// Показываем карту
 				lightBoxShow('map')
 				google.maps.event.trigger($scope.gmap, 'resize')
-
+				
 				// Зум и центр карты по умолчанию
 				$scope.gmap.setCenter(new google.maps.LatLng(55.7387, 37.6032))
 				$scope.gmap.setZoom(10)
-
+				
+				// Обнуляем значение поиска
+				$("#map-search").val("")
+				
+				// Удаляем все маркеры поиска
+				if ($scope.search_markers && $scope.search_markers.length) {
+					$.each($scope.search_markers, function(i, marker) {
+						$log.log(marker)
+						marker.setMap(null)
+					})
+					$scope.search_markers = []
+				}
+				
 				// Если уже есть добавленные маркеры
 				if ($scope.markers.length) {
 					// отображать только метки с выбранным типом
 					bounds = new google.maps.LatLngBounds()
 					// есть отображаемые маркеры
-					has_markers = false
+					markers_count = 0
 					// отображаем маркеры по одному
 					$.each($scope.markers, function(index, marker) {
 						if (marker.type != type) {
 							marker.setVisible(false)
 						} else {
-							has_markers = true // отображаемые маркеры есть
+							markers_count++ // отображаемые маркеры есть
 							marker.setVisible(true)
 							bounds.extend(marker.position) // границы карты в зависимости от поставленных меток
 						}
 					})
 
 					// если отображаемые маркеры есть, делаем зум на них
-					if (has_markers) {
-						$scope.gmap.setZoom(20)
+					if (markers_count > 0) {
 						$scope.gmap.fitBounds(bounds)
 						$scope.gmap.panToBounds(bounds)
+						$scope.gmap.setZoom(12)
 					}
 				}
 			}
@@ -330,32 +356,100 @@
 				// применяем изменения (ОБЯЗАТЕЛЬНО, иначе слетят метки без изменений)
 				$scope.$apply()
 			}
+			
+			$scope.searchMap = function(element) {
+				console.log($(element))	
+			}
+			
+			$scope.gmapAddMarker = function(event) {
+				// Создаем маркер
+				var marker = newMarker($scope.marker_id++, $scope.marker_type, event.latLng)
 
+				// Добавляем маркер в маркеры
+				$scope.markers.push(marker)
+
+				// Добавляем маркер на карту
+				marker.setMap($scope.gmap)
+
+				// Добавляем ивент удаления маркера
+				$scope.bindMarkerDelete(marker)
+			}
+			
 			// ПОСЛЕ ЗАГРУЗКИ КАРТЫ
 			$scope.$on('mapInitialized', function(event, map) {
 				// Запоминаем карту после инициалицации
 				$scope.gmap = map
-
+				
+				test = map
+				
 				// Добавляем существующие метки
 				$scope.loadServerMarkers();
-
+				
+				
+				// generate recommended search bounds
+				INIT_COORDS = {lat: 55.7387, lng: 37.6032};
+				$scope.RECOM_BOUNDS = new google.maps.LatLngBounds(
+		            new google.maps.LatLng(INIT_COORDS.lat-0.5, INIT_COORDS.lng-0.5), 
+		            new google.maps.LatLng(INIT_COORDS.lat+0.5, INIT_COORDS.lng+0.5)
+		        );        
+				$scope.geocoder = new google.maps.Geocoder();
+				
 				// События добавления меток
 				google.maps.event.addListener(map, 'click', function(event) {
-
-					// Создаем маркер
-					var marker = newMarker($scope.marker_id++, $scope.marker_type, event.latLng)
-
-					// Добавляем маркер в маркеры
-					$scope.markers.push(marker)
-
-					// Добавляем маркер на карту
-					marker.setMap(map)
-
-					// Добавляем ивент удаления маркера
-					$scope.bindMarkerDelete(marker)
+					$scope.gmapAddMarker(event)
 				})
 		    });
+		    
+		    // Поиск по карте
+		    $scope.searchMap = function(address) {
+				$scope.geocoder.geocode({address: address, bounds: $scope.RECOM_BOUNDS}, function(results, status) {
+				    if (status == google.maps.GeocoderStatus.OK) {
+					    $("#map-search").removeClass("has-error")
+					    
+				        $scope.gmap.setCenter(results[0].geometry.location)
 
+						var myIcon = {
+						  url: "http://www.clker.com/cliparts/U/8/J/z/5/D/google-maps-icon-blue-th.png",
+//						  size: new google.maps.Size(90,50), // the orignal size
+						  scaledSize: new google.maps.Size(22,40), // the new size you want to use
+						  origin: new google.maps.Point(0,0) // position in the sprite                   
+						};
+				        
+						search_marker = new google.maps.Marker({
+						    map: $scope.map,
+						    position: results[0].geometry.location,
+						    icon: myIcon,
+						});
+						
+						google.maps.event.addListener(search_marker, 'click', function(event) {
+							this.setMap(null)	
+							$scope.gmapAddMarker(event)
+						})
+						
+						$scope.search_markers = initIfNotSet($scope.search_markers)
+						$log.log($scope.search_markers)
+						$scope.search_markers.push(search_marker)
+				    } else {
+						$("#map-search").addClass("has-error").focus()
+				    }
+				});
+			}
+			
+			// Запуск поиска по карте
+			$scope.gmapsSearch = function($event) {
+				if ($event.keyCode == 13 || $event.type == "click") {
+					// prevent empty
+					if ($("#map-search").val() == "") {
+						$("#map-search").addClass("has-error")
+						return
+					} else {
+						$("#map-search").removeClass("has-error")
+					}
+					
+					$scope.searchMap($("#map-search").val())
+				}
+			}
+			
 			// Выбор дня и начало добавления свободного времени
 			$scope.chooseDay = function(day) {
 				// если этот день уже выбран, снимаем выборку
@@ -751,22 +845,16 @@
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
 						
-						
-						console.log("CURRENT", $scope.current_contract.subjects)
-						
 						//new_contract = angular.copy($scope.current_contract)
 						//new_contract.subjects = angular.copy($scope.current_contract.subjects)
 						new_contract = $.extend(true, {}, $scope.current_contract)
 						
 						
-						console.log("NEW", new_contract.subjects)
 						new_contract.subjects = new_contract.subjects.filter(function(e){return e})
 						
 						new_contract.subjects.sort(function(a, b) {
 							return a.id_subject - b.id_subject
 						})
-						
-						console.log("TYPE", $.type(new_contract.subjects[1].id_subject))
 						
 //						testyy = new_contract
 						
@@ -814,9 +902,11 @@
 //				$.makeArray($scope.current_contract.subjects)
 				
 				// баг-контрол!!!! надо прокомментировать
-				//if ($scope.current_contract.subjects[0]) {
-				//	$scope.current_contract.subjects.unshift("bug")
-				//}
+/*
+				if ($scope.current_contract.subjects[0]) {
+					$scope.current_contract.subjects.unshift("bug")
+				}
+*/
 				
 				test = $scope.current_contract
 				
@@ -1093,6 +1183,18 @@
 				not_filled = $("#" + element).val().match(/_/)
 				return not_filled == null
 		    }
+		    
+			// проверить номер телефона
+		    $scope.isMobilePhone = function(element) {
+			    phone = $("#" + element).val();
+			    
+			    // пустой номер телефона – это тоже правильный номер телефона
+			    if (!phone) {
+				    return false
+			    }
+				
+				return !phone.indexOf("+7 (9")
+		    }
 
 		    // Превратить в файлаплоад
 		    $scope.bindFileUpload = function(contract) {
@@ -1145,6 +1247,11 @@
 				
 				$("#request-edit").on('keyup change', 'input, select, textarea', function(){
 			        $scope.form_changed = true
+			        $scope.$apply()
+			    })
+			    
+			    $(".map-save-button").on("click", function() {
+				    $scope.form_changed = true
 			        $scope.$apply()
 			    })
 				

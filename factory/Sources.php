@@ -21,7 +21,7 @@
 		];
 		
 		static $deleted = [
-			self::INTERNET,		// интернет нельзя выбирать вручную
+		//	self::INTERNET,		// интернет нельзя выбирать вручную
 		];
 		
 		# Заголовок
@@ -32,7 +32,7 @@
 		public static function buildSelector($selected = false, $name = false, $attrs = false) {
 			// если выбран ИНТЕРНЕТ, то нельзя редактировать
 			if ($selected == self::INTERNET) {
-				$attrs["disabled"] = "disabled";
+			//	$attrs["disabled"] = "disabled";
 			}
 			
 			parent::buildSelector($selected, $name, $attrs);

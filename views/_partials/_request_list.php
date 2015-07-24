@@ -23,7 +23,7 @@
 						{{request.grade}} класс,
 					</span>
 
-					<span ng-show="request.phone"><span class="underline-hover inline-block" ng-click="callSip(request.phone)">{{request.phone}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone)"></span></span><span ng-show="request.phone2">, <span class="underline-hover inline-block" ng-click="callSip(request.phone2)">{{request.phone2}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone2)"></span></span><span ng-show="request.phone3">, <span class="underline-hover inline-block" ng-click="callSip(request.phone3)">{{request.phone3}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone3)"></span></span>
+					<span ng-show="request.phone"><span class="underline-hover inline-block" ng-click="callSip(request.phone)">{{request.phone}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone)" ng-show="isMobilePhone(request.phone)"></span></span><span ng-show="request.phone2">, <span class="underline-hover inline-block" ng-click="callSip(request.phone2)">{{request.phone2}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone2)" ng-show="isMobilePhone(request.phone2)"></span></span><span ng-show="request.phone3">, <span class="underline-hover inline-block" ng-click="callSip(request.phone3)">{{request.phone3}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone3)" ng-show="isMobilePhone(request.phone3)"></span></span>
 
 				</span>
 
@@ -81,11 +81,11 @@
 	<div class="row" style="margin-top: 20px">
 		<div class="col-sm-6">
 			<div ng-show="request.id_notification > 0 && false">
-				Напоминание:  {{notification_types[request.Notification.id_type]}} {{request.Notification.timestamp + "000" | date:'yy.MM.dd в HH:mm'}}
+				Напоминание:  {{notification_types[request.Notification.id_type]}} {{request.Notification.timestamp + "000" | date:'dd.MM.yy в HH:mm'}}
 			</div>
 			<div class="half-black">
 				Заявка №{{request.id}} создана {{request.id_user_created ? users[request.id_user_created].login : "system"}}
-				{{request.date_timestamp | date:'yy.MM.dd'}} в <span ng-class="getTimeClass(request.date_timestamp)">{{request.date_timestamp | date:'HH:mm'}}</span>
+				{{request.date_timestamp | date:'dd.MM.yy'}} в <span ng-class="getTimeClass(request.date_timestamp)">{{request.date_timestamp | date:'HH:mm'}}</span>
 				<a class="link-reverse" style="margin-left: 5px" href="requests/edit/{{request.id}}">редактировать</a>
 			</div>
 		</div>

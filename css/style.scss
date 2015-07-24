@@ -28,6 +28,16 @@ button:disabled, select:disabled {
 	display: none;
 }
 
+.gmap-search-control {
+	top: 5px !important;
+	right: 10px !important;
+	width: 200px;
+	opacity: .8;
+	&:hover {
+		opacity: 1;
+	}
+}
+
 .modal-footer {
 	border-top: 0;
 }

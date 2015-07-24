@@ -138,8 +138,15 @@
 		public function actionAjaxDeleteRequest()
 		{
 			extract($_POST);
-
-			Request::deleteById($id_request);
+			
+			// нельзя удалять, если меньше одной заявки
+			$Request = Request::findById($id_request);
+			$RequestDuplicates = $Request->getDuplicates();
+			
+			// удаляем заявку только если есть дубликаты (если она не единственная)
+			if ($RequestDuplicates) {
+				Request::deleteById($id_request);
+			}
 		}
 
 

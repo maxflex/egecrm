@@ -119,11 +119,16 @@
 		<div class="lightbox-element lightbox-map">
 			<map zoom="10" disable-default-u-i="true" scale-control="true" zoom-control="true" zoom-control-options="{style:'SMALL'}">
 				<transit-layer></transit-layer>
-<!--
 				<custom-control position="TOP_RIGHT" index="1">
-		          <input type="text" id="map-search">
+				<div class="input-group gmap-search-control">
+		          <input type="text" id="map-search" class="form-control" ng-keyup="gmapsSearch($event)" placeholder="Поиск...">
+		          <span class="input-group-btn">
+				    <button class="btn btn-default" ng-click="gmapsSearch($event)">
+				    <span class="glyphicon glyphicon-search no-margin-right"></span>
+				    </button>
+				  </span>
+				</div>
 		        </custom-control>
--->
 			</map>
 			<button class="btn btn-default map-save-button" onclick="lightBoxHide()">Сохранить</button>
 		</div>
@@ -193,7 +198,7 @@
 					</span>
 					<span class="link-like link-reverse link-in-h" onclick="lightBoxShow('glue')">
 						перенести в другой профиль</span>
-					<span class="link-like link-reverse link-in-h" onclick='deleteRequest(<?= $Request->id ?>)'>
+					<span class="link-like link-reverse link-in-h" ng-show="request_duplicates.length > 1" onclick='deleteRequest(<?= $Request->id ?>)'>
 						удалить заявку
 					</span>
 				</span>
@@ -218,11 +223,12 @@
                     <div class="form-group">
 						
 						<div class="form-group">
-				            <div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone') }">
+				            <div class="input-group" 
+					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone') || (!isMobilePhone('request-phone') && request_phone_level >= 2) }">
 			                	<input ng-keyup id="request-phone" type="text"
 			                		placeholder="телефон" class="form-control phone-masked"  name="Request[phone]" value="<?= $Request->phone ?>">
 			                	<div class="input-group-btn">
-											<button ng-show="phoneCorrect('request-phone')" ng-class="{
+											<button ng-show="phoneCorrect('request-phone') && isMobilePhone('request-phone')" ng-class="{
 													'addon-bordered' : request_phone_level >= 2 || !phoneCorrect('request-phone')
 												}" class="btn btn-default" type="button" onclick="smsDialog('request-phone')">
 													<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
@@ -235,11 +241,12 @@
 						</div>
 						
 						<div class="form-group" ng-show="request_phone_level >= 2">
-				            <div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone-2') }">
+				            <div class="input-group" 
+					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone-2')  || (!isMobilePhone('request-phone') && request_phone_level >= 3) }">
 			                	<input ng-keyup id="request-phone-2" type="text"
 			                		placeholder="телефон 2" class="form-control phone-masked"  name="Request[phone2]" value="<?= $Request->phone2 ?>">
 			                	<div class="input-group-btn">
-									<button ng-show="phoneCorrect('request-phone-2')" ng-class="{
+									<button ng-show="phoneCorrect('request-phone-2') && isMobilePhone('request-phone-2')" ng-class="{
 											'addon-bordered' : request_phone_level >= 3 || !phoneCorrect('request-phone-2')
 										}" class="btn btn-default" type="button"  onclick="smsDialog('request-phone-2')">
 											<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
@@ -253,11 +260,12 @@
 						
 						
 						<div class="form-group" ng-show="request_phone_level >= 3">
-							<div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone-3') }">
+							<div class="input-group" 
+								ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone-3')  || !isMobilePhone('request-phone-3') }">
 				                <input type="text" id="request-phone-3" placeholder="телефон 3" 
 				                	class="form-control phone-masked"  name="Request[phone3]" value="<?= $Request->phone3 ?>">
 				                	<div class="input-group-btn">
-										<button ng-show="phoneCorrect('request-phone-3')" ng-class="{
+										<button ng-show="phoneCorrect('request-phone-3') && isMobilePhone('request-phone-3')" ng-class="{
 												!phoneCorrect('request-phone-3')
 											}" class="btn btn-default" type="button"  onclick="smsDialog('request-phone-3')">
 												<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
@@ -310,6 +318,9 @@
 		    </div>
         </div>
 		<div class="col-sm-3">
+			<div class="form-group" ng-show="<?= $Request->adding ?>">
+                <input type="text" class="form-control bs-datetime" placeholder="дата создания заявки" name="Request[date]" value="">
+			</div>
 			<div class="form-group">
                 <?= RequestStatuses::buildSelector($Request->id_status, "Request[id_status]") ?>
 			</div>
@@ -365,6 +376,9 @@
 				    <h4 style="margin-top: 0" class="row-header">Ученик
 						<a class="link-like link-reverse link-in-h" ng-click="minimizeStudent(1)">свернуть</a>
 				    </h4>
+					<div class="form-group">
+		                <?= Grades::buildSelector($Request->Student->grade, "Student[grade]") ?>
+		            </div>
 				    <div class="form-group">
 		                <input type="text" placeholder="имя" class="form-control" name="Student[first_name]" ng-model="student.first_name">
 		            </div>
@@ -380,11 +394,12 @@
 
 					<div>
 			        	<div class="form-group">
-				            <div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone') }">
+				            <div class="input-group" 
+					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone')  || (!isMobilePhone('student-phone') && student_phone_level >= 2) }">
 			                	<input ng-keyup id="student-phone" type="text"
 			                		placeholder="телефон" class="form-control phone-masked"  name="Student[phone]" value="<?= $Request->Student->phone ?>">
 			                	<div class="input-group-btn">
-											<button ng-show="phoneCorrect('student-phone')" ng-class="{
+											<button ng-show="phoneCorrect('student-phone') && isMobilePhone('student-phone')" ng-class="{
 													'addon-bordered' : student_phone_level >= 2 || !phoneCorrect('student-phone')
 												}" class="btn btn-default" type="button" onclick="smsDialog('student-phone')">
 													<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
@@ -397,11 +412,12 @@
 						</div>
 						
 						<div class="form-group" ng-show="student_phone_level >= 2">
-				            <div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-2') }">
+				            <div class="input-group" 
+					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-2')  || (!isMobilePhone('student-phone-2') && student_phone_level >= 3) }">
 			                	<input ng-keyup id="student-phone-2" type="text"
 			                		placeholder="телефон 2" class="form-control phone-masked"  name="Student[phone2]" value="<?= $Request->Student->phone2 ?>">
 			                	<div class="input-group-btn">
-									<button ng-show="phoneCorrect('student-phone-2')" ng-class="{
+									<button ng-show="phoneCorrect('student-phone-2') && isMobilePhone('student-phone-2')" ng-class="{
 											'addon-bordered' : student_phone_level >= 3 || !phoneCorrect('student-phone-2')
 										}" class="btn btn-default" type="button"  onclick="smsDialog('student-phone-2')">
 											<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
@@ -415,11 +431,11 @@
 						
 						
 						<div class="form-group" ng-show="student_phone_level >= 3">
-							<div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-3') }">
+							<div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-3') || !isMobilePhone('student-phone-3') }">
 				                <input type="text" id="student-phone-3" placeholder="телефон 3" 
 				                	class="form-control phone-masked"  name="Student[phone3]" value="<?= $Request->Student->phone3 ?>">
 				                	<div class="input-group-btn">
-										<button ng-show="phoneCorrect('student-phone-3')" ng-class="{
+										<button ng-show="phoneCorrect('student-phone-3') && isMobilePhone('student-phone-3')" ng-class="{
 												!phoneCorrect('student-phone-3')
 											}" class="btn btn-default" type="button"  onclick="smsDialog('student-phone-3')">
 												<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
@@ -429,9 +445,6 @@
 			            </div>    
 					</div>
 					
-		            <div class="form-group">
-		                <?= Grades::buildSelector($Request->Student->grade, "Student[grade]") ?>
-		            </div>
 					<div class="form-group">
 					    <?=
 						    // Серия
@@ -465,6 +478,9 @@
 			    <div class="col-sm-3">
 				    <h4 style="margin-top: 0" class="row-header">Представитель</h4>
 				    <div class="form-group">
+		                <input type="text" placeholder="статус" class="form-control" name="Representative[status]" ng-model="representative.status">
+		            </div>
+				    <div class="form-group">
 		                <input type="text" placeholder="имя" class="form-control" name="Representative[first_name]" ng-model="representative.first_name">
 		            </div>
 		            <div class="form-group">
@@ -483,11 +499,12 @@
 		      
 					<div>
 			        	<div class="form-group">
-				            <div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone') }">
+				            <div class="input-group" 
+				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone')  || (!isMobilePhone('representative-phone') && representative_phone_level >= 2)  }">
 			                	<input ng-keyup id="representative-phone" type="text"
 			                		placeholder="телефон" class="form-control phone-masked"  name="Representative[phone]" value="<?= $Request->Student->Representative->phone ?>">
 			                	<div class="input-group-btn">
-											<button ng-show="phoneCorrect('representative-phone')" ng-class="{
+											<button ng-show="phoneCorrect('representative-phone') && isMobilePhone('representative-phone')" ng-class="{
 													'addon-bordered' : representative_phone_level >= 2 || !phoneCorrect('representative-phone')
 												}" class="btn btn-default" type="button" onclick="smsDialog('representative-phone')">
 													<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
@@ -500,11 +517,12 @@
 						</div>
 						
 						<div class="form-group" ng-show="representative_phone_level >= 2">
-				            <div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-2') }">
+				            <div class="input-group" 
+				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-2')  || (!isMobilePhone('representative-phone-2') && representative_phone_level >= 3)  }">
 			                	<input ng-keyup id="representative-phone-2" type="text"
 			                		placeholder="телефон 2" class="form-control phone-masked"  name="Representative[phone2]" value="<?= $Request->Student->Representative->phone2 ?>">
 			                	<div class="input-group-btn">
-									<button ng-show="phoneCorrect('representative-phone-2')" ng-class="{
+									<button ng-show="phoneCorrect('representative-phone-2') && isMobilePhone('representative-phone-2')" ng-class="{
 											'addon-bordered' : representative_phone_level >= 3 || !phoneCorrect('representative-phone-2')
 										}" class="btn btn-default" type="button"  onclick="smsDialog('representative-phone-2')">
 											<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
@@ -518,11 +536,12 @@
 						
 						
 						<div class="form-group" ng-show="representative_phone_level >= 3">
-							<div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-3') }">
+							<div class="input-group" 
+				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-3')  || !isMobilePhone('representative-phone-3')  }">
 				                <input type="text" id="representative-phone-3" placeholder="телефон 3" 
 				                	class="form-control phone-masked"  name="Representative[phone3]" value="<?= $Request->Student->Representative->phone3 ?>">
 				                	<div class="input-group-btn">
-										<button ng-show="phoneCorrect('representative-phone-3')" ng-class="{
+										<button ng-show="phoneCorrect('representative-phone-3') && isMobilePhone('representative-phone-3')" ng-class="{
 												!phoneCorrect('representative-phone-3')
 											}" class="btn btn-default" type="button"  onclick="smsDialog('representative-phone-3')">
 												<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>

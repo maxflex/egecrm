@@ -41,6 +41,8 @@
 	<script type="text/javascript" src="js/notify.js"></script>
 	<script type="text/javascript" src="js/moment.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-datepicker.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
+
 	<script type="text/javascript" src="js/user-color-control.js"></script>
 <!-- 	<script type="text/javascript" src="js/jquery.datetimepicker.js"></script> -->
 	<script type="text/javascript" src="js/jquery.timepicker.js"></script>

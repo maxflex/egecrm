@@ -156,6 +156,11 @@
 				orientation	: 'bottom auto',
 			})
 			
+			$(".bs-datetime").datetimepicker({
+				format: 'YYYY-MM-DD HH:mm',
+				locale: 'ru',
+			})
+			
 			// REGEX для полей типа "число" и "1-5"
 			$(".digits-only-float").inputmask("Regex", {regex: "[0-9]*[.]?[0-9]+"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
