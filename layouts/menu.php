@@ -20,7 +20,7 @@
 
 
 <div class="row">
-  <div class="col-sm-1">
+  <div class="col-sm-1" style="width: 4.5%">
   </div>
   
   <div class="col-sm-2">
@@ -91,7 +91,7 @@
     </div>
 -->
   </div>
-  <div class="col-sm-8">
+  <div class="col-sm-9">
     
 	<div class="panel panel-primary">
 	<div class="panel-heading">
