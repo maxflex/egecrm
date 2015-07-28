@@ -37,8 +37,8 @@
 
 		# Не отображать в списке
 		static $hidden = [
-			self::SPAM,
-			self::DUPLICATE,
+		//	self::SPAM,
+		//	self::DUPLICATE,
 		];
 
 		/**

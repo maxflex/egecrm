@@ -128,6 +128,10 @@
 			if ($this->isNewRecord || $this->adding) {
 				$this->date = now();
 			}
+			
+			if (empty(trim($this->date))) {
+				$this->date = now();
+			}
 		}
 
 
@@ -219,10 +223,21 @@
 
 		/**
 		 * Привязать заявку к существующему ученику (склейка клиентов).
-		 *
+		 * $delete_original_student - по умолчанию ученик удаляется, если это его единственная заявка
 		 */
-		public function bindToStudent($id_student)
+		public function bindToStudent($id_student, $delete_original_student = false)
 		{
+			// если ученик есть и надо удалить
+			if ($this->id_student && $delete_original_student && !$this->getDuplicates()) {
+				Student::fullDelete($this->id_student);
+			}
+			// если у ученика после переноса нет заявок (и ученика не надо удалять), создаем пустую заявку
+			if (!$delete_original_student  && !$this->getDuplicates()) {
+				$data = $this->dbData();
+				unset($data["id"]);
+				Request::add($data);
+			}
+			
 			$this->id_student = $id_student;
 			return ($this->save("id_student") > 0 ? true : false);
 		}

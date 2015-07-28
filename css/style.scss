@@ -541,7 +541,7 @@ a.link-white {
 
 .lightbox-glue {
 	width: 600px;
-	height: 174px;
+	height: 159px;
 	top: calc(40% - 63px);
 	left: calc(50% - 300px);
 	box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
@@ -755,6 +755,12 @@ select.has-error:focus, input.has-error:focus {
   border-color: #843534 !important;
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 6px #ce8483 !important;
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 6px #ce8483 !important;
+}
+
+.has-error-bold {
+	border-color: #843534 !important;
+    box-shadow: 0 0 10px 2px #ce8483 !important;
+	transition: all linear .5s;
 }
 
 .timepair {

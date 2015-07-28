@@ -137,18 +137,18 @@
 
 		<!-- СКЛЕЙКА КЛИЕНТОВ -->
 		<div class="lightbox-new lightbox-glue">
-			<div style="height: 110px">
+			<div style="height: 75px">
 				<h4>Перенести в другой профиль</h4>
 			    <input id="id-student-glue" type="text" class="form-control" placeholder="ID ученика" ng-model="id_student_glue" ng-change="findStudent()">
-			    <h6 ng-show="GlueStudent" style="text-align: center">
-			    Заявка будет перенесена в ученика №{{GlueStudent.id}}
-			    <span ng-show="GlueStudent.last_name || GlueStudent.first_name || GlueStudent.middle_name">
-				    ({{GlueStudent.last_name}} {{GlueStudent.first_name}} {{GlueStudent.middle_name}})
-			    </span>
-			    </h6>
 			</div>
 			<center>
-				<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue()">перенести</button>
+				<span ng-show="request_duplicates.length > 1">
+					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(0)">перенести</button>		
+				</span>
+				<span ng-show="request_duplicates.length <= 1">
+					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(1)">перенести с удалением ученика</button>
+					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(0)">скопировать заявку в указанного ученика</button>
+				</span>
 			</center>
 		</div>
 		<!-- /СКЛЕЙКА КЛИЕНТОВ -->
@@ -318,8 +318,9 @@
 		    </div>
         </div>
 		<div class="col-sm-3">
-			<div class="form-group" ng-show="<?= $Request->adding ?>">
-                <input type="text" class="form-control bs-datetime" placeholder="дата создания заявки" name="Request[date]" value="">
+			<div class="form-group">
+                <input type="text" class="form-control bs-datetime" placeholder="дата создания заявки" name="Request[date]" 
+                	value="<?= $Request->adding ? "" : $Request->date ?>">
 			</div>
 			<div class="form-group">
                 <?= RequestStatuses::buildSelector($Request->id_status, "Request[id_status]") ?>

@@ -181,18 +181,18 @@
 					$.post("ajax/checkPhone", {'phone': $(this).val(), 'id_request': ang_scope.id_request}, function(response) {
 						if (response != "null") {
 							ang_scope.phone_duplicate = response
-							t.addClass("has-error")
+							t.addClass("has-error-bold")
 							//console.log(response)
 							//t.parent().find("button span").removeClass("glyphicon-plus").addClass("glyphicon-random")
 							// $("<h2>herererer</h2>").insertAfter(t)
 						} else {
 							ang_scope.phone_duplicate = null
-							t.removeClass("has-error")
+							t.removeClass("has-error-bold")
 						}
 						ang_scope.$apply()
 					})
 				} else {
-					t.removeClass("has-error")
+					t.removeClass("has-error-bold")
 					ang_scope.phone_duplicate = null
 					ang_scope.$apply()
 				}

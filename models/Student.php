@@ -45,6 +45,61 @@
 			]);
 		}
 		
+		// Удаляет ученика и всё, что с ним связано
+		public static function fullDelete($id_student)
+		{
+			$Student = Student::findById($id_student);
+			
+			# Договоры
+			$contract_ids = Contract::getIds([
+				"condition" => "id_student=$id_student"
+			]);
+			
+			Contract::deleteAll([
+				"condition" => "id IN (". implode(",", $contract_ids) .")"
+			]);
+			
+			ContractSubject::deleteAll([
+				"condition" => "id_contract IN (". implode(",", $contract_ids) .")"
+			]);
+			
+			# Свободное время
+			Freetime::deleteAll([
+				"condition" => "id_student=$id_student"
+			]);
+			
+			# Метки
+			Marker::deleteAll([
+				"condition" => "id_owner=$id_student AND owner='STUDENT'"
+			]);
+			
+			# Платежи
+			Payment::deleteAll([
+				"condition" => "id_student=$id_student"
+			]);
+			
+			if ($Student->id_passport) {
+				Payment::deleteAll([
+					"condition" => "id={$Student->id_passport}"
+				]);
+			}
+			
+			if ($Student->id_representative) {
+				Representative::deleteAll([
+					"condition" => "id={$Student->id_representative}"
+				]);
+			}
+			
+			$Student->delete();
+		}
+		
+		public static function createEmptyRequest($id_student)
+		{
+			return Request::add([
+				"id_student" => $id_student,
+			]);
+		}
+		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
 		/**

@@ -59,8 +59,6 @@
 			$scope.getTimeClass = function(timestamp) {
 				hour = 60 * 60 * 1000;
 
-//				console.log(Date.now(), timestamp, (Date.now() - timestamp) / hour)
-
 				// если больше 2 часов
 				if (Date.now() - timestamp >= (hour * 2)) {
 					return 'label-red'
@@ -193,9 +191,13 @@
 			 * Склеить заявки
 			 *
 			 */
-			$scope.glue = function() {
+			$scope.glue = function(delete_student) {
 				ajaxStart()
-				$.post("requests/ajax/GlueRequest", {id_request: $scope.id_request, id_student: $scope.id_student_glue}, function(response) {
+				$.post("requests/ajax/GlueRequest", {
+					id_request: $scope.id_request, 
+					id_student: $scope.id_student_glue,
+					delete_student: delete_student
+				}, function(response) {
 					// если склеилось, то обновляем страницу
 					if (response === true) {
 						location.href = "requests/edit/" + $scope.id_request;
@@ -402,33 +404,60 @@
 		    
 		    // Поиск по карте
 		    $scope.searchMap = function(address) {
-				$scope.geocoder.geocode({address: address, bounds: $scope.RECOM_BOUNDS}, function(results, status) {
+				$scope.geocoder.geocode({
+					address: address + ", московская область",
+//					componentRestrictions: {
+//						locality: "Moscow",
+//				    },
+					bounds: $scope.RECOM_BOUNDS,
+				}, function(results, status) {
 				    if (status == google.maps.GeocoderStatus.OK) {
-					    $("#map-search").removeClass("has-error")
 					    
-				        $scope.gmap.setCenter(results[0].geometry.location)
-
-						var myIcon = {
-						  url: "http://www.clker.com/cliparts/U/8/J/z/5/D/google-maps-icon-blue-th.png",
-//						  size: new google.maps.Size(90,50), // the orignal size
-						  scaledSize: new google.maps.Size(22,40), // the new size you want to use
-						  origin: new google.maps.Point(0,0) // position in the sprite                   
-						};
-				        
-						search_marker = new google.maps.Marker({
-						    map: $scope.map,
-						    position: results[0].geometry.location,
-						    icon: myIcon,
-						});
+					    // максимальное кол-во результатов
+					    max_results = 3
+					    
+					    // масштаб поиска
+						search_result_bounds = new google.maps.LatLngBounds()
+					    
+					    $.each(results, function(i, result) {
+						    if (i >= max_results) {
+							    return
+						    }
+						    
+//							$scope.gmap.setCenter(result.geometry.location)
+							search_result_bounds.extend(result.geometry.location) // границы карты в зависимости от поставленных меток
+							
+							var myIcon = {
+							  url: "http://www.clker.com/cliparts/U/8/J/z/5/D/google-maps-icon-blue-th.png",
+							  scaledSize: new google.maps.Size(22,40), // the new size you want to use
+							  origin: new google.maps.Point(0,0) // position in the sprite                   
+							};
+					        
+							search_marker = new google.maps.Marker({
+							    map: $scope.map,
+							    position: result.geometry.location,
+							    icon: myIcon,
+							});
+							
+							google.maps.event.addListener(search_marker, 'click', function(event) {
+								this.setMap(null)	
+								$scope.gmapAddMarker(event)
+							})
+							
+							$scope.search_markers = initIfNotSet($scope.search_markers)
+//							$log.log($scope.search_markers)
+							$scope.search_markers.push(search_marker)  
+					    })
+					    
+					    // если отображаемые маркеры есть, делаем зум на них
+						if (results.length > 0) {
+							$scope.gmap.fitBounds(search_result_bounds)
+							$scope.gmap.panToBounds(search_result_bounds)
+							if (results.length == 1) {
+								$scope.gmap.setZoom(12)	
+							}
 						
-						google.maps.event.addListener(search_marker, 'click', function(event) {
-							this.setMap(null)	
-							$scope.gmapAddMarker(event)
-						})
-						
-						$scope.search_markers = initIfNotSet($scope.search_markers)
-						$log.log($scope.search_markers)
-						$scope.search_markers.push(search_marker)
+						}
 				    } else {
 						$("#map-search").addClass("has-error").focus()
 				    }
@@ -440,7 +469,7 @@
 				if ($event.keyCode == 13 || $event.type == "click") {
 					// prevent empty
 					if ($("#map-search").val() == "") {
-						$("#map-search").addClass("has-error")
+						$("#map-search").addClass("has-error").focus()
 						return
 					} else {
 						$("#map-search").removeClass("has-error")
@@ -1250,7 +1279,7 @@
 			        $scope.$apply()
 			    })
 			    
-			    $(".map-save-button").on("click", function() {
+			    $(".map-save-button, .bs-datetime").on("click", function() {
 				    $scope.form_changed = true
 			        $scope.$apply()
 			    })
