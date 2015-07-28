@@ -19,6 +19,8 @@
 	<div class="col-sm-3">
 		<?= number_format($Student->Contract->sum, 0, ",", " ") ?> рублей
 		<span class="pull-right"><?= $Student->Contract->cancelled ? "расторгнут" : "" ?></span>
+		
+		<span class="pull-right"><?= $Student->isNotFull() ? "не полный" : "полный" ?></span>
 	</div>
 	
 </div>

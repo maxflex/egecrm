@@ -176,6 +176,46 @@
 			]);
 		}
 		
+		public function isNotFull()
+		{
+			$Requsts = Request::findAll([
+				"condition" => "id_student={$this->id}"
+			]);
+			
+			/*
+				Хотя бы в 1 заявке отсутствует дата создания
+				Хотя бы в 1 заявке не указан источник
+			*/
+			foreach ($Requsts as $Requst) {
+				if (emptyDate($Requst->date) || !$Requst->id_source) {
+					return true;
+				}
+			}
+			
+			/*
+				Если у ученика не заполнено хотя бы 1 из полей (класс, фио, хотя бы 1 телефон, хотя бы 1 из полей паспортных данных, дата рождения)
+				Представитель: статус, фио, хотя бы 1 телефон, хотя бы 1 из полей в группе «паспорт»
+				Не стоит ни одной метки (школа, факт)
+				Ни одного филиала в удобных филиалах
+			*/
+			
+//			preType($Requst);
+//			echo $Requst->id_source;			
+//			var_dump(!$Requst->id_source);
+			
+			if (
+				   !$this->grade || !$this->first_name || !$this->last_name || !$this->middle_name || !$this->Representative->address
+				|| !($this->phone || $this->phone2 || $this->phone3) || !$this->Passport->series || !$this->Passport->number  || !$this->Passport->date_birthday
+				|| !$this->Representative->status || !$this->Representative->first_name || !$this->Representative->last_name || !$this->Representative->middle_name
+				|| !($this->Representative->phone || $this->Representative->phone2 || $this->Representative->phone3) || !$this->Representative->Passport->series
+				|| !$this->Representative->Passport->number || !$this->Representative->Passport->date_birthday || !$this->Representative->Passport->issued_by
+				|| !$this->Representative->Passport->date_issued || !$this->Representative->Passport->address || !$this->getMarkers() || !$this->branches
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 		
 		/**
 		 * ФИО.

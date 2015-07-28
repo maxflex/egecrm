@@ -115,6 +115,20 @@
 		</div>
 		<!-- /ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
 
+		<!-- ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
+		<div class="lightbox-new lightbox-print">
+			<h4>Выберите пользователя</h4>
+					<select class="form-control" id="user-print-select" ng-model="id_user_print">
+						<option selected="" value="">пользователь</option>
+						<option disabled="" value="">──────────────</option>
+						<option ng-repeat="user in users" ng-hide="!user.agreement" ng-value="user.id">{{user.login}}</option>
+					</select>
+			<center style="margin-top: 20px">
+				<button class="btn btn-primary" ng-click="runPrint()" ng-disabled="!id_user_print">Печать</button>
+			</center>
+		</div>
+		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
+		
 		<!-- ЛАЙТБОКС КАРТА -->
 		<div class="lightbox-element lightbox-map">
 			<map zoom="10" disable-default-u-i="true" scale-control="true" zoom-control="true" zoom-control-options="{style:'SMALL'}">
@@ -398,7 +412,7 @@
 				            <div class="input-group" 
 					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone')  || (!isMobilePhone('student-phone') && student_phone_level >= 2) }">
 			                	<input ng-keyup id="student-phone" type="text"
-			                		placeholder="телефон" class="form-control phone-masked"  name="Student[phone]" value="<?= $Request->Student->phone ?>">
+			                		placeholder="телефон" class="form-control phone-masked"  name="Student[phone]" ng-model="student.phone">
 			                	<div class="input-group-btn">
 											<button ng-show="phoneCorrect('student-phone') && isMobilePhone('student-phone')" ng-class="{
 													'addon-bordered' : student_phone_level >= 2 || !phoneCorrect('student-phone')
@@ -416,7 +430,7 @@
 				            <div class="input-group" 
 					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-2')  || (!isMobilePhone('student-phone-2') && student_phone_level >= 3) }">
 			                	<input ng-keyup id="student-phone-2" type="text"
-			                		placeholder="телефон 2" class="form-control phone-masked"  name="Student[phone2]" value="<?= $Request->Student->phone2 ?>">
+			                		placeholder="телефон 2" class="form-control phone-masked"  name="Student[phone2]" ng-model="student.phone2">
 			                	<div class="input-group-btn">
 									<button ng-show="phoneCorrect('student-phone-2') && isMobilePhone('student-phone-2')" ng-class="{
 											'addon-bordered' : student_phone_level >= 3 || !phoneCorrect('student-phone-2')
@@ -434,7 +448,7 @@
 						<div class="form-group" ng-show="student_phone_level >= 3">
 							<div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-3') || !isMobilePhone('student-phone-3') }">
 				                <input type="text" id="student-phone-3" placeholder="телефон 3" 
-				                	class="form-control phone-masked"  name="Student[phone3]" value="<?= $Request->Student->phone3 ?>">
+				                	class="form-control phone-masked"  name="Student[phone3]" ng-model="student.phone3">
 				                	<div class="input-group-btn">
 										<button ng-show="phoneCorrect('student-phone-3') && isMobilePhone('student-phone-3')" ng-class="{
 												!phoneCorrect('student-phone-3')
@@ -466,6 +480,17 @@
 							   "value"			=> $Request->Student->Passport->number,
 						    ], "999999");
 						?>
+		            </div>
+   		            <div class="form-group">
+						<?=
+						   Html::date([
+						   	"id" 			=> "student-passport-birthday",
+			               	"class"			=> "form-control",
+			               	"name"			=> "StudentPassport[date_birthday]",
+			               	"placeholder"	=> "дата рождения",
+			               	"value"			=> $Request->Student->Passport->date_birthday,
+			               ]);
+			            ?>
 		            </div>
 		            <div class="form-group" style="white-space: nowrap">
 			            <span class="link-like" ng-click="showMap('school')"><span class="glyphicon glyphicon-map-marker"></span>Школа местонахождение</span>
@@ -503,7 +528,7 @@
 				            <div class="input-group" 
 				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone')  || (!isMobilePhone('representative-phone') && representative_phone_level >= 2)  }">
 			                	<input ng-keyup id="representative-phone" type="text"
-			                		placeholder="телефон" class="form-control phone-masked"  name="Representative[phone]" value="<?= $Request->Student->Representative->phone ?>">
+			                		placeholder="телефон" class="form-control phone-masked"  name="Representative[phone]" ng-model="representative.phone">
 			                	<div class="input-group-btn">
 											<button ng-show="phoneCorrect('representative-phone') && isMobilePhone('representative-phone')" ng-class="{
 													'addon-bordered' : representative_phone_level >= 2 || !phoneCorrect('representative-phone')
@@ -521,7 +546,7 @@
 				            <div class="input-group" 
 				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-2')  || (!isMobilePhone('representative-phone-2') && representative_phone_level >= 3)  }">
 			                	<input ng-keyup id="representative-phone-2" type="text"
-			                		placeholder="телефон 2" class="form-control phone-masked"  name="Representative[phone2]" value="<?= $Request->Student->Representative->phone2 ?>">
+			                		placeholder="телефон 2" class="form-control phone-masked"  name="Representative[phone2]" ng-model="representative.phone2">
 			                	<div class="input-group-btn">
 									<button ng-show="phoneCorrect('representative-phone-2') && isMobilePhone('representative-phone-2')" ng-class="{
 											'addon-bordered' : representative_phone_level >= 3 || !phoneCorrect('representative-phone-2')
@@ -540,7 +565,7 @@
 							<div class="input-group" 
 				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-3')  || !isMobilePhone('representative-phone-3')  }">
 				                <input type="text" id="representative-phone-3" placeholder="телефон 3" 
-				                	class="form-control phone-masked"  name="Representative[phone3]" value="<?= $Request->Student->Representative->phone3 ?>">
+				                	class="form-control phone-masked"  name="Representative[phone3]" ng-model="representative.phone3">
 				                	<div class="input-group-btn">
 										<button ng-show="phoneCorrect('representative-phone-3') && isMobilePhone('representative-phone-3')" ng-class="{
 												!phoneCorrect('representative-phone-3')
@@ -550,6 +575,12 @@
 						            </div>
 							</div>
 			            </div>    
+					</div>
+					
+					<div class="form-group">
+						 <textarea rows="5" placeholder="адрес фактического проживания" 
+						 	class="form-control" name="Representative[address]" ng-model="representative.address">
+		                </textarea>
 					</div>
 		      
 		      
@@ -567,7 +598,8 @@
 							   "class"			=> "form-control half-field",
 							   "id"				=> "passport-series",
 							   "name"			=> "Passport[series]",
-							   "value"			=> $Request->Student->Representative->Passport->series,
+//							   "value"			=> $Request->Student->Representative->Passport->series,
+								"ng-model"		=> "representative.Passport.series",
 						    ], "9999");
 
 							// Номер
@@ -576,7 +608,8 @@
 							   "class"			=> "form-control half-field pull-right",
 							   "id"				=> "passport-number",
 							   "name"			=> "Passport[number]",
-							   "value"			=> $Request->Student->Representative->Passport->number,
+//							   "value"			=> $Request->Student->Representative->Passport->number,
+								"ng-model"		=> "representative.Passport.number",
 						    ], "999999");
 						?>
 		            </div>
@@ -587,7 +620,8 @@
 					               	"class"			=> "form-control",
 					               	"name"			=> "Passport[date_birthday]",
 					               	"placeholder"	=> "дата рождения",
-					               	"value"			=> $Request->Student->Representative->Passport->date_birthday,
+//					               	"value"			=> $Request->Student->Representative->Passport->date_birthday,
+									"ng-model"		=> "representative.Passport.date_birthday",
 					               ]);
 					            ?>
 		            </div>
@@ -601,12 +635,14 @@
 					               	"class"			=> "form-control",
 					               	"name"			=> "Passport[date_issued]",
 					               	"placeholder"	=> "когда",
-					               	"value"			=> $Request->Student->Representative->Passport->date_issued
+//					               	"value"			=> $Request->Student->Representative->Passport->date_issued
+									"ng-model"		=> "representative.Passport.date_issued",
 					               ]);
 					            ?>
 		            </div>
 		            <div class="form-group">
-		                <textarea rows="5" placeholder="адрес" class="form-control" name="Passport[address]"><?= $Request->Student->Representative->Passport->address ?></textarea>
+		                <textarea rows="5" placeholder="адрес" class="form-control" name="Passport[address]" ng-model="representative.Passport.address">
+		                </textarea>
 		            </div>
 			    </div>
 				<div class="col-sm-3">

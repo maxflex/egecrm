@@ -143,7 +143,7 @@
 				$("#request-edit").css("opacity", 1)
 				$("#panel-loading").hide()
 			})
-
+			
 			$scope.toggleSubject = function(id_subject) {
 				// если предметы не установлены
 				$scope.current_contract.subjects = initIfNotSet($scope.current_contract.subjects)
@@ -228,12 +228,24 @@
 
 
 			/**
-			 * Печать договора
+			 * Выбрать ID контракта для последующей печати договора
 			 *
 			 */
 			$scope.printContract = function(id_contract) {
-				printDiv("contract-print-" + id_contract);
+				$scope.id_contract_print = id_contract
+				lightBoxShow('print')
+			//	printDiv("contract-print-" + id_contract);
 			}
+			
+			/**
+			 * Запустить печать договора
+			 *
+			 */
+			$scope.runPrint = function() {
+				printDiv("contract-print-" + $scope.id_contract_print)
+				lightBoxHide()
+			}
+			
 
 			// Возвращаем структурированные данные по маркерам
 			// для передачи на сохранение
@@ -600,7 +612,7 @@
 
 			// Склонять имя в дательном падеже
 			// https://github.com/petrovich/petrovich-js
-			$scope.contractPrintName = function(person) {
+			$scope.contractPrintName = function(person, padej) {
 				var person = {
 					first	: person.first_name,
 					last	: person.last_name,
@@ -608,7 +620,7 @@
 				};
 
 				// склоняем в дательный падеж
-				person = petrovich(person, 'instrumental');
+				person = petrovich(person, padej);
 
 				// возвращаем ФИО
 				return person.last + " " + person.first + " " + person.middle;
