@@ -9,7 +9,11 @@
 		public static $mysql_table	= "requests";
 
 		protected $_inline_data = ["subjects"]; // Предметы (в БД хранятся строкой "1, 2, 3" – а тут в массиве
+		
+		// Номера телефонов
+		public static $_phone_fields = ["phone", "phone2", "phone3"];
 
+		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
 		public function __construct($array)
@@ -26,6 +30,13 @@
 
 			if ($this->id_branch) {
 				$this->addBranchInfo();
+			}
+			
+			// Генерируем форматированные номера
+			foreach (static::$_phone_fields as $phone_field) {
+				if ($this->{$phone_field} != "") {
+					$this->{$phone_field . "_formatted"} =  formatNumber($this->{$phone_field});
+				}
 			}
 
 			// Включаем связи
@@ -95,13 +106,11 @@
 			// С какой записи начинать отображение, по формуле
 			$start_from = ($page - 1) * self::PER_PAGE;
 
-
-
 			$Requests = self::findAll([
 				"condition"	=> "adding=0"
 					. ($id_status == RequestStatuses::ALL ? "" : " AND id_status=".$id_status)
 					. (empty($_COOKIE["id_user_list"]) ? "" : " AND id_user=".$_COOKIE["id_user_list"]) ,
-				"order"		=> "id DESC",
+				"order"		=> "date DESC",
 				"group"		=> ($id_status == RequestStatuses::NEWR ? "id_student" : ""), // если список "неразобранные", то отображать дубликаты
 				"limit" 	=> $start_from. ", " .self::PER_PAGE
 			]);
@@ -132,11 +141,19 @@
 			if (empty(trim($this->date))) {
 				$this->date = now();
 			}
+			
+			// Очищаем номера телефонов
+			foreach (static::$_phone_fields as $phone_field) {
+				$this->{$phone_field} = cleanNumber($this->{$phone_field});
+			}
 		}
 
 
 		public function processIncoming()
 		{
+			// На всякий случай очищаем номер челефона (через "ч" написано специально)
+			$this->phone = cleanNumber($this->phone);
+			
 			// Создаем нового ученика по заявке, либо привязываем к уже существующему
 			$this->createStudent();
 			

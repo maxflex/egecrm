@@ -115,7 +115,6 @@
 			$scope.new_payment = {id_status : 0}
 			$scope.current_contract = {subjects : []}
 
-
 			// сохранение
 			$scope.saving = false
 

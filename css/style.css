@@ -654,6 +654,11 @@ select.has-error:focus, input.has-error:focus {
   .input-group-with-hidden-span input {
     border-radius: 4px !important; }
 
+.table.table-divlike > tbody > tr > td {
+  border-top: none;
+  padding: 0;
+  padding-bottom: 5px; }
+
 /* make sidebar nav vertical */
 @media (min-width: 768px) {
   .sidebar-nav .navbar .navbar-collapse {

@@ -8,6 +8,9 @@
 		
 		protected $_inline_data = ["branches"]; // Предметы (в БД хранятся строкой "1, 2, 3" – а тут в массиве
 		
+		// Номера телефонов
+		public static $_phone_fields = ["phone", "phone2", "phone3"];
+		
 		// тип маркера
 		const MARKER_OWNER = "STUDENT";
 		
@@ -101,6 +104,14 @@
 		}
 		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
+		
+		public function beforeSave()
+		{
+			// Очищаем номера телефонов
+			foreach (static::$_phone_fields as $phone_field) {
+				$this->{$phone_field} = cleanNumber($this->{$phone_field});
+			}
+		}
 		
 		/**
 		 * Добавить паспорт.

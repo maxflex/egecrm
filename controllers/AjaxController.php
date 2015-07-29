@@ -258,4 +258,16 @@
 			
 			returnJSON($History);
 		}
+		
+		public function actionAjaxUpdateUserCache()
+		{
+			$Users = User::findAll();
+							
+			foreach ($Users as $User) {
+				$return[$User->id] = $User->dbData();
+			}
+			
+			$Users = $return;
+			memcached()->set("Users", $Users, 2 * 24 * 3600); // кеш на 2 дня
+		}
 	}

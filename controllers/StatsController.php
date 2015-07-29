@@ -18,7 +18,7 @@
 				$date = date("d.m.Y", strtotime("today -$i day"));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "date = '$date'"
+					"condition" => "date = '$date' AND id_contract=0"
 				]);
 				
 				$Payments = Payment::findAll([
@@ -57,7 +57,7 @@
 			
 			$date_end = date("d.m.Y", time());
 			
-			for ($i = 1; $i <= $weeks; $i++) {
+			for ($i = 0; $i <= $weeks; $i++) {
 				$last_sunday = strtotime("last sunday -$i weeks");
 				$date_start = date("d.m.Y", $last_sunday);
 				// h1($date_start. " - ".$date_end);
@@ -66,7 +66,7 @@
 				$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') < '$date_end_formatted'"
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') < '$date_end_formatted' AND id_contract=0"
 				]);
 				
 				$Payments = Payment::findAll([
@@ -115,7 +115,7 @@
 				$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') < '$date_end_formatted'"
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') < '$date_end_formatted' AND id_contract=0"
 				]);
 				
 				$Payments = Payment::findAll([
@@ -164,7 +164,7 @@
 				$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') < '$date_end_formatted'"
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') < '$date_end_formatted' AND id_contract=0"
 				]);
 				
 				$Payments = Payment::findAll([

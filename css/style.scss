@@ -865,6 +865,12 @@ select.has-error:focus, input.has-error:focus {
 	}
 }
 
+.table.table-divlike > tbody > tr > td {
+	border-top: none;
+	padding: 0;
+	padding-bottom: 5px;
+}
+
 /* make sidebar nav vertical */
 @media (min-width: 768px) {
   .sidebar-nav .navbar .navbar-collapse {

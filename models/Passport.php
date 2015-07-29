@@ -19,10 +19,14 @@
 
 			if ($this->series == 0) {
 				$this->series = null;
+			} else {
+				$this->series = $this->series . ' '; // FORCE STRING
 			}
 
 			if ($this->number == 0) {
 				$this->number = null;
+			} else {
+				$this->number = $this->number . ' '; // FORCE STRING
 			}
 		}
 

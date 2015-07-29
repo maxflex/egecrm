@@ -6,6 +6,10 @@
 
 		public static $mysql_table	= "representatives";
 		
+		// Номера телефонов
+		public static $_phone_fields = ["phone", "phone2", "phone3"];
+
+		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
 		public function __construct($array) 
@@ -21,6 +25,14 @@
 
 				
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
+		
+		public function beforeSave()
+		{
+			// Очищаем номера телефонов
+			foreach (static::$_phone_fields as $phone_field) {
+				$this->{$phone_field} = cleanNumber($this->{$phone_field});
+			}
+		}
 		
 		/**
 		 * Сколько номеров установлено.

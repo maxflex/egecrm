@@ -392,7 +392,7 @@
 						<a class="link-like link-reverse link-in-h" ng-click="minimizeStudent(1)">свернуть</a>
 				    </h4>
 					<div class="form-group">
-		                <?= Grades::buildSelector($Request->Student->grade, "Student[grade]") ?>
+		                <?= Grades::buildSelector($Request->Student->grade, "Student[grade]", ["ng-model" => "student.grade"]) ?>
 		            </div>
 				    <div class="form-group">
 		                <input type="text" placeholder="имя" class="form-control" name="Student[first_name]" ng-model="student.first_name">
