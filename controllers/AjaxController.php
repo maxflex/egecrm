@@ -233,8 +233,6 @@
 				returnJson($Representative->getStudent()->id);
 			}
 
-
-
 			// возвращается, если номера нет в базе
 			returnJson(null);
 		}
