@@ -139,10 +139,8 @@
 
 			// анимация загрузки RENDER ANGULAR
 			angular.element(document).ready(function() {
-				setTimeout(function() {
-					$(".panel-edit .panel-body").css("opacity", 1)
-					$("#panel-loading").hide()	
-				}, 0)
+				$("#request-edit").css("opacity", 1)
+				$("#panel-loading").hide()
 			})
 			
 			$scope.toggleSubject = function(id_subject) {
@@ -507,7 +505,7 @@
 
 			$scope.addAndRedirect = function() {
 				$scope.redirect_after_save = $scope.id_request
-				$(".save-button").first().click()
+				$("#save-button").click()
 			}
 
 			$scope.toggleCancelled = function(contract) {
@@ -1278,9 +1276,10 @@
 			    })
 		    }
 
-		    $scope.toggleMinimizeStudent = function(minimized) {
-			    $scope.student.minimized = !$scope.student.minimized
-			    $.post("ajax/MinimizeStudent", {"minimized": ($scope.student.minimized ? 1 : 0), "id_student": $scope.student.id})
+		    $scope.minimizeStudent = function(minimized) {
+			    console.log("berer")
+			    $scope.student.minimized = minimized
+			    $.post("ajax/MinimizeStudent", {"minimized": minimized, "id_student": $scope.student.id})
 		    }
 
 
@@ -1326,7 +1325,7 @@
 				}
 				
 				// Кнопка сохранения
-				$(".save-button").on("click", function() {
+				$("#save-button").on("click", function() {
 					// Проверяем все ли номера телефона заполнены
 					has_errors = false
 					

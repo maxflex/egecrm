@@ -334,7 +334,6 @@ h4.row-header {
 	}
 }
 
-
 .contract-history-arrow {
 	position: absolute;
     display: no;
@@ -351,10 +350,6 @@ h4.row-header {
     z-index: 99;
     left: calc(50% - 16px);
     top: 260px;
-}
-
-.panel-edit .panel-body {
-	opacity: .05;
 }
 
 #request-edit {
