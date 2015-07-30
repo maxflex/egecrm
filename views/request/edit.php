@@ -1,6 +1,16 @@
-<!-- 	<img src="img/svg/loading-bars.svg" alt="Загрузка страницы..." id="svg-loading"> -->
+<form id="request-edit" ng-app="Request" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>" autocomplete='off'>
+	
 	<div id="panel-loading">Загрузка...</div>
-	<form id="request-edit" ng-app="Request" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>" style="opacity: 0.05" autocomplete='off'>
+	<div class="panel panel-primary panel-edit">
+		<div class="panel-heading">
+			Редактирование заявки №<?= $Request->id ?>
+			<span class="link-reverse pointer pull-right" ng-show="request_duplicates.length > 1" onclick='deleteRequest(<?= $Request->id ?>)'>
+						удалить заявку
+					</span>
+		</div>
+		<div class="panel-body">
+			
+<!-- 	<img src="img/svg/loading-bars.svg" alt="Загрузка страницы..." id="svg-loading"> -->
 		
 		<!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ДОГОВОРА -->
 		<div class="lightbox-new lightbox-addcontract">
@@ -212,9 +222,11 @@
 					</span>
 					<span class="link-like link-reverse link-in-h" onclick="lightBoxShow('glue')">
 						перенести в другой профиль</span>
+<!--
 					<span class="link-like link-reverse link-in-h" ng-show="request_duplicates.length > 1" onclick='deleteRequest(<?= $Request->id ?>)'>
 						удалить заявку
 					</span>
+-->
 				</span>
 			</h4>
 		</div>
@@ -373,17 +385,24 @@
 	            ?>
             </div>
         </div>
+        <?= partial("save_button") ?>
     </div>
     <!-- /ДАННЫЕ ПО ЗАЯВКЕ С САЙТА И УВЕДОМЛЕНИЯ -->
 
-	<div class="row" ng-show="student.minimized">
-		<div class="col-sm-3">
-			<h4 style="margin-top: 0" class="row-header">Ученик
-				<a class="link-like link-reverse link-in-h" ng-click="minimizeStudent(0)">развернуть</a>
-			</h4>
-		</div>
-	</div>
 
+	<!-- ЗАКАРЫВАЕМ СТАРЫЙ PANEL-BODY И ОТКРЫВАЕМ НОВЫЙ -->
+	</div></div>
+	
+	<div class="panel panel-primary panel-edit">
+		<div class="panel-heading">
+			Редактирование профиля ученика №<?= $Request->Student->id ?>
+			<a class="link-reverse link-white pointer" ng-click="toggleMinimizeStudent()" style="font-size: 12px; margin-left: 7px">
+				{{student.minimized ? "развернуть" : "свернуть"}}
+			</a>
+			<span class='link-reverse pointer pull-right' id='delete-student' onclick='deleteStudent(<?= $Request->Student->id ?>)'>удалить профиль</span>
+		</div>
+		<div class="panel-body"  ng-hide="student.minimized">
+    
     <div class="row" ng-hide="student.minimized">
 	    <div class="col-sm-12">
 		    <div class="row">
@@ -918,34 +937,8 @@
 		    </div>
 	    </div>
     </div>
-    <div class="row" style="margin-top: 10px">
-    	<div class="col-sm-12 center">
-	    	<button class="btn btn-primary" id="save-button" ng-disabled="saving || !form_changed" ng-hide="<?= $Request->adding ?>" style="width: 100px">
-	    		<span ng-show="form_changed">Сохранить</span>
-	    		<span ng-show="!form_changed && !saving">Сохранено</span>
-	    	</button>
+    <?= partial("save_button") ?>
 
-	    	<!-- ДОБАВЛЕНИЕ ЗАЯВКИ В ПРОФИЛЬ УЧЕНИКА -->
-	    	<button class="btn btn-primary" ng-click="addAndRedirect()" ng-disabled="saving" ng-show="<?= ($Request->adding && $_GET["id_student"]) ?>">Добавить заявку</button>
+</div></div>
 
-	    	<!-- СОЗДАНИЕ НОВОЙ ЗАЯВКИ -->
-	    	<div class="add-request-buttons" ng-show="<?= ($Request->adding && !$_GET["id_student"]) ?>">
-
-		    	<div class="add-request-buttons-regular" ng-hide="id_student_phone_exists">
-			    	<button class="btn btn-primary" ng-click="addAndRedirect()" ng-disabled="saving">
-			    		Добавить
-			    	</button>
-		    	</div>
-
-		    	<div class="add-request-buttons-split" ng-show="id_student_phone_exists">
-			    	<button class="btn btn-primary" ng-click="addAndRedirect()" ng-disabled="saving">
-			    		Сохранить как новый профиль
-			    	</button>
-					<button class="btn btn-primary" ng-click="addRequestToExisting()" ng-disabled="saving">
-			    		Добавить заявку к существующему
-			    	</button>
-		    	</div>
-	    	</div>
-    	</div>
-    </div>
-    </form>
+</form>

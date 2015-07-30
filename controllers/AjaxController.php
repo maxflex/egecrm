@@ -198,7 +198,10 @@
 
 			// Находим оригинальную заявку
 			$OriginalRequest = Request::findById($id_request);
-
+			
+			// Очищаем челефон (через "ч" как всегда специально)
+			$phone = cleanNumber($phone);
+			
 			// Находим заявку с таким номером
 			# Ищем заявку с таким же номером телефона
 			$Request = Request::find([
@@ -229,8 +232,6 @@
 			if ($Representative) {
 				returnJson($Representative->getStudent()->id);
 			}
-
-
 
 			// возвращается, если номера нет в базе
 			returnJson(null);
