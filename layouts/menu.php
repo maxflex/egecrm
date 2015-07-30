@@ -93,8 +93,10 @@
   </div>
   <div class="col-sm-9">
     
-	<div class="panel panel-primary">
-	<div class="panel-heading">
-		<?= $this->tabTitle() ?>
-	</div>
-	<div class="panel-body">
+    <?php if (!$this->_custom_panel) { ?>
+		<div class="panel panel-primary">
+		<div class="panel-heading">
+			<?= $this->tabTitle() ?>
+		</div>
+		<div class="panel-body">
+	<?php } ?>

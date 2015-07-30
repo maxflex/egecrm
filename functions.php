@@ -121,7 +121,7 @@
 			
 		$called_dir = dirname(debug_backtrace()[0]["file"]);	// Получаем путь к директории, откуда была вызвана функция
 		
-		include_once($called_dir."/_".$string.".php");
+		include($called_dir."/_".$string.".php");
 	}
 	
 	
