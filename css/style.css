@@ -10,6 +10,9 @@ button:disabled, select:disabled {
 .bootbox-close-button {
   display: none; }
 
+.display-none {
+  display: none; }
+
 #delete-student {
   display: none; }
 
