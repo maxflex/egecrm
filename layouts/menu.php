@@ -9,11 +9,8 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12" style="text-align: center">
-			<div class="form-group" style="position: relative">
+			<div class="form-group">
 				<textarea rows="8" class="form-control" style="width: 100%" placeholder="Текст сообщения" id="sms-message"></textarea>
-			<span class="pull-right" id="sms-counter" style="position: absolute; right: 16px; bottom: 7px; color: #999; background: white; z-index: 9; border-radius: 5px">
-				0 СМС
-			</span>
 			</div>
 			<button class="btn btn-primary" id="sms-send" onclick="sendSms()">Отправить</button>
 		</div>
@@ -96,7 +93,7 @@
   </div>
   <div class="col-sm-9">
     
-  	<?php if (!$this->_custom_panel) { ?>
+    <?php if (!$this->_custom_panel) { ?>
 		<div class="panel panel-primary">
 		<div class="panel-heading">
 			<?= $this->tabTitle() ?>

@@ -1,6 +1,6 @@
 <div class="row" style="margin-top: 10px">
 	<div class="col-sm-12 center">
-    	<button class="btn btn-primary save-button" ng-disabled="saving || !form_changed" ng-hide="<?= $Request->adding ?>" style="width: 100px">
+    	<button class="btn btn-primary" class="save-button" ng-disabled="saving || !form_changed" ng-hide="<?= $Request->adding ?>" style="width: 100px">
     		<span ng-show="form_changed">Сохранить</span>
     		<span ng-show="!form_changed && !saving">Сохранено</span>
     	</button>
