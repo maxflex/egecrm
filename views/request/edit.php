@@ -4,9 +4,14 @@
 	<div class="panel panel-primary panel-edit">
 		<div class="panel-heading">
 			Редактирование заявки №<?= $Request->id ?>
-			<span class="link-reverse pointer pull-right" ng-show="request_duplicates.length > 1" onclick='deleteRequest(<?= $Request->id ?>)'>
-						удалить заявку
-					</span>
+			
+			<div class="pull-right">
+				<span class="link-reverse pointer" onclick="lightBoxShow('glue')">перенести в другой профиль</span>
+				
+				<?php if ($Request->getDuplicates()): ?>
+				<span class="link-reverse pointer" style="margin-left: 10px" onclick='deleteRequest(<?= $Request->id ?>)'>удалить заявку</span>
+				<?php endif ?>
+			</div>
 		</div>
 		<div class="panel-body">
 			
@@ -220,8 +225,10 @@
 					<span class="hint--right" data-hint="Время создания: <?= dateFormat($Request->date) ?>">
 						<span class="glyphicon glyphicon-info-sign opacity-pointer no-margin-right" style="font-size: 14px; cursor: default"></span>
 					</span>
+<!--
 					<span class="link-like link-reverse link-in-h" onclick="lightBoxShow('glue')">
 						перенести в другой профиль</span>
+-->
 <!--
 					<span class="link-like link-reverse link-in-h" ng-show="request_duplicates.length > 1" onclick='deleteRequest(<?= $Request->id ?>)'>
 						удалить заявку
@@ -385,7 +392,7 @@
 	            ?>
             </div>
         </div>
-        <?= partial("save_button") ?>
+        <?= partial("save_button", ["Request" => $Request]) ?>
     </div>
     <!-- /ДАННЫЕ ПО ЗАЯВКЕ С САЙТА И УВЕДОМЛЕНИЯ -->
 
@@ -407,9 +414,7 @@
 	    <div class="col-sm-12">
 		    <div class="row">
 			    <div class="col-sm-3">
-				    <h4 style="margin-top: 0" class="row-header">Ученик
-						<a class="link-like link-reverse link-in-h" ng-click="minimizeStudent(1)">свернуть</a>
-				    </h4>
+				    <h4 style="margin-top: 0" class="row-header">Ученик</h4>
 					<div class="form-group">
 		                <?= Grades::buildSelector($Request->Student->grade, "Student[grade]", ["ng-model" => "student.grade"]) ?>
 		            </div>
@@ -937,7 +942,7 @@
 		    </div>
 	    </div>
     </div>
-    <?= partial("save_button") ?>
+    <?= partial("save_button", ["Request" => $Request]) ?>
 
 </div></div>
 

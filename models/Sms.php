@@ -4,11 +4,17 @@ class SMS extends Model
 {
 	public static $mysql_table	= "sms";
 	
+	const INLINE_SMS_LENGTH = 60;
+	
 	public function __construct($array)
 	{
 		parent::__construct($array);
 		
 		$this->getCoordinates();
+		
+		if (mb_strlen($this->message) > self::INLINE_SMS_LENGTH) {
+			$this->message_short = mb_strimwidth($this->message, 0, self::INLINE_SMS_LENGTH, '...', 'utf-8');
+		}
 	}
 	
 	public static function sendToNumbers($numbers, $message) {
@@ -77,6 +83,8 @@ class SMS extends Model
 			$this->user_login = User::getCached()[$this->id_user]['login'];
 			
 			$this->coordinates = $this->user_login. " ". dateFormat($this->date);
+		} else {
+			$this->user_login = "system";
 		}
 	}
 	

@@ -448,6 +448,12 @@
 	 * 
 	 */
 	function formatNumber($number) {
+		
+		// Если номер не начинается с семаки, добавляем семаку
+		if ($number[0] != "7") {
+			$number = "7". $number;
+		}
+		
 		$part1 = substr($number, 1, 3);
 		$part2 = substr($number, 4, 3);
 		$part3 = substr($number, 7, 2);
