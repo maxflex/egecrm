@@ -6,7 +6,12 @@
 	ICON_HOME = 
 		url: "img/maps/homepin.png",
 		scaledSize: new google.maps.Size(22,40), 
-		origin: new google.maps.Point(0,0)  
+		origin: new google.maps.Point(0,0)
+		
+	ICON_SEARCH =
+		url: "img/maps/bluepin.png",
+		scaledSize: new google.maps.Size(22,40)
+		origin: new google.maps.Point(0,0)
 	
 	# Функция создания маркера
 	newMarker = (id, latLng, map, type = 'school') ->

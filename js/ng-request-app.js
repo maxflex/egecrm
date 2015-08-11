@@ -432,19 +432,12 @@
 							    return
 						    }
 						    
-//							$scope.gmap.setCenter(result.geometry.location)
 							search_result_bounds.extend(result.geometry.location) // границы карты в зависимости от поставленных меток
-							
-							var myIcon = {
-							  url: "img/maps/bluepin.png",
-							  scaledSize: new google.maps.Size(22,40), // the new size you want to use
-							  origin: new google.maps.Point(0,0) // position in the sprite                   
-							};
 					        
 							search_marker = new google.maps.Marker({
 							    map: $scope.map,
 							    position: result.geometry.location,
-							    icon: myIcon,
+							    icon: ICON_SEARCH,
 							});
 							
 							google.maps.event.addListener(search_marker, 'click', function(event) {

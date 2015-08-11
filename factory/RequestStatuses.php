@@ -9,6 +9,7 @@
 		const FINISHED		= 2;
 		const AWAITING		= 3;
 		const NOT_DECIDED 	= 6;
+		const NBT 			= 9;
 		const DENY			= 5;
 		const SPAM			= 4;
 		const DUPLICATE		= 7;
@@ -21,6 +22,7 @@
 			self::FINISHED		=> "выполненные",
 			self::AWAITING		=> "ожидаются",
 			self::NOT_DECIDED 	=> "не решили",
+			self::NBT 			=> "нбт",
 			self::DENY			=> "отказ",
 			self::SPAM			=> "спам",
 			self::DUPLICATE		=> "дубль",
@@ -51,7 +53,7 @@
 
 			// получаем названия констант
 			$constants = $A->getConstants();
-
+			
 			foreach ($constants as $name => $value) {
 				// не показывать удаленные
 				if (!in_array($value, static::$hidden)) {
