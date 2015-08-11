@@ -269,9 +269,9 @@
 			}
 
 			// Показать карту
-			$scope.showMap = function(type) {
+			$scope.showMap = function() {
 				// устанавливаем тип метки
-				$scope.marker_type = type
+				// $scope.marker_type = type
 
 				
 				// Показываем карту
@@ -302,13 +302,13 @@
 					markers_count = 0
 					// отображаем маркеры по одному
 					$.each($scope.markers, function(index, marker) {
-						if (marker.type != type) {
-							marker.setVisible(false)
-						} else {
+					//	if (marker.type != type) {
+					//		marker.setVisible(false)
+					//	} else {
 							markers_count++ // отображаемые маркеры есть
 							marker.setVisible(true)
 							bounds.extend(marker.position) // границы карты в зависимости от поставленных меток
-						}
+					//	}
 					})
 
 					// если отображаемые маркеры есть, делаем зум на них
@@ -324,39 +324,34 @@
 			$scope.bindMarkerDelete = function(marker) {
 				google.maps.event.addListener(marker, "dblclick", function(event) {
 					// удаляем маркер с карты
-					marker.setMap(null)
+					this.setMap(null)
 
 					// удаляем маркер из коллекции
 					$.each($scope.markers, function(index, m) {
-						if (angular.equals(marker, m)) {
+						if (angular.equals(this, m)) {
 							$scope.markers.splice(index, 1)
 						}
 					})
 				})
 			}
-
-			// следим за количеством маркеров
-			$scope.$watchCollection("markers", function(newValue, oldValue) {
-				$scope.marker_school_count 	= 0
-				$scope.marker_home_count	= 0
-
-				// подсчитываем кол-во
-				$.each(newValue, function(i, marker) {
-					if (marker.type == "school") {
-						$scope.marker_school_count++
+			
+			$scope.bindMarkerChangeType = function(marker) {
+				google.maps.event.addListener(marker, "click", function(event) {
+					if (this.type == 'home') {
+						this.type = 'school'
+						this.setIcon(ICON_SCHOOL)
 					} else {
-						$scope.marker_home_count++
+						this.type = 'home'
+						this.setIcon(ICON_HOME)
 					}
 				})
-
-				//$scope.$apply()
-			})
+			}
 
 			// Загрузить маркеры, уже сохраненные на серваке и загруженные оттуда
 			$scope.loadServerMarkers = function() {
 				$.each($scope.server_markers, function(index, marker) {
 					// Создаем маркер
-					var marker = newMarker($scope.marker_id++, marker.type, new google.maps.LatLng(marker.lat, marker.lng))
+					marker = newMarker($scope.marker_id++, new google.maps.LatLng(marker.lat, marker.lng), $scope.map, marker.type)
 
 					// Добавляем маркер в маркеры
 					$scope.markers.push(marker)
@@ -366,19 +361,17 @@
 
 					// Добавляем ивент удаления маркера
 					$scope.bindMarkerDelete(marker)
+					$scope.bindMarkerChangeType(marker)
 				})
 
 				// применяем изменения (ОБЯЗАТЕЛЬНО, иначе слетят метки без изменений)
 				$scope.$apply()
 			}
 			
-			$scope.searchMap = function(element) {
-				console.log($(element))	
-			}
-			
 			$scope.gmapAddMarker = function(event) {
 				// Создаем маркер
-				var marker = newMarker($scope.marker_id++, $scope.marker_type, event.latLng)
+				// var marker = newMarker($scope.marker_id++, $scope.marker_type, event.latLng)
+				marker = newMarker($scope.marker_id++, event.latLng, $scope.map)
 
 				// Добавляем маркер в маркеры
 				$scope.markers.push(marker)
@@ -388,6 +381,8 @@
 
 				// Добавляем ивент удаления маркера
 				$scope.bindMarkerDelete(marker)
+				//
+				$scope.bindMarkerChangeType(marker)
 			}
 			
 			// ПОСЛЕ ЗАГРУЗКИ КАРТЫ
@@ -441,7 +436,7 @@
 							search_result_bounds.extend(result.geometry.location) // границы карты в зависимости от поставленных меток
 							
 							var myIcon = {
-							  url: "http://www.clker.com/cliparts/U/8/J/z/5/D/google-maps-icon-blue-th.png",
+							  url: "img/maps/bluepin.png",
 							  scaledSize: new google.maps.Size(22,40), // the new size you want to use
 							  origin: new google.maps.Point(0,0) // position in the sprite                   
 							};
@@ -1366,7 +1361,6 @@
 							$("input[name='Notification[time]']").removeClass("has-error")
 						}
 					}
-
 
 					ajaxStart()
 					$scope.saving = true

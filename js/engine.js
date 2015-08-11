@@ -37,6 +37,11 @@
 		$("#sms-full-" + id).show(0)
 	}
 	
+	function smsTemplate(id_template) {
+		template = $("#sms-template-" + id_template).text().trim()
+		$("#sms-message").val(template).keyup()
+	}
+	
 	function smsDialog(elem) {
 		var html = ""
 		

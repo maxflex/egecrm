@@ -8,7 +8,8 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
 		
-		public $zero_or_null_contracts = "AND (id_contract=0 OR id_contract IS NULL)";
+		// условие, которое не берет в расчет версии договора
+		const ZERO_OR_NULL_CONDITION = "AND (id_contract=0 OR id_contract IS NULL)";
 				
 		protected function getByDays()
 		{
@@ -19,7 +20,7 @@
 				$date = date("d.m.Y", strtotime("today -$i day"));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "date = '$date' $zero_or_null_contracts"
+					"condition" => "date = '$date' ".self::ZERO_OR_NULL_CONDITION,
 				]);
 				
 				$Payments = Payment::findAll([
@@ -67,7 +68,7 @@
 				$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' $zero_or_null_contracts"
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' ".self::ZERO_OR_NULL_CONDITION,
 				]);
 				
 //				echo "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' $zero_or_null_contracts <br>";
@@ -118,7 +119,7 @@
 				$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' $zero_or_null_contracts"
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' ".self::ZERO_OR_NULL_CONDITION,
 				]);
 				
 				$Payments = Payment::findAll([
@@ -164,7 +165,7 @@
 				$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' AND id_contract=0"
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' ".self::ZERO_OR_NULL_CONDITION
 				]);
 				
 				$Payments = Payment::findAll([
@@ -172,9 +173,6 @@
 				]);
 				
 				$stats[$date_end_formatted] = array();
-			//	$stats[$date]['count'] = 0;
-			//	$stats[$date]['total'] = $total ? $total : 0;
-			//	$stats[$date]['total_payment'] = $total_payment ? $total_payment : 0;
 				
 				foreach ($Contracts as $Contract) {
 					$stats[$date_end_formatted]['count']++;

@@ -57,7 +57,12 @@
 			$Comment->comment = $comment;
 			$Comment->save("comment");
 		}
-
+		
+		
+		public function actionAjaxTestDeleteStudent()
+		{
+			Student::fullDelete(651);
+		}
 
 		/**
 		 * Удалить комментарий.
@@ -199,7 +204,6 @@
 			// Находим оригинальную заявку
 			$OriginalRequest = Request::findById($id_request);
 			
-			// Очищаем челефон (через "ч" как всегда специально)
 			$phone = cleanNumber($phone);
 			
 			// Находим заявку с таким номером
@@ -215,7 +219,7 @@
 
 			# Ищем ученика с таким же номером телефона
 			$Student = Student::find([
-				"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."') AND id_student!=".$OriginalRequest->id_student
+				"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."') AND id!=".$OriginalRequest->id_student
 			]);
 
 			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
@@ -232,6 +236,8 @@
 			if ($Representative) {
 				returnJson($Representative->getStudent()->id);
 			}
+
+
 
 			// возвращается, если номера нет в базе
 			returnJson(null);

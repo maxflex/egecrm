@@ -9,11 +9,24 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12" style="text-align: center">
-			<div class="form-group" style="position: relative">
+			<div class="form-group" style="position: relative; margin-bottom: 0">
 				<textarea rows="8" class="form-control" style="width: 100%" placeholder="Текст сообщения" id="sms-message"></textarea>
 			<span class="pull-right" id="sms-counter" style="position: absolute; right: 16px; bottom: 7px; color: #999; background: white; z-index: 9; border-radius: 5px">
 				0 СМС
 			</span>
+			</div>
+			
+			<div class="sms-template-list">
+				<span onclick="smsTemplate(1)">подтверждение договоренности</span>
+				<span onclick="smsTemplate(2)">нет связи с клиентом</span>
+			</div>
+			
+			<div id="sms-template-1" class="sms-template">
+				Здравствуйте! Запись на курсы ЕГЭ-Центра по адресу: Мясницкая, д. 40, стр. 1, 203 каб. При себе иметь Ваш паспорт и паспорт ребенка. 8 (495) 646-85-92, <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>
+			</div>
+			
+			<div id="sms-template-2" class="sms-template">
+				Здравствуйте! Вы оставляли заявку в ЕГЭ-Центр. Не удалось до Вас дозвониться, просьба перезвонить по тел. 8 (495) 646-85-92, <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>
 			</div>
 			<button class="btn btn-primary" id="sms-send" onclick="sendSms()">Отправить</button>
 		</div>
@@ -54,9 +67,8 @@
 	<a href="stats" class="list-group-item">Итоги</a>
     <a href="clients" class="list-group-item">Клиенты</a>
     <a href="sms" class="list-group-item">SMS</a>
-    <a href="#" class="list-group-item">Группы</a>
     <a href="#" class="list-group-item active">Настройки</a>
-    <a href="#" class="list-group-item">Пользователи</a>
+    <a href="rating" class="list-group-item">Рейтинг</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
 <!--

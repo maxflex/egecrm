@@ -517,12 +517,8 @@
 			            ?>
 		            </div>
 		            <div class="form-group" style="white-space: nowrap">
-			            <span class="link-like" ng-click="showMap('school')"><span class="glyphicon glyphicon-map-marker"></span>Школа местонахождение</span>
-			            <span class="text-primary">({{marker_school_count}})</span>
-		            </div>
-		            <div class="form-group" style="white-space: nowrap">
-			            <span class="link-like" ng-click="showMap('home')"><span class="glyphicon glyphicon-map-marker"></span>Факт местонахождение</span>
-			            <span class="text-primary">({{marker_home_count}})</span>
+			            <span class="link-like" ng-click="showMap()"><span class="glyphicon glyphicon-map-marker"></span>Метки</span>
+			            <span class="text-primary">({{markers.length}})</span>
 		            </div>
 			    </div>
 			    <div class="col-sm-3">
