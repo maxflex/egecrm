@@ -7,6 +7,16 @@ body {
 .sms-template {
   display: none; }
 
+#frontend-loading {
+  position: absolute;
+  z-index: 99;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  line-height: 200px;
+  display: none; }
+
 .sms-template-list {
   text-align: left; }
   .sms-template-list span {
@@ -197,10 +207,34 @@ h4.row-header {
   left: calc(50% - 335px);
   top: 25%; }
 
+.lightbox-confirmpayment, .lightbox-confirmpassword {
+  width: 300px;
+  left: calc(50% - 150px);
+  top: 25%; }
+
 .lightbox-print {
   width: 670px;
   left: calc(50% - 335px);
   top: 25%; }
+
+.modal-header {
+  border: none !important;
+  padding-bottom: 0 !important; }
+
+.modal-body {
+  padding-bottom: 0 !important; }
+
+.modal-password .modal-footer {
+  text-align: center !important; }
+
+.modal-password .modal-dialog {
+  width: 250px;
+  text-align: center; }
+  .modal-password .modal-dialog input {
+    text-align: center; }
+
+.form-control[disabled], fieldset[disabled] .form-control {
+  cursor: default; }
 
 .lightbox-cancelcontract {
   width: 500px;
@@ -479,9 +513,20 @@ h4 {
 .half-black {
   color: rgba(0, 0, 0, 0.5) !important; }
 
-.request-main-list hr {
-  border-top: 1px solid rgba(0, 0, 0, 0.4);
-  margin-top: 5px; }
+.request-main-list {
+  margin-bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.1); }
+  .request-main-list hr {
+    border-top: 1px solid rgba(0, 0, 0, 0.4);
+    margin-top: 5px; }
+  .request-main-list.ui-draggable-dragging {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); }
+
+.request-status-drop-hover {
+  background: #337ab7;
+  border-radius: 4px 4px 0 0; }
+  .request-status-drop-hover a {
+    color: white !important; }
 
 .glyphicon.glyphicon-middle {
   top: 3px; }

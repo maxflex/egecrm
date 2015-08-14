@@ -146,6 +146,35 @@
 		setTimeout(function_name(), 100)
 	}
 	
+	
+	function checkPhone(phone, id_request)
+	{
+		// если номер не заполнен -- выйти
+		if (!phone) {
+			return false
+		}
+		
+		// если номер полностью заполнен
+		a = $.ajax({
+			type: "POST",
+			url: "ajax/checkPhone",
+			data: {'phone': phone, 'id_request': id_request},
+			success: function(response) {
+					if (response != "null") {
+						return true
+					} else {
+						return false
+					}
+				},
+		//	async: false
+		}).done(function(result) {
+			return false
+			return result != "null"
+		})
+		
+		return a
+	}
+	
 	/**
 	 * Переназначает маски для всех элементов, включая новые
 	 * 
@@ -188,34 +217,59 @@
 			// Маска телефонов
 			$(".phone-masked")
 				.mask("+7 (999) 999-99-99", { autoclear: false })
-				.on("keyup", phoneInLoop)
-				
-			function phoneInLoop() {
-				// если есть нижнее подчеркивание, то номер заполнен не полностью
-				not_filled = $(this).val().match(/_/)
-				
-				t = $(this)
-				// если номер полностью заполнен
-				if (!not_filled) {
-					$.post("ajax/checkPhone", {'phone': $(this).val(), 'id_request': ang_scope.id_request}, function(response) {
-						if (response != "null") {
-							ang_scope.phone_duplicate = response
-							t.addClass("has-error-bold")
-							//console.log(response)
-							//t.parent().find("button span").removeClass("glyphicon-plus").addClass("glyphicon-random")
-							// $("<h2>herererer</h2>").insertAfter(t)
-						} else {
-							ang_scope.phone_duplicate = null
-							t.removeClass("has-error-bold")
-						}
+				.on("keyup", function() {
+					t = $(this)
+					
+					// если номер не заполнен -- выйти
+					if (!t.val()) {
+						return
+					}
+					
+					// если есть нижнее подчеркивание, то номер заполнен не полностью
+					not_filled = t.val().match(/_/)
+					
+					// если номер полностью заполнен
+					if (!not_filled) {
+						$.ajax({
+							type: "POST",
+							url: "ajax/checkPhone",
+							data: {'phone': t.val(), 'id_request': ang_scope.id_request},
+							success: function(response) {
+									if (response != "null") {
+										ang_scope.phone_duplicate = response
+										t.addClass("has-error-bold")
+										//console.log(response)
+										//t.parent().find("button span").removeClass("glyphicon-plus").addClass("glyphicon-random")
+										// $("<h2>herererer</h2>").insertAfter(t)
+									} else {
+										ang_scope.phone_duplicate = null
+										t.removeClass("has-error-bold")
+									}
+									ang_scope.$apply()
+								},
+							async: false
+						})
+/*
+						$.post("ajax/checkPhone", {'phone': t.val(), 'id_request': ang_scope.id_request}, function(response) {
+							if (response != "null") {
+								ang_scope.phone_duplicate = response
+								t.addClass("has-error-bold")
+								//console.log(response)
+								//t.parent().find("button span").removeClass("glyphicon-plus").addClass("glyphicon-random")
+								// $("<h2>herererer</h2>").insertAfter(t)
+							} else {
+								ang_scope.phone_duplicate = null
+								t.removeClass("has-error-bold")
+							}
+							ang_scope.$apply()
+						})
+*/
+					} else {
+						t.removeClass("has-error-bold")
+						ang_scope.phone_duplicate = null
 						ang_scope.$apply()
-					})
-				} else {
-					t.removeClass("has-error-bold")
-					ang_scope.phone_duplicate = null
-					ang_scope.$apply()
-				}
-			}
+					}
+				})
 			
 			// FLOAT-LABEL
 			$(".floatlabel").floatlabel();
@@ -326,6 +380,14 @@
 	function ajaxEnd()
 	{
 		NProgress.done()
+	}
+	function frontendLoadingStart()
+	{
+		$("#frontend-loading").fadeIn(300)
+	}
+	function frontendLoadingEnd()
+	{
+		$("#frontend-loading").hide()
 	}
     
     /**

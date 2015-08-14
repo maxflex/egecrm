@@ -6,8 +6,12 @@
 		public $defaultAction = "test";
 
 		// Папка вьюх
-		protected $_viewsFolder	= "";
-
+		protected $_viewsFolder	= "test";
+		
+		public function actionBeforeAction()
+		{
+// 			$this->setTabTitle("Тест");
+		}
 		
 		// Перевести номера телефонов из форматированных
 		public function actionUpdatePhones()
@@ -51,7 +55,23 @@
 				}
 			}
 		}
-
+		
+		public function actionMap()
+		{
+			$this->setTabTitle("Тестирование алгоритма метро");
+			
+			$this->addJs("//maps.google.ru/maps/api/js?libraries=places", true);
+			$this->addJs("maps.controller, ng-test-app");
+			
+			$this->render("map");
+		}
+		
+		public function actionDuplicate()
+		{
+			$res = isDuplicate("79205556776", 19);
+			var_dump($res);
+		}
+		
 		##################################################
 		###################### AJAX ######################
 		##################################################

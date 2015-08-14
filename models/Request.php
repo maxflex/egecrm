@@ -35,10 +35,10 @@
 			// Генерируем форматированные номера
 			foreach (static::$_phone_fields as $phone_field) {
 				if ($this->{$phone_field} != "") {
-					$this->{$phone_field . "_formatted"} =  formatNumber($this->{$phone_field});
+					$this->{$phone_field . "_formatted"} = formatNumber($this->{$phone_field});
 				}
 			}
-
+			
 			// Включаем связи
 			$this->Student 			= Student::findById($this->id_student);
 			$this->Notification 	= Notification::findById($this->id_notification);
@@ -64,6 +64,13 @@
 			}
 
 			return $id_status;
+		}
+		
+		public static function findByStudent($id_student)
+		{
+			return self::find([
+				"condition" => "id_student=$id_student"
+			]);			
 		}
 
 		/**
@@ -126,8 +133,15 @@
 				if ($Request->id_status == RequestStatuses::NEWR && $id_status != RequestStatuses::ALL) {
 					$Request->list_duplicates = $Request->countListDuplicates();
 				}
+				
+				// дубликаты для подсветки
+				foreach (static::$_phone_fields as $phone_field) {
+					if (!empty($Request->{$phone_field})) {
+						$Request->{$phone_field . "_duplicate"} = isDuplicate($Request->{$phone_field}, $Request->id);
+					}
+				}
 			}
-
+			
 			return $Requests;
 		}
 
@@ -363,5 +377,4 @@
 
 			return false;
 		}
-
 	}

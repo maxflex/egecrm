@@ -48,7 +48,7 @@
       "<form class='bootbox-form'></form>",
     inputs: {
       text:
-        "<input class='bootbox-input bootbox-input-text form-control' autocomplete=off type=text />",
+        "<input class='bootbox-input bootbox-input-text form-control' autocomplete=off type='password'/>",
       textarea:
         "<textarea class='bootbox-input bootbox-input-textarea form-control'></textarea>",
       email:

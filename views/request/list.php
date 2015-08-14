@@ -1,9 +1,11 @@
 <div ng-app="Request" ng-controller="ListCtrl"
 	ng-init="<?= $ang_init_data ?>">
 	<div class="row">
-		<div class="col-sm-12">
+		<div class="col-sm-12" style="padding-right: 0">
 			<ul class="nav nav-tabs">
-				<li ng-repeat="request_status in request_statuses" ng-class="{'active' : chosen_list == request_status.id}">
+				<li ng-repeat="request_status in request_statuses" data-id="{{request_status.id}}"
+					ng-class="{'active' : chosen_list == request_status.id, 'request-status-li': request_status.id != 8 && (chosen_list != request_status.id)}" 
+				>
 					<a class="list-link" href="#{{request_status.id}}" ng-click="changeList(request_status, true)" data-toggle="tab" aria-expanded="{{$index == 0}}">
 						{{request_status.name}} ({{request_statuses_count[request_status.id]}})
 					</a></li>
@@ -11,7 +13,8 @@
 		</div>
 	</div>
 
-	<div class="row" style="margin-top: 10px">
+	<div class="row" style="margin-top: 10px; position: relative">
+		<div id="frontend-loading"></div>
 		<div class="col-sm-12">
 			<div ng-show="!requests.length">
 				<h3 style="text-align: center; margin: 50px 0">Список заявок пуст</h3>

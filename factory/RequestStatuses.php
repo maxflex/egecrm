@@ -6,10 +6,10 @@
 
 		# Список
 		const NEWR			= 0;
+		const NBT 			= 9;
 		const FINISHED		= 2;
 		const AWAITING		= 3;
 		const NOT_DECIDED 	= 6;
-		const NBT 			= 9;
 		const DENY			= 5;
 		const SPAM			= 4;
 		const DUPLICATE		= 7;
@@ -19,10 +19,10 @@
 		# Все
 		static $all = [
 			self::NEWR			=> "невыполненные",
+			self::NBT 			=> "нбт",
 			self::FINISHED		=> "выполненные",
 			self::AWAITING		=> "ожидаются",
 			self::NOT_DECIDED 	=> "не решили",
-			self::NBT 			=> "нбт",
 			self::DENY			=> "отказ",
 			self::SPAM			=> "спам",
 			self::DUPLICATE		=> "дубль",

@@ -124,6 +124,16 @@
 					<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
 				</div>
 			</div>
+			<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
+				<h4>Номер карты</h4>
+				<div class="form-group inline-block">
+					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block; margin-left: 5px"> - 
+					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> - 
+					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> - 
+					<input class="form-control digits-only" maxlength="4" ng-model="new_payment.card_number" 
+						style="width: 60px; display: inline-block">
+				</div>
+			</div>
 			<center>
 				<button class="btn btn-primary" ng-click="addPayment()">{{new_payment.id ? "Редактировать" : "Добавить"}}</button>
 			</center>
@@ -924,7 +934,10 @@
 		    </h4>
 		    <div class="form-group payment-line">
 				<div ng-repeat="payment in payments | reverse" style="margin-bottom: 5px">
-					<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">{{payment_statuses[payment.id_status]}}</span> <span class="capitalize">{{payment_types[payment.id_type]}}</span>
+					<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">
+					{{payment_statuses[payment.id_status]}}{{payment.card_number ? " *" + payment.card_number : ""}}</span>
+					
+					<span class="capitalize">{{payment_types[payment.id_type]}}</span>
 					на сумму {{payment.sum}} <ng-pluralize count="payment.sum" when="{
 						'one' : 'рубль',
 						'few' : 'рубля',
@@ -932,6 +945,8 @@
 					}"></ng-pluralize> от {{payment.date}}
 						<span class="save-coordinates">({{payment.user_login}} {{formatDate(payment.first_save_date) | date:'yyyy.MM.dd в HH:mm'}})
 						</span>
+						 <a class="link-like link-reverse small" ng-click="confirmPayment(payment)" ng-show="!payment.confirmed">подтвердить</a>
+						 <span class="label label-success" ng-show="payment.confirmed">подтвержден</span>
 						 <a class="link-like link-reverse small" ng-click="editPayment(payment)">редактировать</a>
 						 <a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
 				</div>

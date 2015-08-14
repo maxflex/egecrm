@@ -4,7 +4,7 @@
 		include_once("main.php");
 		exit();	
 	}*/
-	
+	  
 	// Подключаем файл конфигураций
 	include_once("config.php");
 	

@@ -77,6 +77,15 @@
 		{
 			echo Payment::add($_POST)->id;
 		}
+		
+		public function actionAjaxConfirmPayment()
+		{
+			extract($_POST);
+			
+			Payment::updateById($id, [
+				"confirmed" => 1
+			]);
+		}
 
 		public function actionAjaxDeletePayment()
 		{
@@ -196,7 +205,11 @@
 			$Student->save("minimized");
 		}
 
-
+		
+		/**
+		 * Эта функция вынесена в отдельную функцию в isDuplicate (functions.php).
+		 * 
+		 */
 		public function actionAjaxCheckPhone()
 		{
 			extract($_POST);

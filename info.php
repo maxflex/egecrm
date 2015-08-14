@@ -1,7 +1,7 @@
 <?php
 //	phpinfo();
 	
-	$str = "79252727210";
+	$str = "792527272105";
 	
 	$part1 = substr($str, 1, 3);
 	$part2 = substr($str, 4, 3);

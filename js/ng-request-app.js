@@ -68,7 +68,35 @@
 					return 'label-yellow'
 				}
 			}
-
+			
+			$(document).ready(function() {
+				bindDraggable()
+			})
+			
+			bindDraggable = function() {
+				$(".request-main-list").draggable({
+					connectToSortable: ".request-main-list",
+					revert: 'invalid',
+				})
+				
+				$(".request-status-li").droppable({
+					tolerance: 'pointer',
+					hoverClass: "request-status-drop-hover",
+					drop: function(event, ui) {
+						id_request_status = $(this).data("id")
+						id_request = $(ui.draggable).data("id")
+						
+						$scope.request_statuses_count[$scope.chosen_list]--
+						$scope.request_statuses_count[id_request_status]++
+						$scope.$apply()
+						
+						$.post("requests/ajax/changeStatus", {id_request_status: id_request_status, id_request: id_request})
+						
+						ui.draggable.remove()
+					}
+				})
+			}
+			
 			// Выбрать список
 			$scope.changeList = function(request_status, push_history) {
 				//  Если нажимаем на один и тот же список -- ничего не делаем
@@ -97,14 +125,17 @@
 			// Получаем задачи, соответствующие странице и списку
 			$scope.getByPage = function(page) {
 				ajaxStart()
+				frontendLoadingStart()
 				$.get("requests/ajax/GetByPage", {
 					'page'		: page,
 					'id_status'	: $scope.chosen_list
 				}, function(response) {
 					ajaxEnd()
+					frontendLoadingEnd()
 					$scope.requests = response
 					$scope.$apply()
 					bindUserColorControl()
+					bindDraggable()
 					initComments()
 				}, "json")
 			}
@@ -141,8 +172,12 @@
 			angular.element(document).ready(function() {
 				setTimeout(function() {
 					$(".panel-edit .panel-body").css("opacity", 1)
-					$("#panel-loading").hide()	
+					$("#panel-loading").hide()
 				}, 0)
+				
+				setTimeout(function() {
+					$(".phone-masked").keyup()
+				}, 100)
 			})
 			
 			$scope.toggleSubject = function(id_subject) {
@@ -1025,36 +1060,62 @@
 					}
 				})
 			}
-
+			
+			$scope.confirmPayment = function(payment) {
+				bootbox.prompt({
+					title: "Введите пароль",
+					className: "modal-password",
+					callback: function(result) {
+						if (result == "363") {
+							payment.confirmed = 1
+							$.post("ajax/confirmPayment", {id: payment.id})	
+							$scope.$apply()
+						}
+					},
+					buttons: {
+						confirm: {
+							label: "Подтвердить"
+						},
+						cancel: {
+							className: "display-none"
+						}		
+					}
+				})
+			}
+			
 			// Окно редактирования платежа
 			$scope.editPayment = function(payment) {
-				$scope.new_payment = angular.copy(payment)
-				lightBoxShow('addpayment')
+				if (!payment.confirmed) {
+					$scope.new_payment = angular.copy(payment)
+					$scope.$apply()
+					lightBoxShow('addpayment')
+					return
+				}
+				bootbox.prompt({
+					title: "Введите пароль",
+					className: "modal-password",
+					callback: function(result) {
+						if (result == "363") {
+							$scope.new_payment = angular.copy(payment)
+							$scope.$apply()
+							lightBoxShow('addpayment')		
+						}	
+					},
+					buttons: {
+						confirm: {
+							label: "Подтвердить"
+						},
+						cancel: {
+							className: "display-none"
+						}		
+					}
+				})
 			}
 
 			// Показать окно добавления платежа
 			$scope.addPaymentDialog = function() {
 				$scope.new_payment = {id_status : 0}
-				lightBoxShow('addpayment')
-			}
-
-			// Разбиваем кнопку
-			$scope.$watch("phone_duplicate", function(newValue, oldValue) {
-				if (newValue !== null && newValue != "null") {
-					$scope.id_student_phone_exists = newValue
-				} else {
-					$scope.id_student_phone_exists = null
-				}
-				// $scope.$apply()
-			})
-
-
-			$scope.addRequestToExisting = function() {
-				var num = $scope.id_student_phone_exists.replace(/[^0-9]/g, '');
-//				$scope.student.id = parseInt(num)
-				$("#id_student_force").val(parseInt(num))
-//				console.log($scope.id_student_phone_exists, $scope.student.id)
-				$scope.addAndRedirect()
+				lightBoxShow('addpayment')	
 			}
 
 			// Добавить платеж
@@ -1137,6 +1198,44 @@
 					})
 				}
 			}
+			
+			// Удалить платеж
+			$scope.deletePayment = function(index, payment) {
+				if (!payment.confirmed) {
+					bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
+						if (result === true) {
+							$.post("ajax/deletePayment", {"id_payment": payment.id})
+							$scope.payments.splice(index, 1)
+							$scope.$apply()
+						}
+					})
+				} else {
+					bootbox.prompt({
+						title: "Введите пароль",
+						className: "modal-password",
+						callback: function(result) {
+							if (result == "363") {
+								bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
+									if (result === true) {
+										$.post("ajax/deletePayment", {"id_payment": payment.id})
+										$scope.payments.splice(index, 1)
+										$scope.$apply()
+									}
+								})
+							}	
+						},
+						buttons: {
+							confirm: {
+								label: "Подтвердить"
+							},
+							cancel: {
+								className: "display-none"
+							}		
+						}
+					})
+				}
+				
+			}
 
 			// ссылка "удалить профиль ученика"
 			setInterval(function() {
@@ -1146,23 +1245,6 @@
 					$("#delete-student").hide()
 				}
 			}, 300)
-
-			//  Удалить платеж
-			$scope.deletePayment = function(index, payment) {
-				bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
-					if (result === true) {
-						$.post("ajax/deletePayment", {"id_payment": payment.id})
-						$scope.payments.splice(index, 1)
-						$scope.$apply()
-					}
-				})
-			}
-
-			// Удаляем предмет
-			$scope.removePayment = function(index) {
-				$scope.payments[index].deleted = 1;
-				$scope.$apply()
-			}
 
 			// форматировать дату
 			$scope.formatDate = function(date){
@@ -1273,7 +1355,6 @@
 
 
 			$(document).ready(function() {
-				
 				$("#request-edit").on('keyup change', 'input, select, textarea', function(){
 			        $scope.form_changed = true
 			        $scope.$apply()

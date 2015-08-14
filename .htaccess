@@ -33,6 +33,9 @@ RewriteRule ^stats[/]?$ index.php?controller=stats [QSA,L]
 
 # Клиенты
 RewriteRule ^clients[/]?$ index.php?controller=clients [QSA,L]
+RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
+RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
+
 
 # SMS
 RewriteRule ^sms[/]?$ index.php?controller=sms [QSA,L]
@@ -42,6 +45,7 @@ RewriteRule ^rating[/]?$ index.php?controller=rating [QSA,L]
 
 # API
 RewriteRule ^api/([a-zA-Z]+)[/]?$ index.php?controller=api&action=$1 [QSA,L]
+RewriteRule ^metro/([a-zA-Z]+)[/]?$ index.php?controller=metro&action=$1 [QSA,L]
 
 # CRON
 RewriteRule ^cron/([a-zA-Z]+)[/]?$ index.php?controller=cron&action=$1 [QSA,L]

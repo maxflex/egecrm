@@ -18,6 +18,13 @@
 				$Student->Contract = $Student->getLastContract();
 			}
 			
+			// сортировка по номеру договора
+			usort($Students, function($a, $b) {
+				return ($a->Contract->id < $b->Contract->id ? -1 : 1);
+			});
+			
+//			$Students = array_reverse($Students);
+			
 			$this->render("list", [
 				"Students" => $Students
 			]);
