@@ -43,7 +43,7 @@
 				</span>
 				
 				<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">
-				{{payment_statuses[payment.id_status]}}{{payment.card_number ? " *" + payment.card_number : ""}}</span>
+				{{payment_statuses[payment.id_status]}}<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">{{payment.card_number ? " *" + payment.card_number : ""}}</span></span>
 				
 				<span class="capitalize">{{payment_types[payment.id_type]}}</span>
 				на сумму {{payment.sum}} <ng-pluralize count="payment.sum" when="{

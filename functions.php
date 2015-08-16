@@ -498,16 +498,23 @@
 		}
 
 		# Ищем представителя с таким же номером телефона
+/*
 		$Representative = Representative::find([
 			"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."')"
 		]);
-
+*/
+		
+		$represetative_phone_duplicate = dbConnection()->query("
+			SELECT r.id FROM ".Representative::$mysql_table." r
+			LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
+			WHERE (r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."') AND s.id!=".$OriginalRequest->id_student
+		);
+		
 		// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-		if ($Representative) {
+		if ($represetative_phone_duplicate->num_rows) {
 			return true;
 //				returnJson($Representative->getStudent()->id);
 		}
-
 
 
 		// возвращается, если номера нет в базе

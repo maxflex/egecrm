@@ -32,6 +32,10 @@
 		public function __construct($array) {
 			parent::__construct($array);
 			
+			if ($this->card_number) {
+				$this->card_number .= ' ';
+			}
+			
 			// Добавляем данные
 			$this->user_login = User::findById($this->id_user)->login;
 		}

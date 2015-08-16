@@ -213,47 +213,8 @@
 		public function actionAjaxCheckPhone()
 		{
 			extract($_POST);
-
-			// Находим оригинальную заявку
-			$OriginalRequest = Request::findById($id_request);
 			
-			$phone = cleanNumber($phone);
-			
-			// Находим заявку с таким номером
-			# Ищем заявку с таким же номером телефона
-			$Request = Request::find([
-				"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."') AND id_student!=".$OriginalRequest->id_student
-			]);
-
-			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-			if ($Request) {
-				returnJson($Request->Student->id);
-			}
-
-			# Ищем ученика с таким же номером телефона
-			$Student = Student::find([
-				"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."') AND id!=".$OriginalRequest->id_student
-			]);
-
-			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-			if ($Student) {
-				returnJson($Student->id);
-			}
-
-			# Ищем представителя с таким же номером телефона
-			$Representative = Representative::find([
-				"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."')"
-			]);
-
-			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-			if ($Representative) {
-				returnJson($Representative->getStudent()->id);
-			}
-
-
-
-			// возвращается, если номера нет в базе
-			returnJson(null);
+			returnJSON(isDuplicate($phone, $id_request));
 		}
 		
 		public function actionAjaxSendSms()

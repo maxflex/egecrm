@@ -1,9 +1,10 @@
 	moment.lang('ru-RU');
 	var ang_scope;
 	
+	
 	// Основной скрипт
 	$(document).ready(function() {
-		// ангуляровский scope
+		// ангуляровский scope по умолчанию
 		ang_scope = angular.element("[ng-app='Request']").scope()
 		
 		// Вешаем маски
@@ -146,35 +147,6 @@
 		setTimeout(function_name(), 100)
 	}
 	
-	
-	function checkPhone(phone, id_request)
-	{
-		// если номер не заполнен -- выйти
-		if (!phone) {
-			return false
-		}
-		
-		// если номер полностью заполнен
-		a = $.ajax({
-			type: "POST",
-			url: "ajax/checkPhone",
-			data: {'phone': phone, 'id_request': id_request},
-			success: function(response) {
-					if (response != "null") {
-						return true
-					} else {
-						return false
-					}
-				},
-		//	async: false
-		}).done(function(result) {
-			return false
-			return result != "null"
-		})
-		
-		return a
-	}
-	
 	/**
 	 * Переназначает маски для всех элементов, включая новые
 	 * 
@@ -235,12 +207,9 @@
 							url: "ajax/checkPhone",
 							data: {'phone': t.val(), 'id_request': ang_scope.id_request},
 							success: function(response) {
-									if (response != "null") {
+									if (response == "true") {
 										ang_scope.phone_duplicate = response
 										t.addClass("has-error-bold")
-										//console.log(response)
-										//t.parent().find("button span").removeClass("glyphicon-plus").addClass("glyphicon-random")
-										// $("<h2>herererer</h2>").insertAfter(t)
 									} else {
 										ang_scope.phone_duplicate = null
 										t.removeClass("has-error-bold")
@@ -249,21 +218,6 @@
 								},
 							async: false
 						})
-/*
-						$.post("ajax/checkPhone", {'phone': t.val(), 'id_request': ang_scope.id_request}, function(response) {
-							if (response != "null") {
-								ang_scope.phone_duplicate = response
-								t.addClass("has-error-bold")
-								//console.log(response)
-								//t.parent().find("button span").removeClass("glyphicon-plus").addClass("glyphicon-random")
-								// $("<h2>herererer</h2>").insertAfter(t)
-							} else {
-								ang_scope.phone_duplicate = null
-								t.removeClass("has-error-bold")
-							}
-							ang_scope.$apply()
-						})
-*/
 					} else {
 						t.removeClass("has-error-bold")
 						ang_scope.phone_duplicate = null

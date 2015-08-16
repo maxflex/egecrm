@@ -47,6 +47,8 @@
 <!-- 	<script type="text/javascript" src="js/jquery.datetimepicker.js"></script> -->
 	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
 	<script type="text/javascript" src="js/engine.js?ver=<?= settings()->version ?>"></script>
+	<script type="text/javascript" src="js/functions.js?ver=<?= settings()->version ?>"></script>
+
 
     <?= $this->_js_additional ?>
   </head>

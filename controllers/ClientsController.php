@@ -15,8 +15,11 @@
 			$Students = Student::getWithContract();
 			
 			foreach ($Students as &$Student) {
-				$Student->Contract = $Student->getLastContract();
+				$Student->Contract 	= $Student->getLastContract();
+				$Student->Contracts = $Student->getActiveContracts();
 			}
+			
+			$without_contract = Student::countWithoutContract();
 			
 			// сортировка по номеру договора
 			usort($Students, function($a, $b) {
@@ -26,7 +29,8 @@
 //			$Students = array_reverse($Students);
 			
 			$this->render("list", [
-				"Students" => $Students
+				"Students" => $Students,
+				"without_contract" => $without_contract,
 			]);
 		}
 		

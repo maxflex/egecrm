@@ -84,7 +84,7 @@
 			</div>
 			<div class="half-black">
 				Заявка №{{request.id}} создана {{request.id_user_created ? users[request.id_user_created].login : "system"}}
-				{{request.date_timestamp | date:'dd.MM.yy'}} в <span ng-class="getTimeClass(request.date_timestamp)">{{request.date_timestamp | date:'HH:mm'}}</span>
+				{{request.date_timestamp | date:'dd.MM.yy'}} в <span ng-class="getTimeClass(request)">{{request.date_timestamp | date:'HH:mm'}}</span>
 				<a class="link-reverse" style="margin-left: 5px" href="requests/edit/{{request.id}}">редактировать</a>
 			</div>
 		</div>
@@ -102,5 +102,5 @@
 			источник: {{request.id_source ? sources[request.id_source] : "не указан"}}
 		</div>
 	</div>
-	<hr>
+	<hr ng-hide="$last">
 </div>

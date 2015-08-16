@@ -15,6 +15,9 @@
 		// путь хранения электронных версий договоров
 		const CONTRACTS_DIR = "files/contracts/";
 		
+		// условие, которое не берет в расчет версии договора
+		const ZERO_OR_NULL_CONDITION = " AND (id_contract=0 OR id_contract IS NULL)";
+		
 		// Временная директория электронных версий договоров
 		//const CONTRACTS_TMP_DIR = "files/contracts/tmp/";
 		

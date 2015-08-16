@@ -27,6 +27,22 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		/**
+		 * Получить студентов с договорами.
+		 * 
+		 */
+		public static function countWithoutContract()
+		{
+			$query = dbConnection()->query("
+				SELECT s.id FROM students s
+					LEFT JOIN requests r 	ON r.id_student = s.id
+					LEFT JOIN contracts c 	ON c.id_student = s.id
+				WHERE r.adding = 0 	AND c.id_student IS NULL
+				GROUP BY s.id
+			");
+			
+			return $query->num_rows;
+		}
 		
 		/**
 		 * Получить студентов с договорами.
@@ -159,6 +175,17 @@
 		{
 			return Contract::findAll([
 				"condition"	=> "deleted=0 AND id_student=" . $this->id
+			]);	
+		}
+		
+		/**
+		 * Получить договоры студента без версий.
+		 * 
+		 */
+		public function getActiveContracts()
+		{
+			return Contract::findAll([
+				"condition"	=> "deleted=0  AND id_student=" . $this->id . Contract::ZERO_OR_NULL_CONDITION
 			]);	
 		}
 		

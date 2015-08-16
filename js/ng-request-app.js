@@ -56,7 +56,14 @@
 				window.open(number);
 			}
 
-			$scope.getTimeClass = function(timestamp) {
+			$scope.getTimeClass = function(request) {
+				// подсвечивать время нужно только в невыполненных
+				if (request.id_status != 0) {
+					return
+				}
+				
+				timestamp = request.date_timestamp
+				
 				hour = 60 * 60 * 1000;
 
 				// если больше 2 часов
@@ -1285,29 +1292,11 @@
 		    }
 
 		    // проверить номер телефона
-		    $scope.phoneCorrect = function(element) {
-			    // пустой номер телефона – это тоже правильный номер телефона
-			    if (!$("#" + element).val()) {
-				    return false
-			    }
-
-			    // если есть нижнее подчеркивание, то номер заполнен не полностью
-				not_filled = $("#" + element).val().match(/_/)
-				return not_filled == null
-		    }
-		    
+		    $scope.phoneCorrect = phoneCorrect	
+		    	    
 			// проверить номер телефона
-		    $scope.isMobilePhone = function(element) {
-			    phone = $("#" + element).val();
-			    
-			    // пустой номер телефона – это тоже правильный номер телефона
-			    if (!phone) {
-				    return false
-			    }
-				
-				return !phone.indexOf("+7 (9")
-		    }
-
+		    $scope.isMobilePhone = isMobilePhone
+		    
 		    // Превратить в файлаплоад
 		    $scope.bindFileUpload = function(contract) {
 				// загрузка файла договора

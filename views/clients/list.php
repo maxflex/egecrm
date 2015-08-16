@@ -8,21 +8,41 @@
 			</a>
 		</td>
 		<td>
-			<?= $Student->Contract->id ?>
+			<?php foreach ($Student->Contracts as $Contract): ?>
+				<div>
+					<?= $Contract->id ?>
+				</div>
+			<?php endforeach ?>
 		</td>
 		<td>
-			<?= $Student->Contract->grade ? $Student->Contract->grade. " класс" : "неизвестно" ?>
+			<?php foreach ($Student->Contracts as $Contract): ?>
+				<div>
+					<?= $Contract->grade ? $Contract->grade. " класс" : "неизвестно" ?>
+				</div>
+			<?php endforeach ?>
 		</td>
 		<td>
-			<?= $Student->Contract->date ? $Student->Contract->date : "неизвестно" ?>
+			<?php foreach ($Student->Contracts as $Contract): ?>
+				<div>
+					<?= $Contract->date ? $Contract->date : "неизвестно" ?>
+				</div>
+			<?php endforeach ?>
 		</td>
 		<td>
-			<?= $Student->Contract->subjects === false ? 0 : count($Student->Contract->subjects) ?> 
-			<?= pluralize('предмет', 'предмета', 'предметов', $Student->Contract->subjects === false ? 0 : count($Student->Contract->subjects)) ?>
+			<?php foreach ($Student->Contracts as $Contract): ?>
+				<div>
+					<?= $Contract->subjects === false ? 0 : count($Contract->subjects) ?> 
+					<?= pluralize('предмет', 'предмета', 'предметов', $Contract->subjects === false ? 0 : count($Contract->subjects)) ?>
+				</div>
+			<?php endforeach ?>
 		</td>
 		<td>
-			<?= number_format($Student->Contract->sum, 0, ",", " ") ?> рублей
-			<span class="pull-right"><?= $Student->Contract->cancelled ? "расторгнут" : "" ?></span>
+			<?php foreach ($Student->Contracts as $Contract): ?>
+				<div>
+					<?= number_format($Contract->sum, 0, ",", " ") ?> рублей
+					<span class="pull-right"><?= $Contract->cancelled ? "расторгнут" : "" ?></span>
+				</div>
+			<?php endforeach ?>
 		</td>
 		<td>
 			<span class="pull-right"><?= $Student->isNotFull() ? "не полный" : "полный" ?></span>
@@ -30,3 +50,7 @@
 	</tr>
 	<?php endforeach; ?>
 </table>
+
+<div class="pull-right">
+	<b class="text-success">+<?= $without_contract ?></b> <?= pluralize('ученик', 'ученика', 'учеников', $without_contract) ?> без договора
+</div>

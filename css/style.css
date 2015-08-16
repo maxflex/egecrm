@@ -7,6 +7,9 @@ body {
 .sms-template {
   display: none; }
 
+.no-border-bottom {
+  border-bottom: 0; }
+
 #frontend-loading {
   position: absolute;
   z-index: 99;
