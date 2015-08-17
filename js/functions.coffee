@@ -3,7 +3,7 @@
 		
 	phoneCorrect = (element) ->
 		# пустой номер телефона – это тоже правильный номер телефона
-		false if not $("#" + element).val()
+		return false if not $("#" + element).val()
 		    
 	    # если есть нижнее подчеркивание, то номер заполнен не полностью
 		not_filled = $("#" + element).val().match(/_/)
@@ -12,6 +12,6 @@
 	isMobilePhone = (element) ->
 		phone = $("#" + element).val()
 		
-		false if not phone
+		return false if not phone
 		
 		not phone.indexOf "+7 (9"

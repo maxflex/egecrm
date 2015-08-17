@@ -68,6 +68,8 @@
     <a href="clients" class="list-group-item">Клиенты</a>
     <a href="sms" class="list-group-item">SMS</a>
     <a href="payments" class="list-group-item">Платежи</a>
+    <a href="teachers" class="list-group-item">Преподаватели</a>
+    <a href="groups" class="list-group-item">Группы</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="rating" class="list-group-item">Рейтинг</a>
     <a href="logout" class="list-group-item">Выход</a>

@@ -273,11 +273,14 @@
 			// if (is_array($data) && !hasValues($data)) {
 			// 	return false;
 			// }
+			
 			foreach ($data as $key => $value) {
-				// Обновление обычных данных
-				$this->{$key} = $value;
+				if (in_array($key, $this->mysql_vars) && !in_array($key, $this->_exclude_vars)) {
+					// Обновление обычных данных
+					$this->{$key} = $value;
+				}
 			}
-
+			
 			// Если надо сразу сохранить
 			if ($save) {
 				return $this->save();
@@ -294,7 +297,7 @@
 		public static function updateById($id, $data)
 		{
 			$Object = self::findById($id); // находим объект
-
+			
 			// если найден, сохраняем
 			if ($Object) {
 				$Object->update($data);

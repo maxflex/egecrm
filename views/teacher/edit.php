@@ -2,10 +2,10 @@
 	<div class="row">
 		<div class="col-sm-3">
 			<div class="form-group">
-				<input class="form-control" ng-model="Teacher.first_name" placeholder="фамилия">
+				<input class="form-control" ng-model="Teacher.last_name" placeholder="фамилия">
 			</div>
 			<div class="form-group">
-				<input class="form-control" ng-model="Teacher.last_name" placeholder="имя">
+				<input class="form-control" ng-model="Teacher.first_name" placeholder="имя">
 			</div>
 			<div class="form-group">
 				<input class="form-control" ng-model="Teacher.middle_name" placeholder="отчество">
@@ -23,23 +23,28 @@
 			</div>
 		</div>
 		<div class="col-sm-3">
-			<div class="form-group">
-	            <div class="input-group" 
-		            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('teacher-phone') || (!isMobilePhone('teacher-phone') && teacher_phone_level >= 2) }">
-                	<input ng-keyup id="teacher-phone" type="text"
-                		placeholder="телефон" class="form-control phone-masked"  ng-model="Teacher.phone">
-                	<div class="input-group-btn">
-								<button ng-show="phoneCorrect('teacher-phone') && isMobilePhone('teacher-phone')" ng-class="{
-										'addon-bordered' : teacher_phone_level >= 2 || !phoneCorrect('teacher-phone')
-									}" class="btn btn-default" type="button" onclick="smsDialog('teacher-phone')">
-										<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
-								</button>
-					        	<button ng-hide="teacher_phone_level >= 2 || !phoneCorrect('teacher-phone')" class="btn btn-default" type="button" ng-click="teacher_phone_level = teacher_phone_level + 1">
-					        		<span class="glyphicon glyphicon-plus no-margin-right" style="font-size: 12px"></span>
-					        	</button>
-			            </div>
-				</div>
-			</div>
+			<?= Html::phones('teacher') ?>
+		</div>
+		<div class="col-sm-3">
+			<?= Subjects::buildSelector(false, false, ["ng-model" => "Teacher.id_subject"]) ?>
 		</div>
 	</div>
+	
+	<div class="row" style="margin-top: 10px">
+		<div class="col-sm-12 center">
+	    	<button class="btn btn-primary save-button" ng-disabled="saving || !form_changed" ng-hide="!Teacher.id" style="width: 100px">
+	    		<span ng-show="form_changed">Сохранить</span>
+	    		<span ng-show="!form_changed && !saving">Сохранено</span>
+	    	</button>
+	    	
+	    	<button class="btn btn-primary save-button" ng-hide="Teacher.id" style="width: 100px">
+				добавить
+	    	</button>
+	    	
+		</div>
+	</div>
+	
+
+	
+	
 </form>

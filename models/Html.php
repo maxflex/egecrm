@@ -69,8 +69,8 @@ echo <<<HTML
 <div class="form-group">
     <div class="input-group" 
         ng-class="{'input-group-with-hidden-span' : !phoneCorrect('{$who}-phone') || (!isMobilePhone('{$who}-phone') && {$who}_phone_level >= 2) }">
-    	<input ng-keyup id="{$who}-phone" type="text" ng-model="{$Model}.phone"
-    		placeholder="телефон" class="form-control phone-masked"  
+    	<input ng-keyup id="{$who}-phone" type="text"
+    		placeholder="телефон" class="form-control phone-masked"  ng-model="{$Model}.phone">
     	<div class="input-group-btn">
 					<button ng-show="phoneCorrect('{$who}-phone') && isMobilePhone('{$who}-phone')" ng-class="{
 							'addon-bordered' : {$who}_phone_level >= 2 || !phoneCorrect('{$who}-phone')
@@ -83,12 +83,11 @@ echo <<<HTML
             </div>
 	</div>
 </div>
-
 <div class="form-group" ng-show="{$who}_phone_level >= 2">
     <div class="input-group" 
         ng-class="{'input-group-with-hidden-span' : !phoneCorrect('{$who}-phone-2')  || (!isMobilePhone('{$who}-phone') && {$who}_phone_level >= 3) }">
     	<input ng-keyup id="{$who}-phone-2" type="text"
-    		placeholder="телефон 2" class="form-control phone-masked"  ng-model="{$Model}.phone2"
+    		placeholder="телефон 2" class="form-control phone-masked" ng-model="{$Model}.phone2">
     	<div class="input-group-btn">
 			<button ng-show="phoneCorrect('{$who}-phone-2') && isMobilePhone('{$who}-phone-2')" ng-class="{
 					'addon-bordered' : {$who}_phone_level >= 3 || !phoneCorrect('{$who}-phone-2')
@@ -101,13 +100,11 @@ echo <<<HTML
         </div>
 	</div>
 </div>
-
-
 <div class="form-group" ng-show="{$who}_phone_level >= 3">
 	<div class="input-group" 
 		ng-class="{'input-group-with-hidden-span' : !phoneCorrect('{$who}-phone-3')  || !isMobilePhone('{$who}-phone-3') }">
         <input type="text" id="{$who}-phone-3" placeholder="телефон 3" 
-        	class="form-control phone-masked">
+        	class="form-control phone-masked" ng-model="{$Model}.phone3">
         	<div class="input-group-btn">
 				<button ng-show="phoneCorrect('{$who}-phone-3') && isMobilePhone('{$who}-phone-3')" ng-class="{
 						!phoneCorrect('{$who}-phone-3')

@@ -467,6 +467,8 @@
 		return $n%10==1&&$n%100!=11?$one:($n%10>=2&&$n%10<=4&&($n%100<10||$n%100>=20)?$few:$many);
 	}
 	
+	// если не указан id_request, то ищет по всей базе
+	// иначе ищет учитывая связанные заявки студента
 	function isDuplicate($phone, $id_request)
 	{
 		// Находим оригинальную заявку
@@ -474,57 +476,43 @@
 		
 		$phone = cleanNumber($phone);
 		
-		// Находим заявку с таким номером
 		# Ищем заявку с таким же номером телефона
 		$Request = Request::find([
-			"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."') AND id_student!=".$OriginalRequest->id_student
+			"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."')"
+				. ($id_request ? " AND id_student!=".$OriginalRequest->id_student : "")
 		]);
 
 		// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
 		if ($Request) {
 			return true;
-		//	returnJson($Request->Student->id);
 		}
 
 		# Ищем ученика с таким же номером телефона
 		$Student = Student::find([
-			"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."') AND id!=".$OriginalRequest->id_student
+			"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."')"
+				. ($id_request ? " AND id!=".$OriginalRequest->id_student : "")
 		]);
 
 		// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
 		if ($Student) {
 			return true;
-//				returnJson($Student->id);
 		}
 
 		# Ищем представителя с таким же номером телефона
-/*
-		$Representative = Representative::find([
-			"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."')"
-		]);
-*/
-		
 		$represetative_phone_duplicate = dbConnection()->query("
 			SELECT r.id FROM ".Representative::$mysql_table." r
 			LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
-			WHERE (r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."') AND s.id!=".$OriginalRequest->id_student
+			WHERE (r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."')"
+				. ($id_request ? " AND s.id!=".$OriginalRequest->id_student : "")
 		);
 		
 		// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
 		if ($represetative_phone_duplicate->num_rows) {
 			return true;
-//				returnJson($Representative->getStudent()->id);
 		}
 
 
 		// возвращается, если номера нет в базе
 		return false;
-//			returnJson(null);
 	}
-	
-	// 10,13,9 (1)
-	// 10,9 (3)
-	// 2,15,12 (1)
-	// 2,3,7,4 (1)
-	// 7,4 (42)
 ?>

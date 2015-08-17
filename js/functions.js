@@ -8,7 +8,7 @@ set_scope = function(app_name) {
 phoneCorrect = function(element) {
   var not_filled;
   if (!$("#" + element).val()) {
-    false;
+    return false;
   }
   not_filled = $("#" + element).val().match(/_/);
   return not_filled === null;
@@ -18,7 +18,7 @@ isMobilePhone = function(element) {
   var phone;
   phone = $("#" + element).val();
   if (!phone) {
-    false;
+    return false;
   }
   return !phone.indexOf("+7 (9");
 };

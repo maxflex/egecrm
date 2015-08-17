@@ -1,39 +1,27 @@
 <?php
-	class Teacher extends Model
+	class Group extends Model
 	{
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
-		public static $mysql_table	= "teachers";
+		public static $mysql_table	= "groups";
+		
+		protected $_inline_data = ["students"];
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
 		public function __construct($array)
 		{
 			parent::__construct($array);
+			
+			if (empty($this->students[0])) {
+				$this->students = [];
+			}
+			
+			$this->Teacher = Teacher::findById($this->id_teacher);
 		}
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-		
-		/**
-		 * Сколько номеров установлено.
-		 * 
-		 */
-		public function phoneLevel()
-		{
-			if (!empty($this->phone3)) {
-				return 3;
-			} else
-			if (!empty($this->phone2)) {
-				return 2;
-			} else {
-				return 1;
-			}
-		}
-		
-		public function getInitials()
-		{
-			return $this->last_name . " " . mb_substr($this->first_name, 0, 1, 'utf-8') . ". " . mb_substr($this->middle_name, 0, 1, 'utf-8') . ".";
-		}	
+				
 	}

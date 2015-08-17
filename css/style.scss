@@ -25,6 +25,17 @@ body {
 	border-bottom: 0;
 }
 
+.panel-heading {
+	& a {
+		color: white;
+		text-decoration: underline;
+		
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
+
 #frontend-loading {
 	position: absolute;
     z-index: 99;
@@ -32,7 +43,7 @@ body {
     width: 100%;
     background-color: rgba(255, 255, 255, .9);
     text-align: center;
-    line-height: 200px;
+    line-height: 150px;
     display: none;
 }
 
@@ -444,6 +455,14 @@ h4.row-header {
 	    color: #23527c;
 	    text-decoration: underline;
 	}
+	
+	&.red {
+		color: #a94442;
+	}
+}
+
+.bootstrap-select .btn:focus, .selectpicker a {
+	outline: none !important;
 }
 
 .link-reverse {
@@ -960,6 +979,8 @@ select.has-error:focus, input.has-error:focus {
 	padding: 0;
 	padding-bottom: 5px;
 }
+
+
 
 /* make sidebar nav vertical */
 @media (min-width: 768px) {

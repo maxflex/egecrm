@@ -47,10 +47,12 @@
 		/**
 		 * Получить студентов с договорами.
 		 * 
+		 * $only_active - только активные договоры
 		 */
-		public static function getWithContract()
+		public static function getWithContract($only_active = false)
 		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts GROUP BY id_student");
+			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
+				. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
 			
 			while ($row = $query->fetch_array()) {
 				if ($row["id_student"]) {
@@ -193,10 +195,10 @@
 		 * Получить постудний договор студента.
 		 * 
 		 */
-		public function getLastContract()
+		public function getLastContract($only_active = false)
 		{
 			return Contract::find([
-				"condition"	=> "deleted=0 AND id_student=" . $this->id,
+				"condition"	=> "deleted=0 AND id_student=" . $this->id . ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION,
 				"order"		=> "id DESC",
 				"limit"		=> "1",
 			]);	

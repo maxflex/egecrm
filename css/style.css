@@ -10,6 +10,12 @@ body {
 .no-border-bottom {
   border-bottom: 0; }
 
+.panel-heading a {
+  color: white;
+  text-decoration: underline; }
+  .panel-heading a:hover {
+    text-decoration: none; }
+
 #frontend-loading {
   position: absolute;
   z-index: 99;
@@ -17,7 +23,7 @@ body {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.9);
   text-align: center;
-  line-height: 200px;
+  line-height: 150px;
   display: none; }
 
 .sms-template-list {
@@ -333,6 +339,11 @@ h4.row-header {
   .link-like:hover {
     color: #23527c;
     text-decoration: underline; }
+  .link-like.red {
+    color: #a94442; }
+
+.bootstrap-select .btn:focus, .selectpicker a {
+  outline: none !important; }
 
 .link-reverse {
   text-decoration: underline; }

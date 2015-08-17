@@ -25,6 +25,19 @@ RewriteRule ^requests/ajax/([a-zA-Z]+)[/]?$ index.php?controller=request&action=
 RewriteRule ^requests/([a-zA-Z]+)[/]?$ index.php?controller=request&action=list&id_status=$1 [QSA,L]
 RewriteRule ^requests[/]?$ index.php?controller=request&action=list [QSA,L]
 
+# Учителя
+RewriteRule ^teachers/edit/([0-9]+)?$ index.php?controller=teacher&action=edit&id=$1 [QSA,L]
+RewriteRule ^teachers/add[/]?$ index.php?controller=teacher&action=add [QSA,L]
+RewriteRule ^teachers/ajax/([a-zA-Z]+)[/]?$ index.php?controller=teacher&action=Ajax$1 [QSA,L]
+RewriteRule ^teachers[/]?$ index.php?controller=teacher&action=list [QSA,L]
+
+# Группы
+RewriteRule ^groups/edit/([0-9]+)?$ index.php?controller=group&action=edit&id=$1 [QSA,L]
+RewriteRule ^groups/add[/]?$ index.php?controller=group&action=add [QSA,L]
+RewriteRule ^groups/ajax/([a-zA-Z]+)[/]?$ index.php?controller=group&action=Ajax$1 [QSA,L]
+RewriteRule ^groups[/]?$ index.php?controller=group&action=list [QSA,L]
+
+
 # Уведомления
 RewriteRule ^notifications[/]?$ index.php?controller=notification&action=list [QSA,L]
 
@@ -35,7 +48,6 @@ RewriteRule ^stats[/]?$ index.php?controller=stats [QSA,L]
 RewriteRule ^clients[/]?$ index.php?controller=clients [QSA,L]
 RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
 RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
-RewriteRule ^teachers/edit/([0-9]+)?$ index.php?controller=teachers&action=edit&id_teacher=$1 [QSA,L]
 
 
 # SMS
