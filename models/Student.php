@@ -51,19 +51,44 @@
 		 */
 		public static function getWithContract($only_active = false)
 		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
-			
-			while ($row = $query->fetch_array()) {
-				if ($row["id_student"]) {
-					$ids[] = $row["id_student"];
+			if (LOCAL_DEVELOPMENT) {
+				$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
+					. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+				
+				while ($row = $query->fetch_array()) {
+					if ($row["id_student"]) {
+						$ids[] = $row["id_student"];
+					}
 				}
+				
+				
+				return self::findAll([
+					"condition"	=> "id IN (". implode(",", $ids) .")"
+				]);
+			} else {
+				$Clients = memcached()->get("Clients");
+				
+				if (!$Clients) {
+					$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
+						. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+					
+					while ($row = $query->fetch_array()) {
+						if ($row["id_student"]) {
+							$ids[] = $row["id_student"];
+						}
+					}
+					
+					
+					$return =  self::findAll([
+						"condition"	=> "id IN (". implode(",", $ids) .")"
+					]);
+					
+					$Clients = $return;
+					memcached()->set("Clients", $Clients, 1 * 3600); // кеш на час
+				}
+				
+				return $Clients;
 			}
-			
-			
-			return self::findAll([
-				"condition"	=> "id IN (". implode(",", $ids) .")"
-			]);
 		}
 		
 		// Удаляет ученика и всё, что с ним связано

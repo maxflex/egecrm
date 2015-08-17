@@ -19,8 +19,10 @@ body {
 #frontend-loading {
   position: absolute;
   z-index: 99;
-  height: 100%;
+  height: 99%;
   width: 100%;
+  left: 0;
+  top: 0;
   background-color: rgba(255, 255, 255, 0.9);
   text-align: center;
   line-height: 150px;

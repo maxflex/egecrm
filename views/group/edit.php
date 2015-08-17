@@ -5,7 +5,7 @@
 		<?= $Group->id ? "Группа {$Group->id}" : "Добавление группы" ?>
 	</div>
 	<div class="panel-body" style="position: relative">
-		<div id="frontend-loading" style="height: 92%; width: 98%; display: block">Загрузка...</div>
+		<div id="frontend-loading" style="display: block">Загрузка...</div>
 		<form id="group-edit" autocomplete='off'>
 			<div class="row">
 				<div class="col-sm-9">

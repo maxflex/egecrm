@@ -15,8 +15,12 @@
 						<?php endif ?>
 					</td>
 					<td><?= Subjects::getById($Group->id_subject) ?></td>
-					<td><?= $Group->Teacher->getInitials() ?>
-					<td><?= count($Group->students) ?> <?= pluralize('ученик', 'ученика', 'учеников', count($Group->students)) ?>
+					<td>
+						<?php if ($Group->id_teacher): ?>
+							<?= $Group->Teacher->getInitials() ?>
+						<?php endif ?>
+					</td>
+					<td><?= count($Group->students) ?> <?= pluralize('ученик', 'ученика', 'учеников', count($Group->students)) ?></td>
 				</tr>
 			<?php endforeach ?>
 			</table>
