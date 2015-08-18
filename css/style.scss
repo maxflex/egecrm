@@ -25,6 +25,17 @@ body {
 	border-bottom: 0;
 }
 
+.half-opacity {
+	opacity: .5;
+}
+
+.half-opacity-color {
+	color: rgba(51, 122, 184, 0.5);
+	&:hover {
+		color: rgba(35, 83, 126, 0.5);
+	}
+}
+
 .panel-heading {
 	& a {
 		color: white;
@@ -34,6 +45,10 @@ body {
 			text-decoration: none;
 		}
 	}
+}
+
+.label {
+	font-weight: normal;
 }
 
 #frontend-loading {
@@ -700,6 +715,10 @@ h4 {
 
 .half-black {
 	color: rgba(0, 0, 0, .5) !important;
+}
+
+.quater-black {
+	color: rgba(0, 0, 0, .25) !important;
 }
 
 .request-main-list {

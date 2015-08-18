@@ -98,8 +98,8 @@
 				</option>
 			</select>
 		</div>
-		<div class="col-sm-3" style="text-align: right" ng-show="false">
-			источник: {{request.id_source ? sources[request.id_source] : "не указан"}}
+		<div class="col-sm-3" style="text-align: right" ng-show="request.has_contract">
+			<span class="label label-success">договор заключен</span>
 		</div>
 	</div>
 	<hr ng-hide="$last">

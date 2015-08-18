@@ -34,6 +34,13 @@
 					(parseInt($scope.search.id_branch) in Student.branches or not $scope.search.id_branch) and
 					(Student.Contract.subjects and (parseInt($scope.search.id_subject) of Student.Contract.subjects or not $scope.search.id_subject))
 			
+			$scope.deleteGroup = (id_group) ->
+				bootbox.confirm "Вы уверены, что хотите удалить группу №#{id_group}?", (result) ->
+					if result is true
+						ajaxStart()
+						$.post "groups/ajax/delete", {id_group: id_group}
+						window.history.go -1
+			
 			angular.element(document).ready ->
 				set_scope "Group"
 				frontendLoadingEnd()

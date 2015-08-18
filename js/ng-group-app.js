@@ -49,6 +49,17 @@ angular.module("Group", []).controller("EditCtrl", function($scope) {
     var ref;
     return (Student.Contract.grade === parseInt($scope.search.grade) || !$scope.search.grade) && ((ref = parseInt($scope.search.id_branch), indexOf.call(Student.branches, ref) >= 0) || !$scope.search.id_branch) && (Student.Contract.subjects && (parseInt($scope.search.id_subject) in Student.Contract.subjects || !$scope.search.id_subject));
   };
+  $scope.deleteGroup = function(id_group) {
+    return bootbox.confirm("Вы уверены, что хотите удалить группу №" + id_group + "?", function(result) {
+      if (result === true) {
+        ajaxStart();
+        $.post("groups/ajax/delete", {
+          id_group: id_group
+        });
+        return window.history.go(-1);
+      }
+    });
+  };
   angular.element(document).ready(function() {
     set_scope("Group");
     return frontendLoadingEnd();

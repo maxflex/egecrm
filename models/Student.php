@@ -44,6 +44,27 @@
 			return $query->num_rows;
 		}
 		
+		
+		public static function getWithContractByBranch($id_branch)
+		{
+			$query = dbConnection()->query("
+				SELECT s.id FROM contracts c
+				LEFT JOIN students s ON s.id = c.id_student
+				WHERE CONCAT(s.branches, ',') LIKE '%{$id_branch},%' 
+					AND (c.id_contract=0 OR c.id_contract IS NULL) GROUP BY s.id");
+			
+			while ($row = $query->fetch_array()) {
+				if ($row["id"]) {
+					$ids[] = $row["id"];
+				}
+			}
+			
+			
+			return self::findAll([
+				"condition"	=> "id IN (". implode(",", $ids) .")"
+			]);
+		}
+		
 		/**
 		 * Получить студентов с договорами.
 		 * 
@@ -51,44 +72,19 @@
 		 */
 		public static function getWithContract($only_active = false)
 		{
-			if (LOCAL_DEVELOPMENT) {
-				$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-					. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
-				
-				while ($row = $query->fetch_array()) {
-					if ($row["id_student"]) {
-						$ids[] = $row["id_student"];
-					}
+			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
+				. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+			
+			while ($row = $query->fetch_array()) {
+				if ($row["id_student"]) {
+					$ids[] = $row["id_student"];
 				}
-				
-				
-				return self::findAll([
-					"condition"	=> "id IN (". implode(",", $ids) .")"
-				]);
-			} else {
-				$Clients = memcached()->get("Clients");
-				
-				if (!$Clients) {
-					$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-						. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
-					
-					while ($row = $query->fetch_array()) {
-						if ($row["id_student"]) {
-							$ids[] = $row["id_student"];
-						}
-					}
-					
-					
-					$return =  self::findAll([
-						"condition"	=> "id IN (". implode(",", $ids) .")"
-					]);
-					
-					$Clients = $return;
-					memcached()->set("Clients", $Clients, 1 * 3600); // кеш на час
-				}
-				
-				return $Clients;
 			}
+			
+			
+			return self::findAll([
+				"condition"	=> "id IN (". implode(",", $ids) .")"
+			]);
 		}
 		
 		// Удаляет ученика и всё, что с ним связано

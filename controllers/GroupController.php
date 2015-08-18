@@ -85,4 +85,9 @@
 			}
 		}
 		
+		public function actionAjaxDelete()
+		{
+			Group::deleteById($_POST["id_group"]);
+		}
+		
 	}

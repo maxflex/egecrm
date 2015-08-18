@@ -41,8 +41,10 @@
 		public function actionEdit($Teacher = false)
 		{
 			if (!$Teacher) {
-				$this->setTabTitle("Редактирование преподавателя №{$_GET['id']}");
-				$Teacher = Teacher::findById($_GET['id']);
+				$id_teacher = $_GET['id'];
+				$this->setTabTitle("Редактирование преподавателя №{$id_teacher}");
+				$this->setRightTabTitle("<span class='link-reverse pointer' onclick='deleteTeacher($id_teacher)'>удалить преподавателя</span>");
+				$Teacher = Teacher::findById($id_teacher);
 			}
 						
 			$ang_init_data = angInit([
@@ -65,6 +67,11 @@
 				$NewTeacher = new Teacher($Teacher);
 				returnJSON($NewTeacher->save());
 			}
+		}
+		
+		public function actionAjaxDelete()
+		{
+			Teacher::deleteById($_POST["id_teacher"]);
 		}
 		
 	}

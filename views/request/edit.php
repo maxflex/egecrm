@@ -212,7 +212,7 @@
 		<div class="col-sm-12">
 			<ul class="nav nav-tabs">
 			<li ng-repeat="request_duplicate in request_duplicates" ng-class="{'active' : request_duplicate == <?= $Request->id ?>}">
-				<a href="requests/edit/{{request_duplicate}}">
+				<a href="requests/edit/{{request_duplicate}}" ng-class="{'half-opacity-color': request_duplicate_comments[request_duplicate] == false}">
 					Заявка #{{request_duplicate}}
 				</a>
 			</li>
@@ -935,7 +935,7 @@
 		    <div class="form-group payment-line">
 				<div ng-repeat="payment in payments | reverse" style="margin-bottom: 5px">
 					<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">
-					{{payment_statuses[payment.id_status]}}<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">{{payment.card_number ? " *" + payment.card_number : ""}}</span></span>
+					{{payment_statuses[payment.id_status]}}<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">{{payment.card_number ? " *" + payment.card_number.trim() : ""}}</span></span>
 					
 					<span class="capitalize">{{payment_types[payment.id_type]}}</span>
 					на сумму {{payment.sum}} <ng-pluralize count="payment.sum" when="{

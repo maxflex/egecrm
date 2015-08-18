@@ -3,6 +3,9 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<?= $Group->id ? "Группа {$Group->id}" : "Добавление группы" ?>
+		<div class="pull-right">
+			<span class="link-reverse pointer" ng-click="deleteGroup(Group.id)" ng-show="Group.id">удалить группу</span>
+		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
 		<div id="frontend-loading" style="display: block">Загрузка...</div>

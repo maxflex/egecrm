@@ -191,6 +191,10 @@
 		}
 		
 		
+		public static function getName($id_branch) {
+			return self::metroSvg($id_branch) .  self::getById($id_branch);
+		}
+		
 		/**
 		 * Получить отсортированные по весу линий филиалы с другими параметрами (имя, свг и тд)
 		 * 

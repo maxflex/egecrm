@@ -7,7 +7,7 @@
 	</thead>
 	
 	<?php foreach($rating as $id_branch => $score): ?>
-	<tr>
+	<tr onclick="redirect('rating/<?= $id_branch ?>')" class="pointer">
 		<td><?= Branches::metroSvg($id_branch) ?><?= Branches::$all[$id_branch] ?></td>
 		<td><?= $score ?></td>
 	</tr>
