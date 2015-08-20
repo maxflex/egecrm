@@ -5,4 +5,6 @@
 				
 				google.maps.event.addListener map, 'click', (event) ->
 					marker = addMarker map, event.latLng
-					getDistance event.latLng
+					getDistance event.latLng, (response) ->
+						$scope.data = response
+						$scope.$apply()

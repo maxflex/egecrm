@@ -102,7 +102,7 @@
 				</div>
 			</div>
 			<center>
-				<button class="btn btn-primary" ng-click="addContractNew()">Сохранить</button>
+				<button class="btn btn-primary ajax-contract-button" ng-click="addContractNew()">Сохранить</button>
 			</center>
 		</div>
 		<!-- /ЛАЙТБОКС ДОБАВЛЕНИЕ ДОГОВОРА -->
@@ -135,7 +135,7 @@
 				</div>
 			</div>
 			<center>
-				<button class="btn btn-primary" ng-click="addPayment()">{{new_payment.id ? "Редактировать" : "Добавить"}}</button>
+				<button class="btn btn-primary ajax-payment-button" ng-click="addPayment()">{{new_payment.id ? "Редактировать" : "Добавить"}}</button>
 			</center>
 		</div>
 		<!-- /ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
@@ -182,7 +182,7 @@
 			</div>
 			<center>
 				<span ng-show="request_duplicates.length > 1">
-					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(0)">перенести</button>		
+					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(0)" id="save-glue-button">перенести</button>		
 				</span>
 				<span ng-show="request_duplicates.length <= 1">
 					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(1)">перенести с удалением ученика</button>
@@ -438,7 +438,14 @@
 		                <input type="text" placeholder="отчество" class="form-control" name="Student[middle_name]" ng-model="student.middle_name">
 		            </div>
 		            <div class="form-group">
-		                <input type="text" placeholder="e-mail" class="form-control" name="Student[email]" value="<?= $Request->Student->email ?>">
+			            <div class="input-group" ng-class="{'input-group-with-hidden-span': !emailFull(student.email)}">
+			                <input type="text"  placeholder="e-mail" class="form-control" name="Student[email]" ng-model="student.email">
+			                <div class="input-group-btn">
+				                <button class="btn btn-default" ng-show="emailFull(student.email)" ng-click="emailDialog(student.email)">
+				                	<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+				                </button>
+			                </div>
+			            </div>			                
 		            </div>
 
 					<div>
@@ -547,11 +554,15 @@
 		                <input type="text" placeholder="отчество" class="form-control" name="Representative[middle_name]" ng-model="representative.middle_name">
 		            </div>
 		            <div class="form-group">
-		                <input type="text" placeholder="e-mail" class="form-control" name="Representative[email]" ng-model="representative.email">
+			            <div class="input-group" ng-class="{'input-group-with-hidden-span': !emailFull(representative.email)}">
+			                <input type="text" placeholder="e-mail" class="form-control" name="Representative[email]" ng-model="representative.email">
+								<div class="input-group-btn">
+					                <button class="btn btn-default" ng-show="emailFull(representative.email)" ng-click="emailDialog(representative.email)">
+					                	<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+					                </button>
+								</div>
+			            </div>
 		            </div>
-		      
-		      
-		      
 		      
 					<div>
 			        	<div class="form-group">

@@ -34,6 +34,7 @@
 	<script type="text/javascript" src="js/angular.js"></script>
 	<script type="text/javascript" src="js/angular-locale-ru.js"></script>
 	<script type="text/javascript" src="js/angular-animate.js"></script>
+	<script type="text/javascript" src="extentions/ckeditor/ckeditor.js"></script>
 	<script type="text/javascript" src="js/ngmap.min.js"></script>
 	<script type="text/javascript" src="js/name.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>

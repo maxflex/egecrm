@@ -41,10 +41,11 @@
 	
 	
 	# GEO
-	getDistance = (latLng) ->
+	getDistance = (latLng, callback) ->
 		$.get "metro/getDistance", 
 			lat: latLng.lat()
 			lng: latLng.lng(),
 			(response) ->
-				console.log response
+				callback(response)
+		, "json"
 			

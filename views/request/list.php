@@ -22,7 +22,10 @@
 			</div>
 
 			<?php globalPartial("request_list") ?>
-
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
 			<div ng-hide="request_statuses_count[chosen_list] <= <?= Request::PER_PAGE ?>">
 				<pagination
 			      ng-model="currentPage"

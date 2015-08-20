@@ -17,12 +17,31 @@ body {
 	background-image: url("../img/background/bg.jpg");
 }
 
+#task-app {
+	& .task-line {
+		border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+		margin-bottom: 10px;
+	}
+	
+	& .controls-buttons {
+		text-align: right; 
+		display: inline-block; 
+		width: 100%;
+		margin-top: 10px;
+		& button {
+			width: 150px;
+			margin-left: 20px;
+		}
+	}
+}
+
+
 .sms-template {
 	display: none;
 }
 
 .no-border-bottom {
-	border-bottom: 0;
+	border-bottom: 0 !important;
 }
 
 .half-opacity {
@@ -34,6 +53,15 @@ body {
 	&:hover {
 		color: rgba(35, 83, 126, 0.5);
 	}
+}
+
+#cke_18 {
+	display: none;
+}
+.cke_contents {
+    border: 3px solid #F2F2F2 !important;
+    top: -3px;
+    position: relative !important;
 }
 
 .panel-heading {
@@ -54,7 +82,7 @@ body {
 #frontend-loading {
 	position: absolute;
     z-index: 99;
-    height: 99%;
+    height: 99.9%;
     width: 100%;
     left: 0;
     top: 0;
@@ -192,14 +220,14 @@ h4.row-header {
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
 }
 
-.lightbox-sms {
+.lightbox-sms, .lightbox-email {
 	width: 60%;
 //	height: 80%;
 	left: 20%;
 	top: 10%;
 }
 
-#sms-history {
+#sms-history, #email-history {
 	margin-bottom: 10px;
     padding-left: 23px;
     max-height: 300px;
@@ -218,6 +246,10 @@ h4.row-header {
     font-size: 10px;
     color: #999;
     text-align: right;
+    & a {
+		color: #999;
+		font-size: 10px !important;
+    }
 }
 
 .sms-in-list {

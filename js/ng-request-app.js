@@ -201,6 +201,45 @@
 					$scope.$apply()
 				}, 100);
 			}
+			
+			// проверка на корректность емайл
+			$scope.emailFull = function(email) {
+				re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+				return re.test(email)
+			}
+			
+			$scope.emailDialog = function(email) {
+				$("#email-history").html('<center class="text-gray">загрузка истории сообщений...</center>')
+				
+				html = ""
+				
+				$.post("ajax/emailHistory", {"email": email}, function(response) {
+					console.log(response);
+					if (response != false) {
+						$.each(response, function(i, v) {
+							files_html = ""
+							$.each(v.files, function(i, file) {
+								files_html += '<div class="sms-coordinates">\
+									<a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">' + file.uploaded_name + '</a>\
+									<span> (' + file.size + ')</span>\
+									</div>'
+							})
+							html += '<div class="clear-sms">		\
+										<div class="from-them">		\
+											' + v.message + ' 		\
+											<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '\
+									    </div>						\
+									</div>';	
+							})
+						$("#email-history").html(html)
+					} else {
+						$("#email-history").html("")
+					}
+				}, "json")
+				
+				$("#email-address").text(email)
+				lightBoxShow('email')
+			}
 
 			/**
 			 * Показывать в свободном времени только дни, где есть свободное время
@@ -895,7 +934,7 @@
 				$scope.current_contract.id_student = $scope.student.id
 
 				if ($scope.current_contract.id) {
-					ajaxStart()
+					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
 						angular.forEach($scope.contracts, function(contract, i) {
 							if (contract.id == $scope.current_contract.id) {
@@ -903,14 +942,14 @@
 								$scope.$apply()
 							}
 						})
-						ajaxEnd()
+						ajaxEnd('contract')
 						lightBoxHide()
 					})
 				} else {
 					// сохраняем догавар
-					ajaxStart()
+					ajaxStart('contract')
 					$.post("ajax/contractSave", $scope.current_contract, function(response) {
-						ajaxEnd()
+						ajaxEnd('contract')
 						lightBoxHide()
 
 						$scope.current_contract.id 			= response.id
@@ -1168,7 +1207,7 @@
 
 				// редактирование платежа, если есть ID
 				if ($scope.new_payment.id) {
-					ajaxStart()
+					ajaxStart('payment')
 					$.post("ajax/paymentEdit", $scope.new_payment, function(response) {
 						angular.forEach($scope.payments, function(payment, i) {
 							if (payment.id == $scope.new_payment.id) {
@@ -1176,7 +1215,7 @@
 								$scope.$apply()
 							}
 						})
-						ajaxEnd()
+						ajaxEnd('payment')
 						lightBoxHide()
 					})
 				} else {
@@ -1187,7 +1226,7 @@
 					$scope.new_payment.id_student		= $scope.student.id
 					$scope.new_payment.id_user			= $scope.user.id
 
-					ajaxStart()
+					ajaxStart('payment')
 					$.post("ajax/paymentAdd", $scope.new_payment, function(response) {
 						$scope.new_payment.id = response;
 
@@ -1200,7 +1239,7 @@
 
 						$scope.$apply()
 
-						ajaxEnd()
+						ajaxEnd('payment')
 						lightBoxHide()
 					})
 				}

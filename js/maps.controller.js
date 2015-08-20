@@ -48,11 +48,11 @@ addMarker = function(map, latLng) {
   });
 };
 
-getDistance = function(latLng) {
+getDistance = function(latLng, callback) {
   return $.get("metro/getDistance", {
     lat: latLng.lat(),
     lng: latLng.lng()
   }, function(response) {
-    return console.log(response);
-  });
+    return callback(response);
+  }, "json");
 };

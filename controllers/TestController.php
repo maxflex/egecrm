@@ -66,6 +66,22 @@
 			$this->render("map");
 		}
 		
+		public function actionMailer()
+		{
+			$mail = initMailer();
+			
+			$mail->addAddress("makcyxa-k@yandex.ru");
+			$mail->Body = "Замалым";
+			$mail->Subject = 'Here is the subject';
+
+			if(!$mail->send()) {
+			    echo 'Message could not be sent.';
+			    echo 'Mailer Error: ' . $mail->ErrorInfo;
+			} else {
+			    echo 'Message has been sent';
+			}			
+		}
+		
 		public function actionDuplicate()
 		{
 			$res = isDuplicate("79205556776", 19);
@@ -77,6 +93,13 @@
 			$q = Student::getWithoutContract();
 			
 			var_dump($q);
+		}
+		
+		function actionAddTask()
+		{
+// 			$this->addJs("//cdn.ckeditor.com/4.5.2/full-all/ckeditor.js", true);
+			$this->setTabTitle("Редактирование задачи");
+			$this->render("add_task");
 		}
 		
 		##################################################

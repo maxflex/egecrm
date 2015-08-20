@@ -5,7 +5,10 @@ angular.module("Test", ["ngMap"]).controller("MapCtrl", function($scope) {
     return google.maps.event.addListener(map, 'click', function(event) {
       var marker;
       marker = addMarker(map, event.latLng);
-      return getDistance(event.latLng);
+      return getDistance(event.latLng, function(response) {
+        $scope.data = response;
+        return $scope.$apply();
+      });
     });
   });
 });

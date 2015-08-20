@@ -66,6 +66,8 @@
 	    include $filename;
 	}
 	
+	require 'extentions/PHPMailer/PHPMailerAutoload.php';
+	
 	require_once("models/Model.php");			// Подключаем основную модель
 	require_once("controllers/Controller.php");	// Подключаем основной контроллер
 	

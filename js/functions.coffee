@@ -23,3 +23,15 @@
 		return false if not phone
 		
 		not phone.indexOf "+7 (9"
+	
+	ajaxStart = (element = false) ->
+		if element isnt false
+			$(".ajax-#{element}-button").attr("disabled", "disabled")
+		NProgress.start()
+
+	ajaxEnd = (element = false) ->
+		if element isnt false
+			#setTimeout ->
+			$(".ajax-#{element}-button").removeAttr("disabled")
+			#, 500
+		NProgress.done()

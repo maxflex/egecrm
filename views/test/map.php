@@ -12,4 +12,20 @@
 		</div>
 	    </custom-control>
 	</map>
+	
+	<hr>
+	<div class="row">
+		<div class="col-sm-4">
+			<div ng-repeat="metro in data">
+				<span ng-hide="$last">
+					{{$index + 1}}) {{metro.title}}: {{metro.distance | number}} м.
+				</span>
+			</div>
+		</div>
+		<div class="col-sm-7">	
+			<ul>
+				<li ng-repeat="comment in data.comments" class="half-black small">{{comment}}</li>
+			</ul>
+		</div>
+	
 </div>

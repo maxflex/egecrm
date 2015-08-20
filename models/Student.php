@@ -50,7 +50,7 @@
 			$query = dbConnection()->query("
 				SELECT s.id FROM contracts c
 				LEFT JOIN students s ON s.id = c.id_student
-				WHERE CONCAT(s.branches, ',') LIKE '%{$id_branch},%' 
+				WHERE CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%' 
 					AND (c.id_contract=0 OR c.id_contract IS NULL) GROUP BY s.id");
 			
 			while ($row = $query->fetch_array()) {
@@ -58,7 +58,6 @@
 					$ids[] = $row["id"];
 				}
 			}
-			
 			
 			return self::findAll([
 				"condition"	=> "id IN (". implode(",", $ids) .")"

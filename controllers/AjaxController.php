@@ -240,6 +240,27 @@
 			returnJSON($History);
 		}
 		
+		public function actionAjaxSendEmail()
+		{
+			extract($_POST);
+			
+			$Email = Email::send($email, $subject, $message, $files);
+			$Email->getCoordinates();
+			
+			returnJSON($Email);
+		}
+		
+		public function actionAjaxEmailHistory() {
+			extract($_POST);
+			
+			$History = Email::findAll([
+				"condition" => "email='$email'",
+				"order"		=> "date DESC",
+			]);
+			
+			returnJSON($History);
+		}
+		
 		public function actionAjaxUpdateUserCache()
 		{
 			$Users = User::findAll();

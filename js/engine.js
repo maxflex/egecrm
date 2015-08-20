@@ -1,6 +1,7 @@
 	moment.lang('ru-RU');
 	var ang_scope;
-	
+	var email_uploaded_files = [];
+	var email_uploaded_file_id = 1;
 	
 	// Основной скрипт
 	$(document).ready(function() {
@@ -30,8 +31,61 @@
 			res = SmsCounter.count($(this).val())
 			$("#sms-counter").html(res.messages + " СМС")
 		})
+		
+		
+		// загрузка файла договора
+		$('#email-files').fileupload({
+			dataType: 'json',
+			maxFileSize: 10000000, // 10 MB
+			// начало загрузки
+			send: function() {
+				NProgress.configure({ showSpinner: true })
+			},
+			// во время загрузки
+			progress: function (e, data) {
+	            NProgress.set(data.loaded / data.total)
+	        },
+	        // всегда по окончании загрузки (неважно, ошибка или успех)
+	        always: function() {
+		        NProgress.configure({ showSpinner: false })
+		        ajaxEnd()
+	        },
+	        done: function (i, response) {
+				if (response.result !== "ERROR") {
+					file = response.result
+					file.email_uploaded_file_id = email_uploaded_file_id
+
+					email_uploaded_files.push(file)
+					$("#email-files-list").append('<div id="email-file-' + email_uploaded_file_id + '" class="loaded-file">\
+						<span style="color: black">' + file.uploaded_name + '</span>\
+							<a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">скачать</a>\
+						<span class="link-like link-reverse small" onclick="emailRemoveFile(' + email_uploaded_file_id + ')">удалить</span>\
+						</div>')
+					email_uploaded_file_id++
+				} else {
+					notifyError("Ошибка загрузки")
+				}
+	        },
+	        fail: function (e, data) {
+				$.each(data.messages, function (index, error) {
+					notifyError(error)
+				})
+	        }
+	    })
+
+		
 	})
 	
+	function emailRemoveFile(id) {
+		$("#email-file-" + id).slideUp(300, function() {
+			$.each(email_uploaded_files, function (index, file) {
+				if (file.email_uploaded_file_id == id) {
+					email_uploaded_files.splice(index, 1)
+				}	
+			})
+			$(this).remove()
+		})
+	}
 	
 	function showFullSms(id) {
 		$("#sms-short-" + id).hide(0)
@@ -59,10 +113,19 @@
 			console.log(response);
 			if (response != false) {
 				$.each(response, function(i, v) {
+					
+					files_html = ""
+					$.each(v.files, function(i, file) {
+						files_html += '<div class="sms-coordinates">\
+							<a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">' + file.uploaded_name + '</a>\
+							<span> (' + file.size + ')</span>\
+							</div>'
+					})
+					
 					html += '<div class="clear-sms">		\
 								<div class="from-them">		\
 									' + v.message + ' 		\
-									<div class="sms-coordinates">' + v.coordinates + '</div>\
+									<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '\
 							    </div>						\
 							</div>';	
 					})
@@ -101,6 +164,48 @@
 				</div>';	
 			$("#sms-history").prepend(html).animate({ scrollTop: 0 }, "fast");
 			message.val("")
+		}, "json");
+	}
+	
+	function sendEmail() {
+		message = $("#email-message");
+		email	= $("#email-address").text();
+		subject = $("#email-subject")
+		
+		if (subject.val().trim() == "") {
+			subject.addClass("has-error").focus()
+			return
+		} else {
+			subject.removeClass("has-error")
+		}
+		
+		if (message.val().trim() == "") {
+			message.addClass("has-error").focus()
+			return
+		} else {
+			message.removeClass("has-error")
+		}
+		
+		ajaxStart('email')
+		$.post("ajax/sendEmail", {
+			"message": message.val().trim(),
+			"subject": subject.val().trim(),
+			"email": email,
+			"files": email_uploaded_files,
+		}, function(response) {
+			email_uploaded_files = []
+			$("#email-files-list").html("")
+			ajaxEnd('email')
+			html = '\
+			<div class="clear-sms">		\
+					<div class="from-them">		\
+						' + response.message + ' 		\
+						<div class="sms-coordinates">' + response.coordinates + '</div>\
+				    </div>						\
+				</div>';	
+			$("#email-history").prepend(html).animate({ scrollTop: 0 }, "fast");
+			message.val("")
+			subject.val("")
 		}, "json");
 	}
 	
@@ -327,14 +432,6 @@
 	 * Анимация аякса.
 	 * 
 	 */
-	function ajaxStart()
-	{
-		NProgress.start()
-	}
-	function ajaxEnd()
-	{
-		NProgress.done()
-	}
 	function frontendLoadingStart()
 	{
 		$("#frontend-loading").fadeIn(300)

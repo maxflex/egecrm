@@ -1,4 +1,4 @@
-<!-- ЛАЙТБОКС ОТПРАВКА СООБЩЕИЯ -->
+<!-- ЛАЙТБОКС ОТПРАВКА SMS -->
 <div class="lightbox-new lightbox-sms">
 	<h4 style="text-align: center" id="sms-number">
 		<span class="text-danger">Номер не установлен!</span>
@@ -28,11 +28,50 @@
 			<div id="sms-template-2" class="sms-template">
 				Здравствуйте! Вы оставляли заявку в ЕГЭ-Центр. Не удалось до Вас дозвониться, просьба перезвонить по тел. 8 (495) 646-85-92, <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>
 			</div>
-			<button class="btn btn-primary" id="sms-send" onclick="sendSms()">Отправить</button>
+			<button class="btn btn-primary ajax-sms-button" onclick="sendSms()">Отправить</button>
 		</div>
 	</div>
 </div>
-<!-- /ЛАЙТБОКС ОТПРАВКА СООБЩЕНИЯ -->
+<!-- /ЛАЙТБОКС ОТПРАВКА SMS -->
+
+<!-- ЛАЙТБОКС ОТПРАВКА EMAIL -->
+<div class="lightbox-new lightbox-email">
+	<h4 style="text-align: center" id="email-address">
+		<span class="text-danger">email не установлен!</span>
+	</h4>
+	<div class="row">
+		<div class="col-sm-12" id="email-history">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12" style="text-align: center">
+			<div class="form-group">
+				<input class="form-control" placeholder="Тема сообщения" id="email-subject">
+			</div>
+			<div class="form-group">
+				<textarea rows="8" class="form-control" style="width: 100%" placeholder="Текст сообщения" id="email-message"></textarea>
+				<div class="small" style="text-align: right">
+					<b>прикрепленные файлы</b>
+	
+					<span class="btn-file link-like link-reverse small">
+						<span>добавить файл</span>
+						<input id="email-files" data-url="upload/email/" type="file" name="email_file">
+					</span>
+					<div id="email-files-list">
+					</div>
+<!--
+					<span style="color: black">файл {{$index + 1}}</span> <span ng-show="file.size && file.coords">({{file.size}}, {{file.coords}})</span>
+						<a target="_blank" href="files/contracts/{{file.name}}" class="link-reverse small">скачать</a>
+					<span class="link-like link-reverse small" ng-click="deleteContractFile(contract, $index)">удалить</span>
+-->
+	
+				</div>
+			</div>
+			<button class="btn btn-primary ajax-email-button" onclick="sendEmail()">Отправить</button>
+		</div>
+	</div>
+</div>
+<!-- /ЛАЙТБОКС ОТПРАВКА EMAIL -->
 
 
 <div class="row">
@@ -71,6 +110,18 @@
     <a href="teachers" class="list-group-item">Преподаватели</a>
     <a href="groups" class="list-group-item">Группы</a>
     <a href="#" class="list-group-item active">Настройки</a>
+	<?php if (in_array(User::fromSession()->id, [1, 69])): ?>
+	    <a href="tasks" class="list-group-item">Задачи
+		<?php
+			// Количество новых заявок
+			$new_tasks_count = Task::countNew();
+			
+			// Если есть новые заявки
+			if ($new_tasks_count) {
+				echo '<span class="badge pull-right">'. $new_tasks_count .'</span>';
+			}
+		?>
+	<?php endif ?>
     <a href="rating" class="list-group-item">Рейтинг</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
