@@ -6,8 +6,8 @@
 					className: "modal-password",
 					callback: function(result) {
 						if (result == "363") {
-							payment.confirmed = 1
-							$.post("ajax/confirmPayment", {id: payment.id})	
+							payment.confirmed = payment.confirmed ? 0 : 1
+							$.post("ajax/confirmPayment", {id: payment.id, confirmed: payment.confirmed})	
 							$scope.$apply()
 						}
 					},

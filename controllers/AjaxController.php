@@ -83,7 +83,7 @@
 			extract($_POST);
 			
 			Payment::updateById($id, [
-				"confirmed" => 1
+				"confirmed" => $confirmed
 			]);
 		}
 
@@ -271,5 +271,26 @@
 			
 			$Users = $return;
 			memcached()->set("Users", $Users, 2 * 24 * 3600); // кеш на 2 дня
+		}
+		
+		public function actionAjaxGetFile()
+		{
+			extract($_GET);
+			
+			if (file_exists($file_name)) {
+				// указываем размер
+				$size = round(filesize($file_name) / 1000000, 3); // в мегабайтах, 1 цифра после запятой
+				
+				// если размер меньше мегабайта, отобразить в киллобайтах
+				if ($size < 1) {
+					$size = round($size * 1000) . " Кб";
+				} else {
+					$size = round($size, 1) . " Мб";
+				}
+				
+				returnJson($size);
+			} else {
+				returnJson(false);	
+			}
 		}
 	}

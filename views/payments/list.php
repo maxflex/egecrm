@@ -54,7 +54,7 @@
 					<span class="save-coordinates">({{payment.user_login}} {{formatDate(payment.first_save_date) | date:'yyyy.MM.dd в HH:mm'}})
 					</span>
 					 <a class="link-like link-reverse small" ng-click="confirmPayment(payment)" ng-show="!payment.confirmed">подтвердить</a>
-					 <span class="label label-success" ng-show="payment.confirmed">подтвержден</span>
+					 <span class="label pointer label-success" ng-show="payment.confirmed" ng-click="confirmPayment(payment)">подтвержден</span>
 					 <a class="link-like link-reverse small" ng-click="editPayment(payment)">редактировать</a>
 					 <a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
 			</div>

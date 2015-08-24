@@ -19,6 +19,7 @@
 			<div class="sms-template-list">
 				<span onclick="smsTemplate(1)">подтверждение договоренности</span>
 				<span onclick="smsTemplate(2)">нет связи с клиентом</span>
+				<span onclick="smsTemplate(3)">нет связи с ожидающими и не решившими</span>
 			</div>
 			
 			<div id="sms-template-1" class="sms-template">
@@ -28,6 +29,11 @@
 			<div id="sms-template-2" class="sms-template">
 				Здравствуйте! Вы оставляли заявку в ЕГЭ-Центр. Не удалось до Вас дозвониться, просьба перезвонить по тел. 8 (495) 646-85-92, <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>
 			</div>
+			
+			<div id="sms-template-3" class="sms-template">
+				Имя, здравствуйте. В ЕГЭ-Центре-Филиал формируются группы и расписание. Не могу до Вас дозвониться. Перезвоните, пожалуйста, по тел. (495) 646-85-92. <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>.
+			</div>
+			
 			<button class="btn btn-primary ajax-sms-button" onclick="sendSms()">Отправить</button>
 		</div>
 	</div>
@@ -50,9 +56,10 @@
 			</div>
 			<div class="form-group">
 				<textarea rows="8" class="form-control" style="width: 100%" placeholder="Текст сообщения" id="email-message"></textarea>
+				<div class="sms-template-list" style="float: left">
+					<span onclick="generateEmailTemplate()">шаблон для тестов</span>
+				</div>
 				<div class="small" style="text-align: right">
-					<b>прикрепленные файлы</b>
-	
 					<span class="btn-file link-like link-reverse small">
 						<span>добавить файл</span>
 						<input id="email-files" data-url="upload/email/" type="file" name="email_file">

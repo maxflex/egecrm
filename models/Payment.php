@@ -22,7 +22,9 @@
 		];
 		
 		# удаленные записи коллекции
-		static $deleted = array();
+		static $deleted = [
+			self::NOT_PAID_BILL,
+		];
 		
 		# Заголовок
 		static $title = "способ оплаты";

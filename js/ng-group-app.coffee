@@ -1,5 +1,19 @@
 	angular.module "Group", []
+		.filter 'to_trusted', ['$sce', ($sce) ->
+	        return (text) ->
+	            return $sce.trustAsHtml(text)
+		]
 		.controller "EditCtrl", ($scope) ->
+			
+			$scope.weekdays = [
+				{"short" : "ПН", "full" : "Понедельник"},
+				{"short" : "ВТ", "full" : "Вторник"},
+				{"short" : "СР", "full" : "Среда"},
+				{"short" : "ЧТ", "full" : "Четверг"},
+				{"short" : "ПТ", "full" : "Пятница"},
+				{"short" : "СБ", "full" : "Суббота"},
+				{"short" : "ВС", "full" : "Воскресенье"}
+			]
 			
 			$scope.countSubjects = (Contract) ->
 				Object.keys(Contract.subjects).length

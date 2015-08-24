@@ -181,9 +181,11 @@
 			
 			
 			// Устанавливаем статус заявки
+/*
 			if (time() - $this->delay_time < 10) {
 				$this->id_status = RequestStatuses::SPAM;	
 			} else
+*/
 			if ($this->_phoneExists()) {
 				$this->id_status = RequestStatuses::DUPLICATE;
 			}

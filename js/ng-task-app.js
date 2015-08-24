@@ -5,6 +5,8 @@ angular.module("Task", ['ngSanitize']).filter('reverse', function() {
       return items.slice().reverse();
     }
   };
+}).filter('unsafe', function($sce) {
+  return $sce.trustAsHtml;
 }).controller("ListCtrl", function($scope) {
   $scope.editing_tasks = [];
   $scope.editTask = function(Task) {
@@ -17,7 +19,7 @@ angular.module("Task", ['ngSanitize']).filter('reverse', function() {
       language: 'ru',
       height: 500,
       title: "testy",
-      extraPlugins: 'pastebase64'
+      extraPlugins: 'pastebase64,panel,button,panelbutton,colorbutton'
     });
     $scope.e.setData(Task.html);
     $scope.e.on('contentDom', function() {
@@ -27,6 +29,7 @@ angular.module("Task", ['ngSanitize']).filter('reverse', function() {
           Task.html = $scope.e.getData();
           $scope.e.destroy();
           delete $scope.e;
+          $scope.editing_task = void 0;
           $scope.$apply();
           $scope.saveTask(Task);
         }
@@ -34,23 +37,29 @@ angular.module("Task", ['ngSanitize']).filter('reverse', function() {
           Task.html += " ";
           $scope.e.destroy();
           delete $scope.e;
+          $scope.editing_task = void 0;
           return $scope.$apply();
         }
       });
     });
-    $scope.e.on('instanceReady', function(event) {
+    return $scope.e.on('instanceReady', function(event) {
       $scope.e.focus().select;
       return $scope.e.execCommand('selectAll');
-    });
-    return $scope.e.on('blur', function(event) {
-      Task.html += " ";
-      $scope.e.destroy();
-      delete $scope.e;
-      return $scope.$apply();
     });
   };
   $scope.editingTask = function(Task) {
     return Task.id === $scope.editing_task;
+  };
+  $scope.toggleTaskStatus = function(Task) {
+    Task.id_status++;
+    if (Task.id_status > Object.keys($scope.task_statuses).length) {
+      Task.id_status = 1;
+    }
+    return $scope.saveTask(Task);
+  };
+  $scope.deleteTask = function(Task) {
+    Task.html = "";
+    return $scope.saveTask(Task);
   };
   $scope.addTask = function() {
     return $.post("tasks/ajax/add", {}, function(id_task) {
@@ -62,14 +71,61 @@ angular.module("Task", ['ngSanitize']).filter('reverse', function() {
       };
       $scope.Tasks.push(Task);
       $scope.$apply();
-      return $scope.editTask(Task);
+      $scope.editTask(Task);
+      return setTimeout(function() {
+        return $scope.bindFileUpload(Task);
+      }, 100);
     });
+  };
+  $scope.bindFileUpload = function(Task) {
+    return $('#fileupload' + Task.id).fileupload({
+      dataType: 'json',
+      maxFileSize: 10000000,
+      send: function() {
+        return NProgress.configure({
+          showSpinner: true
+        });
+      },
+      progress: function(e, data) {
+        return NProgress.set(data.loaded / data.total);
+      },
+      always: function() {
+        NProgress.configure({
+          showSpinner: false
+        });
+        return ajaxEnd();
+      },
+      done: function(i, response) {
+        if (response.result !== "ERROR") {
+          Task.files = initIfNotSet(Task.files);
+          Task.files.push(response.result);
+          $scope.saveTask(Task);
+          return $scope.$apply();
+        } else {
+          return notifyError("Ошибка загрузки");
+        }
+      },
+      fail: function(e, data) {
+        return $.each(data.messages, function(index, error) {
+          return notifyError(error);
+        });
+      }
+    });
+  };
+  $scope.deleteTaskFile = function(Task, id) {
+    Task.files.splice(id, 1);
+    return $scope.saveTask(Task);
   };
   $scope.saveTask = function(Task) {
     return $.post("tasks/ajax/save", {
       Task: Task
     });
   };
+  angular.element(document).ready(function() {
+    return $.each($scope.Tasks, function(i, Task) {
+      return $scope.bindFileUpload(Task);
+    });
+  });
   return $(document).ready(function() {
     return set_scope('Task');
   });

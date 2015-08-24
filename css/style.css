@@ -4,9 +4,23 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+#task-app .task-separator {
+  width: 150px;
+  height: 6px;
+  background-color: #5cb85c;
+  margin-bottom: 3px; }
+
+#task-app .attachment {
+  color: #999999;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 10px; }
+  #task-app .attachment:hover {
+    text-decoration: underline; }
+
 #task-app .task-line {
-  border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
-  margin-bottom: 10px; }
+  margin-bottom: 50px;
+  position: relative; }
 
 #task-app .controls-buttons {
   text-align: right;
@@ -16,6 +30,16 @@ body {
   #task-app .controls-buttons button {
     width: 150px;
     margin-left: 20px; }
+
+#task-app .task-status-toggle {
+  height: 50px !important;
+  opacity: .8;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 10px; }
+  #task-app .task-status-toggle:hover {
+    opacity: 1; }
 
 .sms-template {
   display: none; }
@@ -61,7 +85,8 @@ body {
   display: none; }
 
 .sms-template-list {
-  text-align: left; }
+  text-align: left;
+  margin-bottom: 10px; }
   .sms-template-list span {
     font-size: 12px;
     color: #337AB7;
@@ -253,6 +278,11 @@ h4.row-header {
   left: calc(50% - 335px);
   top: 25%; }
 
+.lightbox-manualedit {
+  width: 80%;
+  left: 10%;
+  top: 2%; }
+
 .lightbox-confirmpayment, .lightbox-confirmpassword {
   width: 300px;
   left: calc(50% - 150px);
@@ -293,8 +323,8 @@ h4.row-header {
     display: inline-block; }
 
 .lightbox-addcontract {
-  width: 800px;
-  left: calc(50% - 400px); }
+  width: 820px;
+  left: calc(50% - 410px); }
   .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select {
     width: 230px;
     float: right; }
@@ -314,7 +344,7 @@ h4.row-header {
     text-transform: capitalize;
     opacity: .5; }
   .lightbox-addcontract .contract-subject-list input[type="text"] {
-    width: 80px; }
+    width: 60px; }
 
 .visible {
   visibility: visible !important; }

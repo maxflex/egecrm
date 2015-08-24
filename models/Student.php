@@ -269,7 +269,7 @@
 				|| !$this->Representative->status || !$this->Representative->first_name || !$this->Representative->last_name || !$this->Representative->middle_name
 				|| !($this->Representative->phone || $this->Representative->phone2 || $this->Representative->phone3) || !$this->Representative->Passport->series
 				|| !$this->Representative->Passport->number || !$this->Representative->Passport->date_birthday || !$this->Representative->Passport->issued_by
-				|| !$this->Representative->Passport->date_issued || !$this->Representative->Passport->address || !$this->getMarkers() || !$this->branches
+				|| !$this->Representative->Passport->date_issued || !$this->Representative->Passport->address || ($this->getMarkers() < 2) || !$this->branches
 			) {
 				return true;
 			} else {

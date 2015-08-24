@@ -1,5 +1,4 @@
 <div ng-app="Group" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>">
-
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<?= $Group->id ? "Группа {$Group->id}" : "Добавление группы" ?>
@@ -32,6 +31,29 @@
 					</div>
 					<div class="form-group">
 		                <?= Branches::buildSvgSelector($Group->id_branch, ["id" => "group-branch", "ng-model" => "Group.id_branch"]) ?>
+		            </div>
+					<div class="form-group">
+		                <?= Grades::buildSelector(false, false, ["ng-model" => "Group.grade"]) ?>
+		            </div>
+		            <div class="form-group">
+			            <div class="col-sm-6" style="padding: 0; padding-right: 5px">
+			             <select class="form-control" ng-model="Group.day">
+				            <option selected value=''>день</option>
+							<option disabled value=''>──────────────</option>
+							<option ng-repeat="(day_number, weekday) in weekdays" 
+								ng-value="(day_number + 1)" ng-selected="day_number == Group.day">{{weekday.short}}</option>
+			            </select>
+			            </div>
+			            <div class="col-sm-6" style="padding: 0; padding-left: 5px">
+							<?=
+							   Html::time([
+								   	"id"			=> "grade-start-time",
+									"class"			=> "form-control",
+									"placeholder"	=> "время",
+									"ng-model"		=> "Group.start"
+				               ]);
+				            ?>
+			            </div>
 		            </div>
 				</div>
 			</div>
@@ -97,16 +119,12 @@
 						}">
 					</td>
 					<td>
-						{{Student.Contract.sum | number}}
-						<ng-pluralize count="Student.Contract.sum" when="{
-							'one' : 'рубль',
-							'few' : 'рубля',
-							'many': 'рублей'
-						}">
+						<span ng-repeat="branch_svg in Student.branch_svg" ng-bind-html="branch_svg | to_trusted"></span>
 					</td>
 					<td>
-						{{Student.is_not_full ? "не полный" : "полный"}}
-					</td>
+						<div ng-repeat="subject in Student.Contract.subjects" ng-show="subject.score">
+							{{Subjects[subject.id_subject]}}: <b>{{subject.score}}</b>
+						</div>
 					<td>
 						<span class="link-like small pull-right" ng-click="addStudent(Student.id)" ng-hide="studentAdded(Student.id)">добавить</span>
 						<span class="link-like small pull-right red" ng-click="removeStudent(Student.id)" ng-show="studentAdded(Student.id)">удалить</span>

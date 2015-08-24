@@ -97,6 +97,52 @@
 		$("#sms-message").val(template).keyup()
 	}
 	
+	
+	function generateEmailTemplate()
+	{
+		subject = "Тест определения уровня знаний (ЕГЭ-Центр-Москва)"
+		body = "{student_first_middle_name}, здравствуйте.\n\n\
+В прикрепленных файлах тесты, которые необходимо выполнить до {today_plus_5}. Просьба ответ прислать в письме по электронной почте.\n\n\
+С уважением, {user_first_last}, ответственный по тестированию (ЕГЭ-Центр-Москва), +7 (495) 646-85-92"
+		
+		body = body.replace('{student_first_middle_name}', ang_scope.student.first_name + ' ' + ang_scope.student.middle_name)
+		body = body.replace('{today_plus_5}', moment().add('days', 5).format('DD.MM'))
+		body = body.replace('{user_first_last}', ang_scope.user.first_name + ' ' + ang_scope.user.last_name)
+		
+		contract = ang_scope.contracts[ang_scope.contracts.length - 1]
+		
+		if (contract) {
+			email_uploaded_files = []
+			$("#email-files-list").html("")
+			$.each(contract.subjects, function(i, subject) {
+				file_name = i + '_' + contract.grade + '.pdf'
+				
+				$.get("ajax/getFile", {file_name: "files/email/" + file_name}, function(response) {
+					console.log(response)
+					if (response != false) {
+						file = {
+							uploaded_name: subject.name + ', ' + contract.grade + ' класс',
+							name: i + '_' + contract.grade + '.pdf',
+							size: response,
+						}
+						file.email_uploaded_file_id = email_uploaded_file_id
+			
+						email_uploaded_files.push(file)
+						$("#email-files-list").append('<div id="email-file-' + email_uploaded_file_id + '" class="loaded-file">\
+							<span style="color: black">' + file.uploaded_name + '</span>\
+								<a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">скачать</a>\
+							<span class="link-like link-reverse small" onclick="emailRemoveFile(' + email_uploaded_file_id + ')">удалить</span>\
+							</div>')
+						email_uploaded_file_id++						
+					}
+				}, "json")
+			})
+		}
+		
+		$("#email-subject").val(subject)
+		$("#email-message").html(body)
+	}
+	
 	function smsDialog(elem) {
 		var html = ""
 		
@@ -114,18 +160,10 @@
 			if (response != false) {
 				$.each(response, function(i, v) {
 					
-					files_html = ""
-					$.each(v.files, function(i, file) {
-						files_html += '<div class="sms-coordinates">\
-							<a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">' + file.uploaded_name + '</a>\
-							<span> (' + file.size + ')</span>\
-							</div>'
-					})
-					
 					html += '<div class="clear-sms">		\
 								<div class="from-them">		\
 									' + v.message + ' 		\
-									<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '\
+									<div class="sms-coordinates">' + v.coordinates + '</div>\
 							    </div>						\
 							</div>';	
 					})
@@ -193,19 +231,28 @@
 			"email": email,
 			"files": email_uploaded_files,
 		}, function(response) {
-			email_uploaded_files = []
 			$("#email-files-list").html("")
 			ajaxEnd('email')
+			
+			files_html = ""
+			$.each(email_uploaded_files, function(i, file) {
+				files_html += '<div class="sms-coordinates">\
+					<a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">' + file.uploaded_name + '</a>\
+					<span> (' + file.size + ')</span>\
+					</div>'
+			})
+			
 			html = '\
 			<div class="clear-sms">		\
 					<div class="from-them">		\
 						' + response.message + ' 		\
-						<div class="sms-coordinates">' + response.coordinates + '</div>\
+						<div class="sms-coordinates">' + response.coordinates + '</div>' + files_html + '\
 				    </div>						\
 				</div>';	
 			$("#email-history").prepend(html).animate({ scrollTop: 0 }, "fast");
 			message.val("")
 			subject.val("")
+			email_uploaded_files = []
 		}, "json");
 	}
 	

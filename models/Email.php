@@ -32,7 +32,7 @@ class Email extends Model
 		$Email = new self([
 			'email' 	=> $email,
 			'subject' 	=> $subject,
-			'message' 	=> $message,
+			'message' 	=> nl2br($message),
 			'files'		=> $files,
 		]);
 		
@@ -43,8 +43,8 @@ class Email extends Model
 		}
 		
 		$mail->addAddress($email);
-		$mail->Subject = $subject;
-		$mail->Body = $message;
+		$mail->Subject = $Email->subject;
+		$mail->Body = $Email->message;
 		
 		$mail->send();
 		
@@ -59,12 +59,12 @@ class Email extends Model
 		$mail->isSMTP();                                      // Set mailer to use SMTP
 		$mail->Host = 'smtp.yandex.ru'; 					  // Specify main and backup SMTP servers
 		$mail->SMTPAuth = true;                               // Enable SMTP authentication
-		$mail->Username = 'maksim@kolyadin.com';                // SMTP username
-		$mail->Password = 'rrn1840055';                        // SMTP password
+		$mail->Username = 'info@ege-centr.ru';                // SMTP username
+		$mail->Password = 'kochubey1981';                        // SMTP password
 		$mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
 		$mail->Port = 465;                                    // TCP port to connect to
 		
-		$mail->From = 'maksim@kolyadin.com';
+		$mail->From = 'info@ege-centr.ru';
 		$mail->FromName = 'ЕГЭ Центр';
 		
 		$mail->CharSet = 'UTF-8';

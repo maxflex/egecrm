@@ -17,18 +17,24 @@
 			
 <!-- 	<img src="img/svg/loading-bars.svg" alt="Загрузка страницы..." id="svg-loading"> -->
 		
+		<!-- ЛАЙТБОКС РЕДАКТИРОВАНИЕ ПЕЧАТИ ДОГОВОРА ВРУЧНУЮ -->
+		<div class="lightbox-new lightbox-manualedit">
+			<h4 style="margin-bottom: 20px">РЕДАКТИРОВАНИЕ ДОГОВОРА</h4>
+			<div class="row">
+				<textarea id="contract-manual-edit"></textarea>
+				<div class="display-none" id="contract-manual-div"></div>
+			<center style="margin-top: 10px">
+				<button class="btn btn-primary ajax-payment-button" ng-click="runPrintManual()">Печать</button>
+			</center>
+			</div>
+		</div>
+		<!-- /ЛАЙТБОКС РЕДАКТИРОВАНИЕ ПЕЧАТИ ДОГОВОРА ВРУЧНУЮ -->
+		
 		<!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ДОГОВОРА -->
 		<div class="lightbox-new lightbox-addcontract">
 			<h4 style="margin-bottom: 20px">ПАРАМЕТРЫ ДОГОВОРА</h4>
 			<div class="row">
 				<div class="col-sm-7">
-					<div class="row" style="margin-bottom: 10px" ng-show="current_contract.id && current_contract.no_version_control">
-						<div class="col-sm-12">
-							<span class="input-label">Новый номер договора</span>
-							    <input type="text" placeholder="{{current_contract.id}}" 
-							    	class="form-control digits-only" ng-model="current_contract.new_id" ng-value="current_contract.new_id">
-						</div>
-					</div>
 					<div class="row" style="margin-bottom: 10px">
 						<div class="col-sm-12">
 							<span class="input-label">общая сумма по договору</span>
@@ -95,6 +101,10 @@
 						    <span class="switch"></span>
 						    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(id_subject)}">{{subject_name}}</span>
 						</label>
+						<input type="text" class="form-control contract-score" style="margin-left: 5px"
+							placeholder="балл" ng-show="subjectChecked(id_subject)" 
+							ng-model="current_contract.subjects[getIndexByIdSubject(id_subject)].score">
+							
 						<input type="text" class="form-control contract-lessons"
 							placeholder="занятий" ng-show="subjectChecked(id_subject)" 
 							ng-model="current_contract.subjects[getIndexByIdSubject(id_subject)].count">
@@ -149,7 +159,8 @@
 						<option ng-repeat="user in users" ng-hide="!user.agreement" ng-value="user.id">{{user.login}}</option>
 					</select>
 			<center style="margin-top: 20px">
-				<button class="btn btn-primary" ng-click="runPrint()" ng-disabled="!id_user_print">Печать</button>
+				<button class="btn btn-primary" ng-click="editBeforePrint()" ng-disabled="!id_user_print" style="width: 140px">Редактировать</button>
+				<button class="btn btn-primary" ng-click="runPrint()" ng-disabled="!id_user_print" style="width: 140px">Печать</button>
 			</center>
 		</div>
 		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
@@ -956,10 +967,10 @@
 					}"></ng-pluralize> от {{payment.date}}
 						<span class="save-coordinates">({{payment.user_login}} {{formatDate(payment.first_save_date) | date:'yyyy.MM.dd в HH:mm'}})
 						</span>
-						 <a class="link-like link-reverse small" ng-click="confirmPayment(payment)" ng-show="!payment.confirmed">подтвердить</a>
-						 <span class="label label-success" ng-show="payment.confirmed">подтвержден</span>
-						 <a class="link-like link-reverse small" ng-click="editPayment(payment)">редактировать</a>
-						 <a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
+						<a class="link-like link-reverse small" ng-click="confirmPayment(payment)" ng-show="!payment.confirmed">подтвердить</a>
+						<span class="label pointer label-success" ng-show="payment.confirmed" ng-click="confirmPayment(payment)">подтвержден</span>
+						<a class="link-like link-reverse small" ng-click="editPayment(payment)">редактировать</a>
+						<a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
 				</div>
 		    </div>
 	    </div>

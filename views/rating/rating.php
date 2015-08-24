@@ -7,18 +7,18 @@
 	</thead>
 	
 	<?php foreach($rating as $id_branch => $score): ?>
-	<tr onclick="redirect('rating/<?= $id_branch ?>')" class="pointer">
-		<td><?= Branches::metroSvg($id_branch) ?><?= Branches::$all[$id_branch] ?></td>
-		<td>
-			<?php if ($rdata[$id_branch]['actual'] || $rdata[$id_branch]['prognoz']): ?>
+		<?php if ($rdata[$id_branch]['actual'] || $rdata[$id_branch]['prognoz']): ?>
+		<tr onclick="redirect('rating/<?= $id_branch ?>')" class="pointer">
+			<td><?= Branches::metroSvg($id_branch) ?><?= Branches::$all[$id_branch] ?></td>
+			<td>
 				<?= ($rdata[$id_branch]['actual'] ? $rdata[$id_branch]['actual'] : 0) ?>
 				<?php if ($rdata[$id_branch]['prognoz']): ?>
 					<span class="quater-black"> +
 						<?= ($rdata[$id_branch]['prognoz'] ? $rdata[$id_branch]['prognoz'] : 0) ?>
 					</span>
 				<?php endif ?>
-			<?php endif ?>
-		</td>
-	</tr>
+			</td>
+		</tr>
+		<?php endif ?>
 	<?php endforeach; ?>
 </table>

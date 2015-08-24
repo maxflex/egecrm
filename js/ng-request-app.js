@@ -314,9 +314,31 @@
 			 *
 			 */
 			$scope.printContract = function(id_contract) {
+				$scope.print_mode = 'contract'
 				$scope.id_contract_print = id_contract
 				lightBoxShow('print')
-			//	printDiv("contract-print-" + id_contract);
+			}
+
+			$scope.todayDate = function() {
+				return moment().format("DD.MM.YYYY");
+			}
+			
+			
+			$scope.editBeforePrint = function() {
+				html = $("#contract-print-" + $scope.id_contract_print).html()
+				$("#contract-manual-edit").val(html)
+				
+				if (CKEDITOR.instances['contract-manual-edit'] == undefined) {
+					CKEDITOR.replace('contract-manual-edit', {
+						fullPage: true,
+						allowedContent: true,
+						language: 'ru',
+						height: 600
+					})
+				}
+				
+				lightBoxHide()
+				lightBoxShow('manualedit')
 			}
 			
 			/**
@@ -324,7 +346,14 @@
 			 *
 			 */
 			$scope.runPrint = function() {
-				printDiv("contract-print-" + $scope.id_contract_print)
+				printDiv($scope.print_mode + "-print-" + $scope.id_contract_print)
+				lightBoxHide()
+			}
+			
+			$scope.runPrintManual = function() {
+				html = CKEDITOR.instances['contract-manual-edit'].getData()
+				$("#contract-manual-div").html(html)
+				printDiv('contract-manual-div')
 				lightBoxHide()
 			}
 			
@@ -1113,8 +1142,8 @@
 					className: "modal-password",
 					callback: function(result) {
 						if (result == "363") {
-							payment.confirmed = 1
-							$.post("ajax/confirmPayment", {id: payment.id})	
+							payment.confirmed = payment.confirmed ? 0 : 1
+							$.post("ajax/confirmPayment", {id: payment.id, confirmed: payment.confirmed})
 							$scope.$apply()
 						}
 					},

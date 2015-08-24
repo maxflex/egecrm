@@ -53,6 +53,12 @@
 			foreach ($Students as &$Student) {
 				$Student->Contract 	= $Student->getLastContract();
 				$Student->is_not_full = $Student->isNotFull();
+				foreach ($Student->branches as $id_branch) {
+					if (!$id_branch) {
+						continue;
+					}
+					$Student->branch_svg[] = Branches::metroSvg($id_branch);
+				}
 			}
 			
 			// сортировка по номеру договора
@@ -62,9 +68,10 @@
 
 			
 			$ang_init_data = angInit([
-				"Group" => $Group,
-				"Teachers" => $Teachers,
+				"Group" 	=> $Group,
+				"Teachers"	=> $Teachers,
 				"Students"	=> $Students,
+				"Subjects"	=> Subjects::$all,
 			]);
 			
 			$this->render("edit", [
