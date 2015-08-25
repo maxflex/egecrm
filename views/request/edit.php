@@ -842,6 +842,13 @@
 													'many'	: 'занятий',
 										}"></ng-pluralize>
 									</span>
+									<span ng-show="subject.score != '' && subject.score !== null">
+										({{subject.score}} <ng-pluralize count="subject.score" when="{
+											'one'	: 'балл',
+											'few'	: 'балла',
+											'many'	: 'баллов'
+										}"></ng-pluralize>)
+									</span>
 								</div>
 							</div>
 							<div class="col-sm-3" style="padding: 0; font-size: 12px; width: 18.5%">
@@ -922,6 +929,13 @@
 													'few'	: 'занятия',
 													'many'	: 'занятий',
 										}"></ng-pluralize>
+									</span>
+									<span ng-show="subject.score != ''">
+										({{subject.score}} <ng-pluralize count="subject.score" when="{
+											'one'	: 'балл',
+											'few'	: 'балла',
+											'many'	: 'баллов'
+										}"></ng-pluralize>)
 									</span>
 								</div>
 							</div>

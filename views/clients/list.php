@@ -45,7 +45,19 @@
 			<?php endforeach ?>
 		</td>
 		<td>
-			<span class="pull-right"><?= $Student->isNotFull() ? "не полный" : "полный" ?></span>
+			<span class="pull-right">
+			<?php 
+				foreach ($Student->Contracts as $Contract) {
+					$scores = [];
+					foreach ($Contract->subjects as $subject) {
+						if ($subject['score'] != "") {
+							$scores[] = $subject['score'];
+						}
+					}
+					echo "<div><b>" . implode($scores, " + ") . "</b></div>";
+				}
+			?>
+			</span>
 		</td>
 	</tr>
 	<?php endforeach; ?>

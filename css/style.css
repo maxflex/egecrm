@@ -4,6 +4,96 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+.top-links {
+  margin-bottom: 20px; }
+  .top-links a, .top-links span.link-like {
+    margin-right: 15px; }
+  .top-links span.active {
+    font-weight: bold;
+    color: black;
+    cursor: default;
+    text-decoration: none; }
+
+.link-current {
+  margin-right: 15px;
+  font-weight: bold; }
+
+[ng-app="Group"] thead tr:nth-child(1), [ng-app="Settings"] thead tr:nth-child(1) {
+  display: none; }
+
+[ng-app="Group"] thead, [ng-app="Settings"] thead {
+  display: none; }
+
+[ng-app="Group"] .calendar-row, [ng-app="Settings"] .calendar-row {
+  height: 185px;
+  overflow: hidden; }
+
+[ng-app="Group"] .day:nth-child(2n+6), [ng-app="Group"] .day:nth-child(2n+7), [ng-app="Settings"] .day:nth-child(2n+6), [ng-app="Settings"] .day:nth-child(2n+7) {
+  color: #999 !important; }
+
+[ng-app="Group"] .table-condensed > thead > tr > th, [ng-app="Group"] .table-condensed > tbody > tr > th, [ng-app="Group"] .table-condensed > tfoot > tr > th, [ng-app="Group"] .table-condensed > thead > tr > td, [ng-app="Group"] .table-condensed > tbody > tr > td, [ng-app="Group"] .table-condensed > tfoot > tr > td, [ng-app="Settings"] .table-condensed > thead > tr > th, [ng-app="Settings"] .table-condensed > tbody > tr > th, [ng-app="Settings"] .table-condensed > tfoot > tr > th, [ng-app="Settings"] .table-condensed > thead > tr > td, [ng-app="Settings"] .table-condensed > tbody > tr > td, [ng-app="Settings"] .table-condensed > tfoot > tr > td {
+  padding: 0; }
+
+[ng-app="Group"] .day, [ng-app="Settings"] .day {
+  border-radius: 50% !important; }
+
+[ng-app="Group"] .day.active, [ng-app="Settings"] .day.active {
+  background: #5cb85c !important;
+  color: white !important; }
+
+[ng-app="Group"] .dow, [ng-app="Settings"] .dow {
+  color: #999 !important;
+  font-weight: normal;
+  text-transform: lowercase; }
+
+[ng-app="Group"] .month-name, [ng-app="Settings"] .month-name {
+  text-transform: capitalize;
+  line-height: 173px; }
+
+[ng-app="Group"] .lessons-table, [ng-app="Settings"] .lessons-table {
+  margin-top: 19px;
+  position: fixed;
+  right: -20px !important;
+  top: 11.5%;
+  margin: 0;
+  max-height: 710px;
+  overflow-y: scroll; }
+  [ng-app="Group"] .lessons-table input, [ng-app="Settings"] .lessons-table input {
+    width: 110px; }
+
+[ng-app="Group"] .lessons-count, [ng-app="Settings"] .lessons-count {
+  position: fixed;
+  top: 11.5%;
+  right: 19%;
+  font-weight: bold; }
+
+[ng-app="Group"] .vocation, [ng-app="Settings"] .vocation {
+  background-color: #ff0039 !important;
+  color: white; }
+  [ng-app="Group"] .vocation.active, [ng-app="Settings"] .vocation.active {
+    background: #00b700 !important;
+    /* Old browsers */
+    background: -moz-linear-gradient(top, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00b700), color-stop(50%, #00b700), color-stop(51%, #ff0039), color-stop(100%, #ff0039)) !important;
+    /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    /* IE10+ */
+    background: linear-gradient(to bottom, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#ff0039',GradientType=0 );
+    /* IE6-9 */ }
+
+[ng-app="Group"] .old, [ng-app="Group"] .new, [ng-app="Settings"] .old, [ng-app="Settings"] .new {
+  visibility: hidden !important; }
+
+[ng-app="Settings"] .day.active {
+  background-color: #ff0039 !important; }
+
 #task-app .task-separator {
   width: 150px;
   height: 6px;
@@ -55,8 +145,8 @@ body {
   .half-opacity-color:hover {
     color: rgba(35, 83, 126, 0.5); }
 
-#cke_18 {
-  display: none; }
+.cke_button__about {
+  display: none !important; }
 
 .cke_contents {
   border: 3px solid #F2F2F2 !important;

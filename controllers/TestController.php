@@ -13,6 +13,17 @@
 // 			$this->setTabTitle("Тест");
 		}
 		
+		public function actionImap()
+		{
+			$mailbox = new PhpImap\Mailbox('{imap.yandex.ru:993/imap/ssl}', 'makcyxa-k', 'rrn1840055');
+			
+			$mailsIds = $mailbox->searchMailBox('FROM maksim@kolyaidn.com');
+			
+//			$inboxMail = $mailbox->lecplay();
+			
+			var_dump($mailbox);
+		}
+		
 		// Перевести номера телефонов из форматированных
 		public function actionUpdatePhones()
 		{

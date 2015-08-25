@@ -19,6 +19,111 @@ body {
 	background-image: url("../img/background/bg.jpg");
 }
 
+.top-links {
+	margin-bottom: 20px;
+	& a, span.link-like {
+		margin-right: 15px;
+	}
+	& span.active {
+		font-weight: bold;
+		color: black;
+		cursor: default;
+		text-decoration: none;
+	}
+}
+.link-current {
+	margin-right: 15px;
+    font-weight: bold;
+}
+
+[ng-app="Group"], [ng-app="Settings"] {
+	& thead tr:nth-child(1) {
+		display: none;
+	}
+	
+	& thead {
+		display: none;
+	}
+	
+	& .calendar-row {
+		height: 185px;
+	    overflow: hidden;
+	}
+	
+	& .day:nth-child(2n + 6), .day:nth-child(2n + 7) {
+		color: #999 !important;
+	}
+	
+	& .table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td {
+		padding: 0;
+	}
+	
+	& .day {
+		border-radius: 50% !important;
+	}
+	
+	& .day.active {
+		background: #5cb85c !important;
+		color: white !important;
+	}
+	
+	& .dow {
+		color: #999 !important;
+		font-weight: normal;
+		text-transform: lowercase;
+	}
+	& .month-name {
+		text-transform: capitalize;
+//		line-height: 226px;	
+		line-height: 173px;
+	}
+	
+	& .lessons-table {
+		margin-top: 19px;
+	    position: fixed;
+	    right: -20px !important;
+	    top: 11.5%;
+	    margin: 0;
+	    max-height: 710px;
+	    overflow-y: scroll;
+	    & input {
+		    width: 110px;
+	    }
+	}
+	
+	& .lessons-count {
+	    position: fixed;
+//	    top: 9.6%;
+		top: 11.5%; 
+	    right: 19%;
+	    font-weight: bold;
+	}
+	& .vocation {
+		background-color: $red !important;
+		color: white;
+		&.active {
+			background: #00b700 !important; /* Old browsers */
+			background: -moz-linear-gradient(top,  #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important; /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00b700), color-stop(50%,#00b700), color-stop(51%,#ff0039), color-stop(100%,#ff0039)) !important; /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #00b700 0%,#00b700 50%,#ff0039 51%,#ff0039 100%) !important; /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #00b700 0%,#00b700 50%,#ff0039 51%,#ff0039 100%) !important; /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #00b700 0%,#00b700 50%,#ff0039 51%,#ff0039 100%) !important; /* IE10+ */
+			background: linear-gradient(to bottom,  #00b700 0%,#00b700 50%,#ff0039 51%,#ff0039 100%) !important; /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#ff0039',GradientType=0 ); /* IE6-9 */
+		}
+	}
+	
+	& .old, & .new {
+		visibility: hidden !important;
+	}
+}
+
+[ng-app="Settings"] {
+	& .day.active {
+		background-color: $red !important;
+	}
+}
+
 #task-app {
 	& .task-separator {
 		width: 150px;
@@ -89,8 +194,8 @@ body {
 	}
 }
 
-#cke_18 {
-	display: none;
+.cke_button__about {
+	display: none !important;
 }
 .cke_contents {
     border: 3px solid #F2F2F2 !important;

@@ -130,6 +130,7 @@
 		?>
 	<?php endif ?>
     <a href="rating" class="list-group-item">Рейтинг</a>
+    <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
 <!--

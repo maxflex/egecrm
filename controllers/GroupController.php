@@ -30,6 +30,27 @@
 			]);
 		}
 		
+		public function actionSchedule()
+		{
+			// не надо панель рисовать
+			$this->_custom_panel = true;
+			
+			$id_group = $_GET['id'];		
+			$Group = Group::findById($id_group);
+			
+			$Group->Schedule = $Group->getSchedule();
+			
+			$ang_init_data = angInit([
+				"Group" 		=> $Group,
+				"vocation_dates"=> GroupSchedule::getVocationDates(),
+			]);
+			
+			$this->render("schedule", [
+				"Group"			=> $Group,
+				"ang_init_data" => $ang_init_data,	
+			]);
+		}
+		
 		public function actionAdd()
 		{
 			$Group = new Group();
@@ -97,4 +118,43 @@
 			Group::deleteById($_POST["id_group"]);
 		}
 		
+		
+		public function actionAjaxDeleteScheduleDate()
+		{
+			extract($_POST);
+			
+			GroupSchedule::deleteAll([
+				"condition" => "date='$date' AND id_group=$id_group"
+			]);
+		}
+		
+		public function actionAjaxAddScheduleTime()
+		{
+			extract($_POST);
+			
+			$GroupSchedule = GroupSchedule::find([
+				"condition" => "date='$date' AND id_group='$id_group'"
+			]);
+			
+			$GroupSchedule->time = $time;
+			
+			$GroupSchedule->save("time");
+		}
+		
+		public function actionAjaxAddScheduleDate()
+		{
+			extract($_POST);
+			
+			GroupSchedule::add([
+				"date" => $date,
+				"id_group" => $id_group,
+			]);
+		}
+		
+		public function actionAjaxTimeFromGroup()
+		{
+			extract($_POST);
+			
+			dbConnection()->query("UPDATE ".GroupSchedule::$mysql_table." SET time='$time' WHERE time IS NULL AND id_group=$id_group");
+		}
 	}

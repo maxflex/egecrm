@@ -1,4 +1,4 @@
-	moment.lang('ru-RU');
+	moment.locale('ru-RU');
 	var ang_scope;
 	var email_uploaded_files = [];
 	var email_uploaded_file_id = 1;
@@ -102,7 +102,7 @@
 	{
 		subject = "Тест определения уровня знаний (ЕГЭ-Центр-Москва)"
 		body = "{student_first_middle_name}, здравствуйте.\n\n\
-В прикрепленных файлах тесты, которые необходимо выполнить до {today_plus_5}. Просьба ответ прислать в письме по электронной почте.\n\n\
+В прикрепленных файлах тесты, которые необходимо выполнить до {today_plus_5}. Просьба ответ прислать в ответном письме по электронной почте, с указанием фамилии и предмета.\n\n\
 С уважением, {user_first_last}, ответственный по тестированию (ЕГЭ-Центр-Москва), +7 (495) 646-85-92"
 		
 		body = body.replace('{student_first_middle_name}', ang_scope.student.first_name + ' ' + ang_scope.student.middle_name)

@@ -56,9 +56,7 @@
 			            </div>
 		            </div>
 		            <div class="form-group">
-			            <?php if ($Group->id): ?>
-				            <a class="pull-right small link-reverse" style="margin-top: 5px" href="groups/edit/<?= $Group->id ?>/schedule">расписание</a>
-				        <?php endif ?>
+			            <a class="pull-right small link-reverse" style="margin-top: 5px" href="groups/edit/<?= $Group->id ?>/schedule">расписание</a>
 		            </div>
 				</div>
 			</div>

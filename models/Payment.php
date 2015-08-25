@@ -17,7 +17,7 @@
 			self::PAID_CARD		=> "карта",
 			self::PAID_CASH		=> "наличные",
 			self::NOT_PAID_BILL	=> "не оплаченный счет",
-			self::PAID_BILL		=> "оплаченный счет",
+			self::PAID_BILL		=> "счет",
 			self::CARD_ONLINE	=> "карта онлайн",
 		];
 		
