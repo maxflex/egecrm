@@ -402,15 +402,8 @@
 	            ?>
             </div>
 			<div class="form-group">
-				<?=
-				   Html::time([
-						"id" 			=> "notification-time",
-						"class"			=> "form-control",
-						"name"			=> "Notification[time]",
-						"placeholder"	=> "время",
-						"value"			=> $Request->Notification->time,
-	               ]);
-	            ?>
+				<input type="text" class="form-control timemask" id="notification-time" name="Notification[time]"
+					placeholder="время" value="<?= $Request->Notification->time ?>">
             </div>
         </div>
         <?= partial("save_button", ["Request" => $Request]) ?>
@@ -930,7 +923,7 @@
 													'many'	: 'занятий',
 										}"></ng-pluralize>
 									</span>
-									<span ng-show="subject.score != ''">
+									<span ng-show="subject.score != '' && subject.score !== null">
 										({{subject.score}} <ng-pluralize count="subject.score" when="{
 											'one'	: 'балл',
 											'few'	: 'балла',

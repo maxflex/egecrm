@@ -1,4 +1,4 @@
-<div ng-app="Settings" ng-controller="VocationsCtrl" ng-init="<?= $ang_init_data ?>">
+<div ng-app="Settings" ng-controller="VocationsCtrl" ng-init="<?= $ang_init_data ?>" id="calendar-app">
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Выходные дни и праздники

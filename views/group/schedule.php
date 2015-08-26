@@ -1,4 +1,4 @@
-<div ng-app="Group" ng-controller="ScheduleCtrl" ng-init="<?= $ang_init_data ?>">
+<div ng-app="Group" ng-controller="ScheduleCtrl" ng-init="<?= $ang_init_data ?>" id="calendar-app">
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Расписание группы №<?= $Group->id ?>
@@ -19,26 +19,24 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-6 lessons-table">
-				<div class="row" ng-repeat="Schedule in Group.Schedule" style="height: 30px">
-					<div class="col-sm-4">
-						{{getLine1(Schedule)}}
-					</div>
-					<div class="col-sm-4">
-						{{getLine2(Schedule)}}
-					</div>
-					<div class="col-sm-4">
-						<div>
-							<input type="text" style="display: none" ng-value="Schedule.time">
-							<span ng-click="setTime(Schedule, $event)">{{Schedule.time ? Schedule.time : 'не установлено'}}</span>
-						</div>
-					</div>
-				</div>
-					<h3 style="font-weight: bold">{{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
+			<div class="col-sm-2"></div>
+			<div class="col-sm-5">
+				<h3 style="font-weight: bold; margin: 10px 0 25px">{{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
 						'one': 'занятие',
 						'few': 'занятия',
 						'many': 'занятий'
 					}"></ng-pluralize></h3>
+				<div class="row" ng-repeat="Schedule in Group.Schedule" style="height: 30px">
+					<div class="col-sm-6">
+						{{getLine1(Schedule)}}
+					</div>
+					<div class="col-sm-6">
+						<div class="lessons-table">
+							<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
+							<span ng-click="setTime(Schedule, $event)">{{Schedule.time ? Schedule.time : 'не установлено'}}</span>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		

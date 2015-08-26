@@ -10,7 +10,7 @@
 		
 		public function beforeAction()
 		{
-			$this->addJs("ng-task-app, jspdf");
+			$this->addJs("ng-task-app");
 		}
 		
 		public function actionList()
@@ -18,9 +18,17 @@
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 			
-			$Tasks = Task::findAll([
-				"condition" => "id_status!=" . TaskStatuses::CLOSED,
-			]);
+			$list = $_GET["list"];
+			
+			if ($list) {
+				$Tasks = Task::findAll([
+					"condition" => "id_status=" . $list
+				]);
+			} else {
+				$Tasks = Task::findAll([
+					"condition" => "id_status!=" . TaskStatuses::CLOSED,
+				]);
+			}
 			
 			$ang_init_data = angInit([
 				"Tasks" => $Tasks,

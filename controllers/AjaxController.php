@@ -293,4 +293,31 @@
 				returnJson(false);	
 			}
 		}
+		
+		public function actionAjaxBranchLoadAdd()
+		{
+			extract($_POST);
+			
+			BranchLoad::add([
+				"id_branch" => $id_branch
+			]);
+		}
+		
+		public function actionAjaxBranchLoadChange()
+		{
+			extract($_POST);
+			
+			$BranchLoad = BranchLoad::findAll([
+				"condition" => "id_branch=$id_branch",
+				"limit"		=> "$index, 1"
+			])[0];
+			
+			if ($BranchLoad->color == 3) {
+				$BranchLoad->delete();
+			} else {
+				$BranchLoad->color++;
+				$BranchLoad->save('color');
+			}
+						
+		}
 	}

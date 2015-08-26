@@ -19,6 +19,23 @@ body {
 	background-image: url("../img/background/bg.jpg");
 }
 
+.branch-load-1 {
+	fill: #009D7B;
+}
+
+.branch-load-2 {
+	fill: #FFEE00;
+}
+
+.branch-load-3 {
+	fill: #EE653F;
+}
+
+.no-border-outline {
+	border: none !important;
+	outline: none !important;
+}
+
 .top-links {
 	margin-bottom: 20px;
 	& a, span.link-like {
@@ -36,7 +53,14 @@ body {
     font-weight: bold;
 }
 
-[ng-app="Group"], [ng-app="Settings"] {
+
+[ng-app="Settings"] {
+	& .day.active {
+		background-color: $red !important;
+	}
+}
+
+#calendar-app {
 	& thead tr:nth-child(1) {
 		display: none;
 	}
@@ -45,13 +69,17 @@ body {
 		display: none;
 	}
 	
+	& tbody tr:nth-child(2n + 6) {
+		display: none;
+	}
+	
 	& .calendar-row {
-		height: 185px;
-	    overflow: hidden;
+	//	height: 185px;
+	//    overflow: hidden;
 	}
 	
 	& .day:nth-child(2n + 6), .day:nth-child(2n + 7) {
-		color: #999 !important;
+		color: #999;
 	}
 	
 	& .table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td {
@@ -60,10 +88,16 @@ body {
 	
 	& .day {
 		border-radius: 50% !important;
+		height: 28px;
+	    width: 28px;
+	    display: inline-block;
+	    line-height: 28px;
+	    margin-right: 3px;
+	    margin-bottom: 3px;
 	}
 	
 	& .day.active {
-		background: #5cb85c !important;
+		background: #5cb85c;
 		color: white !important;
 	}
 	
@@ -71,23 +105,26 @@ body {
 		color: #999 !important;
 		font-weight: normal;
 		text-transform: lowercase;
+		margin-right: 1px;
+		display: inline-block;
 	}
+	
+	& .table-condensed {
+		width: 300px;
+	}
+	
 	& .month-name {
 		text-transform: capitalize;
 //		line-height: 226px;	
-		line-height: 173px;
+		line-height: 175px;
 	}
 	
 	& .lessons-table {
-		margin-top: 19px;
-	    position: fixed;
-	    right: -20px !important;
-	    top: 11.5%;
-	    margin: 0;
-	    max-height: 710px;
-	    overflow-y: scroll;
 	    & input {
-		    width: 110px;
+		    width: 38px;
+		    position: relative;
+		    top: -1px;
+		    left: -1px;
 	    }
 	}
 	
@@ -100,7 +137,7 @@ body {
 	}
 	& .vocation {
 		background-color: $red !important;
-		color: white;
+		color: white !important;
 		&.active {
 			background: #00b700 !important; /* Old browsers */
 			background: -moz-linear-gradient(top,  #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important; /* FF3.6+ */
@@ -115,12 +152,6 @@ body {
 	
 	& .old, & .new {
 		visibility: hidden !important;
-	}
-}
-
-[ng-app="Settings"] {
-	& .day.active {
-		background-color: $red !important;
 	}
 }
 
@@ -986,6 +1017,10 @@ h4 {
 	margin-right: 5px;
 	position: relative;
 	top: 3px;
+	&.rating {
+		margin-right: 0;
+		margin-top: 2px;
+	}
 }
 
 .form-group-side-label {

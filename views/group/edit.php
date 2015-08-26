@@ -35,25 +35,21 @@
 					<div class="form-group">
 		                <?= Grades::buildSelector(false, false, ["ng-model" => "Group.grade"]) ?>
 		            </div>
-		            <div class="form-group">
+		            <div class="form-group" style="display: inline-block; margin-bottom: 5px">
 			            <div class="col-sm-6" style="padding: 0; padding-right: 5px">
 			             <select class="form-control" ng-model="Group.day">
-				            <option selected value=''>день</option>
+				            <option selected value='0'>день</option>
 							<option disabled value=''>──────────────</option>
 							<option ng-repeat="(day_number, weekday) in weekdays" 
-								ng-value="(day_number + 1)" ng-selected="day_number == Group.day">{{weekday.short}}</option>
+								ng-value="(day_number + 1)" ng-selected="(day_number + 1) == Group.day">{{weekday.short}}</option>
 			            </select>
 			            </div>
 			            <div class="col-sm-6" style="padding: 0; padding-left: 5px">
-							<?=
-							   Html::time([
-								   	"id"			=> "grade-start-time",
-									"class"			=> "form-control",
-									"placeholder"	=> "время",
-									"ng-model"		=> "Group.start"
-				               ]);
-				            ?>
+							<input type="text" ng-model="Group.start" class="form-control timemask" placeholder="время" id="group-time">
 			            </div>
+		            </div>
+		            <div class="form-group">
+		            	<input ng-model="Group.cabinet" placeholder="№ кабинета" class="form-control digits-only">
 		            </div>
 		            <div class="form-group">
 			            <?php if ($Group->id): ?>
@@ -124,7 +120,8 @@
 						}">
 					</td>
 					<td>
-						<span ng-repeat="branch_svg in Student.branch_svg" ng-bind-html="branch_svg | to_trusted"></span>
+						<span ng-repeat="(id_branch, svg) in Student.branch_svg track by $index"
+							ng-hide="id_branch == search.id_branch" ng-bind-html="svg | to_trusted"></span>
 					</td>
 					<td>
 						<div ng-repeat="subject in Student.Contract.subjects" ng-show="subject.score != ''">

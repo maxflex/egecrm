@@ -10,11 +10,7 @@ angular.module("Settings", []).controller("VocationsCtrl", function($scope) {
   };
   $scope.setTime = function(Schedule, event) {
     $(event.target).hide();
-    $(event.target).parent().children("input").show().timepicker({
-      timeFormat: 'H:i',
-      scrollDefault: '09:30',
-      selectOnBlur: true
-    }).on("changeTime, blur", function(e) {
+    $(event.target).parent().children("input").show().on("changeTime, blur", function(e) {
       var time;
       time = $(this).val();
       if (time) {
@@ -88,7 +84,7 @@ angular.module("Settings", []).controller("VocationsCtrl", function($scope) {
       init_dates.push(new Date(schedule_date.date));
     }
     console.log(init_dates);
-    return $(".calendar-month").each(function() {
+    $(".calendar-month").each(function() {
       var d, k, len1, m, month_number;
       $(this).datepicker($scope.getInitParams(this)).on("changeDate", $scope.dateChange);
       m = $(this).attr("month");
@@ -99,11 +95,12 @@ angular.module("Settings", []).controller("VocationsCtrl", function($scope) {
           $(this).datepicker("_setDate", d);
         }
       }
-      $(".table-condensed").first().children("thead").css("display", "table-caption");
       return setTimeout(function() {
         $scope.schedule_loaded = true;
         return $scope.$apply();
       }, 500);
     });
+    $(".table-condensed").first().children("thead").css("display", "table-caption");
+    return $(".table-condensed").eq(15).children("tbody").children("tr").first().remove();
   });
 });

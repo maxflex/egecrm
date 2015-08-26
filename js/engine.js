@@ -138,9 +138,9 @@
 				}, "json")
 			})
 		}
-		
+
 		$("#email-subject").val(subject)
-		$("#email-message").html(body)
+		$("#email-message").val(body)
 	}
 	
 	function smsDialog(elem) {
@@ -337,6 +337,12 @@
 			$(".digits-only-float").inputmask("Regex", {regex: "[0-9]*[.]?[0-9]+"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
 			
+			
+			$.mask.definitions['H'] = "[0-2]";
+		    $.mask.definitions['h'] = "[0-9]";
+		    $.mask.definitions['M'] = "[0-5]";
+		    $.mask.definitions['m'] = "[0-9]";
+			$(".timemask").mask("Hh:Mm", {clearIfNotMatch: true});
 			
 			// Маска телефонов
 			$(".phone-masked")

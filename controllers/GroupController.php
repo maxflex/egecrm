@@ -73,12 +73,11 @@
 			
 			foreach ($Students as &$Student) {
 				$Student->Contract 	= $Student->getLastContract();
-				$Student->is_not_full = $Student->isNotFull();
 				foreach ($Student->branches as $id_branch) {
 					if (!$id_branch) {
 						continue;
 					}
-					$Student->branch_svg[] = Branches::metroSvg($id_branch);
+					$Student->branch_svg[$id_branch] = Branches::metroSvg($id_branch);
 				}
 			}
 			
@@ -86,7 +85,9 @@
 			usort($Students, function($a, $b) {
 				return ($a->Contract->id < $b->Contract->id ? -1 : 1);
 			});
-
+			
+			
+// 			preType($Students);
 			
 			$ang_init_data = angInit([
 				"Group" 	=> $Group,
@@ -104,6 +105,8 @@
 		public function actionAjaxSave()
 		{
 			$Group = $_POST;
+			
+			preType($Group);
 			
 			if ($Group['id']) {
 				Group::updateById($Group['id'], $Group);

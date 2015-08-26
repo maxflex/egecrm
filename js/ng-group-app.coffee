@@ -27,10 +27,6 @@
 					.parent()
 					.children("input")
 					.show()
-					.timepicker
-						timeFormat: 'H:i'
-						scrollDefault: '09:30'
-						selectOnBlur: true
 					.on "changeTime, blur", (e) ->
 						time = $(this).val()
 						if time
@@ -107,14 +103,15 @@
 						if month_number is m
 							$(this).datepicker "_setDate", d
 					
-					$(".table-condensed").first().children("thead").css("display", "table-caption")
-					
 					# schedule loaded after 500 ms
 					setTimeout ->
 						$scope.schedule_loaded = true
 						$scope.$apply()
-					, 500 
-					
+					, 500
+					 
+				$(".table-condensed").first().children("thead").css "display", "table-caption"
+				# hack
+				$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()					
 									
 		.controller "EditCtrl", ($scope) ->
 			
