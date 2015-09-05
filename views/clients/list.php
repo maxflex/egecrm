@@ -1,68 +1,71 @@
-<table class="table table-divlike">
-	<?php foreach($Students as $id=> $Student): ?>
-	<tr>
-		<td style="width: 30%">
-			<?= ($id + 1) ?>.
-			<a href="requests/edit/<?= $Student->getRequest()->id ?>">
-				<?= empty(trim($Student->fio())) ? "Неизвестно" : $Student->fio() ?>
-			</a>
-		</td>
-		<td>
-			<?php foreach ($Student->Contracts as $Contract): ?>
-				<div>
-					<?= $Contract->id ?>
+<div ng-app="Clients" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
+	<table class="table table-divlike">
+		<tr>
+			<td style="height: 29px">
+				<span class="glyphicon glyphicon-sort sort-link" ng-click="setOrder(1)"></span>
+			</td>
+			<td>
+				<span class="glyphicon glyphicon-sort sort-link" ng-click="setOrder(2)"></span>
+			</td>
+			<td>
+			</td>
+			<td><span class="glyphicon glyphicon-sort sort-link" ng-click="setOrder(3)"></span></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr ng-repeat="Student in Students | orderBy:orderStudents():asc">
+			<td>
+				{{$index + 1}}. <a href="student/{{Student.id}}">{{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}</a>
+			</td>
+			<td>
+				<div ng-repeat="Contract in Student.Contracts">
+					{{Contract.id}}
 				</div>
-			<?php endforeach ?>
-		</td>
-		<td>
-			<?php foreach ($Student->Contracts as $Contract): ?>
-				<div>
-					<?= $Contract->grade ? $Contract->grade. " класс" : "неизвестно" ?>
+			</td>
+			<td>
+				<div ng-repeat="Contract in Student.Contracts">
+					{{Contract.grade ? Contract.grade + " класс" : "неизвестно"}}
 				</div>
-			<?php endforeach ?>
-		</td>
-		<td>
-			<?php foreach ($Student->Contracts as $Contract): ?>
-				<div>
-					<?= $Contract->date ? $Contract->date : "неизвестно" ?>
+			</td>
+			<td>
+				<div ng-repeat="Contract in Student.Contracts">
+					{{Contract.date ? Contract.date : "неизвестно"}}
 				</div>
-			<?php endforeach ?>
-		</td>
-		<td>
-			<?php foreach ($Student->Contracts as $Contract): ?>
-				<div>
-					<?= $Contract->subjects === false ? 0 : count($Contract->subjects) ?> 
-					<?= pluralize('предмет', 'предмета', 'предметов', $Contract->subjects === false ? 0 : count($Contract->subjects)) ?>
+			</td>
+			<td>
+				<div ng-repeat="Contract in Student.Contracts">
+					{{getSubjectsCount(Contract)}} <ng-pluralize count="getSubjectsCount(Contract)" when="{
+						'one': 'предмет',
+						'few': 'предмета',
+						'many': 'предметов'
+					}"></ng-pluralize>
 				</div>
-			<?php endforeach ?>
-		</td>
-		<td>
-			<?php foreach ($Student->Contracts as $Contract): ?>
-				<div>
-					<?= number_format($Contract->sum, 0, ",", " ") ?> рублей
-					<span class="pull-right"><?= $Contract->cancelled ? "расторгнут" : "" ?></span>
+			</td>
+			<td>
+				<div ng-repeat="Contract in Student.Contracts">
+					{{Contract.sum | number}} рублей
 				</div>
-			<?php endforeach ?>
-		</td>
-		<td>
-			<span class="pull-right">
-			<?php 
-				foreach ($Student->Contracts as $Contract) {
-					$scores = [];
-					foreach ($Contract->subjects as $subject) {
-						if ($subject['score'] != "") {
-							$scores[] = $subject['score'];
-						}
-					}
-					echo "<div><b>" . implode($scores, " + ") . "</b></div>";
-				}
-			?>
-			</span>
-		</td>
-	</tr>
-	<?php endforeach; ?>
-</table>
-
-<div class="pull-right">
-	<b class="text-success">+<?= $without_contract ?></b> <?= pluralize('ученик', 'ученика', 'учеников', $without_contract) ?> без договора
+			</td>
+			<td>
+				{{Student.markers_count}}
+			</td>
+			<td>
+				<div ng-repeat="Contract in Student.Contracts">
+					{{Contract.cancelled ? " расторгнут" : ""}}
+				</div>
+			</td>
+			<td>
+				<span class="pull-right">
+					<div ng-repeat="Contract in Student.Contracts">
+						<b>{{getScore(Contract.subjects)}}</b>
+					</div>
+				</span>
+			</td>
+		</tr>
+	</table>
+	
+	<div class="pull-right">
+		<b class="text-success">+<?= $without_contract ?></b> <?= pluralize('ученик', 'ученика', 'учеников', $without_contract) ?> без договора
+	</div>
 </div>

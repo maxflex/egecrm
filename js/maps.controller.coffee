@@ -3,8 +3,18 @@
 		scaledSize: new google.maps.Size(22,40)
 		origin: new google.maps.Point(0,0)
 	
+	ICON_SCHOOL_BLUE = 
+		url: "img/maps/schoolpin_blue.png"
+		scaledSize: new google.maps.Size(22,40)
+		origin: new google.maps.Point(0,0)
+	
 	ICON_HOME = 
 		url: "img/maps/homepin.png",
+		scaledSize: new google.maps.Size(22,40), 
+		origin: new google.maps.Point(0,0)
+	
+	ICON_HOME_BLUE = 
+		url: "img/maps/homepin_blue.png",
 		scaledSize: new google.maps.Size(22,40), 
 		origin: new google.maps.Point(0,0)
 		
@@ -39,6 +49,9 @@
 			map: map
 			position: latLng
 	
+	infoWindow = (contentString) ->
+		new google.maps.InfoWindow
+		    content: contentString
 	
 	# GEO
 	getDistance = (latLng, callback) ->

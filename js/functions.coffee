@@ -15,7 +15,10 @@
 				ajaxStart()
 				$.post "teachers/ajax/delete", {id_teacher: id_teacher}
 				window.history.go -1
-
+		
+	objectToArray = (Obj) ->
+		$.map Obj, (value, index) ->
+		    return [value]
 			
 	isMobilePhone = (element) ->
 		phone = $("#" + element).val()

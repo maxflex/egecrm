@@ -131,6 +131,9 @@
 	<?php endif ?>
     <a href="rating" class="list-group-item">Рейтинг</a>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
+    <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
+    <a href="settings/students" class="list-group-item">Ученики</a>
+    <a href="settings/cabinets" class="list-group-item">Кабинеты</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
 <!--

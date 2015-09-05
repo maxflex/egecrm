@@ -2,6 +2,7 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Расписание группы №<?= $Group->id ?>
+		<span class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
 		<div class="pull-right">
 			<span class="link-reverse pointer" ng-click="setTimeFromGroup(Group)" ng-show="Group.Schedule.length && Group.start">установить время занятия из настроек группы</span>
 		</div>
@@ -26,7 +27,7 @@
 						'few': 'занятия',
 						'many': 'занятий'
 					}"></ng-pluralize></h3>
-				<div class="row" ng-repeat="Schedule in Group.Schedule" style="height: 30px">
+				<div class="row" ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px">
 					<div class="col-sm-6">
 						{{getLine1(Schedule)}}
 					</div>

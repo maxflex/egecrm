@@ -11,14 +11,12 @@
 		const TRG = 1;
 		const PVN = 2;	
 		const BGT = 3;
-		const STR = 4;	# удалено
 		const IZM = 5;
 		const OPL = 6;
 		const RPT = 7;
 		const VKS = 8;
 		const ORH = 9;
-		const PRR = 10; # удалено
-		const PRG = 11;
+		const UJN = 11;
 		const NVG = 12;
 		const KLG = 13;
 		const BRT = 14;
@@ -32,14 +30,12 @@
 			self::TRG => "Тургеневская",
 			self::PVN => "Проспект Вернадского",
 			self::BGT => "Багратионовская",
-			self::STR => "Строгино",
 			self::IZM => "Измайловская",
 			self::OPL => "Октябрьское поле",
 			self::RPT => "Рязанский Проспект",
 			self::VKS => "Войковская",
 			self::ORH => "Орехово",
-			self::PRR => "Петровско-Разумовская",
-			self::PRG => "Пражская",
+			self::UJN => "Южная",
 			self::NVG => "Новогиреево",
 			self::KLG => "Калужская",
 			self::BRT => "Братиславская",
@@ -47,15 +43,30 @@
 			self::VLD => "Владыкино",
 		];
 		
+		# Короткие
+		static $short  = [
+			self::TRG => "ТУР",
+			self::PVN => "ВЕР",
+			self::BGT => "БАГ",
+			self::IZM => "ИЗМ",
+			self::OPL => "ОКТ",
+			self::RPT => "РЯЗ",
+			self::VKS => "ВОЙ",
+			self::ORH => "ОРЕ",
+			self::UJN => "ЮЖН",
+			self::NVG => "НОВ",
+			self::KLG => "КЛЖ",
+			self::BRT => "БРА",
+			self::MLD => "МОЛ",
+			self::VLD => "ВЛА",
+		];
+		
 		# title
 		static $title = "филиал";
 		
 		# удаленные станции
-		static $deleted = array(
-			self::STR,
-			self::PRR,
-		);
-		
+		static $deleted = [];
+				
 		/**
 		 * Построить селектор с кружочками метро
 		 * $multiple - множественный выбор
@@ -87,6 +98,38 @@
 			}
 			echo "</select>";
 			echo "<script>$('#{$attrs['id']}').selectpicker()</script>";
+		}
+		
+		/**
+		 * Построить селектор с кружочками метро
+		 * $multiple - множественный выбор
+		 */
+		public static function buildMultiSelector($selected = false, $attrs, $multiple = true)
+		{	
+			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
+			
+			// Заголовок
+			if (!$multiple) {
+				echo "<option selected style='cursor: default; outline: none' value=''>". static::$title ."</option>";
+				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
+			}
+			
+			// Получаем филиалы
+			$branches = self::getBranches();
+			
+			foreach ($branches as $branch) {
+				// если это массив выбранных элементов (при $multiple = true)
+				if (is_array($selected)) {
+					$option_selected = in_array($branch["id"], $selected);
+				} else {
+					$option_selected = ($selected == $branch["id"]);
+				}
+				// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
+				if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
+					echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}' data-content='{$branch['svg']}{$branch['name']}'></option>";	
+				}
+			}
+			echo "</select>";
 		}
 		
 		
@@ -124,7 +167,7 @@
 					break;
 				}
 				# Синий
-				case self::STR:
+//				case self::STR:
 				case self::IZM:
 				case self::MLD: {
 					if ($return) {
@@ -152,9 +195,9 @@
 					break;
 				}
 				# Серый
-				case self::PRR:
-				case self::VLD:
-				case self::PRG: {
+//				case self::PRR:
+				case self::UJN:
+				case self::VLD: {
 					if ($return) {
 						return 8;
 					}
@@ -192,6 +235,24 @@
 		
 		public static function getName($id_branch) {
 			return self::metroSvg($id_branch) .  self::getById($id_branch);
+		}
+		
+		public static function getShortColored() 
+		{
+			foreach (self::$short as $id_branch => $name) {
+				$return[$id_branch] = "<b><span style='color: ". self::metroSvg($id_branch, false, true) . "'>"
+				. mb_substr($name, 0, 1, "utf-8") . "</span></b>". mb_substr($name, 1, 1, "utf-8") . mb_substr($name, 2, 1, "utf-8");
+			}
+			
+			return $return;
+		}
+		
+		public static function getShortColoredById($id_branch) 
+		{
+			$name = self::$short[$id_branch];
+			
+			return "<span class='label label-metro-short' style='background: ". self::metroSvg($id_branch, false, true) . "'>" 
+				. $name . "</span>";
 		}
 		
 		/**

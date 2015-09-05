@@ -1,5 +1,30 @@
 	angular.module("Payments", [])
 		.controller("ListCtrl", function($scope) {
+			$scope.filter = 6;
+			
+			$scope.paymentsFilter = function(payment) {
+				switch ($scope.filter) {
+					case 1: {
+						return payment.id_status == 5
+					}
+					case 2: {
+						return payment.id_status == 4
+					}
+					case 3: {
+						return payment.id_status == 2
+					}
+					case 4: {
+						return payment.id_status == 1
+					}
+					case 5: {
+						return !payment.confirmed
+					}
+					default: {
+						return payment
+					}
+				}
+			}
+			
 			$scope.confirmPayment = function(payment) {
 				bootbox.prompt({
 					title: "Введите пароль",

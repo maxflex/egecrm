@@ -378,6 +378,45 @@
 			}
 		}
 		
+		public function getPreviousVersion()
+		{
+			if ($this->id_contract) {
+				return self::find([
+					"condition" => "id < " . $this->id . " AND id_contract=" . $this->id_contract,
+					"order"		=> "id DESC",
+				]);	
+			} else {
+				return self::find([
+					"condition" => "id > " . $this->id . " AND id_contract=" . $this->id,
+					"order"		=> "id DESC",
+				]);
+			}
+		}
+		
+		
+		/**
+		 * Является ли договор оригинальным? (Либо активный без версий, либо самая старая версия)
+		 * 
+		 */
+		public function isOriginal()
+		{
+			// если договор активный, нужно проверить единственный ли он.
+			// потому что если у активного договора есть версии, то это не оригинальный договор
+			if (!$this->id_contract) {
+				return self::find([
+					"condition" => "id_contract=".$this->id
+				]) == false;
+			} else {
+				// если это версия договора, нужно найти оригинальную (самую старую) и сравнить по ID
+				$OriginalContract = self::find([
+					"condition" => "id_contract=".$this->id_contract,
+					"order"		=> "id ASC",
+				]);
+								
+				return $this->id == $OriginalContract->id;
+			}
+		}
+		
 		/**
 		 * Загружаем электронную версию договора.
 		 * 

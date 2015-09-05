@@ -5,11 +5,18 @@
 
 		public static $mysql_table	= "teachers";
 		
+		protected $_inline_data = ["branches", "subjects"];
+
+		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
 		public function __construct($array)
 		{
 			parent::__construct($array);
+			
+			if (!$this->id_a_pers) {
+				$this->id_a_pers = null;
+			}
 		}
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/

@@ -4,6 +4,63 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+.bold {
+  font-weight: bold; }
+
+.group-list-2 {
+  border: 3px dashed transparent !important;
+  padding: 10px !important; }
+  .group-list-2 table {
+    margin-bottom: 0; }
+
+.mt40 {
+  margin-top: 60px; }
+
+.tr-helper {
+  width: 93% !important; }
+
+.border-dashed-droppable {
+  border: 3px dashed #eee !important; }
+
+.border-dashed-droppable-hover {
+  border: 3px dashed #5cb85c !important; }
+
+.group-student-status {
+  background-color: white;
+  color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  padding: 1px 4px 2px;
+  cursor: default; }
+
+.group-student-status, .group-student-status1 {
+  background-color: white;
+  color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  padding: 1px 4px 2px;
+  cursor: default; }
+
+.group-student-status2 {
+  background-color: white;
+  color: #fbaa33;
+  border: 1px solid #fbaa33;
+  border-radius: 3px;
+  padding: 1px 4px 2px;
+  cursor: default; }
+
+.group-student-status3 {
+  background-color: white;
+  color: #5cb85c;
+  border: 1px solid #5cb85c;
+  border-radius: 3px;
+  padding: 1px 4px 2px;
+  cursor: default; }
+
+.score-field {
+  display: inline-block;
+  width: 40px; }
+
 .branch-load-1 {
   fill: #009D7B; }
 
@@ -13,15 +70,36 @@ body {
 .branch-load-3 {
   fill: #EE653F; }
 
+.mr3 {
+  margin-right: 3px; }
+
+.label-metro-short {
+  border-radius: 3px;
+  padding: 0.2em 0.4em 0.3em; }
+
 .no-border-outline {
   border: none !important;
   outline: none !important; }
 
+.sort-link {
+  font-size: 12px;
+  color: #337ab7;
+  margin-right: 0;
+  opacity: .5;
+  cursor: pointer; }
+  .sort-link:hover {
+    opacity: 1; }
+  .sort-link.active {
+    opacity: 1;
+    color: black;
+    cursor: default; }
+
 .top-links {
   margin-bottom: 20px; }
   .top-links a, .top-links span.link-like {
-    margin-right: 15px; }
-  .top-links span.active {
+    margin-right: 15px;
+    display: inline-block; }
+  .top-links span.active, .top-links a.active {
     font-weight: bold;
     color: black;
     cursor: default;
@@ -31,8 +109,25 @@ body {
   margin-right: 15px;
   font-weight: bold; }
 
+input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="radio"].disabled, input[type="checkbox"].disabled, fieldset[disabled] input[type="radio"], fieldset[disabled] input[type="checkbox"] {
+  cursor: default !important; }
+
 [ng-app="Settings"] .day.active {
   background-color: #ff0039 !important; }
+
+[ng-controller="ClientsMapCtrl"] .checkbox-wrap {
+  display: inline-block;
+  padding: 1px;
+  margin-right: 3px; }
+
+#map-loader {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: white;
+  opacity: .5;
+  left: 0;
+  top: 0; }
 
 #calendar-app thead tr:nth-child(1) {
   display: none; }
@@ -40,7 +135,7 @@ body {
 #calendar-app thead {
   display: none; }
 
-#calendar-app tbody tr:nth-child(2n+6) {
+#calendar-app .calendar-row:nth-child(1) tbody tr:nth-child(6), #calendar-app .calendar-row:nth-child(2) tbody tr:nth-child(6), #calendar-app .calendar-row:nth-child(4) tbody tr:nth-child(6), #calendar-app .calendar-row:nth-child(5) tbody tr:nth-child(6), #calendar-app .calendar-row:nth-child(7) tbody tr:nth-child(6), #calendar-app .calendar-row:nth-child(8) tbody tr:nth-child(6), #calendar-app .calendar-row:nth-child(10) tbody tr:nth-child(6) {
   display: none; }
 
 #calendar-app .day:nth-child(2n+6), #calendar-app .day:nth-child(2n+7) {
@@ -118,6 +213,9 @@ body {
   background-color: #5cb85c;
   margin-bottom: 3px; }
 
+#task-app p {
+  word-wrap: break-word; }
+
 #task-app .attachment {
   color: #999999;
   font-size: 12px;
@@ -179,6 +277,21 @@ body {
 
 .label {
   font-weight: normal; }
+
+#infobox {
+  border: 2px solid black;
+  margin-top: 8px;
+  background: #333;
+  color: #FFF;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  padding: 0.5em 1em;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  text-shadow: 0 -1px #000000;
+  -webkit-box-shadow: 0 0 8px #000;
+  box-shadow: 0 0 8px #000; }
 
 #frontend-loading {
   position: absolute;
@@ -714,9 +827,19 @@ h4 {
   .request-main-list.ui-draggable-dragging {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); }
 
+.is-draggable {
+  margin-bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.1); }
+  .is-draggable hr {
+    border-top: 1px solid rgba(0, 0, 0, 0.4);
+    margin-top: 5px; }
+  .is-draggable.ui-draggable-dragging {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); }
+
 .request-status-drop-hover {
   background: #337ab7;
-  border-radius: 4px 4px 0 0; }
+  border-radius: 4px 4px 0 0;
+  color: white; }
   .request-status-drop-hover a {
     color: white !important; }
 
@@ -775,6 +898,10 @@ h4 {
   .svg-metro.rating {
     margin-right: 0;
     margin-top: 2px; }
+    .svg-metro.rating.rating-add {
+      opacity: 0; }
+      .svg-metro.rating.rating-add:hover {
+        opacity: 1; }
 
 .form-group-side-label {
   padding: 7px 0; }
@@ -788,6 +915,9 @@ h4 {
   font-size: 12px;
   color: #999999;
   font-style: italic; }
+
+.coordinates-gray {
+  color: #999999; }
 
 .text-gray {
   color: #999999; }
@@ -826,12 +956,12 @@ h4 {
   .opacity-pointer:hover {
     opacity: 1; }
 
-select.has-error, input.has-error, textarea.has-error {
+select.has-error, input.has-error, textarea.has-error, button.has-error {
   border-color: #a94442 !important;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) !important;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) !important; }
 
-select.has-error:focus, input.has-error:focus {
+select.has-error:focus, input.has-error:focus, button.has-error:focus {
   border-color: #843534 !important;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483 !important;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483 !important; }
@@ -919,6 +1049,15 @@ select.has-error:focus, input.has-error:focus {
   border-top: none;
   padding: 0;
   padding-bottom: 5px; }
+
+.cabinet-add .form-control {
+  width: 210px !important;
+  display: inline-block; }
+
+.cabinet-add button {
+  width: 100px;
+  position: relative;
+  top: -1px; }
 
 /* make sidebar nav vertical */
 @media (min-width: 768px) {

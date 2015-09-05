@@ -11,6 +11,175 @@
 		public function actionBeforeAction()
 		{
 // 			$this->setTabTitle("Тест");
+//			$this->addJs("ng-test-app");
+		}
+		
+		public function actionSession()
+		{
+			preType($_SESSION);
+		}
+		
+		public function actionBranchColor()
+		{
+			$r = Branches::getShortColored();
+			
+			preType($r);
+		}
+		
+		public function actionTesty()
+		{
+			$Students = Student::getWithContract(true);
+			
+			// Добавляем догавары к студентам
+			foreach ($Students as $index => $Student) {
+				$Students[$index]->Contract 	= $Student->getLastContract();
+				
+				foreach ($Student->branches as $id_branch) {
+					if (!$id_branch) {
+						continue;
+					}
+					$Students[$index]->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
+				}
+			}
+			
+			// Формируем по классам, всех студентов, кто не принадлежит группам
+			foreach ($Students as $Student) {
+// 				if (!$Student->inAnyOtherGroup()) {
+					$GroupsGrade[$Student->Contract->grade][] = $Student;	
+// 				}
+			}
+			
+			// Формируем по предметам
+			foreach ($GroupsGrade as $grade => $GS)
+			{
+				foreach ($GS as $Student) {
+					foreach ($Student->Contract->subjects as $subject) {
+						foreach ($Student->branches as $id_branch) {
+							if (!$id_branch) {
+								continue;
+							}
+							$GroupStudents[$grade][$subject['id_subject']][$id_branch][] = $Student;
+						}
+					}
+				}
+			}
+			
+			// Формируем отдельные группы из массива (до примыкания к филиалу)
+			foreach ($GroupStudents as $grade => $SubjectBranch) {
+				foreach ($SubjectBranch as $subject => $Branch) {
+					foreach ($Branch as $branch => $BS) {
+						foreach ($BS as $index => $Student) {
+							if ($Student->inOtherGradeSubjectGroup($grade, $subject)) {
+								unset($BS[$index]);
+							}
+						}
+						// если есть ученики в группе
+						if (count($BS)) {
+							$GroupsFull[] = [
+								"grade"		=> $grade,
+								"subject"	=> $subject,
+								"branch"	=> $branch,
+								"branch_svg"=> Branches::getName($branch),
+								"count"		=> count($BS),
+								"Students"	=> $BS,
+							];	
+						}
+					}
+				}
+			}
+			
+			// Сортируем по количеству учеников
+			usort($GroupsFull, function($a, $b) {
+				return ($a['count'] > $b['count'] ? -1 : 1);
+			});
+			
+			// Присваеваем ученика только к максимально нагруженному филиалу, если указано несколько
+			foreach ($GroupsGrade as $grade => $GS)
+			{
+				foreach ($GS as $Student) {
+					foreach ($Student->Contract->subjects as $subject) {
+						if (count($Student->branches) > 1) { 
+							// выявляем максимально нагруженный филиал
+							$max_count = -1;
+							foreach ($Student->branches as $id_branch) {
+								$grade_subject_branch_students_count = count($GroupStudents[$grade][$subject['id_subject']][$id_branch]);
+								if ($grade_subject_branch_students_count > $max_count) {
+									$max_branch	= $id_branch;
+									$max_count 	= $grade_subject_branch_students_count;
+								}
+							}
+							
+							// после выявления максимально нагруженного филиала удаляем учеников
+							// изо всех филиалов, кроме найденного (максимально нагруженного)
+							foreach ($Student->branches as $id_branch) {
+								if ($id_branch != $max_branch) {
+									$BranchStudents = $GroupStudents[$grade][$subject['id_subject']][$id_branch];
+									foreach ($BranchStudents as $index => $BranchStudent) {
+										if ($BranchStudent->id == $Student->id) {
+											unset($GroupStudents[$grade][$subject['id_subject']][$id_branch][$index]);
+										}
+									}	
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			// Формируем отдельные группы из массива
+			foreach ($GroupStudents as $grade => $SubjectBranch) {
+				foreach ($SubjectBranch as $subject => $Branch) {
+					foreach ($Branch as $branch => $BS) {
+						foreach ($BS as $index => $Student) {
+							if ($Student->inOtherGradeSubjectGroup($grade, $subject)) {
+								unset($BS[$index]);
+							}
+						}
+						// если есть ученики в группе
+						if (count($BS)) {
+							$Groups[] = [
+								"grade"		=> $grade,
+								"subject"	=> $subject,
+								"branch"	=> $branch,
+								"branch_svg"=> Branches::getName($branch),
+								"count"		=> count($BS),
+								"Students"	=> $BS,
+							];	
+						}
+					}
+				}
+			}
+			
+			preType($Groups, true);
+			
+			// Сортируем по количеству учеников
+			usort($Groups, function($a, $b) {
+				return ($a['count'] > $b['count'] ? -1 : 1);
+			});
+/*
+			returnJsonAng([
+				"GroupsShort"	=> $Groups,
+				"GroupsFull"	=> $GroupsFull,
+			]);
+*/
+		}
+		
+		public function actionClientsMap()
+		{
+			$this->setTabTitle("Карта клиентов");
+			
+			$this->addJs("//maps.google.ru/maps/api/js?libraries=places", true);
+			$this->addJs("maps.controller, ng-test-app");
+			
+			$ang_init_data = angInit([
+				"Branches"	=> Branches::$all,
+				"Grades"	=> Grades::$all,
+				"Subjects"	=> Subjects::$all,
+			]);
+			
+			$this->render("clientsmap", [
+				"ang_init_data" => $ang_init_data,
+			]);
 		}
 		
 		public function actionImap()

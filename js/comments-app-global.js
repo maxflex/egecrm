@@ -35,8 +35,8 @@
 					id_place: $("#comment-add-" + $(this).attr("request")).attr("id_place"), // ID указанного места (может быть ID заявки, например) 
 				}, function(response) {
 					// Добавляем новый комментарий к уже существующим
-					scope = angular.element("[ng-app='Request']").scope()
-					
+					// scope = angular.element("[ng-app='Request']").scope()
+					scope = ang_scope
 					switch (t.data('place')) {
 						case "REQUEST_EDIT_REQUEST": {
 							comments = scope.request_comments
@@ -44,6 +44,10 @@
 						}
 						case "REQUEST_EDIT_STUDENT": {
 							comments = scope.student_comments
+							break
+						}
+						case "GROUP_EDIT": {
+							comments = scope.Group.Comments
 							break
 						}
 						case "REQUEST_LIST": {
@@ -60,7 +64,7 @@
 					}
 					
 					comments = initIfNotSet(comments)
-										
+					
 					comments.push({
 						'id': 			response.id,
 						'coordinates': 	response.coordinates,

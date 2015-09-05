@@ -6,8 +6,10 @@
 	$red				: #ff0039;
 	$pink				: #ffcccc;
 	$orange				: #fbaa33;
+	$metro_orange		: rgb(251, 170, 51);
 	
 	$green				: #5cb85c;
+	$metro_green		: #029A55;
 	
 	$hr_gray 			: #eee;
 	$half_black			: rgba(0, 0, 0, .5);
@@ -17,6 +19,75 @@ body {
 	overflow-x: hidden;
 	background-color: #eee;
 	background-image: url("../img/background/bg.jpg");
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.group-list-2 {
+	border: 3px dashed transparent !important; 
+	padding: 10px !important;
+	& table {
+		margin-bottom: 0;		
+	}
+}
+
+.mt40 {
+	margin-top: 60px
+}
+
+.tr-helper {
+	width: 93% !important;
+}
+
+.border-dashed-droppable {
+	border: 3px dashed #eee !important;
+}
+
+.border-dashed-droppable-hover {
+	border: 3px dashed $green !important;
+}
+
+.group-student-status {
+    background-color: white;
+    color: rgba(0, 0, 0, .5);
+    border: 1px solid rgba(0, 0, 0, .5);
+    border-radius: 3px;
+    padding: 1px 4px 2px;
+    cursor: default;
+}
+
+.group-student-status, .group-student-status1 {
+    background-color: white;
+    color: rgba(0, 0, 0, .5);
+    border: 1px solid rgba(0, 0, 0, .5);
+    border-radius: 3px;
+    padding: 1px 4px 2px;
+    cursor: default;
+}
+
+.group-student-status2 {
+    background-color: white;
+    color: $orange;
+    border: 1px solid $orange;
+    border-radius: 3px;
+    padding: 1px 4px 2px;
+    cursor: default;
+}
+
+.group-student-status3 {
+    background-color: white;
+    color: $green;
+    border: 1px solid $green;
+    border-radius: 3px;
+    padding: 1px 4px 2px;
+    cursor: default;
+}
+
+.score-field {
+    display: inline-block;
+    width: 40px;
 }
 
 .branch-load-1 {
@@ -31,17 +102,43 @@ body {
 	fill: #EE653F;
 }
 
+.mr3 {
+	margin-right: 3px;
+}
+
+.label-metro-short {
+	border-radius: 3px;
+	padding: .2em 0.4em .3em;
+}
+
 .no-border-outline {
 	border: none !important;
 	outline: none !important;
+}
+
+.sort-link {
+	font-size: 12px;
+	color: #337ab7;
+	margin-right: 0;
+	opacity: .5;
+	cursor: pointer;
+	&:hover {
+		opacity: 1;
+	}
+	&.active {
+		opacity: 1;
+		color: black;
+		cursor: default;
+	}
 }
 
 .top-links {
 	margin-bottom: 20px;
 	& a, span.link-like {
 		margin-right: 15px;
+		display: inline-block;
 	}
-	& span.active {
+	& span.active, a.active {
 		font-weight: bold;
 		color: black;
 		cursor: default;
@@ -53,11 +150,33 @@ body {
     font-weight: bold;
 }
 
+input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="radio"].disabled, input[type="checkbox"].disabled, fieldset[disabled] input[type="radio"], fieldset[disabled] input[type="checkbox"] {
+	cursor: default !important;
+}
+
 
 [ng-app="Settings"] {
 	& .day.active {
 		background-color: $red !important;
 	}
+}
+
+[ng-controller="ClientsMapCtrl"] {
+	.checkbox-wrap {
+		display: inline-block;
+		padding: 1px;
+		margin-right: 3px;
+	}
+}
+
+#map-loader {
+	height: 100%;
+    width: 100%;
+    position: absolute;
+    background: white;
+    opacity: .5;
+    left: 0;
+    top:  0;
 }
 
 #calendar-app {
@@ -69,8 +188,12 @@ body {
 		display: none;
 	}
 	
-	& tbody tr:nth-child(2n + 6) {
-		display: none;
+	& .calendar-row {
+		&:nth-child(1), &:nth-child(2), &:nth-child(4), &:nth-child(5), &:nth-child(7), &:nth-child(8), &:nth-child(10),{
+			& tbody tr:nth-child(6) {
+				display: none;
+			}
+		}
 	}
 	
 	& .calendar-row {
@@ -163,6 +286,10 @@ body {
 		margin-bottom: 3px;
 	}
 	
+	& p {
+		word-wrap: break-word;
+	}
+	
 	& .attachment {
 		color: #999999;
 		font-size: 12px;
@@ -247,6 +374,22 @@ body {
 
 .label {
 	font-weight: normal;
+}
+
+#infobox {
+    border:2px solid black;
+    margin-top: 8px;
+    background:#333;
+    color:#FFF;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:12px;
+    padding: .5em 1em;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    text-shadow:0 -1px #000000;
+    -webkit-box-shadow: 0 0  8px #000;
+    box-shadow: 0 0 8px #000;
 }
 
 #frontend-loading {
@@ -365,6 +508,8 @@ h4.row-header {
 //	color: white;
 	color: $half_black;
 }
+
+
 
 .numberCircle {
     display: inline-block;
@@ -946,9 +1091,22 @@ h4 {
 	}
 }
 
+.is-draggable {
+	margin-bottom: 10px; 
+	background-color: rgba(255, 255, 255, 0.1);
+	& hr {
+		border-top: 1px solid rgba(0,  0,  0, 0.4);
+		margin-top: 5px;
+	}
+	&.ui-draggable-dragging {
+		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+	}
+}
+
 .request-status-drop-hover {
 	background: #337ab7;
 	border-radius: 4px 4px 0 0;
+	color: white;
 	& a {
 		color: white !important;
 	}
@@ -1020,6 +1178,12 @@ h4 {
 	&.rating {
 		margin-right: 0;
 		margin-top: 2px;
+		&.rating-add {
+			opacity: 0;
+			&:hover {
+				opacity: 1;
+			}
+		}
 	}
 }
 
@@ -1038,6 +1202,10 @@ h4 {
 	font-size: 12px;
 	color: $placeholder_gray;
 	font-style: italic;
+}
+
+.coordinates-gray {
+	color: $placeholder_gray;
 }
 
 .text-gray {
@@ -1096,13 +1264,13 @@ thead {
 	}
 }
 
-select.has-error, input.has-error, textarea.has-error {
+select.has-error, input.has-error, textarea.has-error, button.has-error {
   border-color: #a94442 !important;
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075) !important;
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075) !important;
 }
 
-select.has-error:focus, input.has-error:focus {
+select.has-error:focus, input.has-error:focus, button.has-error:focus {
   border-color: #843534 !important;
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 6px #ce8483 !important;
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 6px #ce8483 !important;
@@ -1216,6 +1384,17 @@ select.has-error:focus, input.has-error:focus {
 	padding-bottom: 5px;
 }
 
+.cabinet-add {
+	& .form-control {
+		width: 210px !important;
+		display: inline-block;
+	}
+	& button {
+		width: 100px;
+		position: relative;
+		top: -1px;
+	}
+}
 
 
 /* make sidebar nav vertical */

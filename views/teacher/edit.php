@@ -16,7 +16,7 @@
 				<input placeholder="логин" ng-model="Teacher.login" class="form-control">
 			</div>
 			<div class="form-group">
-				<input placeholder="пароль" type="password" ng-model="Teacher.password" class="form-control">
+				<input placeholder="пароль" type="text" ng-model="Teacher.password" class="form-control">
 			</div>
 			<div class="form-group">
 				<input placeholder="email" ng-model="Teacher.email" class="form-control">
@@ -26,7 +26,47 @@
 			<?= Html::phones('teacher') ?>
 		</div>
 		<div class="col-sm-3">
-			<?= Subjects::buildSelector(false, false, ["ng-model" => "Teacher.id_subject"]) ?>
+			<div class="form-group">
+<!--
+				<select class="form-control" ng-model="Teacher.subjects" multiple id="subjects-select">
+					<option selected>предметы</option>
+					<option disabled>──────────────</option>
+					<option ng-repeat="(id_subject, name) in Subjects" value="{{id_subject}}">
+						{{id_subject}}. {{name}}
+					</option>
+				</select>
+-->
+	
+				<?= Subjects::buildMultiSelector($Teacher->subjects, ["id" => "subjects-select"]) ?>
+
+					
+			</div>
+			<div class="form-group">
+				<input placeholder="оценка эксперта" ng-model="Teacher.expert_mark" class="form-control">
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input placeholder="ID в базе" ng-model="Teacher.id_a_pers" class="form-control digits-only">
+					<span class="input-group-btn">
+			        	<button class="btn btn-default" type="button" ng-disabled="!Teacher.id_a_pers" ng-click="goToTutor()">
+			        		<span class="glyphicon glyphicon-user no-margin-right"></span>
+			        	</button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row" style="margin-bottom: 10px">
+		<div class="col-sm-9">
+	        <?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches"]) ?>
+		</div>
+		<div class="col-sm-3">
+			<input ng-model="Teacher.rubbles" placeholder="кол-во рублей за занятие" class="form-control">
+		</div>
+	</div>
+	<div class="row" style="margin-bottom: 10px">
+		<div class="col-sm-12">
+			<textarea class="form-control" ng-model="Teacher.comment" rows="4"></textarea>
 		</div>
 	</div>
 	

@@ -8,6 +8,11 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "clients";
 		
+		public function beforeAction()
+		{
+			$this->addJs("ng-clients-app");
+		}
+		
 		public function actionList()
 		{
 			$this->setTabTitle("Клиенты с договорами");	
@@ -17,18 +22,23 @@
 			foreach ($Students as &$Student) {
 				$Student->Contract 	= $Student->getLastContract();
 				$Student->Contracts = $Student->getActiveContracts();
+				
+				$date_formatted = new DateTime($Student->Contract->date);
+				$Student->date_formatted = $date_formatted->format("Y-m-d");
+				
+				$markers = $Student->getMarkers();
+				$Student->markers_count = $markers === false ? '' : count($markers);
 			}
 			
 			$without_contract = Student::countWithoutContract();
 			
-			// сортировка по номеру договора
-			usort($Students, function($a, $b) {
-				return ($a->Contract->id < $b->Contract->id ? -1 : 1);
-			});
-			
-//			$Students = array_reverse($Students);
+			$ang_init_data = angInit([
+				"Students" => $Students,
+			]);
 			
 			$this->render("list", [
+				"sort"		=> $_GET['sort'],
+				"ang_init_data" => $ang_init_data,
 				"Students" => $Students,
 				"without_contract" => $without_contract,
 			]);

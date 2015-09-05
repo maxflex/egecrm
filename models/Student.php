@@ -86,6 +86,26 @@
 			]);
 		}
 		
+		/**
+		 * Последний id договора активный
+		 */
+		public static function getWithActiveContract()
+		{
+			$query = dbConnection()->query("SELECT id_student FROM contracts 
+				WHERE cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student LIMIT 1");
+			
+			while ($row = $query->fetch_array()) {
+				if ($row["id_student"]) {
+					$ids[] = $row["id_student"];
+				}
+			}
+			
+			
+			return self::findAll([
+				"condition"	=> "id IN (". implode(",", $ids) .")"
+			]);
+		}
+		
 		// Удаляет ученика и всё, что с ним связано
 		public static function fullDelete($id_student)
 		{
@@ -198,6 +218,14 @@
 			return Contract::findAll([
 				"condition"	=> "deleted=0 AND id_student=" . $this->id
 			]);	
+		}
+		
+		
+		public function getGroups()
+		{
+			return Group::findAll([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
+			]);
 		}
 		
 		/**
@@ -340,6 +368,132 @@
 			// Добавляем новые
 			foreach ($marker_data as $marker) {
 				Marker::add($marker + ["id_owner" => $this->id, "owner" => self::MARKER_OWNER]);
+			}
+		}
+		
+		
+		/**
+		 * Получить группу, в которых есть ученик.
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public function findGroupBySubject($id_subject)
+		{
+			return Group::find([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%' AND id_subject=$id_subject"
+			]);
+		}
+		
+				
+		/**
+		 * Если ученик состоит в группах кроме $id_group
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public function inOtherGroup($id_group, $id_subject)
+		{
+			$id_group = empty($id_group) ? 0 : $id_group;
+			
+			return Group::find([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%' AND id_subject=$id_subject AND id!=$id_group"
+			]);
+		}
+		
+		/**
+		 * Если ученик состоит в группах кроме $id_group
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public function inOtherBranchGroup($id_branch, $id_subject)
+		{
+			return Group::find([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%' AND id_subject=$id_subject AND id_branch=$id_branch"
+			]);
+		}
+		
+		/**
+		 * Если ученик состоит в группах кроме $id_group
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public function inOtherGradeSubjectGroup($grade, $id_subject)
+		{
+			return Group::find([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%' AND id_subject=$id_subject AND grade=$grade"
+			]);
+		}
+
+		
+		/**
+		 * Если ученик состоит в группах кроме $id_group
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public function inOtherSubjectGroup($id_subject)
+		{
+			return Group::find([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%' AND id_subject=$id_subject"
+			]);
+		}
+		
+		/**
+		 * Если ученик состоит в группах кроме $id_group
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public static function inOtherGroupStatic($id_student, $id_group, $id_subject)
+		{
+			$id_group = empty($id_group) ? 0 : $id_group;
+			
+			return Group::find([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND id_subject=$id_subject AND id!=$id_group"
+			]);
+		}
+		
+		/**
+		 * Если ученик состоит в группах кроме $id_group
+		 * 
+		 */
+		public function inAnyOtherGroup()
+		{
+			return Group::find([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
+			]);
+		}
+		
+		/**
+		 * Если ученик состоит в группах кроме $id_group
+		 * 
+		 */
+		public static function inAnyOtherGroupById($id_student)
+		{
+			return Group::find([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
+			]);
+		}
+		
+		// Добавить маркеры студентов
+		// $marker_data - array( array[lat, lng, type], array[lat, lng, type], ... )
+		public static function addMarkersStatic($marker_data, $id_student) {
+			// если данные не установлены
+			if (!count($marker_data)) {
+				return;
+			}
+			
+			// удаляем все старые маркеры
+			Marker::deleteAll([
+				"condition"	=> "owner='". self::MARKER_OWNER ."' AND id_owner=".$id_student
+			]);
+			
+			// Добавляем новые
+			foreach ($marker_data as $marker) {
+				Marker::add($marker + ["id_owner" => $id_student, "owner" => self::MARKER_OWNER]);
 			}
 		}
 					

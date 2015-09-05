@@ -29,7 +29,8 @@
 			if ($ContractSubjects) {
 				foreach ($ContractSubjects as $id => &$ContractSubject) {
 					$ContractSubject = $ContractSubject->dbData();
-					$ContractSubject['name'] = Subjects::$all[$ContractSubject['id_subject']];
+					$ContractSubject['name']	= Subjects::$all[$ContractSubject['id_subject']];
+					$ContractSubject['short']	= Subjects::$short[$ContractSubject['id_subject']];
 					
 					// Вместе 0, 1 в массиве ключами идут ID предметов. Нужно обязательно
 					$return[$ContractSubject["id_subject"]] = $ContractSubject;

@@ -16,6 +16,16 @@
 							</span>
 						</a>
 					</td>
+					<td>
+						<span ng-repeat="(id_branch, short) in Teacher.branch_short track by $index" 
+							ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}"></span>
+					</td>
+					<td>
+						<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
+					</td>
+					<td style="text-align: right">
+						<span class="link-like small" ng-click="deleteTeacher(Teacher.id, $index)">удалить</span>
+					</td>
 				</tr>
 			</table>
 

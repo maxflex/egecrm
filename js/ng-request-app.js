@@ -16,6 +16,11 @@
 				}
 			};
 		})
+		.filter('to_trusted', ['$sce', function($sce){
+	        return function(text) {
+	            return $sce.trustAsHtml(text);
+	        };
+	    }])
 		/*
 
 			Контроллер списка заявок
@@ -194,7 +199,7 @@
 				if ($("#checkbox-subject-" + id_subject).is(":checked") == false) {
 					delete $scope.current_contract.subjects[id_subject]
 				} else {
-					$scope.current_contract.subjects[id_subject] = {'id_subject': id_subject, 'name' : $scope.subjects[id_subject], 'count' : '' }
+					$scope.current_contract.subjects[id_subject] = {'id_subject': id_subject, 'name' : $scope.Subjects[id_subject], 'count' : '' }
 				}
 				// console.log($scope.current_contract.subjects[id_subject]);
 				setTimeout(function(){
@@ -377,7 +382,12 @@
 					return ""
 				}
 			}
-
+			
+			$scope.saveMarkersToServer = function() {
+				$.post("requests/ajax/saveMarkers", {markers: $scope.markerData(), id_student: $scope.student.id})
+				lightBoxHide()
+			}
+			
 			// Показать карту
 			$scope.showMap = function() {
 				// устанавливаем тип метки
@@ -433,12 +443,15 @@
 			// Добавляем ивент удаления маркера
 			$scope.bindMarkerDelete = function(marker) {
 				google.maps.event.addListener(marker, "dblclick", function(event) {
+					t = this
+					
 					// удаляем маркер с карты
-					this.setMap(null)
-
+					t.setMap(null)
+					
+					
 					// удаляем маркер из коллекции
 					$.each($scope.markers, function(index, m) {
-						if (angular.equals(this, m)) {
+						if (t.id == m.id) {
 							$scope.markers.splice(index, 1)
 						}
 					})
@@ -482,10 +495,10 @@
 				// Создаем маркер
 				// var marker = newMarker($scope.marker_id++, $scope.marker_type, event.latLng)
 				marker = newMarker($scope.marker_id++, event.latLng, $scope.map)
-
+				
 				// Добавляем маркер в маркеры
 				$scope.markers.push(marker)
-
+				
 				// Добавляем маркер на карту
 				marker.setMap($scope.gmap)
 
@@ -947,19 +960,6 @@
 					}
 				}
 
-
-
-				// очищаем subjects от undefined элементов (ВАЖНО!)
-/*
-				try {
-					$scope.current_contract.subjects = $scope.current_contract.subjects.filter(function(e){return e})
-				}
-				catch (err) {
-
-				}
-*/
-
-
 				$scope.current_contract.id_student = $scope.student.id
 
 				if ($scope.current_contract.id) {
@@ -995,8 +995,6 @@
 						new_contract.subjects.sort(function(a, b) {
 							return a.id_subject - b.id_subject
 						})
-						
-//						testyy = new_contract
 						
 						$scope.contracts.push(new_contract)
 						$scope.$apply()
@@ -1038,19 +1036,6 @@
 				if ($scope.current_contract.grade === null) {
 					$scope.current_contract.grade = ""
 				}
-				
-//				$.makeArray($scope.current_contract.subjects)
-				
-				// баг-контрол!!!! надо прокомментировать
-/*
-				if ($scope.current_contract.subjects[0]) {
-					$scope.current_contract.subjects.unshift("bug")
-				}
-*/
-				
-				test = $scope.current_contract
-				
-				console.log($scope.current_contract.subjects)
 				
 				lightBoxShow('addcontract')
 				$("select[name='grades']").removeClass("has-error")
@@ -1416,6 +1401,8 @@
 			        $scope.form_changed = true
 			        $scope.$apply()
 			    })
+			    
+			    $("#code-podr").mask("999-999");
 			    
 			    $(".map-save-button, .bs-datetime").on("click", function() {
 				    $scope.form_changed = true

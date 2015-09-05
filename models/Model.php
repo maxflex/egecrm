@@ -355,7 +355,10 @@
 					if (method_exists($this, "afterFirstSave") && $this->firstSaved) {
 						$this->afterFirstSave(); // После первого сохранения
 					}
-
+					// После сохранения
+					if (method_exists($this, "afterSave")) {
+						$this->afterSave(); // После первого сохранения
+					}
 					return $this->id;
 				} else {
 					return false;
@@ -400,6 +403,10 @@
 					if (method_exists($this, "afterFirstSave") && $this->firstSaved) {
 						$this->afterFirstSave();	// После сохранения
 					}
+					// После сохранения
+					if (method_exists($this, "afterSave")) {
+						$this->afterSave();	// После сохранения
+					}
 					return $this->id;
 				} else {
 					return false;
@@ -414,6 +421,15 @@
 		 {
 			 // Будет переопределяться в child-классах
 		 }
+		 
+		 /*
+		  * Перед сохранением
+		  */
+		 public function afterSave()
+		 {
+			 // Будет переопределяться в child-классах
+		 }
+
 
 		 /*
 		  * После сохранения

@@ -296,11 +296,7 @@
 		
 		public function actionAjaxBranchLoadAdd()
 		{
-			extract($_POST);
-			
-			BranchLoad::add([
-				"id_branch" => $id_branch
-			]);
+			BranchLoad::add($_POST);
 		}
 		
 		public function actionAjaxBranchLoadChange()
@@ -308,7 +304,7 @@
 			extract($_POST);
 			
 			$BranchLoad = BranchLoad::findAll([
-				"condition" => "id_branch=$id_branch",
+				"condition" => "id_branch=$id_branch AND id_subject IS NULL AND grade IS NULL",
 				"limit"		=> "$index, 1"
 			])[0];
 			
@@ -319,5 +315,116 @@
 				$BranchLoad->save('color');
 			}
 						
+		}
+		
+		public function actionAjaxBranchLoadChangeFull()
+		{
+			extract($_POST);
+			
+			$BranchLoad = BranchLoad::findAll([
+				"condition" => "id_branch=$id_branch AND id_subject=$id_subject AND grade=$grade",
+				"limit"		=> "$index, 1"
+			])[0];
+			
+			if ($BranchLoad->color == 3) {
+				$BranchLoad->delete();
+			} else {
+				$BranchLoad->color++;
+				$BranchLoad->save('color');
+			}
+						
+		}
+		
+		public function actionAjaxClientsMap()
+		{
+			extract($_GET);
+			
+// 			preType($_GET);
+			
+			if (!$branches_invert && !$branches && !$grades && !$subjects) {
+				returnJsonAng(false);
+			}
+			
+			if ($branches_invert) {
+				foreach ($branches_invert as $id_branch) {
+					$condition_branches_invert[] = "CONCAT(',', CONCAT(s.branches, ',')) NOT LIKE '%,{$id_branch},%'";
+				}
+				$condition[] = "(".implode(" AND ", $condition_branches_invert).")";
+			}
+			
+			if ($branches) {
+				foreach ($branches as $id_branch) {
+					$condition_branches[] = "CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%'";
+				}
+				$condition[] = "(".implode(" OR ", $condition_branches).")";
+			}
+			
+			if ($subjects) {
+				$condition_subjects = "(cs.id_subject IN (". implode(",", $subjects) ."))";
+				$condition[] = $condition_subjects;
+			}
+			
+			if ($grades) {
+				$condition_grades = "(c.grade IN (". implode(",", $grades) ."))";
+				$condition[] = $condition_grades;
+			}
+			
+			$query = dbConnection()->query("
+				SELECT s.id FROM contracts c
+				LEFT JOIN students s ON s.id = c.id_student
+				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
+				WHERE (". implode(" AND ", $condition) .")
+					AND (c.id_contract=0 OR c.id_contract IS NULL) AND c.cancelled=0 GROUP BY s.id");
+			
+/*
+			ECHO("
+				SELECT s.id FROM contracts c
+				LEFT JOIN students s ON s.id = c.id_student
+				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
+				WHERE (". implode(" AND ", $condition) .")
+					AND (c.id_contract=0 OR c.id_contract IS NULL) GROUP BY s.id");		
+*/
+
+			while ($row = $query->fetch_array()) {
+				if ($row["id"]) {
+					$ids[] = $row["id"];
+				}
+			}
+			
+			$Students = Student::findAll([
+				"condition"	=> "id IN (". implode(",", $ids) .")"
+			]);
+			
+			foreach ($Students as &$Student) {
+				$Student->Contract 	= $Student->getLastContract();
+				
+				if ($Student->Contract->cancelled) {
+					unset($Students[$index]);
+					continue;
+				}
+				
+				if ($Student->Contract->subjects) {
+					foreach ($Student->Contract->subjects as $subject) {
+						$Student->subjects_string[] = $subject['count'] > 40 
+							? "<span class='text-danger bold'>" . Subjects::$short[$subject['id_subject']] . "</span>" : Subjects::$short[$subject['id_subject']];
+					}
+					$Student->subjects_string = implode("+", $Student->subjects_string);
+				}
+				
+				$Student->markers = $Student->getMarkers();
+				
+				if ($Student->branches) {
+					foreach ($Student->branches as $id_branch) {
+						if (!$id_branch) {
+							continue;
+						}
+						$Student->branches_string[] = Branches::getName($id_branch);
+					}
+					
+					$Student->branches_string = implode("<br>", $Student->branches_string);
+				}
+			}
+			
+			returnJsonAng($Students);
 		}
 	}

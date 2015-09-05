@@ -92,11 +92,11 @@
 				</div>
 
 				<div class="col-sm-5">
-					<div class="contract-subject-list subject-line" ng-repeat="(id_subject, subject_name) in subjects">
+					<div class="contract-subject-list subject-line" ng-repeat="(id_subject, subject_name) in Subjects">
 						<label class="ios7-switch  transition-control no-transition">
 						    <input type="checkbox" id="checkbox-subject-{{id_subject}}"
 						    	ng-click="toggleSubject(id_subject)"
-						    	ng-true-value="{'id_subject': {{id_subject}}, 'name' : '{{subjects[id_subject]}}', 'count' : '' }"
+						    	ng-true-value="{'id_subject': {{id_subject}}, 'name' : '{{Subjects[id_subject]}}', 'count' : '' }"
 						    	ng-checked="subjectChecked(id_subject)">
 						    <span class="switch"></span>
 						    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(id_subject)}">{{subject_name}}</span>
@@ -180,7 +180,7 @@
 				</div>
 		        </custom-control>
 			</map>
-			<button class="btn btn-default map-save-button" onclick="lightBoxHide()">Сохранить</button>
+			<button class="btn btn-default map-save-button" ng-click="saveMarkersToServer()">Сохранить</button>
 		</div>
 		<!-- КОНЕЦ /КАРТА И ЛАЙТБОКС -->
 
@@ -429,9 +429,6 @@
 		    <div class="row">
 			    <div class="col-sm-3">
 				    <h4 style="margin-top: 0" class="row-header">Ученик</h4>
-					<div class="form-group">
-		                <?= Grades::buildSelector($Request->Student->grade, "Student[grade]", ["ng-model" => "student.grade"]) ?>
-		            </div>
 				    <div class="form-group">
 		                <input type="text" placeholder="имя" class="form-control" name="Student[first_name]" ng-model="student.first_name">
 		            </div>
@@ -440,6 +437,9 @@
 		            </div>
 		            <div class="form-group">
 		                <input type="text" placeholder="отчество" class="form-control" name="Student[middle_name]" ng-model="student.middle_name">
+		            </div>
+		            <div class="form-group">
+		                <?= Grades::buildSelector($Request->Student->grade, "Student[grade]", ["ng-model" => "student.grade"]) ?>
 		            </div>
 		            <div class="form-group">
 			            <div class="input-group" ng-class="{'input-group-with-hidden-span': !emailFull(student.email)}">
@@ -505,6 +505,10 @@
 			            </div>    
 					</div>
 					
+					 <div class="form-group">
+			            <input class="form-control" ng-model="student.school" name="Student[school]" placeholder="№ школы">
+		            </div>
+					
 					<div class="form-group">
 					    <?=
 						    // Серия
@@ -545,9 +549,6 @@
 			    <div class="col-sm-3">
 				    <h4 style="margin-top: 0" class="row-header">Представитель</h4>
 				    <div class="form-group">
-		                <input type="text" placeholder="статус" class="form-control" name="Representative[status]" ng-model="representative.status">
-		            </div>
-				    <div class="form-group">
 		                <input type="text" placeholder="имя" class="form-control" name="Representative[first_name]" ng-model="representative.first_name">
 		            </div>
 		            <div class="form-group">
@@ -556,6 +557,9 @@
 		            </div>
 		            <div class="form-group">
 		                <input type="text" placeholder="отчество" class="form-control" name="Representative[middle_name]" ng-model="representative.middle_name">
+		            </div>
+		            <div class="form-group">
+		                <input type="text" placeholder="статус" class="form-control" name="Representative[status]" ng-model="representative.status">
 		            </div>
 		            <div class="form-group">
 			            <div class="input-group" ng-class="{'input-group-with-hidden-span': !emailFull(representative.email)}">
@@ -623,7 +627,7 @@
 					</div>
 					
 					<div class="form-group">
-						 <textarea rows="5" placeholder="адрес фактического проживания" 
+						 <textarea placeholder="адрес фактического проживания"  style="height: 123px"
 						 	class="form-control" name="Representative[address]" ng-model="representative.address">
 		                </textarea>
 					</div>
@@ -671,7 +675,10 @@
 					            ?>
 		            </div>
 		            <div class="form-group">
-		                <textarea rows="5" placeholder="кем выдан" class="form-control" name="Passport[issued_by]"><?= $Request->Student->Representative->Passport->issued_by ?></textarea>
+		                <textarea style="height: 79px" placeholder="кем выдан" class="form-control" name="Passport[issued_by]"><?= $Request->Student->Representative->Passport->issued_by ?></textarea>
+		            </div>
+		            <div class="form-group">
+			            <input class="form-control" ng-model="representative.Passport.code" name="Passport[code]" placeholder="код подразделения" id="code-podr">
 		            </div>
 		            <div class="form-group">
 								<?=
@@ -686,7 +693,7 @@
 					            ?>
 		            </div>
 		            <div class="form-group">
-		                <textarea rows="5" placeholder="адрес" class="form-control" name="Passport[address]" ng-model="representative.Passport.address">
+		                <textarea style="height: 123px" placeholder="адрес" class="form-control" name="Passport[address]" ng-model="representative.Passport.address">
 		                </textarea>
 		            </div>
 			    </div>
@@ -954,6 +961,17 @@
 
 			</div>
 			<!-- /ДАГАВАРА -->
+	    </div>
+    </div>
+    <div class="row">
+	    <div class="col-sm-12">
+		    <h4 class="row-header">УЧЕНИК ПРИКРЕПЛЕН К ГРУППАМ</h4>
+		    <div style="margin: 15px 0">
+				<?= globalPartial("groups_list", ["filter" => false]) ?>
+				<div ng-show="Groups.length == 0" class="coordinates-gray">
+					у этого ученика пока нет ни одной группы
+				</div>
+		    </div>
 	    </div>
     </div>
     <div class="row" ng-hide="student.minimized">

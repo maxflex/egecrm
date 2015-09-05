@@ -15,7 +15,6 @@
 			exit();
 		}
 	}
-	
 	/*
 	 * Возвращает соединение DB_SETTINGS
 	 */
@@ -374,6 +373,12 @@
 		exit();
 	}
 	
+	function returnJsonAng($Object)
+	{
+		echo json_encode($Object, JSON_NUMERIC_CHECK);
+		exit();
+	}
+	
 	/**
 	 * Проверить есть ли хотя бы одно значение в массиве.
 	 * 
@@ -465,6 +470,19 @@
 	function pluralize($one, $few, $many, $n)
 	{
 		return $n%10==1&&$n%100!=11?$one:($n%10>=2&&$n%10<=4&&($n%100<10||$n%100>=20)?$few:$many);
+	}
+	
+	function convertDate($date)
+	{
+		return date("Y-m-d", strtotime($date));
+	}
+	
+	function convertDateBack($date)
+	{
+		if (!$date) {
+			return "";
+		}
+		return date("d.m.Y", strtotime($date));
 	}
 	
 	// если не указан id_request, то ищет по всей базе

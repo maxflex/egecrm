@@ -37,4 +37,31 @@
 		
 		# Заголовок
 		static $title = "класс";	
+		
+		/**
+		 * Построить селектор с кружочками метро
+		 * $multiple - множественный выбор
+		 */
+		public static function buildMultiSelector($selected = false, $attrs)
+		{
+			$multiple = true;
+			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
+			
+			// Заголовок
+			if (!$multiple) {
+				echo "<option selected style='cursor: default; outline: none' value=''>". static::$title ."</option>";
+				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
+			}
+						
+			foreach (static::$all as $id_subject => $name) {
+				// если это массив выбранных элементов (при $multiple = true)
+				$option_selected = in_array($id_subject, $selected);
+				
+				// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
+				if (!in_array($id_subject, self::$deleted) || ($option_selected)) {
+					echo "<option ".($option_selected ? "selected" : "")." value='{$id_subject}'>{$name}</option>";	
+				}
+			}
+			echo "</select>";
+		}
 	}

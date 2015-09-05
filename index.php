@@ -48,7 +48,7 @@
 		$_actionName		= "actionLogin";
 	}
 	
-//	preType([$_GET, $_controller, $_action, $_controllerName, $_actionName], true);
+// 	preType([$_GET, $_controller, $_action, $_controllerName, $_actionName], true);
 
 	
 	$IndexController = new $_controllerName;	// Создаем объект контроллера
