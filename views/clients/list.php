@@ -1,6 +1,7 @@
 <div class="panel panel-primary" ng-app="Clients" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="panel-heading">Клиенты с договорами
 		<div class="pull-right">
+			<span style="margin-right: 7px">сортировать по:</span>
 			<span class="link-reverse pointer" ng-click="setOrder(1)" style="margin-right: 7px">имя</span>
 			<span class="link-reverse pointer" ng-click="setOrder(2)" style="margin-right: 7px">номер договора</span>
 			<span class="link-reverse pointer" ng-click="setOrder(3)">дата заключения</span>

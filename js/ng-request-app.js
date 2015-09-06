@@ -85,6 +85,9 @@
 				// draggable only from main requests list (not relevant)
 				if ($scope.request_statuses_count) {
 					bindDraggable()
+				} else {
+					// relevant page
+					$("#group-branch-filter").selectpicker('render')
 				}
 			})
 			
@@ -160,12 +163,6 @@
 			$scope.pageChangedRelevant = function() {
 				// Получаем задачи, соответствующие странице и списку
 				$scope.getByPageRelevant($scope.currentPage)
-			}
-			
-			$scope.search = {
-				'grade'		: "",
-				'id_branch' : "",
-				'id_subject': "",
 			}
 
 			// Получаем задачи, соответствующие странице и списку

@@ -1,7 +1,7 @@
 <div ng-app="Group" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>">
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<?= $Group->id ? "Группа {$Group->id}" : "Добавление группы" ?>
+		<?= $Group->id ? "Группа {$Group->id} " . ($Group->is_special ? "(спецгруппа)" : "") : "Добавление группы" ?>
 		<div class="pull-right">
 			<span class="link-reverse pointer" ng-click="deleteGroup(Group.id)" ng-show="Group.id">удалить группу</span>
 		</div>
@@ -52,7 +52,11 @@
 					<div style="margin: 15px 16px">
 						<div ng-show="Students" class="link-like small link-reverse"  style="display: inline-block; margin-right: 7px" 
 								ng-click="addClientsPanel()">добавить ученика</div>
-						<a class="small link-reverse" href="requests/relevant" target="_blank">просмотр релевантных заявок</a>
+								
+						<a class="small link-reverse" target="_blank"
+							href="requests/relevant?subject={{Group.id_subject}}&branch={{Group.id_branch}}&grade={{Group.grade}}">
+								просмотр релевантных заявок
+						</a>
 					</div>
 					<img ng-hide="Students || !Group.id || true" src="img/svg/loading-bubbles.svg" style="margin: 15px 16px">
 				</div>
