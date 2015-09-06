@@ -484,6 +484,21 @@
 		}
 		return date("d.m.Y", strtotime($date));
 	}
+
+/*
+	function cacheFunction($memcached_key, $memcached_hours, $function)
+	{
+		if (LOCAL_DEVELOPMENT) {
+			$function();
+		} else {
+			$cache = memcached()->get($memcached_key);
+			
+			if ($cache) {
+				
+			}
+		}
+	}
+*/
 	
 	// если не указан id_request, то ищет по всей базе
 	// иначе ищет учитывая связанные заявки студента

@@ -9,12 +9,14 @@ body {
 
 .group-list-2 {
   border: 3px dashed transparent !important;
-  padding: 10px !important; }
+  padding: 0 10px !important; }
+  .group-list-2.last {
+    padding: 12px !important; }
   .group-list-2 table {
     margin-bottom: 0; }
 
-.mt40 {
-  margin-top: 60px; }
+.mt10 {
+  margin-top: 10px; }
 
 .tr-helper {
   width: 93% !important; }

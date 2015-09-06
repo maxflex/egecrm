@@ -29,7 +29,10 @@
 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span>
 		</td>
 		<td>
-			{{Group.expected_launch_date}}
+			<span ng-show="Group.first_schedule">{{Group.first_schedule | date:"dd.MM.yyyy"}}</span>
+			<span ng-show="!Group.first_schedule && Group.expected_launch_date" class="quater-black">
+				примерно {{dateToStart(Group.expected_launch_date)}}
+			</span>
 		</td>
 	</tr>
 </table>

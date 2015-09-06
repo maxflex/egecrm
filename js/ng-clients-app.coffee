@@ -7,8 +7,10 @@ angular.module "Clients", []
 				if v.score isnt null and v.score isnt ""
 					ar.push v.score
 			return ar.join " + "
-		
+			
+		$scope.filter_cancelled = 0
 		$scope.order = 2
+		
 		$scope.setOrder = (order) ->
 			console.log order, $scope.asc
 			if $scope.order isnt order

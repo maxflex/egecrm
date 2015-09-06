@@ -108,7 +108,7 @@
 			</div>
 			
 			<div ng-repeat="Group in Groups2 | filter:groupsFilter2" ng-show="Groups2" class="ng-hide group-list-2" 
-				ng-class="{'mt40' : !$first}" data-index="{{$index}}" id="group-index-{{$index}}">
+				ng-class="{'mt10': !$first, 'last': Group.Students.length == 0}" data-index="{{$index}}" id="group-index-{{$index}}">
 <!--		
 				<h5>
 					<span ng-bind-html="Group.branch_svg | to_trusted"></span>, {{Group.grade}} класс, {{Subjects[Group.subject]}}
@@ -116,7 +116,7 @@
 -->
 				<table class="table table-divlike">
 					<tbody>
-						<tr ng-repeat="Student in Group.Students" class="student-line is-draggable" 
+						<tr ng-repeat="Student in Group.Students" class="student-line is-draggable"
 							data-group-index="{{$parent.$index}}" data-student="{{Student}}" data-id="{{Student.id}}">
 <!-- 							<td width="50"></td> -->
 							<td width="300">

@@ -15,7 +15,8 @@
 		
 		public function actionList()
 		{
-			$this->setTabTitle("Клиенты с договорами");	
+			// не надо панель рисовать
+			$this->_custom_panel = true;
 			
 			$Students = Student::getWithContract();
 			
@@ -26,11 +27,10 @@
 				$date_formatted = new DateTime($Student->Contract->date);
 				$Student->date_formatted = $date_formatted->format("Y-m-d");
 				
-				$markers = $Student->getMarkers();
-				$Student->markers_count = $markers === false ? '' : count($markers);
+				$Student->groups_count = $Student->countGroups();
 			}
 			
-			$without_contract = Student::countWithoutContract();
+			$without_contract = LOCAL_DEVELOPMENT ? Student::countWithoutContract() : memcached()->get("TotalStudentsWithNoContract");
 			
 			$ang_init_data = angInit([
 				"Students" => $Students,

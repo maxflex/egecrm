@@ -22,7 +22,7 @@
 			</div>
 			
 			<div ng-repeat="Group in Groups | filter:groupsFilter" ng-show="Groups" class="ng-hide group-list-2" 
-				ng-class="{'mt40' : !$first}" data-index="{{$index}}" id="group-index-{{$index}}">
+				ng-class="{'mt10': !$first, 'last': Group.Students.length == 0}" data-index="{{$index}}" id="group-index-{{$index}}">
 <!--		
 				<h5>
 					<span ng-bind-html="Group.branch_svg | to_trusted"></span>, {{Group.grade}} класс, {{Subjects[Group.subject]}}

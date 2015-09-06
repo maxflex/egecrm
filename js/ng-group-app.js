@@ -374,6 +374,14 @@ angular.module("Group", []).filter('to_trusted', [
     }
     return ((ref = String(Group.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ((ref1 = String(Group.branch), indexOf.call($scope.search2.branches, ref1) >= 0) || $scope.search2.branches.length === 0) && (Group.subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject);
   };
+  $scope.dateToStart = function(date) {
+    var D;
+    date = date.split(".");
+    date = date.reverse();
+    date = date.join("-");
+    D = new Date(date);
+    return moment().to(D);
+  };
   $scope.weekdays = [
     {
       "short": "ПН",

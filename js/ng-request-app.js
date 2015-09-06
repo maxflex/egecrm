@@ -82,7 +82,10 @@
 			}
 			
 			$(document).ready(function() {
-				bindDraggable()
+				// draggable only from main requests list (not relevant)
+				if ($scope.request_statuses_count) {
+					bindDraggable()
+				}
 			})
 			
 			bindDraggable = function() {
@@ -148,6 +151,40 @@
 					$scope.$apply()
 					bindUserColorControl()
 					bindDraggable()
+					initComments()
+				}, "json")
+			}
+			
+			
+			// Страница изменилась
+			$scope.pageChangedRelevant = function() {
+				// Получаем задачи, соответствующие странице и списку
+				$scope.getByPageRelevant($scope.currentPage)
+			}
+			
+			$scope.search = {
+				'grade'		: "",
+				'id_branch' : "",
+				'id_subject': "",
+			}
+
+			// Получаем задачи, соответствующие странице и списку
+			$scope.getByPageRelevant = function(page) {
+				ajaxStart()
+				frontendLoadingStart()
+				$.get("requests/ajax/GetByPageRelevant", {
+					'page'		: page,
+					'grade'		: $scope.search.grade,
+					'id_branch' : $scope.search.id_branch,
+					'id_subject': $scope.search.id_subject,
+				}, function(response) {
+					ajaxEnd()
+					frontendLoadingEnd()
+					console.log(response)
+					$scope.requests = response.requests
+					$scope.requests_count = response.requests_count
+					$scope.$apply()
+					bindUserColorControl()
 					initComments()
 				}, "json")
 			}
@@ -1296,6 +1333,15 @@
 				}
 				
 			}
+			
+			$scope.dateToStart = function(date) {
+				var D;
+				date = date.split(".");
+				date = date.reverse();
+				date = date.join("-");
+				D = new Date(date);
+				return moment().to(D);
+			};
 
 			// ссылка "удалить профиль ученика"
 			setInterval(function() {

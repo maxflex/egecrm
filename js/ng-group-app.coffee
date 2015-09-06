@@ -307,6 +307,15 @@
 					(String(Group.branch) in $scope.search2.branches or $scope.search2.branches.length == 0) and 
 					(Group.subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject)
 			
+			$scope.dateToStart = (date) ->
+				date = date.split "."
+				date = date.reverse()
+				date = date.join "-"
+				
+				D = new Date(date)
+				
+				moment().to D
+			
 			$scope.weekdays = [
 				{"short" : "ПН", "full" : "Понедельник"},
 				{"short" : "ВТ", "full" : "Вторник"},

@@ -49,8 +49,11 @@
 							</td>
 						</tr>	
 					</table>
-					<div ng-show="Students" class="link-like small link-reverse" style="margin: 15px 16px; display: inline-block" 
-							ng-click="addClientsPanel()">добавить ученика</div>
+					<div style="margin: 15px 16px">
+						<div ng-show="Students" class="link-like small link-reverse"  style="display: inline-block; margin-right: 7px" 
+								ng-click="addClientsPanel()">добавить ученика</div>
+						<a class="small link-reverse" href="requests/relevant" target="_blank">просмотр релевантных заявок</a>
+					</div>
 					<img ng-hide="Students || !Group.id || true" src="img/svg/loading-bubbles.svg" style="margin: 15px 16px">
 				</div>
 				<div class="col-sm-3">

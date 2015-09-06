@@ -66,6 +66,23 @@
 			return $id_status;
 		}
 		
+		/**
+		 * Получить студентов с договорами.
+		 * 
+		 */
+		public static function countWithoutContract()
+		{
+			$query = dbConnection()->query("
+				SELECT r.id FROM requests r
+					LEFT JOIN students s 	ON r.id_student = s.id
+					LEFT JOIN contracts c 	ON c.id_student = s.id
+				WHERE r.adding = 0 	AND c.id_student IS NULL
+				GROUP BY r.id
+			");
+			
+			return $query->num_rows;
+		}
+		
 		public static function findByStudent($id_student)
 		{
 			return self::find([
@@ -106,6 +123,66 @@
 
 		/**
 		 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
+		 *
+		 */
+		public static function getByPageRelevant($page, $grade, $id_branch, $id_subject)
+		{
+			if (!$page) {
+				$page = 1;
+			}
+			// С какой записи начинать отображение, по формуле
+			$start_from = ($page - 1) * self::PER_PAGE;
+
+			$Requests = self::findAll([
+				"condition"	=> "adding=0 AND id_status IN (" . RequestStatuses::AWAITING . ", " . RequestStatuses::NOT_DECIDED . ")"
+					. (!empty($grade) ? " AND grade=$grade" : "")
+					. (!empty($id_branch) ? " AND id_branch=$id_branch" : "")
+					. (!empty($id_subject) ? " AND subjects IN ($id_subject)" : "")
+					. (empty($_COOKIE["id_user_list"]) ? "" : " AND id_user=".$_COOKIE["id_user_list"]) ,
+				"order"		=> "date DESC",
+				"limit" 	=> $start_from. ", " .self::PER_PAGE
+			]);
+			
+			// Добавляем дубликаты
+			foreach ($Requests as &$Request) {
+				$Request->duplicates = $Request->getDuplicates();
+				
+				$Request->has_contract = $Request->hasContract();
+				
+				if ($Request->duplicates) {
+					$Request->total_count = count($Request->duplicates) + 1;
+				}
+
+				// дубликаты для подсветки
+				foreach (static::$_phone_fields as $phone_field) {
+					if (!empty($Request->{$phone_field})) {
+						$Request->{$phone_field . "_duplicate"} = isDuplicate($Request->{$phone_field}, $Request->id);
+					}
+				}
+			}
+			
+			return $Requests;
+		}
+		
+		/**
+		 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
+		 *
+		 */
+		public static function countByPageRelevant($grade = '', $id_branch = '', $id_subject = '')
+		{
+			$Requests = self::count([
+				"condition"	=> "adding=0 AND id_status IN (" . RequestStatuses::AWAITING . ", " . RequestStatuses::NOT_DECIDED . ")"
+					. (!empty($grade) ? " AND grade=$grade" : "")
+					. (!empty($id_branch) ? " AND id_branch=$id_branch" : "")
+					. (!empty($id_subject) ? " AND subjects IN ($id_subject)" : "")
+					. (empty($_COOKIE["id_user_list"]) ? "" : " AND id_user=".$_COOKIE["id_user_list"]) ,
+			]);
+			
+			return $Requests;
+		}
+		
+		/**
+		 * Получить релевантные заявки по номеру страницы
 		 *
 		 */
 		public static function getByPage($page, $id_status)

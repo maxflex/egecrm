@@ -10,6 +10,7 @@ angular.module("Clients", []).controller("ListCtrl", function($scope) {
     });
     return ar.join(" + ");
   };
+  $scope.filter_cancelled = 0;
   $scope.order = 2;
   $scope.setOrder = function(order) {
     console.log(order, $scope.asc);

@@ -67,12 +67,8 @@
 								$stats[$Contract->cancelled_date]['plus_contracts'] = 0;
 							}
 							$stats[$Contract->cancelled_date]['plus_contracts']--;
-							
-							if (!isset($stats[$Contract->cancelled_date]['plus_sum'])) {
-								$stats[$Contract->cancelled_date]['plus_sum'] = 0;
-							}
-							
-							$stats[$Contract->cancelled_date]['plus_sum'] -= $Contract->sum;
+
+							$stats[$Contract->cancelled_date]['minus_sum'] += $Contract->sum;
 						}
 						
 						// если расторжен и стал НЕ расторжен
@@ -184,12 +180,8 @@
 								$stats_additional[$Contract->cancelled_date]['plus_contracts'] = 0;
 							}
 							$stats_additional[$Contract->cancelled_date]['plus_contracts']--;
-							
-							if (!isset($stats_additional[$Contract->cancelled_date]['plus_sum'])) {
-								$stats_additional[$Contract->cancelled_date]['plus_sum'] = 0;
-							}
-							
-							$stats_additional[$Contract->cancelled_date]['plus_sum'] -= $Contract->sum;
+
+							$stats_additional[$Contract->cancelled_date]['minus_sum'] += $Contract->sum;
 						}
 						
 						// если расторжен и стал НЕ расторжен
@@ -237,11 +229,11 @@
 				}
 				
 				if (isset($stat['plus_sum'])) {
-					if (!isset($stats[$new_date]['plus_sum'])) {
-						$stats[$new_date]['plus_sum'] = 0;	
-					}
-					
 					$stats[$new_date]['plus_sum'] += $stat['plus_sum'];
+				}
+								
+				if (isset($stat['minus_sum'])) {
+					$stats[$new_date]['minus_sum'] += $stat['minus_sum'];
 				}
 				
 				if (isset($stat['plus_contracts'])) {
@@ -311,12 +303,8 @@
 								$stats_additional[$Contract->cancelled_date]['plus_contracts'] = 0;
 							}
 							$stats_additional[$Contract->cancelled_date]['plus_contracts']--;
-							
-							if (!isset($stats_additional[$Contract->cancelled_date]['plus_sum'])) {
-								$stats_additional[$Contract->cancelled_date]['plus_sum'] = 0;
-							}
-							
-							$stats_additional[$Contract->cancelled_date]['plus_sum'] -= $Contract->sum;
+
+							$stats_additional[$Contract->cancelled_date]['minus_sum'] += $Contract->sum;
 						}
 						
 						// если расторжен и стал НЕ расторжен
@@ -364,11 +352,11 @@
 				}
 				
 				if (isset($stat['plus_sum'])) {
-					if (!isset($stats[$new_date]['plus_sum'])) {
-						$stats[$new_date]['plus_sum'] = 0;	
-					}
-					
 					$stats[$new_date]['plus_sum'] += $stat['plus_sum'];
+				}
+				
+				if (isset($stat['minus_sum'])) {
+					$stats[$new_date]['minus_sum'] += $stat['minus_sum'];
 				}
 				
 				if (isset($stat['plus_contracts'])) {
@@ -437,11 +425,7 @@
 							}
 							$stats_additional[$Contract->cancelled_date]['plus_contracts']--;
 							
-							if (!isset($stats_additional[$Contract->cancelled_date]['plus_sum'])) {
-								$stats_additional[$Contract->cancelled_date]['plus_sum'] = 0;
-							}
-							
-							$stats_additional[$Contract->cancelled_date]['plus_sum'] -= $Contract->sum;
+							$stats_additional[$Contract->cancelled_date]['minus_sum'] += $Contract->sum;
 						}
 						
 						// если расторжен и стал НЕ расторжен
@@ -490,11 +474,11 @@
 				
 				$new_date = date("Y-m-d");
 				if (isset($stat['plus_sum'])) {
-					if (!isset($stats[$new_date]['plus_sum'])) {
-						$stats[$new_date]['plus_sum'] = 0;	
-					}
-					
 					$stats[$new_date]['plus_sum'] += $stat['plus_sum'];
+				}
+				
+				if (isset($stat['minus_sum'])) {
+					$stats[$new_date]['minus_sum'] += $stat['minus_sum'];
 				}
 				
 				if (isset($stat['plus_contracts'])) {

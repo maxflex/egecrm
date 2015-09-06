@@ -169,6 +169,14 @@
 			foreach (static::$_phone_fields as $phone_field) {
 				$this->{$phone_field} = cleanNumber($this->{$phone_field});
 			}
+			
+			if ($this->isNewRecord) {
+				if (!LOCAL_DEVELOPMENT) {
+					// кеш количества учеников без договоров обновляется только при создании нового ученика
+					// т.е. если существующему ученику добавить договор, количество не отнимется до создания нового ученика
+					memcached()->set("TotalStudentsWithNoContract", Student::countWithoutContract(), 3600 * 24 * 30);
+				}
+			}
 		}
 		
 		/**
@@ -224,6 +232,13 @@
 		public function getGroups()
 		{
 			return Group::findAll([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
+			]);
+		}
+		
+		public function countGroups()
+		{
+			return Group::count([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
 			]);
 		}

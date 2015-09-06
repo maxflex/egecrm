@@ -32,7 +32,10 @@
 				$this->branch = Branches::getShortColoredById($this->id_branch);
 			}
 			
+			
+			
 			$this->is_special = $this->isSpecial();
+			$this->first_schedule = $this->getFirstSchedule();
 			
 			$this->Comments	= Comment::findAll([
 				"condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
@@ -51,6 +54,31 @@
 		}
 		
 		
+		/**
+		 * Получить дату первого занятия из расписания.
+		 * 
+		 */
+		public function getFirstSchedule()
+		{
+			$GroupFirstSchedule =  GroupSchedule::find([
+				"condition" => "id_group={$this->id}",
+				"order"		=> "date ASC"	
+			]);
+			
+			return $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date) . "000" : false;
+/*
+			
+			if ($GroupFirstSchedule) {
+				return $GroupFirstSchedule->date;
+			} else {
+				if ($this->expected_launch_date) {
+					return date("Y-m-d", strtotime($this->expected_launch_date));
+				}
+			}
+			
+			return false;	
+*/		
+		}
 		
 		/**
 		 * Если в группе состоит хотя бы 1 ученик с занятиями больше 40, то в списке групп предмет выглядит вместо "русский" пишем "русский (спецгруппа)"

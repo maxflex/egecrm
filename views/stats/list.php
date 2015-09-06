@@ -81,9 +81,14 @@
 						   }
 					   }
 					?>
-				   <?php if ($stat['total'] && isset($stat['plus_sum']) && $stat['plus_sum'] != 0): ?>
-						<span class="quater-black"> <?= ($stat['plus_sum'] > 0 ? " + " . $stat['plus_sum'] : " – " . ($stat['plus_sum'] * -1)) ?></span>
+				   <?php if ($stat['total'] && isset($stat['plus_sum']) && $stat['plus_sum'] > 0): ?>
+						<span class="quater-black"> + <?= $stat['plus_sum'] ?></span>
 				   	<?php endif ?>
+				   	
+				   	<?php if (isset($stat['minus_sum']) && $stat['minus_sum'] > 0): ?>
+						<span class="quater-black"> – <?= $stat['minus_sum'] ?></span>
+					<?php endif ?>
+				   	
 				</td>
 				<td>
 					<?= $stat['total_payment'] ?>
