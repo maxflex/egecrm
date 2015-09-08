@@ -25,6 +25,27 @@ body {
 	font-weight: bold;
 }
 
+.group-freetime-block {
+	display: inline-block;
+	margin-right: 5px;
+	margin-top: 4px;
+	white-space: nowrap;
+	& .freetime-bar {
+		height: 15px;
+		width: 5px;
+	//	float: left;
+		margin-right: 1px;
+		display: inline-block;
+		background-color: #B1B1B1;
+		&.empty {
+			background-color: rgba(176, 176, 176, 0.2);
+		}
+		&.red {
+			background-color: $red;
+		}
+	}	
+}
+
 .group-list-2 {
 	border: 3px dashed transparent !important; 
 	padding: 0 10px !important;
@@ -541,12 +562,13 @@ h4.row-header {
 
 
 
-.lightbox-sms, .lightbox-email {
+.lightbox-sms, .lightbox-email, .lightbox-freetime {
 	width: 60%;
 //	height: 80%;
 	left: 20%;
 	top: 10%;
 }
+
 
 #sms-history, #email-history {
 	margin-bottom: 10px;
@@ -1385,6 +1407,13 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 	border-top: none;
 	padding: 0;
 	padding-bottom: 5px;
+}
+
+.table.table-divlike > thead > tr > td {
+	border-top: none;
+	padding: 0;
+	padding-bottom: 5px;
+	font-weight: bold;
 }
 
 .cabinet-add {

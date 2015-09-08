@@ -244,7 +244,38 @@
 		{
 			extract($_POST);
 			
-			$Email = Email::send($email, $subject, $message, $files);
+			// Group send
+			if ($mode == 2) {
+				$Group = Group::findById($id_place);
+				
+				$Students = $Group->getStudents();
+				
+				if ($to_students == "true") {
+					foreach ($Students as $Student) {
+						if (!empty($Student->email)) {
+							$email[] = $Student->email;
+						}
+					}
+					$additional = 1;
+				}
+				
+				if ($to_representatives == "true") {
+					foreach ($Students as $Student) {
+						if ($Student->Representative) {
+							if (!empty($Student->Representative->email)) {
+								$email[] = $Student->Representative->email;
+							}
+						}
+					}
+					// 0 if nothing selected
+					// 1 if only to students
+					// 2 if only to representatives
+					// 3 if to both
+					$additional += 2; 
+				}
+			}
+			
+			$Email = Email::send($email, $subject, $message, $files, $place, $id_place, $additional);
 			$Email->getCoordinates();
 			
 			returnJSON($Email);
@@ -254,7 +285,7 @@
 			extract($_POST);
 			
 			$History = Email::findAll([
-				"condition" => "email='$email'",
+				"condition" => $email ? "email='$email'" : "place='$place' AND id_place=$id_place",
 				"order"		=> "date DESC",
 			]);
 			

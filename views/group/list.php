@@ -84,7 +84,7 @@
 			<div ng-show="(Students | filter:clientsFilter).length == 0" class="center half-black small" style="margin-bottom: 15px">не найдено учеников, соответствующих запросу</div>
 		</div>
 	</div>
-	<?php else: ?>
+	<?php elseif ($_GET["mode"] == "nogroup"): ?>
 	<div class="row" style="margin-bottom: 15px">
 				<div class="col-sm-3">
 					<?= Grades::buildMultiSelector(false, ["ng-model" => "search2.grades", "id" => "grades-select2"]) ?>

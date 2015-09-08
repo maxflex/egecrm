@@ -1,5 +1,5 @@
 <?php
-	class Freetime  extends Model
+	class Freetime extends Model
 	{
 	
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
@@ -14,42 +14,55 @@
 		
 
 		/**
-		 * Добавить свободное время из angular-json-данных.
+		 * Добавить свободное время
 		 * 
 		 */
-		public static function addData($json_array, $id_student) 
+		public static function addData($data, $id_student) 
 		{
-			// Сначала декодируем данные
-			$freetime_data = json_decode($json_array, true);
+			self::deleteAll([
+				"condition" => "id_student=$id_student"
+			]);
 			
-			// Если никаких данных нет
-			if (!count($freetime_data)) {
-				return false;
-			}
-			
-			// Создаем интервалы свободного времени
-			foreach ($freetime_data as $one_day_freetime_data) {
-				// Если промежуток уже существует и его надо удалить
-				if ($one_day_freetime_data["id"] && $one_day_freetime_data["deleted"]) {
-					// создаем массив из ID промежутков, которые нужно удалить
-					$ids_to_delete[] = $one_day_freetime_data["id"];	
-				} else {
-					// иначе если промежуток новый (и он не удален)
-					if (!$one_day_freetime_data["deleted"]) {
-						// добавляем промежуток свободного времени
-						$FreetimeData = new self($one_day_freetime_data);
-						$FreetimeData->id_student = $id_student;
-						$FreetimeData->save();	
+			foreach ($data as $id_branch => $branch_data) {
+				foreach ($branch_data as $day => $day_data) {
+					foreach ($day_data as $time) {
+						if (empty(trim($time))) {
+							continue;
+						}
+						$Freetime = new self([
+							"id_student"	=> $id_student,
+							"id_branch"		=> $id_branch,
+							"day"			=> $day,
+							"time"			=> $time,
+						]);
+						
+						$Freetime->save();
 					}
 				}
 			}
-			
-			// Если есть что удалять
-			if ($ids_to_delete) {
-				// Удаляем
-				self::deleteAll([
-					"condition"	=> "id IN (". implode(",", $ids_to_delete) .")",
-				]);
+		}
+		
+		public static function getIndexByTime($time) {
+			switch ($time) {
+/*
+				case "11:00": {
+					return 0;
+				}
+*/
+				case "13:30": {
+					return 1;
+				}
+				case "16:00":
+				case "16:15": {
+					return 2;
+				}
+				case "18:30":
+				case "18:40": {
+					return 3;
+				}
+				default: {
+					return 0;
+				}
 			}
 		}
 				

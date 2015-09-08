@@ -98,6 +98,16 @@
 				WHERE g.id = {$this->id} AND (c.id_contract=0 OR c.id_contract IS NULL) AND cs.count>40 AND cs.id_subject={$this->id_subject}
 				LIMIT 1
 			")->num_rows;
+		}
+		
+		public function getStudents()
+		{
+			if (!$this->students) {
+				return false;
+			}
+			return Student::findAll([
+				"condition" => "id IN (" . implode(",", $this->students) . ")"	
+			]);
 		}		
 	}
 	
@@ -169,6 +179,22 @@
 					]);
 				}
 			}
+		}
+
+	
+		/**
+		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "полностью согласен", 
+		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
+		 * 
+		 */
+		public static function inRedFreetime($id_group, $day, $time, $id_student) 
+		{
+			return dbConnection()->query("
+				SELECT g.id FROM group_student_statuses gss
+				LEFT JOIN groups g ON g.id = gss.id_group
+				WHERE g.id != $id_group AND g.start = '$time' AND g.day = '$day' AND gss.id_status = ". self::AGREED ." AND gss.id_student = $id_student
+				LIMIT 1
+			")->num_rows;	
 		}
 		
 		public function getByGroupId($id_group)

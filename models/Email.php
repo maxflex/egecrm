@@ -23,17 +23,20 @@ class Email extends Model
 		}
 	}
 	
-	public static function send($email, $subject, $message, $files)
+	public static function send($email, $subject, $message, $files, $place = NULL, $id_place = NULL, $additional = NULL)
 	{
 		foreach ($files as $file) {
 			unset($file['email_uploaded_file_id']);	
 		}
 		
 		$Email = new self([
-			'email' 	=> $email,
+			'email' 	=> is_array($email) ? implode(",", $email) : $email,
 			'subject' 	=> $subject,
 			'message' 	=> nl2br($message),
 			'files'		=> $files,
+			'place'		=> $place,
+			'id_place' 	=> $id_place,
+			'additional'=> $additional,
 		]);
 		
 		$mail = self::initMailer();
@@ -42,7 +45,13 @@ class Email extends Model
 			$mail->addAttachment(self::UPLOAD_DIR . $file['name'], $file['uploaded_name']);  	
 		}
 		
-		$mail->addAddress($email);
+		if (is_array($email)) {
+			foreach ($email as $index => $e) {
+				$mail->addBCC($e);
+			}
+		} else {
+			$mail->addAddress($email);
+		}
 		$mail->Subject = $Email->subject;
 		$mail->Body = $Email->message;
 		

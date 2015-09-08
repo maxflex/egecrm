@@ -14,7 +14,7 @@
 					
 					<table class="table table-divlike">
 						<tr ng-repeat="Student in TmpStudents">
-							<td width="300">
+							<td width="250">
 								{{$index + 1}}. <a href="student/{{Student.id}}">
 									{{Student.last_name}}
 									{{Student.first_name}}
@@ -24,7 +24,7 @@
 							<td>
 								{{Student.grade}} класс
 							</td>
-							<td>
+							<td width="50">
 								<b>{{Student.Contract.subjects[Group.id_subject].score}}</b>
 							</td>
 							<td>
@@ -34,7 +34,7 @@
 								<span ng-repeat="(id_branch, short) in Student.branch_short track by $index" 
 										ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}"></span>
 							</td>
-							<td style="width: 200px !important">
+							<td style="width: 150px !important">
 								<span class="label group-student-status{{Student.id_status}} s-s-s student-status-span-{{Student.id}}"
 									ng-click="setStudentStatus(Student, $event)">
 									{{Student.id_status ? GroupStudentStatuses[Student.id_status] : "статус"}}
@@ -47,16 +47,28 @@
 											ng-selected="getStudent(id_student).id_status == id_status">{{name}}</option>
 								</select>
 							</td>
+							<td width="150">
+								<span ng-repeat="weekday in weekdays" class="group-freetime-block">
+									<span class="freetime-bar" ng-repeat="time in weekday.schedule track by $index" 
+										ng-class="{
+											'empty'	: !inFreetime(time, Student, $parent.$index + 1),
+											'red'	: inRedFreetime(time, Student, $parent.$index + 1),
+										}" ng-hide="time == ''">
+									</span>
+								</span>
+							</td>
 						</tr>	
 					</table>
 					<div style="margin: 15px 16px">
 						<div ng-show="Students" class="link-like small link-reverse"  style="display: inline-block; margin-right: 7px" 
 								ng-click="addClientsPanel()">добавить ученика</div>
 								
-						<a class="small link-reverse" target="_blank"
+						<a class="small link-reverse" target="_blank" style="margin-right: 7px"
 							href="requests/relevant?subject={{Group.id_subject}}&branch={{Group.id_branch}}&grade={{Group.grade}}">
-								просмотр релевантных заявок
-						</a>
+								просмотр релевантных заявок</a>
+						<span class="link-like small link-reverse" ng-click="emailDialog()">
+								отправка сообщения
+						</span>
 					</div>
 					<img ng-hide="Students || !Group.id || true" src="img/svg/loading-bubbles.svg" style="margin: 15px 16px">
 				</div>
@@ -64,18 +76,23 @@
 					<div class="form-group">
 						<?= Subjects::buildSelector(false, false, [
 							"ng-model" => "Group.id_subject", 
-							"ng-change" => "loadStudents()",
+							"ng-change" => "subjectChange()",
 							"ng-disabled" => "!Students && Group.id",
 						]) ?>
 					</div>
 					<div class="form-group">
 						<select class="form-control" ng-model="Group.id_teacher">
-							<option selected>преподаватель</option>
+							<option selected value="0">преподаватель</option>
 							<option disabled>──────────────</option>
 							<option ng-repeat="Teacher in Teachers | filter:teachersFilter" value="{{Teacher.id}}" ng-selected="Teacher.id == Group.id_teacher">
 								{{Teacher.last_name}} {{Teacher.first_name[0]}}. {{Teacher.middle_name[0]}}.
 							</option>
 						</select>
+						<div class="small" style="text-align: right" ng-show="Group.id_teacher != '0'">
+							<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">егэ-центр</a> | 
+							<a href="https://crm.a-perspektiva.ru/repetitors/edit/?id={{getTeacher(Group.id_teacher).id_a_pers}}" 
+								target="_blank">егэ-репетитор</a>
+						</div>
 					</div>
 					<div class="form-group">
 		                <?= 
@@ -229,5 +246,4 @@
 </div>
 	
 </div>
-
 </div>

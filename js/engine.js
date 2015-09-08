@@ -209,8 +209,8 @@
 	
 	function sendEmail() {
 		message = $("#email-message");
-		email	= $("#email-address").text();
 		subject = $("#email-subject")
+		mode 	= parseInt($("#email-mode").val())
 		
 		if (subject.val().trim() == "") {
 			subject.addClass("has-error").focus()
@@ -226,13 +226,33 @@
 			message.removeClass("has-error")
 		}
 		
-		ajaxStart('email')
-		$.post("ajax/sendEmail", {
+		// default data 
+		data = {
 			"message": message.val().trim(),
 			"subject": subject.val().trim(),
-			"email": email,
 			"files": email_uploaded_files,
-		}, function(response) {
+			"mode": mode
+		}
+		switch (mode) {
+			// sending email from REQUESTS
+			case 1: {
+				email	= $("#email-address").text();
+				data.email = email
+				break
+			}
+			// sending email from GROUPS
+			case 2: {
+				data.place = "GROUP"
+				data.id_place = ang_scope.Group.id
+				data.to_students = ang_scope.to_students
+				data.to_representatives = ang_scope.to_representatives
+				break
+			}
+		}
+		
+		ajaxStart('email')
+		$.post("ajax/sendEmail", data, function(response) {
+			console.log(response);
 			$("#email-files-list").html("")
 			ajaxEnd('email')
 			

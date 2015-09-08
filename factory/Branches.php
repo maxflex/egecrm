@@ -237,22 +237,22 @@
 			return self::metroSvg($id_branch) .  self::getById($id_branch);
 		}
 		
-		public static function getShortColored() 
-		{
-			foreach (self::$short as $id_branch => $name) {
-				$return[$id_branch] = "<b><span style='color: ". self::metroSvg($id_branch, false, true) . "'>"
-				. mb_substr($name, 0, 1, "utf-8") . "</span></b>". mb_substr($name, 1, 1, "utf-8") . mb_substr($name, 2, 1, "utf-8");
-			}
-			
-			return $return;
-		}
-		
 		public static function getShortColoredById($id_branch) 
 		{
 			$name = self::$short[$id_branch];
 			
 			return "<span class='label label-metro-short' style='background: ". self::metroSvg($id_branch, false, true) . "'>" 
 				. $name . "</span>";
+		}
+		
+		
+		public static function getShortColored()
+		{
+			foreach (self::$all as $id_branch => $name) {
+				$return[$id_branch] = self::getShortColoredById($id_branch);	
+			}
+			
+			return $return;
 		}
 		
 		/**

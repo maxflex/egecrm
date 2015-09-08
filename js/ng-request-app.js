@@ -9,6 +9,14 @@
 		        // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
 		    }
 		])
+		.filter('range', function() {
+		  return function(input, total) {
+		    total = parseInt(total);
+		    for (var i=0; i<total; i++)
+		      input.push(i);
+		    return input;
+		  };
+		})
 		.filter('reverse', function() {
 			return function(items) {
 				if (items) {
@@ -201,21 +209,100 @@
 			$scope.marker_id= 1;
 			// Дни недели
 			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник"},
-				{"short" : "ВТ", "full" : "Вторник"},
-				{"short" : "СР", "full" : "Среда"},
-				{"short" : "ЧТ", "full" : "Четверг"},
-				{"short" : "ПТ", "full" : "Пятница"},
-				{"short" : "СБ", "full" : "Суббота"},
-				{"short" : "ВС", "full" : "Воскресенье"}
+				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
+				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
-
+			
+			function initFreetime(id_branch, day) {
+				$scope.freetime = initIfNotSet($scope.freetime);
+				$scope.freetime[id_branch] = initIfNotSet($scope.freetime[id_branch]);
+				$scope.freetime[id_branch][day] = initIfNotSet($scope.freetime[id_branch][day]);
+			}
+			
+			$scope.inFreetime = function(id_branch, day, value) {
+				initFreetime(id_branch, day)
+				return $.inArray(value, objectToArray($scope.freetime[id_branch][day])) >= 0
+			}
+			
+			$scope.inFreetime2 = function(time, freetime) {
+			//	console.log(time, freetime, $.inArray(time, freetime))
+				freetime = objectToArray(freetime)
+				return $.inArray(time, freetime) >= 0
+			}
+			
+			$scope.freetimeClick = function(id_branch, index, n) {
+				index++
+				if ($scope.freetime[id_branch][index][n] !== true) {
+					$scope.freetime[id_branch][index][n] = ""	
+				} else {
+					$scope.freetime[id_branch][index][n] = $scope.weekdays[index - 1].schedule[n]
+				}
+			}
+			
+			$scope.selectAllWorking = function(id_branch) {
+				$.each($scope.weekdays, function(index, weekday) {
+					if (index > 4) {
+						return
+					}
+					if ($scope.freetime_selected_all_working) {
+						$scope.freetime[id_branch][index + 1][2] = ""
+						$scope.freetime[id_branch][index + 1][3] = ""
+					} else {
+						$scope.freetime[id_branch][index + 1][2] = weekday.schedule[2]
+						$scope.freetime[id_branch][index + 1][3] = weekday.schedule[3]
+					}
+				})
+				$scope.freetime_selected_all_working = !$scope.freetime_selected_all_working
+			}
+			
+			$scope.selectAllWeek = function(id_branch) {
+				$.each($scope.weekdays, function(index, weekday) {
+					if ($scope.freetime_selected_all_week) {
+						$scope.freetime[id_branch][index + 1][0] = ""
+						$scope.freetime[id_branch][index + 1][1] = ""
+						$scope.freetime[id_branch][index + 1][2] = ""
+						$scope.freetime[id_branch][index + 1][3] = ""  
+					} else {
+						$scope.freetime[id_branch][index + 1][0] = weekday.schedule[0]
+						$scope.freetime[id_branch][index + 1][1] = weekday.schedule[1]
+						$scope.freetime[id_branch][index + 1][2] = weekday.schedule[2]
+						$scope.freetime[id_branch][index + 1][3] = weekday.schedule[3]
+					}
+				})
+				$scope.freetime_selected_all_week = !$scope.freetime_selected_all_week
+			}
+			
+			$scope.selectAllIndex = function(id_branch, index) {
+				$scope.freetime_selected_all_index = initIfNotSet($scope.freetime_selected_all_index)
+				$.each($scope.weekdays, function(i, weekday) {
+					if ($scope.freetime_selected_all_index[index]) {
+						$scope.freetime[id_branch][i + 1][index] = ""
+					} else {
+						$scope.freetime[id_branch][i + 1][index] = weekday.schedule[index]
+					}
+				})
+				$scope.freetime_selected_all_index[index] = !$scope.freetime_selected_all_index[index]
+			}
+			
+			$scope.saveFreetime = function() {
+				lightBoxHide();
+				$(".save-button").click();
+			}
+			
 			// ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
 			// $scope.new_contract_id = -1;
 
 			// анимация загрузки RENDER ANGULAR
 			angular.element(document).ready(function() {
+				$.each($scope.student.branches, function(index, branch) {
+					$scope.student.branches[index] = branch.toString();
+				});
 				setTimeout(function() {
 					$(".panel-edit .panel-body").css("opacity", 1)
 					$("#panel-loading").hide()
@@ -279,17 +366,6 @@
 				$("#email-address").text(email)
 				lightBoxShow('email')
 			}
-
-			/**
-			 * Показывать в свободном времени только дни, где есть свободное время
-			 *
-			 */
-			$scope.freetimeControl = function(day_number) {
-				return $.grep($scope.freetime, function(v, i) {
-					return (v.day == (day_number + 1) && !v.deleted)
-				}).length > 0
-			}
-
 
 			$scope.formatContractDate = function(date) {
 				if (date == null) {
@@ -636,19 +712,6 @@
 					$scope.searchMap($("#map-search").val())
 				}
 			}
-			
-			// Выбор дня и начало добавления свободного времени
-			$scope.chooseDay = function(day) {
-				// если этот день уже выбран, снимаем выборку
-				if ($scope.adding_day == day) {
-					$scope.adding_day = 0
-					// снимаем фокус с кнопки (иначе некрасиво)
-					$(".btn-group-freetime button").blur();
-				} else {
-					// иначе выбираем день
-					$scope.adding_day = day
-				}
-			}
 
 			$scope.addAndRedirect = function() {
 				$scope.redirect_after_save = $scope.id_request
@@ -663,84 +726,6 @@
 					contract.cancelled_reason = ""
 				}
 			}
-
-			// Добавление отрывка свободного времени
-			$scope.addFreetime = function() {
-				if (!$scope.freetime) {
-					$scope.freetime = []
-				}
-
-				// Элементы
-				free_time_start = $("#free_time_start")
-				free_time_end 	= $("#free_time_end")
-
-				// Если есть пустые поля
-				if (!$scope.adding_day) {
-					$("[ng-model='adding_day'").addClass("has-error")
-					return
-				} else  {
-					$("[ng-model='adding_day'").removeClass("has-error")
-				}
-
-
-				if (!free_time_start.val()) {
-					free_time_start.focus().addClass("has-error")
-					return false
-				} else {
-					free_time_start.removeClass("has-error")
-				}
-
-				if (!free_time_end.val()) {
-					free_time_end.focus().addClass("has-error")
-					return false
-				} else {
-					free_time_end.removeClass("has-error")
-				}
-
-				// Добавляем свободное время
-				$scope.freetime.push({
-					"day"	: $scope.adding_day,
-					"start"	: free_time_start.val(),
-					"end"	: free_time_end.val()
-				});
-
-				// Добавляем JSON
-				$("#freetime_json").val(JSON.stringify($scope.freetime));
-
-				// Обнуляем значения в добавлении
-				free_time_start.val("")
-				free_time_end.val("")
-				$scope.adding_day = ""
-			}
-
-			// Удаление свободного времени
-			$scope.removeFreetime =  function(freetime) {
-				$.each($scope.freetime, function(index, ft) {
-					if (angular.equals(freetime, ft)) {
-						//$scope.freetime.splice(index, 1)
-						// все уже имеющиеся в базе с deleted = true будут удаляться из базы
-						// все новые с deleted = true добавляться не будут
-						$scope.freetime[index].deleted = true
-						// Добавляем JSON
-						$("#freetime_json").val(JSON.stringify($scope.freetime))
-						$scope.$apply()
-						return true
-					}
-				})
-			}
-
-			// Подсчет кол-ва свободного времени конкретного дня
-			$scope.hasFreetime = function(day) {
-				count = 0
-				angular.forEach($scope.freetime, function(freetime) {
-					if (freetime.day == day && !freetime.deleted) {
-						count++;
-					}
-				})
-				// возвращаем либо FALSE, либо кол-во дней
-				return (count == 0 ? false : count);
-			}
-
 
 			// Получить общее количество предметов (для печати договора)
 			$scope.subjectCount = function(contract) {
@@ -1452,9 +1437,6 @@
 			        $scope.$apply()
 			    })
 				
-				// Добавляем JSON
-				$("#freetime_json").val(JSON.stringify($scope.freetime));
-
 				// Биндим загрузку к уже имеющимся дагаварам
 				$.each($scope.contracts, function(index, contract) {
 					$scope.bindFileUpload(contract)

@@ -343,13 +343,66 @@
 		
 		/**
 		 * Получить свободное время ученика.
+		 * $layered -- общее наслоенное расписание по всем филиалам
 		 * 
 		 */
-		public function getFreetime()
+		public function getFreetime($layered = false)
 		{
-			return Freetime::findAll([
+			$Freetime = Freetime::findAll([
 				"condition"	=> "id_student=" . $this->id
 			]);
+			
+			if (!$Freetime) {
+				return [];
+			}
+			
+			foreach ($Freetime as $FreetimeData) {
+				$index = Freetime::getIndexByTime($FreetimeData->time);
+				$return[$FreetimeData->id_branch][$FreetimeData->day][$index] = $FreetimeData->time;
+				if ($layered) {
+					$return[0][$FreetimeData->day][$index] = $FreetimeData->time;
+				}
+			}
+			
+			return $return;
+		}
+		
+				
+		/**
+		 * Получить свободное время ученика.
+		 * $layered -- общее наслоенное расписание по всем филиалам
+		 * 
+		 */
+		public function getGroupFreetime($id_group)
+		{
+			$Freetime = Freetime::findAll([
+				"condition"	=> "id_student=" . $this->id
+			]);
+			
+			if (!$Freetime) {
+				return [];
+			}
+			
+			foreach ($Freetime as $FreetimeData) {
+				$return[$FreetimeData->id_branch][$FreetimeData->day][] = $FreetimeData->time;
+				
+				// Красные кирпичики
+				if (GroupStudentStatuses::inRedFreetime($id_group, $FreetimeData->day, $FreetimeData->time, $FreetimeData->id_student)) {
+					if (!in_array($FreetimeData->time, $return_red[$FreetimeData->day])) {
+						$return_red[$FreetimeData->day][] = $FreetimeData->time;
+					}
+				}
+				
+				// "Если у человека 2 и более филиалов, не совпадающих с филиалом в группе, то их нужно "наслаивать" и выводить наслоенное"
+				if (count($this->branches) >= 2 && !in_array($FreetimeData->time, $return[0][$FreetimeData->day])) {
+					$return[0][$FreetimeData->day][] = $FreetimeData->time;
+				}
+			}
+			
+			return [
+				"freetime" 		=> $return,
+				"freetime_red"	=> $return_red,
+			];
 		}
 		
 		/**

@@ -27,8 +27,8 @@
 				"Groups" 	=> $Groups,
 				"Subjects" 	=> Subjects::$all,
 				"Grades"	=> Grades::$all,
-				"mode" 		=> ($_GET["mode"] == "students" ? 1 : 2),
-				"change_mode" => ($_GET["mode"] == "students" ? 1 : 2),
+				"mode" 			=> ($_GET["mode"] == "students" ? 1 : ($_GET["mode"] == "nogroup") ? 2 : 0),
+				"change_mode" 	=> ($_GET["mode"] == "students" ? 1 : ($_GET["mode"] == "nogroup") ? 2 : 0),
 			]);
 			
 			$this->render("list", [
@@ -81,15 +81,18 @@
 			$Students = [];
 			foreach ($Group->students as $id_student) {
 				$Student = Student::findById($id_student);
-				$Student->fio = $Student->fio();
 				$Student->Contract 	= $Student->getLastContract();
-				
+								
 				foreach ($Student->branches as $id_branch) {
 					if (!$id_branch) {
 						continue;
 					}
 					$Student->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
 				}
+				
+				$freetime = $Student->getGroupFreetime($Group->id);
+				$Student->freetime 		= $freetime["freetime"];
+				$Student->freetime_red 	= $freetime["freetime_red"];
 				
 				if (array_key_exists($Student->id, $Group->student_statuses)) {
 					$Student->id_status = $Group->student_statuses[$Student->id];
@@ -128,6 +131,10 @@
 				$Student->Contract 	= $Student->getLastContract();
 				
 				$Student->in_other_group = $Student->inOtherGroup($_POST['id_group'], $_POST['id_subject']) ? true : false;
+				
+				$freetime = $Student->getGroupFreetime($_POST['id_group']);
+				$Student->freetime 		= $freetime['freetime'];
+				$Student->freetime_red 	= $freetime['freetime_red'];
 				
 				if ($Group && array_key_exists($Student->id, $Group->student_statuses)) {
 					$Student->id_status = $Group->student_statuses[$Student->id];

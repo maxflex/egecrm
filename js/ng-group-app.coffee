@@ -117,15 +117,79 @@
 									
 		.controller "EditCtrl", ($scope) ->
 			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник"},
-				{"short" : "ВТ", "full" : "Вторник"},
-				{"short" : "СР", "full" : "Среда"},
-				{"short" : "ЧТ", "full" : "Четверг"},
-				{"short" : "ПТ", "full" : "Пятница"},
-				{"short" : "СБ", "full" : "Суббота"},
-				{"short" : "ВС", "full" : "Воскресенье"}
+				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
+				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
+			$scope.to_students = true
+			$scope.to_representatives = false
+			
+			# disable "send" button if nothing selected
+			$scope.$watch "[to_students, to_representatives]", (newValue, oldValue) ->
+				if not newValue[0] and not newValue[1]
+					$(".ajax-email-button").attr "disabled", "disabled"
+				else
+					$(".ajax-email-button").removeAttr "disabled"
+			
+			$scope.emailDialog = ->
+				$("#email-history").html "<center class='text-gray'>загрузка истории сообщений...</center>"
+				html = ""
+				
+				$.post "ajax/emailHistory", {place: "GROUP", id_place: $scope.Group.id}, (response) ->
+					console.log(response);
+					if response isnt false
+						$.each response, (i, v) ->
+							files_html = ""
+							$.each v.files, (i, file) ->
+								files_html += '<div class="sms-coordinates">\
+									<a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">' + file.uploaded_name + '</a>\
+									<span> (' + file.size + ')</span>\
+									</div>'
+							html += '<div class="clear-sms">		\
+										<div class="from-them">		\
+											' + v.message + ' 		\
+											<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '\
+									    </div>						\
+									</div>';	
+						$("#email-history").html(html)
+					else
+						$("#email-history").html("")
+				, "json"
+				
+				$("#email-address").text "Группа #{$scope.Group.id} " + (if $scope.Group.is_special then "(спецгруппа)" else "")
+				lightBoxShow('email')
+			
+			initFreetime = (freetime, day) ->
+				freetime								= initIfNotSet freetime
+				freetime[$scope.Group.id_branch] 		= initIfNotSet freetime[$scope.Group.id_branch]
+				freetime[$scope.Group.id_branch][day] 	= initIfNotSet freetime[$scope.Group.id_branch][day]
+			
+			
+			$scope.inFreetime = (time, Student, day) ->
+# 				console.log Student.id, Student.freetime[$scope.Group.id_branch]
+# 				if $.isArray Student.freetime[$scope.Group.id_branch]
+				if Student.freetime[$scope.Group.id_branch] is undefined
+					return false if Student.freetime[0] is undefined
+					freetime = Student.freetime[0]
+				else
+					freetime = Student.freetime[$scope.Group.id_branch]
+				
+# 				console.log Student.id, freetime, Student.freetime[$scope.Group.id_branch] is undefined
+									
+# 				initFreetime(Student.freetime, day)
+# 				if Student.freetime[$scope.Group.id_branch].length <= 0 
+				$.inArray(time, freetime[day]) >= 0
+			
+			$scope.inRedFreetime = (time, Student, day) ->
+				return false if Student.freetime_red is null
+# 				initFreetime Student.freetime_red, day
+				$.inArray(time, Student.freetime_red[day]) >= 0	
+					
 			$scope.setStudentStatus = (Student, event) ->
 				$(event.target).hide()
 				$(".student-status-select-#{Student.id}").show 0, ->
@@ -196,6 +260,10 @@
 			$scope.getStudent = (id_student) ->
 				Student = (i for i in $scope.Students when i.id is id_student)[0]
 			
+			$scope.getTeacher = (id_teacher) ->
+				id_teacher = parseInt id_teacher
+				Teacher = (i for i in $scope.Teachers when i.id is id_teacher)[0]
+			
 			$scope.search = 
 				grade: ""
 				id_branch: ""
@@ -219,9 +287,7 @@
 					$scope.$apply()
 				, "json"
 				$scope.Group.cabinet = undefined
-				setTimeout ->
-					$("option[value^='?']").remove()
-				, 50
+				clearSelect()
 			
 			$scope.addClientsPanel = ->
 				$scope.add_clients_panel = not $scope.add_clients_panel
@@ -231,6 +297,11 @@
 					$scope.search.id_branch = $scope.Group.id_branch
 					$scope.$apply()
 					$("#group-branch-filter").selectpicker 'render'
+			
+			$scope.subjectChange = ->
+				$scope.loadStudents()
+				$scope.Group.id_teacher = 0
+				clearSelect()
 			
 			$scope.loadStudents = ->
 				return if not $scope.Group.id
@@ -261,6 +332,7 @@
 				frontendLoadingEnd()
 				
 			$(document).ready ->
+				emailMode 2
 				$("#group-edit").on 'keyup change', 'input, select, textarea', ->
 					$scope.form_changed = true
 					$scope.$apply()

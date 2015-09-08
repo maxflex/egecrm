@@ -202,7 +202,9 @@
 			</center>
 		</div>
 		<!-- /СКЛЕЙКА КЛИЕНТОВ -->
-
+		
+		<?= partial("freetime") ?>
+		
 	<!-- Скрытые поля -->
 	<input type="hidden" name="id_request" value="<?= $Request->id ?>">
 
@@ -210,7 +212,6 @@
 	<input type="hidden" name="Request[adding]" value="0">
 	<input type="hidden" name="Request[id_student]" id="id_student_force" value="<?= $Request->id_student ?>">
 
-	<input type="hidden" id="freetime_json" name="freetime_json">
 	<input type="hidden" id="subjects_json" name="subjects_json">
 	<input type="hidden" id="payments_json" name="payments_json">
 
@@ -699,61 +700,34 @@
 			    </div>
 				<div class="col-sm-3">
 				    <h4 style="margin-top: 0" class="row-header">Свободное время</h4>
-		<!--
-				     <div class="form-group">
-					    <div class="btn-group btn-group-xs btn-group-freetime">
-							<button ng-repeat="weekday in weekdays" type="button" class="btn" ng-click="chooseDay($index + 1)"
-								ng-class="{'day-chosen' : adding_day == ($index + 1), 'btn-success' : hasFreetime($index + 1), 'btn-default' : !hasFreetime($index + 1)}">
-								{{weekday.short}}
-							</button>
-					    </div>
+				    
+				    <div ng-repeat="id_branch in student.branches">
+					    <span ng-bind-html="branches_brick[id_branch] | to_trusted" style="width: 50px; display: inline-block"></span>
+					    <span ng-repeat="weekday in weekdays" class="group-freetime-block">
+							<span class="freetime-bar" ng-repeat="time in weekday.schedule track by $index" 
+								ng-class="{
+									'empty': !inFreetime2(time, freetime[id_branch][$parent.$index + 1])
+								}" ng-hide="time == ''" style="position: relative; top: 3px">
+							</span>
+						</span>
+				    </div>
+				    
+					<div ng-show="student.schedule_date" class="small" style="margin-top: 13px">актуальность: {{student.schedule_date}}</div>
+		            <div style="margin-top: 5px">
+			            <span class="link-like link-reverse small" onclick="lightBoxShow('freetime')" 
+			            	style="margin-left: 0" ng-hide="!student.branches[0]">редактировать</span>
 		            </div>
-		-->
-
-		            <div ng-show="adding_day && false">
-			            <h5 style="text-align: center">{{weekdays[adding_day - 1].full}}:</h5>
-			            <div class="free-time-list" ng-repeat="ft in freetime | filter:{day : adding_day}" ng-hide="ft.deleted">
-				             <span class="label label-success">{{ft.start}}</span> — <span class="label label-success">{{ft.end}}</span>
-				             <span class="glyphicon glyphicon-remove glyphicon-middle text-danger opacity-pointer" ng-click="removeFreetime(ft)"></span>
-			            </div>
-		            </div>
-
-		            <div>
-			            <div class="row vertical-align border-bottom-separator" ng-repeat="(day_number, weekday) in weekdays"
-				            ng-show="freetimeControl(day_number)">
-				            <div class="col-sm-2">
-				            	{{weekday.short}}
-				            </div>
-				            <div class="col-sm-10" style="display: block">
-								<div ng-repeat="ft in freetime | filter:{day : (day_number + 1)}"  ng-hide="ft.deleted" class="freetime-line">
-									<span class="label label-success">{{ft.start}}</span> — <span class="label label-success">{{ft.end}}</span>
-									<span class="glyphicon glyphicon-remove glyphicon-middle text-danger opacity-pointer pull-right" ng-click="removeFreetime(ft)"></span>
-								</div>
-				            </div>
-			            </div>
-		            </div>
-
-		            <div class="add-freetime-block">
-			            <div id="timepair" class="timepair">
-
-				            <select class="form-control" ng-model="adding_day">
-					            <option selected value=''>день</option>
-								<option disabled value=''>──────────────</option>
-								<option ng-repeat="(day_number, weekday) in weekdays" ng-value="(day_number + 1)">{{weekday.short}}</option>
-				            </select>
-				            <span>c</span>
-				            <input type="text" class="form-control time start" ng-model="free_time_start" id="free_time_start">
-				            <span>по</span>
-				            <input type="text" class="form-control time end" ng-model="free_time_end" id="free_time_end" style="float: right">
-			            </div>
-			            <button class="btn btn-default" style="margin-top: 10px; width: 100%" ng-click="addFreetime()"><span class="glyphicon glyphicon-plus"></span>Добавить</button>
-		            </div>
+		            
 			    </div>
 		    </div>
 			<div class="row">
 			    <div class="col-sm-9">
 					<div class="form-group">
-			            <?= Branches::buildSvgSelector($Request->Student->branches, ["name" => "Student[branches][]", "id" => "student-branches"], true) ?>
+			            <?= Branches::buildSvgSelector($Request->Student->branches, [
+				            "name" => "Student[branches][]", 
+				            "ng-model" => "student.branches",
+				            "id" => "student-branches",
+				        ], true) ?>
 		            </div>
 
 				    <div class="form-group">
@@ -965,13 +939,11 @@
     </div>
     <div class="row">
 	    <div class="col-sm-12">
-		    <h4 class="row-header">УЧЕНИК ПРИКРЕПЛЕН К ГРУППАМ</h4>
+		    <h4 class="row-header" ng-show="Groups.length">УЧЕНИК ПРИКРЕПЛЕН К ГРУППАМ</h4>
 		    <div style="margin: 15px 0">
 				<?= globalPartial("groups_list", ["filter" => false]) ?>
-				<div ng-show="Groups.length == 0" class="coordinates-gray">
-					у этого ученика пока нет ни одной группы
-				</div>
 		    </div>
+		    <h4 class="row-header" ng-show="Groups.length == 0">НЕТ ГРУПП</h4>
 	    </div>
     </div>
     <div class="row" ng-hide="student.minimized">

@@ -27,6 +27,13 @@
 		
 		not phone.indexOf "+7 (9"
 	
+	emailMode = (mode) ->
+		$("#email-mode").val mode
+		switch mode
+			when 2
+				$(".email-group-controls").show()
+				$(".email-template-list").hide()
+	
 	ajaxStart = (element = false) ->
 		if element isnt false
 			$(".ajax-#{element}-button").attr("disabled", "disabled")
@@ -38,3 +45,8 @@
 			$(".ajax-#{element}-button").removeAttr("disabled")
 			#, 500
 		NProgress.done()
+	
+	clearSelect = ->
+		setTimeout ->
+			$("option[value^='?']").remove()
+		, 50
