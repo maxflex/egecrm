@@ -230,7 +230,14 @@
 			}
 			
 			$scope.inFreetime2 = function(time, freetime) {
-			//	console.log(time, freetime, $.inArray(time, freetime))
+				freetime = objectToArray(freetime)
+				return $.inArray(time, freetime) >= 0
+			}
+			
+			$scope.inDayAndTime2 = function(time, freetime) {
+				if (freetime === undefined) {
+					return false
+				}
 				freetime = objectToArray(freetime)
 				return $.inArray(time, freetime) >= 0
 			}
@@ -294,7 +301,7 @@
 				$(".save-button").click();
 			}
 			
-			// ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
+			// OUTDATED: ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
 			// $scope.new_contract_id = -1;
 

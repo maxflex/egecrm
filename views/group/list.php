@@ -147,6 +147,15 @@
 									<b ng-show="subject.id_subject == Group.subject">{{subject.score}}</b>
 								</div>
 							</td>
+							<td width="150">
+							    <span ng-repeat="weekday in weekdays" class="group-freetime-block">
+									<span class="freetime-bar green" ng-repeat="time in weekday.schedule track by $index" 
+										ng-class="{
+											'empty-green'	: !inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0,
+										}" ng-hide="time == ''" style="position: relative; top: 3px">
+									</span>
+								</span>
+							</td>
 						</tr>
 					</tbody>
 				</table>

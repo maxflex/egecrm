@@ -334,7 +334,11 @@
                     </div>
 
                     <div class="form-group">
-                        <?= Branches::buildSvgSelector($Request->id_branch, ["id" => "request-branch", "name" => "Request[id_branch]"]) ?>
+<!--                         <?= Branches::buildSvgSelector($Request->id_branch, ["id" => "request-branch", "name" => "Request[id_branch]"]) ?> -->
+						<?= Branches::buildMultiSelector($Request->branches, [
+							"id" 	=> "request-branches",
+							"name"	=> "Request[branches][]",
+						], "филиалы") ?>
                     </div>
                 </div>
             </div>

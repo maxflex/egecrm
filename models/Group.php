@@ -36,6 +36,7 @@
 			
 			$this->is_special = $this->isSpecial();
 			$this->first_schedule = $this->getFirstSchedule();
+			$this->day_and_time = $this->getDayAndTime();
 			
 			$this->Comments	= Comment::findAll([
 				"condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
@@ -66,18 +67,6 @@
 			]);
 			
 			return $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date) . "000" : false;
-/*
-			
-			if ($GroupFirstSchedule) {
-				return $GroupFirstSchedule->date;
-			} else {
-				if ($this->expected_launch_date) {
-					return date("Y-m-d", strtotime($this->expected_launch_date));
-				}
-			}
-			
-			return false;	
-*/		
 		}
 		
 		/**
@@ -108,7 +97,29 @@
 			return Student::findAll([
 				"condition" => "id IN (" . implode(",", $this->students) . ")"	
 			]);
-		}		
+		}
+		
+		/**
+		 * Получить свободное время ученика.
+		 * 
+		 */
+		public function getDayAndTime()
+		{
+			$GroupTime = GroupTime::findAll([
+				"condition"	=> "id_group=" . $this->id
+			]);
+			
+			if (!$GroupTime) {
+				return [];
+			}
+			
+			foreach ($GroupTime as $GroupTimeData) {
+				$index = Freetime::getIndexByTime($GroupTimeData->time);
+				$return[$GroupTimeData->day][$index] = $GroupTimeData->time;
+			}
+			
+			return $return;
+		}
 	}
 	
 	class GroupSchedule extends Model
@@ -191,8 +202,9 @@
 		{
 			return dbConnection()->query("
 				SELECT g.id FROM group_student_statuses gss
-				LEFT JOIN groups g ON g.id = gss.id_group
-				WHERE g.id != $id_group AND g.start = '$time' AND g.day = '$day' AND gss.id_status = ". self::AGREED ." AND gss.id_student = $id_student
+					LEFT JOIN groups g ON g.id = gss.id_group
+					LEFT JOIN group_time gt ON g.id = gt.id_group
+				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gss.id_status = ". self::AGREED ." AND gss.id_student = $id_student
 				LIMIT 1
 			")->num_rows;	
 		}
@@ -209,4 +221,36 @@
 			
 			return $return;			
 		}
+	}
+	
+	class GroupTime extends Model
+	{
+		public static $mysql_table	= "group_time";	
+		
+		/**
+		 * Добавить свободное время
+		 * 
+		 */
+		public static function addData($data, $id_group) 
+		{
+			self::deleteAll([
+				"condition" => "id_group=$id_group"
+			]);
+			
+			foreach ($data as $day => $day_data) {
+				foreach ($day_data as $time) {
+					if (empty(trim($time))) {
+						continue;
+					}
+					$GroupTime = new self([
+						"id_group"	=> $id_group,
+						"day"		=> $day,
+						"time"		=> $time,
+					]);
+					
+					$GroupTime->save();
+				}
+			}
+		}
+
 	}

@@ -6,7 +6,7 @@
 		<div class="col-sm-12">
 			<table class="table table-divlike">
 				<tr ng-repeat="Teacher in Teachers">
-					<td>
+					<td width="300">
 						{{Teacher.id}}. <a href="teachers/edit/{{Teacher.id}}">
 							<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
 								{{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
@@ -16,12 +16,15 @@
 							</span>
 						</a>
 					</td>
-					<td>
+					<td width="500">
 						<span ng-repeat="(id_branch, short) in Teacher.branch_short track by $index" 
-							ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}"></span>
+							ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}" style="display: inline-block"></span>
 					</td>
 					<td>
 						<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
+					</td>
+					<td>
+						<span ng-show="Teacher.schedule_date">{{Teacher.schedule_date}}</span>
 					</td>
 					<td style="text-align: right">
 						<span class="link-like small" ng-click="deleteTeacher(Teacher.id, $index)">удалить</span>

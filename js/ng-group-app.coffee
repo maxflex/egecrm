@@ -6,7 +6,7 @@
 		.filter 'range', () ->
 			return (input, total) ->
 				total = parseInt total
-				for i in [1...total + 1] by 1
+				for i in [0...total] by 1
 					input.push i
 				input
 		.controller "ScheduleCtrl", ($scope) ->
@@ -126,6 +126,132 @@
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
+			bindDraggable = ->
+				$(".student-line").draggable
+					helper: 'clone'
+					revertDuration: 0
+					revert: (valid) ->
+						if not valid
+							id_student = $(this).data "id"
+							$scope.removeStudent id_student
+							this.remove()
+					start: (event, ui) ->
+						$(this).css "visibility", "hidden"
+						$(ui.helper).addClass "tr-helper"
+					stop: (event, ui) ->
+						$(this).css "visibility", "visible"
+
+				$(".table-students").droppable
+					tolerance: 'pointer'
+# 					hoverClass: "request-status-drop-hover",
+# 					drop: (event, ui) ->
+# 						console.log ""
+# 						ui.draggable.remove();
+# 						id_group	 = $(this).data("id")
+# 						id_student	 = $(ui.draggable).data("id")
+# 						
+# 						Group = $scope.getGroup id_group
+# 						
+# 						if id_student in Group.students
+# 							notifySuccess "Ученик уже в группе"
+# 						else
+# 							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}
+# 							Group.students.push id_student
+# 							$scope.$apply()
+						
+						
+			$scope.dayAndTime = ->
+				lightBoxShow "freetime"
+			
+			$scope.dayAndTimeClick = (index, n) ->
+				index++
+				$scope.form_changed = true
+				$scope.Group.day_and_time[index] = initIfNotSet $scope.Group.day_and_time[index]
+				if 	$scope.Group.day_and_time[index][n] isnt true
+# 					console.log "here", $scope.Group.day_and_time[index][n]
+					$scope.Group.day_and_time[index][n] = ""	
+				else
+# 					console.log "here2", $scope.Group.day_and_time[index][n]
+					$scope.Group.day_and_time[index][n] = $scope.weekdays[index - 1].schedule[n]
+					console.log $scope.weekdays[index - 1].schedule[n]
+			
+			$scope.saveDayAndTime = ->
+				lightBoxHide()
+				$(".save-button").mousedown()
+			
+			initDayAndTime = (day) ->
+				$scope.Group.day_and_time = initIfNotSet $scope.Group.day_and_time
+				$scope.Group.day_and_time[day] = initIfNotSet $scope.Group.day_and_time[day]
+			
+			$scope.inDayAndTime = (day, value) ->
+				initDayAndTime day
+				return $.inArray(value, objectToArray($scope.Group.day_and_time[day])) >= 0
+			
+			$scope.inDayAndTime2 = (time, freetime) ->
+				return false if freetime is undefined
+				freetime = objectToArray freetime
+				return $.inArray(time, freetime) >= 0
+			
+			$scope.inCabinetFreetime = (time, freetime) ->
+				return false if freetime is undefined
+				freetime = objectToArray freetime
+				return $.inArray(time, freetime) >= 0
+			
+			$scope.changeCabinet = ->
+				$("#group-cabinet").attr "disabled", "disabled"
+				ajaxStart()
+				$.post "groups/ajax/GetCabinetFreetime", {id_group: $scope.Group.id, cabinet: $scope.Group.cabinet}, (freetime) ->
+					ajaxEnd()
+					$("#group-cabinet").removeAttr "disabled"
+					$scope.cabinet_freetime = freetime
+					$scope.$apply()
+				, "json"
+			
+			$scope.changeTeacher = ->
+# 				$("#group-cabinet").attr "disabled", "disabled"
+				return if $scope.Group.id_teacher is "0"
+				ajaxStart()
+				$.post "groups/ajax/GetTeacherFreetime", {id_branch: $scope.Group.id_branch, id_teacher: $scope.Group.id_teacher}, (freetime) ->
+					ajaxEnd()
+# 					$("#group-cabinet").removeAttr "disabled"
+					$scope.teacher_freetime = freetime
+					$scope.$apply()
+				, "json"
+			
+			$scope.selectAllWorking = (id_branch) ->
+				$.each $scope.weekdays, (index, weekday) ->
+					return if index > 4
+					if  $scope.freetime_selected_all_working
+						$scope.Group.day_and_time[index + 1][2] = ""
+						$scope.Group.day_and_time[index + 1][3] = ""
+					else
+						$scope.Group.day_and_time[index + 1][2] = weekday.schedule[2]
+						$scope.Group.day_and_time[index + 1][3] = weekday.schedule[3]
+				$scope.freetime_selected_all_working = !$scope.freetime_selected_all_working
+			
+			$scope.selectAllWeek = ->
+				$.each $scope.weekdays, (index, weekday) ->
+					if $scope.freetime_selected_all_week
+						$scope.Group.day_and_time[index + 1][0] = ""
+						$scope.Group.day_and_time[index + 1][1] = ""
+						$scope.Group.day_and_time[index + 1][2] = ""
+						$scope.Group.day_and_time[index + 1][3] = ""  
+					else
+						$scope.Group.day_and_time[index + 1][0] = weekday.schedule[0]
+						$scope.Group.day_and_time[index + 1][1] = weekday.schedule[1]
+						$scope.Group.day_and_time[index + 1][2] = weekday.schedule[2]
+						$scope.Group.day_and_time[index + 1][3] = weekday.schedule[3]
+				$scope.freetime_selected_all_week = !$scope.freetime_selected_all_week
+			
+			$scope.selectAllIndex = (index) ->
+				$scope.freetime_selected_all_index = initIfNotSet($scope.freetime_selected_all_index)
+				$.each $scope.weekdays, (i, weekday) ->
+					if $scope.freetime_selected_all_index[index]
+						$scope.Group.day_and_time[i + 1][index] = ""
+					else
+						$scope.Group.day_and_time[i + 1][index] = weekday.schedule[index]
+				$scope.freetime_selected_all_index[index] = !$scope.freetime_selected_all_index[index]
+			
 			$scope.to_students = true
 			$scope.to_representatives = false
 			
@@ -189,7 +315,8 @@
 				return false if Student.freetime_red is null
 # 				initFreetime Student.freetime_red, day
 				$.inArray(time, Student.freetime_red[day]) >= 0	
-					
+			
+				
 			$scope.setStudentStatus = (Student, event) ->
 				$(event.target).hide()
 				$(".student-status-select-#{Student.id}").show 0, ->
@@ -238,6 +365,7 @@
 							$scope.form_changed = true
 							$scope.$apply()
 							$scope.bindGroupStudentStatusChange()
+							bindDraggable()
 							justSave()
 						else
 							$("#student-adding-#{id_student}").html "в другой группе"
@@ -282,14 +410,23 @@
 							redirect "groups"
 			
 			$scope.changeBranch = ->
-				$.post "groups/ajax/getCabinet", {id_branch: $scope.Group.id_branch}, (response) ->
-					$scope.Cabinets = response
+				$("#group-cabinet").attr "disabled", "disabled"
+				ajaxStart()
+				$.post "groups/ajax/getCabinet", {id_branch: $scope.Group.id_branch}, (cabinets) ->
+					ajaxEnd()
+					$scope.Cabinets = cabinets
+					if cabinets isnt undefined and cabinets.length
+						$scope.Group.cabinet = cabinets[0].id
+						
+					if cabinets.length isnt 1 
+						$("#group-cabinet").removeAttr "disabled"
+					
 					$scope.$apply()
+					clearSelect()
 				, "json"
-				$scope.Group.cabinet = undefined
-				clearSelect()
 			
 			$scope.addClientsPanel = ->
+				$scope.loadStudents() if not $scope.Students
 				$scope.add_clients_panel = not $scope.add_clients_panel
 				$scope.search.grade = $scope.Group.grade if not $scope.search.grade and $scope.Group.grade
 				$scope.search.id_subject = $scope.Group.id_subject if not $scope.search.id_subject and $scope.Group.id_subject
@@ -303,12 +440,15 @@
 				$scope.Group.id_teacher = 0
 				clearSelect()
 			
+			$scope.loading_students = false
 			$scope.loadStudents = ->
 				return if not $scope.Group.id
 				
-				$scope.add_clients_panel = 0
+# 				$scope.add_clients_panel = 0
 				$scope.Students = false
+				$scope.loading_students = true
 				$.post "groups/ajax/getStudents", {id_group: $scope.Group.id, id_subject: $scope.Group.id_subject}, (response) ->
+						$scope.loading_students = false
 						$scope.Students = response
 						$.each $scope.Group.student_statuses, (id_student, id_status) ->
 							id_student = parseInt id_student
@@ -322,7 +462,7 @@
 			angular.element(document).ready ->
 				set_scope "Group"
 				
-				$scope.loadStudents()
+# 				$scope.loadStudents()
 				
 				$scope.bindGroupStudentStatusChange()
 								
@@ -333,6 +473,7 @@
 				
 			$(document).ready ->
 				emailMode 2
+				bindDraggable()
 				$("#group-edit").on 'keyup change', 'input, select, textarea', ->
 					$scope.form_changed = true
 					$scope.$apply()
@@ -356,6 +497,21 @@
 							redirect "groups/edit/#{response}"	
 						
 		.controller "ListCtrl", ($scope) ->
+			$scope.weekdays = [
+				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
+				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
+			]
+			
+			$scope.inDayAndTime2 = (time, freetime) ->
+				return false if freetime is undefined
+				freetime = objectToArray freetime
+				return $.inArray(time, freetime) >= 0
+			
 			$scope.search = 
 				grade: ""
 				id_branch: ""
@@ -387,17 +543,6 @@
 				D = new Date(date)
 				
 				moment().to D
-			
-			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник"},
-				{"short" : "ВТ", "full" : "Вторник"},
-				{"short" : "СР", "full" : "Среда"},
-				{"short" : "ЧТ", "full" : "Четверг"},
-				{"short" : "ПТ", "full" : "Пятница"},
-				{"short" : "СБ", "full" : "Суббота"},
-				{"short" : "ВС", "full" : "Воскресенье"}
-			]
-			
 			
 			$scope.$watchCollection "search2", (newValue, oldValue) ->
 				$scope.Groups2 = if newValue.branches.length > 0 then $scope.GroupsFull else $scope.GroupsShort

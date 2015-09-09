@@ -10,14 +10,14 @@
 		# Список
 		const TRG = 1;
 		const PVN = 2;	
-		const BGT = 3;
+		const BGT = 3; 
 		const IZM = 5;
 		const OPL = 6;
 		const RPT = 7;
 		const VKS = 8;
 		const ORH = 9;
 		const UJN = 11;
-		const NVG = 12;
+		const PER = 12;
 		const KLG = 13;
 		const BRT = 14;
 		const MLD = 15;
@@ -36,7 +36,7 @@
 			self::VKS => "Войковская",
 			self::ORH => "Орехово",
 			self::UJN => "Южная",
-			self::NVG => "Новогиреево",
+			self::PER => "Перово",
 			self::KLG => "Калужская",
 			self::BRT => "Братиславская",
 			self::MLD => "Молодежная",
@@ -54,7 +54,7 @@
 			self::VKS => "ВОЙ",
 			self::ORH => "ОРЕ",
 			self::UJN => "ЮЖН",
-			self::NVG => "НОВ",
+			self::PER => "ПЕР",
 			self::KLG => "КЛЖ",
 			self::BRT => "БРА",
 			self::MLD => "МОЛ",
@@ -104,8 +104,9 @@
 		 * Построить селектор с кружочками метро
 		 * $multiple - множественный выбор
 		 */
-		public static function buildMultiSelector($selected = false, $attrs, $multiple = true)
+		public static function buildMultiSelector($selected = false, $attrs, $none_selected = '')
 		{	
+			$multiple = true;
 			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
 			
 			// Заголовок
@@ -130,6 +131,9 @@
 				}
 			}
 			echo "</select>";
+			if (!empty($none_selected)) {
+				echo "<script>$('#{$attrs['id']}').selectpicker({noneSelectedText: '$none_selected'})</script>";
+			}
 		}
 		
 		
@@ -205,7 +209,7 @@
 					break;
 				}
 				# Желтый
-				case self::NVG: {
+				case self::PER: {
 					if ($return) {
 						return 9;
 					}

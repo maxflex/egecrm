@@ -73,6 +73,7 @@
 			$this->_custom_panel = true;
 			
 			if (!$Group) {
+				$this->addJs("dnd");
 				$Group = Group::findById($_GET['id']);
 			}
 			
@@ -113,7 +114,10 @@
 //				"Students"	=> $Students,
 				"Subjects"	=> Subjects::$all,
 				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch),
-				"GroupStudentStatuses" => GroupStudentStatuses::$all,
+				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
+				"branches_brick"		=> Branches::getShortColored(),
+				"cabinet_freetime"		=> Cabinet::getFreetime($Group->id, $Group->cabinet),
+				"teacher_freetime"		=> TeacherFreetime::getRed($Group->id_branch, $Group->id_teacher),
 			]);
 			
 			$this->render("edit", [
@@ -161,8 +165,12 @@
 			$Group = $_POST;
 			
 			if ($Group['id']) {
+				if (!isset($Group['students'])) {
+					$Group['students'] = [];
+				}
 				Group::updateById($Group['id'], $Group);
 				GroupStudentStatuses::saveData($Group['id'], $Group['student_statuses']);
+				GroupTime::addData($Group['day_and_time'], $Group['id']);
 			} else {
 				$NewGroup = new Group($Group);
 				$NewGroup->save();
@@ -240,5 +248,21 @@
 			$Group->students[] = $id_student;
 			
 			$Group->save("students");
+		}
+		
+		public function actionAjaxGetCabinetFreetime() {
+			extract($_POST);
+			
+			returnJsonAng(
+				Cabinet::getFreetime($id_group, $cabinet)	
+			);
+		}
+		
+		public function actionAjaxGetTeacherFreetime() {
+			extract($_POST);
+
+			returnJsonAng(
+				TeacherFreetime::getRed($id_branch, $id_teacher)
+			);
 		}
 	}

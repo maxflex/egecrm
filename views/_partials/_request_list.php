@@ -3,12 +3,12 @@
 		<div class="col-sm-10">
 
 			<div>
-				<span ng-show="request.id_branch > 0" style="margin-right: 10px">
-					<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
-			    		<circle fill="{{request.Branch.color}}" r="6" cx="7" cy="7"></circle>
-					</svg>{{request.Branch.name}}
+				<span ng-show="request.branches_data" style="margin-right: 10px">
+					<span ng-class="{'mr3' : !$last}" ng-repeat="branch in request.branches_data"><span class="label label-metro-short" style="background: {{branch.color}}; top: -2px; position: relative">{{branch.short}}</span></span>
 				</span>
-
+				
+				
+				
 				<span ng-show="request.comment" style="margin-right: 10px">
 					{{request.comment}}
 				</span>

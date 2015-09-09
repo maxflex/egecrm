@@ -26,7 +26,13 @@
 			</span>
 		</td>
 		<td>
-			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span>
+			<div ng-repeat="(day, day_data) in Group.day_and_time">
+				{{weekdays[day - 1].short}}
+				<span ng-repeat="dd in day_data">
+					в {{dd}}{{$last ? "" : ","}}
+				</span>
+			</div>
+<!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
 		</td>
 		<td>
 			<span ng-show="Group.Teacher">
@@ -34,6 +40,17 @@
 				{{Group.Teacher.first_name[0]}}. {{Group.Teacher.middle_name[0]}}.
 			</span>
 		</td>
+<!--
+		<td width="150">
+		    <span ng-repeat="weekday in weekdays" class="group-freetime-block">
+				<span class="freetime-bar green" ng-repeat="time in weekday.schedule track by $index" 
+					ng-class="{
+						'empty-green'	: !inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]),
+					}" ng-hide="time == ''" style="position: relative; top: 3px">
+				</span>
+			</span>
+		</td>
+-->
 	</tr>
 </table>
 <?php if ($filter) : ?>

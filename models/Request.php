@@ -8,7 +8,7 @@
 
 		public static $mysql_table	= "requests";
 
-		protected $_inline_data = ["subjects"]; // Предметы (в БД хранятся строкой "1, 2, 3" – а тут в массиве
+		protected $_inline_data = ["subjects", "branches"]; // Предметы (в БД хранятся строкой "1, 2, 3" – а тут в массиве
 		
 		// Номера телефонов
 		public static $_phone_fields = ["phone", "phone2", "phone3"];
@@ -27,8 +27,7 @@
 
 			// Таймстемп даты
 			$this->date_timestamp = strtotime($this->date) . "000"; // добавляем миллесекунды, чтобы JS воспринимал timestamp
-
-			if ($this->id_branch) {
+			if ($this->branches[0] != "") {
 				$this->addBranchInfo();
 			}
 			
@@ -136,8 +135,8 @@
 			$Requests = self::findAll([
 				"condition"	=> "adding=0 AND id_status IN (" . RequestStatuses::AWAITING . ", " . RequestStatuses::NOT_DECIDED . ")"
 					. (!empty($grade) ? " AND grade=$grade" : "")
-					. (!empty($id_branch) ? " AND id_branch=$id_branch" : "")
-					. (!empty($id_subject) ? " AND subjects IN ($id_subject)" : "")
+					. (!empty($id_branch) ? " AND CONCAT(',', CONCAT(branches, ',')) LIKE '%,{$id_branch},%'" : "")
+					. (!empty($id_subject) ? " AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%'" : "")
 					. (empty($_COOKIE["id_user_list"]) ? "" : " AND id_user=".$_COOKIE["id_user_list"]) ,
 				"order"		=> "date DESC",
 				"limit" 	=> $start_from. ", " .self::PER_PAGE
@@ -173,8 +172,8 @@
 			$Requests = self::count([
 				"condition"	=> "adding=0 AND id_status IN (" . RequestStatuses::AWAITING . ", " . RequestStatuses::NOT_DECIDED . ")"
 					. (!empty($grade) ? " AND grade=$grade" : "")
-					. (!empty($id_branch) ? " AND id_branch=$id_branch" : "")
-					. (!empty($id_subject) ? " AND subjects IN ($id_subject)" : "")
+					. (!empty($id_branch) ? " AND CONCAT(',', CONCAT(branches, ',')) LIKE '%,{$id_branch},%'" : "")
+					. (!empty($id_subject) ? " AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%'" : "")
 					. (empty($_COOKIE["id_user_list"]) ? "" : " AND id_user=".$_COOKIE["id_user_list"]) ,
 			]);
 			
@@ -333,10 +332,13 @@
 		 *
 		 */
 		public function addBranchInfo() {
-			$this->Branch = [
-				"name"	=> Branches::$all[$this->id_branch],
-				"color"	=> Branches::metroSvg($this->id_branch, false, true),
-			];
+			foreach ($this->branches as $id_branch) {
+				$this->branches_data[$id_branch] = [
+					"id"	=> $id_branch,
+					"short"	=> Branches::$short[$id_branch],
+					"color" => Branches::metroSvg($id_branch, false, true),
+				];
+			}
 		}
 
 		/**

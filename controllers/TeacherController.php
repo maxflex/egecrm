@@ -62,7 +62,9 @@
 			
 			$ang_init_data = angInit([
 				"Teacher" => $Teacher,
+				"freetime"		=> $Teacher->getFreetime(),
 				"teacher_phone_level"	=> $Teacher->phoneLevel(),
+				"branches_brick"		=> Branches::getShortColored(),
 				"Subjects"	=> Subjects::$all,
 			]);
 			
@@ -83,10 +85,14 @@
 				if (!isset($Teacher['branches'])) {
 					$Teacher['branches'] = '';
 				}
+				# СВОБОДНОЕ ВРЕМЯ
+				TeacherFreetime::addData($Teacher['freetime'], $Teacher['id']);
 				Teacher::updateById($Teacher['id'], $Teacher);
 			} else {
 				$NewTeacher = new Teacher($Teacher);
-				returnJSON($NewTeacher->save());
+				$saved = $NewTeacher->save();
+				TeacherFreetime::addData($Teacher['freetime'], $NewTeacher->id);
+				returnJSON($saved);
 			}
 		}
 		

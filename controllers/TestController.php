@@ -19,6 +19,28 @@
 			preType($_SESSION);
 		}
 		
+		public function actionAga()
+		{
+			Cabinet::getFreetime(3);
+		}
+		
+		public function actionTransferDayAndTime()
+		{
+			$Groups = Group::findAll([
+				"condition" => "start!='' AND start IS NOT NULL"
+			]);
+			
+			foreach ($Groups as $Group) {
+				$GroupTime = new GroupTime([
+					"id_group" 	=> $Group->id,
+					"day"		=> $Group->day,
+					"time"		=> $Group->start,
+				]);
+				
+				$GroupTime->save();
+			}
+		}
+		
 		public function actionTransferFreetime()
 		{
 			$Students = Student::getWithContract(true);

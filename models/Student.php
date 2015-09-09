@@ -343,10 +343,9 @@
 		
 		/**
 		 * Получить свободное время ученика.
-		 * $layered -- общее наслоенное расписание по всем филиалам
 		 * 
 		 */
-		public function getFreetime($layered = false)
+		public function getFreetime()
 		{
 			$Freetime = Freetime::findAll([
 				"condition"	=> "id_student=" . $this->id
@@ -359,9 +358,6 @@
 			foreach ($Freetime as $FreetimeData) {
 				$index = Freetime::getIndexByTime($FreetimeData->time);
 				$return[$FreetimeData->id_branch][$FreetimeData->day][$index] = $FreetimeData->time;
-				if ($layered) {
-					$return[0][$FreetimeData->day][$index] = $FreetimeData->time;
-				}
 			}
 			
 			return $return;
@@ -370,7 +366,7 @@
 				
 		/**
 		 * Получить свободное время ученика.
-		 * $layered -- общее наслоенное расписание по всем филиалам
+		 * $id_group -- для нахождения красных кирпичиков. если есть в группах кроме group_id
 		 * 
 		 */
 		public function getGroupFreetime($id_group)
@@ -387,18 +383,21 @@
 				$return[$FreetimeData->id_branch][$FreetimeData->day][] = $FreetimeData->time;
 				
 				// Красные кирпичики
-				if (GroupStudentStatuses::inRedFreetime($id_group, $FreetimeData->day, $FreetimeData->time, $FreetimeData->id_student)) {
-					if (!in_array($FreetimeData->time, $return_red[$FreetimeData->day])) {
-						$return_red[$FreetimeData->day][] = $FreetimeData->time;
-					}
-				}
-				
-				// "Если у человека 2 и более филиалов, не совпадающих с филиалом в группе, то их нужно "наслаивать" и выводить наслоенное"
-				if (count($this->branches) >= 2 && !in_array($FreetimeData->time, $return[0][$FreetimeData->day])) {
+				if (!in_array($FreetimeData->time, $return[0][$FreetimeData->day])) {
 					$return[0][$FreetimeData->day][] = $FreetimeData->time;
 				}
 			}
 			
+			foreach (Freetime::$weekdays as $day => $schedule) {
+				foreach ($schedule as $time) {
+					if (GroupStudentStatuses::inRedFreetime($id_group, $day, $time, $this->id)) {
+						if (!in_array($time, $return_red[$day])) {
+							$return_red[$day][] = $time;
+						}
+					}
+				}
+			}
+						
 			return [
 				"freetime" 		=> $return,
 				"freetime_red"	=> $return_red,

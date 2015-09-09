@@ -11,7 +11,7 @@ angular.module("Group", []).filter('to_trusted', [
   return function(input, total) {
     var i, j, ref;
     total = parseInt(total);
-    for (i = j = 1, ref = total + 1; j < ref; i = j += 1) {
+    for (i = j = 0, ref = total; j < ref; i = j += 1) {
       input.push(i);
     }
     return input;
@@ -135,7 +135,7 @@ angular.module("Group", []).filter('to_trusted', [
     return $(".table-condensed").eq(15).children("tbody").children("tr").first().remove();
   });
 }).controller("EditCtrl", function($scope) {
-  var initFreetime, justSave;
+  var bindDraggable, initDayAndTime, initFreetime, justSave;
   $scope.weekdays = [
     {
       "short": "ПН",
@@ -167,6 +167,139 @@ angular.module("Group", []).filter('to_trusted', [
       "schedule": ["11:00", "13:30", "16:00", "18:30"]
     }
   ];
+  bindDraggable = function() {
+    $(".student-line").draggable({
+      helper: 'clone',
+      revertDuration: 0,
+      revert: function(valid) {
+        var id_student;
+        if (!valid) {
+          id_student = $(this).data("id");
+          $scope.removeStudent(id_student);
+          return this.remove();
+        }
+      },
+      start: function(event, ui) {
+        $(this).css("visibility", "hidden");
+        return $(ui.helper).addClass("tr-helper");
+      },
+      stop: function(event, ui) {
+        return $(this).css("visibility", "visible");
+      }
+    });
+    return $(".table-students").droppable({
+      tolerance: 'pointer'
+    });
+  };
+  $scope.dayAndTime = function() {
+    return lightBoxShow("freetime");
+  };
+  $scope.dayAndTimeClick = function(index, n) {
+    index++;
+    $scope.form_changed = true;
+    $scope.Group.day_and_time[index] = initIfNotSet($scope.Group.day_and_time[index]);
+    if ($scope.Group.day_and_time[index][n] !== true) {
+      return $scope.Group.day_and_time[index][n] = "";
+    } else {
+      $scope.Group.day_and_time[index][n] = $scope.weekdays[index - 1].schedule[n];
+      return console.log($scope.weekdays[index - 1].schedule[n]);
+    }
+  };
+  $scope.saveDayAndTime = function() {
+    lightBoxHide();
+    return $(".save-button").mousedown();
+  };
+  initDayAndTime = function(day) {
+    $scope.Group.day_and_time = initIfNotSet($scope.Group.day_and_time);
+    return $scope.Group.day_and_time[day] = initIfNotSet($scope.Group.day_and_time[day]);
+  };
+  $scope.inDayAndTime = function(day, value) {
+    initDayAndTime(day);
+    return $.inArray(value, objectToArray($scope.Group.day_and_time[day])) >= 0;
+  };
+  $scope.inDayAndTime2 = function(time, freetime) {
+    if (freetime === void 0) {
+      return false;
+    }
+    freetime = objectToArray(freetime);
+    return $.inArray(time, freetime) >= 0;
+  };
+  $scope.inCabinetFreetime = function(time, freetime) {
+    if (freetime === void 0) {
+      return false;
+    }
+    freetime = objectToArray(freetime);
+    return $.inArray(time, freetime) >= 0;
+  };
+  $scope.changeCabinet = function() {
+    $("#group-cabinet").attr("disabled", "disabled");
+    ajaxStart();
+    return $.post("groups/ajax/GetCabinetFreetime", {
+      id_group: $scope.Group.id,
+      cabinet: $scope.Group.cabinet
+    }, function(freetime) {
+      ajaxEnd();
+      $("#group-cabinet").removeAttr("disabled");
+      $scope.cabinet_freetime = freetime;
+      return $scope.$apply();
+    }, "json");
+  };
+  $scope.changeTeacher = function() {
+    if ($scope.Group.id_teacher === "0") {
+      return;
+    }
+    ajaxStart();
+    return $.post("groups/ajax/GetTeacherFreetime", {
+      id_branch: $scope.Group.id_branch,
+      id_teacher: $scope.Group.id_teacher
+    }, function(freetime) {
+      ajaxEnd();
+      $scope.teacher_freetime = freetime;
+      return $scope.$apply();
+    }, "json");
+  };
+  $scope.selectAllWorking = function(id_branch) {
+    $.each($scope.weekdays, function(index, weekday) {
+      if (index > 4) {
+        return;
+      }
+      if ($scope.freetime_selected_all_working) {
+        $scope.Group.day_and_time[index + 1][2] = "";
+        return $scope.Group.day_and_time[index + 1][3] = "";
+      } else {
+        $scope.Group.day_and_time[index + 1][2] = weekday.schedule[2];
+        return $scope.Group.day_and_time[index + 1][3] = weekday.schedule[3];
+      }
+    });
+    return $scope.freetime_selected_all_working = !$scope.freetime_selected_all_working;
+  };
+  $scope.selectAllWeek = function() {
+    $.each($scope.weekdays, function(index, weekday) {
+      if ($scope.freetime_selected_all_week) {
+        $scope.Group.day_and_time[index + 1][0] = "";
+        $scope.Group.day_and_time[index + 1][1] = "";
+        $scope.Group.day_and_time[index + 1][2] = "";
+        return $scope.Group.day_and_time[index + 1][3] = "";
+      } else {
+        $scope.Group.day_and_time[index + 1][0] = weekday.schedule[0];
+        $scope.Group.day_and_time[index + 1][1] = weekday.schedule[1];
+        $scope.Group.day_and_time[index + 1][2] = weekday.schedule[2];
+        return $scope.Group.day_and_time[index + 1][3] = weekday.schedule[3];
+      }
+    });
+    return $scope.freetime_selected_all_week = !$scope.freetime_selected_all_week;
+  };
+  $scope.selectAllIndex = function(index) {
+    $scope.freetime_selected_all_index = initIfNotSet($scope.freetime_selected_all_index);
+    $.each($scope.weekdays, function(i, weekday) {
+      if ($scope.freetime_selected_all_index[index]) {
+        return $scope.Group.day_and_time[i + 1][index] = "";
+      } else {
+        return $scope.Group.day_and_time[i + 1][index] = weekday.schedule[index];
+      }
+    });
+    return $scope.freetime_selected_all_index[index] = !$scope.freetime_selected_all_index[index];
+  };
   $scope.to_students = true;
   $scope.to_representatives = false;
   $scope.$watch("[to_students, to_representatives]", function(newValue, oldValue) {
@@ -274,6 +407,7 @@ angular.module("Group", []).filter('to_trusted', [
           $scope.form_changed = true;
           $scope.$apply();
           $scope.bindGroupStudentStatusChange();
+          bindDraggable();
           return justSave();
         } else {
           return $("#student-adding-" + id_student).html("в другой группе");
@@ -352,16 +486,27 @@ angular.module("Group", []).filter('to_trusted', [
     });
   };
   $scope.changeBranch = function() {
-    $.post("groups/ajax/getCabinet", {
+    $("#group-cabinet").attr("disabled", "disabled");
+    ajaxStart();
+    return $.post("groups/ajax/getCabinet", {
       id_branch: $scope.Group.id_branch
-    }, function(response) {
-      $scope.Cabinets = response;
-      return $scope.$apply();
+    }, function(cabinets) {
+      ajaxEnd();
+      $scope.Cabinets = cabinets;
+      if (cabinets !== void 0 && cabinets.length) {
+        $scope.Group.cabinet = cabinets[0].id;
+      }
+      if (cabinets.length !== 1) {
+        $("#group-cabinet").removeAttr("disabled");
+      }
+      $scope.$apply();
+      return clearSelect();
     }, "json");
-    $scope.Group.cabinet = void 0;
-    return clearSelect();
   };
   $scope.addClientsPanel = function() {
+    if (!$scope.Students) {
+      $scope.loadStudents();
+    }
     $scope.add_clients_panel = !$scope.add_clients_panel;
     if (!$scope.search.grade && $scope.Group.grade) {
       $scope.search.grade = $scope.Group.grade;
@@ -380,16 +525,18 @@ angular.module("Group", []).filter('to_trusted', [
     $scope.Group.id_teacher = 0;
     return clearSelect();
   };
+  $scope.loading_students = false;
   $scope.loadStudents = function() {
     if (!$scope.Group.id) {
       return;
     }
-    $scope.add_clients_panel = 0;
     $scope.Students = false;
+    $scope.loading_students = true;
     return $.post("groups/ajax/getStudents", {
       id_group: $scope.Group.id,
       id_subject: $scope.Group.id_subject
     }, function(response) {
+      $scope.loading_students = false;
       $scope.Students = response;
       $.each($scope.Group.student_statuses, function(id_student, id_status) {
         var Student;
@@ -405,7 +552,6 @@ angular.module("Group", []).filter('to_trusted', [
   };
   angular.element(document).ready(function() {
     set_scope("Group");
-    $scope.loadStudents();
     $scope.bindGroupStudentStatusChange();
     if ($scope.Group.Comments === false) {
       $scope.Group.Comments = [];
@@ -414,6 +560,7 @@ angular.module("Group", []).filter('to_trusted', [
   });
   $(document).ready(function() {
     emailMode(2);
+    bindDraggable();
     return $("#group-edit").on('keyup change', 'input, select, textarea', function() {
       $scope.form_changed = true;
       return $scope.$apply();
@@ -439,6 +586,44 @@ angular.module("Group", []).filter('to_trusted', [
   });
 }).controller("ListCtrl", function($scope) {
   var bindDraggable, bindDraggable2;
+  $scope.weekdays = [
+    {
+      "short": "ПН",
+      "full": "Понедельник",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ВТ",
+      "full": "Вторник",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "СР",
+      "full": "Среда",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ЧТ",
+      "full": "Четверг",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ПТ",
+      "full": "Пятница",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "СБ",
+      "full": "Суббота",
+      "schedule": ["11:00", "13:30", "16:00", "18:30"]
+    }, {
+      "short": "ВС",
+      "full": "Воскресенье",
+      "schedule": ["11:00", "13:30", "16:00", "18:30"]
+    }
+  ];
+  $scope.inDayAndTime2 = function(time, freetime) {
+    if (freetime === void 0) {
+      return false;
+    }
+    freetime = objectToArray(freetime);
+    return $.inArray(time, freetime) >= 0;
+  };
   $scope.search = {
     grade: "",
     id_branch: "",
@@ -467,30 +652,6 @@ angular.module("Group", []).filter('to_trusted', [
     D = new Date(date);
     return moment().to(D);
   };
-  $scope.weekdays = [
-    {
-      "short": "ПН",
-      "full": "Понедельник"
-    }, {
-      "short": "ВТ",
-      "full": "Вторник"
-    }, {
-      "short": "СР",
-      "full": "Среда"
-    }, {
-      "short": "ЧТ",
-      "full": "Четверг"
-    }, {
-      "short": "ПТ",
-      "full": "Пятница"
-    }, {
-      "short": "СБ",
-      "full": "Суббота"
-    }, {
-      "short": "ВС",
-      "full": "Воскресенье"
-    }
-  ];
   $scope.$watchCollection("search2", function(newValue, oldValue) {
     $scope.Groups2 = newValue.branches.length > 0 ? $scope.GroupsFull : $scope.GroupsShort;
     if ($scope.Groups2 !== void 0 && $scope.Groups2.length > 0) {
