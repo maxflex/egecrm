@@ -14,6 +14,15 @@
 //			$this->addJs("ng-test-app");
 		}
 		
+		public function actionCabinetsCheck()
+		{
+			echo "here";
+			$r = Cabinet::getCabinetGroups(1);
+			
+			preType($r);
+		}
+		
+		
 		public function actionSession()
 		{
 			preType($_SESSION);

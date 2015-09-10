@@ -1,4 +1,7 @@
-<table class="table table-divlike">
+<table class="table table-divlike" style="position: relative">
+	<?php if ($loading) :?>
+	<div id="frontend-loading" style="display: block">Загрузка...</div>
+	<?php endif ?>
 	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?> " class="group-list" data-id="{{Group.id}}">
 		<td>
 			<a href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>

@@ -23,16 +23,21 @@
 			
 			$Groups = Group::findAll();
 			
+// 			$mode = ($_GET["mode"] == "students" ? 1 : ($_GET["mode"] == "nogroup") ? 2 : 0);
+			$mode = ($_GET["mode"] == "students" ? 1 : 2);
+// 			$mode = 2;
+			
 			$ang_init_data = angInit([
 				"Groups" 	=> $Groups,
 				"Subjects" 	=> Subjects::$all,
 				"Grades"	=> Grades::$all,
-				"mode" 			=> ($_GET["mode"] == "students" ? 1 : ($_GET["mode"] == "nogroup") ? 2 : 0),
-				"change_mode" 	=> ($_GET["mode"] == "students" ? 1 : ($_GET["mode"] == "nogroup") ? 2 : 0),
+				"mode" 			=> $mode,
+				"change_mode" 	=> $mode,
 			]);
 			
 			$this->render("list", [
-				"Groups" => $Groups,
+				"Groups" 		=> $Groups,
+				"mode"			=> $mode,
 				"ang_init_data" => $ang_init_data
 			]);
 		}
@@ -117,7 +122,8 @@
 				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_freetime"		=> Cabinet::getFreetime($Group->id, $Group->cabinet),
-				"teacher_freetime"		=> TeacherFreetime::getRed($Group->id_branch, $Group->id_teacher),
+				"teacher_freetime"		=> TeacherFreetime::getRed($Group->id, $Group->id_teacher),
+				"teacher_freetime_green"=> TeacherFreetime::get($Group->id_teacher)
 			]);
 			
 			$this->render("edit", [
@@ -261,8 +267,9 @@
 		public function actionAjaxGetTeacherFreetime() {
 			extract($_POST);
 
-			returnJsonAng(
-				TeacherFreetime::getRed($id_branch, $id_teacher)
-			);
+			returnJsonAng([
+				"red" 	=> TeacherFreetime::getRed($id_group, $id_teacher),
+				"green"	=> TeacherFreetime::get($id_teacher),
+			]);
 		}
 	}

@@ -15,6 +15,14 @@ angular.module "Settings", []
 			{"short" : "СБ", "full" : "Суббота"},
 			{"short" : "ВС", "full" : "Воскресенье"}
 		]
+		$scope.dateToStart = (date) ->
+				date = date.split "."
+				date = date.reverse()
+				date = date.join "-"
+				
+				D = new Date(date)
+				
+				moment().to D
 	.controller "CabinetsCtrl", ($scope) ->
 		
 		resetAdd = ->

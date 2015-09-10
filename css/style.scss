@@ -25,6 +25,15 @@ body {
 	font-weight: bold;
 }
 
+.fixed-menu {
+    width: 16.66666667%;
+    position: fixed;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    left: 0;
+}
+
 .group-freetime-block {
 	display: inline-block;
 	margin-right: 5px;

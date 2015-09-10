@@ -19,7 +19,7 @@
 					
 					<table class="table table-divlike table-students">
 						<tr ng-repeat="Student in TmpStudents" class="student-line is-draggable"  data-id="{{Student.id}}">
-							<td width="220">
+							<td width="250">
 								{{$index + 1}}. <a href="student/{{Student.id}}">
 									{{Student.first_name}}
 									{{Student.last_name}}
@@ -81,13 +81,14 @@
 						</tr>
 						<tr>
 							<td colspan="6"></td>
-							<td width="150">
+
+							<td width="150" title="Актуальность: {{getTeacher(Group.id_teacher).schedule_date ? getTeacher(Group.id_teacher).schedule_date : 'не установлено'}}">
 							    <span ng-repeat="weekday in weekdays" class="group-freetime-block"  ng-show="Group.id_teacher && Group.id_teacher != '0'">
 									<span class="freetime-bar blue" ng-repeat="time in weekday.schedule track by $index" 
 										ng-class="{
-											'empty-blue'	: !inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0,
+											'empty-blue'	: !inDayAndTime2(time, teacher_freetime_green[$parent.$index + 1]) || Group.cabinet == 0,
 											'red'			: inCabinetFreetime(time, teacher_freetime[$parent.$index + 1]),
-											'red-blue'		: !(!inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0)
+											'red-blue'		: !(!inDayAndTime2(time, teacher_freetime_green[$parent.$index + 1]) || Group.cabinet == 0)
 																&& (inCabinetFreetime(time, teacher_freetime[$parent.$index + 1]))
 										}" ng-hide="time == ''" style="position: relative; top: 3px">
 									</span>

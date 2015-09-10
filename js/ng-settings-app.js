@@ -11,7 +11,7 @@ angular.module("Settings", []).filter('to_trusted', [
     };
   }
 ]).controller("CabinetsPageCtrl", function($scope) {
-  return $scope.weekdays = [
+  $scope.weekdays = [
     {
       "short": "ПН",
       "full": "Понедельник"
@@ -35,6 +35,14 @@ angular.module("Settings", []).filter('to_trusted', [
       "full": "Воскресенье"
     }
   ];
+  return $scope.dateToStart = function(date) {
+    var D;
+    date = date.split(".");
+    date = date.reverse();
+    date = date.join("-");
+    D = new Date(date);
+    return moment().to(D);
+  };
 }).controller("CabinetsCtrl", function($scope) {
   var resetAdd;
   resetAdd = function() {

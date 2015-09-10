@@ -18,7 +18,7 @@
 		{
 			$id_branch = $_GET["id"];
 			
-			// страница кабинетов
+			// страница всех кабинетов всех филиалов
 			if (!$id_branch) {
 				$this->setTabTitle("Кабинеты");
 				
@@ -39,6 +39,7 @@
 					"ang_init_data" => $ang_init_data,
 				]);
 			} else {
+			// страница кабинетов отдельного филиала
 				$this->setTabTitle("Кабинеты филиала " . Branches::$all[$id_branch]);
 				
 				$Groups = Cabinet::getCabinetGroups($id_branch);

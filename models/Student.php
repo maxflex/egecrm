@@ -382,7 +382,6 @@
 			foreach ($Freetime as $FreetimeData) {
 				$return[$FreetimeData->id_branch][$FreetimeData->day][] = $FreetimeData->time;
 				
-				// Красные кирпичики
 				if (!in_array($FreetimeData->time, $return[0][$FreetimeData->day])) {
 					$return[0][$FreetimeData->day][] = $FreetimeData->time;
 				}

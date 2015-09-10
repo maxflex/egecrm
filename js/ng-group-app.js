@@ -250,11 +250,13 @@ angular.module("Group", []).filter('to_trusted', [
     }
     ajaxStart();
     return $.post("groups/ajax/GetTeacherFreetime", {
-      id_branch: $scope.Group.id_branch,
+      id_group: $scope.Group.id,
       id_teacher: $scope.Group.id_teacher
     }, function(freetime) {
       ajaxEnd();
-      $scope.teacher_freetime = freetime;
+      $scope.teacher_freetime = freetime.red;
+      $scope.teacher_freetime_green = freetime.green;
+      console.log(freetime);
       return $scope.$apply();
     }, "json");
   };
@@ -804,19 +806,12 @@ angular.module("Group", []).filter('to_trusted', [
         return ajaxStart();
     }
   };
-  $(document).ready(function() {
-    if ($scope.mode === 2) {
-      $("#group-branch-filter2").selectpicker({
-        noneSelectedText: "филиалы"
-      });
-      return $("#grades-select2").selectpicker({
-        noneSelectedText: "класс",
-        multipleSeparator: ", "
-      });
-    }
-  });
-  return angular.element(document).ready(function() {
-    set_scope("Group");
+  $scope.students_picker = false;
+  $scope.loadStudentPicker = function() {
+    $scope.students_picker = true;
+    $("html, body").animate({
+      scrollTop: $(document).height()
+    }, 1000);
     switch ($scope.mode) {
       case 1:
         $.post("settings/ajax/getStudents", {}, function(response) {
@@ -842,5 +837,20 @@ angular.module("Group", []).filter('to_trusted', [
           return bindDraggable2();
         }, "json");
     }
+  };
+  $(document).ready(function() {
+    if ($scope.mode === 2) {
+      $("#group-branch-filter2").selectpicker({
+        noneSelectedText: "филиалы"
+      });
+      return $("#grades-select2").selectpicker({
+        noneSelectedText: "класс",
+        multipleSeparator: ", "
+      });
+    }
+  });
+  return angular.element(document).ready(function() {
+    set_scope("Group");
+    return frontendLoadingEnd();
   });
 });

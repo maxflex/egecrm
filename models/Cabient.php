@@ -41,10 +41,9 @@
 			$ids = self::getBranchCabinetIds($id_branch);
 			
 			$Cabinets = self::getByBranch($id_branch);
-									
+												
 			$Groups = Group::findAll([
 				"condition" => "cabinet IN (". implode(",", $ids) . ")",
-				"order"		=> "day ASC, start ASC"
 			]);
 			
 			foreach ($Groups as $Group) {

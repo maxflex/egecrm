@@ -82,6 +82,30 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		public static function get($id_teacher)
+		{
+			$Freetime = TeacherFreetime::findAll([
+				"condition"	=> "id_teacher=" . $id_teacher
+			]);
+			
+			if (!$Freetime) {
+				return [];
+			}
+			
+			foreach ($Freetime as $FreetimeData) {
+				$return[$FreetimeData->day][] = $FreetimeData->time;
+/*
+				
+				if (!in_array($FreetimeData->time, $return[0][$FreetimeData->day])) {
+					$return[0][$FreetimeData->day][] = $FreetimeData->time;
+				}
+*/
+			}
+			
+			return $return;
+		}
+		
+		
 		/**
 		 * 
 		 */

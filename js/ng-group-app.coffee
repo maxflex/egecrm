@@ -211,10 +211,12 @@
 # 				$("#group-cabinet").attr "disabled", "disabled"
 				return if $scope.Group.id_teacher is "0"
 				ajaxStart()
-				$.post "groups/ajax/GetTeacherFreetime", {id_branch: $scope.Group.id_branch, id_teacher: $scope.Group.id_teacher}, (freetime) ->
+				$.post "groups/ajax/GetTeacherFreetime", {id_group: $scope.Group.id, id_teacher: $scope.Group.id_teacher}, (freetime) ->
 					ajaxEnd()
 # 					$("#group-cabinet").removeAttr "disabled"
-					$scope.teacher_freetime = freetime
+					$scope.teacher_freetime 		= freetime.red
+					$scope.teacher_freetime_green 	= freetime.green
+					console.log freetime
 					$scope.$apply()
 				, "json"
 			
@@ -670,18 +672,10 @@
 						redirect "groups/?mode=students"
 						ajaxStart()
 			
-			$(document).ready ->
-				if $scope.mode is 2
-					$("#group-branch-filter2").selectpicker
-						noneSelectedText: "филиалы"
-					
-					$("#grades-select2").selectpicker
-						noneSelectedText: "класс"
-						multipleSeparator: ", "
-			
-			angular.element(document).ready ->
-				set_scope "Group"
-				
+			$scope.students_picker = false
+			$scope.loadStudentPicker = ->
+				$scope.students_picker = true
+				$("html, body").animate { scrollTop: $(document).height() }, 1000
 				switch $scope.mode
 					when 1
 						$.post "settings/ajax/getStudents", {}, (response) ->
@@ -705,3 +699,18 @@
 							$scope.$apply()
 							bindDraggable2()
 						, "json"
+			
+			$(document).ready ->
+				if $scope.mode is 2
+					$("#group-branch-filter2").selectpicker
+						noneSelectedText: "филиалы"
+					
+					$("#grades-select2").selectpicker
+						noneSelectedText: "класс"
+						multipleSeparator: ", "
+			
+			
+			
+			angular.element(document).ready ->
+				set_scope "Group"
+				frontendLoadingEnd()
