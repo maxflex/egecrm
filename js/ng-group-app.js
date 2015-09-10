@@ -231,6 +231,16 @@ angular.module("Group", []).filter('to_trusted', [
     freetime = objectToArray(freetime);
     return $.inArray(time, freetime) >= 0;
   };
+  $scope.justInDayFreetime = function(day, time, freetime) {
+    if (freetime === void 0 || freetime === null) {
+      return false;
+    }
+    return $.inArray(time, freetime[day]) >= 0;
+  };
+  $scope.isOrangeBrick = function(day, time) {
+    var current_index;
+    return current_index = $.inArray(time, $scope.weekdays[day - 1].schedule);
+  };
   $scope.changeCabinet = function() {
     $("#group-cabinet").attr("disabled", "disabled");
     ajaxStart();
@@ -251,12 +261,16 @@ angular.module("Group", []).filter('to_trusted', [
     ajaxStart();
     return $.post("groups/ajax/GetTeacherFreetime", {
       id_group: $scope.Group.id,
-      id_teacher: $scope.Group.id_teacher
+      id_teacher: $scope.Group.id_teacher,
+      id_branch: $scope.Group.id_branch
     }, function(freetime) {
       ajaxEnd();
       $scope.teacher_freetime = freetime.red;
       $scope.teacher_freetime_green = freetime.green;
-      console.log(freetime);
+      $scope.teacher_freetime_red = freetime.red_full;
+      $scope.teacher_freetime_orange_half = freetime.orange;
+      $scope.teacher_freetime_orange_full = freetime.orange_full;
+      $scope.Group.teacher_status = freetime.teacher_status;
       return $scope.$apply();
     }, "json");
   };
@@ -368,6 +382,14 @@ angular.module("Group", []).filter('to_trusted', [
     });
     return false;
   };
+  $scope.setTeacherStatus = function(Teacher, event) {
+    $(event.target).hide();
+    $(".teacher-status-select-" + Teacher.id).show(0, function() {
+      $(this).simulate('mousedown');
+      return $("option[value^='?']").remove();
+    });
+    return false;
+  };
   $scope.teachersFilter = function(Teacher) {
     var ref, ref1;
     return ((ref = parseInt($scope.Group.id_branch), indexOf.call(Teacher.branches, ref) >= 0) || !$scope.Group.id_branch) && ((ref1 = parseInt($scope.Group.id_subject), indexOf.call(Teacher.subjects, ref1) >= 0) || !$scope.Group.id_subject);
@@ -376,16 +398,23 @@ angular.module("Group", []).filter('to_trusted', [
     return Object.keys(Contract.subjects).length;
   };
   $(document).on("mouseup", function() {
-    $("select[class^='student-status-select']").hide();
-    return $(".s-s-s").show();
+    $("select[class^='student-status-select'], select[class^='teacher-status-select']").hide();
+    return $(".s-s-s, .t-s-s").show();
   });
   $scope.bindGroupStudentStatusChange = function() {
-    return $("select[class^='student-status-select']").on("input", function() {
+    $("select[class^='student-status-select']").on("input", function() {
       var id_student;
       $(this).hide();
       id_student = $(this).data("id");
       $(".student-status-span-" + id_student).show();
       return $scope.Group.student_statuses[id_student] = $(this).val();
+    });
+    return $("select[class^='teacher-status-select']").on("input", function() {
+      var id_teacher;
+      $(this).hide();
+      id_teacher = $(this).data("id");
+      $(".teacher-status-span-" + id_teacher).show();
+      return $scope.Group.teacher_status = $(this).val();
     });
   };
   $scope.addStudent = function(id_student, event) {

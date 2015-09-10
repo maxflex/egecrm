@@ -3,8 +3,8 @@
 	<?php foreach($Students as $id=> $Student): ?>
 		<div>
 			<?= ($id + 1) ?>.
-			<a href="requests/edit/<?= $Student->getRequest()->id ?>">
-				<?= empty(trim($Student->fio())) ? "Неизвестно" : $Student->fio() ?>
+			<a href="student/<?= $Student->id ?>">
+				<?= Student::getName($Student->last_name, $Student->first_name, $Student->middle_name) ?>
 			</a>
 		</div>
 	<?php endforeach; ?>

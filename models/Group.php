@@ -32,6 +32,17 @@
 				$this->branch = Branches::getShortColoredById($this->id_branch);
 			}
 			
+			if ($this->id_teacher) {
+				$this->teacher_status = GroupTeacherStatuses::getStatus($this->id, $this->id_teacher);
+				if ($this->teacher_status) {
+					$this->teacher_status = $this->teacher_status->id_status;
+				}
+			}
+			
+			if (!$this->teacher_status) {
+				$this->teacher_status = "";
+			}
+			
 			
 			
 			$this->is_special = $this->isSpecial();
@@ -151,6 +162,67 @@
 		}
 	}
 	
+	
+	class GroupTeacherStatuses extends Model
+	{
+		public static $mysql_table	= "group_teacher_statuses";
+		
+		# Список предметов
+		const NBT 		= 1;
+		const AWAITING	= 2;
+		const AGREED	= 3;
+		
+		# Все предметы
+		static $all = [
+			self::NBT 		=> "нбт",
+			self::AWAITING	=> "ожидает расписания",
+			self::AGREED	=> "полностью согласен",
+		];
+		
+		# Заголовок
+		static $title = "статус";
+		
+		
+		public function getStatus($id_group, $id_teacher) {
+			return GroupTeacherStatuses::find([
+				"condition" => "id_group=$id_group AND id_teacher=$id_teacher"
+			]);
+		}
+		
+		public function saveData($id_group, $id_status, $id_teacher)
+		{
+			if ($id_teacher) {
+				GroupTeacherStatuses::deleteAll([
+					"condition" => "id_group=$id_group"
+				]);
+				if ($id_status) {
+					GroupTeacherStatuses::add([
+						"id_group" 	=> $id_group,
+						"id_teacher"=> $id_teacher,
+						"id_status" => $id_status,
+					]);
+				}
+			}
+		}
+
+	
+		/**
+		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "полностью согласен", 
+		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
+		 * 
+		 */
+		public static function inRedFreetime($id_group, $day, $time, $id_teacher) 
+		{
+			return dbConnection()->query("
+				SELECT g.id FROM group_teacher_statuses gts
+					LEFT JOIN groups g ON g.id = gts.id_group
+					LEFT JOIN group_time gt ON g.id = gt.id_group
+				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gts.id_status = ". self::AGREED ." AND gts.id_teacher = $id_teacher
+				LIMIT 1
+			")->num_rows;	
+		}
+	}
+	
 	class GroupStudentStatuses extends Model
 	{
 		public static $mysql_table	= "group_student_statuses";
@@ -205,6 +277,17 @@
 					LEFT JOIN groups g ON g.id = gss.id_group
 					LEFT JOIN group_time gt ON g.id = gt.id_group
 				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gss.id_status = ". self::AGREED ." AND gss.id_student = $id_student
+				LIMIT 1
+			")->num_rows;	
+		}
+		
+		public static function inRedFreetimeHalf($id_group, $day, $time, $id_student) 
+		{
+			return dbConnection()->query("
+				SELECT g.id FROM groups g
+					LEFT JOIN group_time gt ON g.id = gt.id_group
+				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day'
+					 AND CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'
 				LIMIT 1
 			")->num_rows;	
 		}

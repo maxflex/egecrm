@@ -27,6 +27,37 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		public static function getName($last_name, $first_name, $middle_name, $order = 'fio')
+		{
+			if (empty(trim($last_name)) && empty(trim($first_name)) && empty(trim($middle_name))) {
+				return "Неизвестно";
+			}
+			
+			if ($last_name) {
+				$name[0] = $last_name;
+			}
+			
+			if ($first_name) {
+				$name[1] = $first_name;
+			}
+			
+			if ($middle_name) {
+				$name[2] = $middle_name;
+			}
+			
+			$order_values = [
+				'f' => 0,
+				'i' => 1,
+				'o' => 2,
+			];
+			
+			$name_ordered[] = $name[$order_values[$order[0]]];
+			$name_ordered[] = $name[$order_values[$order[1]]];
+			$name_ordered[] = $name[$order_values[$order[2]]];
+			
+			return implode(" ", $name_ordered);
+		}
+		
 		/**
 		 * Получить студентов с договорами.
 		 * 
@@ -387,6 +418,7 @@
 				}
 			}
 			
+			# красные кирпичи
 			foreach (Freetime::$weekdays as $day => $schedule) {
 				foreach ($schedule as $time) {
 					if (GroupStudentStatuses::inRedFreetime($id_group, $day, $time, $this->id)) {
@@ -396,10 +428,22 @@
 					}
 				}
 			}
+			
+			# красные половинки
+			foreach (Freetime::$weekdays as $day => $schedule) {
+				foreach ($schedule as $time) {
+					if (GroupStudentStatuses::inRedFreetimeHalf($id_group, $day, $time, $this->id)) {
+						if (!in_array($time, $return_red_half[$day])) {
+							$return_red_half[$day][] = $time;
+						}
+					}
+				}
+			}
 						
 			return [
-				"freetime" 		=> $return,
-				"freetime_red"	=> $return_red,
+				"freetime" 			=> $return,
+				"freetime_red"		=> $return_red,
+				"freetime_red_half" => $return_red_half,
 			];
 		}
 		

@@ -197,6 +197,16 @@
 				freetime = objectToArray freetime
 				return $.inArray(time, freetime) >= 0
 			
+			$scope.justInDayFreetime = (day, time, freetime) ->
+				return false if freetime is undefined or freetime is null
+# 				freetime = objectToArray freetime
+# 				console.log time, freetime, day
+				return $.inArray(time, freetime[day]) >= 0
+			
+			
+			$scope.isOrangeBrick = (day, time) ->
+				current_index = $.inArray(time, $scope.weekdays[day - 1].schedule)
+			
 			$scope.changeCabinet = ->
 				$("#group-cabinet").attr "disabled", "disabled"
 				ajaxStart()
@@ -211,12 +221,18 @@
 # 				$("#group-cabinet").attr "disabled", "disabled"
 				return if $scope.Group.id_teacher is "0"
 				ajaxStart()
-				$.post "groups/ajax/GetTeacherFreetime", {id_group: $scope.Group.id, id_teacher: $scope.Group.id_teacher}, (freetime) ->
+				$.post "groups/ajax/GetTeacherFreetime", {id_group: $scope.Group.id, id_teacher: $scope.Group.id_teacher, id_branch: $scope.Group.id_branch}, (freetime) ->
 					ajaxEnd()
 # 					$("#group-cabinet").removeAttr "disabled"
 					$scope.teacher_freetime 		= freetime.red
 					$scope.teacher_freetime_green 	= freetime.green
-					console.log freetime
+					$scope.teacher_freetime_red	 	= freetime.red_full
+					
+					$scope.teacher_freetime_orange_half	= freetime.orange
+					$scope.teacher_freetime_orange_full	= freetime.orange_full
+					
+					$scope.Group.teacher_status = freetime.teacher_status
+					
 					$scope.$apply()
 				, "json"
 			
@@ -326,6 +342,13 @@
 					$("option[value^='?']").remove()
 				return false
 			
+			$scope.setTeacherStatus = (Teacher, event) ->
+				$(event.target).hide()
+				$(".teacher-status-select-#{Teacher.id}").show 0, ->
+					$(@).simulate 'mousedown'
+					$("option[value^='?']").remove()
+				return false
+			
 			$scope.teachersFilter = (Teacher) ->
 				return (parseInt($scope.Group.id_branch) in Teacher.branches or not $scope.Group.id_branch) and
 					(parseInt($scope.Group.id_subject) in Teacher.subjects or not $scope.Group.id_subject)
@@ -336,8 +359,8 @@
 			
 			# on dropdown close fix
 			$(document).on "mouseup", ->
-				$("select[class^='student-status-select']").hide()
-				$(".s-s-s").show()
+				$("select[class^='student-status-select'], select[class^='teacher-status-select']").hide()
+				$(".s-s-s, .t-s-s").show()
 				
 			$scope.bindGroupStudentStatusChange = ->
 				$("select[class^='student-status-select']")
@@ -346,7 +369,12 @@
 						id_student = $(@).data "id"
 						$(".student-status-span-#{id_student}").show()
 						$scope.Group.student_statuses[id_student] = $(@).val()
-			
+				$("select[class^='teacher-status-select']")
+					.on "input", ->
+						$(@).hide()
+						id_teacher = $(@).data "id"
+						$(".teacher-status-span-#{id_teacher}").show()
+						$scope.Group.teacher_status = $(@).val()
 			$scope.addStudent = (id_student, event) ->
 				if id_student not in $scope.Group.students
 					el = $(event.target)

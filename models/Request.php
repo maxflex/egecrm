@@ -133,7 +133,7 @@
 			$start_from = ($page - 1) * self::PER_PAGE;
 
 			$Requests = self::findAll([
-				"condition"	=> "adding=0 AND id_status IN (" . RequestStatuses::AWAITING . ", " . RequestStatuses::NOT_DECIDED . ")"
+				"condition"	=> "adding=0 AND id_status=" . RequestStatuses::AWAITING
 					. (!empty($grade) ? " AND grade=$grade" : "")
 					. (!empty($id_branch) ? " AND CONCAT(',', CONCAT(branches, ',')) LIKE '%,{$id_branch},%'" : "")
 					. (!empty($id_subject) ? " AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%'" : "")
@@ -170,7 +170,7 @@
 		public static function countByPageRelevant($grade = '', $id_branch = '', $id_subject = '')
 		{
 			$Requests = self::count([
-				"condition"	=> "adding=0 AND id_status IN (" . RequestStatuses::AWAITING . ", " . RequestStatuses::NOT_DECIDED . ")"
+				"condition"	=> "adding=0 AND id_status=" . RequestStatuses::AWAITING
 					. (!empty($grade) ? " AND grade=$grade" : "")
 					. (!empty($id_branch) ? " AND CONCAT(',', CONCAT(branches, ',')) LIKE '%,{$id_branch},%'" : "")
 					. (!empty($id_subject) ? " AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%'" : "")

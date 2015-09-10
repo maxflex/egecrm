@@ -20,15 +20,6 @@
 			
 			$Teachers = Teacher::findAll();
 			
-			foreach ($Teachers as $index => &$Teacher) {
-				foreach ($Teacher->branches as $id_branch) {
-					if (!$id_branch) {
-						continue;
-					}
-					$Teacher->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
-				}
-			}
-			
 			$ang_init_data = angInit([
 				"Teachers" => $Teachers,
 				"subjects" => Subjects::$short,

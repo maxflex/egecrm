@@ -55,10 +55,10 @@
 								<span ng-repeat="weekday in weekdays" class="group-freetime-block">
 									<span class="freetime-bar" ng-repeat="time in weekday.schedule track by $index" 
 										ng-class="{
-											'empty'		: !inFreetime(time, Student, $parent.$index + 1),
-											'red'		: inRedFreetime(time, Student, $parent.$index + 1),
-											'red-gray'	: !(!inFreetime(time, Student, $parent.$index + 1))
-														&& (inRedFreetime(time, Student, $parent.$index + 1))
+											'empty'				: !inFreetime(time, Student, $parent.$index + 1),
+											'red-gray-empty' 	: !inFreetime(time, Student, $parent.$index + 1) && justInDayFreetime($parent.$index + 1, time, Student.freetime_red_half),
+											'red-gray' 			: inFreetime(time, Student, $parent.$index + 1) && justInDayFreetime($parent.$index + 1, time, Student.freetime_red_half),
+											'red'				: inRedFreetime(time, Student, $parent.$index + 1),
 										}" ng-hide="time == ''">
 									</span>
 								</span>
@@ -79,30 +79,74 @@
 								</span>
 							</td>
 						</tr>
-						<tr>
-							<td colspan="6"></td>
-
+						<tr ng-show="Group.id_teacher">
+							<td width="250">
+								<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}</a>
+							</td>
+							<td>
+								<a href="https://crm.a-perspektiva.ru/repetitors/edit/?id={{getTeacher(Group.id_teacher).id_a_pers}}" 
+								target="_blank">ID {{getTeacher(Group.id_teacher).id_a_pers}}</a>
+							</td>
+							<td width="75">
+								<span ng-repeat="id_subject in getTeacher(Group.id_teacher).subjects">{{subjects_short[id_subject]}}{{$last ? "" : "+"}}</span>
+							</td>
+							<td colspan="2">
+								<span ng-repeat="(id_branch, short) in getTeacher(Group.id_teacher).branch_short track by $index" 
+									ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}"></span>
+							</td>
+							<td  style="width: 150px !important">
+								<span class="label group-student-status{{Group.teacher_status}} t-s-s teacher-status-span-{{Group.id_teacher}}"
+									ng-click="setTeacherStatus(getTeacher(Group.id_teacher), $event)">
+									{{Group.teacher_status ? GroupTeacherStatuses[Group.teacher_status] : "статус"}}
+								</span>
+								<select ng-model="getTeacher(Group.id_teacher).id_status" class="teacher-status-select-{{Group.id_teacher}}" 
+									style="display: none; width: 150px" data-id="{{Group.id_teacher}}">
+										<option selected value="">статус</option>
+										<option disabled>──────────────</option>
+										<option ng-repeat="(id_status, name) in GroupTeacherStatuses" ng-value="id_status"
+											ng-selected="Group.teacher_status == id_status">{{name}}</option>
+								</select>
+							</td>
 							<td width="150" title="Актуальность: {{getTeacher(Group.id_teacher).schedule_date ? getTeacher(Group.id_teacher).schedule_date : 'не установлено'}}">
 							    <span ng-repeat="weekday in weekdays" class="group-freetime-block"  ng-show="Group.id_teacher && Group.id_teacher != '0'">
 									<span class="freetime-bar blue" ng-repeat="time in weekday.schedule track by $index" 
 										ng-class="{
 											'empty-blue'	: !inDayAndTime2(time, teacher_freetime_green[$parent.$index + 1]) || Group.cabinet == 0,
+											'red-blue-empty': (!inDayAndTime2(time, teacher_freetime_green[$parent.$index + 1]) || Group.cabinet == 0) 
+																	&& justInDayFreetime($parent.$index + 1, time, teacher_freetime),
+											'red-blue' 		: !(!inDayAndTime2(time, teacher_freetime_green[$parent.$index + 1]) || Group.cabinet == 0) 
+																	&& justInDayFreetime($parent.$index + 1, time, teacher_freetime),
+											'red'			: justInDayFreetime($parent.$index + 1, time, teacher_freetime_red),
+											'orange-emptyblue' : justInDayFreetime($parent.$index + 1, time, teacher_freetime_orange_half)
+																	&& (!inDayAndTime2(time, teacher_freetime_green[$parent.$index + 1]) || Group.cabinet == 0),
+											'orange-blue' 	: justInDayFreetime($parent.$index + 1, time, teacher_freetime_orange_half)
+																	&& !(!inDayAndTime2(time, teacher_freetime_green[$parent.$index + 1]) || Group.cabinet == 0),
+											'orange' 		: justInDayFreetime($parent.$index + 1, time, teacher_freetime_orange_full)
+																	
+										}" ng-hide="time == ''" style="position: relative; top: 3px">
+										<!--
 											'red'			: inCabinetFreetime(time, teacher_freetime[$parent.$index + 1]),
 											'red-blue'		: !(!inDayAndTime2(time, teacher_freetime_green[$parent.$index + 1]) || Group.cabinet == 0)
 																&& (inCabinetFreetime(time, teacher_freetime[$parent.$index + 1]))
-										}" ng-hide="time == ''" style="position: relative; top: 3px">
+-->
 									</span>
 								</span>
 							</td>
 						</tr>
 					</table>
 					<div style="margin: 15px 16px">
-						<div class="link-like small link-reverse"  style="display: inline-block; margin-right: 7px" 
+						<div class="link-like small link-reverse" ng-hide="!Group.id" style="display: inline-block; margin-right: 7px" 
 								ng-click="addClientsPanel()">добавить ученика</div>
 					</div>
 					<img ng-hide="Students || !Group.id || true" src="img/svg/loading-bubbles.svg" style="margin: 15px 16px">
 				</div>
 				<div class="col-sm-3">
+					<div class="form-group">
+						<select ng-model="Group.open" class="form-control">
+							<option value="1">набор открыт</option>
+							<option value="0">набор закрыт</option>
+						</select>
+					</div>
 					<div class="form-group">
 						<?= Subjects::buildSelector(false, false, [
 							"ng-model" => "Group.id_subject", 
@@ -118,11 +162,13 @@
 								{{Teacher.last_name}} {{Teacher.first_name[0]}}. {{Teacher.middle_name[0]}}.
 							</option>
 						</select>
+<!--
 						<div class="small" style="text-align: right" ng-show="Group.id_teacher && Group.id_teacher != '0'">
 							<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">егэ-центр</a> | 
 							<a href="https://crm.a-perspektiva.ru/repetitors/edit/?id={{getTeacher(Group.id_teacher).id_a_pers}}" 
 								target="_blank">егэ-репетитор</a>
 						</div>
+-->
 					</div>
 					<div class="form-group">
 		                <?= 
