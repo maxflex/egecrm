@@ -93,7 +93,7 @@
 		    
 			<div ng-show="Teacher.schedule_date" class="small" style="margin-top: 13px">актуальность: {{Teacher.schedule_date}}</div>
 	        <div style="margin-top: 5px">
-	            <span class="link-like link-reverse small" onclick="lightBoxShow('freetime')" 
+	            <span class="link-like link-reverse small" ng-click="openFreetime()" 
 	            	style="margin-left: 0" ng-hide="!Teacher.branches[0]">редактировать</span>
 	        </div>
 	        

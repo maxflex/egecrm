@@ -3,8 +3,14 @@
 	<div id="panel-loading">Загрузка...</div>
 	<div class="panel panel-primary panel-edit">
 		<div class="panel-heading">
-			Редактирование заявки №<?= $Request->id ?>
 			
+			<?php if ($Request->adding) :?>
+			Добавление заявки
+			<?php else :?>
+			Редактирование заявки №<?= $Request->id ?>
+			<?php endif ?>
+			
+			<?php if (!$Request->adding) :?>
 			<div class="pull-right">
 				<span class="link-reverse pointer" onclick="lightBoxShow('glue')">перенести в другой профиль</span>
 				
@@ -12,6 +18,7 @@
 				<span class="link-reverse pointer" style="margin-left: 10px" onclick='deleteRequest(<?= $Request->id ?>)'>удалить заявку</span>
 				<?php endif ?>
 			</div>
+			<?php endif ?>
 		</div>
 		<div class="panel-body">
 			
@@ -425,7 +432,9 @@
 			<a class="link-reverse link-white pointer" ng-click="toggleMinimizeStudent()" style="font-size: 12px; margin-left: 7px">
 				{{student.minimized ? "развернуть" : "свернуть"}}
 			</a>
+			<?php if (!$Request->adding) :?>
 			<span class='link-reverse pointer pull-right' id='delete-student' onclick='deleteStudent(<?= $Request->Student->id ?>)'>удалить профиль</span>
+			<?php endif ?>
 		</div>
 		<div class="panel-body"  ng-hide="student.minimized">
     
@@ -704,7 +713,6 @@
 			    </div>
 				<div class="col-sm-3">
 				    <h4 style="margin-top: 0" class="row-header">Свободное время</h4>
-				    
 				    <div ng-repeat="id_branch in student.branches">
 					    <span ng-bind-html="branches_brick[id_branch] | to_trusted" style="width: 50px; display: inline-block"></span>
 					    <span ng-repeat="weekday in weekdays" class="group-freetime-block">

@@ -10,6 +10,9 @@
 					<a class="list-link" href="#{{request_status.id}}" ng-click="changeList(request_status, true)" data-toggle="tab" aria-expanded="{{$index == 0}}">
 						{{request_status.name}} ({{request_statuses_count[request_status.id]}})
 					</a></li>
+				<li class="delete-request-li" ng-show="dragging">
+					<a class="text-danger">удалить</a>
+				</li>
 			</ul>
 		</div>
 	</div>

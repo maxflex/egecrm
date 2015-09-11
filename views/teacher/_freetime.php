@@ -22,6 +22,7 @@
 					<td ng-repeat="weekday in weekdays">
 						<input type="checkbox" ng-model="freetime[id_branch][$index + 1][n]"
 							name="Teacher[freetime][{{id_branch}}][{{$index + 1}}][{{n}}]"
+							onclick="console.log('click')"
 							ng-click="freetimeClick(id_branch, $index, n)"
 							ng-show="weekday.schedule[n] != ''" 
 							ng-value="weekday.schedule[n]"

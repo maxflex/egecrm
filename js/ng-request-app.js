@@ -100,8 +100,18 @@
 			})
 			
 			bindDraggable = function() {
+				$scope.dragging = false
+				
 				$(".request-main-list").draggable({
 					connectToSortable: ".request-main-list",
+					start: function() {
+						$scope.dragging = true
+						$scope.$apply()
+					},
+					stop: function() {
+						$scope.dragging = false
+						$scope.$apply()
+					},
 					revert: 'invalid',
 				})
 				
@@ -117,6 +127,20 @@
 						$scope.$apply()
 						
 						$.post("requests/ajax/changeStatus", {id_request_status: id_request_status, id_request: id_request})
+						
+						ui.draggable.remove()
+					}
+				})
+				
+				$(".delete-request-li").droppable({
+					tolerance: 'pointer',
+					hoverClass: "request-status-drop-hover-delete",
+					drop: function(event, ui) {
+						id_request = $(ui.draggable).data("id")
+						$scope.dragging = false
+						$scope.request_statuses_count[$scope.chosen_list]--
+						$scope.$apply()
+						$.post("ajax/deleteRequest", {"id_request": id_request})
 						
 						ui.draggable.remove()
 					}
@@ -144,6 +168,8 @@
 
 			// Страница изменилась
 			$scope.pageChanged = function() {
+				request_status = $scope.request_statuses[$scope.chosen_list]
+				window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase() + '/' + $scope.currentPage)
 				// Получаем задачи, соответствующие странице и списку
 				$scope.getByPage($scope.currentPage)
 			}

@@ -1,3 +1,8 @@
+<style>
+	.table tr td {
+		padding-top: 20px !important;
+	}
+</style>
 <div class="panel panel-primary" ng-app="Clients" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="panel-heading">Клиенты с договорами
 		<div class="pull-right">
@@ -42,11 +47,32 @@
 					</div>
 				</td>
 				<td>
-					{{Student.groups_count}} <ng-pluralize count="Student.groups_count" when="{
+					{{Student.Groups.length}} <ng-pluralize count="Student.Groups.length" when="{
 						'one': 'группа',
 						'few': 'группы',
 						'many': 'групп'
 					}"></ng-pluralize>
+				</td>
+				<td>
+					
+					<div ng-show="Student.Groups" ng-repeat="Group in Student.Groups">
+						<span ng-bind-html="Group.branch | to_trusted" style="position: relative; top: -3px; width: 50px; display: inline-block"></span>
+						<span ng-repeat="weekday in weekdays" class="group-freetime-block">
+							<span class="freetime-bar" ng-repeat="time in weekday.schedule track by $index" 
+								ng-class="{
+									'empty'				: !inFreetime(time, Group, $parent.$index + 1),
+									'red-gray-empty' 	: !inFreetime(time, Group, $parent.$index + 1) && justInDayFreetimeObject($parent.$index + 1, time, Group.day_and_time),
+									'red-gray' 		: inFreetime(time, Group, $parent.$index + 1) && justInDayFreetimeObject($parent.$index + 1, time, Group.day_and_time),
+									'red' 			: justInDayFreetimeObject($parent.$index + 1, time, Group.day_and_time) && Group.student_agreed,
+								}" ng-hide="time == ''">
+<!--
+																	'red-gray-empty' 	: !inFreetime(time, Group, $parent.$index + 1) && justInDayFreetime($parent.$index + 1, time, Group.day_and_time),
+									'red-gray' 			: inFreetime(time, Group, $parent.$index + 1) && justInDayFreetime($parent.$index + 1, time, Group.day_and_time),
+									'red'				: inRedFreetime(time, Group, $parent.$index + 1),
+-->
+							</span>
+						</span>
+					</div>
 				</td>
 			</tr>
 		</table>

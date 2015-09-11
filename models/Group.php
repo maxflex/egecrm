@@ -218,6 +218,7 @@
 					LEFT JOIN groups g ON g.id = gts.id_group
 					LEFT JOIN group_time gt ON g.id = gt.id_group
 				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gts.id_status = ". self::AGREED ." AND gts.id_teacher = $id_teacher
+					AND (gts.id_teacher = g.id_teacher AND g.id = gts.id_group)
 				LIMIT 1
 			")->num_rows;	
 		}
@@ -277,6 +278,7 @@
 					LEFT JOIN groups g ON g.id = gss.id_group
 					LEFT JOIN group_time gt ON g.id = gt.id_group
 				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gss.id_status = ". self::AGREED ." AND gss.id_student = $id_student
+					AND (CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', gss.id_student ,',%') AND g.id = gss.id_group)
 				LIMIT 1
 			")->num_rows;	
 		}

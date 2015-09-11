@@ -12,6 +12,15 @@
 				<div class="col-sm-3">
 					<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?>
 				</div>
+				<div class="col-sm-3">
+					<select class="form-control" ng-model="search.id_teacher">
+						<option selected value="">преподаватель</option>
+						<option disabled>──────────────</option>
+						<option ng-repeat="Teacher in Teachers" value="{{Teacher.id}}">
+							{{Teacher.last_name}} {{Teacher.first_name[0]}}. {{Teacher.middle_name[0]}}.
+						</option>
+					</select>
+				</div>
 			</div>
 			
 			<?= globalPartial("groups_list", ["filter" => true, "loading" => true]) ?>

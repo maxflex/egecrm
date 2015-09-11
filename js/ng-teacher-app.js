@@ -68,6 +68,9 @@ angular.module("Teacher", ["ngMap"]).filter('to_trusted', [
       $scope.freetime[id_branch][index][n] = $scope.weekdays[index - 1].schedule[n];
     }
   };
+  $scope.openFreetime = function() {
+    return lightBoxShow('freetime');
+  };
   $scope.selectAllWorking = function(id_branch) {
     $.each($scope.weekdays, function(index, weekday) {
       if (index > 4) {

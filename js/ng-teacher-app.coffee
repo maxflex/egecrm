@@ -20,7 +20,6 @@
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
-			
 			initFreetime = (id_branch, day) ->
 			  $scope.freetime = initIfNotSet($scope.freetime)
 			  $scope.freetime[id_branch] = initIfNotSet($scope.freetime[id_branch])
@@ -37,11 +36,14 @@
 			
 			$scope.freetimeClick = (id_branch, index, n) ->
 			  index++
-			  if $scope.freetime[id_branch][index][n] != true
+			  if $scope.freetime[id_branch][index][n] isnt true
 			    $scope.freetime[id_branch][index][n] = ''
 			  else
 			    $scope.freetime[id_branch][index][n] = $scope.weekdays[index - 1].schedule[n]
 			  return
+			
+			$scope.openFreetime = ->
+				lightBoxShow('freetime')
 			
 			$scope.selectAllWorking = (id_branch) ->
 			  $.each $scope.weekdays, (index, weekday) ->

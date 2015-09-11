@@ -43,6 +43,19 @@
 			self::COMPUTER	=> "Ин",
 		];
 		
+		static $three_letters = [
+			self::MATH 		=> "МАТ",
+			self::PHYSICS	=> "ФИЗ",
+			self::RUSSIAN	=> "РУС",
+			self::LITERATURE=> "ЛИТ",
+			self::ENGLISH	=> "АНГ",
+			self::HISTORY	=> "ИСТ",
+			self::SOCIETY	=> "ОБЩ",
+			self::CHEMISTRY	=> "ХИМ",
+			self::BIOLOGY	=> "БИО",
+			self::COMPUTER	=> "ИНФ",	
+		];
+		
 		# Заголовок
 		static $title = "предмет";
 		

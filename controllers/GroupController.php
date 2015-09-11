@@ -27,9 +27,12 @@
 			$mode = ($_GET["mode"] == "students" ? 1 : 2);
 // 			$mode = 2;
 			
+			$Teachers = Teacher::getActiveGroups();
+			
 			$ang_init_data = angInit([
 				"Groups" 	=> $Groups,
-				"Subjects" 	=> Subjects::$all,
+				"Teachers"	=> $Teachers,
+				"Subjects" 	=> Subjects::$three_letters,
 				"Grades"	=> Grades::$all,
 				"mode" 			=> $mode,
 				"change_mode" 	=> $mode,
@@ -96,10 +99,12 @@
 					$Student->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
 				}
 				
-				$freetime = $Student->getGroupFreetime($Group->id);
-				$Student->freetime 			= $freetime["freetime"];
-				$Student->freetime_red 		= $freetime["freetime_red"];
-				$Student->freetime_red_half = $freetime["freetime_red_half"];
+				$freetime = $Student->getGroupFreetime($Group->id, $Group->id_branch);
+				$Student->freetime 				= $freetime["freetime"];
+				$Student->freetime_red 			= $freetime["freetime_red"];
+				$Student->freetime_red_half 	= $freetime["freetime_red_half"];
+				$Student->freetime_orange	 	= $freetime["freetime_orange"];
+				$Student->freetime_orange_full 	= $freetime["freetime_orange_full"];
 				
 				if (array_key_exists($Student->id, $Group->student_statuses)) {
 					$Student->id_status = $Group->student_statuses[$Student->id];
@@ -157,10 +162,12 @@
 				
 				$Student->in_other_group = $Student->inOtherGroup($_POST['id_group'], $_POST['id_subject']) ? true : false;
 				
-				$freetime = $Student->getGroupFreetime($_POST['id_group']);
-				$Student->freetime 			= $freetime['freetime'];
-				$Student->freetime_red 		= $freetime['freetime_red'];
-				$Student->freetime_red_half = $freetime['freetime_red_half'];
+				$freetime = $Student->getGroupFreetime($_POST['id_group'], $_POST['id_branch']);
+				$Student->freetime 				= $freetime['freetime'];
+				$Student->freetime_red 			= $freetime['freetime_red'];
+				$Student->freetime_red_half 	= $freetime['freetime_red_half'];
+				$Student->freetime_orange	 	= $freetime["freetime_orange"];
+				$Student->freetime_orange_full 	= $freetime["freetime_orange_full"];
 				
 				if ($Group && array_key_exists($Student->id, $Group->student_statuses)) {
 					$Student->id_status = $Group->student_statuses[$Student->id];
@@ -204,6 +211,15 @@
 		public function actionAjaxDelete()
 		{
 			Group::deleteById($_POST["id_group"]);
+			GroupTime::deleteAll([
+				"condition" => "id_group=".$_POST["id_group"]
+			]);
+			GroupStudentStatuses::deleteAll([
+				"condition" => "id_group=".$_POST["id_group"]
+			]);
+			GroupTeacherStatuses::deleteAll([
+				"condition" => "id_group=".$_POST["id_group"]
+			]);
 		}
 		
 		
@@ -311,5 +327,12 @@
 				"orange_full" 	=> $teacher_freetime_orange_full,
 				"teacher_status"=> $teacher_status,
 			]);
+		}
+		
+		public function actionAjaxGetGroups()
+		{
+			$Groups = Group::findAll();
+			
+			returnJsonAng($Groups);
 		}
 	}

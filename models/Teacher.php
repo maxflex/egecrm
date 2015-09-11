@@ -28,6 +28,22 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		public static function getActiveGroups()
+		{
+			$result = dbConnection()->query("
+				SELECT id_teacher FROM groups
+				WHERE (id_teacher!=0 AND id_teacher IS NOT NULL)
+			");
+			
+			while ($row = $result->fetch_object()) {
+				$ids[] = $row->id_teacher;
+			}
+			
+			return self::findAll([
+				"condition" => "id IN (" . implode(",", $ids) . ")"
+			]);
+		}
+		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
 		/**
@@ -270,9 +286,11 @@
 		 */
 		public static function addData($data, $id_teacher) 
 		{
-			self::deleteAll([
+			TeacherFreetime::deleteAll([
 				"condition" => "id_teacher=$id_teacher"
 			]);
+			
+// 			dbConnection()->query("DELETE FROM teacher_freetime WHERE id_teacher=$id_teacher");
 			
 			foreach ($data as $id_branch => $branch_data) {
 				foreach ($branch_data as $day => $day_data) {

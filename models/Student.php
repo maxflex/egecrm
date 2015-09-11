@@ -225,6 +225,13 @@
 			}
 		}
 		
+		public function agreedToBeInGroup($id_group)
+		{
+			return GroupStudentStatuses::count([
+				"condition" => "id_student=" . $this->id . " AND id_group=" . $id_group . " AND id_status=" . GroupStudentStatuses::AGREED
+			]) > 0 ? true : false;
+		}
+		
 		/**
 		 * Сколько номеров установлено.
 		 * 
@@ -400,7 +407,7 @@
 		 * $id_group -- для нахождения красных кирпичиков. если есть в группах кроме group_id
 		 * 
 		 */
-		public function getGroupFreetime($id_group)
+		public function getGroupFreetime($id_group, $id_branch = false)
 		{
 			$Freetime = Freetime::findAll([
 				"condition"	=> "id_student=" . $this->id
@@ -439,13 +446,111 @@
 					}
 				}
 			}
-						
-			return [
+			
+			$return = [
 				"freetime" 			=> $return,
 				"freetime_red"		=> $return_red,
 				"freetime_red_half" => $return_red_half,
 			];
+			
+			if ($id_branch) {
+				$orange = self::getOrange($id_group, $id_branch, $this->id, $return_red_half, $return_red);
+				$return['freetime_orange'] 		= $orange['half'];
+				$return['freetime_orange_full'] = $orange['full'];
+			}
+			
+			return $return;
 		}
+		
+		public static function getOrange($id_group, $id_branch, $id_student, $freetime_red, $freetime_red_full)
+		{
+			foreach (Freetime::$weekdays as $day => $schedule) {
+				foreach ($schedule as $time) {
+					// текущий кирпич не должен быть занят в другой группе у этого преподавателя
+					if (!$time || in_array($time, $freetime_red[$day])) {
+						continue;		
+					}
+					
+					// текущий кирпич обязательно должен соседствовать с красным кирпичом в рамках одного дня
+					$red_neighbour = false;
+					
+					$current_index = array_search($time, Freetime::$weekdays[$day]);
+					
+					# проверяем следующий день
+					$red_neighbour_right 		= false;
+					$red_neighbour_right_data 	= false;
+					if ($current_index < 3) {
+						$red_neighbour_right = in_array(Freetime::$weekdays[$day][$current_index + 1], $freetime_red[$day]);
+						if ($red_neighbour_right) {
+							// сохраняем данные найденного справа красного кирпича
+							$red_neighbour_right_data = [
+								"day" 	=> $day,
+								"time"	=> Freetime::$weekdays[$day][$current_index + 1],
+							];
+						}
+					}
+					
+					# проверяем предыдущий день
+					$red_neighbour_left 	= false;
+					$red_neighbour_left_data= false;
+					if ($current_index > 0) {
+						$red_neighbour_left = in_array(Freetime::$weekdays[$day][$current_index - 1], $freetime_red[$day]);
+						if ($red_neighbour_left) {
+							// сохраняем данные найденного слева красного кирпича
+							$red_neighbour_left_data = [
+								"day" 	=> $day,
+								"time"	=> Freetime::$weekdays[$day][$current_index - 1],
+							];
+						}
+					}
+					// если нашелся красный сосед, идем дальше
+					if ($red_neighbour_left || $red_neighbour_right) {
+						// филиал текущей группы должен отличаться от филиала группы соседствующего красного кирпича
+						if ($red_neighbour_left) {
+							$is_orange = self::_branchDifferent($id_group, $id_branch, $id_student, $red_neighbour_left_data['day'], $red_neighbour_left_data['time']);
+							
+							if ($is_orange) {
+								if (in_array(Freetime::$weekdays[$day][$current_index - 1], $freetime_red_full[$day])) {
+									$return_full[$day][] = $time; // добавляем оранжевое время	
+								} else {
+									$return_half[$day][] = $time; // добавляем оранжевое время	
+								}
+								continue;
+							}
+						}
+						
+						// филиал текущей группы должен отличаться от филиала группы соседствующего красного кирпича
+						if ($red_neighbour_right) {
+							$is_orange = self::_branchDifferent($id_group, $id_branch, $id_student, $red_neighbour_right_data['day'], $red_neighbour_right_data['time']);
+							if ($is_orange) {
+								if (in_array(Freetime::$weekdays[$day][$current_index + 1], $freetime_red_full[$day])) {
+									$return_full[$day][] = $time; // добавляем оранжевое время	
+								} else {
+									$return_half[$day][] = $time; // добавляем оранжевое время	
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			return [
+				"half" 	=> $return_half,
+				"full"	=> $return_full,
+			];
+		}
+		
+		// подфункция проверки, что другой филиал
+		private static function _branchDifferent($id_group, $id_branch, $id_student, $day, $time)
+		{
+			return dbConnection()->query("
+				SELECT g.id FROM groups g
+					LEFT JOIN group_time gt ON gt.id_group = g.id
+				WHERE g.id != $id_group AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' 
+					AND CONCAT(',', CONCAT(g.students, ',')) LIKE '%,{$id_student},%'
+			")->num_rows;
+		}
+
 		
 		/**
 		 * Получить метки студента.

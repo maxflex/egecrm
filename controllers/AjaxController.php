@@ -160,6 +160,10 @@
 			// удаляем заявку только если есть дубликаты (если она не единственная)
 			if ($RequestDuplicates) {
 				Request::deleteById($id_request);
+			} else {
+				// иначе удаляем заявку вместе с учеником
+				$_POST["id_student"] = $Request->id_student;
+				self::actionAjaxDeleteStudent();
 			}
 		}
 

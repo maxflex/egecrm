@@ -126,6 +126,47 @@
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
+			$scope.getGroup = (id_group) ->
+				Group = (i for i in $scope.Groups when i.id is id_group)[0]
+				
+			bindGroupsDroppable = ->
+				$(".group-list").droppable
+					tolerance: 'pointer',
+					hoverClass: "request-status-drop-hover",
+					drop: (event, ui) ->
+						id_group	 = $(this).data("id")
+						id_student	 = $(ui.draggable).data("id")
+						
+						Group = $scope.getGroup id_group
+						
+						if id_student in Group.students
+							notifySuccess "Ученик уже в группе"
+						else
+							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}
+							Group.students.push id_student
+							$scope.removeStudent id_student
+							$scope.$apply()
+			
+			$scope.dateToStart = (date) ->
+				date = date.split "."
+				date = date.reverse()
+				date = date.join "-"
+				
+				D = new Date(date)
+				
+				moment().to D
+			
+			$scope.search_groups = 
+				grade: ""
+				id_branch: ""
+				id_subject: ""
+			
+			$scope.groupsFilter = (Group) ->
+				console.log $scope.search_groups.id_teacher, Group, Group.id_teacher
+				return (Group.grade is parseInt($scope.search_groups.grade) or not $scope.search_groups.grade) and 
+					(parseInt($scope.search_groups.id_branch) is Group.id_branch or not $scope.search_groups.id_branch) and
+					(parseInt($scope.search_groups.id_subject) is Group.id_subject or not $scope.search_groups.id_subject)
+			
 			bindDraggable = ->
 				$(".student-line").draggable
 					helper: 'clone'
@@ -163,6 +204,13 @@
 			$scope.dayAndTime = ->
 				lightBoxShow "freetime"
 			
+			rebindBlinking = ->
+				blinking = $(".blink")
+				blinking.removeClass "blink"
+				setTimeout ->
+					blinking.addClass "blink"
+				, 50
+				
 			$scope.dayAndTimeClick = (index, n) ->
 				index++
 				$scope.form_changed = true
@@ -172,11 +220,12 @@
 					$scope.Group.day_and_time[index][n] = ""	
 				else
 # 					console.log "here2", $scope.Group.day_and_time[index][n]
+					# rebind blinking
 					$scope.Group.day_and_time[index][n] = $scope.weekdays[index - 1].schedule[n]
-					console.log $scope.weekdays[index - 1].schedule[n]
 			
 			$scope.saveDayAndTime = ->
 				lightBoxHide()
+				rebindBlinking()
 				$(".save-button").mousedown()
 			
 			initDayAndTime = (day) ->
@@ -199,8 +248,6 @@
 			
 			$scope.justInDayFreetime = (day, time, freetime) ->
 				return false if freetime is undefined or freetime is null
-# 				freetime = objectToArray freetime
-# 				console.log time, freetime, day
 				return $.inArray(time, freetime[day]) >= 0
 			
 			
@@ -315,23 +362,16 @@
 			
 			
 			$scope.inFreetime = (time, Student, day) ->
-# 				console.log Student.id, Student.freetime[$scope.Group.id_branch]
-# 				if $.isArray Student.freetime[$scope.Group.id_branch]
+				return false if Student.freetime is undefined or Student.freetime is null
 				if Student.freetime[$scope.Group.id_branch] is undefined
 					return false if Student.freetime[0] is undefined
 					freetime = Student.freetime[0]
 				else
 					freetime = Student.freetime[$scope.Group.id_branch]
-				
-# 				console.log Student.id, freetime, Student.freetime[$scope.Group.id_branch] is undefined
-									
-# 				initFreetime(Student.freetime, day)
-# 				if Student.freetime[$scope.Group.id_branch].length <= 0 
 				$.inArray(time, freetime[day]) >= 0
 			
 			$scope.inRedFreetime = (time, Student, day) ->
 				return false if Student.freetime_red is null
-# 				initFreetime Student.freetime_red, day
 				$.inArray(time, Student.freetime_red[day]) >= 0	
 			
 				
@@ -409,7 +449,7 @@
 						$scope.form_changed = true
 						$scope.$apply()
 				$.each $scope.TmpStudents, (index, data) ->
-					if data.id is id_student
+					if data isnt undefined and data.id is id_student
 						$scope.TmpStudents.splice index, 1
 							
 			$scope.studentAdded = (id_student) ->
@@ -464,6 +504,19 @@
 					$scope.search.id_branch = $scope.Group.id_branch
 					$scope.$apply()
 					$("#group-branch-filter").selectpicker 'render'
+					
+			$scope.addGroupsPanel = ->
+				$scope.loadGroups() if not $scope.Groups
+				$scope.add_groups_panel = not $scope.add_groups_panel
+				$scope.search_groups.grade = $scope.Group.grade if not $scope.search_groups.grade and $scope.Group.grade
+				$scope.search_groups.id_subject = $scope.Group.id_subject if not $scope.search_groups.id_subject and $scope.Group.id_subject
+# 				$("html, body").animate { scrollTop: $(document).height() }, 1000
+# 				if not $scope.search_groups.id_branch and $scope.Group.id_branch
+# 					$scope.search_groups.id_branch = $scope.Group.id_branch
+# 					$scope.$apply()
+# 					$("#groups-branch-filter").selectpicker 'render'
+			
+			
 			
 			$scope.subjectChange = ->
 				$scope.loadStudents()
@@ -487,6 +540,18 @@
 								Student.id_status = id_status
 								$scope.$apply()
 						$scope.$apply()
+				, "json"
+				
+			$scope.loading_groups = false
+			$scope.loadGroups = ->
+				return if not $scope.Group.id
+				$scope.Groups = false
+				$scope.loading_groups = true
+				$.post "groups/ajax/getGroups", {}, (response) ->
+						$scope.loading_groups = false
+						$scope.Groups = response
+						$scope.$apply()
+						bindGroupsDroppable()
 				, "json"
 			
 			angular.element(document).ready ->
@@ -546,16 +611,19 @@
 				grade: ""
 				id_branch: ""
 				id_subject: ""
-			
+				id_teacher: ""
+				
 			$scope.search2 = 
 				grades: []
 				branches: []
 				id_subject: ""
 			
 			$scope.groupsFilter = (Group) ->
+				console.log $scope.search.id_teacher, Group, Group.id_teacher
 				return (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and 
 					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
-					(parseInt($scope.search.id_subject) is Group.id_subject or not $scope.search.id_subject)
+					(parseInt($scope.search.id_subject) is Group.id_subject or not $scope.search.id_subject) and
+					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher)
 			
 			$scope.groupsFilter2 = (Group) ->
 				# return empty 

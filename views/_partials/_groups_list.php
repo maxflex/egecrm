@@ -10,10 +10,7 @@
 			<span ng-show="Group.id_branch" ng-bind-html="Group.branch | to_trusted" ng-class="{'mr3' : !$last}"></span>
 		</td>
 		<td width="210">
-			{{Subjects[Group.id_subject]}} {{Group.is_special ? "(спецгруппа)" : ""}}
-		</td>
-		<td>
-			{{Grades[Group.grade]}}
+			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}} {{Group.is_special ? "(спец.)" : ""}}
 		</td>
 		<td>
 			{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
@@ -41,6 +38,11 @@
 			<span ng-show="Group.Teacher">
 				{{Group.Teacher.last_name}}
 				{{Group.Teacher.first_name[0]}}. {{Group.Teacher.middle_name[0]}}.
+			</span>
+		</td>
+		<td>
+			<span ng-show="!Group.open" class="half-black">
+				набор закрыт
 			</span>
 		</td>
 <!--
