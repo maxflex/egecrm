@@ -167,6 +167,15 @@ angular.module("Group", []).filter('to_trusted', [
       "schedule": ["11:00", "13:30", "16:00", "18:30"]
     }
   ];
+  $scope.$watch('Group.open', function(newValue, oldValue) {
+    console.log(newValue);
+    if (parseInt(newValue) === 0) {
+      return $(".selectpicker").first().css("background", "#eee");
+    } else {
+      return $(".selectpicker").first().css("background", "white");
+    }
+  });
+  $scope.smsDialog2 = smsDialog2;
   $scope.getGroup = function(id_group) {
     var Group, i;
     return Group = ((function() {
@@ -228,6 +237,9 @@ angular.module("Group", []).filter('to_trusted', [
       revertDuration: 0,
       revert: function(valid) {
         var id_student;
+        if ($scope.Group.open === "0") {
+          return;
+        }
         if (!valid) {
           id_student = $(this).data("id");
           $scope.removeStudent(id_student);
@@ -441,6 +453,9 @@ angular.module("Group", []).filter('to_trusted', [
     return $.inArray(time, Student.freetime_red[day]) >= 0;
   };
   $scope.setStudentStatus = function(Student, event) {
+    if ($scope.Group.open === "0") {
+      return false;
+    }
     $(event.target).hide();
     $(".student-status-select-" + Student.id).show(0, function() {
       $(this).simulate('mousedown');
@@ -449,6 +464,9 @@ angular.module("Group", []).filter('to_trusted', [
     return false;
   };
   $scope.setTeacherStatus = function(Teacher, event) {
+    if ($scope.Group.open === "0") {
+      return false;
+    }
     $(event.target).hide();
     $(".teacher-status-select-" + Teacher.id).show(0, function() {
       $(this).simulate('mousedown');
@@ -683,6 +701,7 @@ angular.module("Group", []).filter('to_trusted', [
   });
   $(document).ready(function() {
     emailMode(2);
+    smsMode(2);
     bindDraggable();
     return $("#group-edit").on('keyup change', 'input, select, textarea', function() {
       $scope.form_changed = true;

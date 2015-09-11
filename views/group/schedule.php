@@ -4,10 +4,12 @@
 		Расписание группы №<?= $Group->id ?>
 		<span class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
 		<div class="pull-right">
-			<span class="link-reverse pointer" ng-click="setTimeFromGroup(Group)" ng-show="Group.Schedule.length && Group.start">установить время занятия из настроек группы</span>
+			<span class="link-reverse pointer" ng-click="setTimeFromGroup(Group)" ng-show="Group.Schedule.length && Group.start" 
+				ng-hide="Group.open == 0">установить время занятия из настроек группы</span>
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
+		<div style="position: absolute; height: 100%; width: 100%; z-index: 20" ng-show="Group.open == 0"></div>
 		<div class="row calendar">
 			<div class="col-sm-5">
 				<div class="row calendar-row" ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]">

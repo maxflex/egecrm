@@ -34,6 +34,12 @@
 				$(".email-group-controls").show()
 				$(".email-template-list").hide()
 	
+	smsMode = (mode) ->
+		$("#sms-mode").val mode
+		switch mode
+			when 2
+				$(".sms-group-controls").show()
+	
 	ajaxStart = (element = false) ->
 		if element isnt false
 			$(".ajax-#{element}-button").attr("disabled", "disabled")

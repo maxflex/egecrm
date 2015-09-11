@@ -126,6 +126,15 @@
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
+			$scope.$watch 'Group.open', (newValue, oldValue) ->
+				console.log newValue
+				if parseInt(newValue) is 0
+					$(".selectpicker").first().css "background", "#eee"
+				else
+					$(".selectpicker").first().css "background", "white"
+			
+			$scope.smsDialog2 = smsDialog2
+			
 			$scope.getGroup = (id_group) ->
 				Group = (i for i in $scope.Groups when i.id is id_group)[0]
 				
@@ -172,6 +181,7 @@
 					helper: 'clone'
 					revertDuration: 0
 					revert: (valid) ->
+						return if $scope.Group.open == "0"
 						if not valid
 							id_student = $(this).data "id"
 							$scope.removeStudent id_student
@@ -376,6 +386,7 @@
 			
 				
 			$scope.setStudentStatus = (Student, event) ->
+				return false if $scope.Group.open == "0"
 				$(event.target).hide()
 				$(".student-status-select-#{Student.id}").show 0, ->
 					$(@).simulate 'mousedown'
@@ -383,6 +394,7 @@
 				return false
 			
 			$scope.setTeacherStatus = (Teacher, event) ->
+				return false if $scope.Group.open == "0"
 				$(event.target).hide()
 				$(".teacher-status-select-#{Teacher.id}").show 0, ->
 					$(@).simulate 'mousedown'
@@ -568,6 +580,7 @@
 				
 			$(document).ready ->
 				emailMode 2
+				smsMode 2
 				bindDraggable()
 				$("#group-edit").on 'keyup change', 'input, select, textarea', ->
 					$scope.form_changed = true

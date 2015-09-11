@@ -3,14 +3,14 @@
 	<div class="panel-heading">
 		<?= $Group->id ? "Группа {$Group->id} " . ($Group->is_special ? "(спецгруппа)" : "") : "Добавление группы" ?>
 		<div class="pull-right">		
-			<span class="link-like link-reverse link-white" ng-click="addGroupsPanel()" style="margin-right: 12px">
+			<span ng-hide="Group.open == 0" class="link-like link-reverse link-white" ng-click="addGroupsPanel()" style="margin-right: 12px">
 					похожие группы</span>							
 			<a class="link-reverse" target="_blank" style="margin-right: 12px"
 				href="requests/relevant?subject={{Group.id_subject}}&branch={{Group.id_branch}}&grade={{Group.grade}}">
 					релевантные заявки</a>
-			<span class="link-like link-reverse link-white" ng-click="emailDialog()" style="margin-right: 12px">
+			<span class="link-like link-reverse link-white" ng-click="smsDialog2(Group.id)" style="margin-right: 12px">
 					групповое сообщение</span>
-			<span class="link-reverse pointer" ng-click="deleteGroup(Group.id)" ng-show="Group.id">удалить группу</span>
+			<span class="link-reverse pointer" ng-click="deleteGroup(Group.id)" ng-show="Group.id" ng-hide="Group.open == 0">удалить группу</span>
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
@@ -146,7 +146,7 @@
 						</tr>
 					</table>
 					<div style="margin: 15px 16px">
-						<div class="link-like small link-reverse" ng-hide="!Group.id" style="display: inline-block; margin-right: 7px" 
+						<div class="link-like small link-reverse" ng-hide="!Group.id || Group.open == '0'" style="display: inline-block; margin-right: 7px" 
 								ng-click="addClientsPanel()">добавить ученика</div>
 					</div>
 					<img ng-hide="Students || !Group.id || true" src="img/svg/loading-bubbles.svg" style="margin: 15px 16px">
@@ -162,11 +162,11 @@
 						<?= Subjects::buildSelector(false, false, [
 							"ng-model" => "Group.id_subject", 
 							"ng-change" => "subjectChange()",
-							"ng-disabled" => "loading_students",
+							"ng-disabled" => "loading_students || Group.open == 0",
 						]) ?>
 					</div>
 					<div class="form-group">
-						<select class="form-control" ng-model="Group.id_teacher" ng-change="changeTeacher()">
+						<select class="form-control" ng-model="Group.id_teacher" ng-change="changeTeacher()" ng-disabled="Group.open == 0">
 							<option selected value="">преподаватель</option>
 							<option disabled>──────────────</option>
 							<option ng-repeat="Teacher in Teachers | filter:teachersFilter" value="{{Teacher.id}}" ng-selected="Teacher.id == Group.id_teacher">
@@ -186,12 +186,13 @@
 			                Branches::buildSvgSelector($Group->id_branch, [
 				                "id"		=> "group-branch", 
 				                "ng-model"	=> "Group.id_branch", 
-				                "ng-change"	=> "changeBranch()"
+				                "ng-change"	=> "changeBranch()",
+				                "ng-disabled" =>"Group.open == 0",
 			                ]) 
 			            ?>
 		            </div>
 					<div class="form-group">
-		                <?= Grades::buildSelector(false, false, ["ng-model" => "Group.grade"]) ?>
+		                <?= Grades::buildSelector(false, false, ["ng-model" => "Group.grade",  "ng-disabled" => "Group.open == 0"]) ?>
 		            </div>
 		            <div class="form-group">
 							<select class="form-control" ng-model="Group.cabinet" ng-show="Group.id_branch" 
@@ -203,12 +204,14 @@
 							</select>
 		            </div>
 		            <div class="form-group">
-			            <input class="form-control bs-date" ng-model="Group.expected_launch_date" placeholder="ожидаемая дата запуска">
+			            <input  ng-disabled="Group.open == 0" class="form-control bs-date" 
+			            	ng-model="Group.expected_launch_date" placeholder="ожидаемая дата запуска">
 		            </div>
 		            <div class="form-group">
 			            <?php if ($Group->id): ?>
 				            <a class="pull-left small link-reverse" style="margin-top: 5px" href="groups/edit/<?= $Group->id ?>/schedule">расписание</a>
-				            <span class="pull-right small link-like link-reverse" style="margin-top: 5px" ng-click="dayAndTime()">день и время занятий</a>
+				            <span ng-hide="Group.open == 0" class="pull-right small link-like link-reverse" 
+				            	style="margin-top: 5px" ng-click="dayAndTime()">день и время занятий</a>
 				        <?php endif ?>
 		            </div>
 				</div>

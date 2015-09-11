@@ -1,4 +1,4 @@
-<div ng-show="add_groups_panel" class="row">
+<div ng-show="add_groups_panel && Group.open == 1" class="row">
 		<hr>
 		<div class="col-sm-12">
 			<div class="row" style="margin-bottom: 15px">
