@@ -3,14 +3,84 @@
 	        return (text) ->
 	            return $sce.trustAsHtml(text)
 		]
+		.filter 'orderByDayNumber', () ->
+			return (items, field, reverse) ->
+				console.log items, field, reverse
+				filtered = []
+				angular.forEach items, (item) ->
+					filtered.push(item)
+				filtered.sort (a, b) ->
+					return if a[field] > b[field] then 1 else -1
+				if reverse then filtered.reverse()
+				return filtered
 		.filter 'range', () ->
 			return (input, total) ->
 				total = parseInt total
 				for i in [0...total] by 1
 					input.push i
 				input
+		.controller "LessonCtrl", ($scope) ->
+			$scope.formatDate = (date) ->
+				date = date.split "."
+				date = date.reverse()
+				date = date.join "-"
+				D = new Date(date)
+				moment(D).format "D MMMM YYYY г."
+				
+			$scope.editStudent = (Student) ->
+				$scope.EditStudent = Student
+				$scope.EditLessonData = angular.copy $scope.LessonData[$scope.EditStudent.id]
+				clearSelect()
+				lightBoxShow 'edit-student'
+			
+			$scope.saveStudent = ->
+				$scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData
+				$scope.form_changed = true
+				lightBoxHide()
+			
+			$scope.registerInJournal = ->
+				bootbox.confirm "Регистрировать запись в журнал?", (result) ->
+					if result is true
+						ajaxStart()
+						$.post "groups/ajax/registerInJournal",
+							id_group: 	$scope.id_group
+							date:		$scope.date
+							data:		$scope.LessonData
+						, (response) ->
+							ajaxEnd()
+							$scope.registered_in_journal = true
+							# $scope.form_changed = false
+							$scope.$apply()
+			
+			$scope.form_changed = false
+			$scope.save = ->
+				ajaxStart()
+				$.post "groups/ajax/SaveLessonData",
+					id_group: 	$scope.id_group
+					date:		$scope.date
+					data:		$scope.LessonData
+				, (response) ->
+					ajaxEnd()
+					$scope.form_changed = false
+					$scope.$apply()
+			
+			angular.element(document).ready ->
+				set_scope "Group"
 		.controller "ScheduleCtrl", ($scope) ->
+			$scope.weekdays = [
+				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
+				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
+				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
+			]
+			
 			$scope.schedulde_loaded = false
+			
+			$scope.formatDate = (date) ->
+				moment(date).format "D MMMM YYYY г."
 			
 			$scope.getLine1 = (Schedule) ->
 				moment(Schedule.date).format "D MMMM YYYY г."
@@ -18,9 +88,12 @@
 			$scope.setTimeFromGroup = (Group) ->
 				$.each $scope.Group.Schedule, (i, v) ->
 					if not v.time
-						v.time = Group.start
-				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id, time: Group.start}
+						v.time = Group.default_time
+				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id, time: Group.default_time}
 				$scope.$apply()
+			
+			$scope.lessonCount = ->
+				Object.keys($scope.Group.day_and_time).length
 			
 			$scope.setTime = (Schedule, event) ->
 				$(event.target).hide()
@@ -55,9 +128,12 @@
 				endDate: moment(current_date).endOf("month").toDate()
 				multidate: true
 				beforeShowDay: (d) ->
+					if moment(d).format("YYYY-MM-DD") in $scope.past_lesson_dates 
+						add_class = 'was-lesson'
 					if moment(d).format("YYYY-MM-DD") in $scope.vocation_dates 
-						'vocation'
-				
+						add_class += ' vocation'
+					add_class
+					
 			$scope.monthName = (month) ->
 				moment().month(month - 1).format "MMMM"
 			
@@ -386,7 +462,7 @@
 			
 				
 			$scope.setStudentStatus = (Student, event) ->
-				return false if $scope.Group.open == "0"
+				return false if parseInt($scope.Group.open) is 0
 				$(event.target).hide()
 				$(".student-status-select-#{Student.id}").show 0, ->
 					$(@).simulate 'mousedown'
@@ -394,7 +470,7 @@
 				return false
 			
 			$scope.setTeacherStatus = (Teacher, event) ->
-				return false if $scope.Group.open == "0"
+				return false if parseInt($scope.Group.open) is 0
 				$(event.target).hide()
 				$(".teacher-status-select-#{Teacher.id}").show 0, ->
 					$(@).simulate 'mousedown'
@@ -615,6 +691,62 @@
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
+			$scope.changeBranch = ->
+				$("#group-cabinet").attr "disabled", "disabled"
+				ajaxStart()
+				$.post "groups/ajax/getCabinet", {id_branch: $scope.search.id_branch}, (cabinets) ->
+					ajaxEnd()
+					$scope.Cabinets = cabinets
+					$scope.search.cabinet = 0
+					$("#group-cabinet").removeAttr "disabled"
+					
+					$scope.$apply()
+					clearSelect()
+				, "json"
+			
+			
+			$scope.order_reverse = false
+			$scope.orderByTime = ->
+				$scope.Groups.sort (a, b) ->
+					day_index_1 = Object.keys(a.day_and_time)[0]
+					day_index_2 = Object.keys(b.day_and_time)[0]
+					
+					if day_index_1 is undefined
+						day_index_1 = -1
+					
+					if day_index_2 is undefined
+						day_index_2 = -1
+					
+					if day_index_1 > day_index_2
+						return 1
+					else if day_index_2 > day_index_1
+						return -1
+					else
+						a.day_and_time[day_index_1] = initIfNotSet a.day_and_time[day_index_1]
+						b.day_and_time[day_index_2] = initIfNotSet b.day_and_time[day_index_2]
+						
+						a.day_and_time[day_index_1] = objectToArray a.day_and_time[day_index_1]
+						b.day_and_time[day_index_2] = objectToArray b.day_and_time[day_index_2]
+						
+						if a.day_and_time[day_index_1] > b.day_and_time[day_index_2]
+							return 1
+						else
+							return -1
+				
+				if $scope.order_reverse
+					$scope.Groups.reverse()
+				
+				$scope.order_reverse = !$scope.order_reverse
+			
+			$scope.orderByStudentCount = ->
+				$scope.Groups.sort (a, b) ->
+					a.students.length - b.students.length
+					
+				if $scope.order_reverse
+					$scope.Groups.reverse()
+				
+				$scope.order_reverse = !$scope.order_reverse			
+			
 			$scope.inDayAndTime2 = (time, freetime) ->
 				return false if freetime is undefined
 				freetime = objectToArray freetime
@@ -625,6 +757,7 @@
 				id_branch: ""
 				id_subject: ""
 				id_teacher: ""
+				cabinet: 0
 				
 			$scope.search2 = 
 				grades: []
@@ -632,14 +765,13 @@
 				id_subject: ""
 			
 			$scope.groupsFilter = (Group) ->
-				console.log $scope.search.id_teacher, Group, Group.id_teacher
 				return (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and 
 					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
 					(parseInt($scope.search.id_subject) is Group.id_subject or not $scope.search.id_subject) and
-					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher)
+					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher) and
+					(parseInt($scope.search.cabinet) is parseInt(Group.cabinet) or not parseInt($scope.search.cabinet))
 			
 			$scope.groupsFilter2 = (Group) ->
-				# return empty 
 				return true if not Group.hasOwnProperty "grade"
 				
 				return (String(Group.grade) in $scope.search2.grades or $scope.search2.grades.length == 0) and 
@@ -647,6 +779,7 @@
 					(Group.subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject)
 			
 			$scope.dateToStart = (date) ->
+				return "" if date is null
 				date = date.split "."
 				date = date.reverse()
 				date = date.join "-"

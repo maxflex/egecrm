@@ -70,7 +70,9 @@
 	
 	require_once 'extentions/PhpWord/Autoloader.php';
 	\PhpOffice\PhpWord\Autoloader::register();	
-		
+	
+	require_once 'extentions/NCL.NameCase.ru.php';
+			
 	require_once("models/Model.php");			// Подключаем основную модель
 	require_once("controllers/Controller.php");	// Подключаем основной контроллер
 	

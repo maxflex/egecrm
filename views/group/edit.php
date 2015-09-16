@@ -103,7 +103,7 @@
 									target="_blank">ЕР</a>
 							</td>
 							<td  style="width: 150px !important">
-								<span class="label group-student-status{{Group.teacher_status}} t-s-s teacher-status-span-{{Group.id_teacher}}"
+								<span class="label group-teacher-status{{Group.teacher_status}} t-s-s teacher-status-span-{{Group.id_teacher}}"
 									ng-click="setTeacherStatus(getTeacher(Group.id_teacher), $event)">
 									{{Group.teacher_status ? GroupTeacherStatuses[Group.teacher_status] : "статус"}}
 								</span>
@@ -196,16 +196,26 @@
 		            </div>
 		            <div class="form-group">
 							<select class="form-control" ng-model="Group.cabinet" ng-show="Group.id_branch" 
-								ng-change="changeCabinet()" id="group-cabinet" ng-disabled="Cabinets.length == 1 && Group.cabinet">
+								ng-change="changeCabinet()" id="group-cabinet" ng-disabled="(Cabinets.length == 1 && Group.cabinet) || Group.open == 0">
 								<option selected value="0">№ кабинета</option>
 								<option disabled>──────────────</option>
-								<option ng-repeat="Cabinet in Cabinets" 
-									ng-value="Cabinet.id" ng-selected="Group.cabinet == Cabinet.id">Кабинет №{{Cabinet.number}}</option>
+								<option ng-repeat="Cabinet in Cabinets" ng-value="Cabinet.id" 
+									ng-selected="Group.cabinet == Cabinet.id">Кабинет №{{Cabinet.number}}</option>
 							</select>
 		            </div>
 		            <div class="form-group">
 			            <input  ng-disabled="Group.open == 0" class="form-control bs-date" 
 			            	ng-model="Group.expected_launch_date" placeholder="ожидаемая дата запуска">
+		            </div>
+		            <div class="form-group">
+			            <input  ng-disabled="Group.open == 0" class="form-control digits-only" 
+			            	ng-model="Group.teacher_price" placeholder="цена преподавателя">
+		            </div>
+		            <div class="form-group">
+			           <?= GroupLevels::buildSelector(false, false, [
+				        	"ng-model" 		=> "Group.level",
+				        	"ng-disabled"   => "Group.open == 0",
+				        ]) ?>
 		            </div>
 		            <div class="form-group">
 			            <?php if ($Group->id): ?>

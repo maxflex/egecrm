@@ -16,6 +16,10 @@
 			lightBoxHide();
 		})
 		
+		$(".question").children("span").on("click", function() {
+			$(this).parent().children("div").slideToggle();
+		});
+		
 		// Предотвращаем пустой поиск
 		$("#global-search").submit(function() {
 			if (!$("#global-search-text").val()) {
@@ -99,6 +103,10 @@
 		$("#sms-message").val(template).keyup()
 	}
 	
+	function loginPasswordTemplate(id_template) {
+		text = "Ваш логин: " + ang_scope.Teacher.login + "\nВаш пароль: " + ang_scope.Teacher.password
+		$("#sms-message").val(text).keyup()
+	}
 	
 	function generateEmailTemplate()
 	{

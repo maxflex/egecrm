@@ -30,6 +30,19 @@
 			self::COMPUTER	=> "информатика",
 		];
 		
+		static $dative = [
+			self::MATH 		=> "математике",
+			self::PHYSICS	=> "физике",
+			self::RUSSIAN	=> "русскому языку",
+			self::LITERATURE=> "литературе",
+			self::ENGLISH	=> "английскому языку",
+			self::HISTORY	=> "истории",
+			self::SOCIETY	=> "обществознанию",
+			self::CHEMISTRY	=> "химии",
+			self::BIOLOGY	=> "биологии",
+			self::COMPUTER	=> "информатике",
+		];
+		
 		static $short = [
 			self::MATH 		=> "М",
 			self::PHYSICS	=> "Ф",

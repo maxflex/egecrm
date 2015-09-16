@@ -21,6 +21,7 @@
 				<span onclick="smsTemplate(1)">подтверждение договоренности</span>
 				<span onclick="smsTemplate(2)">нет связи с клиентом</span>
 				<span onclick="smsTemplate(3)">нет связи с ожидающими и не решившими</span>
+				<span onclick="loginPasswordTemplate()">логин/пароль</span>
 				
 				<div class="sms-group-controls" style="float: right; display: none">
 					<span style="margin-right: 7px; color: black; border-bottom: none">
@@ -96,7 +97,7 @@
 
 <div class="row">
   <div class="col-sm-2" style="margin-left: 10px">
-	  <div <?php if (User::fromSession()->id == 69) :?>class="fixed-menu"<?php endif ?>>
+	  <div>
 	  		<form id="global-search" action="search" method="post" style="margin-bottom: 10px">
 		<div class="input-group">
 		  <input id="global-search-text" type="text" class="form-control" placeholder="Поиск..." name="text" value="<?= $_POST["text"] ?>">

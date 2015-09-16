@@ -1,16 +1,25 @@
+<?php
+	/*
+		Передать:
+			* GroupLevels
+			* Subjects::$three_letters
+			* dateToStart()
+	*/	
+?>
 <table class="table table-divlike" style="position: relative">
 	<?php if ($loading) :?>
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
 	<?php endif ?>
-	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?> " class="group-list" data-id="{{Group.id}}">
-		<td>
-			<a href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
+	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?>" 
+		class="group-list" data-id="{{Group.id}}">
+		<td width="100">
+			<a href="groups/edit/{{Group.id}}<?= User::isTeacher() || User::isStudent() ? "/schedule" : "" ?>">Группа №{{Group.id}}</a>
 		</td>
 		<td>
 			<span ng-show="Group.id_branch" ng-bind-html="Group.branch | to_trusted" ng-class="{'mr3' : !$last}"></span>
 		</td>
-		<td width="210">
-			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}} {{Group.is_special ? "(спец.)" : ""}}
+		<td width="150">
+			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + GroupLevels[Group.level] : ''}}{{Group.is_special ? " (спец.)" : ""}}
 		</td>
 		<td>
 			{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
@@ -38,6 +47,11 @@
 			<span ng-show="Group.Teacher">
 				{{Group.Teacher.last_name}}
 				{{Group.Teacher.first_name[0]}}. {{Group.Teacher.middle_name[0]}}.
+			</span>
+		</td>
+		<td>
+			<span class="label group-teacher-status<?= GroupTeacherStatuses::AGREED ?>" ng-show="Group.teacher_agreed">
+				<?= GroupTeacherStatuses::$all[GroupTeacherStatuses::AGREED] ?>
 			</span>
 		</td>
 		<td>

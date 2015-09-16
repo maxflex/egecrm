@@ -3,14 +3,52 @@
 	{
 		const SALT 					= "32dg9823dldfg2o001-2134>?erj&*(&(*^";	// Для генерации кук
 		
+		const USER_TYPE = "USER";
+		
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "users";
+		
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 	
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
+		
+		public static function isTeacher($return_string = false)
+		{
+			$return = User::fromSession()->type == Teacher::USER_TYPE;
+			
+			if ($return_string) {
+				return $return ? 'true' : 'false';
+			} else {
+				return $return;
+			}
+		}
+		
+		public static function isStudent($return_string = false)
+		{
+			$return = User::fromSession()->type == Student::USER_TYPE;
+			
+			if ($return_string) {
+				return $return ? 'true' : 'false';
+			} else {
+				return $return;
+			}
+		}
+		
+		public static function getLoginCount($id_entity, $type)
+		{
+			$Entity = self::find([
+				"condition" => "id_entity = $id_entity AND type='$type'"
+			]);
+			
+			if ($Entity) {
+				return $Entity->login_count;
+			} else {
+				return 0;
+			}
+		}
 		
 		// Получить пользователей из кеша
 		public static function getCached()
@@ -53,26 +91,6 @@
 			return $password;
 		}
 		
-		/*
-		 * Функция определяет соединение БД
-		 */
-		public static function dbConnection()
-		{
-			// Открываем соединение с основной БД		
-			$db_repetitors = new mysqli(DB_HOST, DB_LOGIN, DB_PASSWORD, DB_PREFIX."repetitors");
-			
-			// Установлено ли соединение
-			if (mysqli_connect_errno($db_repetitors))
-			{
-				die("Failed to connect to USER {$id_user} MySQL: " . mysqli_connect_error());
-			}
-			
-			// Устанавливаем кодировку
-			$db_repetitors->set_charset("utf8");
-			
-			return $db_repetitors;	
-		}
-		
 		
 		/**
 		 * Список пользователей.
@@ -104,6 +122,9 @@
 		 */
 		public static function rememberMeLogin()
 		{
+			if (User::loggedIn()) {
+				return true;
+			}
 			// Кука токена хранится в виде: 
 			// 1) Первые 16 символов MD5-хэш
 			// 2) Остальные символы – id_user (код пользователя)
@@ -128,6 +149,11 @@
 				
 					// Логинимся (не обновляем токен, создаем сессию)
 					$RememberMeUser->toSession(false, true);
+					
+					if ($RememberMeUser->isStudent() || $RememberMeUser->isTeacher()) {
+						$RememberMeUser->login_count++;
+						$RememberMeUser->save("login_count");
+					}
 					
 					return true;
 				} else {
@@ -165,8 +191,22 @@
 			// Возвращаем пользователя
 			return $User;
 		}	
+		
+		public static function findTeacher($id_teacher)
+		{
+			return self::find([
+				"condition" => "id_entity=$id_teacher AND type='" . Teacher::USER_TYPE . "'"
+			]);
+		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
+		
+		public function beforeSave()
+		{
+			if ($this->isNewRecord) {
+				$this->password = self::password($this->password);	
+			}
+		}
 		
 		/*
 		 * Вход/запись пользователя в сессию

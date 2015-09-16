@@ -12,7 +12,8 @@
 		public static $_phone_fields = ["phone", "phone2", "phone3"];
 		
 		// тип маркера
-		const MARKER_OWNER = "STUDENT";
+		const MARKER_OWNER 	= "STUDENT";
+		const USER_TYPE		= "STUDENT";
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
@@ -75,6 +76,48 @@
 			return $query->num_rows;
 		}
 		
+		/**
+		 * Посчитать студентов с действующими договорами.
+		 * 
+		 * $only_active - только активные договоры
+		 */
+		public static function countWithActiveContract()
+		{
+			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true AND cancelled=0 " 
+				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+			
+			return $query->num_rows;
+		}
+		
+		
+		/**
+		 * Получает всех преподавателей, с которым у ученика когда-либо были занятия.
+		 * 
+		 */
+		public static function getExistedTeachers($id_student)
+		{
+			$VisitJournal = VisitJournal::findAll([
+				"condition" => "id_entity=$id_student AND type_entity='" . self::USER_TYPE . "'",
+				"group"		=> "id_entity"
+			]);
+		}
+		
+		/**
+		 * Количество человеко-предметов, не прикрепленных к группе. 
+		 	(по каждому предмету в действующем договоре должна быть группа, если нет, то +1)
+		 * 
+		 */
+		public static function countSubjectsWithoutGroup()
+		{
+			return dbConnection()->query("
+				SELECT s.id FROM students s
+					LEFT JOIN contracts c on c.id_student = s.id
+					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', s.id ,',%'))
+					WHERE c.id IS NOT NULL AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
+			")->num_rows;
+		}
+		
 		
 		public static function getWithContractByBranch($id_branch)
 		{
@@ -94,6 +137,7 @@
 				"condition"	=> "id IN (". implode(",", $ids) .")"
 			]);
 		}
+		
 		
 		/**
 		 * Получить студентов с договорами.
@@ -116,7 +160,7 @@
 				"condition"	=> "id IN (". implode(",", $ids) .")"
 			]);
 		}
-		
+
 		/**
 		 * Последний id договора активный
 		 */
@@ -232,6 +276,13 @@
 			]) > 0 ? true : false;
 		}
 		
+		public function agreedToBeInGroupStatic($id_student, $id_group)
+		{
+			return GroupStudentStatuses::count([
+				"condition" => "id_student=" . $id_student . " AND id_group=" . $id_group . " AND id_status=" . GroupStudentStatuses::AGREED
+			]) > 0 ? true : false;
+		}
+		
 		/**
 		 * Сколько номеров установлено.
 		 * 
@@ -266,11 +317,24 @@
 			]);	
 		}
 		
+		public static function getGroupsStatic($id_student)
+		{
+			return Group::findAll([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
+			]);
+		}
 		
 		public function getGroups()
 		{
 			return Group::findAll([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
+			]);
+		}
+		
+		public function countGroupsStatic($id_student)
+		{
+			return Group::count([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
 			]);
 		}
 		

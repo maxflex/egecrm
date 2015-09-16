@@ -241,12 +241,12 @@
 			return self::metroSvg($id_branch) .  self::getById($id_branch);
 		}
 		
-		public static function getShortColoredById($id_branch) 
+		public static function getShortColoredById($id_branch, $additional = false) 
 		{
 			$name = self::$short[$id_branch];
 			
 			return "<span class='label label-metro-short' style='background: ". self::metroSvg($id_branch, false, true) . "'>" 
-				. $name . "</span>";
+				. $name . ($additional ? $additional : "") . "</span>";
 		}
 		
 		

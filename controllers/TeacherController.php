@@ -20,6 +20,10 @@
 			
 			$Teachers = Teacher::findAll();
 			
+			foreach ($Teachers as &$Teacher) {
+				$Teacher->login_count = User::getLoginCount($Teacher->id, Teacher::USER_TYPE);
+			}
+			
 			$ang_init_data = angInit([
 				"Teachers" => $Teachers,
 				"subjects" => Subjects::$short,
@@ -46,6 +50,9 @@
 				$this->setTabTitle("Редактирование преподавателя №{$id_teacher}");
 				$this->setRightTabTitle("<span class='link-reverse pointer' onclick='deleteTeacher($id_teacher)'>удалить преподавателя</span>");
 				$Teacher = Teacher::findById($id_teacher);
+				$Teacher->Reviews = Teacher::getReviews($Teacher->id);
+				
+				$Groups = Teacher::getGroups($id_teacher);
 			}
 			
 			$this->addJs("bootstrap-select");
@@ -56,7 +63,9 @@
 				"freetime"		=> $Teacher->getFreetime(),
 				"teacher_phone_level"	=> $Teacher->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
-				"Subjects"	=> Subjects::$all,
+				"Groups"				=> $Groups,
+				"GroupLevels"			=> GroupLevels::$all,
+				"Subjects"	=> Subjects::$three_letters,
 			]);
 			
 			$this->render("edit", [

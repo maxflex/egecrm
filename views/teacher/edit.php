@@ -28,19 +28,7 @@
 		</div>
 		<div class="col-sm-3">
 			<div class="form-group">
-<!--
-				<select class="form-control" ng-model="Teacher.subjects" multiple id="subjects-select">
-					<option selected>предметы</option>
-					<option disabled>──────────────</option>
-					<option ng-repeat="(id_subject, name) in Subjects" value="{{id_subject}}">
-						{{id_subject}}. {{name}}
-					</option>
-				</select>
--->
-	
 				<?= Subjects::buildMultiSelector($Teacher->subjects, ["id" => "subjects-select"]) ?>
-
-					
 			</div>
 			<div class="form-group">
 				<input placeholder="оценка эксперта" ng-model="Teacher.expert_mark" class="form-control">
@@ -77,6 +65,8 @@
 			<textarea class="form-control" ng-model="Teacher.comment" rows="4"></textarea>
 		</div>
 	</div>
+	
+	<?php if ($Teacher->id) :?>
 	<div class="row" style="margin-bottom: 10px" ng-hide="Teacher.branches.length == 0 || Teacher.branches[0] == ''">
 		<div class="col-sm-3">
 		    <h4 style="margin-top: 0" class="row-header">Свободное время</h4>
@@ -96,10 +86,43 @@
 	            <span class="link-like link-reverse small" ng-click="openFreetime()" 
 	            	style="margin-left: 0" ng-hide="!Teacher.branches[0]">редактировать</span>
 	        </div>
-	        
 	    </div>
+		<div class="col-sm-9">
+			<div class="pull-right">
+				Входов: <?= User::getLoginCount($Teacher->id, Teacher::USER_TYPE) ?>
+			</div>
+		</div>
+	</div>
+	<div class="row" style="margin-bottom: 10px">
+		<div class="col-sm-12">
+		    <h4 style="margin-top: 0" class="row-header">{{(Groups && Groups.length > 0) ? 'ГРУППЫ' : 'НЕТ ГРУПП'}}</h4>
+		    <?= globalPartial("groups_list") ?>
+		</div>
 	</div>
 	
+	<div class="row" style="margin-bottom: 10px">
+		<div class="col-sm-12">
+		    <h4 style="margin-top: 0" class="row-header">{{(Teacher.Reviews && Teacher.Reviews.length > 0) ? 'ОТЗЫВЫ' : 'НЕТ ОТЗЫВОВ'}}</h4>
+			
+			<div class="row">
+				<div class="col-sm-12">	
+					<div ng-repeat="Review in Teacher.Reviews" class="clear-sms" style="margin-left: 11px">
+						<div class="from-them">
+							<span>{{Review.comment}}</span>
+							<div style="text-align: right; margin-top: 5px" class="save-coordinates">
+								<a href="student/{{Review.Student.id}}" target="_blank">
+									{{Review.Student.last_name}} {{Review.Student.first_name}}</a>, {{coordinate_time(Review.date)}}<br>
+								Оценка: <b>{{Review.rating}}</b>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+	</div>
+	
+	<?php endif ?>
 	<div class="row" style="margin-top: 10px">
 		<div class="col-sm-12 center">
 	    	<button class="btn btn-primary save-button" ng-disabled="saving || !form_changed" ng-hide="!Teacher.id" style="width: 100px">

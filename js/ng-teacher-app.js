@@ -47,6 +47,17 @@ angular.module("Teacher", ["ngMap"]).filter('to_trusted', [
       "schedule": ["11:00", "13:30", "16:00", "18:30"]
     }
   ];
+  $scope.coordinate_time = function(date) {
+    return moment(date).format("YYYY.MM.DD в HH:mm");
+  };
+  $scope.dateToStart = function(date) {
+    var D;
+    date = date.split(".");
+    date = date.reverse();
+    date = date.join("-");
+    D = new Date(date);
+    return moment().to(D);
+  };
   initFreetime = function(id_branch, day) {
     $scope.freetime = initIfNotSet($scope.freetime);
     $scope.freetime[id_branch] = initIfNotSet($scope.freetime[id_branch]);

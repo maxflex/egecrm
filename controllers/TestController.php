@@ -14,6 +14,40 @@
 //			$this->addJs("ng-test-app");
 		}
 		
+		
+		public function actionGo()
+		{	
+			$Teachers = Teacher::findAll();
+			
+			preType($Teachers);
+			
+			foreach ($Teachers as $Teacher) {
+				$Teacher->save();
+			}
+		}
+		
+		public function actionSetStudentLogin()
+		{
+			$Students = Student::getWithContract();
+			
+			foreach ($Students as $Student) {
+				$Student->Contract 	= $Student->getLastContract();
+				$Student->login 	= $Student->Contract->id;
+				$Student->password	= mt_rand(10000000, 99999999);
+				$Student->save();
+				
+				User::add([
+					"login" 	=> $Student->login,
+					"password"	=> $Student->password,
+					"first_name"	=> $Student->first_name,
+					"last_name"		=> $Student->last_name,
+					"middle_name"	=> $Student->middle_name,
+					"type"			=> Student::USER_TYPE,
+					"id_entity"		=> $Student->id
+				]);
+			}
+		}
+		
 		public function actionCabinetsCheck()
 		{
 			echo "here";

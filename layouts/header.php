@@ -52,6 +52,8 @@
 	<script type="text/javascript" src="js/jquery.iframe-transport.js"></script>
 	<script type="text/javascript" src="js/jquery.fileupload.js"></script>
 	
+	<script type="text/javascript" src="js/underscore.js"></script>
+	
 	<script type="text/javascript" src="js/engine.js?ver=<?= settings()->version ?>"></script>
 	<script type="text/javascript" src="js/functions.js?ver=<?= settings()->version ?>"></script>
 

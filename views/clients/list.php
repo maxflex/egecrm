@@ -54,6 +54,9 @@
 					}"></ng-pluralize>
 				</td>
 				<td>
+					{{Student.login_count}}
+				</td>
+				<td>
 					
 					<div ng-show="Student.Groups" ng-repeat="Group in Student.Groups">
 						<span ng-bind-html="Group.branch | to_trusted" style="position: relative; top: -3px; width: 50px; display: inline-block"></span>

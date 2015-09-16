@@ -25,6 +25,26 @@ body {
 	font-weight: bold;
 }
 
+.teacher-rating {
+	height: 40px;
+	width: 40px;
+	line-height: 39px;
+	text-align: center;
+	border-radius: 50% !important;
+	display: inline-block;
+	border: 1px solid $hr_gray;
+	cursor: pointer;
+	margin: 10px 0;
+	font-weight: bold;
+	&:hover {
+		background-color: $hr_gray;
+	}
+	&.active {
+		background-color: $green !important;
+		color: white !important;
+	}
+}
+
 .fixed-menu {
     width: 16.66666667%;
     position: fixed;
@@ -32,6 +52,41 @@ body {
     padding-right: 15px;
     padding-left: 15px;
     left: 0;
+}
+
+.title-section-1 {
+    line-height: normal;
+    background: #f2f1f1;
+    padding: 12px 0 12px 30px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    margin: 10px 0 15px 0;
+}
+
+.question {
+	margin: 15px 0 0 30px;
+	& span:first-child {
+		cursor: pointer;
+		color: $blue;
+		border-bottom: 1px dashed $blue;
+		&:hover {
+			color: $hover_blue;
+			border-color: $hover_blue;
+		}
+	}
+	& div {
+		display: none;
+		width: 800px;
+		background: #eaf5e5;
+	    padding: 15px 20px 15px 20px;
+	    margin: 5px 0 0 0;
+	    color: #6f8267;
+	    font-size: 14px;
+	    line-height: 20px;
+	    border-radius: 5px;
+	}
 }
 
 .group-freetime-block {
@@ -293,6 +348,34 @@ body {
     cursor: default;
 }
 
+
+.group-teacher-status, .group-teacher-status1 {
+    background-color: white;
+    color: rgba(0, 0, 0, .5);
+    border: 1px solid rgba(0, 0, 0, .5);
+    border-radius: 3px;
+    padding: 1px 4px 2px;
+    cursor: default;
+}
+
+.group-teacher-status2 {
+    background-color: white;
+    color: $orange;
+    border: 1px solid $orange;
+    border-radius: 3px;
+    padding: 1px 4px 2px;
+    cursor: default;
+}
+
+.group-teacher-status3 {
+    background-color: white;
+    color: $blue;
+    border: 1px solid $blue;
+    border-radius: 3px;
+    padding: 1px 4px 2px;
+    cursor: default;
+}
+
 .score-field {
     display: inline-block;
     width: 40px;
@@ -410,6 +493,22 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	//    overflow: hidden;
 	}
 	
+	& .day-explain {
+		border-radius: 50% !important;
+		height: 14px;
+	    width: 14px;
+	    display: inline-block;
+	    background: #5cb85c;
+	    top: 2px;
+	    position: relative;
+	    & .vocation {
+		    background-color: $red !important;
+	    }
+	    & .was-lesson {
+		    background-color: $blue !important;
+	    }
+	}
+	
 	& .day:nth-child(2n + 6), .day:nth-child(2n + 7) {
 		color: #999;
 	}
@@ -467,6 +566,10 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	    right: 19%;
 	    font-weight: bold;
 	}
+	& .was-lesson {
+		background-color: $blue !important;
+		color: white !important;
+	}
 	& .vocation {
 		background-color: $red !important;
 		color: white !important;
@@ -479,6 +582,17 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			background: -ms-linear-gradient(top,  #00b700 0%,#00b700 50%,#ff0039 51%,#ff0039 100%) !important; /* IE10+ */
 			background: linear-gradient(to bottom,  #00b700 0%,#00b700 50%,#ff0039 51%,#ff0039 100%) !important; /* W3C */
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#ff0039',GradientType=0 ); /* IE6-9 */
+		}
+		&.was-lesson {
+			/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#337ab7+0,337ab7+50,ff0039+51,ff0039+100 */
+			background: #337ab7 !important; /* Old browsers */
+			background: -moz-linear-gradient(top,  #337ab7 0%, #337ab7 50%, #ff0039 51%, #ff0039 100%) !important; /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#337ab7), color-stop(50%,#337ab7), color-stop(51%,#ff0039), color-stop(100%,#ff0039)) !important; /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #337ab7 0%,#337ab7 50%,#ff0039 51%,#ff0039 100%) !important; /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #337ab7 0%,#337ab7 50%,#ff0039 51%,#ff0039 100%) !important; /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #337ab7 0%,#337ab7 50%,#ff0039 51%,#ff0039 100%) !important; /* IE10+ */
+			background: linear-gradient(to bottom,  #337ab7 0%,#337ab7 50%,#ff0039 51%,#ff0039 100%) !important; /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#337ab7', endColorstr='#ff0039',GradientType=0 ) !important; /* IE6-9 */
 		}
 	}
 	
@@ -865,6 +979,14 @@ h4.row-header {
 	left: calc(50% - 335px);
 	top: 25%;
 }
+
+.lightbox-edit-student {
+	width: 364px;
+	left: calc(50% - 182px);
+	top: 25%;
+}
+
+
 
 .lightbox-manualedit {
 	width: 80%;
@@ -1430,6 +1552,13 @@ h4 {
 	font-size: 12px;
 	color: $placeholder_gray;
 	font-style: italic;
+	& a {
+		color: $placeholder_gray;
+		text-decoration: underline;
+		&:hover {
+			text-decoration: none;
+		}
+	}
 }
 
 .coordinates-gray {

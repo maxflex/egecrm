@@ -163,7 +163,7 @@
 					<select class="form-control" id="user-print-select" ng-model="id_user_print">
 						<option selected="" value="">пользователь</option>
 						<option disabled="" value="">──────────────</option>
-						<option ng-repeat="user in users" ng-hide="!user.agreement" ng-value="user.id">{{user.login}}</option>
+						<option ng-repeat="user in users" ng-value="user.id" ng-hide="!user.agreement">{{user.login}}</option>
 					</select>
 			<center style="margin-top: 20px">
 				<button class="btn btn-primary" ng-click="editBeforePrint()" ng-disabled="!id_user_print" style="width: 140px">Редактировать</button>
@@ -729,7 +729,18 @@
 			            <span class="link-like link-reverse small" onclick="lightBoxShow('freetime')" 
 			            	style="margin-left: 0" ng-hide="!student.branches[0]">редактировать</span>
 		            </div>
-		            
+		            <?php if (!empty($Request->Student->login)) :?>
+		            <h4 style="margin-top: 30px" class="row-header">Данные для входа</h4>
+		            <div>
+			            <span style="width: 75px; display: inline-block">Логин: </span><i><?= $Request->Student->login ?></i>
+		            </div>
+		            <div>
+			            <span style="width: 75px; display: inline-block">Пароль:</span><i><?= $Request->Student->password ?></i>
+		            </div>
+		            <div>
+			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
+		            </div>
+		            <?php endif ?>
 			    </div>
 		    </div>
 			<div class="row">

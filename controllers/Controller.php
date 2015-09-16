@@ -20,6 +20,8 @@
 		// Дополнительный CSS
 		protected $_css_additional = "";
 		
+		public static $allowed_users = [User::USER_TYPE];
+		
 		/*// Проверка на аякс запрос
 		private function _isAjaxRequest()
 		{
@@ -40,10 +42,14 @@
 		/*
 		 * Отобразить view
 		 * $layout – кастомный лэйаут, по умолчанию меню
-		 * @todo: изменить футер под кастомный лэйаут
+		 * @todo: изменить футер под кастомный лэйаут DONE
 		 */
-		protected function render($view, $vars = array(), $layout = "menu")
+		protected function render($view, $vars = array(), $layout = false)
 		{
+			if (!$layout) {
+				$layout = strtolower(User::fromSession()->type);
+			}
+			
 			// Рендер лэйаута
 			include_once(BASE_ROOT."/layouts/header.php");
 			include_once(BASE_ROOT."/layouts/{$layout}.php");	
@@ -62,6 +68,43 @@
 			include_once(BASE_ROOT."/layouts/{$layout}_footer.php");
 		}
 		
+		/*
+		 * Отобразить "Недостаточно прав"
+		 */
+		public function renderRestricted($layout = false)
+		{
+			if (!$layout) {
+				$layout = strtolower(User::fromSession()->type);
+			}
+			
+			$this->setTabTitle("Ошибка");
+				
+			// Рендер лэйаута
+			include_once(BASE_ROOT."/layouts/header.php");
+			include_once(BASE_ROOT."/layouts/{$layout}.php");	
+
+			include_once(BASE_ROOT."/views/_partials/_access_restricted.php");
+						
+			// Рендер лэйаута
+			include_once(BASE_ROOT."/layouts/{$layout}_footer.php");
+			
+			exit();
+		}
+		
+		
+		/**
+		 * Установить права доступа к контроллеру.
+		 * 
+		 * @access protected
+		 * @param mixed $allowed_users (default: [User::USER_TYPE]) Только пользователям по умолчанию
+		 * @return void
+		 */
+		protected function setRights($allowed_users = [User::USER_TYPE])
+		{
+			if (!in_array(User::fromSession()->type, $allowed_users)) {
+				$this->renderRestricted();
+			}
+		}
 		
 		/*
 		 * Редирект

@@ -8,62 +8,185 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "group";
 		
+		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		
 		public function beforeAction()
 		{
 			$this->addJs("ng-group-app");
 		}
 		
+		public function actionLesson()
+		{
+			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+			$date 		= $_GET['date'];
+			$id_group 	= $_GET['id_group'];
+			
+			if (!Group::inSchedule($id_group, $date)) {
+				$this->setTabTitle("Ошибка");
+				$this->render("no_lesson");
+			} else {
+				$this->_custom_panel = true;
+				$Group = Group::findById($id_group);
+				$Group->Students = $Group->getStudents();
+				
+				$LessonData = LessonData::findAll([
+					"condition" => "date='$date' AND id_group=$id_group"
+				]);
+				
+				foreach ($LessonData as $index => $OneLessonData) {
+					$OrderedLessonData[$OneLessonData->id_student] = $OneLessonData;
+				}
+				
+				$ang_init_data = angInit([
+					"Group" 	=> $Group,
+					"LessonData"=> $OrderedLessonData,
+					"lesson_statuses" => LessonData::$statuses,
+					"id_group"		=> $id_group,
+					"date"			=> $date,
+					"registered_in_journal" => $Group->registeredInJournal($date),
+				]);
+				
+				
+				$this->render("lesson", [
+					"ang_init_data" => $ang_init_data,
+				]);
+			}
+		}
+		
 		public function actionList()
 		{
-			$this->setTabTitle("Группы");
-			$this->setRightTabTitle("<a href='groups/add'>добавить группу</a>");
-			
-			$this->addCss("bootstrap-select");
-			$this->addJs("bootstrap-select, dnd");
-			
-			$Groups = Group::findAll();
-			
-// 			$mode = ($_GET["mode"] == "students" ? 1 : ($_GET["mode"] == "nogroup") ? 2 : 0);
-			$mode = ($_GET["mode"] == "students" ? 1 : 2);
-// 			$mode = 2;
-			
-			$Teachers = Teacher::getActiveGroups();
-			
-			$ang_init_data = angInit([
-				"Groups" 	=> $Groups,
-				"Teachers"	=> $Teachers,
-				"Subjects" 	=> Subjects::$three_letters,
-				"Grades"	=> Grades::$all,
-				"mode" 			=> $mode,
-				"change_mode" 	=> $mode,
-			]);
-			
-			$this->render("list", [
-				"Groups" 		=> $Groups,
-				"mode"			=> $mode,
-				"ang_init_data" => $ang_init_data
-			]);
+			if (User::fromSession()->type == Teacher::USER_TYPE) {
+				$this->setTabTitle("Мои группы");
+				$Groups = Teacher::getGroups(User::fromSession()->id_entity);
+				
+				$ang_init_data = angInit([
+					"Groups" 		=> $Groups,
+					"Subjects" 		=> Subjects::$three_letters,
+					"Grades"		=> Grades::$all,
+					"GroupLevels"	=> GroupLevels::$all,
+				]);
+				
+				$this->render("list_for_teachers", [
+					"Groups" 		=> $Groups,
+					"ang_init_data" => $ang_init_data
+				]);
+				
+			} else 
+			if (User::fromSession()->type == Student::USER_TYPE) {
+				$this->setTabTitle("Мои группы");
+				$Groups = Student::getGroupsStatic(User::fromSession()->id_entity);
+				
+				$ang_init_data = angInit([
+					"Groups" 		=> $Groups,
+					"Subjects" 		=> Subjects::$all,
+					"Grades"		=> Grades::$all,
+					"GroupLevels"	=> GroupLevels::$all,
+					"Branches"		=> Branches::$all,
+				]);
+				
+				$this->render("list_for_students", [
+					"Groups" 		=> $Groups,
+					"ang_init_data" => $ang_init_data
+				]);
+			} else {
+				// не надо панель рисовать
+				$this->_custom_panel = true;
+				
+				$this->addCss("bootstrap-select");
+				$this->addJs("bootstrap-select, dnd");
+				
+				$Groups = Group::findAll();
+				
+				$mode = ($_GET["mode"] == "students" ? 1 : 2);
+				
+				$Teachers = Teacher::getActiveGroups();
+				
+				$Stats = Group::getStats();
+				
+				$ang_init_data = angInit([
+					"Groups" 	=> $Groups,
+					"Teachers"	=> $Teachers,
+					"Subjects" 	=> Subjects::$three_letters,
+					"Grades"	=> Grades::$all,
+					"mode" 			=> $mode,
+					"change_mode" 	=> $mode,
+					"GroupLevels"	=> GroupLevels::$all,
+					"Stats"		=> $Stats,
+				]);
+				
+				$this->render("list", [
+					"Groups" 		=> $Groups,
+					"mode"			=> $mode,
+					"ang_init_data" => $ang_init_data
+				]);
+			}
 		}
 		
 		public function actionSchedule()
 		{
-			// не надо панель рисовать
-			$this->_custom_panel = true;
-			
-			$id_group = $_GET['id'];		
-			$Group = Group::findById($id_group);
-			
-			$Group->Schedule = $Group->getSchedule();
-			
-			$ang_init_data = angInit([
-				"Group" 		=> $Group,
-				"vocation_dates"=> GroupSchedule::getVocationDates(),
-			]);
-			
-			$this->render("schedule", [
-				"Group"			=> $Group,
-				"ang_init_data" => $ang_init_data,	
-			]);
+			if (User::fromSession()->type == Student::USER_TYPE) {
+//				ini_set("display_errors", 1);
+//				error_reporting(E_ALL);
+				
+				// не надо панель рисовать
+				$this->_custom_panel = true;
+				
+				$id_group = $_GET['id'];		
+				$Group = Group::findById($id_group);
+				
+				$Group->Schedule = $Group->getSchedule();
+				
+				$Teacher = Teacher::findById($Group->id_teacher);
+				
+				if (!$Teacher) {
+					$Teacher = 0;
+				}
+				
+				$agreed_to_be_in_group = $Teacher ? $Teacher->agreedToBeInGroup($Group->id) : 0;
+				$agreed_to_be_in_group = $agreed_to_be_in_group ? 1 : 0;
+								
+				$ang_init_data = angInit([
+					"Group" 				=> $Group,
+					"Teacher"				=> $Teacher,
+					"vocation_dates"		=> GroupSchedule::getVocationDates(),
+					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
+					"agreed_to_be_in_group" => $agreed_to_be_in_group,
+				]);
+				
+				$this->render("student_schedule", [
+					"Group"			=> $Group,
+					"ang_init_data" => $ang_init_data,
+				]);	
+			} else {
+				// не надо панель рисовать
+				$this->_custom_panel = true;
+				
+				$id_group = $_GET['id'];		
+				$Group = Group::findById($id_group);
+				
+				$Group->Schedule = $Group->getSchedule();
+				
+				foreach ($Group->day_and_time as $day_data) {
+					if ($Group->default_time) {
+						break;
+					}
+					foreach ($day_data as $index => $time) {
+						$Group->default_time = $time;
+						break;
+					}
+				}
+				
+				$ang_init_data = angInit([
+					"Group" 			=> $Group,
+					"past_lesson_dates" => $Group->getPastLessonDates(),
+					"vocation_dates"	=> GroupSchedule::getVocationDates(),
+				]);
+				
+				$this->render("schedule", [
+					"Group"			=> $Group,
+					"ang_init_data" => $ang_init_data,	
+				]);	
+			}
 		}
 		
 		public function actionAdd()
@@ -75,6 +198,7 @@
 			
 		public function actionEdit($Group = false)
 		{
+			$this->setRights();
 			$this->addCss("bootstrap-select");
 			$this->addJs("bootstrap-select, jquery.simulate");
 			// не надо панель рисовать
@@ -132,7 +256,8 @@
 				"Teachers"	=> $Teachers,
 				"TmpStudents" => $Students,
 //				"Students"	=> $Students,
-				"Subjects"	=> Subjects::$all,
+				"Subjects"	=> Subjects::$three_letters,
+				"GroupLevels" => GroupLevels::$all,
 				"subjects_short" => Subjects::$short,
 				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch),
 				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
@@ -262,7 +387,8 @@
 			dbConnection()->query("UPDATE ".GroupSchedule::$mysql_table." SET time='$time' WHERE time IS NULL AND id_group=$id_group");
 		}
 		
-		public function actionAjaxInGroup(){
+		public function actionAjaxInGroup()
+		{
 			extract($_POST);
 			
 			$in_other_group = Student::inOtherGroupStatic($id_student, $id_group, $id_subject) ? true : false;
@@ -270,7 +396,8 @@
 			returnJsonAng($in_other_group);
 		}
 		
-		public function actionAjaxGetCabinet() {
+		public function actionAjaxGetCabinet() 
+		{
 			extract($_POST);
 			
 			returnJsonAng(
@@ -278,7 +405,8 @@
 			);
 		}		
 		
-		public function actionAjaxAddStudentDnd() {
+		public function actionAjaxAddStudentDnd() 
+		{
 			extract($_POST);
 			
 			$Group = Group::findById($id_group);
@@ -288,7 +416,8 @@
 			$Group->save("students");
 		}
 		
-		public function actionAjaxGetCabinetFreetime() {
+		public function actionAjaxGetCabinetFreetime() 
+		{
 			extract($_POST);
 			
 			returnJsonAng(
@@ -296,7 +425,8 @@
 			);
 		}
 		
-		public function actionAjaxGetTeacherFreetime() {
+		public function actionAjaxGetTeacherFreetime() 
+		{
 			extract($_POST);
 			
 			
@@ -334,5 +464,21 @@
 			$Groups = Group::findAll();
 			
 			returnJsonAng($Groups);
+		}
+		
+		public function actionAjaxSaveLessonData()
+		{
+			extract($_POST);
+			$data = array_filter($data);
+			
+			LessonData::addData($id_group, $date, $data);
+		}
+		
+		public function actionAjaxRegisterInJournal()
+		{
+			extract($_POST);
+			$data = array_filter($data);
+			
+			VisitJournal::addData($id_group, $date, $data);
 		}
 	}

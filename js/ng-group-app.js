@@ -7,7 +7,27 @@ angular.module("Group", []).filter('to_trusted', [
       return $sce.trustAsHtml(text);
     };
   }
-]).filter('range', function() {
+]).filter('orderByDayNumber', function() {
+  return function(items, field, reverse) {
+    var filtered;
+    console.log(items, field, reverse);
+    filtered = [];
+    angular.forEach(items, function(item) {
+      return filtered.push(item);
+    });
+    filtered.sort(function(a, b) {
+      if (a[field] > b[field]) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    if (reverse) {
+      filtered.reverse();
+    }
+    return filtered;
+  };
+}).filter('range', function() {
   return function(input, total) {
     var i, j, ref;
     total = parseInt(total);
@@ -16,22 +36,111 @@ angular.module("Group", []).filter('to_trusted', [
     }
     return input;
   };
+}).controller("LessonCtrl", function($scope) {
+  $scope.formatDate = function(date) {
+    var D;
+    date = date.split(".");
+    date = date.reverse();
+    date = date.join("-");
+    D = new Date(date);
+    return moment(D).format("D MMMM YYYY г.");
+  };
+  $scope.editStudent = function(Student) {
+    $scope.EditStudent = Student;
+    $scope.EditLessonData = angular.copy($scope.LessonData[$scope.EditStudent.id]);
+    clearSelect();
+    return lightBoxShow('edit-student');
+  };
+  $scope.saveStudent = function() {
+    $scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData;
+    $scope.form_changed = true;
+    return lightBoxHide();
+  };
+  $scope.registerInJournal = function() {
+    return bootbox.confirm("Регистрировать запись в журнал?", function(result) {
+      if (result === true) {
+        ajaxStart();
+        return $.post("groups/ajax/registerInJournal", {
+          id_group: $scope.id_group,
+          date: $scope.date,
+          data: $scope.LessonData
+        }, function(response) {
+          ajaxEnd();
+          $scope.registered_in_journal = true;
+          return $scope.$apply();
+        });
+      }
+    });
+  };
+  $scope.form_changed = false;
+  $scope.save = function() {
+    ajaxStart();
+    return $.post("groups/ajax/SaveLessonData", {
+      id_group: $scope.id_group,
+      date: $scope.date,
+      data: $scope.LessonData
+    }, function(response) {
+      ajaxEnd();
+      $scope.form_changed = false;
+      return $scope.$apply();
+    });
+  };
+  return angular.element(document).ready(function() {
+    return set_scope("Group");
+  });
 }).controller("ScheduleCtrl", function($scope) {
+  $scope.weekdays = [
+    {
+      "short": "ПН",
+      "full": "Понедельник",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ВТ",
+      "full": "Вторник",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "СР",
+      "full": "Среда",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ЧТ",
+      "full": "Четверг",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ПТ",
+      "full": "Пятница",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "СБ",
+      "full": "Суббота",
+      "schedule": ["11:00", "13:30", "16:00", "18:30"]
+    }, {
+      "short": "ВС",
+      "full": "Воскресенье",
+      "schedule": ["11:00", "13:30", "16:00", "18:30"]
+    }
+  ];
   $scope.schedulde_loaded = false;
+  $scope.formatDate = function(date) {
+    return moment(date).format("D MMMM YYYY г.");
+  };
   $scope.getLine1 = function(Schedule) {
     return moment(Schedule.date).format("D MMMM YYYY г.");
   };
   $scope.setTimeFromGroup = function(Group) {
     $.each($scope.Group.Schedule, function(i, v) {
       if (!v.time) {
-        return v.time = Group.start;
+        return v.time = Group.default_time;
       }
     });
     $.post("groups/ajax/TimeFromGroup", {
       id_group: Group.id,
-      time: Group.start
+      time: Group.default_time
     });
     return $scope.$apply();
+  };
+  $scope.lessonCount = function() {
+    return Object.keys($scope.Group.day_and_time).length;
   };
   $scope.setTime = function(Schedule, event) {
     $(event.target).hide();
@@ -62,10 +171,14 @@ angular.module("Group", []).filter('to_trusted', [
       endDate: moment(current_date).endOf("month").toDate(),
       multidate: true,
       beforeShowDay: function(d) {
-        var ref;
-        if (ref = moment(d).format("YYYY-MM-DD"), indexOf.call($scope.vocation_dates, ref) >= 0) {
-          return 'vocation';
+        var add_class, ref, ref1;
+        if (ref = moment(d).format("YYYY-MM-DD"), indexOf.call($scope.past_lesson_dates, ref) >= 0) {
+          add_class = 'was-lesson';
         }
+        if (ref1 = moment(d).format("YYYY-MM-DD"), indexOf.call($scope.vocation_dates, ref1) >= 0) {
+          add_class += ' vocation';
+        }
+        return add_class;
       }
     };
   };
@@ -453,7 +566,7 @@ angular.module("Group", []).filter('to_trusted', [
     return $.inArray(time, Student.freetime_red[day]) >= 0;
   };
   $scope.setStudentStatus = function(Student, event) {
-    if ($scope.Group.open === "0") {
+    if (parseInt($scope.Group.open) === 0) {
       return false;
     }
     $(event.target).hide();
@@ -464,7 +577,7 @@ angular.module("Group", []).filter('to_trusted', [
     return false;
   };
   $scope.setTeacherStatus = function(Teacher, event) {
-    if ($scope.Group.open === "0") {
+    if (parseInt($scope.Group.open) === 0) {
       return false;
     }
     $(event.target).hide();
@@ -759,6 +872,62 @@ angular.module("Group", []).filter('to_trusted', [
       "schedule": ["11:00", "13:30", "16:00", "18:30"]
     }
   ];
+  $scope.changeBranch = function() {
+    $("#group-cabinet").attr("disabled", "disabled");
+    ajaxStart();
+    return $.post("groups/ajax/getCabinet", {
+      id_branch: $scope.search.id_branch
+    }, function(cabinets) {
+      ajaxEnd();
+      $scope.Cabinets = cabinets;
+      $scope.search.cabinet = 0;
+      $("#group-cabinet").removeAttr("disabled");
+      $scope.$apply();
+      return clearSelect();
+    }, "json");
+  };
+  $scope.order_reverse = false;
+  $scope.orderByTime = function() {
+    $scope.Groups.sort(function(a, b) {
+      var day_index_1, day_index_2;
+      day_index_1 = Object.keys(a.day_and_time)[0];
+      day_index_2 = Object.keys(b.day_and_time)[0];
+      if (day_index_1 === void 0) {
+        day_index_1 = -1;
+      }
+      if (day_index_2 === void 0) {
+        day_index_2 = -1;
+      }
+      if (day_index_1 > day_index_2) {
+        return 1;
+      } else if (day_index_2 > day_index_1) {
+        return -1;
+      } else {
+        a.day_and_time[day_index_1] = initIfNotSet(a.day_and_time[day_index_1]);
+        b.day_and_time[day_index_2] = initIfNotSet(b.day_and_time[day_index_2]);
+        a.day_and_time[day_index_1] = objectToArray(a.day_and_time[day_index_1]);
+        b.day_and_time[day_index_2] = objectToArray(b.day_and_time[day_index_2]);
+        if (a.day_and_time[day_index_1] > b.day_and_time[day_index_2]) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }
+    });
+    if ($scope.order_reverse) {
+      $scope.Groups.reverse();
+    }
+    return $scope.order_reverse = !$scope.order_reverse;
+  };
+  $scope.orderByStudentCount = function() {
+    $scope.Groups.sort(function(a, b) {
+      return a.students.length - b.students.length;
+    });
+    if ($scope.order_reverse) {
+      $scope.Groups.reverse();
+    }
+    return $scope.order_reverse = !$scope.order_reverse;
+  };
   $scope.inDayAndTime2 = function(time, freetime) {
     if (freetime === void 0) {
       return false;
@@ -770,7 +939,8 @@ angular.module("Group", []).filter('to_trusted', [
     grade: "",
     id_branch: "",
     id_subject: "",
-    id_teacher: ""
+    id_teacher: "",
+    cabinet: 0
   };
   $scope.search2 = {
     grades: [],
@@ -778,8 +948,7 @@ angular.module("Group", []).filter('to_trusted', [
     id_subject: ""
   };
   $scope.groupsFilter = function(Group) {
-    console.log($scope.search.id_teacher, Group, Group.id_teacher);
-    return (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && (parseInt($scope.search.id_subject) === Group.id_subject || !$scope.search.id_subject) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher);
+    return (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && (parseInt($scope.search.id_subject) === Group.id_subject || !$scope.search.id_subject) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
   };
   $scope.groupsFilter2 = function(Group) {
     var ref, ref1;
@@ -790,6 +959,9 @@ angular.module("Group", []).filter('to_trusted', [
   };
   $scope.dateToStart = function(date) {
     var D;
+    if (date === null) {
+      return "";
+    }
     date = date.split(".");
     date = date.reverse();
     date = date.join("-");

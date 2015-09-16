@@ -53,6 +53,11 @@
 	
 	$IndexController = new $_controllerName;	// Создаем объект контроллера
 	
+	// проверка прав доступа к контроллеру
+	if (!in_array(User::fromSession()->type, $IndexController::$allowed_users) && !in_array($_controllerName, $bypass_login)) {
+		$IndexController->renderRestricted();
+	}
+	
 	// Запускаем BeforeAction, если существует
 	if (method_exists($IndexController, "beforeAction")) {
 		$IndexController->beforeAction();

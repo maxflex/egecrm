@@ -28,8 +28,14 @@
 				$this->student_statuses = [];
 			}
 			
+			if ($this->cabinet) {
+				$this->CabinetInfo = Cabinet::findById($this->cabinet);
+			}
+			
 			if ($this->id_branch) {
-				$this->branch = Branches::getShortColoredById($this->id_branch);
+				$this->branch = Branches::getShortColoredById($this->id_branch, 
+					($this->cabinet ? "-".$this->CabinetInfo->number : "")
+				);
 			}
 			
 			if ($this->id_teacher) {
@@ -37,7 +43,10 @@
 				if ($this->teacher_status) {
 					$this->teacher_status = $this->teacher_status->id_status;
 				}
+				// $this->teacher_agreed = $this->Teacher->agreedToBeInGroup($this->id);
+				$this->teacher_agreed = $this->Teacher ? $this->Teacher->agreedToBeInGroup($this->id) : false;
 			}
+		
 			
 			if (!$this->teacher_status) {
 				$this->teacher_status = "";
@@ -56,6 +65,72 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		
+		/**
+		 * Получить даты проведенных занятий.
+		 * 
+		 */
+		public function getPastLessonDates()
+		{
+
+			$Lessons = VisitJournal::findAll([
+				"condition" => "id_group={$this->id}",
+				"group"		=> "lesson_date",
+			]);
+			
+			foreach ($Lessons as $Lesson) {
+				$dates[] = $Lesson->lesson_date;
+			}
+			
+			return $dates;
+		}		
+		
+		public function inSchedule($id_group, $date)
+		{
+			return GroupSchedule::find([
+				"condition" => "id_group=$id_group AND date='$date'"
+			]);
+		}
+		
+		
+		/**
+		 *  Всего человеко групп - это количество человек, записанных в любые группы. Если один человек записан в 3 группы, то это 3 человеко-группы
+			Согласных с расписание - это количество учеников, согласных в конкретной группе с отметкой согласен
+			Запланировано групп - это просто
+			Преподов, согласных с расписанием - это количество синих "согласен" у преподов
+			Человеко-групп не в группах - это количество человеко-групп с действующими договорами, не прикрепленных к группам.
+		 * 
+		 */
+		public static function getStats()
+		{
+			$Groups = Group::findAll();
+			
+			foreach ($Groups as $Group) {
+				
+				if ($Group->id_teacher) {
+					if (Teacher::agreedToBeInGroupStatic($Group->id_teacher, $Group->id)) {
+						$total_teachers_agreed++;			
+					}
+				}
+				if ($Group->students) {
+					$total_group_students += count($Group->students);
+					foreach ($Group->students as $id_student) {
+						if (Student::agreedToBeInGroupStatic($id_student, $Group->id)) {
+							$total_students_agreed++;		
+						}
+					}
+				}
+			}
+			
+			return [
+				"total_group_students" 	=> $total_group_students,
+				"total_students_agreed"	=> $total_students_agreed,
+				"total_teachers_agreed"	=> $total_teachers_agreed,
+				"total_groups"			=> count($Groups),
+				"total_witn_no_group"	=> Student::countSubjectsWithoutGroup(),
+			];
+		}
+		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 
 		public function getSchedule()
@@ -64,7 +139,6 @@
 				"condition" => "id_group=".$this->id
 			]);
 		}
-		
 		
 		/**
 		 * Получить дату первого занятия из расписания.
@@ -98,6 +172,13 @@
 				WHERE g.id = {$this->id} AND (c.id_contract=0 OR c.id_contract IS NULL) AND cs.count>40 AND cs.id_subject={$this->id_subject}
 				LIMIT 1
 			")->num_rows;
+		}
+		
+		public function registeredInJournal($date)
+		{
+			return VisitJournal::count([
+				"condition" => "id_group=" . $this->id . " AND lesson_date='$date'",
+			]) > 0 ? true : false;
 		}
 		
 		public function getStudents()
@@ -175,8 +256,8 @@
 		# Все предметы
 		static $all = [
 			self::NBT 		=> "нбт",
-			self::AWAITING	=> "ожидает расписания",
-			self::AGREED	=> "полностью согласен",
+			self::AWAITING	=> "ожидает",
+			self::AGREED	=> "согласен",
 		];
 		
 		# Заголовок
@@ -207,7 +288,7 @@
 
 	
 		/**
-		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "полностью согласен", 
+		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "согласен", 
 		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
 		 * 
 		 */
@@ -236,8 +317,8 @@
 		# Все предметы
 		static $all = [
 			self::NBT 		=> "нбт",
-			self::AWAITING	=> "ожидает расписания",
-			self::AGREED	=> "полностью согласен",
+			self::AWAITING	=> "ожидает",
+			self::AGREED	=> "согласен",
 		];
 		
 		# Заголовок
@@ -267,7 +348,7 @@
 
 	
 		/**
-		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "полностью согласен", 
+		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "согласен", 
 		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
 		 * 
 		 */

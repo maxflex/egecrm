@@ -20,6 +20,18 @@
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
+			$scope.coordinate_time = (date) ->
+				moment(date).format("YYYY.MM.DD в HH:mm")
+			
+			$scope.dateToStart = (date) ->
+				date = date.split "."
+				date = date.reverse()
+				date = date.join "-"
+				
+				D = new Date(date)
+				
+				moment().to D
+			
 			initFreetime = (id_branch, day) ->
 			  $scope.freetime = initIfNotSet($scope.freetime)
 			  $scope.freetime[id_branch] = initIfNotSet($scope.freetime[id_branch])

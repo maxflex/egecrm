@@ -24,6 +24,10 @@
 				$Student->Contract 	= $Student->getLastContract();
 				$Student->Contracts = $Student->getActiveContracts();
 				
+				if (!empty($Student->login)) {
+					$Student->login_count = User::getLoginCount($Student->id, Student::USER_TYPE);
+				}
+				
 				$date_formatted = new DateTime($Student->Contract->date);
 				$Student->date_formatted = $date_formatted->format("Y-m-d");
 				

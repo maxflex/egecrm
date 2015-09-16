@@ -26,6 +26,9 @@
 					<td>
 						<span ng-show="Teacher.schedule_date">{{Teacher.schedule_date}}</span>
 					</td>
+					<td>
+						{{Teacher.login_count}}
+					</td>
 					<td style="text-align: right">
 						<span class="link-like small" ng-click="deleteTeacher(Teacher.id, $index)">удалить</span>
 					</td>
