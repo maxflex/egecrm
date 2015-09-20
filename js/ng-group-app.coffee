@@ -192,101 +192,6 @@
 				$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()					
 									
 		.controller "EditCtrl", ($scope) ->
-			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
-				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
-			]
-			
-			$scope.$watch 'Group.open', (newValue, oldValue) ->
-				console.log newValue
-				if parseInt(newValue) is 0
-					$(".selectpicker").first().css "background", "#eee"
-				else
-					$(".selectpicker").first().css "background", "white"
-			
-			$scope.smsDialog2 = smsDialog2
-			
-			$scope.getGroup = (id_group) ->
-				Group = (i for i in $scope.Groups when i.id is id_group)[0]
-				
-			bindGroupsDroppable = ->
-				$(".group-list").droppable
-					tolerance: 'pointer',
-					hoverClass: "request-status-drop-hover",
-					drop: (event, ui) ->
-						id_group	 = $(this).data("id")
-						id_student	 = $(ui.draggable).data("id")
-						
-						Group = $scope.getGroup id_group
-						
-						if id_student in Group.students
-							notifySuccess "Ученик уже в группе"
-						else
-							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}
-							Group.students.push id_student
-							$scope.removeStudent id_student
-							$scope.$apply()
-			
-			$scope.dateToStart = (date) ->
-				date = date.split "."
-				date = date.reverse()
-				date = date.join "-"
-				
-				D = new Date(date)
-				
-				moment().to D
-			
-			$scope.search_groups = 
-				grade: ""
-				id_branch: ""
-				id_subject: ""
-			
-			$scope.groupsFilter = (Group) ->
-				console.log $scope.search_groups.id_teacher, Group, Group.id_teacher
-				return (Group.grade is parseInt($scope.search_groups.grade) or not $scope.search_groups.grade) and 
-					(parseInt($scope.search_groups.id_branch) is Group.id_branch or not $scope.search_groups.id_branch) and
-					(parseInt($scope.search_groups.id_subject) is Group.id_subject or not $scope.search_groups.id_subject)
-			
-			bindDraggable = ->
-				$(".student-line").draggable
-					helper: 'clone'
-					revertDuration: 0
-					revert: (valid) ->
-						return if $scope.Group.open == "0"
-						if not valid
-							id_student = $(this).data "id"
-							$scope.removeStudent id_student
-							this.remove()
-					start: (event, ui) ->
-						$(this).css "visibility", "hidden"
-						$(ui.helper).addClass "tr-helper"
-					stop: (event, ui) ->
-						$(this).css "visibility", "visible"
-
-				$(".table-students").droppable
-					tolerance: 'pointer'
-# 					hoverClass: "request-status-drop-hover",
-# 					drop: (event, ui) ->
-# 						console.log ""
-# 						ui.draggable.remove();
-# 						id_group	 = $(this).data("id")
-# 						id_student	 = $(ui.draggable).data("id")
-# 						
-# 						Group = $scope.getGroup id_group
-# 						
-# 						if id_student in Group.students
-# 							notifySuccess "Ученик уже в группе"
-# 						else
-# 							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}
-# 							Group.students.push id_student
-# 							$scope.$apply()
-						
-						
 			$scope.dayAndTime = ->
 				lightBoxShow "freetime"
 			
@@ -544,7 +449,8 @@
 				id_student in $scope.Group.students
 			
 			$scope.getStudent = (id_student) ->
-				Student = (i for i in $scope.Students when i.id is id_student)[0]
+				
+#				Student = (i for i in $scope.Students when i.id is id_student)[0]
 			
 			$scope.getTeacher = (id_teacher) ->
 				id_teacher = parseInt id_teacher
