@@ -2,6 +2,10 @@
 	<div class="panel-heading">
 <!-- 		Группа №{{id_group}}, занятие {{formatDate(date)}} -->
 		<?= User::isStudent(true) ? "Просмотр" : "Редактирование" ?> занятия
+		<span class="pull-right" ng-hide="<?= User::isStudent(true) ?>">
+			<span class="link-reverse pointer" ng-click="registerInJournal()" ng-hide="registered_in_journal === true">регистрировать запись в журнал</span>
+			<span class="text-white" ng-show="registered_in_journal === true">зарегистрировано в журнале</span>
+		</span>
 	</div>
 	<div class="panel-body">
 		<div>
@@ -31,7 +35,7 @@
 									<span>{{LessonData[Student.id].comment}}</span>
 								</td>
 								<td ng-hide="<?= User::isStudent(true) ?>">
-									<span class="link-like" ng-click="editStudent(Student)" ng-show="registered_in_journal !== true">редактировать</span>
+									<span class="link-like" ng-click="editStudent(Student)">редактировать</span>
 								</td>
 							</tr>
 						</tbody>
@@ -40,9 +44,9 @@
 			</div>
 			<div class="row" ng-hide="<?= User::isStudent(true) ?>">
 				<div class="col-sm-12 center">
-					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-disabled="registered_in_journal === true || saving">
-						<span ng-show="registered_in_journal !== true">Записать в журнал</span>
-						<span ng-show="registered_in_journal === true">Записано</span>
+					<button class="btn btn-primary ajax-payment-button" ng-click="save()" ng-disabled="!form_changed">
+						<span ng-show="form_changed">Сохранить</span>
+						<span ng-show="!form_changed">Сохранено</span>
 					</button>
 				</div>
 			</div>

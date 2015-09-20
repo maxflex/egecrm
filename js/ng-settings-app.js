@@ -10,33 +10,7 @@ angular.module("Settings", []).filter('to_trusted', [
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("LessonsCtrl", function($scope) {
-  $scope.formatDate = function(date) {
-    var D;
-    date = date.split(".");
-    date = date.reverse();
-    date = date.join("-");
-    D = new Date(date);
-    return moment(D).format("D MMMM YYYY г.");
-  };
-  $scope.isFirstLesson = function(Schedule) {
-    var GroupSchedule, first_lesson_date;
-    GroupSchedule = _.where($scope.Schedule, {
-      id_group: Schedule.id_group
-    });
-    first_lesson_date = _.sortBy(GroupSchedule, 'date');
-    first_lesson_date = first_lesson_date[0].date;
-    return first_lesson_date === Schedule.date;
-  };
-  return angular.element(document).ready(function() {
-    set_scope("Settings");
-    return $.post("settings/ajax/GetLessons", {}, function(Schedule) {
-      console.log(Schedule);
-      $scope.Schedule = Schedule;
-      return $scope.$apply();
-    }, "json");
-  });
-}).controller("CabinetsPageCtrl", function($scope) {
+]).controller("CabinetsPageCtrl", function($scope) {
   $scope.weekdays = [
     {
       "short": "ПН",

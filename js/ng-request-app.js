@@ -250,10 +250,6 @@
 				$scope.freetime[id_branch][day] = initIfNotSet($scope.freetime[id_branch][day]);
 			}
 			
-			$scope.preCancel = function (contract) {
-				$.post("ajax/preCancel", {id_contract: contract.id, pre_cancelled: contract.pre_cancelled})
-			}
-			
 			$scope.inFreetime = function(id_branch, day, value) {
 				initFreetime(id_branch, day)
 				return $.inArray(value, objectToArray($scope.freetime[id_branch][day])) >= 0
@@ -419,10 +415,7 @@
 				date = new Date(date[2], month, date[0])
 				return moment(date).format("DD MMMM YYYY г.")
 			}
-			
-			$scope.objectLength = function(object) {
-				return Object.keys(object).length
-			}
+
 
 			/**
 			 * Склеить заявки
@@ -473,14 +466,11 @@
 				$scope.id_contract_print = id_contract
 				lightBoxShow('print')
 			}
-			
+
 			$scope.todayDate = function() {
 				return moment().format("DD.MM.YYYY");
 			}
 			
-			$scope.textDate = function(date) {
-				return moment(date).format("DD MMMM YYYY")
-			}
 			
 			$scope.editBeforePrint = function() {
 				html = $("#contract-print-" + $scope.id_contract_print).html()
@@ -497,13 +487,6 @@
 				
 				lightBoxHide()
 				lightBoxShow('manualedit')
-			}
-			
-			
-			$scope.printBill = function(id_contract) {
-				$scope.print_mode = 'bill'
-				$scope.id_contract_print = id_contract
-				printDiv($scope.print_mode + "-print-" + $scope.id_contract_print)
 			}
 			
 			/**

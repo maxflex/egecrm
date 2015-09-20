@@ -1,7 +1,6 @@
 <div class="row">
 	<div class="col-sm-12">
 <!-- 		<div class="title-section-1">Работа ЕГЭ-Центра</div> -->
-<!--
 		<div class="question" style="margin-top: 0">
 			<span>
 			<b>Вопрос: </b> мой вопрос
@@ -19,5 +18,4 @@
 			</div>
 		</div>
 	</div>
--->
 </div>

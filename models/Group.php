@@ -22,13 +22,6 @@
 			
 			if (!$this->isNewRecord) {
 				$this->student_statuses = GroupStudentStatuses::getByGroupId($this->id);
-				
-				$this->agreed_students_count = 0;
-				foreach ($this->student_statuses as $id_student => $status) {
-					if ($status == GroupStudentStatuses::AGREED && in_array($id_student, $this->students)) {
-						$this->agreed_students_count++;
-					}
-				}
 			}
 			
 			if (!$this->student_statuses) {
@@ -98,7 +91,7 @@
 				"condition" => "id_group=$id_group AND date='$date'"
 			]);
 		}
-				
+		
 		
 		/**
 		 *  Всего человеко групп - это количество человек, записанных в любые группы. Если один человек записан в 3 группы, то это 3 человеко-группы
@@ -143,8 +136,7 @@
 		public function getSchedule()
 		{
 			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id,
-				"order"		=> "date ASC",
+				"condition" => "id_group=".$this->id
 			]);
 		}
 		
@@ -233,21 +225,8 @@
 			if ($this->time) {
 				$this->time = mb_strimwidth($this->time, 0, 5);
 			}
-			
-			$this->was_lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
-// 			$this->is_first_lesson = $this->date == $this->getFirstLessonDate();
 		}
 		
-/*
-		public function getFirstLessonDate()
-		{
-			return self::find([
-				"condition" => "id_group=" . $this->id_group,
-				"order"		=> "date ASC"
-			])->date;
-		}
-		
-*/
 		public static function getVocationDates()
 		{
 			$Vocations = self::findAll([

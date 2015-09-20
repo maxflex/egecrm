@@ -53,13 +53,12 @@ angular.module("Group", []).filter('to_trusted', [
   };
   $scope.saveStudent = function() {
     $scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData;
+    $scope.form_changed = true;
     return lightBoxHide();
   };
   $scope.registerInJournal = function() {
-    return bootbox.confirm("Записать запись в журнал?", function(result) {
+    return bootbox.confirm("Регистрировать запись в журнал?", function(result) {
       if (result === true) {
-        $scope.saving = true;
-        $scope.$apply();
         ajaxStart();
         return $.post("groups/ajax/registerInJournal", {
           id_group: $scope.id_group,
@@ -67,11 +66,23 @@ angular.module("Group", []).filter('to_trusted', [
           data: $scope.LessonData
         }, function(response) {
           ajaxEnd();
-          $scope.saving = false;
           $scope.registered_in_journal = true;
           return $scope.$apply();
         });
       }
+    });
+  };
+  $scope.form_changed = false;
+  $scope.save = function() {
+    ajaxStart();
+    return $.post("groups/ajax/SaveLessonData", {
+      id_group: $scope.id_group,
+      date: $scope.date,
+      data: $scope.LessonData
+    }, function(response) {
+      ajaxEnd();
+      $scope.form_changed = false;
+      return $scope.$apply();
     });
   };
   return angular.element(document).ready(function() {

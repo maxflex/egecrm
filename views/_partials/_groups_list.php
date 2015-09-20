@@ -22,7 +22,7 @@
 			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + GroupLevels[Group.level] : ''}}{{Group.is_special ? " (спец.)" : ""}}
 		</td>
 		<td>
-			{{Group.students.length}}/<span style="color: #62CB64">{{Group.agreed_students_count}}</span> <ng-pluralize count="Group.students.length" when="{
+			{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
 				'one': 'ученик',
 				'few': 'ученика',
 				'many': 'учеников'
@@ -50,19 +50,9 @@
 			</span>
 		</td>
 		<td>
-			{{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
-				'one': 'занятие',
-				'few': 'занятия',
-				'many': 'занятий'
-			}"></ng-pluralize>
-		</td>
-		<td>
 			<span class="label group-teacher-status<?= GroupTeacherStatuses::AGREED ?>" ng-show="Group.teacher_agreed">
 				<?= GroupTeacherStatuses::$all[GroupTeacherStatuses::AGREED] ?>
 			</span>
-				<span class="label group-student-status3" ng-show="Group.approved" style="margin-left: 5px">
-					OK
-				</span>
 		</td>
 		<td>
 			<span ng-show="!Group.open" class="half-black">

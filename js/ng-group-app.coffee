@@ -35,13 +35,12 @@
 			
 			$scope.saveStudent = ->
 				$scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData
+				$scope.form_changed = true
 				lightBoxHide()
 			
 			$scope.registerInJournal = ->
-				bootbox.confirm "Записать запись в журнал?", (result) ->
+				bootbox.confirm "Регистрировать запись в журнал?", (result) ->
 					if result is true
-						$scope.saving = true
-						$scope.$apply()
 						ajaxStart()
 						$.post "groups/ajax/registerInJournal",
 							id_group: 	$scope.id_group
@@ -49,14 +48,24 @@
 							data:		$scope.LessonData
 						, (response) ->
 							ajaxEnd()
-							$scope.saving = false
 							$scope.registered_in_journal = true
 							# $scope.form_changed = false
 							$scope.$apply()
 			
+			$scope.form_changed = false
+			$scope.save = ->
+				ajaxStart()
+				$.post "groups/ajax/SaveLessonData",
+					id_group: 	$scope.id_group
+					date:		$scope.date
+					data:		$scope.LessonData
+				, (response) ->
+					ajaxEnd()
+					$scope.form_changed = false
+					$scope.$apply()
+			
 			angular.element(document).ready ->
 				set_scope "Group"
-				
 		.controller "ScheduleCtrl", ($scope) ->
 			$scope.weekdays = [
 				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},

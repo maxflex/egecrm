@@ -97,32 +97,9 @@
 		public static function getExistedTeachers($id_student)
 		{
 			$VisitJournal = VisitJournal::findAll([
-				"condition" => "id_entity=$id_student AND type_entity='" . self::USER_TYPE . "' AND presence=1",
+				"condition" => "id_entity=$id_student AND type_entity='" . self::USER_TYPE . "'",
+				"group"		=> "id_entity"
 			]);
-			
-			$group_ids = [];
-			foreach ($VisitJournal as $VJ) {
-				$group_ids[] = $VJ->id_group;
-			}
-			
-			if (!$group_ids) {
-				return false;
-			}
-			
-			$VisitJournal = VisitJournal::findAll([
-				"condition" => "id_group IN (" . implode(",", $group_ids) . ") AND type_entity='". Teacher::USER_TYPE ."'",
-				"group"		=> "id_entity",
-			]);
-			
-			if ($VisitJournal) {
-				foreach ($VisitJournal as $VJ) {
-					$teacher_ids[] = $VJ->id_entity;
-				}
-				
-				return $teacher_ids;
-			}
-			
-			return false;
 		}
 		
 		/**
@@ -137,7 +114,7 @@
 					LEFT JOIN contracts c on c.id_student = s.id
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', s.id ,',%'))
-					WHERE c.id IS NOT NULL AND c.pre_cancelled=0 AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
+					WHERE c.id IS NOT NULL AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
 			")->num_rows;
 		}
 		
@@ -170,28 +147,7 @@
 		public static function getWithContract($only_active = false)
 		{
 			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. ($only_active ? " AND cancelled=0 AND pre_cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
-			
-			while ($row = $query->fetch_array()) {
-				if ($row["id_student"]) {
-					$ids[] = $row["id_student"];
-				}
-			}
-			
-			
-			return self::findAll([
-				"condition"	=> "id IN (". implode(",", $ids) .")"
-			]);
-		}
-		
-				/**
-		 * Получить студентов с договорами.
-		 * 
-		 */
-		public static function getWithContractPreCancelled()
-		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. " AND pre_cancelled=1 " . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+				. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
 			
 			while ($row = $query->fetch_array()) {
 				if ($row["id_student"]) {
@@ -413,18 +369,6 @@
 			]);	
 		}
 		
-		
-		/**
-		 * Получить пол.
-		 * 
-		 * 1 - мужской, 2 - женский
-		 */
-		public function getGender()
-		{
-			$nc = new NCLNameCaseRu(); 
-			
-			return $nc->genderDetect($this->last_name . " " . $this->first_name . " " . $this->middle_name);
-		}
 		
 		/**
 		 * Получить одну из заявок студента.

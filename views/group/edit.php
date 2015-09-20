@@ -218,13 +218,6 @@
 				        ]) ?>
 		            </div>
 		            <div class="form-group">
-			            <div class="checkbox">
-						  <label><input type="checkbox" ng-model="Group.approved" ng-true-value="1" ng-false-value="0" ng-disabled="Group.open == 0">
-						  	<small style="position: relative; top: -2px">согласие ЕГЭ-Центра на запуск группы</small>
-						  </label>
-						</div>
-		            </div>
-		            <div class="form-group">
 			            <?php if ($Group->id): ?>
 				            <a class="pull-left small link-reverse" style="margin-top: 5px" href="groups/edit/<?= $Group->id ?>/schedule">расписание</a>
 				            <span ng-hide="Group.open == 0" class="pull-right small link-like link-reverse" 

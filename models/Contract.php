@@ -108,25 +108,7 @@
 			// логин пользователя
 			if ($NewContract->id_user) {
 				$NewContract->user_login = User::getCached()[$NewContract->id_user]['login'];
-			}
-			
-			// Создаем логин-пароль пользователя
-			$Student = Student::findById($NewContract->id_student);	
-			if (!$Student->login) {
-				$Student->login 	= $NewContract->id;
-				$Student->password	= mt_rand(10000000, 99999999);
-				$Student->save();
-				
-				User::add([
-					"login" 		=> $Student->login,
-					"password"		=> $Student->password,
-					"first_name"	=> $Student->first_name,
-					"last_name"		=> $Student->last_name,
-					"middle_name"	=> $Student->middle_name,
-					"type"			=> Student::USER_TYPE,
-					"id_entity"		=> $Student->id
-				]);
-			}
+			}	
 			
 			// Добавляем предметы договора
 			ContractSubject::addData($Contract["subjects"], $NewContract->id);

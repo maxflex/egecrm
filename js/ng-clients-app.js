@@ -84,13 +84,6 @@ angular.module("Clients", []).filter('to_trusted', [
     return ar.join(" + ");
   };
   $scope.filter_cancelled = 0;
-  $scope.clientsFilter = function(Student) {
-    if ($scope.filter_cancelled === 2) {
-      return Student.Contract.pre_cancelled === 1;
-    } else {
-      return Student.Contract.cancelled === $scope.filter_cancelled;
-    }
-  };
   $scope.order = 2;
   $scope.setOrder = function(order) {
     console.log(order, $scope.asc);
