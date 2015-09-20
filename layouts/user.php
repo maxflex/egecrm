@@ -1,6 +1,5 @@
 <!-- ЛАЙТБОКС ОТПРАВКА SMS -->
 <div class="lightbox-new lightbox-sms">
-	<input type="hidden" id="sms-mode" value="1">
 	<h4 style="text-align: center" id="sms-number">
 		<span class="text-danger">Номер не установлен!</span>
 	</h4>
@@ -21,6 +20,7 @@
 				<span onclick="smsTemplate(1)">подтверждение договоренности</span>
 				<span onclick="smsTemplate(2)">нет связи с клиентом</span>
 				<span onclick="smsTemplate(3)">нет связи с ожидающими и не решившими</span>
+<<<<<<< HEAD:layouts/user.php
 				<span onclick="loginPasswordTemplate()">логин/пароль</span>
 				
 				<div class="sms-group-controls" style="float: right; display: none">
@@ -31,6 +31,8 @@
 						<input type="checkbox" onclick="ang_scope.to_representatives = !ang_scope.to_representatives; ang_scope.$apply()"> представителям
 					</span>
 				</div>
+=======
+>>>>>>> parent of 99d1c84... Конец недели:layouts/menu.php
 			</div>
 			
 			<div id="sms-template-1" class="sms-template">

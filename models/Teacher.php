@@ -385,7 +385,7 @@
 		 * Добавить свободное время
 		 * 
 		 */
-		public static function addData($data, $id_teacher, $branches) 
+		public static function addData($data, $id_teacher) 
 		{
 			TeacherFreetime::deleteAll([
 				"condition" => "id_teacher=$id_teacher"
@@ -394,9 +394,6 @@
 // 			dbConnection()->query("DELETE FROM teacher_freetime WHERE id_teacher=$id_teacher");
 			
 			foreach ($data as $id_branch => $branch_data) {
-				if (!in_array($id_branch, $branches)) {
-					continue;
-				}
 				foreach ($branch_data as $day => $day_data) {
 					foreach ($day_data as $time) {
 						if (empty(trim($time))) {

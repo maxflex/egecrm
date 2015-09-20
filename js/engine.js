@@ -153,12 +153,6 @@
 		$("#email-message").val(body)
 	}
 	
-	
-	function smsDialog2(id_group) {
-		$("#sms-number").text("Группа №" + id_group);
-		lightBoxShow('sms')
-	}
-	
 	function smsDialog(elem) {
 		var html = ""
 		
@@ -195,10 +189,9 @@
 	}
 	
 	function sendSms() {
-		mode = $("#sms-mode").val();
-		
 		message = $("#sms-message");
-			
+		number	= $("#sms-number").text();
+		
 		if (message.val().trim() == "") {
 			message.addClass("has-error").focus()
 			return
@@ -206,42 +199,20 @@
 			message.removeClass("has-error")
 		}
 		
-		if (mode == 1) {
-			number	= $("#sms-number").text();
-			$.post("ajax/sendSms", {
-				"message": message.val().trim(),
-				"number": number,
-			}, function(response) {
-				html = '\
-				<div class="clear-sms">		\
-						<div class="from-them">		\
-							' + response.message + ' 		\
-							<div class="sms-coordinates">' + response.coordinates + '</div>\
-					    </div>						\
-					</div>';	
-				$("#sms-history").prepend(html).animate({ scrollTop: 0 }, "fast");
-				message.val("")
-			}, "json");
-		}
-		
-		if (mode == 2) {
-			ajaxStart("sms");
-			console.log("here");
-			data = {
-				"message": message.val().trim(),
-				"place": "GROUP",
-				"id_place": ang_scope.Group.id,
-				"to_students": ang_scope.to_students,
-				"to_representatives": ang_scope.to_representatives,
-			};
-			console.log(data);
-			$.post("ajax/sendGroupSms", data, function(response) {
-				ajaxEnd("sms")
-				lightBoxHide();
-				notifySuccess("Отправлено " + response + " СМС");
-				message.val("")
-			});
-		}
+		$.post("ajax/sendSms", {
+			"message": message.val().trim(),
+			"number": number,
+		}, function(response) {
+			html = '\
+			<div class="clear-sms">		\
+					<div class="from-them">		\
+						' + response.message + ' 		\
+						<div class="sms-coordinates">' + response.coordinates + '</div>\
+				    </div>						\
+				</div>';	
+			$("#sms-history").prepend(html).animate({ scrollTop: 0 }, "fast");
+			message.val("")
+		}, "json");
 	}
 	
 	function sendEmail() {

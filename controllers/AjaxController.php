@@ -231,53 +231,6 @@
 			returnJSON($SMS);
 		}
 		
-		public function actionAjaxSendGroupSms()
-		{
-			extract($_POST);
-			
-			$Group = Group::findById($id_place);
-				
-			$Students = $Group->getStudents();
-			
-			if ($to_students == "true") {
-				$additional = 1;
-				foreach ($Students as $Student) {
-					foreach (Student::$_phone_fields as $phone_field) {
-						$number = $Student->{$phone_field};
-						
-						if (!empty(trim($number))) {
-							$numbers[] = $number;
-						}
-					}
-				}
-			}
-			
-			if ($to_representatives == "true") {
-				$additional += 2; 
-				foreach ($Students as $Student) {
-					if ($Student->Representative) {
-						foreach (Student::$_phone_fields as $phone_field) {
-							$number = $Student->Representative->{$phone_field};
-							
-							if (!empty(trim($number))) {
-								$numbers[] = $number;
-							}
-						}
-					}
-				}
-			}
-			
-			SMS::sendToNumbers($numbers, $message, $_POST + ["additional" => $additional]);
-			
-			returnJSON(count($numbers));
-/*
-			$SMS = SMS::send($number, $message);
-			$SMS->getCoordinates();
-			
-			returnJSON($SMS);
-*/
-		}
-		
 		public function actionAjaxSmsHistory() {
 			extract($_POST);
 			

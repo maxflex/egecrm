@@ -17,14 +17,14 @@ class SMS extends Model
 		}
 	}
 	
-	public static function sendToNumbers($numbers, $message, $additional = []) {
+	public static function sendToNumbers($numbers, $message) {
 		foreach ($numbers as $number) {
-			self::send($number, $message, $additional);
+			self::send($number, $message);
 		}	
 	}
 	
 	
-	public static function send($to, $message, $additional = [])
+	public static function send($to, $message)
 	{
 		$to = explode(",", $to);
 		foreach ($to as $number) {
@@ -39,14 +39,14 @@ class SMS extends Model
 				"text"		=>	$message,
 				"from"      =>  "EGE-Centr",
 			);		
-			$result = self::exec("http://sms.ru/sms/send", $params, $additional);
+			$result = self::exec("http://sms.ru/sms/send", $params);
 		}
 		
 		
 		return $result;
 	}
 	
-	protected static function exec($url, $params, $additional = [])
+	protected static function exec($url, $params)
 	{
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
@@ -68,7 +68,7 @@ class SMS extends Model
 		];
 		
 		// создаем объект для истории
-		return SMS::add($info + $additional);		
+		return SMS::add($info);		
 	}
 	
 	public function beforeSave()
@@ -83,9 +83,6 @@ class SMS extends Model
 			$this->user_login = User::getCached()[$this->id_user]['login'];
 			
 			$this->coordinates = $this->user_login. " ". dateFormat($this->date);
-			if ($this->additional) {
-				$this->coordinates .= " (массовая)";
-			}
 		} else {
 			$this->user_login = "system";
 		}

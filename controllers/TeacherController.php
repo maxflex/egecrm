@@ -84,9 +84,9 @@
 				}
 				if (!isset($Teacher['branches'])) {
 					$Teacher['branches'] = '';
-				} 				
+				}
 				# СВОБОДНОЕ ВРЕМЯ
-				TeacherFreetime::addData($Teacher['freetime'], $Teacher['id'], $Teacher['branches']);
+				TeacherFreetime::addData($Teacher['freetime'], $Teacher['id']);
 				Teacher::updateById($Teacher['id'], $Teacher);
 			} else {
 				$NewTeacher = new Teacher($Teacher);

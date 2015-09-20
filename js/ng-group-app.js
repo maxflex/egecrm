@@ -248,7 +248,121 @@ angular.module("Group", []).filter('to_trusted', [
     return $(".table-condensed").eq(15).children("tbody").children("tr").first().remove();
   });
 }).controller("EditCtrl", function($scope) {
+<<<<<<< HEAD
   var initDayAndTime, initFreetime, justSave, rebindBlinking;
+=======
+  var bindDraggable, bindGroupsDroppable, initDayAndTime, initFreetime, justSave, rebindBlinking;
+  $scope.weekdays = [
+    {
+      "short": "ПН",
+      "full": "Понедельник",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ВТ",
+      "full": "Вторник",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "СР",
+      "full": "Среда",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ЧТ",
+      "full": "Четверг",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "ПТ",
+      "full": "Пятница",
+      "schedule": ["", "", "16:15", "18:40"]
+    }, {
+      "short": "СБ",
+      "full": "Суббота",
+      "schedule": ["11:00", "13:30", "16:00", "18:30"]
+    }, {
+      "short": "ВС",
+      "full": "Воскресенье",
+      "schedule": ["11:00", "13:30", "16:00", "18:30"]
+    }
+  ];
+  $scope.getGroup = function(id_group) {
+    var Group, i;
+    return Group = ((function() {
+      var j, len, ref, results;
+      ref = $scope.Groups;
+      results = [];
+      for (j = 0, len = ref.length; j < len; j++) {
+        i = ref[j];
+        if (i.id === id_group) {
+          results.push(i);
+        }
+      }
+      return results;
+    })())[0];
+  };
+  bindGroupsDroppable = function() {
+    return $(".group-list").droppable({
+      tolerance: 'pointer',
+      hoverClass: "request-status-drop-hover",
+      drop: function(event, ui) {
+        var Group, id_group, id_student;
+        id_group = $(this).data("id");
+        id_student = $(ui.draggable).data("id");
+        Group = $scope.getGroup(id_group);
+        if (indexOf.call(Group.students, id_student) >= 0) {
+          return notifySuccess("Ученик уже в группе");
+        } else {
+          $.post("groups/ajax/AddStudentDnd", {
+            id_group: id_group,
+            id_student: id_student
+          });
+          Group.students.push(id_student);
+          $scope.removeStudent(id_student);
+          return $scope.$apply();
+        }
+      }
+    });
+  };
+  $scope.dateToStart = function(date) {
+    var D;
+    date = date.split(".");
+    date = date.reverse();
+    date = date.join("-");
+    D = new Date(date);
+    return moment().to(D);
+  };
+  $scope.search_groups = {
+    grade: "",
+    id_branch: "",
+    id_subject: ""
+  };
+  $scope.groupsFilter = function(Group) {
+    console.log($scope.search_groups.id_teacher, Group, Group.id_teacher);
+    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && (parseInt($scope.search_groups.id_branch) === Group.id_branch || !$scope.search_groups.id_branch) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
+  };
+  bindDraggable = function() {
+    $(".student-line").draggable({
+      helper: 'clone',
+      revertDuration: 0,
+      revert: function(valid) {
+        var id_student;
+        if (!valid) {
+          id_student = $(this).data("id");
+          $scope.removeStudent(id_student);
+          return this.remove();
+        }
+      },
+      start: function(event, ui) {
+        $(this).css("visibility", "hidden");
+        return $(ui.helper).addClass("tr-helper");
+      },
+      stop: function(event, ui) {
+        return $(this).css("visibility", "visible");
+      }
+    });
+    return $(".table-students").droppable({
+      tolerance: 'pointer'
+    });
+  };
+>>>>>>> parent of 99d1c84... Конец недели
   $scope.dayAndTime = function() {
     return lightBoxShow("freetime");
   };
@@ -444,9 +558,12 @@ angular.module("Group", []).filter('to_trusted', [
     return $.inArray(time, Student.freetime_red[day]) >= 0;
   };
   $scope.setStudentStatus = function(Student, event) {
+<<<<<<< HEAD
     if (parseInt($scope.Group.open) === 0) {
       return false;
     }
+=======
+>>>>>>> parent of 99d1c84... Конец недели
     $(event.target).hide();
     $(".student-status-select-" + Student.id).show(0, function() {
       $(this).simulate('mousedown');
@@ -455,9 +572,12 @@ angular.module("Group", []).filter('to_trusted', [
     return false;
   };
   $scope.setTeacherStatus = function(Teacher, event) {
+<<<<<<< HEAD
     if (parseInt($scope.Group.open) === 0) {
       return false;
     }
+=======
+>>>>>>> parent of 99d1c84... Конец недели
     $(event.target).hide();
     $(".teacher-status-select-" + Teacher.id).show(0, function() {
       $(this).simulate('mousedown');
@@ -678,7 +798,6 @@ angular.module("Group", []).filter('to_trusted', [
   });
   $(document).ready(function() {
     emailMode(2);
-    smsMode(2);
     bindDraggable();
     return $("#group-edit").on('keyup change', 'input, select, textarea', function() {
       $scope.form_changed = true;
