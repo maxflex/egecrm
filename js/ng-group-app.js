@@ -865,7 +865,7 @@ angular.module("Group", []).filter('to_trusted', [
     $("#group-cabinet").attr("disabled", "disabled");
     ajaxStart();
     return $.post("groups/ajax/getCabinet", {
-      id_branch: $scope.search.branches
+      id_branch: $scope.search.id_branch
     }, function(cabinets) {
       ajaxEnd();
       $scope.Cabinets = cabinets;
@@ -926,7 +926,7 @@ angular.module("Group", []).filter('to_trusted', [
   };
   $scope.search = {
     grade: "",
-    branches: "",
+    id_branch: "",
     id_subject: "",
     id_teacher: "",
     cabinet: 0
@@ -937,8 +937,7 @@ angular.module("Group", []).filter('to_trusted', [
     id_subject: ""
   };
   $scope.groupsFilter = function(Group) {
-    var ref;
-    return (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && ((ref = Group.id_branch.toString(), indexOf.call($scope.search.branches, ref) >= 0) || !$scope.search.branches) && (parseInt($scope.search.id_subject) === Group.id_subject || !$scope.search.id_subject) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
+    return (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && (parseInt($scope.search.id_subject) === Group.id_subject || !$scope.search.id_subject) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
   };
   $scope.groupsFilter2 = function(Group) {
     var ref, ref1;
@@ -1143,11 +1142,6 @@ angular.module("Group", []).filter('to_trusted', [
     }
   };
   $(document).ready(function() {
-    if ($("#group-branch-filter").length) {
-      $("#group-branch-filter").selectpicker({
-        noneSelectedText: "филиалы"
-      });
-    }
     if ($scope.mode === 2) {
       $("#group-branch-filter2").selectpicker({
         noneSelectedText: "филиалы"

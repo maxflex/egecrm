@@ -109,6 +109,7 @@
 			} else {
 				// не надо панель рисовать
 				$this->_custom_panel = true;
+				
 				$this->addCss("bootstrap-select");
 				$this->addJs("bootstrap-select, dnd");
 				
@@ -444,7 +445,7 @@
 			returnJsonAng(
 				Cabinet::getByBranch($id_branch)
 			);
-		}
+		}		
 		
 		public function actionAjaxAddStudentDnd() 
 		{

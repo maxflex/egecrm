@@ -155,7 +155,6 @@
 			
 			angular.element(document).ready ->
 				set_scope 'Group'
-				
 				init_dates = []
 				for schedule_date in $scope.Group.Schedule
 					init_dates.push new Date schedule_date.date
@@ -671,6 +670,7 @@
 							$scope.$apply()
 						else
 							redirect "groups/edit/#{response}"	
+						
 		.controller "ListCtrl", ($scope) ->
 			$scope.weekdays = [
 				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
@@ -685,7 +685,7 @@
 			$scope.changeBranch = ->
 				$("#group-cabinet").attr "disabled", "disabled"
 				ajaxStart()
-				$.post "groups/ajax/getCabinet", {id_branch: $scope.search.branches}, (cabinets) ->
+				$.post "groups/ajax/getCabinet", {id_branch: $scope.search.id_branch}, (cabinets) ->
 					ajaxEnd()
 					$scope.Cabinets = cabinets
 					$scope.search.cabinet = 0
@@ -745,7 +745,7 @@
 			
 			$scope.search = 
 				grade: ""
-				branches: ""
+				id_branch: ""
 				id_subject: ""
 				id_teacher: ""
 				cabinet: 0
@@ -757,7 +757,7 @@
 			
 			$scope.groupsFilter = (Group) ->
 				return (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and 
-					(Group.id_branch.toString() in $scope.search.branches or not $scope.search.branches) and
+					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
 					(parseInt($scope.search.id_subject) is Group.id_subject or not $scope.search.id_subject) and
 					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher) and
 					(parseInt($scope.search.cabinet) is parseInt(Group.cabinet) or not parseInt($scope.search.cabinet))
@@ -934,11 +934,6 @@
 						, "json"
 			
 			$(document).ready ->
-				# branch mulitiselect
-				if $("#group-branch-filter").length
-					$("#group-branch-filter").selectpicker
-						noneSelectedText: "филиалы"
-					
 				if $scope.mode is 2
 					$("#group-branch-filter2").selectpicker
 						noneSelectedText: "филиалы"
