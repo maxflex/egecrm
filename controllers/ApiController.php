@@ -77,7 +77,7 @@
 			extract($_POST);
 			
 			$Groups = Group::findAll([
-				"condition" => "id_branch=$id_branch AND id_subject=$id_subject AND grade=$id_grade"
+				"condition" => ($id_branch > 0 ? "id_branch=$id_branch AND " : "" ) . "id_subject=$id_subject AND grade=$id_grade"
 			]);
 			
 			returnJSON($Groups);

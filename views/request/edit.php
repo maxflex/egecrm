@@ -825,11 +825,18 @@
 									<span style="display: inline-block; width: 200px">дата расторжения</span>
 									<span>{{formatContractDate(contract.cancelled_date)}}</span>
 								</div>
-								<div style="margin-bottom: 25px">
+								<div>
 									<span style="display: inline-block; width: 200px">общая сумма</span>
 									<span>{{contract.sum}} руб.</span>
 								</div>
-
+								<div style="margin-bottom: 25px">
+									<div class="checkbox">
+									  <label><input type="checkbox" ng-model="contract.pre_cancelled" ng-true-value="1" ng-false-value="0" ng-click="preCancel(contract)">
+									  	<small style="position: relative; top: -2px">предварительное расторжение</small>
+									  </label>
+									</div>
+								</div>
+								
 								<div ng-repeat="subject in contract.subjects | orderBy:'id_subject'" style="margin-bottom: 3px; white-space: nowrap">
 									<span style="display: inline-block; width: 200px">{{subject.name}}</span>
 									<span>{{subject.count}}
@@ -858,6 +865,10 @@
 								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContract(contract.id)">
 									печать договора
 									<?= partial("contract_print", ["Request" => $Request]) ?>
+								</div>
+								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printBill(contract.id)">
+									печать счета
+									<?= partial("bill_print") ?>
 								</div>
 								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="deleteContract(contract)">
 									удалить

@@ -124,6 +124,7 @@
 	<a href="notifications" class="list-group-item">Напоминания</a>
 	<a href="stats" class="list-group-item">Итоги</a>
     <a href="clients" class="list-group-item">Клиенты</a>
+    <a href="clients/precancelled" class="list-group-item">Клиенты (раст.)</a>
     <a href="sms" class="list-group-item">SMS</a>
     <a href="payments" class="list-group-item">Платежи</a>
     <a href="teachers" class="list-group-item">Преподаватели</a>
@@ -141,11 +142,12 @@
 			}
 		?>
 	<?php endif ?>
-    <a href="rating" class="list-group-item">Рейтинг</a>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
     <a href="settings/students" class="list-group-item">Ученики</a>
     <a href="settings/cabinets" class="list-group-item">Кабинеты</a>
+    <a href="templates" class="list-group-item">Шаблоны</a>
+    <a href="settings/lessons" class="list-group-item">Трекер занятий</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
 <!--

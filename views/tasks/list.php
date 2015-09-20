@@ -21,7 +21,7 @@
 						<div class="task-separator"></div>
 						<div ng-bind-html="Task.html | unsafe" name="task-{{Task.id}}" ng-click="editTask(Task)"></div>
 						<span ng-repeat="file in Task.files" class="attachment" ng-hide="editingTask(Task)">
-							<span class="glyphicon glyphicon-paperclip"></span>{{file.uploaded_name}} ({{file.size}})
+							<span class="glyphicon glyphicon-paperclip"></span><a target="_blank" href="files/task/{{file.name}}" style="">{{file.uploaded_name}}</a> ({{file.size}})
 						</span>
 						
 						<div class="small" style="text-align: right" ng-show="editingTask(Task)">

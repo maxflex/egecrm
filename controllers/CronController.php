@@ -23,21 +23,42 @@
 			}
 		}
 		
-		public static function actionNotifyGroupsFirstLesson()
+		
+		/**
+		 * Выгружает количества групп на ЕГЭ-ЦЕНТР в переменны {inf_11} и тд.
+		 * 
+		 */
+		public static function actionEgeCentrUpdateGroupsCount()
 		{
-			$result = dbConnection()->query("
-				SELECT id_group, MIN(date) as first_lesson_date FROM group_schedule
-				GROUP BY id_group
-				HAVING first_lesson_date = '" . date("Y-m-d", strtotime("tomorrow")) . "'
-			");
+			for ($i = 9; $i <= 11; $i += 2) {
+				foreach (Subjects::$short_eng as $id_subject => $subject) {
+					$count = Group::count([
+						"condition" => "id_subject=$id_subject AND grade=$i"
+					]);
+					$return[] = [
+						'subject' 	=> $subject . "_" . $i,
+						'count'		=> $count,
+					];
+				}	
+			}
+			// соединение с базой ЕЦ
+			$ec_connection = new mysqli('mysql.aperspek.mass.hc.ru', 'aperspek_ec', 'xu6Sonu4', "wwwaperspektivar_ec");
+			$ec_connection->set_charset("utf8");
 			
-			$tomorrow_group_ids = [];
-			while ($row = $result->fetch_object()) {
-				$tomorrow_group_ids[] = $row->id_group;
+			$ec_connection->query("DELETE FROM groups_count");
+			
+			foreach ($return as $data) {
+				$values[] = "('{$data['subject']}', {$data['count']})";
 			}
 			
+			$ec_connection->query("INSERT INTO groups_count (name, value) VALUES " . implode(",", $values));
+		}
+		
+		public static function actionNotifyGroupsFirstLesson()
+		{
+			// все завтрашние занятия
 			$Groups = Group::findAll([
-				"condition" => "id IN (". implode(",", $tomorrow_group_ids) .")"
+				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "'"
 			]);
 			
 			$tomorrow_month = date("n", strtotime("tomorrow"));
@@ -62,6 +83,18 @@
 				}
 				foreach ($Group->students as $id_student) {
 					$Student = Student::findById($id_student);
+					
+					// Проверяем было ли занятие у ученика
+					$already_had_lesson = VisitJournal::count([
+						"condition" => "id_entity=" . $Student->id . " AND type_entity='" . Student::USER_TYPE . "' 
+							AND id_group={$Group->id} AND present=1"
+					]) > 0 ? true : false;
+					
+					// Если занятие у ученика уже было – отправлять СМС не надо
+					if ($already_had_lesson) {
+						continue;
+					}
+					
 					foreach (Student::$_phone_fields as $phone_field) {
 						$student_number = $Student->{$phone_field};
 						if (!empty($student_number)) {
@@ -89,7 +122,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-//					SMS::send($message['number'], $message['message'], ["additional" => 3]);
+					SMS::send($message['number'], $message['message'], ["additional" => 3]);
 					$sent_to[] = $message['number'];
 					
 					// debug
@@ -104,7 +137,7 @@
 		
 		private function _generateMessage($Group, $Entity, $tomorrow)
 		{
-			return "ЕГЭ-Центр информирует: завтра, {$tomorrow}, состоится занятие по " . Subjects::$dative[$Group->id_subject] . " (". Branches::$all[$Group->id_branch] ."). Подробности в личном кабинете на сайте ege-centr.ru (ссылка вверху справа). Ваш логин: {$Entity->login}, пароль {$Entity->password}. Администрация ЕГЭ-Центра";
+			return "ЕГЭ-Центр информирует: завтра, {$tomorrow}, состоится занятие по " . Subjects::$dative[$Group->id_subject] . " (". Branches::$all[$Group->id_branch] ." " . Cabinet::findById($Group->cabinet)->number . "). Подробности в личном кабинете на сайте ege-centr.ru (ссылка вверху справа). Ваш логин: {$Entity->login}, пароль {$Entity->password}. Администрация ЕГЭ-Центра";
 		}
 		
 		/**

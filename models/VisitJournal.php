@@ -17,6 +17,38 @@
 			{
 				$Student = Student::findById($id_student);
 				
+				// если отсутствовал на занятии
+				if ($data[$id_student]['presence'] == 2) {
+					$message = Template::get(7, [
+						"date" 			=> today_text(),
+						"student_name"	=> $Student->last_name . " " . $Student->first_name,
+						"abscent_word"	=> ($Student->getGender() == 1 ? "отсутствовал" : "отсутствовала"),
+						"subject"		=> Subjects::$dative[$Group->id_subject],
+					]);
+					foreach (Student::$_phone_fields as $phone_field) {
+						$representative_number = $Student->Representative->{$phone_field};
+						if (!empty($representative_number)) {
+							SMS::send($representative_number, $message, ["additional" => 3]);
+						}
+					}
+				} else 
+				// если отсутствовал на занятии
+				if ($data[$id_student]['late'] >= 15) {
+					$message = Template::get(6, [
+						"date" 			=> today_text(),
+						"student_name"	=> $Student->last_name . " " . $Student->first_name,
+						"late_word"		=> ($Student->getGender() == 1 ? "опоздал" : "опоздала"),
+						"subject"		=> Subjects::$dative[$Group->id_subject],
+						"late_minutes"	=> $data[$id_student]['late'] . " " . pluralize('минуту', 'минуты', 'минут', $data[$id_student]['late']),
+					]);
+					foreach (Student::$_phone_fields as $phone_field) {
+						$representative_number = $Student->Representative->{$phone_field};
+						if (!empty($representative_number)) {
+							SMS::send($representative_number, $message, ["additional" => 3]);
+						}
+					}
+				}
+				
 				self::add([
 					"id_entity" 			=> $id_student,
 					"type_entity"			=> Student::USER_TYPE,

@@ -14,14 +14,15 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div>
-					Место проведения занятий: ЕГЭ-Центр-<?= Branches::$all[$Group->id_branch] ?> (как добраться смотрите в разделе "вопрос-ответ")
+					Место проведения занятий: ЕГЭ-Центр-<?= Branches::$all[$Group->id_branch] ?> (<?= Cabinet::findById($Group->cabinet)->number ?> каб.)
+					<? partial("how_to_get", ["Group" => $Group]) ?>
 				</div>
 				<div>
 					Преподаватель: 
-					<span ng-show="agreed_to_be_in_group">
+					<span ng-show="Group.approved">
 						{{Teacher.last_name + " " + Teacher.first_name + " " + Teacher.middle_name}} 
 					</span>
-					<span ng-show="!agreed_to_be_in_group || !Teacher">
+					<span ng-show="!Group.approved || !Teacher">
 						пока не назначен
 					</span>
 				</div>
@@ -34,17 +35,17 @@
 						
 						<span ng-show="lessonCount() == 1">
 							(<span ng-repeat="(day, day_data) in Group.day_and_time">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ", "}}</span>). 
-							<span ng-show="!agreed_to_be_in_group">Расписание может быть изменено.</span>
-							<span ng-show="agreed_to_be_in_group">Расписание подтверждено</span>
+							<span ng-show="!Group.approved">Расписание может быть изменено.</span>
+							<span ng-show="Group.approved">Расписание подтверждено</span>
 						</span>
 						
 						<span ng-show="lessonCount() > 1">
 							(<span ng-repeat="(day, day_data) in Group.day_and_time">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ", "}}</span>). 
-							<span ng-show="!agreed_to_be_in_group">Расписание может быть изменено.</span>
-							<span ng-show="agreed_to_be_in_group">Расписание подтверждено</span>
+							<span ng-show="!Group.approved">Расписание может быть изменено.</span>
+							<span ng-show="Group.approved">Расписание подтверждено</span>
 						</span>
 						
-<!-- 						<span ng-show="!agreed_to_be_in_group"> (может быть изменено)</span> -->
+<!-- 						<span ng-show="!Group.approved"> (может быть изменено)</span> -->
 					</span>
 					<span ng-show="!Group.day_and_time">
 						формируется

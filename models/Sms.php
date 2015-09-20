@@ -5,6 +5,8 @@ class SMS extends Model
 	public static $mysql_table	= "sms";
 	
 	const INLINE_SMS_LENGTH = 60;
+	const PER_PAGE = 50; // Сколько отображать на странице списка
+	
 	
 	public function __construct($array)
 	{
@@ -15,6 +17,26 @@ class SMS extends Model
 		if (mb_strlen($this->message) > self::INLINE_SMS_LENGTH) {
 			$this->message_short = mb_strimwidth($this->message, 0, self::INLINE_SMS_LENGTH, '...', 'utf-8');
 		}
+	}
+	
+	/**
+	 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
+	 *
+	 */
+	public static function getByPage($page)
+	{
+		if (!$page) {
+			$page = 1;
+		}
+		// С какой записи начинать отображение, по формуле
+		$start_from = ($page - 1) * self::PER_PAGE;
+
+		$SMS = self::findAll([
+			"order" 	=> "id DESC",
+			"limit" 	=> $start_from. ", " .self::PER_PAGE
+		]);
+				
+		return $SMS;
 	}
 	
 	public static function sendToNumbers($numbers, $message, $additional = []) {

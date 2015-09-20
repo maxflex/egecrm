@@ -468,7 +468,7 @@
 		public static function deleteAll($params)
 		{
 			// Удаляем из БД
-			static::dbConnection()->query("DELETE FROM ".static::$mysql_table." WHERE ".$params["condition"]);
+			static::dbConnection()->query("DELETE FROM ".static::$mysql_table. (isset($params["condition"]) ? " WHERE ".$params["condition"] : ""));
 		}
 
 		 /*

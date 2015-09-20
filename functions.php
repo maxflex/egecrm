@@ -573,5 +573,14 @@
 		}
 		
 		return $m;
-	}	
+	}
+	
+	// 12 сентября
+	function today_text()
+	{
+		$current_month = date("n");
+		$current_month = russian_month($current_month);
+		
+		return date("d") . " " . $current_month;
+	}
 ?>

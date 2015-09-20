@@ -62,6 +62,7 @@ RewriteRule ^stats[/]?$ index.php?controller=stats [QSA,L]
 
 # Клиенты
 RewriteRule ^clients[/]?$ index.php?controller=clients [QSA,L]
+RewriteRule ^clients/precancelled[/]?$ index.php?controller=clients&action=preCancelled [QSA,L]
 RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
 RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
 
@@ -69,15 +70,19 @@ RewriteRule ^faq[/]?$ index.php?controller=faq&action=faq[QSA,L]
 RewriteRule ^reviews[/]?$ index.php?controller=TeacherReviews&action=main[QSA,L]
 RewriteRule ^reviews/ajax/([a-zA-Z]+)[/]?$ index.php?controller=TeacherReviews&action=Ajax$1 [QSA,L]
 
+RewriteRule ^templates[/]?$ index.php?controller=templates&action=list[QSA,L]
+RewriteRule ^templates/ajax/([a-zA-Z]+)[/]?$ index.php?controller=templates&action=Ajax$1 [QSA,L]
+
 
 # SMS
 RewriteRule ^sms[/]?$ index.php?controller=sms [QSA,L]
+RewriteRule ^sms/([0-9]+)[/]?$ index.php?controller=sms&page=$1 [QSA,L]
 
 # RATING
-RewriteRule ^rating[/]?$ index.php?controller=rating [QSA,L]
-RewriteRule ^rating/sum[/]?$ index.php?controller=rating&action=sum [QSA,L]
-RewriteRule ^rating/subject/([0-9]+)[/]?$ index.php?controller=rating&action=subjectRating&id_subject=$1 [QSA,L]
-RewriteRule ^rating/([0-9]+)?$ index.php?controller=rating&action=branchRating&id_branch=$1 [QSA,L]
+# RewriteRule ^rating[/]?$ index.php?controller=rating [QSA,L]
+# RewriteRule ^rating/sum[/]?$ index.php?controller=rating&action=sum [QSA,L]
+# RewriteRule ^rating/subject/([0-9]+)[/]?$ index.php?controller=rating&action=subjectRating&id_subject=$1 [QSA,L]
+# RewriteRule ^rating/([0-9]+)?$ index.php?controller=rating&action=branchRating&id_branch=$1 [QSA,L]
 
 
 # API

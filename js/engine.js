@@ -99,13 +99,40 @@
 	}
 	
 	function smsTemplate(id_template) {
-		template = $("#sms-template-" + id_template).text().trim()
-		$("#sms-message").val(template).keyup()
+//		template = $("#sms-template-" + id_template).text().trim()
+		$.post("templates/ajax/get", {number: id_template}, function(template) {
+			$("#sms-message").val(template).keyup()			
+		})
 	}
 	
-	function loginPasswordTemplate(id_template) {
-		text = "Ваш логин: " + ang_scope.Teacher.login + "\nВаш пароль: " + ang_scope.Teacher.password
-		$("#sms-message").val(text).keyup()
+	function loginPasswordTemplate() {
+		
+		// учитель/ученик?
+		if ($('[ng-app="Request"]').length) {
+			if ($('[ng-controller="EditCtrl"]').length) {
+				login = ang_scope.student.login 
+				password = ang_scope.student.password
+			} else {
+				login = false
+				password = false
+			}
+		} else {
+			login = ang_scope.Teacher.login
+			password = ang_scope.Teacher.password
+		}
+		
+		$.post("templates/ajax/get", {
+				number: 4, 
+				params: {
+					entity_login: login,
+					entity_password: password,
+					number: $("#sms-number").text()
+				}
+			}, function(template) {
+				$("#sms-message").val(template).keyup()			
+		});
+		//text = "Ваш логин: " + ang_scope.Teacher.login + "\nВаш пароль: " + ang_scope.Teacher.password
+		//$("#sms-message").val(text).keyup()
 	}
 	
 	function generateEmailTemplate()

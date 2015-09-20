@@ -35,12 +35,13 @@
 			
 			$scope.saveStudent = ->
 				$scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData
-				$scope.form_changed = true
 				lightBoxHide()
 			
 			$scope.registerInJournal = ->
-				bootbox.confirm "Регистрировать запись в журнал?", (result) ->
+				bootbox.confirm "Записать запись в журнал?", (result) ->
 					if result is true
+						$scope.saving = true
+						$scope.$apply()
 						ajaxStart()
 						$.post "groups/ajax/registerInJournal",
 							id_group: 	$scope.id_group
@@ -48,24 +49,14 @@
 							data:		$scope.LessonData
 						, (response) ->
 							ajaxEnd()
+							$scope.saving = false
 							$scope.registered_in_journal = true
 							# $scope.form_changed = false
 							$scope.$apply()
 			
-			$scope.form_changed = false
-			$scope.save = ->
-				ajaxStart()
-				$.post "groups/ajax/SaveLessonData",
-					id_group: 	$scope.id_group
-					date:		$scope.date
-					data:		$scope.LessonData
-				, (response) ->
-					ajaxEnd()
-					$scope.form_changed = false
-					$scope.$apply()
-			
 			angular.element(document).ready ->
 				set_scope "Group"
+				
 		.controller "ScheduleCtrl", ($scope) ->
 			$scope.weekdays = [
 				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
@@ -164,6 +155,7 @@
 			
 			angular.element(document).ready ->
 				set_scope 'Group'
+				
 				init_dates = []
 				for schedule_date in $scope.Group.Schedule
 					init_dates.push new Date schedule_date.date
@@ -679,7 +671,6 @@
 							$scope.$apply()
 						else
 							redirect "groups/edit/#{response}"	
-						
 		.controller "ListCtrl", ($scope) ->
 			$scope.weekdays = [
 				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
@@ -694,7 +685,7 @@
 			$scope.changeBranch = ->
 				$("#group-cabinet").attr "disabled", "disabled"
 				ajaxStart()
-				$.post "groups/ajax/getCabinet", {id_branch: $scope.search.id_branch}, (cabinets) ->
+				$.post "groups/ajax/getCabinet", {id_branch: $scope.search.branches}, (cabinets) ->
 					ajaxEnd()
 					$scope.Cabinets = cabinets
 					$scope.search.cabinet = 0
@@ -754,7 +745,7 @@
 			
 			$scope.search = 
 				grade: ""
-				id_branch: ""
+				branches: ""
 				id_subject: ""
 				id_teacher: ""
 				cabinet: 0
@@ -766,7 +757,7 @@
 			
 			$scope.groupsFilter = (Group) ->
 				return (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and 
-					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
+					(Group.id_branch.toString() in $scope.search.branches or not $scope.search.branches) and
 					(parseInt($scope.search.id_subject) is Group.id_subject or not $scope.search.id_subject) and
 					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher) and
 					(parseInt($scope.search.cabinet) is parseInt(Group.cabinet) or not parseInt($scope.search.cabinet))
@@ -943,6 +934,11 @@
 						, "json"
 			
 			$(document).ready ->
+				# branch mulitiselect
+				if $("#group-branch-filter").length
+					$("#group-branch-filter").selectpicker
+						noneSelectedText: "филиалы"
+					
 				if $scope.mode is 2
 					$("#group-branch-filter2").selectpicker
 						noneSelectedText: "филиалы"

@@ -53,12 +53,13 @@ angular.module("Group", []).filter('to_trusted', [
   };
   $scope.saveStudent = function() {
     $scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData;
-    $scope.form_changed = true;
     return lightBoxHide();
   };
   $scope.registerInJournal = function() {
-    return bootbox.confirm("Регистрировать запись в журнал?", function(result) {
+    return bootbox.confirm("Записать запись в журнал?", function(result) {
       if (result === true) {
+        $scope.saving = true;
+        $scope.$apply();
         ajaxStart();
         return $.post("groups/ajax/registerInJournal", {
           id_group: $scope.id_group,
@@ -66,23 +67,11 @@ angular.module("Group", []).filter('to_trusted', [
           data: $scope.LessonData
         }, function(response) {
           ajaxEnd();
+          $scope.saving = false;
           $scope.registered_in_journal = true;
           return $scope.$apply();
         });
       }
-    });
-  };
-  $scope.form_changed = false;
-  $scope.save = function() {
-    ajaxStart();
-    return $.post("groups/ajax/SaveLessonData", {
-      id_group: $scope.id_group,
-      date: $scope.date,
-      data: $scope.LessonData
-    }, function(response) {
-      ajaxEnd();
-      $scope.form_changed = false;
-      return $scope.$apply();
     });
   };
   return angular.element(document).ready(function() {
@@ -876,7 +865,7 @@ angular.module("Group", []).filter('to_trusted', [
     $("#group-cabinet").attr("disabled", "disabled");
     ajaxStart();
     return $.post("groups/ajax/getCabinet", {
-      id_branch: $scope.search.id_branch
+      id_branch: $scope.search.branches
     }, function(cabinets) {
       ajaxEnd();
       $scope.Cabinets = cabinets;
@@ -937,7 +926,7 @@ angular.module("Group", []).filter('to_trusted', [
   };
   $scope.search = {
     grade: "",
-    id_branch: "",
+    branches: "",
     id_subject: "",
     id_teacher: "",
     cabinet: 0
@@ -948,7 +937,8 @@ angular.module("Group", []).filter('to_trusted', [
     id_subject: ""
   };
   $scope.groupsFilter = function(Group) {
-    return (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && (parseInt($scope.search.id_subject) === Group.id_subject || !$scope.search.id_subject) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
+    var ref;
+    return (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && ((ref = Group.id_branch.toString(), indexOf.call($scope.search.branches, ref) >= 0) || !$scope.search.branches) && (parseInt($scope.search.id_subject) === Group.id_subject || !$scope.search.id_subject) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
   };
   $scope.groupsFilter2 = function(Group) {
     var ref, ref1;
@@ -1153,6 +1143,11 @@ angular.module("Group", []).filter('to_trusted', [
     }
   };
   $(document).ready(function() {
+    if ($("#group-branch-filter").length) {
+      $("#group-branch-filter").selectpicker({
+        noneSelectedText: "филиалы"
+      });
+    }
     if ($scope.mode === 2) {
       $("#group-branch-filter2").selectpicker({
         noneSelectedText: "филиалы"

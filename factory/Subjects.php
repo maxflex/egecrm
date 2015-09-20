@@ -69,6 +69,19 @@
 			self::COMPUTER	=> "ИНФ",	
 		];
 		
+		static $short_eng = [
+			self::MATH 		=> "math",
+			self::PHYSICS	=> "phys",
+			self::RUSSIAN	=> "rus",
+			self::LITERATURE=> "lit",
+			self::ENGLISH	=> "eng",
+			self::HISTORY	=> "his",
+			self::SOCIETY	=> "soc",
+			self::CHEMISTRY	=> "chem",
+			self::BIOLOGY	=> "bio",
+			self::COMPUTER	=> "inf",	
+		];
+		
 		# Заголовок
 		static $title = "предмет";
 		

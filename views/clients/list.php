@@ -16,9 +16,10 @@
 		<div class="top-links">
 		    <span class="link-like" ng-click="filter_cancelled = 0" ng-class="{'active': filter_cancelled == 0}">договоры в работе</span>
 		    <span class="link-like" ng-click="filter_cancelled = 1" ng-class="{'active': filter_cancelled == 1}">расторгнутые договоры</span>
+		    <span class="link-like" ng-click="filter_cancelled = 2" ng-class="{'active': filter_cancelled == 2}">предварительное расторжение</span>
 	    </div>
 		<table class="table table-divlike">
-			<tr ng-repeat="Student in Students | orderBy:orderStudents():asc | filter:{Contract: {cancelled : filter_cancelled} }">
+			<tr ng-repeat="Student in Students | orderBy:orderStudents():asc | filter:clientsFilter">
 				<td>
 					{{$index + 1}}. <a href="student/{{Student.id}}">{{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}</a>
 				</td>

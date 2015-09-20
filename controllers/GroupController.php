@@ -27,14 +27,23 @@
 			} else {
 				$this->_custom_panel = true;
 				$Group = Group::findById($id_group);
-				$Group->Students = $Group->getStudents();
+				$registered_in_journal = $Group->registeredInJournal($date);
 				
-				$LessonData = LessonData::findAll([
-					"condition" => "date='$date' AND id_group=$id_group"
-				]);
-				
-				foreach ($LessonData as $index => $OneLessonData) {
-					$OrderedLessonData[$OneLessonData->id_student] = $OneLessonData;
+				// если занятие уже зарегистрировано, берем данные из журнала
+				if ($registered_in_journal) {
+					$LessonData = VisitJournal::findAll([
+						"condition" => "lesson_date='$date' AND id_group=$id_group AND type_entity='". Student::USER_TYPE ."'"
+					]);
+					
+					$student_ids = [];
+					foreach ($LessonData as $OneData) {
+						$student_ids[] = $OneData->id_entity;
+						$OrderedLessonData[$OneData->id_entity] = $OneData;
+					}
+					
+					$Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"]);
+				} else {
+					$Group->Students = $Group->getStudents();
 				}
 				
 				$ang_init_data = angInit([
@@ -59,11 +68,16 @@
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity);
 				
+				foreach ($Groups as &$Group) {
+					$Group->Schedule = $Group->getSchedule();
+				}
+				
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
-					"Subjects" 		=> Subjects::$three_letters,
+					"Subjects" 		=> Subjects::$all,
 					"Grades"		=> Grades::$all,
 					"GroupLevels"	=> GroupLevels::$all,
+					"Branches"		=> Branches::$all,				
 				]);
 				
 				$this->render("list_for_teachers", [
@@ -75,6 +89,10 @@
 			if (User::fromSession()->type == Student::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
 				$Groups = Student::getGroupsStatic(User::fromSession()->id_entity);
+				
+				foreach ($Groups as &$Group) {
+					$Group->Schedule = $Group->getSchedule();
+				}
 				
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -91,11 +109,14 @@
 			} else {
 				// не надо панель рисовать
 				$this->_custom_panel = true;
-				
 				$this->addCss("bootstrap-select");
 				$this->addJs("bootstrap-select, dnd");
 				
 				$Groups = Group::findAll();
+				
+				foreach ($Groups as &$Group) {
+					$Group->Schedule = $Group->getSchedule();
+				}
 				
 				$mode = ($_GET["mode"] == "students" ? 1 : 2);
 				
@@ -125,9 +146,6 @@
 		public function actionSchedule()
 		{
 			if (User::fromSession()->type == Student::USER_TYPE) {
-//				ini_set("display_errors", 1);
-//				error_reporting(E_ALL);
-				
 				// не надо панель рисовать
 				$this->_custom_panel = true;
 				
@@ -141,22 +159,45 @@
 				if (!$Teacher) {
 					$Teacher = 0;
 				}
-				
-				$agreed_to_be_in_group = $Teacher ? $Teacher->agreedToBeInGroup($Group->id) : 0;
-				$agreed_to_be_in_group = $agreed_to_be_in_group ? 1 : 0;
 								
 				$ang_init_data = angInit([
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
 					"vocation_dates"		=> GroupSchedule::getVocationDates(),
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
-					"agreed_to_be_in_group" => $agreed_to_be_in_group,
 				]);
 				
 				$this->render("student_schedule", [
 					"Group"			=> $Group,
 					"ang_init_data" => $ang_init_data,
 				]);	
+			} else 
+			if (User::fromSession()->type == Teacher::USER_TYPE) {
+				// не надо панель рисовать
+				$this->_custom_panel = true;
+				
+				$id_group = $_GET['id'];		
+				$Group = Group::findById($id_group);
+				
+				$Group->Schedule = $Group->getSchedule();
+				
+				$Teacher = Teacher::findById($Group->id_teacher);
+				
+				if (!$Teacher) {
+					$Teacher = 0;
+				}
+								
+				$ang_init_data = angInit([
+					"Group" 				=> $Group,
+					"Teacher"				=> $Teacher,
+					"vocation_dates"		=> GroupSchedule::getVocationDates(),
+					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
+				]);
+				
+				$this->render("teacher_schedule", [
+					"Group"			=> $Group,
+					"ang_init_data" => $ang_init_data,
+				]);
 			} else {
 				// не надо панель рисовать
 				$this->_custom_panel = true;
@@ -403,7 +444,7 @@
 			returnJsonAng(
 				Cabinet::getByBranch($id_branch)
 			);
-		}		
+		}
 		
 		public function actionAjaxAddStudentDnd() 
 		{
@@ -465,20 +506,13 @@
 			
 			returnJsonAng($Groups);
 		}
-		
-		public function actionAjaxSaveLessonData()
-		{
-			extract($_POST);
-			$data = array_filter($data);
-			
-			LessonData::addData($id_group, $date, $data);
-		}
-		
+
 		public function actionAjaxRegisterInJournal()
 		{
 			extract($_POST);
 			$data = array_filter($data);
 			
+			LessonData::addData($id_group, $date, $data);
 			VisitJournal::addData($id_group, $date, $data);
 		}
 	}

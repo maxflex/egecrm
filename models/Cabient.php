@@ -12,21 +12,47 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
-			
 		}
 		
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
-		public static function getByBranch($id_branch)
+		
+		/**
+		 * Получить кабинеты по id филиалов.
+		 * 
+		 * $branch – если передан массив, ищет все кабинеты по ID, если передано число,
+		 * то ищутстя только кабинеты этого id филиала
+		 */
+		public static function getByBranch($branch)
 		{
-			if (!$id_branch) {
+			if (!$branch) {
 				return false;
 			}
 			
-			return self::findAll([
-				"condition" => "id_branch=$id_branch"
+			if (is_array($branch)) {
+				$condition = "id_branch IN (". implode(",", $branch) . ")";
+			} else {
+				$condition = "id_branch=$id_branch";
+			}
+			
+			$return = self::findAll([
+				"condition" => $condition,
 			]);
+			
+			foreach ($return as &$cabinet) {
+				$cabinet->number = "Кабинет №".$cabinet->number;
+			}
+			
+			// если выбрано много филиалов, подписывать название филиала к кабинету
+			// чтобы было понятно филиал какого кабинета это
+			if (is_array($branch) && count($branch) > 1) {
+				foreach ($return as &$cabinet) {
+					$cabinet->number = Branches::$short[$cabinet->id_branch] . ": " . $cabinet->number;
+				}
+			}
+			
+			return $return;
 		}
 		
 		public static function getBranchCabinetIds($id_branch)

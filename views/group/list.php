@@ -39,11 +39,18 @@
 							<?= Grades::buildSelector(false, false, ["ng-model" => "search.grade"]) ?>
 						</div>
 						<div class="col-sm-2">
+							<?= Branches::buildMultiSelector(false, [
+								"id" 		=> "group-branch-filter", 
+								"ng-model" 	=> "search.branches",
+								"ng-change"	=> "changeBranch()",
+							]) ?>
+<!--
 			                <?= Branches::buildSvgSelector(false, [
 				                "id" => "group-branch-filter", 
 				                "ng-model" => "search.id_branch", 
 				                "ng-change" => "changeBranch()"
 				            ]) ?>
+-->
 						</div>
 						<div class="col-sm-2">
 							<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?>
@@ -62,7 +69,7 @@
 								<option selected value="0">№ кабинета</option>
 								<option disabled>──────────────</option>
 								<option ng-repeat="Cabinet in Cabinets" 
-									ng-value="Cabinet.id" ng-selected="Group.cabinet == Cabinet.id">Кабинет №{{Cabinet.number}}</option>
+									ng-value="Cabinet.id" ng-selected="Group.cabinet == Cabinet.id">{{Cabinet.number}}</option>
 							</select>
 						</div>
 					</div>

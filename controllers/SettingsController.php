@@ -87,7 +87,38 @@
 			$this->render("students");			
 		}
 		
+		public function actionLessons()
+		{
+			
+			$this->setTabTitle("Трекер занятий");
+/*
+			
+			$ang_init_data = angInit([
+				"Schedule" => $ExistingSchedule,
+			]);
+			
+*/
+			$this->render("lessons", [
+//				"ang_init_data" => $ang_init_data,
+			]);
+		}
 		
+		public function actionAjaxGetLessons()
+		{
+			$Schedule = GroupSchedule::findAll([
+				"order" => "date ASC, time ASC",
+			]);
+			
+			foreach ($Schedule as &$S) {
+				$Group = Group::findById($S->id_group);
+				if ($Group) {
+					$S->Group = $Group;
+					$ExistingSchedule[] = $S;
+				}
+			}
+			
+			returnJsonAng($ExistingSchedule);
+		}
 		
 		/**
 		 * Получить всех учеников, не принадлежащих группам

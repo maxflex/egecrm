@@ -5,6 +5,32 @@ angular.module "Settings", []
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
+	.controller "LessonsCtrl", ($scope) ->
+		$scope.formatDate = (date) ->
+			date = date.split "."
+			date = date.reverse()
+			date = date.join "-"
+			D = new Date(date)
+			moment(D).format "D MMMM YYYY г."
+			
+		
+		$scope.isFirstLesson = (Schedule) ->
+			GroupSchedule = _.where $scope.Schedule, 
+				id_group: Schedule.id_group
+			
+			first_lesson_date = _.sortBy GroupSchedule, 'date'
+			first_lesson_date = first_lesson_date[0].date
+			
+			return first_lesson_date is Schedule.date
+		
+		angular.element(document).ready ->
+			set_scope "Settings"
+			
+			$.post "settings/ajax/GetLessons", {}, (Schedule) ->
+				console.log Schedule
+				$scope.Schedule = Schedule
+				$scope.$apply()
+			, "json"
 	.controller "CabinetsPageCtrl", ($scope) ->
 		$scope.weekdays = [
 			{"short" : "ПН", "full" : "Понедельник"},

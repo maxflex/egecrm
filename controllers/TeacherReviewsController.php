@@ -19,14 +19,8 @@
 		{
 			$this->setTabTitle("Оценка преподавателей");
 			
-			$Groups = Student::getGroupsStatic(User::fromSession()->id_entity);
-			
-			foreach ($Groups as $Group) {
-				if ($Group->id_teacher && VisitJournal::lessonPresent($Group->id)) {
-					$teacher_ids[] = $Group->id_teacher;
-				}
-			}
-			
+			$teacher_ids = Student::getExistedTeachers(User::fromSession()->id_entity);
+
 			if ($teacher_ids) {
 				$Teachers = Teacher::findAll([
 					"condition" => "id IN (" . implode(",", $teacher_ids) . ")"
