@@ -17,7 +17,11 @@ class SMS extends Model
 		}
 	}
 	
+<<<<<<< HEAD
 	public static function sendToNumbers($numbers, $message) {
+=======
+	public static function sendToNumbers($numbers, $message, $additional = []) {
+>>>>>>> parent of 5231888... Не работают группы
 		foreach ($numbers as $number) {
 			self::send($number, $message);
 		}	
