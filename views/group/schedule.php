@@ -4,14 +4,10 @@
 		Расписание группы №<?= $Group->id ?>
 		<span ng-hide="<?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>" class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
 		<div class="pull-right">
-<<<<<<< HEAD
 			<span class="link-reverse pointer" ng-click="setTimeFromGroup(Group)" ng-show="Group.Schedule.length && Group.start" 
 				ng-hide="<?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>">
 				установить время занятия из настроек группы
 			</span>
-=======
-			<span class="link-reverse pointer" ng-click="setTimeFromGroup(Group)" ng-show="Group.Schedule.length && Group.start">установить время занятия из настроек группы</span>
->>>>>>> parent of 99d1c84... Конец недели
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
@@ -50,7 +46,9 @@
 				</div>
 			</div>
 		</div>
-		
+			<div style="clear: both; margin-top: 15px; text-align: center">
+		<button class="btn btn-primary" ng-click="updateCache()" ng-disabled="!can_update_cache">обновить кеш</button>
+	</div>
 	</div>
 </div>
 </div>

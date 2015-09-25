@@ -1,4 +1,4 @@
-<div ng-show="add_clients_panel" class="row">
+<div ng-show="add_clients_panel && Group.open == 1" class="row">
 		<hr>
 		<div class="col-sm-12">
 			<div class="row" style="margin-bottom: 15px">
@@ -53,7 +53,7 @@
 									ng-show="Student.Contract.cancelled == 1 && !studentAdded(Student.id)">
 									расторгнут
 								</span>
-								<span class="link-like small pull-right" ng-click="addStudent(Student.id, $event)" 
+								<span class="link-like small pull-right" ng-click="addStudent(Student, $event)" 
 									ng-hide="studentAdded(Student.id) || Student.Contract.cancelled == 1">добавить</span>
 								<span class="link-like small pull-right red" ng-click="removeStudent(Student.id)" ng-show="studentAdded(Student.id)">удалить</span>
 							</span>

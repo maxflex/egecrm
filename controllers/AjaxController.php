@@ -231,6 +231,105 @@
 			returnJSON($SMS);
 		}
 		
+		public function actionAjaxSendGroupSms()
+		{
+			extract($_POST);
+			
+			$Group = Group::findById($id_place);
+				
+			$Students = $Group->getStudents();
+			
+			if ($to_students == "true") {
+				foreach ($Students as $Student) {
+					foreach (Student::$_phone_fields as $phone_field) {
+						$number = $Student->{$phone_field};
+						
+						if (!empty(trim($number))) {
+							$msg = $message;
+							if ($Student->login && $Student->password) {
+								$msg = str_replace('{entity_login}', $Student->login, $msg);
+								$msg = str_replace('{entity_password}', $Student->password, $msg);
+							}
+							$messages[] = [
+								"type"      => "Ученику #" . $Student->id,
+								'number' 	=> $number,
+								'message'	=> $msg,
+							];
+						}
+					}
+				}
+			}
+			
+			if ($to_representatives == "true") {
+				foreach ($Students as $Student) {
+					if ($Student->Representative) {
+						foreach (Student::$_phone_fields as $phone_field) {
+							$number = $Student->Representative->{$phone_field};
+							
+							if (!empty(trim($number))) {
+								$msg = $message;
+								if ($Student->login && $Student->password) {
+									$msg = str_replace('{entity_login}', $Student->login, $msg);
+									$msg = str_replace('{entity_password}', $Student->password, $msg);
+								}
+								$messages[] = [
+									"type"      => "Представителю #" . $Student->Representative->id,
+									'number' 	=> $number,
+									'message'	=> $msg,
+								];
+							}
+						}
+					}
+				}
+			}
+			
+			if ($to_teacher == "true") {
+				$Teacher = Teacher::findById($Group->id_teacher);
+				$msg = $message;
+				if ($Teacher->login && $Teacher->password) {
+					$msg = str_replace('{entity_login}', $Teacher->login, $msg);
+					$msg = str_replace('{entity_password}', $Teacher->password, $msg);
+				}
+				
+				foreach (Student::$_phone_fields as $phone_field) {
+					$number = $Teacher->{$phone_field};
+					
+					if (!empty(trim($number))) {				
+						$messages[] = [
+							"type"      => "Учителю #" . $Teacher->id,
+							'number' 	=> $number,
+							'message'	=> $msg,
+						];
+					}
+				}
+			}
+			
+			$sent_to = [];
+			foreach ($messages as $message) {
+				if (!in_array($message['number'], $sent_to)) {
+					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
+					$sent_to[] = $message['number'];
+					
+					// debug
+					$body .= "<h3>" . $message["type"] . "</h3>";
+					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+				}
+			}
+
+			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
+			
+//			SMS::sendToNumbers($numbers, $message, $_POST + ["additional" => $additional]);
+			
+			returnJSON(count($sent_to));
+/*
+			$SMS = SMS::send($number, $message);
+			$SMS->getCoordinates();
+			
+			returnJSON($SMS);
+*/
+		}
+		
 		public function actionAjaxSmsHistory() {
 			extract($_POST);
 			
@@ -461,5 +560,26 @@
 			}
 			
 			returnJsonAng($Students);
+		}
+		
+		public function actionAjaxPreCancel()
+		{
+			extract($_POST);
+			
+			$Contract = Contract::findById($id_contract);
+			$Contract->pre_cancelled = $pre_cancelled;
+			$Contract->save("pre_cancelled");
+		}
+		
+		public function actionAjaxSmsCheckOk()
+		{
+			extract($_POST);
+			dbConnection()->query("UPDATE sms SET force_ok = 1 WHERE id=$id");
+		}
+		
+		public function actionAjaxSmsCheckDelete()
+		{
+			extract($_POST);
+			dbConnection()->query("UPDATE sms SET force_ok = 0 WHERE id=$id");
 		}
 	}

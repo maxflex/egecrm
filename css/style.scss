@@ -25,6 +25,70 @@ body {
 	font-weight: bold;
 }
 
+.student-dragout {
+	display: flex;
+    position: fixed;
+    height: 100%;
+    width: 226px;
+    top: 0;
+    left: 0;
+//    background-color: #ff5f5f;
+	background-color: #ff7c7c;
+    z-index: 99;
+//    border: 5px dashed rgba(255, 255, 255, 0.3);
+    border: 5px dashed rgba(0, 0, 0, 0.2);
+    /* vertical-align: middle; */
+    align-items: center;
+    text-align: center;
+    text-align: -webkit-auto;
+    /* border: 5px dashed red; */
+    & span {
+	    font-size: 64px;
+	    color: white;
+	    display: block;
+	    width: 100%;
+	    text-align: center;
+	    margin: 0;
+    }
+}
+
+.student-dragout-hover {
+	background-color: $red;
+ 	border-color: rgba(0, 0, 0, 0.3);
+}
+
+.gray-hover {
+	cursor: pointer;
+	color: rgba(0, 0, 0, .25);
+	&:hover {
+		color: rgba(0, 0, 0, .5);
+	}
+}
+
+.group-student-sms-sent {
+	cursor: default !important;
+	color: $green !important;
+}
+
+.dotted-link {
+	display: inline-block;
+	color: $blue;
+	border-bottom: 1px dotted $blue;
+	cursor: pointer;
+	&:hover {
+		color: $hover_blue;
+		border-color: $hover_blue;
+	}
+}
+
+.from-capital {display:inline-block}
+.from-capital:first-letter {text-transform: uppercase}
+
+#how-to-get {
+	margin: 10px 0 30px;
+	display: none;
+}
+
 .teacher-rating {
 	height: 40px;
 	width: 40px;
@@ -246,6 +310,14 @@ body {
 }
 
 /* @group Blink */
+.double-blink {
+	-webkit-animation: blink .37s linear infinite !important;
+	-moz-animation: blink .37s linear infinite !important;
+	-ms-animation: blink .37s linear infinite !important;
+	-o-animation: blink .37s linear infinite !important;
+	 animation: blink .37s linear infinite !important;
+}
+
 .blink {
 	-webkit-animation: blink .75s linear infinite;
 	-moz-animation: blink .75s linear infinite;
@@ -301,6 +373,8 @@ body {
 }
 
 .tr-helper {
+	background: white !important;
+	z-index: 999;
 	width: 93% !important;
 }
 
@@ -321,7 +395,7 @@ body {
     cursor: default;
 }
 
-.group-student-status, .group-student-status1 {
+.group-student-status, .group-student-status1, .group-student-status0 {
     background-color: white;
     color: rgba(0, 0, 0, .5);
     border: 1px solid rgba(0, 0, 0, .5);
@@ -391,6 +465,10 @@ body {
 
 .branch-load-3 {
 	fill: #EE653F;
+}
+
+.ready-to-start {
+	fill: #5cb85c;
 }
 
 .mr3 {
@@ -471,6 +549,36 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     top:  0;
 }
 
+.day-explain {
+	border-radius: 50% !important;
+	height: 14px;
+    width: 14px;
+    display: inline-block;
+    background: #5cb85c;
+    top: 2px;
+    position: relative;
+    &.was-lesson {
+	    background-color: $blue !important;
+    }
+    &.first-lesson {
+	    background-color: $red !important;
+    }
+    &.first-and-was {
+		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fbaa33+0,fbaa33+50,337ab7+51,337ab7+100 */
+		background: #fbaa33  !important; /* Old browsers */
+		background: -moz-linear-gradient(top,  #fbaa33 0%, #fbaa33 50%, #337ab7 51%, #337ab7 100%)  !important; /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fbaa33), color-stop(50%,#fbaa33), color-stop(51%,#337ab7), color-stop(100%,#337ab7))  !important; /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top,  #fbaa33 0%,#fbaa33 50%,#337ab7 51%,#337ab7 100%)  !important; /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top,  #fbaa33 0%,#fbaa33 50%,#337ab7 51%,#337ab7 100%)  !important; /* Opera 11.10+ */
+		background: -ms-linear-gradient(top,  #fbaa33 0%,#fbaa33 50%,#337ab7 51%,#337ab7 100%)  !important; /* IE10+ */
+		background: linear-gradient(to bottom,  #fbaa33 0%,#fbaa33 50%,#337ab7 51%,#337ab7 100%)  !important; /* W3C */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbaa33', endColorstr='#337ab7',GradientType=0 )  !important; /* IE6-9 */
+    }
+    &.vocation {
+	    background-color: $red !important;
+    }
+}
+
 #calendar-app {
 	& thead tr:nth-child(1) {
 		display: none;
@@ -483,6 +591,12 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	& .calendar-row {
 		&:nth-child(1), &:nth-child(2), &:nth-child(4), &:nth-child(5), &:nth-child(7), &:nth-child(8), &:nth-child(10),{
 			& tbody tr:nth-child(6) {
+			//	display: none;
+			}
+		}
+		
+		&:nth-child(2), &:nth-child(3), &:nth-child(5), &:nth-child(6), &:nth-child(8), &:nth-child(9), &:nth-child(11) {
+			& tbody tr:nth-child(6) {
 				display: none;
 			}
 		}
@@ -491,22 +605,6 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	& .calendar-row {
 	//	height: 185px;
 	//    overflow: hidden;
-	}
-	
-	& .day-explain {
-		border-radius: 50% !important;
-		height: 14px;
-	    width: 14px;
-	    display: inline-block;
-	    background: #5cb85c;
-	    top: 2px;
-	    position: relative;
-	    & .vocation {
-		    background-color: $red !important;
-	    }
-	    & .was-lesson {
-		    background-color: $blue !important;
-	    }
 	}
 	
 	& .day:nth-child(2n + 6), .day:nth-child(2n + 7) {
@@ -614,7 +712,10 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	}
 	
 	& .attachment {
-		color: #999999;
+		color: #999999 !important;
+		& a {
+			color: #999999 !important;
+		}
 		font-size: 12px;
 		cursor: pointer;
 		margin-right: 10px;
@@ -736,7 +837,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 		color: $blue;
 		border-bottom: 1px dotted $blue;
 		cursor: pointer;
-		margin-right: 5px;
+		margin-right: 34px;
 		&:hover {
 			border-color: $hover_blue;
 			color: $hover_blue;
@@ -861,20 +962,36 @@ h4.row-header {
 
 
 
-.lightbox-sms, .lightbox-email, .lightbox-freetime {
+.lightbox-email, .lightbox-freetime {
 	width: 60%;
 //	height: 80%;
 	left: 20%;
 	top: 10%;
 }
 
+.lightbox-sms {
+	width: 80%;
+    left: 10%;
+    top: 5%;
+    height: 90%;
+    overflow: hidden;
+}
+
+
 .lightbox-freetime {
     max-height: 700px;
     overflow-y: scroll;
 }
 
+#sms-history {
+	margin-bottom: 10px;
+    padding-left: 23px;
+	height: 523px;
+    overflow-y: scroll;
+}
 
-#sms-history, #email-history {
+
+#email-history {
 	margin-bottom: 10px;
     padding-left: 23px;
     max-height: 300px;
@@ -1517,6 +1634,29 @@ h4 {
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;
+}
+
+.sms-status {
+	height: 15px;
+	width: 15px;
+//	margin-right: 5px;
+	position: relative;
+	top: 5px;
+	&.delivered {
+		& circle {
+			fill: #5cb85c;
+		}
+	}
+	&.not-delivered {
+		& circle {
+			fill: $red;
+		}
+	}
+	&.inway {
+		& circle {
+			fill: $orange;
+		}
+	}
 }
 
 .svg-metro {

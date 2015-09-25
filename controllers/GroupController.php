@@ -13,6 +13,12 @@
 		public function beforeAction()
 		{
 			$this->addJs("ng-group-app");
+			
+/*
+			ini_set("display_errors", 1);
+			error_reporting(E_ALL);
+*/
+			
 		}
 		
 		public function actionLesson()
@@ -27,14 +33,23 @@
 			} else {
 				$this->_custom_panel = true;
 				$Group = Group::findById($id_group);
-				$Group->Students = $Group->getStudents();
+				$registered_in_journal = $Group->registeredInJournal($date);
 				
-				$LessonData = LessonData::findAll([
-					"condition" => "date='$date' AND id_group=$id_group"
-				]);
-				
-				foreach ($LessonData as $index => $OneLessonData) {
-					$OrderedLessonData[$OneLessonData->id_student] = $OneLessonData;
+				// если занятие уже зарегистрировано, берем данные из журнала
+				if ($registered_in_journal) {
+					$LessonData = VisitJournal::findAll([
+						"condition" => "lesson_date='$date' AND id_group=$id_group AND type_entity='". Student::USER_TYPE ."'"
+					]);
+					
+					$student_ids = [];
+					foreach ($LessonData as $OneData) {
+						$student_ids[] = $OneData->id_entity;
+						$OrderedLessonData[$OneData->id_entity] = $OneData;
+					}
+					
+					$Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"]);
+				} else {
+					$Group->Students = $Group->getStudents();
 				}
 				
 				$ang_init_data = angInit([
@@ -59,11 +74,16 @@
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity);
 				
+				foreach ($Groups as &$Group) {
+					$Group->Schedule = $Group->getSchedule();
+				}
+				
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
-					"Subjects" 		=> Subjects::$three_letters,
+					"Subjects" 		=> Subjects::$all,
 					"Grades"		=> Grades::$all,
 					"GroupLevels"	=> GroupLevels::$all,
+					"Branches"		=> Branches::$all,				
 				]);
 				
 				$this->render("list_for_teachers", [
@@ -75,6 +95,10 @@
 			if (User::fromSession()->type == Student::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
 				$Groups = Student::getGroupsStatic(User::fromSession()->id_entity);
+				
+				foreach ($Groups as &$Group) {
+					$Group->Schedule = $Group->getSchedule();
+				}
 				
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -96,6 +120,13 @@
 				$this->addJs("bootstrap-select, dnd");
 				
 				$Groups = Group::findAll();
+/*
+				
+				foreach ($Groups as &$Group) {
+				//	$Group->Schedule = $Group->getScheduleCached();
+					$Group->schedule_count = $Group->getScheduleCountCached();
+				}
+*/
 				
 				$mode = ($_GET["mode"] == "students" ? 1 : 2);
 				
@@ -121,13 +152,10 @@
 				]);
 			}
 		}
-		
+
 		public function actionSchedule()
 		{
 			if (User::fromSession()->type == Student::USER_TYPE) {
-//				ini_set("display_errors", 1);
-//				error_reporting(E_ALL);
-				
 				// не надо панель рисовать
 				$this->_custom_panel = true;
 				
@@ -141,22 +169,45 @@
 				if (!$Teacher) {
 					$Teacher = 0;
 				}
-				
-				$agreed_to_be_in_group = $Teacher ? $Teacher->agreedToBeInGroup($Group->id) : 0;
-				$agreed_to_be_in_group = $agreed_to_be_in_group ? 1 : 0;
 								
 				$ang_init_data = angInit([
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
 					"vocation_dates"		=> GroupSchedule::getVocationDates(),
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
-					"agreed_to_be_in_group" => $agreed_to_be_in_group,
 				]);
 				
 				$this->render("student_schedule", [
 					"Group"			=> $Group,
 					"ang_init_data" => $ang_init_data,
 				]);	
+			} else 
+			if (User::fromSession()->type == Teacher::USER_TYPE) {
+				// не надо панель рисовать
+				$this->_custom_panel = true;
+				
+				$id_group = $_GET['id'];		
+				$Group = Group::findById($id_group);
+				
+				$Group->Schedule = $Group->getSchedule();
+				
+				$Teacher = Teacher::findById($Group->id_teacher);
+				
+				if (!$Teacher) {
+					$Teacher = 0;
+				}
+								
+				$ang_init_data = angInit([
+					"Group" 				=> $Group,
+					"Teacher"				=> $Teacher,
+					"vocation_dates"		=> GroupSchedule::getVocationDates(),
+					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
+				]);
+				
+				$this->render("teacher_schedule", [
+					"Group"			=> $Group,
+					"ang_init_data" => $ang_init_data,
+				]);
 			} else {
 				// не надо панель рисовать
 				$this->_custom_panel = true;
@@ -207,6 +258,7 @@
 			if (!$Group) {
 				$this->addJs("dnd");
 				$Group = Group::findById($_GET['id']);
+				$Group->day_and_time_2 = $Group->day_and_time;
 			}
 			
 			$Teachers = Teacher::findAll();
@@ -224,14 +276,20 @@
 				}
 				
 				$freetime = $Student->getGroupFreetime($Group->id, $Group->id_branch);
-				$Student->freetime 				= $freetime["freetime"];
-				$Student->freetime_red 			= $freetime["freetime_red"];
-				$Student->freetime_red_half 	= $freetime["freetime_red_half"];
+				$Student->freetime 			= $freetime["freetime"];
+				$Student->freetime_red 		= $freetime["freetime_red"];
+				$Student->freetime_red_half = $freetime["freetime_red_half"];
+				$Student->red_doubleblink 	= $freetime["red_doubleblink"];
+				
 				$Student->freetime_orange	 	= $freetime["freetime_orange"];
 				$Student->freetime_orange_full 	= $freetime["freetime_orange_full"];
 				
+				# Статус доставки СМС
+				$Student->delivery_data			= $Student->getAwaitingSmsStatuses($Group->id);
+				
 				if (array_key_exists($Student->id, $Group->student_statuses)) {
-					$Student->id_status = $Group->student_statuses[$Student->id];
+					$Student->id_status	= $Group->student_statuses[$Student->id]['id_status'];
+					$Student->notified	= $Group->student_statuses[$Student->id]['notified'];
 				}
 				$Students[] = $Student;
 			}
@@ -244,12 +302,18 @@
 			
 			// Свободное время препода
 			$teacher_freetime 			= TeacherFreetime::get($Group->id_teacher);
-			$teacher_freetime_red 		= TeacherFreetime::getRed($Group->id, $Group->id_teacher);
-			$teacher_freetime_red_full	= TeacherFreetime::getRedFull($Group->id, $Group->id_teacher);
+			
+			$teacher_freetime_all 		= TeacherFreetime::getRedAll($Group->id, $Group->id_teacher);
+			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
+			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
+			
+			$teacher_freetime_doubleblink = $teacher_freetime_all['red_doubleblink'];
 			
 			$teacher_freetime_orange	= TeacherFreetime::getOrange($Group->id, $Group->id_branch, $Group->id_teacher, $teacher_freetime_red, $teacher_freetime_red_full);
 			$teacher_freetime_orange_half = $teacher_freetime_orange['half'];
 			$teacher_freetime_orange_full = $teacher_freetime_orange['full'];
+			
+			
 			
 			$ang_init_data = angInit([
 				"Group" 	=> $Group,
@@ -269,6 +333,7 @@
 				"teacher_freetime_red"	=> $teacher_freetime_red_full,
 				"teacher_freetime_orange_half" 	=> $teacher_freetime_orange_half,
 				"teacher_freetime_orange_full"	=> $teacher_freetime_orange_full,
+				"teacher_freetime_doubleblink"	=> $teacher_freetime_doubleblink,
 			]);
 			
 			$this->render("edit", [
@@ -293,6 +358,11 @@
 				$Student->freetime_red_half 	= $freetime['freetime_red_half'];
 				$Student->freetime_orange	 	= $freetime["freetime_orange"];
 				$Student->freetime_orange_full 	= $freetime["freetime_orange_full"];
+				$Student->red_doubleblink 		= $freetime["red_doubleblink"];
+				
+				# Статус доставки СМС
+// 				$Student->delivery_data			= $Student->getAwaitingSmsStatuses($_POST['id_group']);
+
 				
 				if ($Group && array_key_exists($Student->id, $Group->student_statuses)) {
 					$Student->id_status = $Group->student_statuses[$Student->id];
@@ -383,8 +453,19 @@
 		public function actionAjaxTimeFromGroup()
 		{
 			extract($_POST);
+			$Group = Group::findById($id_group);
 			
-			dbConnection()->query("UPDATE ".GroupSchedule::$mysql_table." SET time='$time' WHERE time IS NULL AND id_group=$id_group");
+			$Group->Schedule = $Group->getSchedule();
+			
+			foreach($Group->Schedule as $Schedule) {
+				$d = date("w", strtotime($Schedule->date));
+				if ($d == 0) {
+					$d = 7;
+				}
+				$Schedule->time = end($Group->day_and_time[$d]);
+				$Schedule->save("time");
+			}
+//			dbConnection()->query("UPDATE ".GroupSchedule::$mysql_table." SET time='$time' WHERE time IS NULL AND id_group=$id_group");
 		}
 		
 		public function actionAjaxInGroup()
@@ -432,8 +513,12 @@
 			
 			// Свободное время препода
 			$teacher_freetime 			= TeacherFreetime::get($id_teacher);
-			$teacher_freetime_red 		= TeacherFreetime::getRed($id_group, $id_teacher);
-			$teacher_freetime_red_full	= TeacherFreetime::getRedFull($id_group, $id_teacher);
+			
+			$teacher_freetime_all 		= TeacherFreetime::getRedAll($id_group, $id_teacher);
+			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
+			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
+			
+			$teacher_freetime_doubleblink = $teacher_freetime_all['red_doubleblink'];
 			
 			$teacher_freetime_orange	= TeacherFreetime::getOrange($id_group, $id_branch, $id_teacher, $teacher_freetime_red, $teacher_freetime_red_full);
 			$teacher_freetime_orange_half = $teacher_freetime_orange['half'];
@@ -454,7 +539,8 @@
 				"red_full" 	=> $teacher_freetime_red_full,
 				"green"		=> $teacher_freetime,
 				"orange"	=> $teacher_freetime_orange_half,
-				"orange_full" 	=> $teacher_freetime_orange_full,
+				"orange_full"		=> $teacher_freetime_orange_full,
+				"red_doubleblink" 	=> $teacher_freetime_doubleblink,
 				"teacher_status"=> $teacher_status,
 			]);
 		}
@@ -465,20 +551,89 @@
 			
 			returnJsonAng($Groups);
 		}
-		
-		public function actionAjaxSaveLessonData()
-		{
-			extract($_POST);
-			$data = array_filter($data);
-			
-			LessonData::addData($id_group, $date, $data);
-		}
-		
+
 		public function actionAjaxRegisterInJournal()
 		{
 			extract($_POST);
 			$data = array_filter($data);
 			
+			LessonData::addData($id_group, $date, $data);
 			VisitJournal::addData($id_group, $date, $data);
+		}
+		
+		
+		/**
+		 * Обновить кеш групп.
+		 * 
+		 */
+		public function actionAjaxUpdateCache()
+		{
+			extract($_POST);
+			
+			$Group = Group::findById($id_group);
+			
+			$return = $Group->countSchedule();
+			memcached()->set("GroupScheduleCount[{$Group->id}]", $return, 5 * 24 * 3600);
+		}
+		
+		public function actionAjaxUpdateStatsCache()
+		{
+			memcached()->set("GroupStats", Group::_getStats(), 3600 * 24);
+		}
+		
+		public function actionAjaxSmsNotify()
+		{
+			extract($_POST);
+			
+			$Student = Student::findById($id_student);
+			$Group 	 = Group::findById($id_group);
+			
+			$FirstLesson = $Group->getFirstLesson(true);
+			
+			//=========
+			$date = date("n", strtotime($FirstLesson->date));
+			$date = russian_month($date);
+			
+			$date_day = date("j", strtotime($FirstLesson->date)) . " " . $date;
+			
+			$date_formatted = $date_day;
+			
+			if ($FirstLesson->time) {
+				$time = mb_strimwidth($FirstLesson->time, 0, 5);
+				$date_formatted .= " в " . $time;
+			}
+			//=========
+			
+			
+			
+			$Template = Template::getFull(8, [
+				"student_name"	=> $Student->last_name . " " . $Student->first_name,
+				"subject"		=> Subjects::$dative[$Group->id_subject],
+				"branch"		=> Branches::$all[$Group->id_branch],
+				"date"			=> $date_formatted,
+				"cabinet"		=> Cabinet::findById($Group->cabinet)->number,
+			]);
+			
+			$message = $Template->text;
+			
+			if ($Template->toStudents()) {
+				foreach (Student::$_phone_fields as $phone_field) {
+					$student_number = $Student->{$phone_field};
+					if (!empty($student_number)) {
+						SMS::send($student_number, $message);
+					}
+				}
+			}
+			
+			if ($Template->toRepresentatives()) {
+				if ($Student->Representative) {
+					foreach (Student::$_phone_fields as $phone_field) {
+						$representative_number = $Student->Representative->{$phone_field};
+						if (!empty($representative_number)) {
+							SMS::send($representative_number, $message);
+						}
+					}
+				}
+			}
 		}
 	}

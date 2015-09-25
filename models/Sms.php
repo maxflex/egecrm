@@ -5,6 +5,8 @@ class SMS extends Model
 	public static $mysql_table	= "sms";
 	
 	const INLINE_SMS_LENGTH = 60;
+	const PER_PAGE = 50; // Сколько отображать на странице списка
+	
 	
 	public function __construct($array)
 	{
@@ -17,18 +19,34 @@ class SMS extends Model
 		}
 	}
 	
-<<<<<<< HEAD
-	public static function sendToNumbers($numbers, $message) {
-=======
+	/**
+	 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
+	 *
+	 */
+	public static function getByPage($page)
+	{
+		if (!$page) {
+			$page = 1;
+		}
+		// С какой записи начинать отображение, по формуле
+		$start_from = ($page - 1) * self::PER_PAGE;
+
+		$SMS = self::findAll([
+			"order" 	=> "id DESC",
+			"limit" 	=> $start_from. ", " .self::PER_PAGE
+		]);
+				
+		return $SMS;
+	}
+	
 	public static function sendToNumbers($numbers, $message, $additional = []) {
->>>>>>> parent of 5231888... Не работают группы
 		foreach ($numbers as $number) {
-			self::send($number, $message);
+			self::send($number, $message, $additional);
 		}	
 	}
 	
 	
-	public static function send($to, $message)
+	public static function send($to, $message, $additional = [])
 	{
 		$to = explode(",", $to);
 		foreach ($to as $number) {
@@ -43,14 +61,14 @@ class SMS extends Model
 				"text"		=>	$message,
 				"from"      =>  "EGE-Centr",
 			);		
-			$result = self::exec("http://sms.ru/sms/send", $params);
+			$result = self::exec("http://sms.ru/sms/send", $params, $additional);
 		}
 		
 		
 		return $result;
 	}
 	
-	protected static function exec($url, $params)
+	protected static function exec($url, $params, $additional = [])
 	{
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
@@ -72,7 +90,7 @@ class SMS extends Model
 		];
 		
 		// создаем объект для истории
-		return SMS::add($info);		
+		return SMS::add($info + $additional);		
 	}
 	
 	public function beforeSave()
@@ -85,11 +103,18 @@ class SMS extends Model
 	{
 		if ($this->id_user) {
 			$this->user_login = User::getCached()[$this->id_user]['login'];
-			
-			$this->coordinates = $this->user_login. " ". dateFormat($this->date);
 		} else {
 			$this->user_login = "system";
 		}
+		$this->coordinates = $this->user_login. " ". dateFormat($this->date);
+		if ($this->additional) {
+			$this->coordinates .= " (массовая)";
+		}
+		
+		$this->coordinates .= '
+		<svg class="sms-status ' . ($this->id_status == 103 ? 'delivered' : ($this->id_status == 102 ? 'inway' : 'not-delivered') ) .'">
+			<circle r="3" cx="7" cy="7"></circle>
+		</svg>';
 	}
 	
 	public function getStatus()

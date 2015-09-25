@@ -1,0 +1,1 @@
+<?php	// Контроллер	class MetroController extends Controller	{				public function actionGetDistance()		{			extract($_GET);						$return = Metro::calculate($lat, $lng);						returnJson($return);		}				##################################################		###################### AJAX ######################		##################################################			}

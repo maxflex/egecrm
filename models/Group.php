@@ -21,7 +21,22 @@
 			$this->Teacher	= Teacher::findById($this->id_teacher);
 			
 			if (!$this->isNewRecord) {
+				$this->past_lesson_count = VisitJournal::getLessonCount($this->id);
+				
 				$this->student_statuses = GroupStudentStatuses::getByGroupId($this->id);
+				
+				$this->agreed_students_count 	= 0;
+				$this->notified_students_count 	= 0;
+				foreach ($this->student_statuses as $id_student => $data) {
+					if ($data['id_status'] == GroupStudentStatuses::AGREED && in_array($id_student, $this->students)) {
+						$this->agreed_students_count++;
+					}
+					if ($data['notified'] && in_array($id_student, $this->students)) {
+						$this->notified_students_count++;
+					}
+				}
+				
+				$this->schedule_count = $this->getScheduleCountCached();
 			}
 			
 			if (!$this->student_statuses) {
@@ -54,9 +69,10 @@
 			
 			
 			
-			$this->is_special = $this->isSpecial();
-			$this->first_schedule = $this->getFirstSchedule();
-			$this->day_and_time = $this->getDayAndTime();
+			$this->is_special 			= $this->isSpecial();
+			$this->first_schedule 		= $this->getFirstSchedule();
+			$this->day_and_time 		= $this->getDayAndTime();
+			$this->lesson_days_match 	= $this->lessonDaysMatch();
 			
 			$this->Comments	= Comment::findAll([
 				"condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
@@ -83,15 +99,83 @@
 			}
 			
 			return $dates;
+		}
+		
+		
+		/**
+		 * Если хотя бы 1 день в расписании группы не соответствует дням недели этой группы то в списке групп нужно 
+		   ставить пиктограммку в конце например типа восклицательный значок.
+		 * 
+		 */
+		public function lessonDaysMatch()
+		{			
+			if ($this->day_and_time) {
+				$days = array_keys($this->day_and_time);
+				
+				// sunday in mysql is 0
+				foreach ($days as &$day) {
+					if ($day == 7) {
+						$day = 0;
+					}
+				}
+				
+				// дни совпали
+				$days_match = GroupSchedule::count([
+					"condition" => "id_group={$this->id} AND DATE_FORMAT(date, '%w') NOT IN (" . implode(',', $days) . ")"
+				]) > 0 ? false : true;
+				
+				// если дни совпали, проверяем время
+				if ($days_match) {
+					
+					// проверяем время
+					$sql = [];
+					
+					foreach($this->day_and_time as $day => $day_data) {
+						$sql_tmp = "DATE_FORMAT(date, '%w') = " . ($day == 0 ? 7 : $day);
+						$sql_time = [];
+						foreach ($day_data as $time) {
+							$sql_time[] = "'". $time ."'";
+						}
+						if (count($sql_time)) {
+							$sql_tmp .= " AND SUBSTR(time, 1, 5) NOT IN (" . implode(",", $sql_time) . ")";
+						}
+						$sql[] = "(" . $sql_tmp . ")";
+					}
+					
+					// время совпало?
+					return GroupSchedule::count([
+						"condition" => "id_group={$this->id} AND (" . implode(" OR ", $sql) . ")"
+					]) > 0 ? false : true;
+				} else {
+					return false;
+				}
+				
+			} else {
+				return true;
+			}
+		}
+		
+		
+		/**
+		 * Получить количество занятий из календаря.
+		 *  УЖЕ ГДЕ-ТО ЕСТЬ ЭТОТ ФУНКЦИОНАЛ! Group.Schedule.length
+		 */
+/*
+		public function getTotalLessonCount()
+		{
+			return GroupSchedule::count([
+				"condition"	=> "id_group={$this->id}",
+			]);
 		}		
 		
+*/
 		public function inSchedule($id_group, $date)
 		{
 			return GroupSchedule::find([
 				"condition" => "id_group=$id_group AND date='$date'"
 			]);
 		}
-		
+				
 		
 		/**
 		 *  Всего человеко групп - это количество человек, записанных в любые группы. Если один человек записан в 3 группы, то это 3 человеко-группы
@@ -102,6 +186,22 @@
 		 * 
 		 */
 		public static function getStats()
+		{
+			if (LOCAL_DEVELOPMENT) {
+				return self::_getStats();
+			} else {
+				$return = memcached()->get("GroupStats");
+				
+				if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+					$return = self::_getStats();
+					memcached()->set("GroupStats", $return, 3600 * 24);
+				}
+				
+				return $return;
+			}
+		}
+		
+		public static function _getStats()
 		{
 			$Groups = Group::findAll();
 			
@@ -118,6 +218,9 @@
 						if (Student::agreedToBeInGroupStatic($id_student, $Group->id)) {
 							$total_students_agreed++;		
 						}
+						if (Student::notifiedInGroupStatic($id_student, $Group->id)) {
+							$total_students_notified++;		
+						}
 					}
 				}
 			}
@@ -126,6 +229,7 @@
 				"total_group_students" 	=> $total_group_students,
 				"total_students_agreed"	=> $total_students_agreed,
 				"total_teachers_agreed"	=> $total_teachers_agreed,
+				"total_students_notified" => $total_students_notified,
 				"total_groups"			=> count($Groups),
 				"total_witn_no_group"	=> Student::countSubjectsWithoutGroup(),
 			];
@@ -136,22 +240,96 @@
 		public function getSchedule()
 		{
 			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id
+				"condition" => "id_group=".$this->id,
+				"order"		=> "date ASC",
 			]);
 		}
+		
+		public function countSchedule()
+		{
+			return GroupSchedule::count([
+				"condition" => "id_group=".$this->id,
+			]);
+		}
+		
+/*
+		
+		public function getScheduleCached()
+		{
+			$return = memcached()->get("GroupSchedule[{$this->id}]");
+			
+			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+				$return = $this->getSchedule();
+				memcached()->set("GroupSchedule[{$this->id}]", $return, 5 * 24 * 3600);
+			}
+			return $return;
+		}
+*/
+		
+		public function getScheduleCountCached()
+		{
+			if (LOCAL_DEVELOPMENT) {
+				return $this->countSchedule();
+			}
+			
+			
+			$return = memcached()->get("GroupScheduleCount[{$this->id}]");
+			
+			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+				$return = $this->countSchedule();
+				memcached()->set("GroupScheduleCount[{$this->id}]", $return, 5 * 24 * 3600);
+			}
+			return $return;
+		}
+		
 		
 		/**
 		 * Получить дату первого занятия из расписания.
 		 * 
 		 */
-		public function getFirstSchedule()
+		public function getFirstSchedule($unix = true)
 		{
 			$GroupFirstSchedule =  GroupSchedule::find([
 				"condition" => "id_group={$this->id}",
 				"order"		=> "date ASC"	
 			]);
 			
-			return $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date) . "000" : false;
+			if ($unix) {
+				return $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date . " " . $GroupFirstSchedule->time) . "000" : false;
+			} else {
+				return $GroupFirstSchedule;
+			}
+		}
+		
+		/**
+		 * Получить дату первого занятия из расписания.
+		 * 
+		 */
+/*
+		public function getFirstScheduleCached()
+		{
+			$return = memcached()->get("GroupFirstSchedule[{$this->id}]");
+			
+			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+				$GroupFirstSchedule = $this->getFirstSchedule();
+				$return = $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date) . "000" : false;
+				memcached()->set("GroupFirstSchedule[{$this->id}]", $return, 180 * 24 * 3600);	
+			}
+			
+			return $return;
+		}
+*/
+		
+		/**
+		 * Получить первое занятие
+		 * $from_today – первое относительно сегодняшнего дня (ближайшее следующее)
+		 */
+		public function getFirstLesson($from_today = false)
+		{
+			return GroupSchedule::find([
+				"condition" => "id_group={$this->id}" . ($from_today ? " AND date >= '" . date("Y-m-d") . "'" : ""),
+				"order"		=> "date ASC"	
+			]);
 		}
 		
 		/**
@@ -218,6 +396,9 @@
 	{
 		public static $mysql_table	= "group_schedule";
 		
+		const PER_PAGE = 100; // Сколько отображать на странице списка
+
+
 		public function __construct($array)
 		{
 			parent::__construct($array);
@@ -225,7 +406,83 @@
 			if ($this->time) {
 				$this->time = mb_strimwidth($this->time, 0, 5);
 			}
+			
+			$this->was_lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
+			$this->is_first_lesson = $this->date == $this->getFirstLessonDate();
 		}
+		
+		
+		public function getFirstLessonDate()
+		{
+/*
+			return self::find([
+				"condition" => "id_group=" . $this->id_group,
+				"order"		=> "date ASC"
+			])->date;
+*/			
+			$result = dbConnection()->query("SELECT date FROM group_schedule WHERE id_group={$this->id_group} ORDER BY date ASC LIMIT 1");
+			return $result->fetch_object()->date;
+		}
+		
+		/**
+		 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
+		 *
+		 */
+		public static function getByPage($page)
+		{
+			if (!$page) {
+				$page = 1;
+			}
+			
+			// С какой записи начинать отображение, по формуле
+			$start_from = ($page - 1) * self::PER_PAGE;
+			
+			$Schedule = GroupSchedule::findAll([
+				"order" => "date ASC, time ASC",
+				"limit" 	=> $start_from. ", " .self::PER_PAGE
+			]);
+			
+			foreach ($Schedule as &$S) {
+				$Group = Group::findById($S->id_group);
+				if ($Group) {
+					$S->Group = $Group;
+					$ExistingSchedule[] = $S;
+				}
+			}
+		
+			return $ExistingSchedule;
+		}
+		
+		public static function countAll()
+		{
+			if (LOCAL_DEVELOPMENT) {
+				$result = dbConnection()->query("
+					SELECT COUNT(gs.id) as cnt FROM group_schedule gs
+					LEFT JOIN groups g ON g.id = gs.id_group
+					WHERE g.id IS NOT NULL
+					ORDER BY date ASC, time ASC
+				");
+				
+				return $result->fetch_object()->cnt;
+			} else {
+				$result = memcached()->get("GroupScheduleCount");
+				
+				if (!$result) {
+					$result = dbConnection()->query("
+						SELECT COUNT(gs.id) as cnt FROM group_schedule gs
+						LEFT JOIN groups g ON g.id = gs.id_group
+						WHERE g.id IS NOT NULL
+						ORDER BY date ASC, time ASC
+					");
+					
+					$result = $result->fetch_object()->cnt;
+					memcached()->set($result, 24 * 3600);
+				}
+				
+				return $result;
+			}
+		}
+
 		
 		public static function getVocationDates()
 		{
@@ -332,15 +589,16 @@
 					"condition" => "id_group=$id_group"
 				]);
 				
-				foreach ($student_statuses as $id_student => $id_status) {
-					if (!$id_status) {
+				foreach ($student_statuses as $id_student => $data) {
+					if (!$data['id_status'] && !$data['notified']) {
 						continue;
 					}
 					
 					GroupStudentStatuses::add([
 						"id_group" 	=> $id_group,
 						"id_student"=> $id_student,
-						"id_status" => $id_status,
+						"id_status" => $data['id_status'],
+						"notified"	=> $data['notified'],
 					]);
 				}
 			}
@@ -360,7 +618,6 @@
 					LEFT JOIN group_time gt ON g.id = gt.id_group
 				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gss.id_status = ". self::AGREED ." AND gss.id_student = $id_student
 					AND (CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', gss.id_student ,',%') AND g.id = gss.id_group)
-				LIMIT 1
 			")->num_rows;	
 		}
 		
@@ -371,7 +628,6 @@
 					LEFT JOIN group_time gt ON g.id = gt.id_group
 				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day'
 					 AND CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'
-				LIMIT 1
 			")->num_rows;	
 		}
 		
@@ -382,7 +638,10 @@
 			]);
 			
 			foreach ($data as $data_line) {
-				$return[$data_line->id_student] = $data_line->id_status;
+				$return[$data_line->id_student] = [
+					'id_status' => $data_line->id_status,
+					'notified'	=> $data_line->notified,
+				];
 			}
 			
 			return $return;			

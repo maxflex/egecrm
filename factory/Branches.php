@@ -151,7 +151,11 @@
 					if ($return) {
 						return 1;
 					}
-					$color = "#FBAA33";
+					if ($id_branch == self::TRG) {
+						$color = "#FBAA33";
+					} else {
+						$color = "#C07911";
+					}
 					break;
 				}
 				# Красный

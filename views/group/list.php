@@ -4,6 +4,7 @@
 		<div class="pull-right">
 			<span style="margin-right: 7px">сортировать по:</span>
 			<span class="link-reverse pointer" ng-click="orderByStudentCount()" style="margin-right: 7px">количество учеников</span>
+			<span class="link-reverse pointer" ng-click="orderByFirstLesson()" style="margin-right: 7px">дата и время запуска</span>
 			<span class="link-reverse pointer" ng-click="orderByTime()">время</span>
 			<span style="margin: 0 7px; display: inline-block; opacity: .1">|</span>
 			<a href='groups/add'>добавить группу</a>
@@ -11,23 +12,27 @@
 	</div>
 	<div class="panel-body">
 		<div>
-			<div class="row small" style="margin-bottom: 15px">
+			<div class="row small" style="margin-bottom: 10px">
 				<div class="col-sm-12">
-					<span style="display: inline-block; margin-right: 15px">
+					<span style="display: inline-block; margin-right: 8px">
 						Всего человеко-групп: <b>{{Stats.total_group_students}}</b>
 					</span>
-					<span style="display: inline-block; margin-right: 15px">
+					<span style="display: inline-block; margin-right: 8px">
 						Из них полностью согласных с расписанием: <b>{{Stats.total_students_agreed}}</b>
+						(<b class="text-success">{{Stats.total_students_notified}}</b>)
 					</span>
-					<span style="display: inline-block; margin-right: 15px">
+					<span style="display: inline-block; margin-right: 8px">
 						Всего запланировано групп: <b>{{Stats.total_groups}}</b>
 					</span>
-					<span style="display: inline-block; margin-right: 15px">
+					<span style="display: inline-block; margin-right: 8px">
 						Преподавателей, согласных с расписанием: <b>{{Stats.total_teachers_agreed}}</b>
 					</span>
 					<span>
 						Человеко-групп не в группах: <b>{{Stats.total_witn_no_group}}</b>
 					</span>
+					
+					<span class="glyphicon glyphicon-refresh small pull-right gray-hover" 
+						ng-click="updateStatsCache()" style="top: 4px; margin: 0"></span>
 				</div>
 			</div>
 			</div>
@@ -46,7 +51,8 @@
 				            ]) ?>
 						</div>
 						<div class="col-sm-2">
-							<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?>
+							<?= Subjects::buildMultiSelector(false, ["id" => "subjects-select", "ng-model" => "search.subjects"]) ?>
+<!-- 							<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?> -->
 						</div>
 						<div class="col-sm-2">
 							<select class="form-control" ng-model="search.id_teacher">
@@ -62,7 +68,7 @@
 								<option selected value="0">№ кабинета</option>
 								<option disabled>──────────────</option>
 								<option ng-repeat="Cabinet in Cabinets" 
-									ng-value="Cabinet.id" ng-selected="Group.cabinet == Cabinet.id">Кабинет №{{Cabinet.number}}</option>
+									ng-value="Cabinet.id" ng-selected="Group.cabinet == Cabinet.id">{{Cabinet.number}}</option>
 							</select>
 						</div>
 					</div>

@@ -35,37 +35,31 @@
 			
 			$scope.saveStudent = ->
 				$scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData
-				$scope.form_changed = true
 				lightBoxHide()
 			
 			$scope.registerInJournal = ->
-				bootbox.confirm "Регистрировать запись в журнал?", (result) ->
+				bootbox.confirm "Записать запись в журнал?", (result) ->
 					if result is true
-						ajaxStart()
-						$.post "groups/ajax/registerInJournal",
-							id_group: 	$scope.id_group
-							date:		$scope.date
-							data:		$scope.LessonData
-						, (response) ->
-							ajaxEnd()
-							$scope.registered_in_journal = true
-							# $scope.form_changed = false
+						if _.without($scope.LessonData, undefined).length isnt $scope.Group.Students.length
+							bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
+						else
+							$scope.saving = true
 							$scope.$apply()
-			
-			$scope.form_changed = false
-			$scope.save = ->
-				ajaxStart()
-				$.post "groups/ajax/SaveLessonData",
-					id_group: 	$scope.id_group
-					date:		$scope.date
-					data:		$scope.LessonData
-				, (response) ->
-					ajaxEnd()
-					$scope.form_changed = false
-					$scope.$apply()
+							ajaxStart()
+							$.post "groups/ajax/registerInJournal",
+								id_group: 	$scope.id_group
+								date:		$scope.date
+								data:		$scope.LessonData
+							, (response) ->
+								ajaxEnd()
+								$scope.saving = false
+								$scope.registered_in_journal = true
+								# $scope.form_changed = false
+								$scope.$apply()
 			
 			angular.element(document).ready ->
 				set_scope "Group"
+				
 		.controller "ScheduleCtrl", ($scope) ->
 			$scope.weekdays = [
 				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
@@ -77,6 +71,14 @@
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
+			
+			$scope.updateCache = ->
+				ajaxStart()
+				$.post "groups/ajax/updateCache", {id_group: $scope.Group.id}, () ->
+					$scope.can_update_cache = false
+					$scope.$apply()
+					ajaxEnd()
+			
 			$scope.schedulde_loaded = false
 			
 			$scope.formatDate = (date) ->
@@ -87,9 +89,11 @@
 			
 			$scope.setTimeFromGroup = (Group) ->
 				$.each $scope.Group.Schedule, (i, v) ->
-					if not v.time
-						v.time = Group.default_time
-				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id, time: Group.default_time}
+					#if not v.time
+					d = moment(v.date).format("d")
+					key = Object.keys(Group.day_and_time[d])[0]
+					v.time = Group.day_and_time[d][key]
+				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
 				$scope.$apply()
 			
 			$scope.lessonCount = ->
@@ -136,10 +140,13 @@
 					
 			$scope.monthName = (month) ->
 				moment().month(month - 1).format "MMMM"
-			
+				
+			$scope.can_update_cache = false
 			$scope.dateChange = (e) ->
 				return if not $scope.schedule_loaded
 				# console.log clicked_date
+				
+				$scope.can_update_cache = true
 				d = moment(clicked_date).format("YYYY-MM-DD")
 				
 				$scope.Group.Schedule = initIfNotSet $scope.Group.Schedule
@@ -192,8 +199,6 @@
 				$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()					
 									
 		.controller "EditCtrl", ($scope) ->
-<<<<<<< HEAD
-=======
 			$scope.weekdays = [
 				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
 				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
@@ -203,6 +208,15 @@
 				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
+			
+			$scope.$watch 'Group.open', (newValue, oldValue) ->
+				console.log newValue
+				if parseInt(newValue) is 0
+					$(".selectpicker").first().css "background", "#eee"
+				else
+					$(".selectpicker").first().css "background", "white"
+			
+			$scope.smsDialog2 = smsDialog2
 			
 			$scope.getGroup = (id_group) ->
 				Group = (i for i in $scope.Groups when i.id is id_group)[0]
@@ -248,20 +262,34 @@
 			bindDraggable = ->
 				$(".student-line").draggable
 					helper: 'clone'
-					revertDuration: 0
-					revert: (valid) ->
-						if not valid
-							id_student = $(this).data "id"
-							$scope.removeStudent id_student
-							this.remove()
+					revert: 'invalid'
+						# return if $scope.Group.open == "0"
+# 						if not valid
+# 							id_student = $(this).data "id"
+# 							$scope.removeStudent id_student
+# 							this.remove()
 					start: (event, ui) ->
+						$scope.is_student_dragging = true
+						$scope.$apply()
 						$(this).css "visibility", "hidden"
 						$(ui.helper).addClass "tr-helper"
 					stop: (event, ui) ->
+						$scope.is_student_dragging = false
+						$scope.$apply()
 						$(this).css "visibility", "visible"
-
-				$(".table-students").droppable
+				
+				$(".student-dragout").droppable
 					tolerance: 'pointer'
+					hoverClass: 'student-dragout-hover'
+					drop: (event, ui) ->
+						ui.draggable.remove()
+						id_student	 = $(ui.draggable).data("id")
+						$scope.removeStudent id_student
+						$scope.$apply()
+						
+				
+# 				$(".table-students").droppable
+# 					tolerance: 'pointer'
 # 					hoverClass: "request-status-drop-hover",
 # 					drop: (event, ui) ->
 # 						console.log ""
@@ -279,7 +307,6 @@
 # 							$scope.$apply()
 						
 						
->>>>>>> parent of 99d1c84... Конец недели
 			$scope.dayAndTime = ->
 				lightBoxShow "freetime"
 			
@@ -348,6 +375,7 @@
 				return if $scope.Group.id_teacher is "0"
 				ajaxStart()
 				$.post "groups/ajax/GetTeacherFreetime", {id_group: $scope.Group.id, id_teacher: $scope.Group.id_teacher, id_branch: $scope.Group.id_branch}, (freetime) ->
+					console.log freetime
 					ajaxEnd()
 # 					$("#group-cabinet").removeAttr "disabled"
 					$scope.teacher_freetime 		= freetime.red
@@ -356,6 +384,8 @@
 					
 					$scope.teacher_freetime_orange_half	= freetime.orange
 					$scope.teacher_freetime_orange_full	= freetime.orange_full
+					
+					$scope.teacher_freetime_doubleblink	= freetime.red_doubleblink
 					
 					$scope.Group.teacher_status = freetime.teacher_status
 					
@@ -398,6 +428,7 @@
 			
 			$scope.to_students = true
 			$scope.to_representatives = false
+			$scope.to_teacher = false
 			
 			# disable "send" button if nothing selected
 			$scope.$watch "[to_students, to_representatives]", (newValue, oldValue) ->
@@ -455,10 +486,7 @@
 			
 				
 			$scope.setStudentStatus = (Student, event) ->
-<<<<<<< HEAD
 				return false if parseInt($scope.Group.open) is 0
-=======
->>>>>>> parent of 99d1c84... Конец недели
 				$(event.target).hide()
 				$(".student-status-select-#{Student.id}").show 0, ->
 					$(@).simulate 'mousedown'
@@ -466,10 +494,7 @@
 				return false
 			
 			$scope.setTeacherStatus = (Teacher, event) ->
-<<<<<<< HEAD
 				return false if parseInt($scope.Group.open) is 0
-=======
->>>>>>> parent of 99d1c84... Конец недели
 				$(event.target).hide()
 				$(".teacher-status-select-#{Teacher.id}").show 0, ->
 					$(@).simulate 'mousedown'
@@ -479,6 +504,10 @@
 			$scope.teachersFilter = (Teacher) ->
 				return (parseInt($scope.Group.id_branch) in Teacher.branches or not $scope.Group.id_branch) and
 					(parseInt($scope.Group.id_subject) in Teacher.subjects or not $scope.Group.id_subject)
+			
+			$scope.emptyDayFilter = (day_and_time) ->
+				return _.filter day_and_time, (d) ->
+					d.length isnt 0
 				
 			
 			$scope.countSubjects = (Contract) ->
@@ -488,6 +517,15 @@
 			$(document).on "mouseup", ->
 				$("select[class^='student-status-select'], select[class^='teacher-status-select']").hide()
 				$(".s-s-s, .t-s-s").show()
+		
+			
+			$scope.smsNotify = (id_student) ->
+				$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0} if $scope.Group.student_statuses[id_student] is undefined
+				return false if $scope.Group.student_statuses[id_student].notified
+				$scope.Group.student_statuses[id_student].notified = 1
+				$scope.getStudent(id_student).notified = 1
+				$.post "groups/ajax/smsNotify", {id_student: id_student, id_group: $scope.Group.id}
+				justSave()
 				
 			$scope.bindGroupStudentStatusChange = ->
 				$("select[class^='student-status-select']")
@@ -495,37 +533,38 @@
 						$(@).hide()
 						id_student = $(@).data "id"
 						$(".student-status-span-#{id_student}").show()
-						$scope.Group.student_statuses[id_student] = $(@).val()
+						$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0} if $scope.Group.student_statuses[id_student] is undefined
+						$scope.Group.student_statuses[id_student].id_status = $(@).val()
 				$("select[class^='teacher-status-select']")
 					.on "input", ->
 						$(@).hide()
 						id_teacher = $(@).data "id"
 						$(".teacher-status-span-#{id_teacher}").show()
 						$scope.Group.teacher_status = $(@).val()
-			$scope.addStudent = (id_student, event) ->
-				if id_student not in $scope.Group.students
+			$scope.addStudent = (Student, event) ->
+				if Student.id not in $scope.Group.students
 					el = $(event.target)
 					el.hide()
-					$("#student-adding-#{id_student}").show()
+					$("#student-adding-#{Student.id}").show()
 					$.post "groups/ajax/inGroup",
-						id_student: id_student 
+						id_student: Student.id 
 						id_group: $scope.Group.id 
 						id_subject: $scope.Group.id_subject
 					, (in_other_group) ->
 						if not in_other_group
 							console.log el
 							el.show()
-							$("#student-adding-#{id_student}").hide()
-							$scope.Group.students.push(id_student)
+							$("#student-adding-#{Student.id}").hide()
+							$scope.Group.students.push(Student.id)
 							$scope.TmpStudents = initIfNotSet $scope.TmpStudents
-							$scope.TmpStudents.push $scope.getStudent id_student
+							$scope.TmpStudents.push Student
 							$scope.form_changed = true
 							$scope.$apply()
 							$scope.bindGroupStudentStatusChange()
 							bindDraggable()
 							justSave()
 						else
-							$("#student-adding-#{id_student}").html "в другой группе"
+							$("#student-adding-#{Student.id}").html "в другой группе"
 					, "json"
 					
 			$scope.removeStudent = (id_student) ->
@@ -543,8 +582,7 @@
 				id_student in $scope.Group.students
 			
 			$scope.getStudent = (id_student) ->
-				
-#				Student = (i for i in $scope.Students when i.id is id_student)[0]
+				Student = (i for i in $scope.TmpStudents when i.id is id_student)[0]
 			
 			$scope.getTeacher = (id_teacher) ->
 				id_teacher = parseInt id_teacher
@@ -621,11 +659,12 @@
 				$.post "groups/ajax/getStudents", {id_group: $scope.Group.id, id_subject: $scope.Group.id_subject}, (response) ->
 						$scope.loading_students = false
 						$scope.Students = response
-						$.each $scope.Group.student_statuses, (id_student, id_status) ->
+						$.each $scope.Group.student_statuses, (id_student, data) ->
 							id_student = parseInt id_student
 							Student = $scope.getStudent id_student
 							if Student isnt undefined
-								Student.id_status = id_status
+								Student.id_status 	= data.id_status
+								Student.notified 	= data.notified
 								$scope.$apply()
 						$scope.$apply()
 				, "json"
@@ -656,6 +695,7 @@
 				
 			$(document).ready ->
 				emailMode 2
+				smsMode 2
 				bindDraggable()
 				$("#group-edit").on 'keyup change', 'input, select, textarea', ->
 					$scope.form_changed = true
@@ -689,6 +729,11 @@
 				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
+			
+			$scope.updateStatsCache = ->
+				ajaxStart()
+				$.post "groups/ajax/updateStatsCache", {}, ->
+					redirect "groups"
 			
 			$scope.changeBranch = ->
 				$("#group-cabinet").attr "disabled", "disabled"
@@ -746,6 +791,15 @@
 				
 				$scope.order_reverse = !$scope.order_reverse			
 			
+			$scope.orderByFirstLesson = ->
+				$scope.Groups.sort (a, b) ->
+					a.first_schedule - b.first_schedule
+					
+				if $scope.order_reverse
+					$scope.Groups.reverse()
+				
+				$scope.order_reverse = !$scope.order_reverse		
+			
 			$scope.inDayAndTime2 = (time, freetime) ->
 				return false if freetime is undefined
 				freetime = objectToArray freetime
@@ -754,7 +808,7 @@
 			$scope.search = 
 				grade: ""
 				id_branch: ""
-				id_subject: ""
+				subjects: []
 				id_teacher: ""
 				cabinet: 0
 				
@@ -766,7 +820,7 @@
 			$scope.groupsFilter = (Group) ->
 				return (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and 
 					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
-					(parseInt($scope.search.id_subject) is Group.id_subject or not $scope.search.id_subject) and
+					(Group.id_subject.toString() in $scope.search.subjects or $scope.search.subjects.length is 0) and
 					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher) and
 					(parseInt($scope.search.cabinet) is parseInt(Group.cabinet) or not parseInt($scope.search.cabinet))
 			
@@ -942,6 +996,10 @@
 						, "json"
 			
 			$(document).ready ->
+				# branch mulitiselect
+				if $("#subjects-select").length
+					$("#subjects-select").selectpicker
+						noneSelectedText: "предметы"
 				if $scope.mode is 2
 					$("#group-branch-filter2").selectpicker
 						noneSelectedText: "филиалы"

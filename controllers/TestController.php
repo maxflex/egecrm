@@ -7,10 +7,264 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "test";
 		
+		
 		public function beforeAction()
 		{
-			ini_set("display_errors", 1);
+//			ini_set("display_errors", 1);
 //			error_reporting(E_ALL);
+		}
+		
+		public function actionZamalim()
+		{
+			$Student = Student::findById(815);
+				
+			$r = $Student->getAwaitingSmsStatuses(268);
+		}
+		
+		public function actionTwoOrMoreContracts()
+		{
+			$Students = Student::getWithContract();
+			
+			$student_ids = [];
+			foreach ($Students as $Student) {
+				$count = Contract::count([
+					"condition" => "id_student={$Student->id} ".Contract::ZERO_OR_NULL_CONDITION
+				]);
+				
+				if ($count > 1) {
+					$student_ids[] = $Student->id;
+				}
+			}
+			
+			echo implode(", ", $student_ids);
+		}
+		
+		public function actionSameNumber()
+		{
+			$Requests = Request::findAll([
+				"condition" => "adding=0",
+				"limit"		=> "100 OFFSET 100",
+			]);
+			
+			$request_ids = [];
+			foreach ($Requests as $Request) {
+				foreach (Student::$_phone_fields as $phone_field) {
+					$request_phone = $Request->{$phone_field};
+					if (!empty($request_phone)) {
+						if (isDuplicate($request_phone, $Request->id)) {
+							$request_ids[] = $Request->id;
+							break;
+						}
+					}
+					
+					$student_phone = $Request->Student->{$phone_field};
+					if (!empty($student_phone)) {
+						if (isDuplicate($student_phone, $Request->id)) {
+							$request_ids[] = $Request->id;
+							break;
+						}
+					}
+					
+					if ($Request->Student->Representative) {
+						$representative_phone = $Request->Student->Representative->{$phone_field};
+						if (!empty($representative_phone)) {
+							if (isDuplicate($representative_phone, $Request->id)) {
+								$request_ids[] = $Request->id;
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			preType($request_ids);
+		}
+		
+		public function actionGroupContractCacnelled()
+		{
+			$Students = Student::getWithContract();
+			foreach ($Students as $Student) {
+				$Student->Contract = $Student->getLastContract();
+				$subject_ids = [];
+				foreach ($Student->Contract->subjects as $subject) {
+					$subject_ids[] = $subject['id_subject'];
+				}
+				// preType($Student->Contract->subjects);
+				
+				if (count($subject_ids)) {
+					$count = Group::count([
+						"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Student->id},%' AND id_subject NOT IN (" . implode(",", $subject_ids) . ")"
+					]);
+					if ($count > 0) {
+						h1($Student->id);
+					}
+				}
+			}
+		}
+		
+		public function actionSameDay()
+		{
+			$Students = Student::getWithContract();
+			foreach ($Students as $Student) {
+				$Groups = $Student->getGroups();
+				foreach ($Groups as $Group) {
+					foreach ($Group->day_and_time as $day => $time_data) {
+						foreach ($time_data as $time) {
+							$result = dbConnection()->query("
+								SELECT COUNT(*) AS cnt FROM groups g
+									LEFT JOIN group_time gt ON gt.id_group = g.id
+									WHERE CONCAT(',', CONCAT(g.students, ',')) LIKE '%,{$Student->id},%' AND gt.day = {$day} AND gt.time = '{$time}'
+							");
+							$count = $result->fetch_object()->cnt;
+							if ($count > 1) {
+								h1($Student->id);
+							}
+						}
+					}
+				}
+			}
+		}
+/*
+		
+		public function actionOneSubject()
+		{
+			$Students = Student::getWithContract();
+			
+			
+			foreach ($Students as $Student) {
+				$Groups = $Student->getGroups();
+				
+				foreach ($Groups as $Group) {
+					$count = Group::count([
+						"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Student->id},%' AND id_subject={$Group->id_subject}"
+					]);
+					
+					if ($count > 1) {
+						h1($Student->id);
+					}
+				}
+		}
+		
+*/
+		public function actionMatch()
+		{
+			$Group = Group::findById(73);
+			
+			var_dump($Group->lessonDaysMatch());
+		}
+		
+		
+		public function actionSmsCheck()
+		{
+			$result = dbConnection()->query("select * from sms where message LIKE '%ожидается%'");
+			
+			while ($row = $result->fetch_object())
+			{
+				$all_sms[] = $row;
+			}
+			
+			
+			foreach ($all_sms as &$sms) {
+				$phone = $sms->number;
+				
+				$sms->message = preg_replace('!\s+!', ' ', $sms->message);
+				preg_match("/ченик ([\w-]+[\s]*[\w-]+)[\s]*ожидается на первое занятие по ([\w]+[\s]?[\w]*) в ЕГЭ-Центр-([\w]+) ([\d]+) ([\w]+)[\s]*[в]?[\s]*([\d:]+)?. Кабинет ([\d]+)./u", $sms->message, $matches);
+				
+				$id_subject = array_search($matches[2], Subjects::$dative);
+				$id_branch 	= array_search($matches[3], Branches::$all);
+				
+				$Student = dbConnection()->query("
+					select s.id, s.first_name, s.last_name from students s
+					left join representatives r on s.id_representative = r.id
+					where (s.phone = '$phone' OR s.phone2 = '$phone' OR s.phone3 = '$phone')
+					or (r.phone = '$phone' OR r.phone2 = '$phone' OR r.phone3 = '$phone')
+					LIMIT 1
+				")->fetch_object();
+				
+				$id_student = $Student->id;
+				
+				// если студент не найден
+				if (!$id_student) {
+					$sms->status 		= 0;
+					$sms->status_text 	= "УЧЕНИКА С ТАКИМ НОМЕРОМ НЕ НАЙДЕНО";
+					continue;
+				}
+				
+				if ($id_subject && $id_branch && $id_student) {
+					$Group = Group::find([
+						"condition" => "id_branch=$id_branch AND id_subject=$id_subject AND CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
+					]);
+					if ($Group) {
+						// проверка даты и времени первого занятия
+						$Group->first_schedule = $Group->getFirstSchedule(false);
+						
+						// проверка имени и фамилии студента
+						$name = explode(" ", $matches[1]); 
+						if (strcmp(trim($name[0]), trim($Student->last_name)) !== 0 || strcmp(trim($name[1]), trim($Student->first_name))) {
+							$sms->status 		= 0;
+							$sms->status_text 	= "ИМЯ НЕ СОВПАДАЕТ ({$Student->last_name} {$Student->first_name} | {$name[0]} {$name[1]})";
+							continue;
+						}
+						
+						// проверка статуса согласия студента
+						if (!$Group) {
+							$sms->status 		= 0;
+							$sms->status_text 	= "ГРУППА НЕ НАЙДЕНА ($id_branch | $id_subject | $id_student)";
+							continue;
+						}
+						
+						
+						$Status = GroupStudentStatuses::find([
+							"condition" => "id_student=$id_student AND id_group={$Group->id}"
+						]);
+						
+						if ($Status->id_status != GroupStudentStatuses::AGREED) {
+							$sms->not_agreed = true;	
+						}
+						
+						$date_day = date("j", strtotime($Group->first_schedule->date));
+						
+						if ($date_day != $matches[4]) {
+							$sms->status 		= 0;
+							$sms->status_text 	= "НЕПРАВИЛЬНАЯ ДАТА ($date_day | {$matches[4]})";
+							continue;
+						}
+						
+						if (mb_strimwidth($Group->first_schedule->time, 0, 5) != $matches[6]) {
+							$sms->status 		= 0;
+							$sms->status_text 	= "НЕПРАВИЛЬНОЕ ВРЕМЯ (" . mb_strimwidth($Group->first_schedule->time, 0, 5) . " | {$matches[6]})";
+							continue;					
+						}
+						
+						$cabinet_number = Cabinet::findById($Group->cabinet)->number;
+						
+						if ($cabinet_number != $matches[7]) {
+							$sms->status 		= 0;
+							$sms->status_text 	= "КАБИНЕТЫ НЕ СОВПАДАЮТ";
+							continue;		
+						}
+						
+						$sms->status 		= 1;
+						$sms->status_text 	= "ОК";
+						continue;	
+						
+					} else {
+						$sms->status 		= 0;
+						$sms->status_text 	= "ГРУППА НЕ НАЙДЕНА ($id_branch | $id_subject | $id_student)";
+					}
+				} else {
+					$sms->status 		= 0;
+					$sms->status_text 	= "НЕ ПОДХОДИТ ПОД РЕГУЛЯРНОЕ ВЫРАЖЕНИЕ";
+				}	
+			}
+			
+//			preType($all_sms);
+			
+			$this->setTabTitle("Проверка СМС");
+			
+			$this->render("sms_check", [
+				"all_sms" => $all_sms
+			]);		
 		}
 		
 		public function actionGo()

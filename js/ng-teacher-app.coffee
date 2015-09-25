@@ -114,6 +114,12 @@
 				set_scope "Teacher"
 				$.each $scope.Teacher.branches, (index, branch) ->
 					$scope.Teacher.branches[index] = branch.toString()
+				
+				# Заходим в преподавателя и хотим отправить ему смс. Девочки говорят, что она может появится, но спустя вечность. 
+				# А нам нужно чтобы он появлялась мгновенно
+				setTimeout ->
+					$scope.$apply()
+				, 100
 			
 			$scope.goToTutor = ->
 				window.open "https://crm.a-perspektiva.ru/repetitors/edit/?id=#{$scope.Teacher.id_a_pers}", "_blank"

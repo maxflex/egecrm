@@ -87,7 +87,19 @@
 			$this->render("students");			
 		}
 		
-		
+		public function actionLessons()
+		{
+			$this->setTabTitle("Трекер занятий");
+			
+			$ang_init_data = angInit([
+				"Schedule" 		=> GroupSchedule::getByPage($_GET['id']),
+				"currentPage" 	=> $_GET['id'],
+			]);
+			
+			$this->render("lessons", [
+				"ang_init_data" => $ang_init_data,
+			]);
+		}
 		
 		/**
 		 * Получить всех учеников, не принадлежащих группам

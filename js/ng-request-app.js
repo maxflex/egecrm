@@ -168,7 +168,9 @@
 
 			// Страница изменилась
 			$scope.pageChanged = function() {
-				request_status = $scope.request_statuses[$scope.chosen_list]
+				// request_status = $scope.request_statuses[$scope.chosen_list]
+				request_status = _.where($scope.request_statuses, {id: $scope.chosen_list})[0];
+				console.log($scope.chosen_list, request_status)
 				window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase() + '/' + $scope.currentPage)
 				// Получаем задачи, соответствующие странице и списку
 				$scope.getByPage($scope.currentPage)
@@ -248,6 +250,10 @@
 				$scope.freetime = initIfNotSet($scope.freetime);
 				$scope.freetime[id_branch] = initIfNotSet($scope.freetime[id_branch]);
 				$scope.freetime[id_branch][day] = initIfNotSet($scope.freetime[id_branch][day]);
+			}
+			
+			$scope.preCancel = function (contract) {
+				$.post("ajax/preCancel", {id_contract: contract.id, pre_cancelled: contract.pre_cancelled})
 			}
 			
 			$scope.inFreetime = function(id_branch, day, value) {
@@ -415,7 +421,10 @@
 				date = new Date(date[2], month, date[0])
 				return moment(date).format("DD MMMM YYYY г.")
 			}
-
+			
+			$scope.objectLength = function(object) {
+				return Object.keys(object).length
+			}
 
 			/**
 			 * Склеить заявки
@@ -466,11 +475,14 @@
 				$scope.id_contract_print = id_contract
 				lightBoxShow('print')
 			}
-
+			
 			$scope.todayDate = function() {
 				return moment().format("DD.MM.YYYY");
 			}
 			
+			$scope.textDate = function(date) {
+				return moment(date).format("DD MMMM YYYY")
+			}
 			
 			$scope.editBeforePrint = function() {
 				html = $("#contract-print-" + $scope.id_contract_print).html()
@@ -487,6 +499,13 @@
 				
 				lightBoxHide()
 				lightBoxShow('manualedit')
+			}
+			
+			
+			$scope.printBill = function(id_contract) {
+				$scope.print_mode = 'bill'
+				$scope.id_contract_print = id_contract
+				printDiv($scope.print_mode + "-print-" + $scope.id_contract_print)
 			}
 			
 			/**

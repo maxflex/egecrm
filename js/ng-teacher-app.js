@@ -132,9 +132,12 @@ angular.module("Teacher", ["ngMap"]).filter('to_trusted', [
   $scope.isMobilePhone = isMobilePhone;
   angular.element(document).ready(function() {
     set_scope("Teacher");
-    return $.each($scope.Teacher.branches, function(index, branch) {
+    $.each($scope.Teacher.branches, function(index, branch) {
       return $scope.Teacher.branches[index] = branch.toString();
     });
+    return setTimeout(function() {
+      return $scope.$apply();
+    }, 100);
   });
   $scope.goToTutor = function() {
     return window.open("https://crm.a-perspektiva.ru/repetitors/edit/?id=" + $scope.Teacher.id_a_pers, "_blank");

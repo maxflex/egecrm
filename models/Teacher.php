@@ -355,6 +355,43 @@
 			return $return_red;
 		}
 		
+		public static function getRedAll($id_group, $id_teacher)
+		{
+			foreach (Freetime::$weekdays as $day => $schedule) {
+				foreach ($schedule as $time) {
+					$count = TeacherFreetime::inRed($id_group, $id_teacher, $day, $time);
+					if ($count) {
+						if (!in_array($time, $return_red_half[$day])) {
+							$return_red_half[$day][] = $time;
+						}
+					}
+					if ($count > 1) {
+						if (!in_array($time, $red_doubleblink[$day])) {
+							$red_doubleblink[$day][] = $time;
+						}
+					}
+					/************************************************************************/
+					$count = TeacherFreetime::inRedFull($id_group, $id_teacher, $day, $time);
+					if ($count) {
+						if (!in_array($time, $return_red_full[$day])) {
+							$return_red_full[$day][] = $time;
+						}
+					}
+					if ($count > 1) {
+						if (!in_array($time, $red_doubleblink[$day])) {
+							$red_doubleblink[$day][] = $time;
+						}
+					}
+				}
+			}
+			
+			return [
+				'red_half' 			=> $return_red_half,
+				'red_full'			=> $return_red_full,
+				'red_doubleblink'	=> $red_doubleblink,
+			];
+		}
+		
 		/**
 		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "полностью согласен", 
 		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
@@ -367,7 +404,6 @@
 					LEFT JOIN groups g ON g.id = gts.id_group
 					LEFT JOIN group_time gt ON g.id = gt.id_group
 				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gts.id_status = ". GroupTeacherStatuses::AGREED ." AND gts.id_teacher = $id_teacher
-				LIMIT 1
 			")->num_rows;	
 		}
 		
@@ -377,7 +413,6 @@
 				SELECT g.id FROM groups g
 					LEFT JOIN group_time gt ON g.id = gt.id_group
 				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND g.id_teacher=$id_teacher 
-				LIMIT 1
 			")->num_rows;
 		}
 		
@@ -385,7 +420,7 @@
 		 * Добавить свободное время
 		 * 
 		 */
-		public static function addData($data, $id_teacher) 
+		public static function addData($data, $id_teacher, $branches) 
 		{
 			TeacherFreetime::deleteAll([
 				"condition" => "id_teacher=$id_teacher"
@@ -394,6 +429,9 @@
 // 			dbConnection()->query("DELETE FROM teacher_freetime WHERE id_teacher=$id_teacher");
 			
 			foreach ($data as $id_branch => $branch_data) {
+				if (!in_array($id_branch, $branches)) {
+					continue;
+				}
 				foreach ($branch_data as $day => $day_data) {
 					foreach ($day_data as $time) {
 						if (empty(trim($time))) {

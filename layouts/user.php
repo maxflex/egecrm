@@ -1,5 +1,6 @@
 <!-- ЛАЙТБОКС ОТПРАВКА SMS -->
 <div class="lightbox-new lightbox-sms">
+	<input type="hidden" id="sms-mode" value="1">
 	<h4 style="text-align: center" id="sms-number">
 		<span class="text-danger">Номер не установлен!</span>
 	</h4>
@@ -10,7 +11,7 @@
 	<div class="row">
 		<div class="col-sm-12" style="text-align: center">
 			<div class="form-group" style="position: relative; margin-bottom: 0">
-				<textarea rows="8" class="form-control" style="width: 100%" placeholder="Текст сообщения" id="sms-message"></textarea>
+				<textarea rows="4" class="form-control" style="width: 100%" placeholder="Текст сообщения" id="sms-message"></textarea>
 			<span class="pull-right" id="sms-counter" style="position: absolute; right: 16px; bottom: 7px; color: #999; background: white; z-index: 9; border-radius: 5px">
 				0 СМС
 			</span>
@@ -20,7 +21,6 @@
 				<span onclick="smsTemplate(1)">подтверждение договоренности</span>
 				<span onclick="smsTemplate(2)">нет связи с клиентом</span>
 				<span onclick="smsTemplate(3)">нет связи с ожидающими и не решившими</span>
-<<<<<<< HEAD:layouts/user.php
 				<span onclick="loginPasswordTemplate()">логин/пароль</span>
 				
 				<div class="sms-group-controls" style="float: right; display: none">
@@ -30,9 +30,10 @@
 					<span style="color: black; border-bottom: none">
 						<input type="checkbox" onclick="ang_scope.to_representatives = !ang_scope.to_representatives; ang_scope.$apply()"> представителям
 					</span>
+					<span style="color: black; border-bottom: none">
+						<input type="checkbox" onclick="ang_scope.to_teacher = !ang_scope.to_teacher; ang_scope.$apply()"> преподавателю
+					</span>
 				</div>
-=======
->>>>>>> parent of 99d1c84... Конец недели:layouts/menu.php
 			</div>
 			
 			<div id="sms-template-1" class="sms-template">
@@ -47,7 +48,9 @@
 				Имя, здравствуйте. В ЕГЭ-Центре-Филиал формируются группы и расписание. Не могу до Вас дозвониться. Перезвоните, пожалуйста, по тел. (495) 646-85-92. <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>.
 			</div>
 			
-			<button class="btn btn-primary ajax-sms-button" onclick="sendSms()">Отправить</button>
+			<div style="clear: both">
+				<button class="btn btn-primary ajax-sms-button" onclick="sendSms()">Отправить</button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -126,6 +129,7 @@
 	<a href="notifications" class="list-group-item">Напоминания</a>
 	<a href="stats" class="list-group-item">Итоги</a>
     <a href="clients" class="list-group-item">Клиенты</a>
+    <a href="clients/precancelled" class="list-group-item">Клиенты (раст.)</a>
     <a href="sms" class="list-group-item">SMS</a>
     <a href="payments" class="list-group-item">Платежи</a>
     <a href="teachers" class="list-group-item">Преподаватели</a>
@@ -143,11 +147,12 @@
 			}
 		?>
 	<?php endif ?>
-    <a href="rating" class="list-group-item">Рейтинг</a>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
     <a href="settings/students" class="list-group-item">Ученики</a>
     <a href="settings/cabinets" class="list-group-item">Кабинеты</a>
+    <a href="templates" class="list-group-item">Шаблоны</a>
+    <a href="settings/lessons" class="list-group-item">Трекер занятий</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
 <!--
