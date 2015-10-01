@@ -285,6 +285,16 @@ angular.module("Group", []).filter('to_trusted', [
       "schedule": ["11:00", "13:30", "16:00", "18:30"]
     }
   ];
+  $scope.allStudentStatuses = function() {
+    var student_statuses_count;
+    student_statuses_count = _.filter($scope.Group.student_statuses, function(s, id_student) {
+      return s !== void 0 && s.id_status && _.where($scope.TmpStudents, {
+        id: parseInt(id_student)
+      }).length;
+    });
+    console.log(student_statuses_count.length, $scope.TmpStudents.length);
+    return student_statuses_count.length === $scope.TmpStudents.length;
+  };
   $scope.$watch('Group.open', function(newValue, oldValue) {
     console.log(newValue);
     if (parseInt(newValue) === 0) {
@@ -612,11 +622,29 @@ angular.module("Group", []).filter('to_trusted', [
     $("select[class^='student-status-select'], select[class^='teacher-status-select']").hide();
     return $(".s-s-s, .t-s-s").show();
   });
+  $scope.changeReviewStatus = function(id_student) {
+    $scope.form_changed = true;
+    if ($scope.Group.student_statuses[id_student] === void 0) {
+      $scope.Group.student_statuses[id_student] = {
+        id_status: 0,
+        notified: 0,
+        review_status: 0
+      };
+    }
+    $scope.Group.student_statuses[id_student].review_status;
+    if ($scope.Group.student_statuses[id_student].review_status === 3) {
+      $scope.Group.student_statuses[id_student].review_status = 0;
+    } else {
+      $scope.Group.student_statuses[id_student].review_status++;
+    }
+    return $scope.getStudent(id_student).review_status = $scope.Group.student_statuses[id_student].review_status;
+  };
   $scope.smsNotify = function(id_student) {
     if ($scope.Group.student_statuses[id_student] === void 0) {
       $scope.Group.student_statuses[id_student] = {
         id_status: 0,
-        notified: 0
+        notified: 0,
+        review_status: 0
       };
     }
     if ($scope.Group.student_statuses[id_student].notified) {

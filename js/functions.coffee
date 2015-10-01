@@ -52,7 +52,7 @@
 			#, 500
 		NProgress.done()
 	
-	clearSelect = ->
+	clearSelect = (ms = 50) ->
 		setTimeout ->
 			$("option[value^='?']").remove()
-		, 50
+		, ms

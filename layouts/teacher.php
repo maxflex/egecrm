@@ -12,7 +12,8 @@
 			}
 		?>
     </a>
-    <a href="faq" class="list-group-item">Необходимая информация</a>
+    <a href="print" class="list-group-item">Печать</a>
+<!--     <a href="faq" class="list-group-item">Необходимая информация</a> -->
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>

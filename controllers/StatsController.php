@@ -5,6 +5,8 @@
 	{
 		public $defaultAction = "list";
 		
+		const PER_PAGE = 30;
+		
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
 		
@@ -19,14 +21,20 @@
 		
 		protected function getByDays()
 		{
-			$days = 75 + 43;
+			$page = $_GET['page'];
+			if (!$page) {
+				$page = 1;
+			}
 			
+			$start = ($page - 1) * self::PER_PAGE;
+
+// 			echo (self::PER_PAGE * $page). ".." .$start;
 			
-			for ($i = $days; $i >= 0; $i--) {
+			for ($i = (self::PER_PAGE * $page); $i >= $start + ($page > 1 ? 1 : 0); $i--) {
 				$date = date("d.m.Y", strtotime("today -$i day"));
 				
 				$Contracts = Contract::findAll([
-					"condition" => "date = '$date' ",
+					"condition" => "((date = '$date' AND cancelled=0) OR (cancelled_date = '$date' AND cancelled=1))",
 				]);
 				
 				
@@ -43,6 +51,7 @@
 					if ($Contract->isOriginal()) {
 						$stats[$date]['count']++;
 						$stats[$date]['total'] += $Contract->sum;
+						continue; # если договор оригинальный, у него не может быть предыдущих версий
 					}
 					
 					// если есть версия договора
@@ -63,20 +72,25 @@
 						
 						// если был НЕ расторжен и стал расторжен
 						if ($Contract->cancelled &&  !$PreviousContract->cancelled) {
-							if (!isset($stats[$Contract->cancelled_date]['plus_contracts'])) {
-								$stats[$Contract->cancelled_date]['plus_contracts'] = 0;
+							if (!isset($stats[$date]['plus_contracts'])) {
+								$stats[$date]['plus_contracts'] = 0;
 							}
-							$stats[$Contract->cancelled_date]['plus_contracts']--;
+							$stats[$date]['plus_contracts']--;
 
-							$stats[$Contract->cancelled_date]['minus_sum'] += $Contract->sum;
+							$stats[$date]['minus_sum'] += $Contract->sum;
 						}
+						
+						// echo "DATE: $date <br>";
 						
 						// если расторжен и стал НЕ расторжен
 						if (!$Contract->cancelled && $PreviousContract->cancelled) {
+//							echo $PreviousContract->id . " => " . $Contract->id . " | ";
 							$stats[$date]['plus_contracts']++;
 							
 							$stats[$date]['plus_sum'] += $Contract->sum;
 						}
+						
+//						echo "<hr>";
 					}
 				}
 				
@@ -517,8 +531,13 @@
 				}
 			}
 			
+			$ang_init_data = angInit([
+				"currentPage" => $_GET['page'],
+			]);
+			
 			$this->render("list", [
-				"stats" => $stats
+				"ang_init_data" 	=> $ang_init_data,
+				"stats" => $stats,
 			]);
 		}
 		

@@ -162,8 +162,9 @@
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $Group->getFirstSchedule(false)->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
+				'address'		=> Branches::$address[$Group->id_branch],
 				'branch' 		=> Branches::$all[$Group->id_branch],
-				'cabinet'		=> Cabinet::findById($Group->cabinet)->number,
+				'cabinet'		=> trim(Cabinet::findById($Group->cabinet)->number),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
 			]);

@@ -61,6 +61,24 @@
 			self::VLD => "ВЛА",
 		];
 		
+		# Короткие
+		static $address  = [
+			self::TRG => "Мясницкая 40с1",
+			self::PVN => "",
+			self::BGT => "",
+			self::IZM => "",
+			self::OPL => "",
+			self::RPT => "",
+			self::VKS => "",
+			self::ORH => "",
+			self::UJN => "",
+			self::PER => "",
+			self::KLG => "Научный проезд 8с1",
+			self::BRT => "",
+			self::MLD => "",
+			self::VLD => "",
+		];
+		
 		# title
 		static $title = "филиал";
 		

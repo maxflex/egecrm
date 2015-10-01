@@ -42,6 +42,9 @@
 
 	$bypass_login = ["LoginController", "ApiController", "CronController"]; // эти страницы не требуют логина для просмотра
 	
+	// Пытаемся войти
+	User::rememberMeLogin();
+	
 	if ((!User::loggedIn() || !User::rememberMeLogin()) && !in_array($_controllerName, $bypass_login)) {
 	//	$this->redirect(BASE_ADDON . "login"); // Можно сделать так же редирект на страницу входа
 		$_controllerName	= "LoginController";

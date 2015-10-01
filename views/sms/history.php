@@ -27,12 +27,15 @@
 				</td>
 				<td>
 					
+<!--
 					
 					<div id="sms-short-<?= $SMS->id ?>" style="display: <?= empty($SMS->message_short) ? "none" : "block" ?>">
 						<?= $SMS->message_short ?> <span class="link-like small" onclick="showFullSms(<?= $SMS->id ?>)">развернуть</span>
 					</div>
+-->
 					
-					<div id="sms-full-<?= $SMS->id ?>" style="display: <?= empty($SMS->message_short) ? "block" : "none" ?>">
+<!-- 					style="display: <?= empty($SMS->message_short) ? "block" : "none" ?>" -->
+					<div id="sms-full-<?= $SMS->id ?>" style="display: block">
 						<?= $SMS->message ?>
 					</div>
 				</td>

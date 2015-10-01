@@ -161,6 +161,13 @@
 			]);
 		}
 		
+		public function alreadyHadLesson($id_group)
+		{
+			return VisitJournal::count([
+				"condition" => "id_entity={$this->id} AND type_entity='STUDENT' AND presence=1 AND id_group=$id_group"
+			]) > 0 ? true : false;
+		}
+		
 		
 		/**
 		 * Получить студентов с договорами.

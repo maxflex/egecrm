@@ -1,4 +1,4 @@
-angular.module "Stats", []
+angular.module "Stats", ["ui.bootstrap"]
 	.controller "ListCtrl", ($scope) ->
 		$scope.payment_status = $.cookie "stats_payment_status"
 		
@@ -6,3 +6,7 @@ angular.module "Stats", []
 			# $scope.payment_status = payment_status
 			$.cookie "stats_payment_status", payment_status, { expires: 365, path: '/' }
 			location.reload()
+		
+		$scope.pageChanged = ->
+			ajaxStart()
+			redirect "stats/?page=#{$scope.currentPage}"

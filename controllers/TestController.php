@@ -14,11 +14,88 @@
 //			error_reporting(E_ALL);
 		}
 		
-		public function actionZamalim()
+		public function actionReviewCount()
 		{
-			$Student = Student::findById(815);
-				
-			$r = $Student->getAwaitingSmsStatuses(268);
+			$Groups = Group::findAll();
+			
+			foreach ($Groups as $Group) {
+				foreach ($Group->students as $id_student) {
+					$Student = Student::findById($id_student);
+					$Teacher = Teacher::findById($Group->id_teacher);
+					
+					$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
+					
+					$Student->review_status	= $Group->student_statuses[$Student->id]['review_status'];
+					
+					if ($Student->already_had_lesson) {
+						$total_count++;
+						if (!$Student->review_status) {
+							$gray_count++;
+							$data[] = [
+								'sort'		=> 0,
+								'class' 	=> 'not-collected',
+								'Teacher'	=> $Teacher,
+								'Student'	=> $Student,
+								'id_group'	=> $Group->id,
+							];
+							//echo "GROUP ID: {$Group->id} | STUDENT ID: {$Student->id} <br>";
+						} else {
+							switch ($Student->review_status) {
+								case 1: {
+									$green_count++;
+									$data[] = [
+										'sort'		=> 1,
+										'class' 	=> 'collected',
+										'Teacher'	=> $Teacher,
+										'Student'	=> $Student,
+										'id_group'	=> $Group->id,
+									];
+									break;
+								}
+								case 2: {
+									$orange_count++;
+									$data[] = [
+										'sort'		=> 2,
+										'class' 	=> 'orange',
+										'Teacher'	=> $Teacher,
+										'Student'	=> $Student,
+										'id_group'	=> $Group->id,
+									];
+									break;
+								}
+								case 3: {
+									$red_count++;
+									$data[] = [
+										'sort'		=> 3,
+										'class' 	=> 'red',
+										'Teacher'	=> $Teacher,
+										'Student'	=> $Student,
+										'id_group'	=> $Group->id,
+									];
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			usort($data, function($a, $b) {
+				return $a['sort'] - $b['sort'];
+			});
+			
+			$this->setTabTitle("Количество отзывов");
+			
+			$this->render("review_count", [
+				"data" => $data,
+				"gray_count" => $gray_count,
+				"green_count" => $green_count,
+				"orange_count" => $orange_count,
+				"red_count"	=> $red_count,
+				"total_count" => $total_count,
+			]);
+						
+// 			echo "GRAY: $gray_count | GREEN: $green_count | ORANGE: $orange_count | RED: $red_count <br> TOTAL: $total_count";
 		}
 		
 		public function actionTwoOrMoreContracts()
@@ -220,6 +297,13 @@
 						
 						if ($Status->id_status != GroupStudentStatuses::AGREED) {
 							$sms->not_agreed = true;	
+						}
+						
+						if ($Status->notified != 1) {
+//							echo $Group->id . " | " . $Student->id . "<br>";
+//							$Status->notified = 1;
+//							$Status->save("notified");
+							$sms->not_notified = true;	
 						}
 						
 						$date_day = date("j", strtotime($Group->first_schedule->date));

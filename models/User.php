@@ -125,6 +125,11 @@
 			if (User::loggedIn()) {
 				return true;
 			}
+			
+			if (!isset($_COOKIE["egecrm_token"])) {
+				return false;
+			}
+			
 			// Кука токена хранится в виде: 
 			// 1) Первые 16 символов MD5-хэш
 			// 2) Остальные символы – id_user (код пользователя)

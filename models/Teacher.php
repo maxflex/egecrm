@@ -191,8 +191,6 @@
 		}
 	}
 	
-	
-	
 	class TeacherFreetime extends Model
 	{
 	

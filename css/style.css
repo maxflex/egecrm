@@ -7,6 +7,12 @@ body {
 .bold {
   font-weight: bold; }
 
+.bright-green {
+  color: #5cb85c !important; }
+
+.print-label {
+  width: 100px; }
+
 .student-dragout {
   display: flex;
   position: fixed;
@@ -683,6 +689,16 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 #calendar-app .old, #calendar-app .new {
   visibility: hidden !important; }
 
+.attachment {
+  color: #999999 !important;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 10px; }
+  .attachment a {
+    color: #999999 !important; }
+  .attachment:hover {
+    text-decoration: underline; }
+
 #task-app .task-separator {
   width: 150px;
   height: 6px;
@@ -691,16 +707,6 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 #task-app p {
   word-wrap: break-word; }
-
-#task-app .attachment {
-  color: #999999 !important;
-  font-size: 12px;
-  cursor: pointer;
-  margin-right: 10px; }
-  #task-app .attachment a {
-    color: #999999 !important; }
-  #task-app .attachment:hover {
-    text-decoration: underline; }
 
 #task-app .task-line {
   margin-bottom: 50px;
@@ -1410,6 +1416,24 @@ h4 {
     fill: #ff0039; }
   .sms-status.inway circle {
     fill: #fbaa33; }
+
+.review-status {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 5px;
+  cursor: pointer;
+  opacity: .9; }
+  .review-status:hover {
+    opacity: 1; }
+  .review-status.not-collected circle {
+    fill: rgba(0, 0, 0, 0.25); }
+  .review-status.collected circle {
+    fill: #5cb85c; }
+  .review-status.orange circle {
+    fill: #fbaa33; }
+  .review-status.red circle {
+    fill: #ff0039; }
 
 .svg-metro {
   height: 15px;

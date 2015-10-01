@@ -99,6 +99,37 @@
 		}
 
 
+
+
+		# TEACHER PAYMENTS
+		public function actionAjaxTeacherPaymentAdd()
+		{
+			echo TeacherPayment::add($_POST)->id;
+		}
+		
+		public function actionAjaxConfirmTeacherPayment()
+		{
+			extract($_POST);
+			
+			TeacherPayment::updateById($id, [
+				"confirmed" => $confirmed
+			]);
+		}
+		
+		public function actionAjaxDeleteTeacherPayment()
+		{
+			TeacherPayment::deleteById($_POST["id_payment"]);
+		}
+
+		public function actionAjaxTeacherPaymentEdit()
+		{
+			$Payment = new TeacherPayment($_POST);
+			$Payment->save();
+		}
+		# / TEACHER PAYMENTS
+		
+		
+		
 		public function actionAjaxContractSave()
 		{
 			returnJson(Contract::addNewAndReturn($_POST));
@@ -108,7 +139,7 @@
 		{
 			Contract::edit($_POST);
 		}
-
+		
 		public function actionAjaxUploadFiles()
 		{
 			$Contract = Contract::findById($_POST["id_contract"]);

@@ -209,6 +209,12 @@
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
 			]
 			
+			$scope.allStudentStatuses = ->
+				student_statuses_count = _.filter $scope.Group.student_statuses, (s, id_student) ->
+											s isnt undefined and s.id_status and _.where($scope.TmpStudents, {id: parseInt(id_student)}).length
+				console.log student_statuses_count.length, $scope.TmpStudents.length
+				student_statuses_count.length is $scope.TmpStudents.length
+			
 			$scope.$watch 'Group.open', (newValue, oldValue) ->
 				console.log newValue
 				if parseInt(newValue) is 0
@@ -518,9 +524,21 @@
 				$("select[class^='student-status-select'], select[class^='teacher-status-select']").hide()
 				$(".s-s-s, .t-s-s").show()
 		
-			
+				
+			$scope.changeReviewStatus = (id_student) ->
+				$scope.form_changed = true
+				$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0, review_status: 0} if $scope.Group.student_statuses[id_student] is undefined
+				
+				$scope.Group.student_statuses[id_student].review_status
+				
+				if $scope.Group.student_statuses[id_student].review_status is 3
+					$scope.Group.student_statuses[id_student].review_status = 0
+				else
+					$scope.Group.student_statuses[id_student].review_status++
+				$scope.getStudent(id_student).review_status = $scope.Group.student_statuses[id_student].review_status
+				
 			$scope.smsNotify = (id_student) ->
-				$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0} if $scope.Group.student_statuses[id_student] is undefined
+				$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0, review_status: 0} if $scope.Group.student_statuses[id_student] is undefined
 				return false if $scope.Group.student_statuses[id_student].notified
 				$scope.Group.student_statuses[id_student].notified = 1
 				$scope.getStudent(id_student).notified = 1

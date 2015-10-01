@@ -21,6 +21,28 @@
 							ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}" style="display: inline-block"></span>
 					</td>
 					<td>
+						<span ng-show="Teacher.gray_count">
+							<svg class="review-status not-collected" style="top: 4px; width: 15px">
+								<circle r="3" cx="7" cy="7"></circle>
+							</svg>{{Teacher.gray_count}}
+						</span>
+						<span ng-show="Teacher.green_count">
+							<svg class="review-status collected" style="top: 4px; width: 15px">
+								<circle r="3" cx="7" cy="7"></circle>
+							</svg>{{Teacher.green_count}}
+						</span>
+						<span ng-show="Teacher.orange_count">
+							<svg class="review-status orange" style="top: 4px; width: 15px">
+								<circle r="3" cx="7" cy="7"></circle>
+							</svg>{{Teacher.orange_count}}
+						</span>
+						<span ng-show="Teacher.red_count">
+							<svg class="review-status red" style="top: 4px; width: 15px">
+								<circle r="3" cx="7" cy="7"></circle>
+							</svg>{{Teacher.red_count}}
+						</span>
+					</td>
+					<td>
 						<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
 					</td>
 					<td>

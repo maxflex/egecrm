@@ -1,4 +1,4 @@
-<div ng-app="Stats" ng-controller="ListCtrl">
+<div ng-app="Stats" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="top-links">
 		<?php if ($_GET["group"] == "d" || empty($_GET["group"])) { ?>
 		<span style="margin-right: 15px; font-weight: bold">по дням</span>
@@ -111,37 +111,19 @@
 			<?php endforeach; ?>
 		</tbody>
 	</table>
+	
+	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
+	<pagination
+	  ng-model="currentPage"
+	  ng-change="pageChanged()"
+	  total-items="160"
+	  max-size="10"
+	  items-per-page="<?= StatsController::PER_PAGE ?>"
+	  first-text="«"
+	  last-text="»"
+	  previous-text="«"
+	  next-text="»"
+	>
+	</pagination>
+	<?php endif ?>
 </div>
-<!--
-
-<div class="row" style="font-weight: bold; margin-bottom: 5px">
-	<div class="col-sm-2">
-		дата
-	</div>
-	<div class="col-sm-2">
-		договоров
-	</div>
-	<div class="col-sm-2">
-		сумма
-	</div>
-	<div class="col-sm-2">
-		сумма платежей
-	</div>
-</div>
-<?php foreach($stats as $date => $stat): ?>
-<div class="row" style="margin-bottom: 5px">
-	<div class="col-sm-2">
-		<?= strftime("%d %b %Y", strtotime($date)) ?>
-	</div>
-	<div class="col-sm-2">
-		<?= $stat['count'] ?>
-	</div>
-	<div class="col-sm-2">
-		<?= $stat['total'] ?>
-	</div>
-	<div class="col-sm-2">
-		<?= $stat['total_payment'] ?>
-	</div>
-</div>
-<?php endforeach; ?>
--->

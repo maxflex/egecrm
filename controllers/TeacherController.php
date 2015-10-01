@@ -13,6 +13,74 @@
 			$this->addJs("ng-teacher-app");
 		}
 		
+		public function actionSalary()
+		{
+			$Data = VisitJournal::findAll([
+				"condition" => "type_entity='TEACHER'"
+			]);
+			
+			$teacher_ids = [];
+			foreach ($Data as $OneData) {
+				if (!$OneData->id_entity) {
+					continue;
+				}
+				if (!in_array($OneData->id_entity, $teacher_ids)) {
+					$teacher_ids[] = $OneData->id_entity;
+				}
+			}
+			
+			$total_sum = 0;
+			$total_payment_sum = 0;
+			$lesson_count = 0;
+			foreach ($teacher_ids as $id_teacher) {
+				$Teacher = Teacher::findById($id_teacher);
+				
+				$Payments = TeacherPayment::findAll([
+					"condition" => "id_teacher=$id_teacher"
+				]);
+				
+				$payment_sum = 0;
+				foreach ($Payments as $Payment) {
+					$payment_sum += $Payment->sum;	
+					$total_payment_sum += $Payment->sum;
+				}
+				
+				$Data = VisitJournal::findAll([
+					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'"
+				]);
+				
+				$sum = 0;
+				foreach ($Data as $OneData) {
+					$sum += $OneData->teacher_price;
+					$total_sum += $OneData->teacher_price;
+				}
+				
+				$lesson_count += count($Data);
+				
+				$return[] = [
+					"Teacher" 	=> $Teacher,
+					"sum"		=> $sum,
+					"payment_sum" => $payment_sum,
+					"count"		=> count($Data),
+				];
+			}
+			
+			$ang_init_data = angInit([
+				"Data" 		=> $return,
+				"total_sum"			=> $total_sum,
+				"total_payment_sum"	=> $total_payment_sum,
+				"lesson_count"		=> $lesson_count,
+				"subjects"	=> Subjects::$short,
+			]);
+			
+			$this->setTabTitle("Дебет преподавателей");
+			
+			$this->render("salary", [
+				"ang_init_data" => $ang_init_data,
+			]);				
+		}
+		
+		
 		public function actionList()
 		{
 			$this->setTabTitle("Преподователи");
@@ -22,6 +90,40 @@
 			
 			foreach ($Teachers as &$Teacher) {
 				$Teacher->login_count = User::getLoginCount($Teacher->id, Teacher::USER_TYPE);
+				
+				$Groups = Teacher::getGroups($Teacher->id);
+				foreach ($Groups as $Group) {
+					foreach ($Group->students as $id_student) {
+						
+						$Student = Student::findById($id_student);
+						
+						$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
+						
+						$Student->review_status	= $Group->student_statuses[$Student->id]['review_status'];
+						
+						if ($Student->already_had_lesson) {
+							if (!$Student->review_status) {
+								$Teacher->gray_count++;
+								//echo "GROUP ID: {$Group->id} | STUDENT ID: {$Student->id} <br>";
+							} else {
+								switch ($Student->review_status) {
+									case 1: {
+										$Teacher->green_count++;
+										break;
+									}
+									case 2: {
+										$Teacher->orange_count++;
+										break;
+									}
+									case 3: {
+										$Teacher->red_count++;
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 			
 			$ang_init_data = angInit([
@@ -52,6 +154,12 @@
 				$Teacher = Teacher::findById($id_teacher);
 				$Teacher->Reviews = Teacher::getReviews($Teacher->id);
 				
+				# Данные по занятиям/выплатам
+				$Data = VisitJournal::findAll([
+					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'",
+					"order"		=> "lesson_date DESC, lesson_time DESC",
+				]);
+				
 				$Groups = Teacher::getGroups($id_teacher);
 			}
 			
@@ -60,12 +168,16 @@
 			
 			$ang_init_data = angInit([
 				"Teacher" => $Teacher,
+				"Data"				=> $Data,
 				"freetime"		=> $Teacher->getFreetime(),
 				"teacher_phone_level"	=> $Teacher->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"Groups"				=> $Groups,
 				"GroupLevels"			=> GroupLevels::$all,
 				"Subjects"	=> Subjects::$three_letters,
+				"payment_statuses"	=> Payment::$all,
+				"payments"			=> TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher"]),
+				"user"				=> User::fromSession(),
 			]);
 			
 			$this->render("edit", [

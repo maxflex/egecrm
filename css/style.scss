@@ -8,8 +8,10 @@
 	$orange				: #fbaa33;
 	$metro_orange		: rgb(251, 170, 51);
 	
+	
 	$green				: #5cb85c;
 	$metro_green		: #029A55;
+	$bright_green		: #5cb85c;
 	
 	$hr_gray 			: #eee;
 	$half_black			: rgba(0, 0, 0, .5);
@@ -23,6 +25,14 @@ body {
 
 .bold {
 	font-weight: bold;
+}
+
+.bright-green {
+	color: #5cb85c !important;
+}
+
+.print-label {
+	width: 100px;
 }
 
 .student-dragout {
@@ -699,6 +709,19 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	}
 }
 
+.attachment {
+	color: #999999 !important;
+	& a {
+		color: #999999 !important;
+	}
+	font-size: 12px;
+	cursor: pointer;
+	margin-right: 10px;
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
 #task-app {
 	& .task-separator {
 		width: 150px;
@@ -709,19 +732,6 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	
 	& p {
 		word-wrap: break-word;
-	}
-	
-	& .attachment {
-		color: #999999 !important;
-		& a {
-			color: #999999 !important;
-		}
-		font-size: 12px;
-		cursor: pointer;
-		margin-right: 10px;
-		&:hover {
-			text-decoration: underline;
-		}
 	}
 	
 	& .task-line {
@@ -1655,6 +1665,38 @@ h4 {
 	&.inway {
 		& circle {
 			fill: $orange;
+		}
+	}
+}
+
+.review-status {
+	height: 15px;
+	width: 15px;
+	position: relative;
+	top: 5px;
+	cursor: pointer;
+	opacity: .9;
+	&:hover {
+		opacity: 1;
+	}
+	&.not-collected {
+		& circle {
+			fill: rgba(0, 0, 0, 0.25);
+		}
+	}
+	&.collected {
+		& circle {
+			fill: $green;
+		}
+	}
+	&.orange {
+		& circle {
+			fill: $orange;
+		}
+	}
+	&.red {
+		& circle {
+			fill: $red;
 		}
 	}
 }

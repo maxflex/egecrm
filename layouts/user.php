@@ -147,6 +147,18 @@
 			}
 		?>
 	<?php endif ?>
+	<a href="print" class="list-group-item">Печать 
+	    <?php
+			// Количество новых заявок
+			$new_print_count = PrintTask::countNew();
+			
+			// Если есть новые заявки
+			if ($new_print_count) {
+				echo '<span class="badge pull-right">'. $new_print_count .'</span>';
+			}
+		?>
+	</a>
+	<a href="teachers/salary" class="list-group-item">Дебет преподавателей</a>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
     <a href="settings/students" class="list-group-item">Ученики</a>

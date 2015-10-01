@@ -78,8 +78,11 @@ ajaxEnd = function(element) {
   return NProgress.done();
 };
 
-clearSelect = function() {
+clearSelect = function(ms) {
+  if (ms == null) {
+    ms = 50;
+  }
   return setTimeout(function() {
     return $("option[value^='?']").remove();
-  }, 50);
+  }, ms);
 };

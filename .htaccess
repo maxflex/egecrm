@@ -28,6 +28,8 @@ RewriteRule ^requests/([a-zA-Z]+)/([0-9]+)[/]?$ index.php?controller=request&act
 RewriteRule ^requests[/]?$ index.php?controller=request&action=list [QSA,L]
 
 # Учителя
+RewriteRule ^teachers/salary[/]?$ index.php?controller=teacher&action=Salary [QSA,L]
+# RewriteRule ^teachers/salary/([0-9]+)?$ index.php?controller=teacher&action=Salary&id_teacher=$1 [QSA,L]
 RewriteRule ^teachers/edit/([0-9]+)?$ index.php?controller=teacher&action=edit&id=$1 [QSA,L]
 RewriteRule ^teachers/add[/]?$ index.php?controller=teacher&action=add [QSA,L]
 RewriteRule ^teachers/ajax/([a-zA-Z]+)[/]?$ index.php?controller=teacher&action=Ajax$1 [QSA,L]
@@ -49,6 +51,9 @@ RewriteRule ^settings/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=$1 [
 RewriteRule ^settings/([a-zA-Z]+)/([0-9]+)[/]?$ index.php?controller=settings&action=$1&id=$2 [QSA,L]
 RewriteRule ^settings/ajax/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=Ajax$1 [QSA,L]
 
+RewriteRule ^print[/]?$ index.php?controller=PrintTasks&action=list [QSA,L]
+RewriteRule ^print/add[/]?$ index.php?controller=PrintTasks&action=add [QSA,L]
+RewriteRule ^print/ajax/([a-zA-Z]+)[/]?$ index.php?controller=PrintTasks&action=Ajax$1 [QSA,L]
 
 RewriteRule ^tasks[/]?$ index.php?controller=task&action=list [QSA,L]
 RewriteRule ^tasks/([0-9]+)[/]?$ index.php?controller=task&action=list&list=$1 [QSA,L]

@@ -241,7 +241,15 @@
 		{
 			return GroupSchedule::findAll([
 				"condition" => "id_group=".$this->id,
-				"order"		=> "date ASC",
+				"order"		=> "date ASC, time ASC",
+			]);
+		}
+		
+		public function getFutureSchedule()
+		{
+			return GroupSchedule::findAll([
+				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) >= UNIX_TIMESTAMP(NOW())",
+				"order"		=> "date ASC, time ASC",
 			]);
 		}
 		
@@ -595,10 +603,11 @@
 					}
 					
 					GroupStudentStatuses::add([
-						"id_group" 	=> $id_group,
-						"id_student"=> $id_student,
-						"id_status" => $data['id_status'],
-						"notified"	=> $data['notified'],
+						"id_group" 		=> $id_group,
+						"id_student"	=> $id_student,
+						"id_status" 	=> $data['id_status'],
+						"notified"		=> $data['notified'],
+						"review_status"	=> $data['review_status'],
 					]);
 				}
 			}
@@ -639,8 +648,9 @@
 			
 			foreach ($data as $data_line) {
 				$return[$data_line->id_student] = [
-					'id_status' => $data_line->id_status,
-					'notified'	=> $data_line->notified,
+					'id_status' 	=> $data_line->id_status,
+					'notified'		=> $data_line->notified,
+					'review_status'	=> $data_line->review_status,
 				];
 			}
 			

@@ -13,7 +13,10 @@
 	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?>" 
 		class="group-list" data-id="{{Group.id}}">
 		<td width="100">
-			<a ng-class="{'text-danger': Group.schedule_count == 24}" href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
+			<a ng-class="{
+				'text-danger'	: Group.schedule_count == 24,
+				'bright-green'	: Group.schedule_count == 28,
+			}" href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
 		</td>
 		<td>
 			<span ng-show="Group.id_branch" ng-bind-html="Group.branch | to_trusted" ng-class="{'mr3' : !$last}"></span>

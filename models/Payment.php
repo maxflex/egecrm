@@ -101,3 +101,48 @@
 		}
 			
 	}
+	
+	
+	class TeacherPayment extends Model 
+	{
+		public static $mysql_table	= "teacher_payments";
+		
+		public function __construct($array) {
+			parent::__construct($array);
+			
+			if ($this->card_number) {
+				$this->card_number .= ' ';
+			}
+			
+			// Добавляем данные
+			$this->user_login = User::findById($this->id_user)->login;
+		}
+		
+				public function getStudent()
+		{
+			return Student::findById($this->id_student);
+		}
+		
+		/**
+		 * Добавить платежи
+		 * 
+		 */
+		public static function addData($payments_array, $id_teacher) 
+		{	
+			// Сохраняем данные
+			foreach ($payments_array as $id => $one_payment) {
+				// если у платежа есть ID, то обновляем его
+				if ($one_payment["id"]) {
+					$Payment = Payment::findById($one_payment["id"]);
+					$Payment->update($one_payment);	
+				} else {
+					// иначе добавляем новый платеж
+					$Payment = new self($one_payment);
+					$Payment->id_teacher	= $id_teacher;
+					$Payment->id_user		= User::fromSession()->id;
+					$Payment->first_save_date = now();
+					$Payment->save();
+				}
+			}
+		}
+	}

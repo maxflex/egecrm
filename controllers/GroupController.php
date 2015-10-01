@@ -284,12 +284,15 @@
 				$Student->freetime_orange	 	= $freetime["freetime_orange"];
 				$Student->freetime_orange_full 	= $freetime["freetime_orange_full"];
 				
+				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
+				
 				# Статус доставки СМС
-				$Student->delivery_data			= $Student->getAwaitingSmsStatuses($Group->id);
+				// $Student->delivery_data			= $Student->getAwaitingSmsStatuses($Group->id);
 				
 				if (array_key_exists($Student->id, $Group->student_statuses)) {
-					$Student->id_status	= $Group->student_statuses[$Student->id]['id_status'];
-					$Student->notified	= $Group->student_statuses[$Student->id]['notified'];
+					$Student->id_status		= $Group->student_statuses[$Student->id]['id_status'];
+					$Student->notified		= $Group->student_statuses[$Student->id]['notified'];
+					$Student->review_status	= $Group->student_statuses[$Student->id]['review_status'];
 				}
 				$Students[] = $Student;
 			}
@@ -365,7 +368,9 @@
 
 				
 				if ($Group && array_key_exists($Student->id, $Group->student_statuses)) {
-					$Student->id_status = $Group->student_statuses[$Student->id];
+					$Student->id_status 	= $Group->student_statuses[$Student->id]['id_status'];
+					$Student->notified		= $Group->student_statuses[$Student->id]['notified'];
+					$Student->review_status	= $Group->student_statuses[$Student->id]['review_status'];
 				}
 								
 				foreach ($Student->branches as $id_branch) {
@@ -555,6 +560,10 @@
 		public function actionAjaxRegisterInJournal()
 		{
 			extract($_POST);
+			
+			// Дополнительный вход
+			User::rememberMeLogin();
+			preType([User::fromSession(), $_POST]);
 			$data = array_filter($data);
 			
 			LessonData::addData($id_group, $date, $data);
@@ -609,9 +618,10 @@
 			$Template = Template::getFull(8, [
 				"student_name"	=> $Student->last_name . " " . $Student->first_name,
 				"subject"		=> Subjects::$dative[$Group->id_subject],
+				"address"		=> Branches::$address[$Group->id_branch],
 				"branch"		=> Branches::$all[$Group->id_branch],
 				"date"			=> $date_formatted,
-				"cabinet"		=> Cabinet::findById($Group->cabinet)->number,
+				"cabinet"		=> trim(Cabinet::findById($Group->cabinet)->number),
 			]);
 			
 			$message = $Template->text;
