@@ -1,3 +1,9 @@
+<style>
+	table tr td:not(:first-child) {
+		text-align: center;
+	}
+</style>
+
 <div ng-app="Stats" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="top-links">
 		<?php if ($_GET["group"] == "d" || empty($_GET["group"])) { ?>
@@ -25,32 +31,45 @@
 		<?php } ?>
 		
 		<div class="pull-right">
-			<span class="link-like" ng-click="setPayment(1)" ng-class="{'active': payment_status == 1}">оплата по картам</span>
-			<span class="link-like" ng-click="setPayment(2)" ng-class="{'active': payment_status == 2}">наличные</span>
-			<span class="link-like" ng-click="setPayment(4)" ng-class="{'active': payment_status == 4}">счет</span>
-			<span class="link-like" ng-click="setPayment(5)" ng-class="{'active': payment_status == 5}">карта онлайн</span>
-			<span class="link-like" ng-click="setPayment(0)" ng-class="{'active': payment_status == 0 || !payment_status}">все платежи</span>
+			<span class="link-like active">итоговые данные</span>
+			<a href="stats/payments">детализация по платежам</a>
 		</div>
-		
 	</div>
 	
 	<table class="table table-hover">
-		<thead style="font-weight: bold">
+		<thead style="font-size: 10px" class="half-black">
 			<tr>
 				<td>
-					дата
 				</td>
 				<td>
 					заявок
 				</td>
 				<td>
-					договоров
+					заключенные
 				</td>
 				<td>
-					сумма
+					расторгнутые
 				</td>
 				<td>
-					сумма платежей
+					реанимированные
+				</td>
+				<td>
+					заключенные
+				</td>
+				<td>
+					расторгнутые
+				</td>
+				<td>
+					реанимированные
+				</td>
+				<td>
+					изменение существующих
+				</td>
+				<td>
+					платежи
+				</td>
+				<td>
+					возвраты
 				</td>
 			</tr>
 		</thead>
@@ -64,48 +83,37 @@
 					<?= $stat['requests'] ?>
 				</td>
 				<td>
-					<?= $stat['count'] ?>
-					<?php if (isset($stat['plus_contracts']) && $stat['plus_contracts'] != 0): ?>
-						<span class="quater-black"> 
-							<?= ($stat['plus_contracts'] > 0 ? " + " . $stat['plus_contracts'] : " – " . ($stat['plus_contracts'] * -1)) ?>
-						</span>
-				   	<?php endif ?>
+					<?= $stat['contract_new'] ?>
 				</td>
 				<td>
-				   <?php 
-					   if ($stat['total']) {
-						   echo $stat['total'];
-					   } else {
-						   if (isset($stat['plus_sum']) && $stat['plus_sum'] != 0) {
-							   echo $stat['plus_sum'];
-						   }
-					   }
-					?>
-				   <?php if ($stat['total'] && isset($stat['plus_sum']) && $stat['plus_sum'] > 0): ?>
-						<span class="quater-black"> + <?= $stat['plus_sum'] ?></span>
-				   	<?php endif ?>
-				   	
-				   	<?php if (isset($stat['minus_sum']) && $stat['minus_sum'] > 0): ?>
-						<span class="quater-black"> – <?= $stat['minus_sum'] ?></span>
+					<?= $stat['contract_cancelled'] ?>
+				</td>
+				<td>
+					<?= $stat['contract_restored'] ?>
+				</td>
+				<td>
+					<?= $stat['contract_sum_new'] ?>
+				</td>
+				<td>
+					<?= $stat['contract_sum_cancelled'] ?>
+				</td>
+				<td>
+					<?= $stat['contract_sum_restored'] ?>
+				</td>
+				<td>
+					<?= $stat['contract_sum_changed'] ?>
+				</td>
+				<td>
+					<?= $stat['payment_confirmed'] ?>
+					<?php if ($stat['payment_unconfirmed'] > 0) :?>
+						<span class="quater-black"><?= ($stat['payment_confirmed'] > 0 ? ' + ' : '')?><?= $stat['payment_unconfirmed'] ?></span>
 					<?php endif ?>
-				   	
 				</td>
 				<td>
-					<?= $stat['total_payment'] ?>
-					<?php 
-						if ($stat['total_payment_plus'] != 0) {
-							echo '<span class="quater-black"> ';
-							if ($stat['total_payment']) {
-								echo "+ ";
-							}
-							echo $stat['total_payment_plus'];
-							echo "</span>";
-						}
-						
-						if (isset($stat["payment_minus"])) {
-							echo '<span class="quater-black"> – '. ($stat["payment_minus"] * -1) .'</span>'; 	
-						}
-					?>
+					<?= $stat['return_confirmed'] ?>
+					<?php if ($stat['return_unconfirmed'] > 0) :?>
+						<span class="quater-black"><?= ($stat['return_confirmed'] > 0 ? ' + ' : '')?><?= $stat['return_unconfirmed'] ?></span>
+					<?php endif ?>
 				</td>
 			</tr>
 			<?php endforeach; ?>
@@ -116,7 +124,7 @@
 	<pagination
 	  ng-model="currentPage"
 	  ng-change="pageChanged()"
-	  total-items="160"
+	  total-items="<?= Request::timeFromFirst() ?>"
 	  max-size="10"
 	  items-per-page="<?= StatsController::PER_PAGE ?>"
 	  first-text="«"

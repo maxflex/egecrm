@@ -4,6 +4,20 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+.top-group-menu > div {
+  width: 13%;
+  display: inline-block;
+  margin-right: 5px; }
+
+.students-10 {
+  background-color: rgba(255, 0, 0, 0.06); }
+
+.students-11 {
+  background-color: rgba(255, 0, 0, 0.15); }
+
+.text-warning {
+  color: #C07911 !important; }
+
 .bold {
   font-weight: bold; }
 
@@ -12,6 +26,9 @@ body {
 
 .print-label {
   width: 100px; }
+
+.bootstrap-select.btn-group > .disabled {
+  cursor: default !important; }
 
 .student-dragout {
   display: flex;
@@ -425,6 +442,10 @@ body {
 .border-dashed-droppable-hover {
   border: 3px dashed #5cb85c !important; }
 
+.center-label {
+  position: relative;
+  top: -1px; }
+
 .group-student-status {
   background-color: white;
   color: rgba(0, 0, 0, 0.5);
@@ -556,7 +577,50 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   left: 0;
   top: 0; }
 
-.day-explain {
+.invisible {
+  visibility: hidden !important; }
+
+.table-journal {
+  width: auto !important; }
+  .table-journal th {
+    font-weight: normal;
+    color: black; }
+    .table-journal th span {
+      position: absolute;
+      -moz-transform: rotate(-90deg);
+      /* FF3.5+ */
+      -o-transform: rotate(-90deg);
+      /* Opera 10.5 */
+      -webkit-transform: rotate(-90deg);
+      /* Saf3.1+, Chrome */
+      filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+      /* IE6,IE7 */
+      -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
+      /* IE8 */
+      vertical-align: top !important;
+      display: block;
+      left: -12px;
+      top: 27px;
+      font-size: 12px; }
+  .table-journal td:last-child, .table-journal th:last-child {
+    border-right: none !important; }
+  .table-journal .circle-default {
+    top: 4px !important; }
+  .table-journal td, .table-journal th {
+    height: 24px;
+    padding: 0 4px !important;
+    text-align: center;
+    border: solid 1px #ddd !important; }
+  .table-journal tr td:first-child {
+    border-left: none !important; }
+  .table-journal th {
+    border-top: none !important; }
+  .table-journal tr:last-child td {
+    border-bottom: none !important; }
+  .table-journal .gray-bg {
+    background: #EFEFEF; }
+
+.day-explain, .circle-default {
   border-radius: 50% !important;
   height: 14px;
   width: 14px;
@@ -564,11 +628,13 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   background: #5cb85c;
   top: 2px;
   position: relative; }
-  .day-explain.was-lesson {
+  .day-explain.was-lesson, .day-explain.circle-blue, .circle-default.was-lesson, .circle-default.circle-blue {
     background-color: #337AB7 !important; }
-  .day-explain.first-lesson {
+  .day-explain.first-lesson, .day-explain.circle-red, .circle-default.first-lesson, .circle-default.circle-red {
     background-color: #ff0039 !important; }
-  .day-explain.first-and-was {
+  .day-explain.circle-orange, .circle-default.circle-orange {
+    background-color: #fbaa33 !important; }
+  .day-explain.first-and-was, .circle-default.first-and-was {
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fbaa33+0,fbaa33+50,337ab7+51,337ab7+100 */
     background: #fbaa33  !important;
     /* Old browsers */
@@ -586,7 +652,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbaa33', endColorstr='#337ab7',GradientType=0 ) !important;
     /* IE6-9 */ }
-  .day-explain.vocation {
+  .day-explain.vocation, .circle-default.vocation {
     background-color: #ff0039 !important; }
 
 #calendar-app thead tr:nth-child(1) {
@@ -722,11 +788,11 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     margin-left: 20px; }
 
 #task-app .task-status-toggle {
-  height: 50px !important;
+  height: 20px !important;
   opacity: .8;
   cursor: pointer;
   position: absolute;
-  top: 50%;
+  top: 57%;
   right: 10px; }
   #task-app .task-status-toggle:hover {
     opacity: 1; }
@@ -825,7 +891,7 @@ button:disabled, select:disabled {
 .modal-footer {
   border-top: 0; }
 
-.ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
+.no-transition .slider-handle, .ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
   transition: none !important; }
 
 .capitalize {
@@ -898,8 +964,32 @@ h4.row-header {
   width: 80%;
   left: 10%;
   top: 5%;
-  height: 90%;
+  max-height: 90%;
   overflow: hidden; }
+
+.vertical-header thead th {
+  text-align: center;
+  padding: 10px 0;
+  font-weight: normal !important;
+  border: none !important; }
+  .vertical-header thead th:not(:first-child) {
+    border: 1px solid #ddd !important; }
+
+.testyy {
+  -ms-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  -ms-transform-origin: left top 0;
+  -moz-transform-origin: left top 0;
+  -webkit-transform-origin: left top 0;
+  transform-origin: left top 0;
+  margin-left: 30px;
+  padding: 0;
+  float: left;
+  height: 80px;
+  width: 5px;
+  white-space: nowrap; }
 
 .lightbox-freetime {
   max-height: 700px;
@@ -908,7 +998,7 @@ h4.row-header {
 #sms-history {
   margin-bottom: 10px;
   padding-left: 23px;
-  height: 523px;
+  max-height: 490px;
   overflow-y: scroll; }
 
 #email-history {
@@ -1050,8 +1140,8 @@ h4.row-header {
     display: inline-block; }
 
 .lightbox-addcontract {
-  width: 820px;
-  left: calc(50% - 410px); }
+  width: 900px;
+  left: calc(50% - 450px); }
   .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select {
     width: 230px;
     float: right; }
@@ -1062,7 +1152,8 @@ h4.row-header {
     display: inline-block;
     width: 100%;
     margin-bottom: 10px;
-    height: 34px; }
+    height: 34px;
+    position: relative; }
   .lightbox-addcontract .contract-subject-list .ios7-switch .switch {
     font-size: 24px;
     margin-right: 15px; }
@@ -1071,7 +1162,24 @@ h4.row-header {
     text-transform: capitalize;
     opacity: .5; }
   .lightbox-addcontract .contract-subject-list input[type="text"] {
-    width: 60px; }
+    width: 100px; }
+  .lightbox-addcontract .contract-subject-list .dogavar-label {
+    position: absolute;
+    color: gray;
+    font-size: 12px;
+    top: 9px; }
+    .lightbox-addcontract .contract-subject-list .dogavar-label.zero {
+      right: 220px; }
+    .lightbox-addcontract .contract-subject-list .dogavar-label.first {
+      right: 115px; }
+    .lightbox-addcontract .contract-subject-list .dogavar-label.second {
+      right: 10px; }
+
+.contract-recommended-price {
+  font-size: 10px;
+  position: absolute;
+  right: 17px;
+  top: -16px; }
 
 .visible {
   visibility: visible !important; }
@@ -1598,8 +1706,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .table.table-divlike > tbody > tr > td {
   border-top: none;
-  padding: 0;
-  padding-bottom: 5px; }
+  padding: 2px 0 3px; }
 
 .table.table-divlike > thead > tr > td {
   border-top: none;

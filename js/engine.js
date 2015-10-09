@@ -559,7 +559,7 @@
 	function lightBoxShow(element)
 	{
 		if (element == "addcontract") {
-			setTimeout(function(){$(".ios7-switch.transition-control").removeClass("no-transition")}, 300)
+			setTimeout(function(){$(".transition-control").removeClass("no-transition")}, 300)
 		}
 		
 		$(".lightbox, .lightbox-" + element).fadeIn(150)
@@ -567,7 +567,7 @@
 	
 	function lightBoxHide()
 	{
-		$(".ios7-switch.transition-control").addClass("no-transition")
+		$(".transition-control").addClass("no-transition")
 		
 		$(".lightbox, div[class^='lightbox-']").fadeOut(150)
 	}

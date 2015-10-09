@@ -5,7 +5,17 @@ angular.module("Clients", []).filter('to_trusted', [
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("ListCtrl", function($scope) {
+]).controller("ErrorsCtrl", function($scope) {
+  return angular.element(document).ready(function() {
+    set_scope("Clients");
+    return $.post("clients/ajax/getErrorStudents", {
+      mode: window.location.search
+    }, function(response) {
+      $scope.Response = response;
+      return $scope.$apply();
+    }, "json");
+  });
+}).controller("ListCtrl", function($scope) {
   $scope.weekdays = [
     {
       "short": "ПН",
@@ -86,7 +96,9 @@ angular.module("Clients", []).filter('to_trusted', [
   $scope.filter_cancelled = 0;
   $scope.clientsFilter = function(Student) {
     if ($scope.filter_cancelled === 2) {
-      return Student.Contract.pre_cancelled === 1;
+      return _.findWhere(Student.Contract.subjects, {
+        status: 1
+      }) !== void 0;
     } else {
       return Student.Contract.cancelled === $scope.filter_cancelled;
     }
@@ -120,6 +132,10 @@ angular.module("Clients", []).filter('to_trusted', [
     }
   };
   return angular.element(document).ready(function() {
+    $.post("clients/ajax/GetStudents", {}, function(response) {
+      $scope.Students = response;
+      return $scope.$apply();
+    }, "json");
     return set_scope("Clients");
   });
 });

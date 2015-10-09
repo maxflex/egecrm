@@ -21,6 +21,56 @@
 			
 		}
 		
+		public function actionJournal()
+		{
+			$id_group 	= $_GET['id_group'];
+			$id_group = $_GET['id'];		
+			$Group = Group::findById($id_group);
+			
+			$Group->Schedule = $Group->getSchedule();
+			
+			
+			// get student ids
+			$result = dbConnection()->query("
+				SELECT id_entity FROM visit_journal 
+				WHERE id_group=$id_group AND type_entity='STUDENT'
+				GROUP BY id_entity
+			");
+
+			$student_ids = [];
+			while ($row = $result->fetch_object()) {
+				$student_ids[] = $row->id_entity;
+			}
+			
+			// get students from journal 
+			$result = dbConnection()->query("
+				SELECT id, first_name, last_name FROM students
+				WHERE id IN (". implode(",", $student_ids) .")
+			");
+			
+			$students = [];
+			while ($row = $result->fetch_object()) {
+				$students[] = $row;
+			}
+			
+			$Group->Students = $students;
+						
+			$LessonData = VisitJournal::findAll([
+				"condition" => "id_group=$id_group AND type_entity='". Student::USER_TYPE ."'"
+			]);
+
+			
+			$ang_init_data = angInit([
+				"Group" 		=> $Group,
+				"LessonData"	=> $LessonData,
+			]);
+			
+			$this->setTabTitle("Посещаемость группы " . $id_group);
+			$this->render("journal", [
+				"ang_init_data" => $ang_init_data,
+			]);
+		}
+		
 		public function actionLesson()
 		{
 			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
@@ -55,7 +105,7 @@
 				$ang_init_data = angInit([
 					"Group" 	=> $Group,
 					"LessonData"=> $OrderedLessonData,
-					"lesson_statuses" => LessonData::$statuses,
+					"lesson_statuses" => VisitJournal::$statuses,
 					"id_group"		=> $id_group,
 					"date"			=> $date,
 					"registered_in_journal" => $Group->registeredInJournal($date),
@@ -120,19 +170,13 @@
 				$this->addJs("bootstrap-select, dnd");
 				
 				$Groups = Group::findAll();
-/*
 				
+				// исключить некоторые данные для более быстрой front-end загрузки
 				foreach ($Groups as &$Group) {
-				//	$Group->Schedule = $Group->getScheduleCached();
-					$Group->schedule_count = $Group->getScheduleCountCached();
+					unset($Group->Comments);
 				}
-*/
-				
-				$mode = ($_GET["mode"] == "students" ? 1 : 2);
 				
 				$Teachers = Teacher::getActiveGroups();
-				
-				$Stats = Group::getStats();
 				
 				$ang_init_data = angInit([
 					"Groups" 	=> $Groups,
@@ -142,7 +186,6 @@
 					"mode" 			=> $mode,
 					"change_mode" 	=> $mode,
 					"GroupLevels"	=> GroupLevels::$all,
-					"Stats"		=> $Stats,
 				]);
 				
 				$this->render("list", [
@@ -276,7 +319,6 @@
 				}
 				
 				$freetime = $Student->getGroupFreetime($Group->id, $Group->id_branch);
-				$Student->freetime 			= $freetime["freetime"];
 				$Student->freetime_red 		= $freetime["freetime_red"];
 				$Student->freetime_red_half = $freetime["freetime_red_half"];
 				$Student->red_doubleblink 	= $freetime["red_doubleblink"];
@@ -304,8 +346,6 @@
 			
 			
 			// Свободное время препода
-			$teacher_freetime 			= TeacherFreetime::get($Group->id_teacher);
-			
 			$teacher_freetime_all 		= TeacherFreetime::getRedAll($Group->id, $Group->id_teacher);
 			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
 			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
@@ -326,13 +366,12 @@
 				"Subjects"	=> Subjects::$three_letters,
 				"GroupLevels" => GroupLevels::$all,
 				"subjects_short" => Subjects::$short,
-				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch),
+				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
 				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
 				"GroupTeacherStatuses"	=> GroupTeacherStatuses::$all,
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_freetime"		=> Cabinet::getFreetime($Group->id, $Group->cabinet),
 				"teacher_freetime"		=> $teacher_freetime_red, // red half
-				"teacher_freetime_green"=> $teacher_freetime,
 				"teacher_freetime_red"	=> $teacher_freetime_red_full,
 				"teacher_freetime_orange_half" 	=> $teacher_freetime_orange_half,
 				"teacher_freetime_orange_full"	=> $teacher_freetime_orange_full,
@@ -356,7 +395,6 @@
 				$Student->in_other_group = $Student->inOtherGroup($_POST['id_group'], $_POST['id_subject']) ? true : false;
 				
 				$freetime = $Student->getGroupFreetime($_POST['id_group'], $_POST['id_branch']);
-				$Student->freetime 				= $freetime['freetime'];
 				$Student->freetime_red 			= $freetime['freetime_red'];
 				$Student->freetime_red_half 	= $freetime['freetime_red_half'];
 				$Student->freetime_orange	 	= $freetime["freetime_orange"];
@@ -487,7 +525,7 @@
 			extract($_POST);
 			
 			returnJsonAng(
-				Cabinet::getByBranch($id_branch)
+				Cabinet::getByBranch($id_branch, $id_group)
 			);
 		}		
 		
@@ -517,8 +555,6 @@
 			
 			
 			// Свободное время препода
-			$teacher_freetime 			= TeacherFreetime::get($id_teacher);
-			
 			$teacher_freetime_all 		= TeacherFreetime::getRedAll($id_group, $id_teacher);
 			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
 			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
@@ -542,7 +578,6 @@
 			returnJsonAng([
 				"red" 		=> $teacher_freetime_red,
 				"red_full" 	=> $teacher_freetime_red_full,
-				"green"		=> $teacher_freetime,
 				"orange"	=> $teacher_freetime_orange_half,
 				"orange_full"		=> $teacher_freetime_orange_full,
 				"red_doubleblink" 	=> $teacher_freetime_doubleblink,
@@ -563,10 +598,8 @@
 			
 			// Дополнительный вход
 			User::rememberMeLogin();
-			preType([User::fromSession(), $_POST]);
 			$data = array_filter($data);
 			
-			LessonData::addData($id_group, $date, $data);
 			VisitJournal::addData($id_group, $date, $data);
 		}
 		
@@ -646,4 +679,231 @@
 				}
 			}
 		}
+		
+		// DOWNLOAD SCHEDULE
+		public function actionDownloadSchedule()
+		{
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="расписание.xls"');
+			header('Cache-Control: max-age=0');
+			
+			$objPHPExcel = new PHPExcel();
+			
+			$objPHPExcel->setActiveSheetIndex(0);
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'РАСПИСАНИЕ');
+			
+			$objPHPExcel->getActiveSheet()->getStyle('B1')
+				->getAlignment()
+				->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->getStyle('B1')->getFont()
+				->setBold(true)						
+				->setName('Apple SD Gothic Neo')
+				->setSize(46);
+			
+			$objPHPExcel->getActiveSheet()->mergeCells('B1:S1');
+			
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('B3', 'ПОНЕДЕЛЬНИК');
+			$objPHPExcel->getActiveSheet()->mergeCells('B3:C3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('B4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('C4', '18:40');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('D3', 'ВТОРНИК');
+			$objPHPExcel->getActiveSheet()->mergeCells('D3:E3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('D4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('E4', '18:40');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('F3', 'СРЕДА');
+			$objPHPExcel->getActiveSheet()->mergeCells('F3:G3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('F4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('G4', '18:40');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('H3', 'ЧЕТВЕРГ');
+			$objPHPExcel->getActiveSheet()->mergeCells('H3:I3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('H4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('I4', '18:40');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('J3', 'ПЯТНИЦА');
+			$objPHPExcel->getActiveSheet()->mergeCells('J3:K3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('J4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('K4', '18:40');
+			
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('L3', 'СУББОТА');
+			$objPHPExcel->getActiveSheet()->mergeCells('L3:O3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('L4', '11:00');
+			$objPHPExcel->getActiveSheet()->SetCellValue('M4', '13:30');
+			$objPHPExcel->getActiveSheet()->SetCellValue('N4', '16:00');
+			$objPHPExcel->getActiveSheet()->SetCellValue('O4', '18:30');
+			
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('P3', 'ВОСКРЕСЕНЬЕ');
+			$objPHPExcel->getActiveSheet()->mergeCells('P3:S3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('P4', '11:00');
+			$objPHPExcel->getActiveSheet()->SetCellValue('Q4', '13:30');
+			$objPHPExcel->getActiveSheet()->SetCellValue('R4', '16:00');
+			$objPHPExcel->getActiveSheet()->SetCellValue('S4', '18:30');
+
+			$objPHPExcel->getActiveSheet()->getStyle('B3:S4')
+				->getAlignment()
+				->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)
+				->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+				
+			$objPHPExcel->getActiveSheet()->getStyle('B3:S4')->getFont()				
+				->setName('Apple SD Gothic Neo')
+				->setSize(18);
+			
+			// resize default height
+		    $objPHPExcel->getActiveSheet()->getRowDimension(3)->setRowHeight(35);
+		    $objPHPExcel->getActiveSheet()->getRowDimension(4)->setRowHeight(35);
+		    			
+			$Cabinets = Cabinet::findAll([
+				"condition" => "id_branch=" . Branches::TRG,
+			]);
+			
+			
+			$row = 4;
+			$col = 'A';
+			
+			foreach ($Cabinets as $Cabinet) {
+				$row++;
+
+				$objPHPExcel->getActiveSheet()->SetCellValue($col.$row, 'Кабинет ' . $Cabinet->number);
+				$objPHPExcel->getActiveSheet()->getStyle($col.$row)
+								->getAlignment()
+								->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)
+								->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+								->setWrapText(true);
+				$objPHPExcel->getActiveSheet()->getStyle($col.$row)->getFont()
+								->setName('Apple SD Gothic Neo')
+								->setSize(18);
+								
+				// Cabinet groups
+				$Groups = Group::findAll([
+					"condition" => "cabinet=" . $Cabinet->id
+				]);
+				
+				foreach ($Groups as $Group) {
+					$Teacher = Teacher::findById($Group->id_teacher);
+
+					foreach ($Group->day_and_time as $day => $time_data) {
+						foreach ($time_data as $time) {
+							$time_index = Freetime::getIndexByTime($time);	
+							if ($day < 6) {
+								$time_index -= 2;
+							}
+// 							h1($day . " | " . $time_index . " | " . $row . " | " . self::getCol($day, $time_index, $row));
+							$text = [];
+							$text[] = Subjects::$full[$Group->id_subject];
+							$text[] = Grades::$all[$Group->grade];
+							$text[] = $Teacher->last_name . " " . $Teacher->first_name;
+							$text[] = $Teacher->middle_name;
+							$text = implode("\r", $text);
+							
+							$col_row = self::getColRow($day, $time_index, $row);
+							
+							$objPHPExcel->getActiveSheet()->SetCellValue($col_row, $text);
+							$objPHPExcel->getActiveSheet()->getStyle($col_row)
+								->getAlignment()
+								->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)
+								->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+								->setWrapText(true);
+							$objPHPExcel->getActiveSheet()->getStyle($col_row)->getFont()
+								->setName('Apple SD Gothic Neo')
+								->setSize(9);
+						}
+					}
+				}
+			}
+			
+			// Кабинет
+			$style_default_border = [
+				'borders' => array(
+			        'allborders' => array(
+			            'style' => PHPExcel_Style_Border::BORDER_THIN,
+			            'color' => array('rgb' => 'AAAAAA')
+			        )
+			    )	
+			];
+
+			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
+			foreach(range('B', 'S') as $columnID) {
+			    $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)->setWidth(20);
+			}
+			
+			foreach(range(5, $row) as $rowID) {
+			    $objPHPExcel->getActiveSheet()->getRowDimension($rowID)->setRowHeight(80);
+			    if ($rowID % 2 == 0) {
+				    $objPHPExcel->getActiveSheet()->getStyle("A$rowID:S$rowID")
+				    	->getFill()
+				        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+				        ->getStartColor()
+				        ->setRGB('F2F2F2');
+			    }
+			    $objPHPExcel->getActiveSheet()->getStyle("A$rowID:S$rowID")->applyFromArray($style_default_border);
+			}
+			
+			// default border for weekdays
+			$objPHPExcel->getActiveSheet()->getStyle("B3:S4")->applyFromArray($style_default_border);
+			
+			$style_thick_border = [
+				'borders' => array(
+			        'outline' => array(
+			            'style' => PHPExcel_Style_Border::BORDER_MEDIUM,
+			            'color' => array('rgb' => '000000')
+			        )
+			    )	
+			];
+			$objPHPExcel->getActiveSheet()->getStyle("A5:S$rowID")->applyFromArray($style_thick_border);
+			
+/*
+			foreach (range(5, $row) as $rowID) {
+				$objPHPExcel->getActiveSheet()->getStyle("A{$rowID}")->applyFromArray($style_thick_border);	
+			}
+*/
+			
+			foreach (range(1, 7) as $day) {
+				switch ($day) {
+					case 7: {
+						$col_start = 'P';
+						break;
+					}
+					case 6: {
+						$col_start = 'L';
+						break;
+					}
+					default: {
+						$col_start 	= chr(64 + (2 * $day));		
+					}
+				}
+				$col_end	= ($day < 6) ? chr(ord($col_start) + 1) : chr(ord($col_start) + 3);
+				
+				$objPHPExcel->getActiveSheet()->getStyle("{$col_start}3:{$col_end}{$row}")->applyFromArray($style_thick_border);
+			}
+			
+// 			exit();
+			
+			$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+			$objWriter->save('php://output');
+		}
+		
+		private function getColRow($day, $time_index, $row)
+		{
+			if ($day < 7) {
+				$col = chr(64 + (2 * $day) + $time_index);
+			} else {
+				// воскресенье
+				$col = chr(ord('P') + $time_index);
+			}
+			return $col.$row;
+		}
+		
 	}

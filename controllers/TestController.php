@@ -14,6 +14,82 @@
 //			error_reporting(E_ALL);
 		}
 		
+		public function actionSwitchTest()
+		{
+			$this->addCss("bs-slider");
+			$this->addJs("bs-slider");
+			$this->setTabTitle("test");
+			$this->render("test");
+		}
+		
+		public function actionPhpExcel()
+		{
+/*
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="расписание.xls"');
+			header('Cache-Control: max-age=0');
+*/
+			
+			$objPHPExcel = new PHPExcel();
+			
+			$objPHPExcel->setActiveSheetIndex(0);
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('B3', 'ПОНЕДЕЛЬНИК');
+			$objPHPExcel->getActiveSheet()->mergeCells('B3:C3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('B4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('C4', '18:40');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('D3', 'ВТОРНИК');
+			$objPHPExcel->getActiveSheet()->mergeCells('D3:E3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('D4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('E4', '18:40');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('F3', 'СРЕДА');
+			$objPHPExcel->getActiveSheet()->mergeCells('F3:G3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('F4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('G4', '18:40');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('H3', 'ЧЕТВЕРГ');
+			$objPHPExcel->getActiveSheet()->mergeCells('H3:I3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('H4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('I4', '18:40');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('J3', 'ПЯТНИЦА');
+			$objPHPExcel->getActiveSheet()->mergeCells('J3:K3');
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('J4', '16:15');
+			$objPHPExcel->getActiveSheet()->SetCellValue('K4', '18:40');
+			
+			
+			$Cabinets = Cabinet::findAll([
+				"condition" => "id_branch=" . Branches::TRG,
+			]);
+			
+			
+			$row = 5;
+			$col = 'A';
+			
+			foreach ($Cabinets as $Cabinet) {
+				$objPHPExcel->getActiveSheet()->SetCellValue($col.$row, 'Кабинет ' . $Cabinet->number);
+				$row++;
+				
+				// Cabinet groups
+				$Groups = Group::findAll([
+					"condition" => "cabinet=" . $Cabinet->id
+				]);
+				
+				preType($Groups, 1);
+			}
+
+			exit();
+			$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+			$objWriter->save('php://output');
+		}
+		
 		public function actionReviewCount()
 		{
 			$Groups = Group::findAll();

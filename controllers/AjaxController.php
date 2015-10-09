@@ -593,15 +593,6 @@
 			returnJsonAng($Students);
 		}
 		
-		public function actionAjaxPreCancel()
-		{
-			extract($_POST);
-			
-			$Contract = Contract::findById($id_contract);
-			$Contract->pre_cancelled = $pre_cancelled;
-			$Contract->save("pre_cancelled");
-		}
-		
 		public function actionAjaxSmsCheckOk()
 		{
 			extract($_POST);

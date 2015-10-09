@@ -137,7 +137,7 @@
 					LEFT JOIN contracts c on c.id_student = s.id
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', s.id ,',%'))
-					WHERE c.id IS NOT NULL AND c.pre_cancelled=0 AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
+					WHERE c.id IS NOT NULL AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
 			")->num_rows;
 		}
 		
@@ -177,7 +177,7 @@
 		public static function getWithContract($only_active = false)
 		{
 			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. ($only_active ? " AND cancelled=0 AND pre_cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+				. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
 			
 			while ($row = $query->fetch_array()) {
 				if ($row["id_student"]) {
@@ -198,7 +198,7 @@
 		public static function getWithContractPreCancelled()
 		{
 			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. " AND pre_cancelled=1 " . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
 			
 			while ($row = $query->fetch_array()) {
 				if ($row["id_student"]) {
@@ -269,11 +269,6 @@
 			
 			ContractSubject::deleteAll([
 				"condition" => "id_contract IN (". implode(",", $contract_ids) .")"
-			]);
-			
-			# Свободное время
-			Freetime::deleteAll([
-				"condition" => "id_student=$id_student"
 			]);
 			
 			# Метки
@@ -581,30 +576,6 @@
 				"condition" => "deleted=0 AND id_student=" . $this->id
 			]);
 		}
-		
-		
-		/**
-		 * Получить свободное время ученика.
-		 * 
-		 */
-		public function getFreetime()
-		{
-			$Freetime = Freetime::findAll([
-				"condition"	=> "id_student=" . $this->id
-			]);
-			
-			if (!$Freetime) {
-				return [];
-			}
-			
-			foreach ($Freetime as $FreetimeData) {
-				$index = Freetime::getIndexByTime($FreetimeData->time);
-				$return[$FreetimeData->id_branch][$FreetimeData->day][$index] = $FreetimeData->time;
-			}
-			
-			return $return;
-		}
-		
 				
 		/**
 		 * Получить свободное время ученика.
@@ -613,22 +584,6 @@
 		 */
 		public function getGroupFreetime($id_group, $id_branch = false)
 		{
-			$Freetime = Freetime::findAll([
-				"condition"	=> "id_student=" . $this->id
-			]);
-			
-			if (!$Freetime) {
-				$return = [];
-			} else {
-				foreach ($Freetime as $FreetimeData) {
-					$return[$FreetimeData->id_branch][$FreetimeData->day][] = $FreetimeData->time;
-					
-					if (!in_array($FreetimeData->time, $return[0][$FreetimeData->day])) {
-						$return[0][$FreetimeData->day][] = $FreetimeData->time;
-					}
-				}	
-			}
-			
 			# красные кирпичи
 			foreach (Freetime::$weekdays as $day => $schedule) {
 				foreach ($schedule as $time) {
@@ -664,7 +619,6 @@
 			}
 			
 			$return = [
-				"freetime" 				=> $return,
 				"freetime_red"			=> $return_red,
 				"freetime_red_half" 	=> $return_red_half,
 				"red_doubleblink"		=> $red_doubleblink,
@@ -908,6 +862,125 @@
 			return Group::find([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
 			]);
+		}
+		
+		public static function getErrors()
+		{
+			$Students = self::getWithContract(true);
+			
+			foreach ($Students as &$Student) {
+				$Student->Contract = $Student->getLastContract(true);
+				
+				foreach ($Student->Contract->subjects as $subject) {
+					if (!$Student->inOtherSubjectGroup($subject['id_subject'])) {
+						// 1 - это предварительное расторжение
+						if ($subject['status'] != 1) {
+							$ReturnStudent = $Student;
+							$ReturnStudent->subject = $subject;
+							# 18 let osobogo
+							$return[] = $ReturnStudent;	
+						}
+					}
+				}
+			}
+			
+			return $return;
+		}
+		
+		public static function getLayerErrors()
+		{
+			$Students = Student::getWithContract(true);
+			foreach ($Students as $Student) {
+				$Groups = $Student->getGroups();
+				foreach ($Groups as $Group) {
+					foreach ($Group->day_and_time as $day => $time_data) {
+						foreach ($time_data as $time) {
+							$result = dbConnection()->query("
+								SELECT COUNT(*) AS cnt FROM groups g
+									LEFT JOIN group_time gt ON gt.id_group = g.id
+									WHERE CONCAT(',', CONCAT(g.students, ',')) LIKE '%,{$Student->id},%' AND gt.day = {$day} AND gt.time = '{$time}'
+							");
+							$count = $result->fetch_object()->cnt;
+							if ($count > 1) {
+								$return[] = $Student;
+							}
+						}
+					}
+				}
+			}
+			return $return;
+		}
+		
+		public static function getPhoneErrors()
+		{
+			$Requests = Request::findAll([
+				"condition" => "adding=0"
+			]);
+			
+			$students = [];
+			$student_ids = [];
+			foreach ($Requests as $Request) {
+				foreach (Student::$_phone_fields as $phone_field) {
+					$request_phone = $Request->{$phone_field};
+					if (!empty($request_phone)) {
+						if (isDuplicate($request_phone, $Request->id)) {
+							if (!in_array($Request->Student->id, $student_ids)) {
+								$students[] = $Request->Student;
+								$student_ids[] = $Request->Student->id;
+							}
+							break;
+						}
+					}
+					
+					$student_phone = $Request->Student->{$phone_field};
+					if (!empty($student_phone)) {
+						if (isDuplicate($student_phone, $Request->id)) {
+							if (!in_array($Request->Student->id, $student_ids)) {
+								$students[] = $Request->Student;
+								$student_ids[] = $Request->Student->id;
+							}
+							break;
+						}
+					}
+					
+					if ($Request->Student->Representative) {
+						$representative_phone = $Request->Student->Representative->{$phone_field};
+						if (!empty($representative_phone)) {
+							if (isDuplicate($representative_phone, $Request->id)) {
+								if (!in_array($Request->Student->id, $student_ids)) {
+									$students[] = $Request->Student;
+									$student_ids[] = $Request->Student->id;
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			return $students;
+		}
+		
+		public static function getSameSubjectErrors()
+		{
+			$Students = Student::getWithContract();
+			
+			
+			foreach ($Students as $Student) {
+				$Groups = $Student->getGroups();
+				
+				foreach ($Groups as $Group) {
+					$count = Group::count([
+						"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Student->id},%' AND id_subject={$Group->id_subject}"
+					]);
+					
+					if ($count > 1) {
+						$return[] = $Student;
+					}
+				}
+			}
+			
+			return $return;
 		}
 		
 		// Добавить маркеры студентов

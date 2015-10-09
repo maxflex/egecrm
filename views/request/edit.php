@@ -41,10 +41,63 @@
 		<div class="lightbox-new lightbox-addcontract">
 			<h4 style="margin-bottom: 20px">ПАРАМЕТРЫ ДОГОВОРА</h4>
 			<div class="row">
-				<div class="col-sm-7">
+				<div class="col-sm-6">
+					<div class="contract-subject-list subject-line transition-control no-transition" ng-repeat="(id_subject, subject_name) in Subjects">
+						    <input class="triple-switch" id="checkbox-subject-{{id_subject}}"
+						    	ng-model="current_contract.subjects[id_subject].status"
+						    	ng-change="subjectHandle(id_subject)"
+							    data-slider-min="0" data-slider-max="2" data-slider-step="1" 
+							    data-slider-value="{{current_contract.subjects[id_subject].status}}"
+						    >
+						    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(id_subject)}">{{subject_name}}</span>
+						<div class="pull-right" style="top: -5px; position: relative">
+							
+							<span class="dogavar-label zero" ng-show="subjectChecked(id_subject)">
+								<ng-pluralize ng-show="current_contract.subjects[id_subject].count" count="current_contract.subjects[id_subject].count" when="{
+									'one' 	: 'урок',
+									'few'	: 'урока',
+									'many'	: 'уроков',
+								}"></ng-pluralize>
+							</span>
+							
+							<span class="dogavar-label first" ng-show="subjectChecked(id_subject)">
+								<ng-pluralize ng-show="current_contract.subjects[id_subject].count2" count="current_contract.subjects[id_subject].count2" when="{
+									'one' 	: 'урок',
+									'few'	: 'урока',
+									'many'	: 'уроков',
+								}"></ng-pluralize>
+							</span>
+							
+							<span class="dogavar-label second" ng-show="subjectChecked(id_subject)">
+								<ng-pluralize ng-show="current_contract.subjects[id_subject].score" count="current_contract.subjects[id_subject].score" when="{
+									'one' 	: 'балл',
+									'few'	: 'балла',
+									'many'	: 'баллов',
+								}"></ng-pluralize>
+							</span>
+							
+							<input type="text" class="form-control contract-score" style="margin-left: 5px" placeholder="балл"
+								ng-show="subjectChecked(id_subject)" 
+								ng-model="current_contract.subjects[id_subject].score">
+							
+							<input type="text" class="form-control contract-lessons" style="margin-left: 5px" placeholder="2й семестр"
+								ng-show="subjectChecked(id_subject)" 
+								ng-model="current_contract.subjects[id_subject].count2">
+							
+							<input type="text" class="form-control contract-lessons" placeholder="1й семестр"
+								ng-show="subjectChecked(id_subject)" 
+								ng-model="current_contract.subjects[id_subject].count">
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-6">
 					<div class="row" style="margin-bottom: 10px">
 						<div class="col-sm-12">
 							<span class="input-label">общая сумма по договору</span>
+							<span class="half-black contract-recommended-price" ng-show="recommendedPrice(current_contract) && current_contract.grade >= 9">
+								рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
+							</span>
 							<div class="input-group">
 							    <input id="contract-sum" type="text" placeholder="сумма" class="form-control digits-only" ng-model="current_contract.sum" ng-value="current_contract.sum">
 							    <span class="input-group-addon rubble-addon">₽</span>
@@ -97,26 +150,7 @@
 					</div>
 
 				</div>
-
-				<div class="col-sm-5">
-					<div class="contract-subject-list subject-line" ng-repeat="(id_subject, subject_name) in Subjects">
-						<label class="ios7-switch  transition-control no-transition">
-						    <input type="checkbox" id="checkbox-subject-{{id_subject}}"
-						    	ng-click="toggleSubject(id_subject)"
-						    	ng-true-value="{'id_subject': {{id_subject}}, 'name' : '{{Subjects[id_subject]}}', 'count' : '' }"
-						    	ng-checked="subjectChecked(id_subject)">
-						    <span class="switch"></span>
-						    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(id_subject)}">{{subject_name}}</span>
-						</label>
-						<input type="text" class="form-control contract-score" style="margin-left: 5px"
-							placeholder="балл" ng-show="subjectChecked(id_subject)" 
-							ng-model="current_contract.subjects[getIndexByIdSubject(id_subject)].score">
-							
-						<input type="text" class="form-control contract-lessons"
-							placeholder="занятий" ng-show="subjectChecked(id_subject)" 
-							ng-model="current_contract.subjects[getIndexByIdSubject(id_subject)].count">
-					</div>
-				</div>
+				
 			</div>
 			<center>
 				<button class="btn btn-primary ajax-contract-button" ng-click="addContractNew()">Сохранить</button>
@@ -209,8 +243,6 @@
 			</center>
 		</div>
 		<!-- /СКЛЕЙКА КЛИЕНТОВ -->
-		
-		<?= partial("freetime") ?>
 		
 	<!-- Скрытые поля -->
 	<input type="hidden" name="id_request" value="<?= $Request->id ?>">
@@ -397,25 +429,6 @@
 
 			<div class="form-group">
                 <?= Sources::buildSelector($Request->id_source, 'Request[id_source]') ?>
-            </div>
-
-            <div class="form-group">
-                <?= NotificationTypes::buildSelector($Request->Notification->id_type, "Notification[id_type]") ?>
-            </div>
-            <div class="form-group">
-				<?=
-				   Html::date([
-						"id" 			=> "notification-date",
-						"class"			=> "form-control",
-						"name"			=> "Notification[date]",
-						"placeholder"	=> "дата",
-						"value"			=> $Request->Notification->date,
-	               ], "now");
-	            ?>
-            </div>
-			<div class="form-group">
-				<input type="text" class="form-control timemask" id="notification-time" name="Notification[time]"
-					placeholder="время" value="<?= $Request->Notification->time ?>">
             </div>
         </div>
         <?= partial("save_button", ["Request" => $Request]) ?>
@@ -712,25 +725,8 @@
 		            </div>
 			    </div>
 				<div class="col-sm-3">
-				    <h4 style="margin-top: 0" class="row-header">Свободное время</h4>
-				    <div ng-repeat="id_branch in student.branches">
-					    <span ng-bind-html="branches_brick[id_branch] | to_trusted" style="width: 50px; display: inline-block"></span>
-					    <span ng-repeat="weekday in weekdays" class="group-freetime-block">
-							<span class="freetime-bar" ng-repeat="time in weekday.schedule track by $index" 
-								ng-class="{
-									'empty': !inFreetime2(time, freetime[id_branch][$parent.$index + 1])
-								}" ng-hide="time == ''" style="position: relative; top: 3px">
-							</span>
-						</span>
-				    </div>
-				    
-					<div ng-show="student.schedule_date" class="small" style="margin-top: 13px">актуальность: {{student.schedule_date}}</div>
-		            <div style="margin-top: 5px">
-			            <span class="link-like link-reverse small" onclick="lightBoxShow('freetime')" 
-			            	style="margin-left: 0" ng-hide="!student.branches[0]">редактировать</span>
-		            </div>
 		            <?php if (!empty($Request->Student->login)) :?>
-		            <h4 style="margin-top: 30px" class="row-header">Данные для входа</h4>
+		            <h4 style="margin-top: 0" class="row-header">Данные для входа</h4>
 		            <div>
 			            <span style="width: 75px; display: inline-block">Логин: </span><i><?= $Request->Student->login ?></i>
 		            </div>
@@ -825,22 +821,33 @@
 									<span style="display: inline-block; width: 200px">дата расторжения</span>
 									<span>{{formatContractDate(contract.cancelled_date)}}</span>
 								</div>
-								<div>
+								<div style="margin-bottom: 3px">
 									<span style="display: inline-block; width: 200px">общая сумма</span>
-									<span>{{contract.sum}} руб.</span>
+									<span>{{contract.sum | number}} руб.</span>
+								</div>
+								<div style="margin-bottom: 3px">
+									<span style="display: inline-block; width: 200px">сумма 1 семестра</span>
+									<span>{{contractFirstPart(contract) | number}} руб.</span>
 								</div>
 								<div style="margin-bottom: 25px">
-									<div class="checkbox">
-									  <label><input type="checkbox" ng-model="contract.pre_cancelled" ng-true-value="1" ng-false-value="0" ng-click="preCancel(contract)">
-									  	<small style="position: relative; top: -2px">предварительное расторжение</small>
-									  </label>
-									</div>
+									<span style="display: inline-block; width: 200px">сумма 2 семестра</span>
+									<span>{{contractSecondPart(contract) | number}} руб.</span>
 								</div>
 								
 								<div ng-repeat="subject in contract.subjects | orderBy:'id_subject'" style="margin-bottom: 3px; white-space: nowrap">
-									<span style="display: inline-block; width: 200px">{{subject.name}}</span>
-									<span>{{subject.count}}
+									<span style="display: inline-block; width: 200px" ng-class="{
+										'text-warning'	: subject.status == 1 && !contract.cancelled,	
+										'text-danger'	: contract.cancelled,
+									}">{{subject.name}}</span>
+									<span ng-show="!subject.count2">{{subject.count}}
 										<ng-pluralize count="subject.count" when="{
+													'one' 	: 'занятие',
+													'few'	: 'занятия',
+													'many'	: 'занятий',
+										}"></ng-pluralize>
+									</span>
+									<span ng-show="subject.count2">{{subject.count}} + {{subject.count2}}
+										<ng-pluralize count="subject.count2" when="{
 													'one' 	: 'занятие',
 													'few'	: 'занятия',
 													'many'	: 'занятий',
@@ -865,10 +872,6 @@
 								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContract(contract.id)">
 									печать договора
 									<?= partial("contract_print", ["Request" => $Request]) ?>
-								</div>
-								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printBill(contract.id)">
-									печать счета
-									<?= partial("bill_print") ?>
 								</div>
 								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="deleteContract(contract)">
 									удалить
@@ -924,15 +927,32 @@
 									<span style="display: inline-block; width: 200px">дата расторжения</span>
 									<span>{{formatContractDate(contract.cancelled_date)}}</span>
 								</div>
-								<div style="margin-bottom: 25px">
+								<div style="margin-bottom: 3px">
 									<span style="display: inline-block; width: 200px">общая сумма</span>
-									<span>{{contract_history.sum}} руб.</span>
+									<span>{{contract_history.sum | number}} руб.</span>
 								</div>
-
+								<div style="margin-bottom: 3px">
+									<span style="display: inline-block; width: 200px">сумма 1 семестра</span>
+									<span>{{contractFirstPart(contract_history) | number}} руб.</span>
+								</div>
+								<div style="margin-bottom: 25px">
+									<span style="display: inline-block; width: 200px">сумма 2 семестра</span>
+									<span>{{contractSecondPart(contract_history) | number}} руб.</span>
+								</div>
 								<div ng-repeat="subject in contract_history.subjects" style="margin-bottom: 3px; white-space: nowrap">
-									<span style="display: inline-block; width: 200px">{{subject.name}}</span>
-									<span>{{subject.count}}
+									<span style="display: inline-block; width: 200px" ng-class="{
+										'text-warning'	: subject.status == 1 && !contract.cancelled,	
+										'text-danger'	: contract_history.cancelled,
+									}">{{subject.name}}</span>
+									<span ng-show="!subject.count2">{{subject.count}}
 										<ng-pluralize count="subject.count" when="{
+													'one' 	: 'занятие',
+													'few'	: 'занятия',
+													'many'	: 'занятий',
+										}"></ng-pluralize>
+									</span>
+									<span ng-show="subject.count2">{{subject.count}} + {{subject.count2}}
+										<ng-pluralize count="subject.count2" when="{
 													'one' 	: 'занятие',
 													'few'	: 'занятия',
 													'many'	: 'занятий',
@@ -1000,6 +1020,7 @@
 						</span>
 						<a class="link-like link-reverse small" ng-click="confirmPayment(payment)" ng-show="!payment.confirmed">подтвердить</a>
 						<span class="label pointer label-success" ng-show="payment.confirmed" ng-click="confirmPayment(payment)">подтвержден</span>
+						<a class="link-like link-reverse small" ng-click="printBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета</a>
 						<a class="link-like link-reverse small" ng-click="editPayment(payment)">редактировать</a>
 						<a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
 				</div>
@@ -1007,7 +1028,7 @@
 	    </div>
     </div>
     <?= partial("save_button", ["Request" => $Request]) ?>
-
+	<?= partial("bill_print") ?>
 </div></div>
 
 </form>

@@ -913,23 +913,26 @@ h3 .glyphicon {
 
 /* line 860, ../sass/screen.scss */
 fieldset.hidden-thoughts {
-  border-top: 1px dashed rgba(171, 171, 171, 0.7);
+  border-top: 1px dashed #eee;
   border-bottom: none;
   border-left: none;
   border-right: none;
   display: block;
   text-align: center;
   margin: 0;
-  height: 50px;
+//  height: 50px;
 }
 /* line 870, ../sass/screen.scss */
 fieldset.hidden-thoughts legend {
   padding: 0 10px;
   width: auto;
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
   font-family: 'RaleWayMedium', sans-serif;
   opacity: 0.6;
+  color: #999999;
+  border: 0;
+  margin-bottom: 0;
 }
 /* line 877, ../sass/screen.scss */
 fieldset.hidden-thoughts legend:hover {

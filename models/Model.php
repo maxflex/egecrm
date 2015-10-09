@@ -235,6 +235,7 @@
 			$result = static::dbConnection()->query("
 				SELECT id FROM ".static::$mysql_table."
 				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
+				.(!empty($params["group"]) ? " GROUP BY ".$params["group"] : "")				// Если есть условие сортировки
 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
 				);

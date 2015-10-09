@@ -72,7 +72,6 @@
 			$this->is_special 			= $this->isSpecial();
 			$this->first_schedule 		= $this->getFirstSchedule();
 			$this->day_and_time 		= $this->getDayAndTime();
-			$this->lesson_days_match 	= $this->lessonDaysMatch();
 			
 			$this->Comments	= Comment::findAll([
 				"condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
@@ -231,7 +230,7 @@
 				"total_teachers_agreed"	=> $total_teachers_agreed,
 				"total_students_notified" => $total_students_notified,
 				"total_groups"			=> count($Groups),
-				"total_witn_no_group"	=> Student::countSubjectsWithoutGroup(),
+			//	"total_witn_no_group"	=> Student::countSubjectsWithoutGroup(),
 			];
 		}
 		
@@ -252,6 +251,15 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
+		
+		public function getPastSchedule()
+		{
+			return GroupSchedule::findAll([
+				"condition" => "id_group=".$this->id." AND date < DATE(NOW())",
+				"order"		=> "date ASC, time ASC",
+			]);
+		}
+
 		
 		public function countSchedule()
 		{

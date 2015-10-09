@@ -35,14 +35,18 @@
 						
 						<span ng-show="lessonCount() == 1">
 							(<span ng-repeat="(day, day_data) in Group.day_and_time">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ", "}}</span>). 
+<!--
 							<span ng-show="!Group.approved">Расписание может быть изменено.</span>
 							<span ng-show="Group.approved">Расписание подтверждено</span>
+-->
 						</span>
 						
 						<span ng-show="lessonCount() > 1">
 							(<span ng-repeat="(day, day_data) in Group.day_and_time">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ", "}}</span>). 
+<!--
 							<span ng-show="!Group.approved">Расписание может быть изменено.</span>
 							<span ng-show="Group.approved">Расписание подтверждено</span>
+-->
 						</span>
 						
 <!-- 						<span ng-show="!Group.approved"> (может быть изменено)</span> -->
@@ -74,7 +78,7 @@
 		</div>
 		<div class="row calendar">
 			<div class="col-sm-5" style="position: relative">
-				<div style="position: absolute; height: 100%; width: 100%; z-index: 20" ng-show="Group.open == 0 || <?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>"></div>
+				<div style="position: absolute; height: 100%; width: 100%; z-index: 20"></div>
 				<div class="row calendar-row" ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]">
 					<div class="col-sm-4 month-name text-primary">
 						{{monthName(month)}} {{month == 1 ? "2016" : ""}}
