@@ -23,6 +23,7 @@ body {
 	background-image: url("../img/background/bg.jpg");
 }
 
+<<<<<<< HEAD
 .visit-div {
 	display: inline-block;
     width: 100%;
@@ -85,6 +86,8 @@ body {
 	color: #C07911 !important;
 }
 
+=======
+>>>>>>> parent of bb26286... Конец недели STABLE
 .bold {
 	font-weight: bold;
 }
@@ -95,10 +98,6 @@ body {
 
 .print-label {
 	width: 100px;
-}
-
-.bootstrap-select.btn-group>.disabled {
-	cursor: default !important;
 }
 
 .student-dragout {
@@ -460,11 +459,6 @@ body {
 
 .border-dashed-droppable-hover {
 	border: 3px dashed $green !important;
-} 
-
-.center-label {
-	position: relative;
-	top: -1px;
 }
 
 .group-student-status {
@@ -630,6 +624,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     top:  0;
 }
 
+<<<<<<< HEAD
 .invisible {
 	visibility: hidden !important;
 }
@@ -681,6 +676,9 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 }
 
 .day-explain, .circle-default {
+=======
+.day-explain {
+>>>>>>> parent of bb26286... Конец недели STABLE
 	border-radius: 50% !important;
 	height: 14px;
     width: 14px;
@@ -688,14 +686,11 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     background: #5cb85c;
     top: 2px;
     position: relative;
-    &.was-lesson, &.circle-blue {
+    &.was-lesson {
 	    background-color: $blue !important;
     }
-    &.first-lesson, &.circle-red {
+    &.first-lesson {
 	    background-color: $red !important;
-    }
-    &.circle-orange {
-	   background-color: $orange !important; 
     }
     &.first-and-was {
 		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fbaa33+0,fbaa33+50,337ab7+51,337ab7+100 */
@@ -886,13 +881,12 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	
 	& .task-status-toggle {
 //		height: 64px !important;
-//		height: 50px !important;
-		height: 20px !important;
+		height: 50px !important;
 		opacity: .8;
 		cursor: pointer;
 		position: absolute;
 //		top: calc(50% - 30px + 25px);
-		top: 57%;
+		top: 50%;
 		right: 10px;
 		&:hover {
 			opacity: 1;
@@ -1019,7 +1013,7 @@ button:disabled, select:disabled {
 	border-top: 0;
 }
 
-.no-transition .slider-handle, .ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
+.ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
 	transition: none !important;
 }
 
@@ -1117,37 +1111,10 @@ h4.row-header {
 	width: 80%;
     left: 10%;
     top: 5%;
-    max-height: 90%;
+    height: 90%;
     overflow: hidden;
 }
 
-.vertical-header thead th {
-text-align:center;padding:10px 0;
-  font-weight: normal !important;
-  border: none !important;
-  &:not(:first-child) {
-	  border: 1px solid #ddd !important;
-	}
-}
-
-.testyy {
--ms-transform: rotate(90deg);
--moz-transform: rotate(90deg);
--webkit-transform: rotate(90deg);
-transform: rotate(90deg);
-
--ms-transform-origin: left top 0;
--moz-transform-origin: left top 0;
--webkit-transform-origin: left top 0;
-transform-origin: left top 0;
-
-margin-left: 30px;
-padding: 0;
-float: left;
-height:80px;
-width:5px;
-white-space: nowrap;
-}
 
 .lightbox-freetime {
     max-height: 700px;
@@ -1157,7 +1124,7 @@ white-space: nowrap;
 #sms-history {
 	margin-bottom: 10px;
     padding-left: 23px;
-	max-height: 490px;
+	height: 523px;
     overflow-y: scroll;
 }
 
@@ -1335,8 +1302,8 @@ white-space: nowrap;
 }
 
 .lightbox-addcontract {
-	width: 900px;
-	left: calc(50% - 450px);
+	width: 820px;
+	left: calc(50% - 410px);
 
 	& .input-group, input, select {
 		width: 230px;
@@ -1354,7 +1321,6 @@ white-space: nowrap;
 			width: 100%;
 			margin-bottom: 10px;
 			height: 34px;
-			position: relative;
 		}
 		& .ios7-switch {
 			& .switch {
@@ -1369,33 +1335,10 @@ white-space: nowrap;
 			}
 		}
 		& input[type="text"] {
-			width: 100px;
+			width: 60px;
 		//	visibility: hidden;
 		}
-		
-		& .dogavar-label {
-		    position: absolute;
-		    color: gray;
-		    font-size: 12px;
-		    top: 9px;
-		    &.zero {
-				right: 220px;   
-		    }
-		    &.first {
-				right: 115px;   
-		    }
-		    &.second {
-				right: 10px;   
-		    }
-		}
 	}
-}
-
-.contract-recommended-price {
-	font-size: 10px;
-	position: absolute;
-    right: 17px;
-    top: -16px;
 }
 
 .visible {
@@ -2104,7 +2047,8 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .table.table-divlike > tbody > tr > td {
 	border-top: none;
-	padding: 2px 0 3px;
+	padding: 0;
+	padding-bottom: 5px;
 }
 
 .table.table-divlike > thead > tr > td {

@@ -36,6 +36,18 @@
 				</div>
 			</div>
 			
+			<div id="sms-template-1" class="sms-template">
+				Здравствуйте! Запись на курсы ЕГЭ-Центра по адресу: Мясницкая, д. 40, стр. 1, 203 каб. При себе иметь Ваш паспорт и паспорт ребенка. 8 (495) 646-85-92, <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>
+			</div>
+			
+			<div id="sms-template-2" class="sms-template">
+				Здравствуйте! Вы оставляли заявку в ЕГЭ-Центр. Не удалось до Вас дозвониться, просьба перезвонить по тел. 8 (495) 646-85-92, <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>
+			</div>
+			
+			<div id="sms-template-3" class="sms-template">
+				Имя, здравствуйте. В ЕГЭ-Центре-Филиал формируются группы и расписание. Не могу до Вас дозвониться. Перезвоните, пожалуйста, по тел. (495) 646-85-92. <?= User::fromSession()->first_name ? User::fromSession()->first_name : "{{имя}}" ?>.
+			</div>
+			
 			<div style="clear: both">
 				<button class="btn btn-primary ajax-sms-button" onclick="sendSms()">Отправить</button>
 			</div>
@@ -102,7 +114,7 @@
 		</div><!-- /input-group -->
 		</form>
 	<div class="list-group">
-    <a class="list-group-item active">Меню</a>
+    <a href="#" class="list-group-item active">Меню</a>
     <a href="requests" class="list-group-item">Заявки 
 	    <?php
 			// Количество новых заявок
@@ -114,11 +126,15 @@
 			}
 		?>
 	</a>
+	<a href="notifications" class="list-group-item">Напоминания</a>
 	<a href="stats" class="list-group-item">Итоги</a>
     <a href="clients" class="list-group-item">Клиенты</a>
+    <a href="clients/precancelled" class="list-group-item">Клиенты (раст.)</a>
     <a href="sms" class="list-group-item">SMS</a>
     <a href="payments" class="list-group-item">Платежи</a>
+    <a href="teachers" class="list-group-item">Преподаватели</a>
     <a href="groups" class="list-group-item">Группы</a>
+<<<<<<< HEAD
 	<a href="stats/visits/students" class="list-group-item">Посещаемость</a>
     <a href="clients/errors" class="list-group-item">Ошибки</a>
 	
@@ -129,6 +145,9 @@
 	
 	
     <a class="list-group-item active">Настройки</a>
+=======
+    <a href="#" class="list-group-item active">Настройки</a>
+>>>>>>> parent of bb26286... Конец недели STABLE
 	<?php if (in_array(User::fromSession()->id, [1, 69])): ?>
 	    <a href="tasks" class="list-group-item">Задачи
 		<?php
@@ -152,9 +171,14 @@
 			}
 		?>
 	</a>
+<<<<<<< HEAD
+=======
+	<a href="teachers/salary" class="list-group-item">Дебет преподавателей</a>
+>>>>>>> parent of bb26286... Конец недели STABLE
     <a href="settings/vocations" class="list-group-item">Календарь</a>
-    <a href="settings/cabinets" class="list-group-item">Кабинеты</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
+    <a href="settings/students" class="list-group-item">Ученики</a>
+    <a href="settings/cabinets" class="list-group-item">Кабинеты</a>
     <a href="templates" class="list-group-item">Шаблоны</a>
     <a href="settings/lessons" class="list-group-item">Трекер занятий</a>
     <a href="users" class="list-group-item">Пользователи</a>
@@ -196,7 +220,7 @@
 -->
 	</div>
   </div>
-  <div class="col-sm-9 content-col" style="padding: 0; width: 80.6%;">
+  <div class="col-sm-9" style="padding: 0; width: 80.6%;">
     
   	<?php if (!$this->_custom_panel) { ?>
 		<div class="panel panel-primary">

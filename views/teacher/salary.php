@@ -5,6 +5,9 @@
 		text-transform: uppercase;
 		font-weight: bold;
 	}
+	table tfoot tr td {
+		font-weight: bold;
+	}
 </style>
 <div ng-app="Teacher" ng-controller="SalaryCtrl"
 	ng-init="<?= $ang_init_data ?>">
@@ -24,7 +27,7 @@
 				<tbody>
 					<tr ng-repeat="d in Data">
 						<td width="300">
-							<a href="teachers/edit/{{d.Teacher.id}}">
+							{{d.Teacher.id}}. <a href="teachers/edit/{{d.Teacher.id}}">
 								<span ng-show="d.Teacher.last_name || d.Teacher.first_name || d.Teacher.middle_name">
 									{{d.Teacher.last_name}} {{d.Teacher.first_name}} {{d.Teacher.middle_name}}
 								</span>
@@ -46,25 +49,26 @@
 							<span ng-hide="(d.sum - d.payment_sum) == 0">{{(d.sum - d.payment_sum) | number}}</span>
 						</td>
 					</tr>
-
+				</tbody>
+				<tfoot>
 					<tr>
 						<td class="half-black">
 							
 						</td>
 						<td class="center">
-							<b>{{lesson_count}}</b>
+							{{lesson_count}}
 						</td>
 						<td class="center">
-							<b>{{total_sum | number}}</b>
+							{{total_payment_sum | number}}
 						</td>
 						<td class="center">
-							<b>{{total_payment_sum | number}}</b>
+							{{total_sum | number}}
 						</td>
 						<td class="center">
-							<b>{{(total_sum - total_payment_sum) | number}}</b>
+							{{(total_sum - total_payment_sum) | number}}
 						</td>
 					</tr>
-				</tbody>
+				</tfoot>
 			</table>
 
 		</div>

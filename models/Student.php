@@ -137,7 +137,7 @@
 					LEFT JOIN contracts c on c.id_student = s.id
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', s.id ,',%'))
-					WHERE c.id IS NOT NULL AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
+					WHERE c.id IS NOT NULL AND c.pre_cancelled=0 AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
 			")->num_rows;
 		}
 		
@@ -177,7 +177,7 @@
 		public static function getWithContract($only_active = false)
 		{
 			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+				. ($only_active ? " AND cancelled=0 AND pre_cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
 			
 			while ($row = $query->fetch_array()) {
 				if ($row["id_student"]) {
@@ -198,7 +198,7 @@
 		public static function getWithContractPreCancelled()
 		{
 			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+				. " AND pre_cancelled=1 " . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
 			
 			while ($row = $query->fetch_array()) {
 				if ($row["id_student"]) {
@@ -269,6 +269,11 @@
 			
 			ContractSubject::deleteAll([
 				"condition" => "id_contract IN (". implode(",", $contract_ids) .")"
+			]);
+			
+			# Свободное время
+			Freetime::deleteAll([
+				"condition" => "id_student=$id_student"
 			]);
 			
 			# Метки
@@ -576,6 +581,30 @@
 				"condition" => "deleted=0 AND id_student=" . $this->id
 			]);
 		}
+		
+		
+		/**
+		 * Получить свободное время ученика.
+		 * 
+		 */
+		public function getFreetime()
+		{
+			$Freetime = Freetime::findAll([
+				"condition"	=> "id_student=" . $this->id
+			]);
+			
+			if (!$Freetime) {
+				return [];
+			}
+			
+			foreach ($Freetime as $FreetimeData) {
+				$index = Freetime::getIndexByTime($FreetimeData->time);
+				$return[$FreetimeData->id_branch][$FreetimeData->day][$index] = $FreetimeData->time;
+			}
+			
+			return $return;
+		}
+		
 				
 		/**
 		 * Получить свободное время ученика.
@@ -584,6 +613,22 @@
 		 */
 		public function getGroupFreetime($id_group, $id_branch = false)
 		{
+			$Freetime = Freetime::findAll([
+				"condition"	=> "id_student=" . $this->id
+			]);
+			
+			if (!$Freetime) {
+				$return = [];
+			} else {
+				foreach ($Freetime as $FreetimeData) {
+					$return[$FreetimeData->id_branch][$FreetimeData->day][] = $FreetimeData->time;
+					
+					if (!in_array($FreetimeData->time, $return[0][$FreetimeData->day])) {
+						$return[0][$FreetimeData->day][] = $FreetimeData->time;
+					}
+				}	
+			}
+			
 			# красные кирпичи
 			foreach (Freetime::$weekdays_time as $day => $schedule) {
 				foreach ($schedule as $time) {
@@ -619,6 +664,7 @@
 			}
 			
 			$return = [
+				"freetime" 				=> $return,
 				"freetime_red"			=> $return_red,
 				"freetime_red_half" 	=> $return_red_half,
 				"red_doubleblink"		=> $red_doubleblink,
@@ -866,6 +912,7 @@
 			]);
 		}
 		
+<<<<<<< HEAD
 		public static function getErrors()
 		{
 			$Students = self::getWithContract(true);
@@ -993,6 +1040,8 @@
 			return $return;
 		}
 		
+=======
+>>>>>>> parent of bb26286... Конец недели STABLE
 		// Добавить маркеры студентов
 		// $marker_data - array( array[lat, lng, type], array[lat, lng, type], ... )
 		public static function addMarkersStatic($marker_data, $id_student) {

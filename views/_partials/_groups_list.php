@@ -11,16 +11,15 @@
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
 	<?php endif ?>
 	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?>" 
-		ng-class="{
-			'students-10': Group.students.length == 10,
-			'students-11': Group.students.length == 11,
-		}"
 		class="group-list" data-id="{{Group.id}}">
 		<td width="100">
-			<a href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
+			<a ng-class="{
+				'text-danger'	: Group.schedule_count == 24,
+				'bright-green'	: Group.schedule_count == 28,
+			}" href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
 		</td>
 		<td>
-			<span ng-show="Group.id_branch" ng-bind-html="Group.branch | to_trusted" ng-class="{'mr3' : !$last}" class="center-label"></span>
+			<span ng-show="Group.id_branch" ng-bind-html="Group.branch | to_trusted" ng-class="{'mr3' : !$last}"></span>
 		</td>
 		<td width="150">
 			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + GroupLevels[Group.level] : ''}}{{Group.is_special ? " (спец.)" : ""}}
@@ -75,8 +74,27 @@
 			}"></ng-pluralize></span>
 		</td>
 		<td>
-			<span class="label center-label group-teacher-status<?= GroupTeacherStatuses::AGREED ?>" ng-show="Group.teacher_agreed">
+			<span class="label group-teacher-status<?= GroupTeacherStatuses::AGREED ?>" ng-show="Group.teacher_agreed">
 				<?= GroupTeacherStatuses::$all[GroupTeacherStatuses::AGREED] ?>
+			</span>
+			<span class="label group-student-status3" ng-show="Group.approved" style="margin-left: 5px">
+				OK
+			</span>
+		</td>
+		<td>
+			<svg ng-show="Group.ready_to_start == 0" xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
+        		<circle fill="transparent" r="6" cx="7" cy="7" stroke="#C0C0C0" stroke-width="1"></circle>
+			</svg>
+			<svg ng-show="Group.ready_to_start > 0" xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
+        		<circle r="6" cx="7" cy="7" class="ready-to-start"></circle>
+			</svg>
+		</td>
+		<td>
+			<span class="glyphicon glyphicon-exclamation-sign text-danger" ng-show="!Group.lesson_days_match" style="top: 2px"></span>
+		</td>
+		<td>
+			<span ng-show="!Group.open" class="half-black">
+				набор закрыт
 			</span>
 		</td>
 <!--

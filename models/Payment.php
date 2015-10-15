@@ -99,37 +99,7 @@
 				}
 			}
 		}
-		
-		
-		/**
-		 * Коливество дней/недель/месяцев/лет с момента первой оплаты
-		 * 
-		 * @param string $mode (default: 'days')
-		 * $mode = days | weeks | months | years
-		 */
-		public static function timeFromFirst($mode = 'days')
-		{
-			$today = time(); // or your date as well
 			
-		    $first_payment_date = 1431932400; // #hardcoded first payment timestamp
-		    
-		    $datediff = $today - $first_payment_date;
-
-		    switch ($mode) {
-			    case 'days': {
-				    return ceil($datediff / (60 * 60 * 24));
-			    }
-			    case 'weeks': {
-				    return floor($datediff / (60 * 60 * 24 * 7));
-			    }
-			    case 'months': {
-				    return ceil($datediff / (60 * 60 * 24 * 30));
-			    }
-			    case 'years': {
-				    return ceil($datediff / (60 * 60 * 24 * 365));
-			    }
-		    }
-		}
 	}
 	
 	

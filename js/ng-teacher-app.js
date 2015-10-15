@@ -25,6 +25,7 @@ angular.module("Teacher", ["ngMap"]).filter('to_trusted', [
     return set_scope("Teacher");
   });
 }).controller("EditCtrl", function($scope) {
+  var initFreetime;
   $scope.formatDate2 = function(date) {
     var dateOut;
     dateOut = new Date(date);
@@ -198,6 +199,76 @@ angular.module("Teacher", ["ngMap"]).filter('to_trusted', [
     D = new Date(date);
     return moment().to(D);
   };
+  initFreetime = function(id_branch, day) {
+    $scope.freetime = initIfNotSet($scope.freetime);
+    $scope.freetime[id_branch] = initIfNotSet($scope.freetime[id_branch]);
+    $scope.freetime[id_branch][day] = initIfNotSet($scope.freetime[id_branch][day]);
+  };
+  $scope.inFreetime = function(id_branch, day, value) {
+    initFreetime(id_branch, day);
+    return $.inArray(value, objectToArray($scope.freetime[id_branch][day])) >= 0;
+  };
+  $scope.inFreetime2 = function(time, freetime) {
+    freetime = objectToArray(freetime);
+    return $.inArray(time, freetime) >= 0;
+  };
+  $scope.freetimeClick = function(id_branch, index, n) {
+    index++;
+    if ($scope.freetime[id_branch][index][n] !== true) {
+      $scope.freetime[id_branch][index][n] = '';
+    } else {
+      $scope.freetime[id_branch][index][n] = $scope.weekdays[index - 1].schedule[n];
+    }
+  };
+  $scope.openFreetime = function() {
+    return lightBoxShow('freetime');
+  };
+  $scope.selectAllWorking = function(id_branch) {
+    $.each($scope.weekdays, function(index, weekday) {
+      if (index > 4) {
+        return;
+      }
+      if ($scope.freetime_selected_all_working) {
+        $scope.freetime[id_branch][index + 1][2] = '';
+        $scope.freetime[id_branch][index + 1][3] = '';
+      } else {
+        $scope.freetime[id_branch][index + 1][2] = weekday.schedule[2];
+        $scope.freetime[id_branch][index + 1][3] = weekday.schedule[3];
+      }
+    });
+    $scope.freetime_selected_all_working = !$scope.freetime_selected_all_working;
+  };
+  $scope.selectAllWeek = function(id_branch) {
+    $.each($scope.weekdays, function(index, weekday) {
+      if ($scope.freetime_selected_all_week) {
+        $scope.freetime[id_branch][index + 1][0] = '';
+        $scope.freetime[id_branch][index + 1][1] = '';
+        $scope.freetime[id_branch][index + 1][2] = '';
+        $scope.freetime[id_branch][index + 1][3] = '';
+      } else {
+        $scope.freetime[id_branch][index + 1][0] = weekday.schedule[0];
+        $scope.freetime[id_branch][index + 1][1] = weekday.schedule[1];
+        $scope.freetime[id_branch][index + 1][2] = weekday.schedule[2];
+        $scope.freetime[id_branch][index + 1][3] = weekday.schedule[3];
+      }
+    });
+    $scope.freetime_selected_all_week = !$scope.freetime_selected_all_week;
+  };
+  $scope.selectAllIndex = function(id_branch, index) {
+    $scope.freetime_selected_all_index = initIfNotSet($scope.freetime_selected_all_index);
+    $.each($scope.weekdays, function(i, weekday) {
+      if ($scope.freetime_selected_all_index[index]) {
+        $scope.freetime[id_branch][i + 1][index] = '';
+      } else {
+        $scope.freetime[id_branch][i + 1][index] = weekday.schedule[index];
+      }
+    });
+    $scope.freetime_selected_all_index[index] = !$scope.freetime_selected_all_index[index];
+  };
+  $scope.saveFreetime = function() {
+    lightBoxHide();
+    $('.save-button').click();
+  };
   $scope.phoneCorrect = phoneCorrect;
   $scope.isMobilePhone = isMobilePhone;
   angular.element(document).ready(function() {
@@ -303,23 +374,6 @@ angular.module("Teacher", ["ngMap"]).filter('to_trusted', [
     });
   });
 }).controller("ListCtrl", function($scope) {
-  $scope.othersCount = function() {
-    return _.where($scope.Teachers, {
-      had_lesson: 0
-    }).length;
-  };
-  $scope.showHidden = function() {
-    $scope.show_others = !$scope.show_others;
-    if ($scope.show_others) {
-      return $('html, body').animate({
-        scrollTop: $("#hidden-teachers-button").offset().top
-      }, 400);
-    } else {
-      return $('html, body').animate({
-        scrollTop: $("#teachers-list").prop("scrollHeight") - 420
-      }, 400);
-    }
-  };
   return $scope.deleteTeacher = function(id_teacher, index) {
     return bootbox.confirm("Вы уверены, что хотите удалить преподавателя №" + id_teacher + "?", function(result) {
       if (result === true) {

@@ -34,6 +34,14 @@
 					<td>
 						<span ng-bind-html="s.Group.branch | to_trusted"></span>
 					</td>
+					<td>
+						<svg ng-show="s.Group.ready_to_start == 0" xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
+			        		<circle fill="transparent" r="6" cx="7" cy="7" stroke="#C0C0C0" stroke-width="1"></circle>
+						</svg>
+						<svg ng-show="s.Group.ready_to_start > 0" xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
+			        		<circle r="6" cx="7" cy="7" class="ready-to-start"></circle>
+						</svg>
+					</td>
 				</tr>
 			</table>
 			

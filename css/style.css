@@ -4,6 +4,7 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+<<<<<<< HEAD
 .visit-div {
   display: inline-block;
   width: 100%;
@@ -54,6 +55,8 @@ body {
 .text-warning {
   color: #C07911 !important; }
 
+=======
+>>>>>>> parent of bb26286... Конец недели STABLE
 .bold {
   font-weight: bold; }
 
@@ -62,9 +65,6 @@ body {
 
 .print-label {
   width: 100px; }
-
-.bootstrap-select.btn-group > .disabled {
-  cursor: default !important; }
 
 .student-dragout {
   display: flex;
@@ -478,10 +478,6 @@ body {
 .border-dashed-droppable-hover {
   border: 3px dashed #5cb85c !important; }
 
-.center-label {
-  position: relative;
-  top: -1px; }
-
 .group-student-status {
   background-color: white;
   color: rgba(0, 0, 0, 0.5);
@@ -613,6 +609,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   left: 0;
   top: 0; }
 
+<<<<<<< HEAD
 .invisible {
   visibility: hidden !important; }
 
@@ -658,6 +655,9 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   background: #EFEFEF !important; }
 
 .day-explain, .circle-default {
+=======
+.day-explain {
+>>>>>>> parent of bb26286... Конец недели STABLE
   border-radius: 50% !important;
   height: 14px;
   width: 14px;
@@ -665,13 +665,11 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   background: #5cb85c;
   top: 2px;
   position: relative; }
-  .day-explain.was-lesson, .day-explain.circle-blue, .circle-default.was-lesson, .circle-default.circle-blue {
+  .day-explain.was-lesson {
     background-color: #337AB7 !important; }
-  .day-explain.first-lesson, .day-explain.circle-red, .circle-default.first-lesson, .circle-default.circle-red {
+  .day-explain.first-lesson {
     background-color: #ff0039 !important; }
-  .day-explain.circle-orange, .circle-default.circle-orange {
-    background-color: #fbaa33 !important; }
-  .day-explain.first-and-was, .circle-default.first-and-was {
+  .day-explain.first-and-was {
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fbaa33+0,fbaa33+50,337ab7+51,337ab7+100 */
     background: #fbaa33  !important;
     /* Old browsers */
@@ -689,7 +687,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbaa33', endColorstr='#337ab7',GradientType=0 ) !important;
     /* IE6-9 */ }
-  .day-explain.vocation, .circle-default.vocation {
+  .day-explain.vocation {
     background-color: #ff0039 !important; }
 
 #calendar-app thead tr:nth-child(1) {
@@ -832,11 +830,11 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     margin-left: 20px; }
 
 #task-app .task-status-toggle {
-  height: 20px !important;
+  height: 50px !important;
   opacity: .8;
   cursor: pointer;
   position: absolute;
-  top: 57%;
+  top: 50%;
   right: 10px; }
   #task-app .task-status-toggle:hover {
     opacity: 1; }
@@ -935,7 +933,7 @@ button:disabled, select:disabled {
 .modal-footer {
   border-top: 0; }
 
-.no-transition .slider-handle, .ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
+.ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
   transition: none !important; }
 
 .capitalize {
@@ -1008,32 +1006,8 @@ h4.row-header {
   width: 80%;
   left: 10%;
   top: 5%;
-  max-height: 90%;
+  height: 90%;
   overflow: hidden; }
-
-.vertical-header thead th {
-  text-align: center;
-  padding: 10px 0;
-  font-weight: normal !important;
-  border: none !important; }
-  .vertical-header thead th:not(:first-child) {
-    border: 1px solid #ddd !important; }
-
-.testyy {
-  -ms-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
-  -ms-transform-origin: left top 0;
-  -moz-transform-origin: left top 0;
-  -webkit-transform-origin: left top 0;
-  transform-origin: left top 0;
-  margin-left: 30px;
-  padding: 0;
-  float: left;
-  height: 80px;
-  width: 5px;
-  white-space: nowrap; }
 
 .lightbox-freetime {
   max-height: 700px;
@@ -1042,7 +1016,7 @@ h4.row-header {
 #sms-history {
   margin-bottom: 10px;
   padding-left: 23px;
-  max-height: 490px;
+  height: 523px;
   overflow-y: scroll; }
 
 #email-history {
@@ -1184,8 +1158,8 @@ h4.row-header {
     display: inline-block; }
 
 .lightbox-addcontract {
-  width: 900px;
-  left: calc(50% - 450px); }
+  width: 820px;
+  left: calc(50% - 410px); }
   .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select {
     width: 230px;
     float: right; }
@@ -1196,8 +1170,7 @@ h4.row-header {
     display: inline-block;
     width: 100%;
     margin-bottom: 10px;
-    height: 34px;
-    position: relative; }
+    height: 34px; }
   .lightbox-addcontract .contract-subject-list .ios7-switch .switch {
     font-size: 24px;
     margin-right: 15px; }
@@ -1206,24 +1179,7 @@ h4.row-header {
     text-transform: capitalize;
     opacity: .5; }
   .lightbox-addcontract .contract-subject-list input[type="text"] {
-    width: 100px; }
-  .lightbox-addcontract .contract-subject-list .dogavar-label {
-    position: absolute;
-    color: gray;
-    font-size: 12px;
-    top: 9px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.zero {
-      right: 220px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.first {
-      right: 115px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.second {
-      right: 10px; }
-
-.contract-recommended-price {
-  font-size: 10px;
-  position: absolute;
-  right: 17px;
-  top: -16px; }
+    width: 60px; }
 
 .visible {
   visibility: visible !important; }
@@ -1750,7 +1706,8 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .table.table-divlike > tbody > tr > td {
   border-top: none;
-  padding: 2px 0 3px; }
+  padding: 0;
+  padding-bottom: 5px; }
 
 .table.table-divlike > thead > tr > td {
   border-top: none;

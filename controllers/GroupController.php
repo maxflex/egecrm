@@ -21,6 +21,7 @@
 			
 		}
 		
+<<<<<<< HEAD
 		public function actionJournal()
 		{
 			$this->setTabTitle("Посещаемость группы " . $id_group);
@@ -79,6 +80,8 @@
 			]);
 		}
 		
+=======
+>>>>>>> parent of bb26286... Конец недели STABLE
 		public function actionLesson()
 		{
 			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
@@ -113,7 +116,7 @@
 				$ang_init_data = angInit([
 					"Group" 	=> $Group,
 					"LessonData"=> $OrderedLessonData,
-					"lesson_statuses" => VisitJournal::$statuses,
+					"lesson_statuses" => LessonData::$statuses,
 					"id_group"		=> $id_group,
 					"date"			=> $date,
 					"registered_in_journal" => $Group->registeredInJournal($date),
@@ -180,13 +183,19 @@
 				$this->addJs("bootstrap-select, dnd");
 				
 				$Groups = Group::findAll();
+/*
 				
-				// исключить некоторые данные для более быстрой front-end загрузки
 				foreach ($Groups as &$Group) {
-					unset($Group->Comments);
+				//	$Group->Schedule = $Group->getScheduleCached();
+					$Group->schedule_count = $Group->getScheduleCountCached();
 				}
+*/
+				
+				$mode = ($_GET["mode"] == "students" ? 1 : 2);
 				
 				$Teachers = Teacher::getActiveGroups();
+				
+				$Stats = Group::getStats();
 				
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -196,7 +205,11 @@
 					"mode" 			=> $mode,
 					"change_mode" 	=> $mode,
 					"GroupLevels"	=> GroupLevels::$all,
+<<<<<<< HEAD
 					"time" 			=> Freetime::TIME,
+=======
+					"Stats"		=> $Stats,
+>>>>>>> parent of bb26286... Конец недели STABLE
 				]);
 				
 				$this->render("list", [
@@ -333,6 +346,7 @@
 				}
 				
 				$freetime = $Student->getGroupFreetime($Group->id, $Group->id_branch);
+				$Student->freetime 			= $freetime["freetime"];
 				$Student->freetime_red 		= $freetime["freetime_red"];
 				$Student->freetime_red_half = $freetime["freetime_red_half"];
 				$Student->red_doubleblink 	= $freetime["red_doubleblink"];
@@ -360,6 +374,8 @@
 			
 			
 			// Свободное время препода
+			$teacher_freetime 			= TeacherFreetime::get($Group->id_teacher);
+			
 			$teacher_freetime_all 		= TeacherFreetime::getRedAll($Group->id, $Group->id_teacher);
 			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
 			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
@@ -380,12 +396,13 @@
 				"Subjects"	=> Subjects::$three_letters,
 				"GroupLevels" => GroupLevels::$all,
 				"subjects_short" => Subjects::$short,
-				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
+				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch),
 				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
 				"GroupTeacherStatuses"	=> GroupTeacherStatuses::$all,
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_freetime"		=> Cabinet::getFreetime($Group->id, $Group->cabinet),
 				"teacher_freetime"		=> $teacher_freetime_red, // red half
+				"teacher_freetime_green"=> $teacher_freetime,
 				"teacher_freetime_red"	=> $teacher_freetime_red_full,
 				"teacher_freetime_orange_half" 	=> $teacher_freetime_orange_half,
 				"teacher_freetime_orange_full"	=> $teacher_freetime_orange_full,
@@ -410,6 +427,7 @@
 				$Student->in_other_group = $Student->inOtherGroup($_POST['id_group'], $_POST['id_subject']) ? true : false;
 				
 				$freetime = $Student->getGroupFreetime($_POST['id_group'], $_POST['id_branch']);
+				$Student->freetime 				= $freetime['freetime'];
 				$Student->freetime_red 			= $freetime['freetime_red'];
 				$Student->freetime_red_half 	= $freetime['freetime_red_half'];
 				$Student->freetime_orange	 	= $freetime["freetime_orange"];
@@ -540,7 +558,7 @@
 			extract($_POST);
 			
 			returnJsonAng(
-				Cabinet::getByBranch($id_branch, $id_group)
+				Cabinet::getByBranch($id_branch)
 			);
 		}		
 		
@@ -571,6 +589,8 @@
 			$id_group = $id_group ? $id_group : 0;
 			
 			// Свободное время препода
+			$teacher_freetime 			= TeacherFreetime::get($id_teacher);
+			
 			$teacher_freetime_all 		= TeacherFreetime::getRedAll($id_group, $id_teacher);
 			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
 			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
@@ -594,6 +614,7 @@
 			returnJsonAng([
 				"red" 		=> $teacher_freetime_red,
 				"red_full" 	=> $teacher_freetime_red_full,
+				"green"		=> $teacher_freetime,
 				"orange"	=> $teacher_freetime_orange_half,
 				"orange_full"		=> $teacher_freetime_orange_full,
 				"red_doubleblink" 	=> $teacher_freetime_doubleblink,
@@ -614,8 +635,10 @@
 			
 			// Дополнительный вход
 			User::rememberMeLogin();
+			preType([User::fromSession(), $_POST]);
 			$data = array_filter($data);
 			
+			LessonData::addData($id_group, $date, $data);
 			VisitJournal::addData($id_group, $date, $data);
 		}
 		
@@ -695,6 +718,7 @@
 				}
 			}
 		}
+<<<<<<< HEAD
 		
 		// DOWNLOAD SCHEDULE
 		public function actionDownloadSchedule()
@@ -922,4 +946,6 @@
 			return $col.$row;
 		}
 		
+=======
+>>>>>>> parent of bb26286... Конец недели STABLE
 	}

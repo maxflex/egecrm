@@ -14,6 +14,7 @@
 //			error_reporting(E_ALL);
 		}
 		
+<<<<<<< HEAD
 		public function actionSwitchTest()
 		{
 			$this->addCss("bs-slider");
@@ -99,6 +100,8 @@
 			$objWriter->save('php://output');
 		}
 		
+=======
+>>>>>>> parent of bb26286... Конец недели STABLE
 		public function actionReviewCount()
 		{
 			$Groups = Group::findAll();

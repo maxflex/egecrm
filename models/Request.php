@@ -40,6 +40,7 @@
 			
 			// Включаем связи
 			$this->Student 			= Student::findById($this->id_student);
+			$this->Notification 	= Notification::findById($this->id_notification);
 			$this->Comments			= Comment::findAll([
 				"condition" => "place='". Comment::PLACE_REQUEST ."' AND id_place=" . $this->id,
 			]);
@@ -478,36 +479,4 @@
 
 			return false;
 		}
-		
-		
-		/**
-		 * Коливество дней/недель/месяцев/лет с момента первой заявки
-		 * 
-		 * @param string $mode (default: 'days')
-		 * $mode = days | weeks | months | years
-		 */
-		public static function timeFromFirst($mode = 'days')
-		{
-			$today = time(); // or your date as well
-			
-		    $first_request_date = 1432071360; // #hardcoded first request timestamp
-		    
-		    $datediff = $today - $first_request_date;
-
-		    switch ($mode) {
-			    case 'days': {
-				    return ceil($datediff / (60 * 60 * 24));
-			    }
-			    case 'weeks': {
-				    return ceil($datediff / (60 * 60 * 24 * 7));
-			    }
-			    case 'months': {
-				    return ceil($datediff / (60 * 60 * 24 * 30));
-			    }
-			    case 'years': {
-				    return ceil($datediff / (60 * 60 * 24 * 365));
-			    }
-		    }
-		}
-
 	}

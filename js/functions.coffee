@@ -52,9 +52,7 @@
 			#, 500
 		NProgress.done()
 	
-	clearSelect = (ms = 50, callback = undefined) ->
+	clearSelect = (ms = 50) ->
 		setTimeout ->
 			$("option[value^='?']").remove()
-			if callback isnt undefined
-				callback()
 		, ms

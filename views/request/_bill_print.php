@@ -1,4 +1,4 @@
-    <div class="print-bill-body printable" id="bill-print">
+    <div class="print-bill-body printable" id="bill-print-{{contract.id}}">
 	     <style type="text/css">
     .print-bill-body { width: 210mm; margin-left: auto; margin-right: auto; border: none;}
         table.invoice_bank_rekv { border-collapse: collapse; border: 1px solid; }
@@ -114,7 +114,7 @@
         </table><br>
 
         <div style="font-weight: bold; font-size: 16px; padding-left:5px; margin-bottom: 5px; border-bottom: 2px solid black; padding-bottom: 5px">
-            Счет на оплату №{{contracts[0].id}} от {{formatContractDate(PrintPayment.date)}}
+            Счет на оплату №{{contract.id}} от {{formatContractDate(contract.date)}}
         </div>
 
         <table width="100%">
@@ -166,15 +166,15 @@
                 <tr>
                     <td align="center" style="font-size: 12px">1</td>
 
-                    <td align="left" style="font-size: 12px">Предметно-консультационные услуги согласно договору №{{contracts[0].id}} от {{contracts[0].date}}г. Без НДС.</td>
+                    <td align="left" style="font-size: 12px">Предметно-консультационные услуги за сентябрь-декабрь 2015г. согласно договору №{{contract.id}} от {{contract.date}}г. Без НДС.</td>
 
-                    <td align="right" style="font-size: 12px">{{objectLength(contracts[0].subjects)}}</td>
+                    <td align="right" style="font-size: 12px">{{objectLength(contract.subjects)}}</td>
 
                     <td align="left" style="font-size: 12px">предмет</td>
 
-                    <td align="right" style="font-size: 12px">{{(PrintPayment.sum / objectLength(contracts[0].subjects)) | number}},00</td>
+                    <td align="right" style="font-size: 12px">{{(contract.sum / objectLength(contract.subjects)) | number}},00</td>
 
-                    <td align="right" style="font-size: 12px">{{PrintPayment.sum | number}},00</td>
+                    <td align="right" style="font-size: 12px">{{contract.sum | number}},00</td>
                 </tr>
             </tbody>
         </table>
@@ -185,7 +185,7 @@
 
                 <td style="width:80mm; font-weight:bold;  text-align:right;">Итого:</td>
 
-                <td style="width:27mm; font-weight:bold;  text-align:right;">{{PrintPayment.sum | number}},00</td>
+                <td style="width:27mm; font-weight:bold;  text-align:right;">{{contract.sum | number}},00</td>
             </tr>
 
             <tr>
@@ -201,17 +201,17 @@
 
                 <td style="width:80mm; font-weight:bold;  text-align:right;">Всего к оплате:</td>
 
-                <td style="width:27mm; font-weight:bold;  text-align:right;">{{PrintPayment.sum | number}},00</td>
+                <td style="width:27mm; font-weight:bold;  text-align:right;">{{contract.sum | number}},00</td>
             </tr>
         </table>
 
         <div style="font-size: 12px; margin-bottom: 8px;  border-bottom: 2px solid black; padding-bottom: 5px">
-            Всего наименований 1, на сумму  {{PrintPayment.sum | number}},00 <ng-pluralize count="PrintPayment.sum" when="{
+            Всего наименований 1, на сумму  {{contract.sum | number}},00 <ng-pluralize count="contract.sum" when="{
 			'one'	: 'рубль',
 			'few'	: 'рубля',
 			'many'	: 'рублей',
 		}"></ng-pluralize>.<br>
-            <b class="m_title">{{numToText(PrintPayment.sum)}} <ng-pluralize count="PrintPayment.sum" when="{
+            <b class="m_title">{{numToText(contract.sum)}} <ng-pluralize count="contract.sum" when="{
 			'one'	: 'рубль',
 			'few'	: 'рубля',
 			'many'	: 'рублей',
@@ -345,7 +345,7 @@
         </table><br>
 
         <div style="font-weight: bold; font-size: 16px; padding-left:5px; margin-bottom: 5px; border-bottom: 2px solid black; padding-bottom: 5px">
-            Счет на оплату №{{contracts[0].id}} от {{formatContractDate(PrintPayment.date)}}
+            Счет на оплату №{{contract.id}} от {{formatContractDate(contract.date)}}
         </div>
 
         <table width="100%">
@@ -397,15 +397,15 @@
                 <tr>
                     <td align="center" style="font-size: 12px">1</td>
 
-                    <td align="left" style="font-size: 12px">Предметно-консультационные услуги согласно договору №{{contracts[0].id}} от {{contracts[0].date}}г. Без НДС.</td>
+                    <td align="left" style="font-size: 12px">Предметно-консультационные услуги за сентябрь-декабрь 2015г. согласно договору №{{contract.id}} от {{contract.date}}г. Без НДС.</td>
 
-                    <td align="right" style="font-size: 12px">{{objectLength(contracts[0].subjects)}}</td>
+                    <td align="right" style="font-size: 12px">{{objectLength(contract.subjects)}}</td>
 
                     <td align="left" style="font-size: 12px">предмет</td>
 
-                    <td align="right" style="font-size: 12px">{{(PrintPayment.sum / objectLength(contracts[0].subjects)) | number}},00</td>
+                    <td align="right" style="font-size: 12px">{{(contract.sum / objectLength(contract.subjects)) | number}},00</td>
 
-                    <td align="right" style="font-size: 12px">{{PrintPayment.sum | number}},00</td>
+                    <td align="right" style="font-size: 12px">{{contract.sum | number}},00</td>
                 </tr>
             </tbody>
         </table>
@@ -416,7 +416,7 @@
 
                 <td style="width:80mm; font-weight:bold;  text-align:right;">Итого:</td>
 
-                <td style="width:27mm; font-weight:bold;  text-align:right;">{{PrintPayment.sum | number}},00</td>
+                <td style="width:27mm; font-weight:bold;  text-align:right;">{{contract.sum | number}},00</td>
             </tr>
 
             <tr>
@@ -432,17 +432,17 @@
 
                 <td style="width:80mm; font-weight:bold;  text-align:right;">Всего к оплате:</td>
 
-                <td style="width:27mm; font-weight:bold;  text-align:right;">{{PrintPayment.sum | number}},00</td>
+                <td style="width:27mm; font-weight:bold;  text-align:right;">{{contract.sum | number}},00</td>
             </tr>
         </table>
 
         <div style="font-size: 12px; margin-bottom: 8px;  border-bottom: 2px solid black; padding-bottom: 5px">
-            Всего наименований 1, на сумму  {{PrintPayment.sum | number}},00 <ng-pluralize count="PrintPayment.sum" when="{
+            Всего наименований 1, на сумму  {{contract.sum | number}},00 <ng-pluralize count="contract.sum" when="{
 			'one'	: 'рубль',
 			'few'	: 'рубля',
 			'many'	: 'рублей',
 		}"></ng-pluralize>.<br>
-            <b class="m_title">{{numToText(PrintPayment.sum)}} <ng-pluralize count="PrintPayment.sum" when="{
+            <b class="m_title">{{numToText(contract.sum)}} <ng-pluralize count="contract.sum" when="{
 			'one'	: 'рубль',
 			'few'	: 'рубля',
 			'many'	: 'рублей',

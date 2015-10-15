@@ -39,11 +39,11 @@ RewriteRule ^teachers[/]?$ index.php?controller=teacher&action=list [QSA,L]
 RewriteRule ^groups/([0-9]+)/lesson/([0-9]{4}-[0-9]{2}-[0-9]{2})?$ index.php?controller=group&action=lesson&id_group=$1&date=$2 [QSA,L]
 RewriteRule ^groups/edit/([0-9]+)?$ index.php?controller=group&action=edit&id=$1 [QSA,L]
 RewriteRule ^groups/edit/([0-9]+)/schedule[/]?$ index.php?controller=group&action=schedule&id=$1 [QSA,L]
-RewriteRule ^groups/journal/([0-9]+)$ index.php?controller=group&action=journal&id=$1 [QSA,L]
-RewriteRule ^groups/schedule/download[/]?$ index.php?controller=group&action=DownloadSchedule [QSA,L]
 RewriteRule ^groups/add[/]?$ index.php?controller=group&action=add [QSA,L]
 RewriteRule ^groups/ajax/([a-zA-Z]+)[/]?$ index.php?controller=group&action=Ajax$1 [QSA,L]
 RewriteRule ^groups[/]?$ index.php?controller=group&action=list [QSA,L]
+RewriteRule ^groups2[/]?$ index.php?controller=group&action=list2 [QSA,L]
+
 
 
 # Настройки
@@ -60,19 +60,17 @@ RewriteRule ^tasks/([0-9]+)[/]?$ index.php?controller=task&action=list&list=$1 [
 
 RewriteRule ^tasks/ajax/([a-zA-Z]+)[/]?$ index.php?controller=task&action=Ajax$1 [QSA,L]
 
+
+# Уведомления
+RewriteRule ^notifications[/]?$ index.php?controller=notification&action=list [QSA,L]
+
 # Статистика
 RewriteRule ^stats[/]?$ index.php?controller=stats [QSA,L]
-RewriteRule ^stats/payments[/]?$ index.php?controller=stats&action=payments [QSA,L]
-RewriteRule ^stats/visits/students[/]?$ index.php?controller=stats&action=TotalVisitStudents [QSA,L]
-RewriteRule ^stats/visits/teachers[/]?$ index.php?controller=stats&action=TotalVisitTeachers [QSA,L]
-
-
 
 # Клиенты
 RewriteRule ^clients[/]?$ index.php?controller=clients [QSA,L]
-RewriteRule ^clients/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=$1 [QSA,L]
-RewriteRule ^clients/ajax/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=Ajax$1 [QSA,L]
-
+RewriteRule ^clients/precancelled[/]?$ index.php?controller=clients&action=cancelled&type=1 [QSA,L]
+RewriteRule ^clients/cancelled[/]?$ index.php?controller=clients&action=cancelled&type=2 [QSA,L]
 RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
 RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
 

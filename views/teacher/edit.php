@@ -67,6 +67,32 @@
 	</div>
 	
 	<?php if ($Teacher->id) :?>
+	<div class="row" style="margin-bottom: 10px" ng-hide="Teacher.branches.length == 0 || Teacher.branches[0] == ''">
+		<div class="col-sm-3">
+		    <h4 style="margin-top: 0" class="row-header">Свободное время</h4>
+		    <div ng-repeat="id_branch in Teacher.branches">
+			    <span ng-bind-html="branches_brick[id_branch] | to_trusted" style="width: 50px; display: inline-block"></span>
+			    <span ng-repeat="weekday in weekdays" class="group-freetime-block">
+					<span class="freetime-bar" ng-repeat="time in weekday.schedule track by $index" 
+						ng-class="{
+							'empty': !inFreetime2(time, freetime[id_branch][$parent.$index + 1])
+						}" ng-hide="time == ''" style="position: relative; top: 3px">
+					</span>
+				</span>
+		    </div>
+		    
+			<div ng-show="Teacher.schedule_date" class="small" style="margin-top: 13px">актуальность: {{Teacher.schedule_date}}</div>
+	        <div style="margin-top: 5px">
+	            <span class="link-like link-reverse small" ng-click="openFreetime()" 
+	            	style="margin-left: 0" ng-hide="!Teacher.branches[0]">редактировать</span>
+	        </div>
+	    </div>
+		<div class="col-sm-9">
+			<div class="pull-right">
+				Входов: <?= User::getLoginCount($Teacher->id, Teacher::USER_TYPE) ?>
+			</div>
+		</div>
+	</div>
 	<div class="row" style="margin-bottom: 10px">
 		<div class="col-sm-12">
 		    <h4 style="margin-top: 0" class="row-header">{{(Groups && Groups.length > 0) ? 'ГРУППЫ' : 'НЕТ ГРУПП'}}</h4>

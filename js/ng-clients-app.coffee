@@ -3,20 +3,13 @@ angular.module "Clients", []
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
-	.controller "ErrorsCtrl", ($scope) ->
-		angular.element(document).ready ->
-			set_scope "Clients"
-			$.post "clients/ajax/getErrorStudents", {mode: window.location.search}, (response) ->
-				$scope.Response = response
-				$scope.$apply()
-			, "json"
 	.controller "ListCtrl", ($scope) ->
 		$scope.filter_cancelled = 0
 		
 		$scope.clientsFilter = (Student) ->
 			if $scope.filter_cancelled is 2
-				return _.findWhere(Student.Contract.subjects, {status: 1}) isnt undefined
-			else 
+				return Student.Contract.pre_cancelled is 1
+			else
 				return Student.Contract.cancelled is $scope.filter_cancelled
 		
 		$scope.order = 2
@@ -43,8 +36,4 @@ angular.module "Clients", []
 				0
 		
 		angular.element(document).ready ->
-			$.post "clients/ajax/GetStudents", {}, (response) ->
-				$scope.Students = response
-				$scope.$apply()
-			, "json"
 			set_scope "Clients"

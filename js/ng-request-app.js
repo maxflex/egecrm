@@ -223,7 +223,7 @@
 			}
 
 		})
-		.controller("EditCtrl", function ($scope, $log, $timeout) {
+		.controller("EditCtrl", function ($scope, $log) {
 			// значение "Платежи" по умолчанию (иначе подставляет пустое значение)
 			$scope.new_payment = {id_status : 0}
 			$scope.current_contract = {subjects : []}
@@ -235,6 +235,93 @@
 			$scope.markers 	= [];
 			// ID маркера
 			$scope.marker_id= 1;
+			
+			function initFreetime(id_branch, day) {
+				$scope.freetime = initIfNotSet($scope.freetime);
+				$scope.freetime[id_branch] = initIfNotSet($scope.freetime[id_branch]);
+				$scope.freetime[id_branch][day] = initIfNotSet($scope.freetime[id_branch][day]);
+			}
+			
+			$scope.preCancel = function (contract) {
+				$.post("ajax/preCancel", {id_contract: contract.id, pre_cancelled: contract.pre_cancelled})
+			}
+			
+			$scope.inFreetime = function(id_branch, day, value) {
+				initFreetime(id_branch, day)
+				return $.inArray(value, objectToArray($scope.freetime[id_branch][day])) >= 0
+			}
+			
+			$scope.inFreetime2 = function(time, freetime) {
+				freetime = objectToArray(freetime)
+				return $.inArray(time, freetime) >= 0
+			}
+			
+			$scope.inDayAndTime2 = function(time, freetime) {
+				if (freetime === undefined) {
+					return false
+				}
+				freetime = objectToArray(freetime)
+				return $.inArray(time, freetime) >= 0
+			}
+			
+			$scope.freetimeClick = function(id_branch, index, n) {
+				index++
+				if ($scope.freetime[id_branch][index][n] !== true) {
+					$scope.freetime[id_branch][index][n] = ""	
+				} else {
+					$scope.freetime[id_branch][index][n] = $scope.weekdays[index - 1].schedule[n]
+				}
+			}
+			
+			$scope.selectAllWorking = function(id_branch) {
+				$.each($scope.weekdays, function(index, weekday) {
+					if (index > 4) {
+						return
+					}
+					if ($scope.freetime_selected_all_working) {
+						$scope.freetime[id_branch][index + 1][2] = ""
+						$scope.freetime[id_branch][index + 1][3] = ""
+					} else {
+						$scope.freetime[id_branch][index + 1][2] = weekday.schedule[2]
+						$scope.freetime[id_branch][index + 1][3] = weekday.schedule[3]
+					}
+				})
+				$scope.freetime_selected_all_working = !$scope.freetime_selected_all_working
+			}
+			
+			$scope.selectAllWeek = function(id_branch) {
+				$.each($scope.weekdays, function(index, weekday) {
+					if ($scope.freetime_selected_all_week) {
+						$scope.freetime[id_branch][index + 1][0] = ""
+						$scope.freetime[id_branch][index + 1][1] = ""
+						$scope.freetime[id_branch][index + 1][2] = ""
+						$scope.freetime[id_branch][index + 1][3] = ""  
+					} else {
+						$scope.freetime[id_branch][index + 1][0] = weekday.schedule[0]
+						$scope.freetime[id_branch][index + 1][1] = weekday.schedule[1]
+						$scope.freetime[id_branch][index + 1][2] = weekday.schedule[2]
+						$scope.freetime[id_branch][index + 1][3] = weekday.schedule[3]
+					}
+				})
+				$scope.freetime_selected_all_week = !$scope.freetime_selected_all_week
+			}
+			
+			$scope.selectAllIndex = function(id_branch, index) {
+				$scope.freetime_selected_all_index = initIfNotSet($scope.freetime_selected_all_index)
+				$.each($scope.weekdays, function(i, weekday) {
+					if ($scope.freetime_selected_all_index[index]) {
+						$scope.freetime[id_branch][i + 1][index] = ""
+					} else {
+						$scope.freetime[id_branch][i + 1][index] = weekday.schedule[index]
+					}
+				})
+				$scope.freetime_selected_all_index[index] = !$scope.freetime_selected_all_index[index]
+			}
+			
+			$scope.saveFreetime = function() {
+				lightBoxHide();
+				$(".save-button").click();
+			}
 			
 			// OUTDATED: ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
@@ -445,11 +532,10 @@
 			}
 			
 			
-			$scope.printBill = function(payment) {
+			$scope.printBill = function(id_contract) {
 				$scope.print_mode = 'bill'
-				$scope.PrintPayment = payment 
-				$scope.$apply()
-				printDiv($scope.print_mode + "-print")
+				$scope.id_contract_print = id_contract
+				printDiv($scope.print_mode + "-print-" + $scope.id_contract_print)
 			}
 			
 			/**
@@ -728,15 +814,7 @@
 				count = 0
 				$.each(contract.subjects, function(i, subject) {
 					if (subject != undefined) {
-						cnt1 = parseInt(subject.count)
-						if (!isNaN(cnt1)) {
-							count += cnt1
-						}
-						
-						cnt2 = parseInt(subject.count2)
-						if (!isNaN(cnt2)) {
-							count += cnt2
-						}
+						count = count + parseInt(subject.count)
 					}
 				})
 				return count
@@ -744,59 +822,10 @@
 
 			// Передаем функция numToText() в SCOPE
 			$scope.numToText = numToText;
-			
-			// Первая часть суммы для печати в договоре
-			$scope.contractFirstPart = function(contract) {
-				count = 0
-				$.each(contract.subjects, function(i, subject) {
-					if (subject != undefined) {
-						cnt1 = parseInt(subject.count)
-						if (!isNaN(cnt1)) {
-							count += cnt1
-						}
-					}
-				})
-				
-				// сколько процентов составляет первая часть предметов
-				percentage = count / $scope.subjectCount(contract)
-				
-				return Math.round(contract.sum * percentage)
-			}
-			
-			// Первая часть суммы для печати в договоре
-			$scope.contractSecondPart = function(contract) {
-				count = 0
-				$.each(contract.subjects, function(i, subject) {
-					if (subject != undefined) {
-						cnt2 = parseInt(subject.count2)
-						if (!isNaN(cnt2)) {
-							count += cnt2
-						}
-					}
-				})
-				
-				// сколько процентов составляет первая часть предметов
-				percentage = count / $scope.subjectCount(contract)
-				
-				return Math.round(contract.sum * percentage)
-			}
-			
-			// Рекомендуемая цена договора
-			$scope.recommendedPrice = function(contract) {
-				count = $scope.subjectCount(contract)
-				if (contract.grade == 11) {
-					return Math.round(count * 1500)
-				} else {
-					return Math.round(count * 1350)
-				}
-			}
-			
+
 			// Склонять имя в дательном падеже
 			// https://github.com/petrovich/petrovich-js
 			$scope.contractPrintName = function(person, padej) {
-				if (person === undefined) {
-					return false
-				}
 				var person = {
 					first	: person.first_name,
 					last	: person.last_name,
@@ -879,6 +908,32 @@
 
 
 			/**
+			 * Напоминание установлено? Если установлено, то появляется иконка "удалить напоминание"
+			 *
+			 */
+			$scope.notificationSet = function() {
+				return ($("#notificationtypes-select").val() &&
+					$scope.notification_date &&
+					$scope.notification_time
+				) ? true : false
+			}
+
+			/**
+			 * Удалить напоминание
+			 *
+			 */
+			$scope.deleteNotification = function() {
+				bootbox.confirm("Удалить напоминание?", function(result) {
+					if (result === true) {
+						$('#notificationtypes-select option:first-child').attr("selected", "selected");
+						$scope.notification_date = ""
+						$scope.notification_time = ""
+						$scope.$apply()
+					}
+				})
+			}
+
+			/**
 			 * Проверка на пустой договор. Если пустой, появляется функционал удаления
 			 *
 			 */
@@ -932,19 +987,12 @@
 					}
 				}
 			}
-			
+
 			// для позднего обновления
 			$scope.lateApply = function() {
 				setTimeout(function() {
 					$scope.$apply()
 				}, 100)
-			}
-			
-			// для позднего обновления
-			$scope.lateApplyShort = function() {
-				setTimeout(function() {
-					$scope.$apply()
-				}, 30)
 			}
 
 
@@ -1057,7 +1105,6 @@
 			}
 			
 			$scope.subjectChecked = function(id_subject) {
-// 				return _.findWhere($scope.current_contract.subjects, {id_subject: id_subject}) !== undefined
 				checked = false
 				angular.forEach($scope.current_contract.subjects, function(subject) {
 					if (subject.id_subject == id_subject) {
@@ -1072,7 +1119,7 @@
 			$scope.getIndexByIdSubject = function(id_subject) {
 				res = false
 				angular.forEach($scope.current_contract.subjects, function(subject, i) {
-//					console.log(subject, i)
+					console.log(subject, i)
 					if (subject.id_subject == id_subject) {
 						res = i
 						return
@@ -1080,27 +1127,6 @@
 				})
 
 				return res
-			}
-			
-			$scope.subjectHandle = function(id_subject) {
-				subjects 	= $scope.current_contract.subjects
-				subject 	= subjects[id_subject]
-				
-// 				subject.status = $("#checkbox-subject-" + id_subject).val()					
-				console.log('changed', subject.status, $("#checkbox-subject-" + id_subject).val()) 
-				
-				if (subject.status != 0) {
-					if (!subject.id_subject) {
-						subject.id_subject = id_subject
-						subject.name 	= $scope.SubjectsFull[id_subject]
-						subject.count 	= ''
-						subject.count2 	= ''
-						subject.score 	= ''
-					}
-				} else {
-					delete subjects[id_subject]
-				}
-				$scope.lateApplyShort()
 			}
 			
 			// вызывает окно редактирования контракта
@@ -1115,10 +1141,6 @@
 				lightBoxShow('addcontract')
 				$("select[name='grades']").removeClass("has-error")
 				$scope.lateApply()
-		
-				setTimeout(function() {
-					$('.triple-switch').slider('reset')	
-				}, 100)
 			}
 
 			// Окно редактирования договора
@@ -1139,9 +1161,6 @@
 			// Показать окно добавления платежа
 			$scope.addContractDialog = function() {
 				$scope.current_contract = {subjects : []}
-				
-				$('.triple-switch').slider('setValue', 0)	
-				
 				lightBoxShow('addcontract')
 				$("select[name='grades']").removeClass("has-error")
 				$scope.lateApply()
@@ -1493,11 +1512,6 @@
 			        $scope.$apply()
 			    })
 			    
-		    	// ios-like triple switch
-				$('.triple-switch').slider({
-					tooltip: 'hide',
-				});
-			    
 			    $("#code-podr").mask("999-999");
 			    
 			    $(".map-save-button, .bs-datetime").on("click", function() {
@@ -1513,6 +1527,24 @@
 				// Биндим пару-время к свободному времени
 				datePair()
 
+
+				// Биндим удаление Напоминания
+				$("#notificationtypes-select").on("change", function() {
+					if (!$(this).val()) {
+						$("#notification-date").val("").parent().hide()
+						$("#notification-time").val("").parent().hide()
+					} else {
+						$("#notification-date").parent().show()
+						$("#notification-time").parent().show()
+					}
+				})
+
+				// если изначально напоминание не установлено, не отображаем поля
+				if (!$("#notificationtypes-select").val()) {
+					$("#notification-date").val("").parent().hide()
+					$("#notification-time").val("").parent().hide()
+				}
+				
 				// Кнопка сохранения
 				$(".save-button").on("click", function() {
 					// Проверяем все ли номера телефона заполнены
@@ -1535,6 +1567,24 @@
 					// если в предварительной проверке были ошибки
 					if (has_errors) {
 						return false
+					}
+
+					// если установлено уведомнелие
+					if ($("#notificationtypes-select").val()) {
+						if (!$("input[name='Notification[date]']").val()) {
+							$("input[name='Notification[date]']").addClass("has-error").focus()
+							notifyError("Не установлена дата напоминания")
+							return false
+						} else {
+							$("input[name='Notification[date]']").removeClass("has-error")
+						}
+						if (!$("input[name='Notification[time]']").val()) {
+							$("input[name='Notification[time]']").addClass("has-error").focus()
+							notifyError("Не установлено время напоминания")
+							return false
+						} else {
+							$("input[name='Notification[time]']").removeClass("has-error")
+						}
 					}
 
 					ajaxStart()
