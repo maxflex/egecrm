@@ -137,7 +137,7 @@
 
 		public function actionAjaxContractEdit()
 		{
-			Contract::edit($_POST);
+			returnJson(Contract::edit($_POST));
 		}
 		
 		public function actionAjaxUploadFiles()

@@ -37,7 +37,7 @@
 				// если отсутствовал на занятии
 				if ($data[$id_student]['late'] >= 15) {
 					$message = Template::get(6, [
-						"date" 			=> today_text(),
+						"date" 			=> today_text($Schedule->date),
 						"student_name"	=> $Student->last_name . " " . $Student->first_name,
 						"late_word"		=> ($Student->getGender() == 1 ? "опоздал" : "опоздала"),
 						"subject"		=> Subjects::$dative[$Group->id_subject],
@@ -66,6 +66,7 @@
 					"late"					=> $data[$id_student]['late'],
 					"comment"				=> $data[$id_student]['comment'],
 					"id_user_saved"			=> User::fromSession()->id,
+					"id_teacher"			=> $Group->id_teacher,
 				]);
 			}
 			

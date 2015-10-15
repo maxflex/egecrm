@@ -48,6 +48,7 @@
 					<div class="top-links">
 						<span style="margin-right: 7px">сортировать по:</span>
 						<span class="link-like" ng-click="orderByFirstLesson()" style="margin-right: 7px">хронология запуска</span>
+						<span class="link-like" ng-click="orderByStudentCount()" style="margin-right: 7px">кол-во учеников</span>
 					</div>
 					
 					

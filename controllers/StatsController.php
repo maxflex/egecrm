@@ -42,8 +42,10 @@
 			
 			$Contracts = Contract::findAll([
 				"condition" => 
-					$date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' "
-								: "date = '$date_start'"
+					$date_end 	? "(STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' AND cancelled=0)
+									OR
+								   (STR_TO_DATE(cancelled_date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(cancelled_date, '%d.%m.%Y') <= '$date_end_formatted' AND cancelled=1)"
+								: "(date='$date_start' AND cancelled=0) OR (cancelled_date='$date_start' AND cancelled=1)"
 			]);
 			
 			$Payments = Payment::findAll([
@@ -257,6 +259,11 @@
 		
 		private function _studentVisits($date_start, $date_end = false)
 		{
+			$return['lesson_count'] = VisitJournal::count([
+				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
+					. " AND type_entity='TEACHER'"
+			]);
+			
 			$return['visit_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
 					. " AND type_entity='STUDENT' AND presence!=2"
@@ -374,10 +381,37 @@
 			return $stats;
 		}
 		
+		// занятие должно было быть, но его нет в журнале
+		private function _journalErrors()
+		{
+			// Высчитываем полностью отсутствующие занятия
+			$Groups = Group::findAll();
+
+			foreach ($Groups as $Group) {
+				$PastSchedule = $Group->getPastSchedule();
+				
+				foreach ($PastSchedule as $Schedule) {
+					// Проверяем было ли это занятие
+					$was_lesson = VisitJournal::find([
+						"condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
+					]);
+					
+					// если занятия не было, добавляем в ошибки
+					if (!$was_lesson) {
+						$return[] = $Schedule->date;
+					}
+				}
+			}
+			
+			return $return;
+		}
 		
 		public function actionTotalVisitStudents()
 		{
 			$this->setTabTitle("Общая посещаемость");
+			
+			
+			
 			
 			switch ($_GET["group"]) {
 				case "w": {
@@ -405,6 +439,7 @@
 			$this->render("total_visit_students", [
 				"ang_init_data" => $ang_init_data,
 				"stats" 		=> $stats,
+				"errors"		=> self::_journalErrors(),
 			]);
 		}
 		
@@ -428,30 +463,38 @@
 		{
 			$this->setTabTitle("Общая посещаемость по преподавателям");
 			
-			$Teachers = Teacher::getActiveGroups();
+			// $Teachers = Teacher::getActiveGroups();
+			
+			// получаем все ID преподов из журнала
+			$result = dbConnection()->query("
+				SELECT id_entity FROM visit_journal 
+				WHERE type_entity='TEACHER'
+				GROUP BY id_entity"
+			);
+			while ($row = $result->fetch_object()) {
+				$teacher_ids[] = $row->id_entity;
+			}
+			
+			$Teachers = Teacher::findAll([
+				"condition" => "id IN (" . implode(",", $teacher_ids) . ")",
+				"order"		=> "last_name ASC, first_name ASC, middle_name ASC"
+			]);
 			
 			foreach ($Teachers as $index => &$Teacher) {
-				$teacher_group_ids = Group::getIds([
-					"condition" => "id_teacher=" . $Teacher->id,
+				$Teacher->lesson_count = VisitJournal::count([
+					"condition" => "type_entity='TEACHER' AND id_entity=" . $Teacher->id
 				]);
-				$teacher_group_ids = implode(",", $teacher_group_ids);
 				
 				$Teacher->visit_count = VisitJournal::count([
-					"condition" => "id_group IN ({$teacher_group_ids}) AND type_entity='STUDENT' AND presence!=2"
+					"condition" => "id_teacher={$Teacher->id} AND type_entity='STUDENT' AND presence!=2"
 				]);
-				
-				// если у учителя не было занятий, не показываем его
-				if (!$Teacher->visit_count) {
-					unset($Teachers[$index]);
-					continue;
-				}
-				
+
 				$Teacher->late_count = VisitJournal::count([
-					"condition" => "id_group IN ({$teacher_group_ids}) AND type_entity='STUDENT' AND presence=1 AND late > 0"
+					"condition" => "id_teacher={$Teacher->id} AND type_entity='STUDENT' AND presence=1 AND late > 0"
 				]);
 				
 				$Teacher->abscent_count = VisitJournal::count([
-					"condition" => "id_group IN ({$teacher_group_ids}) AND type_entity='STUDENT' AND presence=2"
+					"condition" => "id_teacher={$Teacher->id} AND type_entity='STUDENT' AND presence=2"
 				]);
 				
 				if (!$Teacher->abscent_count) {

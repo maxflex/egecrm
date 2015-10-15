@@ -1,8 +1,9 @@
 <style>
 	table thead tr td {
 		text-align: center;
-		font-weight: 16px;
+/* 		font-weight: 16px; */
 		text-transform: uppercase;
+		font-weight: bold;
 	}
 </style>
 <div ng-app="Teacher" ng-controller="SalaryCtrl"
@@ -10,7 +11,7 @@
 		
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
-			<table class="table table-divlike">
+			<table class="table table-hover">
 				<thead>
 					<tr style="height: 35px">
 						<td style="text-align: left">Преподаватель</td>

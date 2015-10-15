@@ -19,10 +19,10 @@
 				</div>
 				<div>
 					Преподаватель: 
-					<span ng-show="Group.approved">
+					<span ng-show="Teacher">
 						{{Teacher.last_name + " " + Teacher.first_name + " " + Teacher.middle_name}} 
 					</span>
-					<span ng-show="!Group.approved || !Teacher">
+					<span ng-show="!Teacher">
 						пока не назначен
 					</span>
 				</div>

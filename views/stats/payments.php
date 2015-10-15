@@ -113,15 +113,16 @@
 					<?php endif ?>
 				</td>
 				<td>
+					<?= $stat[Payment::PAID_BILL]['payment_confirmed'] ?>
+					<?php if ($stat[Payment::PAID_BILL]['payment_unconfirmed'] > 0) :?>
+						<span class="quater-black"><?= ($stat[Payment::PAID_BILL]['payment_confirmed'] > 0 ? ' + ' : '')?><?= $stat[Payment::PAID_BILL]['payment_unconfirmed'] ?></span>
+					<?php endif ?>
+				
+				</td>
+				<td>
 					<?= $stat[Payment::PAID_BILL]['return_confirmed'] ?>
 					<?php if ($stat[Payment::PAID_BILL]['return_unconfirmed'] > 0) :?>
 						<span class="quater-black"><?= ($stat[Payment::PAID_BILL]['return_confirmed'] > 0 ? ' + ' : '')?><?= $stat[Payment::PAID_BILL]['return_unconfirmed'] ?></span>
-					<?php endif ?>
-				</td>
-				<td>
-					<?= $stat[Payment::PAID_CARD]['payment_confirmed'] ?>
-					<?php if ($stat[Payment::PAID_CARD]['payment_unconfirmed'] > 0) :?>
-						<span class="quater-black"><?= ($stat[Payment::PAID_CARD]['payment_confirmed'] > 0 ? ' + ' : '')?><?= $stat[Payment::PAID_CARD]['payment_unconfirmed'] ?></span>
 					<?php endif ?>
 				</td>
 				<td>

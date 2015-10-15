@@ -445,9 +445,16 @@
 			<a class="link-reverse link-white pointer" ng-click="toggleMinimizeStudent()" style="font-size: 12px; margin-left: 7px">
 				{{student.minimized ? "развернуть" : "свернуть"}}
 			</a>
-			<?php if (!$Request->adding) :?>
-			<span class='link-reverse pointer pull-right' id='delete-student' onclick='deleteStudent(<?= $Request->Student->id ?>)'>удалить профиль</span>
-			<?php endif ?>
+			
+			<div class="pull-right">
+				<?php if (!empty($Request->Student->login)) :?>
+				<a class="like-white" href="as/student/<?= $Request->Student->id ?>">режим просмотра</a>
+				<?php endif ?>
+				
+				<?php if (!$Request->adding) :?>
+				<span style="margin-left: 10px" class='link-reverse pointer' id='delete-student' onclick='deleteStudent(<?= $Request->Student->id ?>)'>удалить профиль</span>
+				<?php endif ?>
+			</div>
 		</div>
 		<div class="panel-body"  ng-hide="student.minimized">
     
@@ -1027,6 +1034,28 @@
 		    </div>
 	    </div>
     </div>
+    
+    <div class="row" ng-show="Journal.length > 0">
+	    <div class="col-sm-12">
+		     <h4 class="row-header">ПОСЕЩАЕМОСТЬ</h4>
+				 <div ng-repeat="id_group in getJournalGroups()" class="visit-div" style="top: -{{6 * $index}}px">
+					 <div class="visit-div-group" ng-class="{'gray-bg': !inActiveGroup(id_group)}">
+						<a href="groups/edit/{{id_group}}">Группа №{{id_group}}</a>
+					</div>
+					 <div ng-repeat="Visit in getVisitsByGroup(id_group)" class="visit-div-circle" ng-class="{'gray-bg': !inActiveGroup(id_group)}">
+						<span class="circle-default" title="{{formatVisitDate(Visit.lesson_date)}}"
+						ng-class="{
+							'circle-red'	: Visit.presence == 2,
+							'circle-orange'	: Visit.presence == 1 && Visit.late > 0
+						}"></span>
+					 </div>
+					 <div ng-repeat="i in [] | range:(getMaxVisits() - getVisitsByGroup(id_group).length)" class="visit-div-circle" ng-class="{'gray-bg': !inActiveGroup(id_group)}"> 
+						 <span class="circle-default invisible"></span>
+					 </div>
+				 </div>
+	    </div>
+    </div>
+    
     <?= partial("save_button", ["Request" => $Request]) ?>
 	<?= partial("bill_print") ?>
 </div></div>

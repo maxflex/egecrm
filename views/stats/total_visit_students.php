@@ -43,6 +43,9 @@
 				<td>
 				</td>
 				<td>
+					кол-во занятий
+				</td>
+				<td>
 					были на занятии
 				</td>
 				<td>
@@ -61,6 +64,12 @@
 			<tr>
 				<td>
 					<?= strftime("%d %b %Y", strtotime($date)) ?>
+					<?php if (in_array($date, $errors)) :?>
+						<span class="text-danger glyphicon glyphicon-exclamation-sign"></span>
+					<?php endif ?>
+				</td>
+				<td>
+					<?= $stat['lesson_count'] ? $stat['lesson_count'] : '' ?>
 				</td>
 				<td>
 					<?= $stat['visit_count'] ? $stat['visit_count'] : '' ?>

@@ -72,17 +72,6 @@
 				set_scope "Group"
 				
 		.controller "ScheduleCtrl", ($scope) ->
-			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
-				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
-			]
-			
-			
 			$scope.updateCache = ->
 				ajaxStart()
 				$.post "groups/ajax/updateCache", {id_group: $scope.Group.id}, () ->
@@ -184,6 +173,15 @@
 			
 			angular.element(document).ready ->
 				set_scope 'Group'
+				$scope.weekdays = [
+					{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
+					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
+				]
 				init_dates = []
 				for schedule_date in $scope.Group.Schedule
 					init_dates.push new Date schedule_date.date
@@ -199,6 +197,7 @@
 					for d in init_dates
 						month_number = moment(d).format("M")
 						if month_number is m
+							console.log d
 							$(this).datepicker "_setDate", d
 					
 					# schedule loaded after 500 ms
@@ -212,16 +211,6 @@
 				$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()					
 									
 		.controller "EditCtrl", ($scope) ->
-			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
-				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
-			]
-			
 			$scope.allStudentStatuses = ->
 				student_statuses_count = _.filter $scope.Group.student_statuses, (s, id_student) ->
 											s isnt undefined and s.id_status and _.where($scope.TmpStudents, {id: parseInt(id_student)}).length
@@ -679,6 +668,17 @@
 			angular.element(document).ready ->
 				set_scope "Group"
 				
+				$scope.weekdays = [
+					{"short" : "ПН", "full" : "Понедельник","time": [1,2], 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ВТ", "full" : "Вторник",  	"time": [1,2],		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СР", "full" : "Среда", 		"time": [1,2], 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ЧТ", "full" : "Четверг", 	"time": [1,2], 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ПТ", "full" : "Пятница", 	"time": [1,2],		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СБ", "full" : "Суббота",  	"time": [3,4,5,6],	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
+					{"short" : "ВС", "full" : "Воскресенье","time": [3,4,5,6],	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
+				]
+				$scope.$apply()
+				
 # 				$scope.loadStudents()
 				
 				$scope.bindGroupStudentStatusChange()
@@ -719,16 +719,6 @@
 							redirect "groups/edit/#{response}"	
 						
 		.controller "ListCtrl", ($scope) ->
-			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
-				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
-			]
-			
 			$scope.updateStatsCache = ->
 				ajaxStart()
 				$.post "groups/ajax/updateStatsCache", {}, ->
@@ -970,4 +960,13 @@
 			
 			angular.element(document).ready ->
 				set_scope "Group"
+				$scope.weekdays = [
+					{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
+					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
+				]
 				frontendLoadingEnd()

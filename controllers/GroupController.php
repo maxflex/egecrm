@@ -23,6 +23,8 @@
 		
 		public function actionJournal()
 		{
+			$this->setTabTitle("Посещаемость группы " . $id_group);
+			
 			$id_group 	= $_GET['id_group'];
 			$id_group = $_GET['id'];		
 			$Group = Group::findById($id_group);
@@ -42,17 +44,24 @@
 				$student_ids[] = $row->id_entity;
 			}
 			
-			// get students from journal 
-			$result = dbConnection()->query("
-				SELECT id, first_name, last_name FROM students
-				WHERE id IN (". implode(",", $student_ids) .")
-			");
 			
-			$students = [];
-			while ($row = $result->fetch_object()) {
-				$students[] = $row;
+			if (count($student_ids)) {
+				// get students from journal 
+				$result = dbConnection()->query("
+					SELECT id, first_name, last_name FROM students
+					WHERE id IN (". implode(",", $student_ids) .")
+				");
+				
+	
+				$students = [];
+				while ($row = $result->fetch_object()) {
+					$students[] = $row;
+				}
+			} else {
+				// если пустой журнал
+				$this->render("journal_empty");
+				return;
 			}
-			
 			$Group->Students = $students;
 						
 			$LessonData = VisitJournal::findAll([
@@ -65,7 +74,6 @@
 				"LessonData"	=> $LessonData,
 			]);
 			
-			$this->setTabTitle("Посещаемость группы " . $id_group);
 			$this->render("journal", [
 				"ang_init_data" => $ang_init_data,
 			]);
@@ -133,7 +141,8 @@
 					"Subjects" 		=> Subjects::$all,
 					"Grades"		=> Grades::$all,
 					"GroupLevels"	=> GroupLevels::$all,
-					"Branches"		=> Branches::$all,				
+					"Branches"		=> Branches::$all,		
+					"time" 			=> Freetime::TIME,		
 				]);
 				
 				$this->render("list_for_teachers", [
@@ -156,6 +165,7 @@
 					"Grades"		=> Grades::$all,
 					"GroupLevels"	=> GroupLevels::$all,
 					"Branches"		=> Branches::$all,
+					"time" 			=> Freetime::TIME,
 				]);
 				
 				$this->render("list_for_students", [
@@ -179,13 +189,14 @@
 				$Teachers = Teacher::getActiveGroups();
 				
 				$ang_init_data = angInit([
-					"Groups" 	=> $Groups,
-					"Teachers"	=> $Teachers,
-					"Subjects" 	=> Subjects::$three_letters,
-					"Grades"	=> Grades::$all,
+					"Groups" 		=> $Groups,
+					"Teachers"		=> $Teachers,
+					"Subjects" 		=> Subjects::$three_letters,
+					"Grades"		=> Grades::$all,
 					"mode" 			=> $mode,
 					"change_mode" 	=> $mode,
 					"GroupLevels"	=> GroupLevels::$all,
+					"time" 			=> Freetime::TIME,
 				]);
 				
 				$this->render("list", [
@@ -218,6 +229,7 @@
 					"Teacher"				=> $Teacher,
 					"vocation_dates"		=> GroupSchedule::getVocationDates(),
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
+					"time" 					=> Freetime::TIME,
 				]);
 				
 				$this->render("student_schedule", [
@@ -245,6 +257,7 @@
 					"Teacher"				=> $Teacher,
 					"vocation_dates"		=> GroupSchedule::getVocationDates(),
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
+					"time" 					=> Freetime::TIME,
 				]);
 				
 				$this->render("teacher_schedule", [
@@ -274,6 +287,7 @@
 					"Group" 			=> $Group,
 					"past_lesson_dates" => $Group->getPastLessonDates(),
 					"vocation_dates"	=> GroupSchedule::getVocationDates(),
+					"time" 				=> Freetime::TIME,
 				]);
 				
 				$this->render("schedule", [
@@ -376,6 +390,7 @@
 				"teacher_freetime_orange_half" 	=> $teacher_freetime_orange_half,
 				"teacher_freetime_orange_full"	=> $teacher_freetime_orange_full,
 				"teacher_freetime_doubleblink"	=> $teacher_freetime_doubleblink,
+				"time" => Freetime::TIME,
 			]);
 			
 			$this->render("edit", [
@@ -553,6 +568,7 @@
 		{
 			extract($_POST);
 			
+			$id_group = $id_group ? $id_group : 0;
 			
 			// Свободное время препода
 			$teacher_freetime_all 		= TeacherFreetime::getRedAll($id_group, $id_teacher);
@@ -707,50 +723,50 @@
 			$objPHPExcel->getActiveSheet()->SetCellValue('B3', 'ПОНЕДЕЛЬНИК');
 			$objPHPExcel->getActiveSheet()->mergeCells('B3:C3');
 			
-			$objPHPExcel->getActiveSheet()->SetCellValue('B4', '16:15');
-			$objPHPExcel->getActiveSheet()->SetCellValue('C4', '18:40');
+			$objPHPExcel->getActiveSheet()->SetCellValue('B4', Freetime::TIME[1]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('C4', Freetime::TIME[2]);
 			
 			$objPHPExcel->getActiveSheet()->SetCellValue('D3', 'ВТОРНИК');
 			$objPHPExcel->getActiveSheet()->mergeCells('D3:E3');
 			
-			$objPHPExcel->getActiveSheet()->SetCellValue('D4', '16:15');
-			$objPHPExcel->getActiveSheet()->SetCellValue('E4', '18:40');
+			$objPHPExcel->getActiveSheet()->SetCellValue('D4', Freetime::TIME[1]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('E4', Freetime::TIME[2]);
 			
 			$objPHPExcel->getActiveSheet()->SetCellValue('F3', 'СРЕДА');
 			$objPHPExcel->getActiveSheet()->mergeCells('F3:G3');
 			
-			$objPHPExcel->getActiveSheet()->SetCellValue('F4', '16:15');
-			$objPHPExcel->getActiveSheet()->SetCellValue('G4', '18:40');
+			$objPHPExcel->getActiveSheet()->SetCellValue('F4', Freetime::TIME[1]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('G4', Freetime::TIME[2]);
 			
 			$objPHPExcel->getActiveSheet()->SetCellValue('H3', 'ЧЕТВЕРГ');
 			$objPHPExcel->getActiveSheet()->mergeCells('H3:I3');
 			
-			$objPHPExcel->getActiveSheet()->SetCellValue('H4', '16:15');
-			$objPHPExcel->getActiveSheet()->SetCellValue('I4', '18:40');
+			$objPHPExcel->getActiveSheet()->SetCellValue('H4', Freetime::TIME[1]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('I4', Freetime::TIME[2]);
 			
 			$objPHPExcel->getActiveSheet()->SetCellValue('J3', 'ПЯТНИЦА');
 			$objPHPExcel->getActiveSheet()->mergeCells('J3:K3');
 			
-			$objPHPExcel->getActiveSheet()->SetCellValue('J4', '16:15');
-			$objPHPExcel->getActiveSheet()->SetCellValue('K4', '18:40');
+			$objPHPExcel->getActiveSheet()->SetCellValue('J4', Freetime::TIME[1]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('K4', Freetime::TIME[2]);
 			
 			
 			$objPHPExcel->getActiveSheet()->SetCellValue('L3', 'СУББОТА');
 			$objPHPExcel->getActiveSheet()->mergeCells('L3:O3');
 			
-			$objPHPExcel->getActiveSheet()->SetCellValue('L4', '11:00');
-			$objPHPExcel->getActiveSheet()->SetCellValue('M4', '13:30');
-			$objPHPExcel->getActiveSheet()->SetCellValue('N4', '16:00');
-			$objPHPExcel->getActiveSheet()->SetCellValue('O4', '18:30');
+			$objPHPExcel->getActiveSheet()->SetCellValue('L4', Freetime::TIME[3]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('M4', Freetime::TIME[4]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('N4', Freetime::TIME[5]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('O4', Freetime::TIME[6]);
 			
 			
 			$objPHPExcel->getActiveSheet()->SetCellValue('P3', 'ВОСКРЕСЕНЬЕ');
 			$objPHPExcel->getActiveSheet()->mergeCells('P3:S3');
 			
-			$objPHPExcel->getActiveSheet()->SetCellValue('P4', '11:00');
-			$objPHPExcel->getActiveSheet()->SetCellValue('Q4', '13:30');
-			$objPHPExcel->getActiveSheet()->SetCellValue('R4', '16:00');
-			$objPHPExcel->getActiveSheet()->SetCellValue('S4', '18:30');
+			$objPHPExcel->getActiveSheet()->SetCellValue('P4', Freetime::TIME[3]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('Q4', Freetime::TIME[4]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('R4', Freetime::TIME[5]);
+			$objPHPExcel->getActiveSheet()->SetCellValue('S4', Freetime::TIME[6]);
 
 			$objPHPExcel->getActiveSheet()->getStyle('B3:S4')
 				->getAlignment()

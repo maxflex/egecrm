@@ -25,37 +25,6 @@ angular.module("Teacher", ["ngMap"]).filter('to_trusted', [
     return set_scope("Teacher");
   });
 }).controller("EditCtrl", function($scope) {
-  $scope.weekdays = [
-    {
-      "short": "ПН",
-      "full": "Понедельник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ВТ",
-      "full": "Вторник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СР",
-      "full": "Среда",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ЧТ",
-      "full": "Четверг",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ПТ",
-      "full": "Пятница",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СБ",
-      "full": "Суббота",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }, {
-      "short": "ВС",
-      "full": "Воскресенье",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }
-  ];
   $scope.formatDate2 = function(date) {
     var dateOut;
     dateOut = new Date(date);
@@ -233,6 +202,37 @@ angular.module("Teacher", ["ngMap"]).filter('to_trusted', [
   $scope.isMobilePhone = isMobilePhone;
   angular.element(document).ready(function() {
     set_scope("Teacher");
+    $scope.weekdays = [
+      {
+        "short": "ПН",
+        "full": "Понедельник",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ВТ",
+        "full": "Вторник",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "СР",
+        "full": "Среда",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ЧТ",
+        "full": "Четверг",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ПТ",
+        "full": "Пятница",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "СБ",
+        "full": "Суббота",
+        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
+      }, {
+        "short": "ВС",
+        "full": "Воскресенье",
+        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
+      }
+    ];
     $.each($scope.Teacher.branches, function(index, branch) {
       return $scope.Teacher.branches[index] = branch.toString();
     });

@@ -31,12 +31,6 @@
 		<a href="clients/errors/?mode=grouptime" style="margin-right: 15px">несоответсвие в расписании групп</a>
 		<?php } ?>
 		
-		<?php if ($_GET["mode"] == "journal") { ?>
-		<span style="margin-right: 15px; font-weight: bold">журнал</span>
-		<?php } else { ?>
-		<a href="clients/errors/?mode=journal" style="margin-right: 15px">журнал</a>
-		<?php } ?>
-		
 		<?php if ($_GET["mode"] == "groupgrade") { ?>
 		<span style="margin-right: 15px; font-weight: bold">класс в группах</span>
 		<?php } else { ?>
@@ -87,14 +81,6 @@
 		</div>
 	<?php
 			break;	
-		}
-		case "journal": {	
-	?>
-		<div ng-repeat="Schedule in Response track by $index">
-			<a href="groups/edit/{{Schedule.id_group}}">Группа №{{Schedule.id_group}}</a>, отсутствует занятие <a href="groups/{{Schedule.id_group}}/lesson/{{Schedule.date}}">{{Schedule.date}}</a>
-		</div>
-	<?php
-			break; 
 		}
 		case "groupgrade": {
 	?>

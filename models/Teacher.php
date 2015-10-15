@@ -159,28 +159,6 @@
 			return $this->last_name . " " . mb_substr($this->first_name, 0, 1, 'utf-8') . ". " . mb_substr($this->middle_name, 0, 1, 'utf-8') . ".";
 		}
 		
-		/**
-		 * Получить свободное время ученика.
-		 * 
-		 */
-		public function getFreetime()
-		{
-			$Freetime = TeacherFreetime::findAll([
-				"condition"	=> "id_teacher=" . $this->id
-			]);
-			
-			if (!$Freetime) {
-				return [];
-			}
-			
-			foreach ($Freetime as $FreetimeData) {
-				$index = Freetime::getIndexByTime($FreetimeData->time);
-				$return[$FreetimeData->id_branch][$FreetimeData->day][$index] = $FreetimeData->time;
-			}
-			
-			return $return;
-		}
-		
 		public function agreedToBeInGroup($id_group)
 		{
 			return GroupTeacherStatuses::count([

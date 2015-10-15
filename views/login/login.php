@@ -8,14 +8,18 @@
             <input type="checkbox" value="remember-me" checked> Запомнить
           </label>
         </div>
-		<button class="btn btn-lg btn-primary btn-block" type="submit"><span class="glyphicon glyphicon-lock"></span>Войти</button>
+		<button id="login-submit" data-style="zoom-in" ng-disabled="in_process" class="btn btn-lg btn-primary btn-block ladda-button" type="submit"><span class="glyphicon glyphicon-lock"></span><span ng-show="!in_process">Войти</span><span ng-show="in_process">Вход</span>
+		</button>
 		
+<!--
 		<div style="overflow: hidden">
-			<div class="error-message alert alert-dismissible alert-danger animate-show-fadeIn" ng-show="form_errors" style="margin-top: 20px">
+			<div class="error-message alert alert-dismissible alert-danger" ng-show="form_errors !== undefined" style="margin-top: 20px">
 			  <button type="button" class="close" data-dismiss="alert">×</button>
 			  {{form_errors}}
 			</div>
 		</div>
 		
+-->
+
 	</form>
 </center>

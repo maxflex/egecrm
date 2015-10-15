@@ -1,6 +1,15 @@
+<?php if (User::fromSession()->AsUser) :?>
+<div class="view-as">
+	<span style="position: absolute; left: 10px">Режим просмотра преподавателя</span>
+	<span class='center'>
+		<?= User::fromSession()->AsUser->last_name." ".User::fromSession()->AsUser->first_name." ".User::fromSession()->AsUser->middle_name ?>
+	</span>
+	<a href="as/cancel" class="btn btn-primary btn-sm" style="position: absolute; top: 2px; right: 10px">Выйти из режима просмотра</a>
+</div>
+<?php endif ?>
 <div class="row">
   <div class="col-sm-2" style="margin-left: 10px">
-	  <div>
+	<div>
 	<div class="list-group">
     <a href="#" class="list-group-item active">Меню</a>
     <a href="groups" class="list-group-item">Мои группы
@@ -13,7 +22,7 @@
 		?>
     </a>
     <a href="print" class="list-group-item">Печать</a>
-<!--     <a href="faq" class="list-group-item">Необходимая информация</a> -->
+    <a href="faq" class="list-group-item">Необходимая информация</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>

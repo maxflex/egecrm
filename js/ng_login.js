@@ -1,4 +1,5 @@
 	angular.module("Login", ["ngAnimate"])
+/*
 		.controller("RegisterCtrl", function($scope) {
 			// Отправка формы
 			$scope.checkFields = function() {
@@ -30,7 +31,13 @@
 				})
 			}
 		})
+*/
 		.controller("LoginCtrl", function($scope) {
+			angular.element(document).ready(function() {
+				set_scope("Login")
+				l = Ladda.create(document.querySelector('#login-submit'));
+			});
+			
 			// Отправка формы
 			$scope.checkFields = function() {
 				if (!$scope.login) {
@@ -43,20 +50,32 @@
 					$scope.form_errors = "Укажите пароль"
 					return false
 				}
-								
+				
+				
+			 	l.start();
+				
+				ajaxStart()
+				$scope.in_process = true;
 				$.post("index.php?controller=login&action=AjaxLogin", {
 					'login'		: $scope.login,
 					'password'	: $scope.password
 				}, function(response) {
 					console.log(response)
-					if (response == "true") {
+					if (response === true) {
 						// window.location = "requests";
 						location.reload()
 					} else {
-						$scope.form_errors = "Неправильная пара логин-пароль"
+						ajaxEnd()
+						$scope.in_process = false;
+						l.stop()
+						if (response == "banned") {
+							notifyError("Пользователь заблокирован")
+						} else {
+							notifyError("Неправильная пара логин-пароль")
+						}
+						$scope.$apply()
 						return false
 					}
-				})
- 
+				}, "json")
 			}
 		});

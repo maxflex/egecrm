@@ -4,6 +4,42 @@ body {
   background-color: #eee;
   background-image: url("../img/background/bg.jpg"); }
 
+.visit-div {
+  display: inline-block;
+  width: 100%;
+  position: relative; }
+
+.visit-div-group {
+  border: 1px solid #ddd;
+  border-left: none;
+  border-right: none;
+  float: left;
+  display: inline-block;
+  width: 100px; }
+
+.visit-div-circle {
+  border: 1px solid #ddd;
+  float: left;
+  display: inline-block;
+  padding: 0 3px !important;
+  border-right: none; }
+
+.view-as {
+  position: fixed;
+  z-index: 99;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(51, 122, 184, 0.7);
+  color: white;
+  padding: 6px;
+  text-align: center;
+  font-size: 12px; }
+  .view-as .btn {
+    padding: 3px 10px !important; }
+
+.red-switch.ios7-switch input:checked + span {
+  box-shadow: inset 0 0 0 0.73em #ff0039 !important; }
+
 .top-group-menu > div {
   width: 13%;
   display: inline-block;
@@ -122,7 +158,7 @@ body {
   margin: 10px 0 15px 0; }
 
 .question {
-  margin: 15px 0 0 30px; }
+  margin-bottom: 7px; }
   .question span:first-child {
     cursor: pointer;
     color: #337AB7;
@@ -135,7 +171,7 @@ body {
     width: 800px;
     background: #eaf5e5;
     padding: 15px 20px 15px 20px;
-    margin: 5px 0 0 0;
+    margin: 10px 0 0 0;
     color: #6f8267;
     font-size: 14px;
     line-height: 20px;
@@ -617,8 +653,9 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     border-top: none !important; }
   .table-journal tr:last-child td {
     border-bottom: none !important; }
-  .table-journal .gray-bg {
-    background: #EFEFEF; }
+
+.gray-bg {
+  background: #EFEFEF !important; }
 
 .day-explain, .circle-default {
   border-radius: 50% !important;
@@ -764,6 +801,13 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     color: #999999 !important; }
   .attachment:hover {
     text-decoration: underline; }
+
+.attachment-no-underline {
+  color: #999999 !important;
+  font-size: 12px;
+  margin-right: 10px; }
+  .attachment-no-underline a {
+    color: #999999 !important; }
 
 #task-app .task-separator {
   width: 150px;

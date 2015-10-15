@@ -575,12 +575,37 @@
 		return $m;
 	}
 	
-	// 12 сентября
-	function today_text()
+	function russian_month_id_by_name($month_name)
 	{
-		$current_month = date("n");
+		switch ($month_name) {
+			case 'января': return 1;
+			case 'февраля': return 2;
+			case 'марта': return 3;
+			case 'апреля': return 4;
+			case 'мая': return 5;
+			case 'июня': return 6;
+			case 'июля': return 7;
+			case 'августа': return 8;
+			case 'сентября': return 9;
+			case 'октября': return 10;
+			case 'ноября': return 11;
+			case 'декабря': return 12;
+		}
+	}
+	
+	// 12 сентября
+	function today_text($not_today = false)
+	{
+		if ($not_today) {
+			$current_month = date("n", strtotime($not_today));
+			$current_day   = date("d", strtotime($not_today));
+		} else {
+			$current_month = date("n");
+			$current_day   = date("d");	
+		}
+		
 		$current_month = russian_month($current_month);
 		
-		return date("d") . " " . $current_month;
+		return $current_day . " " . $current_month;
 	}	
 ?>

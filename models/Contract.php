@@ -151,26 +151,10 @@
 				$OriginalContract = new Contract($Contract);
 				$OriginalContract->save();
 				
-				// ВРЕМЕННО! СМЕНА ID
-				if ($Contract["new_id"]) {
-					// меняем ID старых версий договора
-					$contract_ids = Contract::getIds([
-						"condition" => "id_contract=".$OriginalContract->id,
-					]);
-					
-					dbConnection()->query("update contracts set id_contract=".$Contract["new_id"]." where id IN (". implode(",", $contract_ids) .")");
-					
-					dbConnection()->query("update contract_subjects set id_contract=".$Contract["new_id"]." where id_contract=" . $OriginalContract->id);
-
-					
-					Contract::changeId($Contract["new_id"], $OriginalContract->id);
-				}
-				
-				// Загружаем туда файлы
-				// $OriginalContract->uploadFile();
-				
 				// Добавляем предметы договора
-				ContractSubject::addData($Contract["subjects"], $Contract["id"]);	
+				ContractSubject::addData($Contract["subjects"], $Contract["id"]);
+				
+				return $OriginalContract;
 			}
 		}
 		
@@ -336,14 +320,6 @@
 		
 		public function beforeSave()
 		{
-/*
-			h1("SAVING...");
-			echo "<pre>";
-			debug_print_backtrace();
-			echo "</pre>";
-*/
-			// preType($this);
-			
 			// Если сумма договора равна нулю, то ставим, будто не указана
 			// иначе если в новый договор не подставить сумму, автоматом ставится ноль
 			if (!$this->sum) {
@@ -352,6 +328,13 @@
 			
 			if (!$this->id_contract) {
 				$this->id_contract = NULL;
+				
+				if ($this->isNewRecord) {
+					// дата изменения и пользователь МЕНЯЮТСЯ ТОЛЬКО В СЛУЧАЕ ЕСЛИ ЭТО НЕ ПОДВЕРСИЯ
+					$this->date_changed = now();
+					// договор всегда создается новый, поэтому нет условия if ($this->isNewRecord) { ... }
+					$this->id_user		= User::fromSession()->id;
+				}
 			}
 			
 			// Если расторгаем договор
@@ -364,11 +347,6 @@
 				//	$this->cancelled_date	= now();
 				}
 			}
-			
-			// дата изменения
-			$this->date_changed = now();
-			// договор всегда создается новый, поэтому нет условия if ($this->isNewRecord) { ... }
-			$this->id_user		= User::fromSession()->id;
 		}
 		
 		public function afterFirstSave()

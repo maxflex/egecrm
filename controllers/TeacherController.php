@@ -175,7 +175,10 @@
 			if (!$Teacher) {
 				$id_teacher = $_GET['id'];
 				$this->setTabTitle("Редактирование преподавателя №{$id_teacher}");
-				$this->setRightTabTitle("<span class='link-reverse pointer' onclick='deleteTeacher($id_teacher)'>удалить преподавателя</span>");
+				$this->setRightTabTitle("
+					<a class='link-white' style='margin-right: 10px' href='as/teacher/{$id_teacher}'>режим просмотра</a>
+					<span class='link-reverse pointer' onclick='deleteTeacher($id_teacher)'>удалить преподавателя</span>
+				");
 				$Teacher = Teacher::findById($id_teacher);
 				$Teacher->Reviews = Teacher::getReviews($Teacher->id);
 				
@@ -202,6 +205,7 @@
 				"payment_statuses"	=> Payment::$all,
 				"payments"			=> TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher"]),
 				"user"				=> User::fromSession(),
+				"time" 					=> Freetime::TIME,
 			]);
 			
 			$this->render("edit", [

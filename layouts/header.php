@@ -21,6 +21,7 @@
     <link href="css/style.css?ver=<?= settings()->version ?>" rel="stylesheet">
     <link href="css/ng-showhide.css?ver=<?= settings()->version ?>" rel="stylesheet">
 	<link href="css/ios7switch.css" rel="stylesheet">
+	<link href="css/ladda-themeless.css" rel="stylesheet">
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/jquery.cookie.js"></script>
@@ -57,7 +58,8 @@
 	<script type="text/javascript" src="js/engine.js?ver=<?= settings()->version ?>"></script>
 	<script type="text/javascript" src="js/functions.js?ver=<?= settings()->version ?>"></script>
 
-
+	<script src="js/spin.js"></script>
+	<script src="js/ladda.js"></script>
 
     <?= $this->_js_additional ?>
   </head>

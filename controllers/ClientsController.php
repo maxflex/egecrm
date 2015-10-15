@@ -86,29 +86,6 @@
 					
 					break;
 				}
-				case "?mode=journal": {
-					// Высчитываем полностью отсутствующие занятия
-					$Groups = Group::findAll();
-
-					foreach ($Groups as $Group) {
-						$PastSchedule = $Group->getPastSchedule();
-						
-						foreach ($PastSchedule as $Schedule) {
-							// Проверяем было ли это занятие
-							$was_lesson = VisitJournal::find([
-								"condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
-							]);
-							
-							// если занятия не было, добавляем в ошибки
-							if (!$was_lesson) {
-								$return[] = $Schedule;
-							}
-						}
-					}
-					
-					$Response = $return;
-					break;
-				}
 				case "?mode=groupgrade": {
 					$Groups = Group::findAll();
 

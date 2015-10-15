@@ -3,15 +3,36 @@
 	{
 	
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
-
+		
+		
+		// ID => TIME
+		const TIME = [
+			1 => "16:15",
+			2 => "18:40",
+			3 => "11:00",
+			4 => "13:30",
+			5 => "16:00",
+			6 => "18:30",
+		];
+		
+		public static $weekdays_time = [
+			1 => [1, 2],
+			2 => [1, 2],
+			3 => [1, 2],
+			4 => [1, 2],
+			5 => [1, 2],
+			6 => [3, 4, 5, 6],
+			7 => [3, 4, 5, 6],
+		];
+		
 		public static $weekdays = [
-			1 => ["", "", "16:15", "18:40"],
-			2 => ["", "", "16:15", "18:40"],
-			3 => ["", "", "16:15", "18:40"],
-			4 => ["", "", "16:15", "18:40"],
-			5 => ["", "", "16:15", "18:40"],
-			6 => ["11:00", "13:30", "16:00", "18:30"],
-			7 => ["11:00", "13:30", "16:00", "18:30"],
+			1 => ["", "", self::TIME[1], self::TIME[2]],
+			2 => ["", "", self::TIME[1], self::TIME[2]],
+			3 => ["", "", self::TIME[1], self::TIME[2]],
+			4 => ["", "", self::TIME[1], self::TIME[2]],
+			5 => ["", "", self::TIME[1], self::TIME[2]],
+			6 => [self::TIME[3], self::TIME[4], self::TIME[5], self::TIME[6]],
+			7 => [self::TIME[3], self::TIME[4], self::TIME[5], self::TIME[6]],
 		];
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
@@ -22,15 +43,15 @@
 
 		public static function getIndexByTime($time) {
 			switch ($time) {
-				case "13:30": {
+				case self::TIME[4]: {
 					return 1;
 				}
-				case "16:00":
-				case "16:15": {
+				case self::TIME[5]:
+				case self::TIME[1]: {
 					return 2;
 				}
-				case "18:30":
-				case "18:40": {
+				case self::TIME[6]:
+				case self::TIME[2]: {
 					return 3;
 				}
 				default: {
@@ -38,35 +59,49 @@
 				}
 			}
 		}
+		
+		public static function getId($time)
+		{
+			foreach (self::TIME as $id => $t) {
+				if ($t == $time) {
+					return $id;
+				}
+			}
+		}
+		
+		public static function dayIndexByIdTime($id_time) 
+		{
+			return array_search($id_time, self::$weekdays_time);	
+		}
 	}
 	
 	class TeacherFreetime
 	{
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
-		public static function getOrange($id_group, $id_branch, $id_teacher, $teacher_freetime_red, $teacher_freetime_red_full)
+		public static function getOrange($id_group, $id_branch, $id_student, $teacher_freetime_red, $teacher_freetime_red_full)
 		{
-			foreach (Freetime::$weekdays as $day => $schedule) {
-				foreach ($schedule as $time) {
+			foreach (Freetime::$weekdays_time as $day => $time_array) {
+				foreach ($time_array as $time) {
 					// текущий кирпич не должен быть занят в другой группе у этого преподавателя
-					if (!$time || in_array($time, $teacher_freetime_red[$day])) {
+					if (in_array($time, $teacher_freetime_red[$day])) {
 						continue;		
 					}
 					
 					// текущий кирпич обязательно должен соседствовать с красным кирпичом в рамках одного дня
 					$red_neighbour = false;
 					
-					$current_index = array_search($time, Freetime::$weekdays[$day]);
-					
+					$current_index = array_search($time, Freetime::$weekdays_time[$day]);
+
 					# проверяем следующий день
 					$red_neighbour_right 		= false;
 					$red_neighbour_right_data 	= false;
-					if ($current_index < 3) {
-						$red_neighbour_right = in_array(Freetime::$weekdays[$day][$current_index + 1], $teacher_freetime_red[$day]);
+					if ( ($day < 6 && $current_index < 1) || ($day >= 6 && $current_index < 3) ) {
+						$red_neighbour_right = in_array(Freetime::$weekdays_time[$day][$current_index + 1], $teacher_freetime_red[$day]);
 						if ($red_neighbour_right) {
 							// сохраняем данные найденного справа красного кирпича
 							$red_neighbour_right_data = [
 								"day" 	=> $day,
-								"time"	=> Freetime::$weekdays[$day][$current_index + 1],
+								"time"	=> Freetime::$weekdays_time[$day][$current_index + 1],
 							];
 						}
 					}
@@ -75,24 +110,23 @@
 					$red_neighbour_left 	= false;
 					$red_neighbour_left_data= false;
 					if ($current_index > 0) {
-						$red_neighbour_left = in_array(Freetime::$weekdays[$day][$current_index - 1], $teacher_freetime_red[$day]);
+						$red_neighbour_left = in_array(Freetime::$weekdays_time[$day][$current_index - 1], $teacher_freetime_red[$day]);
 						if ($red_neighbour_left) {
 							// сохраняем данные найденного слева красного кирпича
 							$red_neighbour_left_data = [
 								"day" 	=> $day,
-								"time"	=> Freetime::$weekdays[$day][$current_index - 1],
+								"time"	=> Freetime::$weekdays_time[$day][$current_index - 1],
 							];
 						}
 					}
-					
 					// если нашелся красный сосед, идем дальше
 					if ($red_neighbour_left || $red_neighbour_right) {
 						// филиал текущей группы должен отличаться от филиала группы соседствующего красного кирпича
 						if ($red_neighbour_left) {
-							$is_orange = self::_branchDifferent($id_group, $id_branch, $id_teacher, $red_neighbour_left_data['day'], $red_neighbour_left_data['time']);
+							$is_orange = self::_branchDifferent($id_group, $id_branch, $id_student, $red_neighbour_left_data['day'], $red_neighbour_left_data['time']);
 							
 							if ($is_orange) {
-								if (in_array(Freetime::$weekdays[$day][$current_index - 1], $teacher_freetime_red_full[$day])) {
+								if (in_array(Freetime::$weekdays_time[$day][$current_index - 1], $teacher_freetime_red_full[$day])) {
 									$return_full[$day][] = $time; // добавляем оранжевое время	
 								} else {
 									$return_half[$day][] = $time; // добавляем оранжевое время	
@@ -103,9 +137,9 @@
 						
 						// филиал текущей группы должен отличаться от филиала группы соседствующего красного кирпича
 						if ($red_neighbour_right) {
-							$is_orange = self::_branchDifferent($id_group, $id_branch, $id_teacher, $red_neighbour_right_data['day'], $red_neighbour_right_data['time']);
+							$is_orange = self::_branchDifferent($id_group, $id_branch, $id_student, $red_neighbour_right_data['day'], $red_neighbour_right_data['time']);
 							if ($is_orange) {
-								if (in_array(Freetime::$weekdays[$day][$current_index + 1], $teacher_freetime_red_full[$day])) {
+								if (in_array(Freetime::$weekdays_time[$day][$current_index + 1], $teacher_freetime_red_full[$day])) {
 									$return_full[$day][] = $time; // добавляем оранжевое время	
 								} else {
 									$return_half[$day][] = $time; // добавляем оранжевое время	
@@ -138,8 +172,8 @@
 		 */
 		public static function getRed($id_group, $id_teacher) 
 		{
-			foreach (Freetime::$weekdays as $day => $schedule) {
-				foreach ($schedule as $time) {
+			foreach (Freetime::$weekdays_time as $day => $time_array) {
+				foreach ($time_array as $time) {
 					if (TeacherFreetime::inRed($id_group, $id_teacher, $day, $time)) {
 						if (!in_array($time, $return_red[$day])) {
 							$return_red[$day][] = $time;
@@ -156,8 +190,8 @@
 		 */
 		public static function getRedFull($id_group, $id_teacher) 
 		{
-			foreach (Freetime::$weekdays as $day => $schedule) {
-				foreach ($schedule as $time) {
+			foreach (Freetime::$weekdays_time as $day => $time_array) {
+				foreach ($time_array as $time) {
 					if (TeacherFreetime::inRedFull($id_group, $id_teacher, $day, $time)) {
 						if (!in_array($time, $return_red[$day])) {
 							$return_red[$day][] = $time;
@@ -171,8 +205,8 @@
 		
 		public static function getRedAll($id_group, $id_teacher)
 		{
-			foreach (Freetime::$weekdays as $day => $schedule) {
-				foreach ($schedule as $time) {
+			foreach (Freetime::$weekdays_time as $day => $time_array) {
+				foreach ($time_array as $time) {
 					$count = TeacherFreetime::inRed($id_group, $id_teacher, $day, $time);
 					if ($count) {
 						if (!in_array($time, $return_red_half[$day])) {

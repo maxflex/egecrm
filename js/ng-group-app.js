@@ -101,37 +101,6 @@ angular.module("Group", []).filter('to_trusted', [
     return set_scope("Group");
   });
 }).controller("ScheduleCtrl", function($scope) {
-  $scope.weekdays = [
-    {
-      "short": "ПН",
-      "full": "Понедельник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ВТ",
-      "full": "Вторник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СР",
-      "full": "Среда",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ЧТ",
-      "full": "Четверг",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ПТ",
-      "full": "Пятница",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СБ",
-      "full": "Суббота",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }, {
-      "short": "ВС",
-      "full": "Воскресенье",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }
-  ];
   $scope.updateCache = function() {
     ajaxStart();
     return $.post("groups/ajax/updateCache", {
@@ -249,6 +218,37 @@ angular.module("Group", []).filter('to_trusted', [
   return angular.element(document).ready(function() {
     var init_dates, j, len, ref, schedule_date;
     set_scope('Group');
+    $scope.weekdays = [
+      {
+        "short": "ПН",
+        "full": "Понедельник",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ВТ",
+        "full": "Вторник",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "СР",
+        "full": "Среда",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ЧТ",
+        "full": "Четверг",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ПТ",
+        "full": "Пятница",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "СБ",
+        "full": "Суббота",
+        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
+      }, {
+        "short": "ВС",
+        "full": "Воскресенье",
+        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
+      }
+    ];
     init_dates = [];
     ref = $scope.Group.Schedule;
     for (j = 0, len = ref.length; j < len; j++) {
@@ -264,6 +264,7 @@ angular.module("Group", []).filter('to_trusted', [
         d = init_dates[k];
         month_number = moment(d).format("M");
         if (month_number === m) {
+          console.log(d);
           $(this).datepicker("_setDate", d);
         }
       }
@@ -277,37 +278,6 @@ angular.module("Group", []).filter('to_trusted', [
   });
 }).controller("EditCtrl", function($scope) {
   var bindDraggable, bindGroupsDroppable, initDayAndTime, initFreetime, justSave, rebindBlinking;
-  $scope.weekdays = [
-    {
-      "short": "ПН",
-      "full": "Понедельник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ВТ",
-      "full": "Вторник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СР",
-      "full": "Среда",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ЧТ",
-      "full": "Четверг",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ПТ",
-      "full": "Пятница",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СБ",
-      "full": "Суббота",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }, {
-      "short": "ВС",
-      "full": "Воскресенье",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }
-  ];
   $scope.allStudentStatuses = function() {
     var student_statuses_count;
     student_statuses_count = _.filter($scope.Group.student_statuses, function(s, id_student) {
@@ -858,6 +828,45 @@ angular.module("Group", []).filter('to_trusted', [
   };
   angular.element(document).ready(function() {
     set_scope("Group");
+    $scope.weekdays = [
+      {
+        "short": "ПН",
+        "full": "Понедельник",
+        "time": [1, 2],
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ВТ",
+        "full": "Вторник",
+        "time": [1, 2],
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "СР",
+        "full": "Среда",
+        "time": [1, 2],
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ЧТ",
+        "full": "Четверг",
+        "time": [1, 2],
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ПТ",
+        "full": "Пятница",
+        "time": [1, 2],
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "СБ",
+        "full": "Суббота",
+        "time": [3, 4, 5, 6],
+        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
+      }, {
+        "short": "ВС",
+        "full": "Воскресенье",
+        "time": [3, 4, 5, 6],
+        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
+      }
+    ];
+    $scope.$apply();
     $scope.bindGroupStudentStatusChange();
     if ($scope.Group.Comments === false) {
       $scope.Group.Comments = [];
@@ -896,37 +905,6 @@ angular.module("Group", []).filter('to_trusted', [
   });
 }).controller("ListCtrl", function($scope) {
   var bindDraggable2;
-  $scope.weekdays = [
-    {
-      "short": "ПН",
-      "full": "Понедельник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ВТ",
-      "full": "Вторник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СР",
-      "full": "Среда",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ЧТ",
-      "full": "Четверг",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ПТ",
-      "full": "Пятница",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СБ",
-      "full": "Суббота",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }, {
-      "short": "ВС",
-      "full": "Воскресенье",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }
-  ];
   $scope.updateStatsCache = function() {
     ajaxStart();
     return $.post("groups/ajax/updateStatsCache", {}, function() {
@@ -1191,6 +1169,37 @@ angular.module("Group", []).filter('to_trusted', [
   });
   return angular.element(document).ready(function() {
     set_scope("Group");
+    $scope.weekdays = [
+      {
+        "short": "ПН",
+        "full": "Понедельник",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ВТ",
+        "full": "Вторник",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "СР",
+        "full": "Среда",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ЧТ",
+        "full": "Четверг",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "ПТ",
+        "full": "Пятница",
+        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+      }, {
+        "short": "СБ",
+        "full": "Суббота",
+        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
+      }, {
+        "short": "ВС",
+        "full": "Воскресенье",
+        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
+      }
+    ];
     return frontendLoadingEnd();
   });
 });

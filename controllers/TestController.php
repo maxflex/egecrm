@@ -22,6 +22,15 @@
 			$this->render("test");
 		}
 		
+		public function actionSLessons()
+		{
+			$Student = Student::findById(288);
+			
+			$Data = $Student->getVisits();
+			
+			preType($Data);
+		}
+		
 		public function actionPhpExcel()
 		{
 /*

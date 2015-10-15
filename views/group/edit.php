@@ -59,7 +59,7 @@
 	            ?>
 			</div>
 			<div class="form-group">
-				<select class="form-control" ng-model="Group.cabinet" ng-show="Group.id_branch" 
+				<select class="form-control" ng-model="Group.cabinet"
 					ng-change="changeCabinet()" id="group-cabinet" ng-disabled="(Cabinets.length == 1 && Group.cabinet)">
 					<option selected value="0">№ кабинета</option>
 					<option disabled>──────────────</option>
@@ -143,7 +143,7 @@
 							</td>
 							<td width="150">
 								<span ng-repeat="weekday in weekdays" class="group-freetime-block">
-									<span class="freetime-bar empty" ng-repeat="time in weekday.schedule track by $index" 
+									<span class="freetime-bar empty" ng-repeat="time in weekday.time track by $index" 
 										ng-class="{
 											'red-gray-empty' 	: justInDayFreetime($parent.$index + 1, time, Student.freetime_red_half),
 											'red'				: inRedFreetime(time, Student, $parent.$index + 1),
@@ -201,7 +201,7 @@
 							</td>
 							<td width="150">
 							    <span ng-repeat="weekday in weekdays" class="group-freetime-block"  ng-show="Group.id_teacher && Group.id_teacher != '0'">
-									<span class="freetime-bar empty-blue" ng-repeat="time in weekday.schedule track by $index" 
+									<span class="freetime-bar empty-blue" ng-repeat="time in weekday.time track by $index" 
 										ng-class="{
 											'red-blue-empty'	: justInDayFreetime($parent.$index + 1, time, teacher_freetime),
 											'red'				: justInDayFreetime($parent.$index + 1, time, teacher_freetime_red),

@@ -17,17 +17,6 @@
 			angular.element(document).ready ->
 				set_scope "Teacher"
 		.controller "EditCtrl", ($scope) ->
-			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
-				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
-			]
-			
-			
 			# форматировать дату
 			$scope.formatDate2 = (date) ->
 			  dateOut = new Date(date)
@@ -191,6 +180,17 @@
 			
 			angular.element(document).ready ->
 				set_scope "Teacher"
+				
+				$scope.weekdays = [
+					{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
+					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
+				]
+				
 				$.each $scope.Teacher.branches, (index, branch) ->
 					$scope.Teacher.branches[index] = branch.toString()
 				

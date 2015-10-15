@@ -235,16 +235,6 @@
 			$scope.markers 	= [];
 			// ID маркера
 			$scope.marker_id= 1;
-			// Дни недели
-			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
-				{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
-				{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
-			]
 			
 			// OUTDATED: ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
@@ -252,6 +242,16 @@
 
 			// анимация загрузки RENDER ANGULAR
 			angular.element(document).ready(function() {
+				$scope.weekdays = [
+					{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
+					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
+				]
+				
 				$.each($scope.student.branches, function(index, branch) {
 					$scope.student.branches[index] = branch.toString();
 				});
@@ -264,6 +264,36 @@
 					$(".phone-masked").keyup()
 				}, 100)
 			})
+			
+			// получить группы из журнала
+			$scope.getJournalGroups = function() {
+				return Object.keys(_.chain($scope.Journal).groupBy('id_group').value())
+			}
+			
+			$scope.getVisitsByGroup = function(id_group) {
+				id_group = parseInt(id_group)
+				return _.where($scope.Journal, {id_group: id_group})
+			}
+			
+			$scope.inActiveGroup = function(id_group) {
+				id_group = parseInt(id_group)
+				return _.where($scope.Groups, {id: id_group}).length
+			}
+			
+			$scope.getMaxVisits = function() {
+				max = -1;
+				$.each($scope.Groups, function(i, group) {
+					count = $scope.getVisitsByGroup(group.id).length
+					if (count > max) {
+						max = count
+					}
+				});
+				return max;
+			}
+			
+			$scope.formatVisitDate = function (date) {
+				return moment(date).format("DD.MM.YY")
+			}
 			
 			$scope.toggleSubject = function(id_subject) {
 				// если предметы не установлены
@@ -817,16 +847,6 @@
 				subject_count.val("")
 			}
 
-			$scope.showHistory = function(contract) {
-				if (contract._show_history) {
-					contract._show_history = false
-					$("#contract-history-" + contract.id).slideUp(300)
-				} else {
-					contract._show_history = true
-					$("#contract-history-" + contract.id).slideDown(300)
-				}
-			}
-
 			// Удалить предмет из договора
 			$scope.removeSubject = function(contract, index) {
 				contract.subjects.splice(index, 1);
@@ -988,15 +1008,25 @@
 				if ($scope.current_contract.id) {
 					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
-						angular.forEach($scope.contracts, function(contract, i) {
-							if (contract.id == $scope.current_contract.id) {
-								$scope.contracts[i] = $scope.current_contract
-								$scope.$apply()
-							}
-						})
+						$scope.current_contract.user_login 	= response.user_login
+						$scope.current_contract.date_changed= response.date_changed
+						
+							angular.forEach($scope.contracts, function(contract, i) {
+								if (contract.id == $scope.current_contract.id) {
+									old_contract = $scope.contracts[i]
+									$scope.contracts[i] = $scope.current_contract
+									// если создалась новая версия, пушим в историю
+									if (!$scope.current_contract.no_version_control) {
+										$scope.contracts[i].History = initIfNotSet($scope.contracts[i].History)
+										$scope.contracts[i].History.push(old_contract)
+									}
+								}
+							})
+						
+						$scope.$apply()
 						ajaxEnd('contract')
 						lightBoxHide()
-					})
+					}, "json")
 				} else {
 					// сохраняем догавар
 					ajaxStart('contract')

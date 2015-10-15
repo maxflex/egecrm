@@ -670,6 +670,14 @@
 	{
 		public static $mysql_table	= "group_time";	
 		
+		public function __construct($array)
+		{
+			parent::__construct($array);
+			
+			if (!$this->isNewRecord) {
+				$this->time = Freetime::TIME[$this->time];		
+			}
+		}
 		/**
 		 * Добавить свободное время
 		 * 
@@ -688,7 +696,7 @@
 					$GroupTime = new self([
 						"id_group"	=> $id_group,
 						"day"		=> $day,
-						"time"		=> $time,
+						"time"		=> Freetime::getId($time),
 					]);
 					
 					$GroupTime->save();

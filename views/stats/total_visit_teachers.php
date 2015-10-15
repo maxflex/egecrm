@@ -16,6 +16,9 @@
 				<td>
 				</td>
 				<td>
+					кол-во занятий
+				</td>
+				<td>
 					были на занятии
 				</td>
 				<td>
@@ -34,6 +37,9 @@
 			<tr>
 				<td>
 					<a href="teachers/edit/<?= $Teacher->id?>"><?= $Teacher->last_name ." ". $Teacher->first_name ." ". $Teacher->middle_name ?></a>
+				</td>
+				<td>
+					<?= $Teacher->lesson_count ? $Teacher->lesson_count : '' ?>
 				</td>
 				<td>
 					<?= $Teacher->visit_count ? $Teacher->visit_count : '' ?>

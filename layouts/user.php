@@ -119,6 +119,7 @@
     <a href="sms" class="list-group-item">SMS</a>
     <a href="payments" class="list-group-item">Платежи</a>
     <a href="groups" class="list-group-item">Группы</a>
+	<a href="stats/visits/students" class="list-group-item">Посещаемость</a>
     <a href="clients/errors" class="list-group-item">Ошибки</a>
 	
 	<a class="list-group-item active">Преподаватели</a>
@@ -151,12 +152,12 @@
 			}
 		?>
 	</a>
-	<a href="stats/visits/students" class="list-group-item">Посещаемость</a>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="settings/cabinets" class="list-group-item">Кабинеты</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
     <a href="templates" class="list-group-item">Шаблоны</a>
     <a href="settings/lessons" class="list-group-item">Трекер занятий</a>
+    <a href="users" class="list-group-item">Пользователи</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
 <!--
