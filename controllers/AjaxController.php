@@ -9,7 +9,7 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "";
 
-
+		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE];
 
 		##################################################
 		###################### AJAX ######################
@@ -361,6 +361,80 @@
 */
 		}
 		
+		public function actionAjaxSendGroupSmsClients()
+		{
+			extract($_POST);
+			
+			
+			$student_ids = implode(",", $student_ids);
+			
+			$Students = Student::findAll([
+				"condition" => "id IN ($student_ids)"
+			]);
+
+			
+			if ($to_students == "true") {
+				foreach ($Students as $Student) {
+					foreach (Student::$_phone_fields as $phone_field) {
+						$number = $Student->{$phone_field};
+						
+						if (!empty(trim($number))) {
+							$msg = $message;
+							if ($Student->login && $Student->password) {
+								$msg = str_replace('{entity_login}', $Student->login, $msg);
+								$msg = str_replace('{entity_password}', $Student->password, $msg);
+							}
+							$messages[] = [
+								"type"      => "Ученику #" . $Student->id,
+								'number' 	=> $number,
+								'message'	=> $msg,
+							];
+						}
+					}
+				}
+			}
+			
+			if ($to_representatives == "true") {
+				foreach ($Students as $Student) {
+					if ($Student->Representative) {
+						foreach (Student::$_phone_fields as $phone_field) {
+							$number = $Student->Representative->{$phone_field};
+							
+							if (!empty(trim($number))) {
+								$msg = $message;
+								if ($Student->login && $Student->password) {
+									$msg = str_replace('{entity_login}', $Student->login, $msg);
+									$msg = str_replace('{entity_password}', $Student->password, $msg);
+								}
+								$messages[] = [
+									"type"      => "Представителю #" . $Student->Representative->id,
+									'number' 	=> $number,
+									'message'	=> $msg,
+								];
+							}
+						}
+					}
+				}
+			}
+			
+			$sent_to = [];
+			foreach ($messages as $message) {
+				if (!in_array($message['number'], $sent_to)) {
+					// SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
+					$sent_to[] = $message['number'];
+					
+					// debug
+					$body .= "<h3>" . $message["type"] . "</h3>";
+					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+				}
+			}
+
+			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
+			
+			returnJSON(count($sent_to));
+		}
+		
 		public function actionAjaxSmsHistory() {
 			extract($_POST);
 			
@@ -593,13 +667,18 @@
 			returnJsonAng($Students);
 		}
 		
-		public function actionAjaxPreCancel()
+		public function actionAjaxCheckPromoCode()
 		{
 			extract($_POST);
+			$code = strtoupper($code);
 			
-			$Contract = Contract::findById($id_contract);
-			$Contract->pre_cancelled = $pre_cancelled;
-			$Contract->save("pre_cancelled");
+			$code_valid = Student::count(["condition" => "code='$code'"]);
+			
+			if ($code_valid) {
+				returnJsonAng(true);				
+			} else {
+				returnJsonAng(false);
+			}
 		}
 		
 		public function actionAjaxSmsCheckOk()
@@ -612,5 +691,59 @@
 		{
 			extract($_POST);
 			dbConnection()->query("UPDATE sms SET force_ok = 0 WHERE id=$id");
+		}
+		
+		public function actionAjaxLoadStatsSchedule()
+		{
+			extract($_POST);
+			
+			$Schedule = GroupSchedule::findAll([
+				"condition" => "date='$date' AND id_group!=0",
+				"group"		=> "id_group",
+			]);
+			
+			foreach ($Schedule as &$S) {
+				$S->Group = Group::findById($S->id_group);
+				
+				// номер урока
+				$S->lesson_number = GroupSchedule::count([
+					"condition" => "id_group={$S->id_group} AND date <= '{$date}'"
+				]);
+			}
+			
+			usort($Schedule, function($a, $b) {
+				return $b->time - $a->time;
+			});
+			
+			returnJsonAng($Schedule);
+		}
+		
+		public function actionAjaxPlusDays()
+		{
+			extract($_POST);
+			
+			$return = StatsController::plusDays($day);
+			
+			returnJsonAng($return);
+		}
+		
+		public function actionAjaxCheckTeacherPass()
+		{
+			extract($_POST);
+			
+			$Teacher = Teacher::find([
+				"condition" => "id=" . User::fromSession()->id_entity
+			]);
+			
+			returnJsonAng($password == $Teacher->password);
+		}
+		
+		public function actionAjaxStudentsWithNoGroup()
+		{
+			$Students = Student::getWithoutGroup();
+			
+			// preType($Students, true);
+			
+			returnJsonAng($Students);
 		}
 	}

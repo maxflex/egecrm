@@ -1,1 +1,1 @@
-<h3 class="center text-danger" style="margin: 50px 0">Занятие не найдено</h3>
+<h4 class="center text-danger" style="margin: 50px 0"><?= $message ?></h4>

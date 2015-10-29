@@ -2,7 +2,9 @@
 	$placeholder_gray 	: #999999;
 	$blue				: #337AB7;
 	$hover_blue			: #23527c;
-
+	
+	$promo				: #3A6487;
+	
 	$red				: #ff0039;
 	$pink				: #ffcccc;
 	$orange				: #fbaa33;
@@ -13,8 +15,118 @@
 	$metro_green		: #029A55;
 	$bright_green		: #5cb85c;
 	
+	$dark_red			: #A94442;
+	
 	$hr_gray 			: #eee;
 	$half_black			: rgba(0, 0, 0, .5);
+
+.no-hover {
+	&:hover {
+		background: white !important;
+	}		
+}
+
+[ng-app="Promo"] {
+	color: $promo;
+	& h4 {
+		font-weight: normal;
+		margin-bottom: 50px;
+		line-height: 25px;
+	}
+	& h3 {
+		font-size: 20px;
+		text-align: center;
+		margin: 50px 0;
+	}
+	& .flip-clock-wrapper {
+		display: inline-block;
+	    width: 70px;
+	} 
+	& .promo-images {
+		text-align: center;
+		& label {
+			display: block;
+		    margin-top: 15px;
+// 		    font-weight: normal;
+		}
+		& > div {
+			display: inline-block;
+			width: 300px;
+		}
+		& span {
+			font-size: 15px;
+			display: block;
+			font-weight: bold;
+			margin-bottom: 20px;
+		}
+		& img {
+			height: 200px;
+		}
+		& a {
+			font-size: 12px;
+			color: $placeholder_gray;
+			text-decoration: underline;
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+	& .promo-info {
+		width: 90%;
+		margin: 0 auto;
+		& p {
+			margin: 0;
+			white-space: nowrap;
+		}
+		& div.row {
+			&:first-child {
+				padding-right: 0;
+			}
+			&:nth-child(2) {
+				margin-right: 15px;
+			}
+			width: 49%;
+			display: inline-block;
+			& a {
+				color: $promo;
+				text-decoration: underline;
+				&:hover {
+					text-decoration: none;
+					color: $hover_blue;
+				}
+			}
+		}
+		& circle {
+			$size:  30px;
+			font-size: 26px;
+			background-color: #337AB7;
+			color: white;
+			height: $size;
+			width: $size;
+			line-height: $size;
+			display: block;
+			text-align: center;
+			border-radius: 50%;
+		}
+	}
+}
+
+.add-to-journal {
+	display: none;
+}
+
+.vertical-margin {
+	display: block;
+	font-size: 12px;
+	text-align: center;
+	color: $half_black;
+	&.small {
+		margin: 25px 0;
+	}
+	&.medium {
+		margin: 50px 0;
+	}
+}
 
 body {
 	margin-top: 20px !important;
@@ -23,7 +135,10 @@ body {
 	background-image: url("../img/background/bg.jpg");
 }
 
-<<<<<<< HEAD
+.badge-danger {
+	background-color: $dark_red;
+}
+
 .visit-div {
 	display: inline-block;
     width: 100%;
@@ -74,20 +189,22 @@ body {
 	margin-right: 5px;
 }
 
-.students-10 {
-	background-color: rgba(255, 0, 0, 0.06);
+.manual-request {
+	background-color: rgba(92, 184, 92, 0.06) !important;
+}
+
+.students-10, .manual-request-red {
+	background-color: rgba(255, 0, 0, 0.06) !important;
 }
 
 .students-11 {
-	background-color: rgba(255, 0, 0, 0.15);
+	background-color: rgba(255, 0, 0, 0.15) !important;
 }
 
 .text-warning {
 	color: #C07911 !important;
 }
 
-=======
->>>>>>> parent of bb26286... Конец недели STABLE
 .bold {
 	font-weight: bold;
 }
@@ -98,6 +215,10 @@ body {
 
 .print-label {
 	width: 100px;
+}
+
+.bootstrap-select.btn-group>.disabled {
+	cursor: default !important;
 }
 
 .student-dragout {
@@ -459,6 +580,11 @@ body {
 
 .border-dashed-droppable-hover {
 	border: 3px dashed $green !important;
+} 
+
+.center-label {
+	position: relative;
+	top: -1px;
 }
 
 .group-student-status {
@@ -624,7 +750,6 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     top:  0;
 }
 
-<<<<<<< HEAD
 .invisible {
 	visibility: hidden !important;
 }
@@ -676,9 +801,6 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 }
 
 .day-explain, .circle-default {
-=======
-.day-explain {
->>>>>>> parent of bb26286... Конец недели STABLE
 	border-radius: 50% !important;
 	height: 14px;
     width: 14px;
@@ -686,11 +808,14 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     background: #5cb85c;
     top: 2px;
     position: relative;
-    &.was-lesson {
+    &.was-lesson, &.circle-blue {
 	    background-color: $blue !important;
     }
-    &.first-lesson {
+    &.first-lesson, &.circle-red {
 	    background-color: $red !important;
+    }
+    &.circle-orange {
+	   background-color: $orange !important; 
     }
     &.first-and-was {
 		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fbaa33+0,fbaa33+50,337ab7+51,337ab7+100 */
@@ -881,12 +1006,13 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	
 	& .task-status-toggle {
 //		height: 64px !important;
-		height: 50px !important;
+//		height: 50px !important;
+		height: 20px !important;
 		opacity: .8;
 		cursor: pointer;
 		position: absolute;
 //		top: calc(50% - 30px + 25px);
-		top: 50%;
+		top: 57%;
 		right: 10px;
 		&:hover {
 			opacity: 1;
@@ -1013,7 +1139,7 @@ button:disabled, select:disabled {
 	border-top: 0;
 }
 
-.ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
+.no-transition .slider-handle, .ios7-switch.no-transition input + span, .ios7-switch.no-transition input + span:after {
 	transition: none !important;
 }
 
@@ -1060,6 +1186,14 @@ h4.row-header {
 	padding: 1px 3px;
 //	color: #761316;
 	color: $half_black;
+}
+
+.label-red-visits {
+	background: #ffcccc;
+    border-radius: 4px;
+    padding: 2px 5px;
+    left: -4px;
+    position: relative;
 }
 
 .label-yellow {
@@ -1111,10 +1245,37 @@ h4.row-header {
 	width: 80%;
     left: 10%;
     top: 5%;
-    height: 90%;
+    max-height: 90%;
     overflow: hidden;
 }
 
+.vertical-header thead th {
+text-align:center;padding:10px 0;
+  font-weight: normal !important;
+  border: none !important;
+  &:not(:first-child) {
+	  border: 1px solid #ddd !important;
+	}
+}
+
+.testyy {
+-ms-transform: rotate(90deg);
+-moz-transform: rotate(90deg);
+-webkit-transform: rotate(90deg);
+transform: rotate(90deg);
+
+-ms-transform-origin: left top 0;
+-moz-transform-origin: left top 0;
+-webkit-transform-origin: left top 0;
+transform-origin: left top 0;
+
+margin-left: 30px;
+padding: 0;
+float: left;
+height:80px;
+width:5px;
+white-space: nowrap;
+}
 
 .lightbox-freetime {
     max-height: 700px;
@@ -1124,7 +1285,7 @@ h4.row-header {
 #sms-history {
 	margin-bottom: 10px;
     padding-left: 23px;
-	height: 523px;
+	max-height: 490px;
     overflow-y: scroll;
 }
 
@@ -1270,15 +1431,22 @@ h4.row-header {
 	padding-bottom: 0 !important;
 }
 
-.modal-password .modal-footer {
+.modal-password .modal-footer, .modal-password-bigger .modal-footer {
 	text-align: center !important;
 }
 
-.modal-password .modal-dialog {
+.modal-password .modal-dialog, .modal-password-bigger .modal-dialog {
 	width: 250px;
 	text-align: center;
 	& input {
 		text-align: center;
+	}
+}
+
+.modal-password-bigger .modal-dialog {
+	width: 310px;
+	& h4 {
+		font-size: 12px;
 	}
 }
 
@@ -1302,8 +1470,8 @@ h4.row-header {
 }
 
 .lightbox-addcontract {
-	width: 820px;
-	left: calc(50% - 410px);
+	width: 900px;
+	left: calc(50% - 450px);
 
 	& .input-group, input, select {
 		width: 230px;
@@ -1321,6 +1489,7 @@ h4.row-header {
 			width: 100%;
 			margin-bottom: 10px;
 			height: 34px;
+			position: relative;
 		}
 		& .ios7-switch {
 			& .switch {
@@ -1335,10 +1504,33 @@ h4.row-header {
 			}
 		}
 		& input[type="text"] {
-			width: 60px;
+			width: 100px;
 		//	visibility: hidden;
 		}
+		
+		& .dogavar-label {
+		    position: absolute;
+		    color: gray;
+		    font-size: 12px;
+		    top: 9px;
+		    &.zero {
+				right: 220px;   
+		    }
+		    &.first {
+				right: 115px;   
+		    }
+		    &.second {
+				right: 10px;   
+		    }
+		}
 	}
+}
+
+.contract-recommended-price {
+	font-size: 10px;
+	position: absolute;
+    right: 17px;
+    top: -16px;
 }
 
 .visible {
@@ -2047,8 +2239,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .table.table-divlike > tbody > tr > td {
 	border-top: none;
-	padding: 0;
-	padding-bottom: 5px;
+	padding: 2px 0 3px;
 }
 
 .table.table-divlike > thead > tr > td {

@@ -21,14 +21,22 @@
 			
 		}
 		
-<<<<<<< HEAD
 		public function actionJournal()
 		{
-			$this->setTabTitle("Посещаемость группы " . $id_group);
-			
 			$id_group 	= $_GET['id_group'];
-			$id_group = $_GET['id'];		
+			$id_group = $_GET['id'];
+					
+			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+			
+			$this->setTabTitle("Посещаемость группы №" . $id_group);
+			
 			$Group = Group::findById($id_group);
+			
+			// restrict other teachers to access journal
+			if ((User::fromSession()->type == Teacher::USER_TYPE) && ($Group->id_teacher != User::fromSession()->id_entity)) {
+				$this->renderRestricted();
+			}
+			
 			
 			$Group->Schedule = $Group->getSchedule();
 			
@@ -80,52 +88,74 @@
 			]);
 		}
 		
-=======
->>>>>>> parent of bb26286... Конец недели STABLE
 		public function actionLesson()
 		{
 			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+			
 			$date 		= $_GET['date'];
 			$id_group 	= $_GET['id_group'];
 			
 			if (!Group::inSchedule($id_group, $date)) {
 				$this->setTabTitle("Ошибка");
-				$this->render("no_lesson");
+				$this->render("no_lesson", [
+					"message" => "Занятие отсутствует"
+				]);
 			} else {
-				$this->_custom_panel = true;
-				$Group = Group::findById($id_group);
-				$registered_in_journal = $Group->registeredInJournal($date);
-				
-				// если занятие уже зарегистрировано, берем данные из журнала
-				if ($registered_in_journal) {
-					$LessonData = VisitJournal::findAll([
-						"condition" => "lesson_date='$date' AND id_group=$id_group AND type_entity='". Student::USER_TYPE ."'"
+				// если занятие еще не началось, нельзя переходить в функционал добавления в журнал
+				$Schedule = GroupSchedule::find([
+					"condition" => "date='$date' AND id_group=$id_group"
+				]);
+				$schedule_date = $Schedule->date . " " . $Schedule->time;
+
+				if ($schedule_date > now()) {
+					$this->setTabTitle("Ошибка");
+					$this->render("no_lesson", [
+						"message" => "Занятие еще не началось"
 					]);
+				} else {
+					// если дошло досюда, всё хорошо, ошибок нет
+					$this->_custom_panel = true;
+					$Group = Group::findById($id_group);
 					
-					$student_ids = [];
-					foreach ($LessonData as $OneData) {
-						$student_ids[] = $OneData->id_entity;
-						$OrderedLessonData[$OneData->id_entity] = $OneData;
+					// restrict other teachers to access journal
+					if ((User::fromSession()->type == Teacher::USER_TYPE) && ($Group->id_teacher != User::fromSession()->id_entity)) {
+						$this->renderRestricted();
 					}
 					
-					$Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"]);
-				} else {
-					$Group->Students = $Group->getStudents();
+					$registered_in_journal = $Group->registeredInJournal($date);
+					
+					// если занятие уже зарегистрировано, берем данные из журнала
+					if ($registered_in_journal) {
+						$LessonData = VisitJournal::findAll([
+							"condition" => "lesson_date='$date' AND id_group=$id_group AND type_entity='". Student::USER_TYPE ."'"
+						]);
+						
+						$student_ids = [];
+						foreach ($LessonData as $OneData) {
+							$student_ids[] = $OneData->id_entity;
+							$OrderedLessonData[$OneData->id_entity] = $OneData;
+						}
+						
+						$Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"]);
+					} else {
+						$Group->Students = $Group->getStudents();
+					}
+					
+					$ang_init_data = angInit([
+						"Group" 	=> $Group,
+						"LessonData"=> $OrderedLessonData,
+						"lesson_statuses" => VisitJournal::$statuses,
+						"id_group"		=> $id_group,
+						"date"			=> $date,
+						"registered_in_journal" => $Group->registeredInJournal($date),
+					]);
+					
+					
+					$this->render("lesson", [
+						"ang_init_data" => $ang_init_data,
+					]);
 				}
 				
-				$ang_init_data = angInit([
-					"Group" 	=> $Group,
-					"LessonData"=> $OrderedLessonData,
-					"lesson_statuses" => LessonData::$statuses,
-					"id_group"		=> $id_group,
-					"date"			=> $date,
-					"registered_in_journal" => $Group->registeredInJournal($date),
-				]);
-				
-				
-				$this->render("lesson", [
-					"ang_init_data" => $ang_init_data,
-				]);
 			}
 		}
 		
@@ -183,33 +213,24 @@
 				$this->addJs("bootstrap-select, dnd");
 				
 				$Groups = Group::findAll();
-/*
 				
+				// исключить некоторые данные для более быстрой front-end загрузки
 				foreach ($Groups as &$Group) {
-				//	$Group->Schedule = $Group->getScheduleCached();
-					$Group->schedule_count = $Group->getScheduleCountCached();
+					unset($Group->Comments);
 				}
-*/
-				
-				$mode = ($_GET["mode"] == "students" ? 1 : 2);
 				
 				$Teachers = Teacher::getActiveGroups();
-				
-				$Stats = Group::getStats();
 				
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
 					"Teachers"		=> $Teachers,
 					"Subjects" 		=> Subjects::$three_letters,
+					"SubjectsShort" => Subjects::$short,
 					"Grades"		=> Grades::$all,
 					"mode" 			=> $mode,
 					"change_mode" 	=> $mode,
 					"GroupLevels"	=> GroupLevels::$all,
-<<<<<<< HEAD
 					"time" 			=> Freetime::TIME,
-=======
-					"Stats"		=> $Stats,
->>>>>>> parent of bb26286... Конец недели STABLE
 				]);
 				
 				$this->render("list", [
@@ -257,7 +278,15 @@
 				$id_group = $_GET['id'];		
 				$Group = Group::findById($id_group);
 				
+				// restrict other teachers to access journal
+				if ($Group->id_teacher != User::fromSession()->id_entity) {
+					$this->renderRestricted();
+				}
+				
 				$Group->Schedule = $Group->getSchedule();
+				$Group->Students = Student::findAll([
+					"condition" => "id IN (" . implode(',', $Group->students) . ")"
+				]);
 				
 				$Teacher = Teacher::findById($Group->id_teacher);
 				
@@ -337,7 +366,9 @@
 			foreach ($Group->students as $id_student) {
 				$Student = Student::findById($id_student);
 				$Student->Contract 	= $Student->getLastContract();
-								
+				
+				$Student->teacher_like_status = StudentTeacherLike::getStatus($Student->id, $Teacher->id_teacher);
+						
 				foreach ($Student->branches as $id_branch) {
 					if (!$id_branch) {
 						continue;
@@ -346,7 +377,6 @@
 				}
 				
 				$freetime = $Student->getGroupFreetime($Group->id, $Group->id_branch);
-				$Student->freetime 			= $freetime["freetime"];
 				$Student->freetime_red 		= $freetime["freetime_red"];
 				$Student->freetime_red_half = $freetime["freetime_red_half"];
 				$Student->red_doubleblink 	= $freetime["red_doubleblink"];
@@ -374,8 +404,6 @@
 			
 			
 			// Свободное время препода
-			$teacher_freetime 			= TeacherFreetime::get($Group->id_teacher);
-			
 			$teacher_freetime_all 		= TeacherFreetime::getRedAll($Group->id, $Group->id_teacher);
 			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
 			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
@@ -396,13 +424,12 @@
 				"Subjects"	=> Subjects::$three_letters,
 				"GroupLevels" => GroupLevels::$all,
 				"subjects_short" => Subjects::$short,
-				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch),
+				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
 				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
 				"GroupTeacherStatuses"	=> GroupTeacherStatuses::$all,
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_freetime"		=> Cabinet::getFreetime($Group->id, $Group->cabinet),
 				"teacher_freetime"		=> $teacher_freetime_red, // red half
-				"teacher_freetime_green"=> $teacher_freetime,
 				"teacher_freetime_red"	=> $teacher_freetime_red_full,
 				"teacher_freetime_orange_half" 	=> $teacher_freetime_orange_half,
 				"teacher_freetime_orange_full"	=> $teacher_freetime_orange_full,
@@ -427,7 +454,6 @@
 				$Student->in_other_group = $Student->inOtherGroup($_POST['id_group'], $_POST['id_subject']) ? true : false;
 				
 				$freetime = $Student->getGroupFreetime($_POST['id_group'], $_POST['id_branch']);
-				$Student->freetime 				= $freetime['freetime'];
 				$Student->freetime_red 			= $freetime['freetime_red'];
 				$Student->freetime_red_half 	= $freetime['freetime_red_half'];
 				$Student->freetime_orange	 	= $freetime["freetime_orange"];
@@ -558,7 +584,7 @@
 			extract($_POST);
 			
 			returnJsonAng(
-				Cabinet::getByBranch($id_branch)
+				Cabinet::getByBranch($id_branch, $id_group)
 			);
 		}		
 		
@@ -589,8 +615,6 @@
 			$id_group = $id_group ? $id_group : 0;
 			
 			// Свободное время препода
-			$teacher_freetime 			= TeacherFreetime::get($id_teacher);
-			
 			$teacher_freetime_all 		= TeacherFreetime::getRedAll($id_group, $id_teacher);
 			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
 			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
@@ -614,7 +638,6 @@
 			returnJsonAng([
 				"red" 		=> $teacher_freetime_red,
 				"red_full" 	=> $teacher_freetime_red_full,
-				"green"		=> $teacher_freetime,
 				"orange"	=> $teacher_freetime_orange_half,
 				"orange_full"		=> $teacher_freetime_orange_full,
 				"red_doubleblink" 	=> $teacher_freetime_doubleblink,
@@ -635,11 +658,24 @@
 			
 			// Дополнительный вход
 			User::rememberMeLogin();
-			preType([User::fromSession(), $_POST]);
 			$data = array_filter($data);
 			
-			LessonData::addData($id_group, $date, $data);
 			VisitJournal::addData($id_group, $date, $data);
+			
+			// Обновляем красные счетчики
+			if (!LOCAL_DEVELOPMENT) {
+				$errors = memcached()->get("JournalErrors");
+				
+				if (($key = array_search($id_group, $errors[$date])) !== false) {
+				    unset($errors[$date][$key]);
+				    memcached()->set("JournalErrors", $errors, 3600 * 24);
+				}
+				
+				$count = memcached()->get("JournalErrorsCount");
+				$count--;
+				memcached()->set("JournalErrorsCount", $count, 3600 * 24);
+			}
+			// CronController::actionUpdateJournalMiss();
 		}
 		
 		
@@ -655,6 +691,9 @@
 			
 			$return = $Group->countSchedule();
 			memcached()->set("GroupScheduleCount[{$Group->id}]", $return, 5 * 24 * 3600);
+			
+			// обновить циферки в меню ЗАЧЕМ ЭТО ЗДЕСЬ НУЖНО?
+			// CronController::actionUpdateJournalMiss();
 		}
 		
 		public function actionAjaxUpdateStatsCache()
@@ -718,7 +757,6 @@
 				}
 			}
 		}
-<<<<<<< HEAD
 		
 		// DOWNLOAD SCHEDULE
 		public function actionDownloadSchedule()
@@ -946,6 +984,4 @@
 			return $col.$row;
 		}
 		
-=======
->>>>>>> parent of bb26286... Конец недели STABLE
 	}

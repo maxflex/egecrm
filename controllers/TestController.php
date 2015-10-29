@@ -14,7 +14,6 @@
 //			error_reporting(E_ALL);
 		}
 		
-<<<<<<< HEAD
 		public function actionSwitchTest()
 		{
 			$this->addCss("bs-slider");
@@ -100,8 +99,6 @@
 			$objWriter->save('php://output');
 		}
 		
-=======
->>>>>>> parent of bb26286... Конец недели STABLE
 		public function actionReviewCount()
 		{
 			$Groups = Group::findAll();
@@ -317,6 +314,73 @@
 			
 			var_dump($Group->lessonDaysMatch());
 		}
+		
+		
+		public function actionSmsCheckLate()
+		{
+			$result = dbConnection()->query("select * from sms where message LIKE '%опоздал%' or  message LIKE '%отсутствовал%'");
+			
+			while ($row = $result->fetch_object())
+			{
+				$all_sms[] = $row;
+			}
+			
+			
+			foreach ($all_sms as &$sms) {
+				$phone = $sms->number;
+				
+				$sms->message = preg_replace('!\s+!', ' ', $sms->message);
+				preg_match("/информирует: ([\d]+) ([\w]+) ([\w-]+[\s]*[\w-]+) ([\w]+)/u", $sms->message, $matches);
+				
+				$presence = false;
+				
+				if (strpos($matches[4], "отсутствовал") !== false) {
+					$presence = 2;
+				} else 
+				if (strpos($matches[4], "опоздал") !== false) {
+					$presence = 1;
+				}
+				
+				if ($presence) {
+					$month = russian_month_id_by_name($matches[2]);
+					if ($month < 10) {
+						$month = "0" . $month;
+					}
+					$date = "2015-{$month}-{$matches[1]}";
+					
+					list($last_name, $first_name) = explode(" ", $matches[3]);
+					
+					$result = dbConnection()->query("
+						SELECT * FROM visit_journal vj
+						LEFT JOIN students s on s.id = vj.id_entity
+						WHERE vj.type_entity = 'STUDENT' AND s.first_name = '{$first_name}' 
+							AND s.last_name = '{$last_name}' AND vj.lesson_date = '$date' AND ". ($presence == 2 ? "vj.presence=2" : "(vj.presence=1 AND vj.late > 0)") ."
+					");
+					
+					$count_all++;
+					
+					if ($result->num_rows) {
+						$count_correct++;
+					}
+					
+// 					h1($result->num_rows);
+				}
+				
+// 				h1($matches[4] . "-" . $presence);
+// 				preType($matches);	
+			}
+			echo "ALL: $count_all | CORRECT: $count_correct";
+// 			preType($all_sms);
+			
+/*
+			$this->setTabTitle("Проверка СМС");
+			
+			$this->render("sms_check", [
+				"all_sms" => $all_sms
+			]);		
+*/
+		}
+
 		
 		
 		public function actionSmsCheck()
@@ -569,6 +633,18 @@
 					"id_entity"		=> $Student->id
 				]);
 */
+			}
+		}
+		
+		public function actionSetStudentCode()
+		{
+			$Students = Student::getWithContract();
+									
+			foreach ($Students as $Student) {
+				// if (!$Student->code) {
+					$Student->code = Contract::_generateCode();
+					$Student->save("code");
+				//}
 			}
 		}
 		

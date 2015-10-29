@@ -30,6 +30,20 @@
 			self::COMPUTER	=> "информатика",
 		];
 		
+		# Все предметы
+		static $full = [
+			self::MATH 		=> "Математика",
+			self::PHYSICS	=> "Физика",
+			self::RUSSIAN	=> "Русский язык",
+			self::LITERATURE=> "Литература",
+			self::ENGLISH	=> "Английский язык",
+			self::HISTORY	=> "История",
+			self::SOCIETY	=> "Обществознание",
+			self::CHEMISTRY	=> "Химия",
+			self::BIOLOGY	=> "Биология",
+			self::COMPUTER	=> "Информатика",
+		];
+		
 		static $dative = [
 			self::MATH 		=> "математике",
 			self::PHYSICS	=> "физике",

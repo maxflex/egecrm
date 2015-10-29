@@ -1,7 +1,8 @@
-<div ng-repeat="request in requests | filter:{adding : 0}" class="request-main-list" data-id="{{request.id}}">
+<div ng-repeat="request in requests | filter:{adding : 0}" class="request-main-list" data-id="{{request.id}}" ng-class="{
+	'manual-request-red': request.contract_time && request.contract_time > 0 && request.contract_time <= 3600
+}">
 	<div class="row">
 		<div class="col-sm-10">
-
 			<div>
 				<span ng-show="request.branches_data" style="margin-right: 10px">
 					<span ng-class="{'mr3' : !$last}" ng-repeat="branch in request.branches_data"><span class="label label-metro-short" style="background: {{branch.color}}; top: -2px; position: relative">{{branch.short}}</span></span>
@@ -63,9 +64,8 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
-
+		
 		<div class="col-sm-2" style="text-align: right">
 			<div ng-show="request.subjects.length > 0">
 				<div ng-repeat="subject in request.subjects">
@@ -88,7 +88,7 @@
 				<a class="link-reverse" style="margin-left: 5px" href="requests/edit/{{request.id}}">редактировать</a>
 			</div>
 		</div>
-		<div class="col-sm-3">
+		<div class="col-sm-2">
 			<select class="user-list small" onchange="changeUserColor(this)" data-rid="{{request.id}}" style="background-color: {{users[request.id_user].color}}">
 				<option selected="" value="">пользователь</option>
 				<option disabled="" value="">──────────────</option>
@@ -98,8 +98,9 @@
 				</option>
 			</select>
 		</div>
-		<div class="col-sm-3" style="text-align: right" ng-show="request.has_contract">
-			<span class="label label-success">договор заключен</span>
+		<div class="col-sm-4"  >
+			<span class="label small group-teacher-status3 pull-left" style="position: relative; top: 4px; left: 40px">{{sources[request.id_source]}}</span>
+			<span ng-show="request.has_contract" class="label label-success pull-right" style="position: relative; top: 4px">договор заключен</span>
 		</div>
 	</div>
 	<hr ng-hide="$last">

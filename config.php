@@ -13,7 +13,8 @@
 		"DB_PREFIX"		=> "",
 		"BASE_ADDON"	=> "/egecrm/",
 		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/egecrm",
-
+		
+		"LESSON_LENGTH" 	=> 135, // длина урока в минутах (2ч 15мин)
 		"LOCAL_DEVELOPMENT"	=> true,
 		"ERRORS"			=> 81,
 	);

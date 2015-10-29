@@ -22,6 +22,9 @@
 					<span class='text-success'>OK</span>
 				</b>
 			</td>
+			<td style="width: 15px">
+				<span class="glyphicon glyphicon-envelope <?= $sms->not_notified ? 'quater-black' : 'text-success' ?>" style="margin: 0"></span>
+			</td>
 			<td>
 				<?php if ($sms->not_agreed) :?>
 					<b class="text-danger">НЕ СОГЛАСЕН</b>

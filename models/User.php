@@ -206,6 +206,15 @@
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
+		public function promoVisit()
+		{
+			if ($this->type == Student::USER_TYPE && $this->id > 112) {
+				$Student = Student::findById($this->id_entity);
+				$Student->promo_visit_count++;
+				$Student->save("promo_visit_count");
+			}
+		}
+		
 		public function beforeSave()
 		{
 			if ($this->isNewRecord) {

@@ -25,6 +25,83 @@
 		
 		
 		/**
+		 * Обновить отсутствующие фактически занятия, но присутствующие в расписании.
+		 * 
+		 */
+		public static function actionUpdateJournalMiss()
+		{
+			// Высчитываем полностью отсутствующие занятия
+			$Groups = Group::findAll();
+			
+			// для подсчета цифры ВСЕГО ОТСУТСТВУЮЩИХ ГРУПП
+			// (будет отображаться кружочком в меню)
+			$count = [];
+			foreach ($Groups as $Group) {
+				$PastSchedule = $Group->getPastScheduleBeforeEnd();
+				
+				foreach ($PastSchedule as $Schedule) {
+					// Проверяем было ли это занятие
+					$was_lesson = VisitJournal::find([
+						"condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
+					]);
+					
+					// если занятия не было, добавляем в ошибки
+					if (!$was_lesson) {
+ 						$return[$Schedule->date][] = $Schedule->id_group;
+						
+						if (!in_array($Schedule->id_group, $count)) {
+							$count[] = $Schedule->id_group;
+						}
+					}
+				}
+			}
+			
+			if (!LOCAL_DEVELOPMENT) {
+				memcached()->set("JournalErrorsCount", count($count), 3600 * 24);
+				memcached()->set("JournalErrors", $return, 3600 * 24); 
+			} 
+			// var_dump(count($count));
+			return count($count);
+		}
+		
+		/**
+		 * Уведомить учителя об отсутствии записи в журнале
+		 * 
+		 */
+		public static function actionTeacherNotifyJournalMiss()
+		{
+			// Высчитываем полностью отсутствующие занятия
+			$Groups = Group::findAll();
+			
+			foreach ($Groups as $Group) {
+				if (!$Group->Teacher) {
+					continue;
+				}
+				$PastSchedule = $Group->getPastScheduleTeacherReport();
+				
+				foreach ($PastSchedule as $Schedule) {
+					// Проверяем было ли это занятие
+					$was_lesson = VisitJournal::find([
+						"condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
+					]);
+					
+					// если занятия не было, отправляем смс
+					if (!$was_lesson) {
+						$message = Template::get(9, [
+							"time" 			=> $Schedule->time,
+							"teacher_name"	=> $Group->Teacher->first_name ." " .$Group->Teacher->middle_name
+						]);
+						if (!empty($Group->Teacher->phone)) {
+						//	SMS::send($Group->Teacher->phone, $message);
+						//	echo $message . "<hr>";
+							Email::send("makcyxa-k@yandex.ru", "Отсутствие занятий у учителя", $message);
+						}
+					}
+				}
+			}
+		}
+		
+		/**
 		 * Выгружает количества групп на ЕГЭ-ЦЕНТР в переменны {inf_11} и тд.
 		 * 
 		 */

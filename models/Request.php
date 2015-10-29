@@ -40,7 +40,6 @@
 			
 			// Включаем связи
 			$this->Student 			= Student::findById($this->id_student);
-			$this->Notification 	= Notification::findById($this->id_notification);
 			$this->Comments			= Comment::findAll([
 				"condition" => "place='". Comment::PLACE_REQUEST ."' AND id_place=" . $this->id,
 			]);
@@ -148,6 +147,10 @@
 				
 				$Request->has_contract = $Request->hasContract();
 				
+				if ($Request->has_contract) {
+					$Request->contract_time = $Request->contractTimeDiff();
+				}
+				
 				if ($Request->duplicates) {
 					$Request->total_count = count($Request->duplicates) + 1;
 				}
@@ -204,6 +207,10 @@
 				
 				$Request->has_contract = $Request->hasContract();
 				
+				if ($Request->has_contract) {
+					$Request->contract_time = $Request->contractTimeDiff();
+				}
+				
 				if ($Request->duplicates) {
 					$Request->total_count = count($Request->duplicates) + 1;
 				}
@@ -245,6 +252,21 @@
 			return Contract::count([
 				"condition" => "id_student=" . $this->id_student
 			]) > 0;
+		}
+		
+		
+		/**
+		 * Время между созданием договора и созданием заявки.
+		 * 
+		 */
+		public function contractTimeDiff()
+		{
+			$OriginalContract = Contract::find([
+				"condition" => "id_student=" . $this->id_student,
+				"order"		=> "id ASC"
+			]);
+			
+			return (strtotime($OriginalContract->date_changed) - strtotime($this->date));
 		}
 
 		public function processIncoming()
@@ -479,4 +501,36 @@
 
 			return false;
 		}
+		
+		
+		/**
+		 * Коливество дней/недель/месяцев/лет с момента первой заявки
+		 * 
+		 * @param string $mode (default: 'days')
+		 * $mode = days | weeks | months | years
+		 */
+		public static function timeFromFirst($mode = 'days')
+		{
+			$today = time(); // or your date as well
+			
+		    $first_request_date = 1432071360; // #hardcoded first request timestamp
+		    
+		    $datediff = $today - $first_request_date;
+
+		    switch ($mode) {
+			    case 'days': {
+				    return ceil($datediff / (60 * 60 * 24));
+			    }
+			    case 'weeks': {
+				    return ceil($datediff / (60 * 60 * 24 * 7));
+			    }
+			    case 'months': {
+				    return ceil($datediff / (60 * 60 * 24 * 30));
+			    }
+			    case 'years': {
+				    return ceil($datediff / (60 * 60 * 24 * 365));
+			    }
+		    }
+		}
+
 	}

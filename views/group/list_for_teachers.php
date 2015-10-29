@@ -3,14 +3,11 @@
 		<div class="col-sm-12">
 			
 			
-			<table class="table table-divlike" style="position: relative">
+<table class="table table-divlike" style="position: relative; width: 90%">
 	<tr ng-repeat="Group in Groups" 
 		class="group-list" data-id="{{Group.id}}">
-		<td width="100">
-			<a href="groups/edit/{{Group.id}}/schedule">Группа №{{Group.id}}</a>
-		</td>
 		<td>
-			<span>ЕГЭ-Центр-{{Branches[Group.id_branch]}}</span>
+			Группа №{{Group.id}}
 		</td>
 		<td>
 			{{Subjects[Group.id_subject]}}
@@ -19,14 +16,28 @@
 			{{Group.grade}} класс
 		</td>
 		<td>
-			{{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
-				'one': 'занятие',
-				'few': 'занятия',
-				'many': 'занятий'
+			{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
+				'one': 'ученик',
+				'few': 'ученика',
+				'many': 'учеников',
 			}"></ng-pluralize>
 		</td>
 		<td>
-			{{Group.is_special ? " (спец.)" : ""}}
+			<div ng-repeat="(day, day_data) in Group.day_and_time">
+				{{weekdays[day - 1].short}}
+				<span ng-repeat="dd in day_data">
+					в {{dd}}{{$last ? "" : ","}}
+				</span>
+			</div>
+		</td>
+		<td>
+			<span>ЕГЭ-Центр-{{Branches[Group.id_branch]}}</span>
+		</td>
+		<td>
+			<a href="groups/edit/{{Group.id}}/schedule">расписание</a>
+		</td>
+		<td>
+			<a href="groups/journal/{{Group.id}}">посещаемость</a>
 		</td>
 	</tr>
 </table>

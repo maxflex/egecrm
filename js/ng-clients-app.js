@@ -5,11 +5,23 @@ angular.module("Clients", []).filter('to_trusted', [
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("ListCtrl", function($scope) {
+]).controller("ErrorsCtrl", function($scope) {
+  return angular.element(document).ready(function() {
+    set_scope("Clients");
+    return $.post("clients/ajax/getErrorStudents", {
+      mode: window.location.search
+    }, function(response) {
+      $scope.Response = response;
+      return $scope.$apply();
+    }, "json");
+  });
+}).controller("ListCtrl", function($scope) {
   $scope.filter_cancelled = 0;
   $scope.clientsFilter = function(Student) {
     if ($scope.filter_cancelled === 2) {
-      return Student.Contract.pre_cancelled === 1;
+      return _.findWhere(Student.Contract.subjects, {
+        status: 1
+      }) !== void 0 && Student.Contract.cancelled === 0;
     } else {
       return Student.Contract.cancelled === $scope.filter_cancelled;
     }
@@ -42,7 +54,19 @@ angular.module("Clients", []).filter('to_trusted', [
       return 0;
     }
   };
+  $scope.to_students = true;
+  $scope.to_representatives = false;
+  $scope.smsDialog3 = function() {
+    $scope.sms_students = $scope.$eval("Students | filter:clientsFilter");
+    $scope.sms_students_ids = _.pluck($scope.sms_students, 'id');
+    return smsDialog3();
+  };
   return angular.element(document).ready(function() {
-    return set_scope("Clients");
+    $.post("clients/ajax/GetStudents", {}, function(response) {
+      $scope.Students = response;
+      return $scope.$apply();
+    }, "json");
+    set_scope("Clients");
+    return smsMode(3);
   });
 });

@@ -1,4 +1,81 @@
 	angular.module("Payments", [])
+		.filter('reverse', function() {
+			return function(items) {
+				if (items) {
+					return items.slice().reverse();
+				}
+			};
+		})
+		.controller("LkTeacherCtrl", function($scope, $http) {
+			
+			$scope.formatDate = function(date) {
+				return moment(date).format("D MMMM YYYY")
+			}
+			
+			$scope.formatTime = function(time) {
+				return time.substr(0, 5)
+			}
+			
+			$scope.totalPaid = function() {
+				sum = 0;
+				$.each($scope.payments, function(i, payment){
+					sum += payment.sum
+				})
+				return sum
+			}
+			
+			$scope.totalEarned = function() {
+				sum = 0;
+				$.each($scope.Data, function(i, data){
+					sum += data.teacher_price
+				})
+				return sum
+			}
+			
+			$scope.toBePaid = function() {
+				return $scope.totalEarned() - $scope.totalPaid()
+			}
+			
+			angular.element(document).ready(function() {
+				bootbox.prompt({
+					title: "Для доступа к странице введите ваш пароль",
+					className: "modal-password-bigger",
+					callback: function(result) {
+						$.ajax({
+							url: "ajax/checkTeacherPass", 
+							data: {password: result}, 
+							dataType: "json",
+							method: "post",
+							success: function(response) {
+								if (response == true) {
+									$scope.password_correct = true;
+									$.post("payments/ajaxLkTeacher", {}, function(response) {
+										console.log(response)
+										$scope.payments = response.payments 
+										$scope.Data 	= response.Data
+										$scope.loaded	= true; // data loaded
+										$scope.$apply()
+									}, "json")
+								} else {
+									$scope.password_correct = false;
+								}
+								$scope.$apply();
+							},
+							async: false,
+						})
+							
+					},
+					buttons: {
+						confirm: {
+							label: "Подтвердить"
+						},
+						cancel: {
+							className: "display-none"
+						}		
+					}
+				})
+			})
+		})
 		.controller("ListCtrl", function($scope) {
 			$scope.filter = 6;
 			

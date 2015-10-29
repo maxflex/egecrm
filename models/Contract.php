@@ -100,6 +100,22 @@
 			echo $NewContract->id;
 		}
 		
+		
+		/**
+		 * Сгенерировать акционный код.
+		 * [1-9]{1}[A-Z]{3}
+		 * 
+		 */
+		public static function _generateCode()
+		{
+			// генерировать код пока он станет уникальным 
+			do {
+				$code = generateRandomString(1, ['uppercase']) . generateRandomString(3, ['digits']);
+			} while (Student::find(["condition" => "code = '$code'"]));
+			
+			return $code;
+		}
+		
 		public static function addNewAndReturn($Contract)
 		{
 			// Создаем договор
@@ -115,6 +131,7 @@
 			if (!$Student->login) {
 				$Student->login 	= $NewContract->id;
 				$Student->password	= mt_rand(10000000, 99999999);
+				$Student->code		= self::_generateCode();
 				$Student->save();
 				
 				User::add([

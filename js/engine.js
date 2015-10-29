@@ -117,7 +117,7 @@
 				password = false
 			}
 		} else 
-		if ($('[ng-app="Group"]').length) {
+		if ($('[ng-app="Group"],[ng-app="Clients"]').length) {
 			login = '{entity_login}'
 			password = '{entity_password}'
 		}
@@ -188,6 +188,11 @@
 	
 	function smsDialog2(id_group) {
 		$("#sms-number").text("Группа №" + id_group);
+		lightBoxShow('sms')
+	}
+	
+	function smsDialog3() {
+		$("#sms-number").text("Групповое сообщение клиентам");
 		lightBoxShow('sms')
 	}
 	
@@ -269,6 +274,25 @@
 			};
 			console.log(data);
 			$.post("ajax/sendGroupSms", data, function(response) {
+				ajaxEnd("sms")
+				lightBoxHide();
+				notifySuccess("Отправлено " + response + " СМС");
+				message.val("")
+			});
+		}
+		
+		if (mode == 3) {
+			ajaxStart("sms");
+			console.log("here");
+			data = {
+				"message": message.val().trim(),
+				"place": "CLIENTS",
+				"to_students": ang_scope.to_students,
+				"to_representatives": ang_scope.to_representatives,
+				"student_ids": ang_scope.sms_students_ids,
+			};
+			console.log(data);
+			$.post("ajax/sendGroupSmsClients", data, function(response) {
 				ajaxEnd("sms")
 				lightBoxHide();
 				notifySuccess("Отправлено " + response + " СМС");
@@ -425,6 +449,13 @@
 				locale: 'ru',
 			})
 			
+			$(".bs-date-default").datetimepicker({
+				format: 'YYYY-MM-DD',
+				locale: 'ru',
+			})
+			
+			$(".passport-number").inputmask("Regex", {regex: "[a-zA-Z0-9]{0,12}"});
+			
 			// REGEX для полей типа "число" и "1-5"
 			$(".digits-only-float").inputmask("Regex", {regex: "[0-9]*[.]?[0-9]+"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
@@ -559,7 +590,7 @@
 	function lightBoxShow(element)
 	{
 		if (element == "addcontract") {
-			setTimeout(function(){$(".ios7-switch.transition-control").removeClass("no-transition")}, 300)
+			setTimeout(function(){$(".transition-control").removeClass("no-transition")}, 300)
 		}
 		
 		$(".lightbox, .lightbox-" + element).fadeIn(150)
@@ -567,7 +598,7 @@
 	
 	function lightBoxHide()
 	{
-		$(".ios7-switch.transition-control").addClass("no-transition")
+		$(".transition-control").addClass("no-transition")
 		
 		$(".lightbox, div[class^='lightbox-']").fadeOut(150)
 	}
@@ -584,6 +615,43 @@
 	function frontendLoadingEnd()
 	{
 		$("#frontend-loading").hide()
+	}
+    
+	    /**
+	 * Sort JavaScript Object
+	 * CF Webtools : Chris Tierney
+	 * obj = object to sort
+	 * order = 'asc' or 'desc'
+	 */
+	function sortObj( obj, order ) {
+		"use strict";
+	
+		var key,
+			tempArry = [],
+			i,
+			tempObj = {};
+	
+		for ( key in obj ) {
+			tempArry.push(key);
+		}
+	
+		tempArry.sort(
+			function(a, b) {
+				return a.toLowerCase().localeCompare( b.toLowerCase() );
+			}
+		);
+	
+		if( order === 'asc' ) {
+			for ( i = 0; i < tempArry.length; i++ ) {
+				tempObj[ tempArry[i] ] = obj[ tempArry[i] ];
+			}
+		} else {
+			for ( i = tempArry.length - 1; i >= 0; i-- ) {
+				tempObj[ tempArry[i] ] = obj[ tempArry[i] ];
+			}
+		}
+	
+		return tempObj;
 	}
     
     /**

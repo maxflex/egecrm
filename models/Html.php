@@ -72,15 +72,18 @@ echo <<<HTML
     	<input ng-keyup id="{$who}-phone" type="text"
     		placeholder="телефон" class="form-control phone-masked"  ng-model="{$Model}.phone">
     	<div class="input-group-btn">
-					<button ng-show="phoneCorrect('{$who}-phone') && isMobilePhone('{$who}-phone')" ng-class="{
-							'addon-bordered' : {$who}_phone_level >= 2 || !phoneCorrect('{$who}-phone')
-						}" class="btn btn-default" type="button" onclick="smsDialog('{$who}-phone')">
-							<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
-					</button>
-		        	<button ng-hide="{$who}_phone_level >= 2 || !phoneCorrect('{$who}-phone')" class="btn btn-default" type="button" ng-click="{$who}_phone_level = {$who}_phone_level + 1">
-		        		<span class="glyphicon glyphicon-plus no-margin-right" style="font-size: 12px"></span>
-		        	</button>
-            </div>
+	    	<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone') && isMobilePhone('{$who}-phone')" ng-click="callSip('{$who}-phone')">
+				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+			</button>
+			<button ng-show="phoneCorrect('{$who}-phone') && isMobilePhone('{$who}-phone')" ng-class="{
+					'addon-bordered' : {$who}_phone_level >= 2 || !phoneCorrect('{$who}-phone')
+				}" class="btn btn-default" type="button" onclick="smsDialog('{$who}-phone')">
+					<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+			</button>
+	    	<button ng-hide="{$who}_phone_level >= 2 || !phoneCorrect('{$who}-phone')" class="btn btn-default" type="button" ng-click="{$who}_phone_level = {$who}_phone_level + 1">
+	    		<span class="glyphicon glyphicon-plus no-margin-right small"></span>
+	    	</button>
+        </div>
 	</div>
 </div>
 <div class="form-group" ng-show="{$who}_phone_level >= 2">
@@ -89,13 +92,16 @@ echo <<<HTML
     	<input ng-keyup id="{$who}-phone-2" type="text"
     		placeholder="телефон 2" class="form-control phone-masked" ng-model="{$Model}.phone2">
     	<div class="input-group-btn">
+    		<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone-2') && isMobilePhone('{$who}-phone-2')" ng-click="callSip('{$who}-phone-2')">
+				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+			</button>
 			<button ng-show="phoneCorrect('{$who}-phone-2') && isMobilePhone('{$who}-phone-2')" ng-class="{
 					'addon-bordered' : {$who}_phone_level >= 3 || !phoneCorrect('{$who}-phone-2')
 				}" class="btn btn-default" type="button"  onclick="smsDialog('{$who}-phone-2')">
-					<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
+					<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 			</button>
         	<button ng-hide="{$who}_phone_level >= 3 || !phoneCorrect('{$who}-phone-2')" class="btn btn-default" type="button" ng-click="{$who}_phone_level = {$who}_phone_level + 1">
-        		<span class="glyphicon glyphicon-plus no-margin-right" style="font-size: 12px"></span>
+        		<span class="glyphicon glyphicon-plus no-margin-right small"></span>
         	</button>
         </div>
 	</div>
@@ -106,10 +112,13 @@ echo <<<HTML
         <input type="text" id="{$who}-phone-3" placeholder="телефон 3" 
         	class="form-control phone-masked" ng-model="{$Model}.phone3">
         	<div class="input-group-btn">
+	        	<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone-3') && isMobilePhone('{$who}-phone-3')" ng-click="callSip('{$who}-phone-3')">
+					<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+				</button>
 				<button ng-show="phoneCorrect('{$who}-phone-3') && isMobilePhone('{$who}-phone-3')" ng-class="{
 						!phoneCorrect('{$who}-phone-3')
 					}" class="btn btn-default" type="button"  onclick="smsDialog('{$who}-phone-3')">
-						<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
+						<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 				</button>
             </div>
 	</div>

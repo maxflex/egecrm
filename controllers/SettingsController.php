@@ -16,44 +16,35 @@
 		
 		public function actionCabinets()
 		{
-			$id_branch = $_GET["id"];
+			// Выводить только кабинеты, в которых есть хотя бы 1 группа.
+			$result = dbConnection()->query("SELECT cabinet FROM groups GROUP BY cabinet");
 			
-			// страница всех кабинетов всех филиалов
-			if (!$id_branch) {
-				$this->setTabTitle("Кабинеты");
-				
-				foreach (Branches::getBranches() as $branch){
-					$id_branch = $branch['id'];
-					$Branches[] = [
-						"id"		=> $id_branch,
-						"svg" 		=> Branches::getName($id_branch),
-						"Cabinets"	=> Cabinet::findAll(["condition" => "id_branch=$id_branch"])
-					];
+			$cabinet_ids = [];
+			while ($row = $result->fetch_object()) {
+				if (!empty($row->cabinet)) {
+					$cabinet_ids[] = $row->cabinet;
 				}
-				
-				$ang_init_data = angInit([
-					"Branches" => $Branches,
-				]);
-				
-				$this->render("cabinets", [
-					"ang_init_data" => $ang_init_data,
-				]);
-			} else {
-			// страница кабинетов отдельного филиала
-				$this->setTabTitle("Кабинеты филиала " . Branches::$all[$id_branch]);
-				
-				$Groups = Cabinet::getCabinetGroups($id_branch);
-				
-				$ang_init_data = angInit([
-					"Groups" => $Groups,
-					"Grades" => Grades::$all,
-					"Subjects" => Subjects::$all,
-				]);
-				
-				$this->render("cabinet_page", [
-					"ang_init_data" => $ang_init_data
-				]);
 			}
+			
+			$Cabinets = Cabinet::findAll([
+				"condition" => "id IN (". implode(",", $cabinet_ids) .")",
+				"order"		=> "ABS(number) ASC"
+			]);
+			
+			foreach ($Cabinets as &$Cabinet) {
+				$Cabinet->freetime = Cabinet::getFreetime(0, $Cabinet->id);
+			}
+
+			$ang_init_data = angInit([
+				"Cabinets" 	=> $Cabinets,
+				"Branches"	=> Branches::getBranches(),
+			]);
+			
+			
+			$this->setTabTitle("Свободное время кабинетов");
+			$this->render("cabinets_freetime", [
+				"ang_init_data" => $ang_init_data,
+ 			]);
 		}
 		
 		public function actionVocations()
@@ -78,29 +69,7 @@
 				"ang_init_data" => $ang_init_data,	
 			]);
 		}
-		
-		public function actionStudents()
-		{
-			// не надо панель рисовать
-			$this->_custom_panel = true;
-			
-			$this->render("students");			
-		}
-		
-		public function actionLessons()
-		{
-			$this->setTabTitle("Трекер занятий");
-			
-			$ang_init_data = angInit([
-				"Schedule" 		=> GroupSchedule::getByPage($_GET['id']),
-				"currentPage" 	=> $_GET['id'],
-			]);
-			
-			$this->render("lessons", [
-				"ang_init_data" => $ang_init_data,
-			]);
-		}
-		
+
 		/**
 		 * Получить всех учеников, не принадлежащих группам
 		 
@@ -115,21 +84,6 @@
 		 		кол-во учеников
 		 		ученики
 		 */
-		public function actionNoGroup()
-		{
-			// не надо панель рисовать
-			$this->_custom_panel = true;
-			$this->addJs("dnd");
-			
-			$ang_init_data = angInit([
-				"Subjects" => Subjects::$all,
-			]);
-			
-			$this->render("students_with_no_groups", [
-				"ang_init_data" => $ang_init_data,
-			]);
-		}
-		
 		public function actionAjaxStudentsWithNoGroup()
 		{
 			$Students = Student::getWithContract(true);
@@ -266,7 +220,7 @@
 			]);
 		}
 		
-		public function actionAjaxGetStudents()
+		public function ___DEPRICATED___actionAjaxGetStudents()
 		{
 			$Students = Student::getWithContract(true);
 			

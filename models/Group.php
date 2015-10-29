@@ -72,7 +72,6 @@
 			$this->is_special 			= $this->isSpecial();
 			$this->first_schedule 		= $this->getFirstSchedule();
 			$this->day_and_time 		= $this->getDayAndTime();
-			$this->lesson_days_match 	= $this->lessonDaysMatch();
 			
 			$this->Comments	= Comment::findAll([
 				"condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
@@ -231,7 +230,7 @@
 				"total_teachers_agreed"	=> $total_teachers_agreed,
 				"total_students_notified" => $total_students_notified,
 				"total_groups"			=> count($Groups),
-				"total_witn_no_group"	=> Student::countSubjectsWithoutGroup(),
+			//	"total_witn_no_group"	=> Student::countSubjectsWithoutGroup(),
 			];
 		}
 		
@@ -248,10 +247,44 @@
 		public function getFutureSchedule()
 		{
 			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) >= UNIX_TIMESTAMP(NOW())",
+				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW())",
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
+		
+		public function getPastSchedule()
+		{
+			return GroupSchedule::findAll([
+				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW())",
+				"order"		=> "date ASC, time ASC",
+			]);
+		}
+		
+		// LESSON_LENGTH = 105 минут - 1:45 - 30 минут до конца занятия
+		public function getPastScheduleBeforeEnd($minutes_to_end = 30)
+		{
+			$minutes = LESSON_LENGTH - $minutes_to_end;
+			
+			return GroupSchedule::findAll([
+				// "condition" => "id_group=".$this->id." AND  ((ABS(UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) - UNIX_TIMESTAMP(NOW())) / 60) > {$minutes})
+				"condition" => "id_group=".$this->id." AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) >  {$minutes}
+					AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW())",
+				"order"		=> "date ASC, time ASC",
+			]);
+		}
+		
+		// получить прошлое расписание для уведомления учителя об отсутсвии записи в журнале
+		public function getPastScheduleTeacherReport()
+		{
+			return GroupSchedule::findAll([
+				"condition" => "id_group=".$this->id." 
+					AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) < ". (LESSON_LENGTH + 35) ."
+					AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) > ". (LESSON_LENGTH + 25) ."
+					AND date='". date('Y-m-d') ."'",
+				"order"		=> "date ASC, time ASC",
+			]);
+		}
+
 		
 		public function countSchedule()
 		{

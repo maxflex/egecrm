@@ -208,7 +208,7 @@
 			$result = static::dbConnection()->query("SELECT COUNT(*) as c FROM ".static::$mysql_table."
 				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
 			);
-
+			
 			// Возвращаем кол-во
 			return $result->fetch_object()->c;
 		}
@@ -235,10 +235,11 @@
 			$result = static::dbConnection()->query("
 				SELECT id FROM ".static::$mysql_table."
 				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
+				.(!empty($params["group"]) ? " GROUP BY ".$params["group"] : "")				// Если есть условие сортировки
 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
 				);
-
+			
 			// Если запрос без ошибок и что-то нашлось
 			if ($result->num_rows) {
 				// Создаем массив айдишников

@@ -39,6 +39,9 @@
 		switch mode
 			when 2
 				$(".sms-group-controls").show()
+			when 3
+				$(".sms-group-controls").show()
+				$("#sms-to-teacher").hide()
 	
 	ajaxStart = (element = false) ->
 		if element isnt false
@@ -52,7 +55,9 @@
 			#, 500
 		NProgress.done()
 	
-	clearSelect = (ms = 50) ->
+	clearSelect = (ms = 50, callback = undefined) ->
 		setTimeout ->
 			$("option[value^='?']").remove()
+			if callback isnt undefined
+				callback()
 		, ms

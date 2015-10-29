@@ -6,8 +6,9 @@
 
 <div ng-app="Stats" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="top-links pull-right">
-		<a href="stats/visits/students">общая посещаемость</a>
-		<span class="link-like active">по преподавателям</span>
+		<a href="stats/visits/days">по дням</a>
+		<a href="stats/visits/students">по ученикам</a>
+		<span class="link-like active" style="margin-right: 0">по преподавателям</span>
 	</div>
 	
 	<table class="table table-hover">
@@ -19,13 +20,13 @@
 					кол-во занятий
 				</td>
 				<td>
-					были на занятии
+					пришли вовремя
 				</td>
 				<td>
 					опоздали
 				</td>
 				<td>
-					пропустили
+					отсутствовали
 				</td>
 				<td>
 					доля пропуска
@@ -42,7 +43,7 @@
 					<?= $Teacher->lesson_count ? $Teacher->lesson_count : '' ?>
 				</td>
 				<td>
-					<?= $Teacher->visit_count ? $Teacher->visit_count : '' ?>
+					<?= $Teacher->in_time ? $Teacher->in_time : '' ?>
 				</td>
 				<td>
 					<?= $Teacher->late_count ? $Teacher->late_count : '' ?>
@@ -51,7 +52,7 @@
 					<?= $Teacher->abscent_count ? $Teacher->abscent_count : '' ?>
 				</td>
 				<td>
-					<?= $Teacher->visit_count ? $Teacher->late_percent . '%' : '' ?>
+					<?= $Teacher->abscent_percent ? $Teacher->abscent_percent . '%' : '' ?>
 				</td>
 			</tr>
 			<?php endforeach; ?>

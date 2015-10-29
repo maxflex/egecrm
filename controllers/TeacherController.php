@@ -65,6 +65,29 @@
 				];
 			}
 			
+			// Сортировка по ФИО
+			usort($return, function($a, $b) {
+				if ($a["Teacher"]->last_name > $b["Teacher"]->last_name) {
+					return 1;
+				} else {
+					if ($a["Teacher"]->last_name == $b["Teacher"]->last_name) {
+						if ($a["Teacher"]->first_name > $b["Teacher"]->first_name) {
+							return 1;
+						} else {
+							if ($a["Teacher"]->first_name == $b["Teacher"]->first_name) {
+								if ($a["Teacher"]->middle_name > $b["Teacher"]->middle_name) {
+									return 1;
+								} else {
+									return -1;	
+								}
+							}
+						}
+					} else {
+						return -1;
+					}
+				}
+			});
+			
 			$ang_init_data = angInit([
 				"Data" 		=> $return,
 				"total_sum"			=> $total_sum,
@@ -86,7 +109,9 @@
 			$this->setTabTitle("Преподователи");
 			$this->setRightTabTitle("<a href='teachers/add'>добавить преподавателя</a>");
 			
-			$Teachers = Teacher::findAll();
+			$Teachers = Teacher::findAll([
+				"order" => "last_name ASC"
+			]);
 			
 			foreach ($Teachers as &$Teacher) {
 				$Teacher->login_count = User::getLoginCount($Teacher->id, Teacher::USER_TYPE);
@@ -172,7 +197,6 @@
 			$ang_init_data = angInit([
 				"Teacher" => $Teacher,
 				"Data"				=> $Data,
-				"freetime"		=> $Teacher->getFreetime(),
 				"teacher_phone_level"	=> $Teacher->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"Groups"				=> $Groups,
@@ -201,13 +225,10 @@
 				if (!isset($Teacher['branches'])) {
 					$Teacher['branches'] = '';
 				} 				
-				# СВОБОДНОЕ ВРЕМЯ
-				TeacherFreetime::addData($Teacher['freetime'], $Teacher['id'], $Teacher['branches']);
 				Teacher::updateById($Teacher['id'], $Teacher);
 			} else {
 				$NewTeacher = new Teacher($Teacher);
 				$saved = $NewTeacher->save();
-				TeacherFreetime::addData($Teacher['freetime'], $NewTeacher->id);
 				returnJSON($saved);
 			}
 		}

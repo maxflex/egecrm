@@ -5,6 +5,8 @@
 
 		public static $mysql_table	= "visit_journal";
 		
+		public static $statuses = ["не указано", "был", "не был"];
+		
 		public static function addData($id_group, $date, $data)
 		{
 			$Schedule = GroupSchedule::find([
@@ -94,5 +96,37 @@
 			return self::find([
 				"condition" => "id_group=$id_group"
 			]);
+		}
+		
+				
+		/**
+		 * Коливество дней/недель/месяцев/лет с момента первого занятия
+		 * 
+		 * @param string $mode (default: 'days')
+		 * $mode = days | weeks | months | years
+		 */
+		public static function fromFirstLesson($mode = 'days')
+		{
+			$today = time(); // or your date as well
+		    $first_lesson_date = self::find(["order" => "lesson_date ASC"])->lesson_date;
+
+		    $first_lesson_date = strtotime($first_lesson_date);
+		    
+		    $datediff = $today - $first_lesson_date;
+
+		    switch ($mode) {
+			    case 'days': {
+				    return ceil($datediff / (60 * 60 * 24));
+			    }
+			    case 'weeks': {
+				    return floor($datediff / (60 * 60 * 24 * 7));
+			    }
+			    case 'months': {
+				    return ceil($datediff / (60 * 60 * 24 * 30));
+			    }
+			    case 'years': {
+				    return ceil($datediff / (60 * 60 * 24 * 365));
+			    }
+		    }
 		}
 	}

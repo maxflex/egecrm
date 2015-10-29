@@ -607,5 +607,32 @@
 		$current_month = russian_month($current_month);
 		
 		return $current_day . " " . $current_month;
+	}
+	
+	
+	/**
+	 * Сгенерировать случайную строку.
+	 * 
+	 * $mode =  digits | uppercase | lowercase (по умолчанию - всё)
+	 */
+	function generateRandomString($length = 10, $mode = ['digits', 'uppercase', 'lowercase']) {
+		$characters = '';
+		
+		if (in_array('digits', $mode)) {
+			$characters .= '0123456789';
+		}
+		if (in_array('uppercase', $mode)) {
+			$characters .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		}
+		if (in_array('lowercase', $mode)) {
+			$characters .= 'abcdefghijklmnopqrstuvwxyz';
+		}
+		
+	    $charactersLength = strlen($characters);
+	    $randomString = '';
+	    for ($i = 0; $i < $length; $i++) {
+	        $randomString .= $characters[rand(0, $charactersLength - 1)];
+	    }
+	    return $randomString;
 	}	
 ?>

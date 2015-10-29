@@ -24,7 +24,7 @@
 		 * $branch – если передан массив, ищет все кабинеты по ID, если передано число,
 		 * то ищутстя только кабинеты этого id филиала
 		 */
-		public static function getByBranch($branch)
+		public static function getByBranch($branch, $id_group = 0)
 		{
 			if (!$branch) {
 				return false;
@@ -42,6 +42,7 @@
 			
 			foreach ($return as &$cabinet) {
 				$cabinet->number = "Кабинет №".$cabinet->number;
+				$cabinet->freetime = self::getFreetime($id_group, $cabinet->id);
 			}
 			
 			// если выбрано много филиалов, подписывать название филиала к кабинету

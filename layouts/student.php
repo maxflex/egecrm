@@ -4,7 +4,7 @@
 	<span class='center'>
 		<?= User::fromSession()->AsUser->last_name." ".User::fromSession()->AsUser->first_name." ".User::fromSession()->AsUser->middle_name ?>
 	</span>
-	<a href="as/cancel" class="btn btn-primary btn-sm" style="position: absolute; top: 2px; right: 10px">Выйти из режима просмотра</a>
+	<a href="as/cancel" class="link-white" style="position: absolute; right: 10px">Выйти из режима просмотра</a>
 </div>
 <?php endif ?>
 <div class="row">
@@ -21,6 +21,7 @@
 			}
 		?>
     </a>
+    <a href="promo" class="list-group-item">Получи iPhone 6</a>
     <a href="reviews" class="list-group-item">Оставить отзыв</a>
     <a href="faq" class="list-group-item">Необходимая информация</a>
     <a href="#" class="list-group-item active">Настройки</a>

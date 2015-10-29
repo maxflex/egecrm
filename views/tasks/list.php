@@ -17,7 +17,7 @@
 				</div>
 -->
 				<div ng-repeat="Task in Tasks | reverse" class="row task-line" ng-hide="!Task.html.trim()">
-					<div class="col-sm-11" style="width: 93%">
+					<div class="col-sm-11" style="width: 97%">
 						<div class="task-separator"></div>
 						<div ng-bind-html="Task.html | unsafe" name="task-{{Task.id}}" ng-click="editTask(Task)"></div>
 						<span ng-repeat="file in Task.files" class="attachment-no-underline" ng-hide="editingTask(Task)">
@@ -40,7 +40,7 @@
 					</div>
 					<div class="col-sm-1">
 					</div>
-					<img src="img/task/{{Task.id_status}}.png" class="task-status-toggle" ng-click="toggleTaskStatus(Task)">
+					<img src="img/task/circle_{{Task.id_status}}.png" class="task-status-toggle" ng-click="toggleTaskStatus(Task)">
 				</div>
 		</div>
 	</div>

@@ -71,7 +71,7 @@
 		##################################### ПОЛУЧЕНИЕ ДАННЫХ #####################################
 		############################################################################################
 
-		// Добавляем заявку
+		// Расписание
 		public function actionGetSchedule()
 		{
 			extract($_POST);
@@ -81,6 +81,27 @@
 			]);
 			
 			returnJSON($Groups);
+		}
+		
+		// Получить ученика по коду
+		// Возвращает имя ученика в родительном падеже
+		public function actionGetStudentByCode()
+		{
+			extract($_POST);
+			
+			$Student = Student::find([
+				"condition" => "code='$code'"
+			]);
+			
+			if ($Student) {
+				$nc = new NCLNameCaseRu(); 
+				
+				$name = $nc->setFirstName($Student->first_name)->setSecondName($Student->last_name)->getFormatted(NCL::$RODITLN, "N S");
+				
+				returnJSON($name);
+			} else {
+				returnJSON(false);
+			}
 		}
 		
 		############################################################################################

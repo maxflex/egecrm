@@ -55,6 +55,9 @@ smsMode = function(mode) {
   switch (mode) {
     case 2:
       return $(".sms-group-controls").show();
+    case 3:
+      $(".sms-group-controls").show();
+      return $("#sms-to-teacher").hide();
   }
 };
 
@@ -78,11 +81,17 @@ ajaxEnd = function(element) {
   return NProgress.done();
 };
 
-clearSelect = function(ms) {
+clearSelect = function(ms, callback) {
   if (ms == null) {
     ms = 50;
   }
+  if (callback == null) {
+    callback = void 0;
+  }
   return setTimeout(function() {
-    return $("option[value^='?']").remove();
+    $("option[value^='?']").remove();
+    if (callback !== void 0) {
+      return callback();
+    }
   }, ms);
 };
