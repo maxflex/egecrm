@@ -481,11 +481,24 @@
 			]);
 		}
 		
-		public function getGroups()
+		public function getGroups($with_schedule = false)
 		{
-			return Group::findAll([
+			$Groups = Group::findAll([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
 			]);
+			
+			if ($with_schedule) {
+				foreach ($Groups as &$Group) {
+					$Group->Schedule = $Group->getFutureSchedule();
+					foreach ($Group->Schedule as &$Schedule) {
+						$Schedule->missing_note = GroupNote::count([
+							"condition" => "id_student={$this->id} AND id_group={$Group->id} AND date='{$Schedule->date}'"
+						]);
+					}
+				}
+			}
+			
+			return $Groups;
 		}
 		
 		public function countGroupsStatic($id_student)
@@ -923,6 +936,20 @@
 			return $return;
 		}
 		
+		
+		public function getTeacherLikes()
+		{
+			$TeacherLikes = GroupTeacherLike::findAll([
+				"condition" => "id_student={$this->id} AND id_status > 0"
+			]);
+			
+			foreach ($TeacherLikes as &$Like) {
+				$Like->Teacher = Teacher::findById($Like->id_teacher);
+			}
+			
+			return $TeacherLikes;
+		}
+		
 		public static function getLayerErrors()
 		{
 			$Students = Student::getWithContract(true);
@@ -998,11 +1025,28 @@
 		}
 		
 
-		public function getVisits()
+		public function getVisits($with_missing = false)
 		{
-			return VisitJournal::findAll([
+			$visits = VisitJournal::findAll([
 				"condition" => "id_entity={$this->id} AND type_entity='STUDENT'"
 			]);
+			
+			if ($with_missing) {
+				foreach ($visits as &$visit) {
+					$visit->missing_note = GroupNote::count([
+						"condition" => "id_student={$visit->id_entity} AND id_group={$visit->id_group} AND date='{$visit->lesson_date}'"
+					]);
+				}
+			}
+			
+			return $visits;
+		}
+		
+		public function getVisitsAndSchedule()
+		{
+			$visits = VisitJournal::findAll([
+				"condition" => "id_entity={$this->id} AND type_entity='STUDENT'"
+			]);			
 		}
 		
 		public static function getSameSubjectErrors()

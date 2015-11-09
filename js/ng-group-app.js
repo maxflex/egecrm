@@ -289,6 +289,43 @@ angular.module("Group", []).filter('to_trusted', [
   });
 }).controller("EditCtrl", function($scope) {
   var bindDraggable, bindGroupsDroppable, initDayAndTime, initFreetime, justSave, rebindBlinking;
+  $scope.toggleAgreement = function(Entity) {
+    var id_status, type_entity;
+    type_entity = Entity.hasOwnProperty('id_a_pers') ? 'TEACHER' : 'STUDENT';
+    console.log(type_entity);
+    id_status = Entity.agreement;
+    if (id_status === 0) {
+      id_status = 3;
+    } else {
+      id_status--;
+    }
+    return $.post("ajax/toggleGroupAgreement", {
+      id_entity: Entity.id,
+      type_entity: type_entity,
+      id_group: $scope.Group.id,
+      day_and_time: $scope.Group.day_and_time,
+      id_status: id_status
+    }, function(response) {
+      Entity.agreement = id_status;
+      return $scope.$apply();
+    });
+  };
+  $scope.toggleTeacherLike = function(Student) {
+    var id_status;
+    id_status = Student.teacher_like_status;
+    id_status++;
+    if (id_status > 3) {
+      id_status = 0;
+    }
+    return $.post("ajax/toggleTeacherLike", {
+      id_student: Student.id,
+      id_teacher: $scope.Group.id_teacher,
+      id_status: id_status
+    }, function(response) {
+      Student.teacher_like_status = id_status;
+      return $scope.$apply();
+    });
+  };
   $scope.allStudentStatuses = function() {
     var student_statuses_count;
     student_statuses_count = _.filter($scope.Group.student_statuses, function(s, id_student) {
@@ -411,6 +448,7 @@ angular.module("Group", []).filter('to_trusted', [
   $scope.saveDayAndTime = function() {
     lightBoxHide();
     rebindBlinking();
+    $scope.updateAgreement();
     return $(".save-button").mousedown();
   };
   initDayAndTime = function(day) {
@@ -446,6 +484,13 @@ angular.module("Group", []).filter('to_trusted', [
     return current_index = $.inArray(time, $scope.weekdays[day - 1].schedule);
   };
   $scope.changeCabinet = function() {
+    if (!$scope.Group.id) {
+      return;
+    }
+    $scope.reloadSmsNotificationStatuses();
+    $scope.updateGroup({
+      cabinet: $scope.Group.cabinet
+    });
     $("#group-cabinet").attr("disabled", "disabled");
     ajaxStart();
     return $.post("groups/ajax/GetCabinetFreetime", {
@@ -458,7 +503,37 @@ angular.module("Group", []).filter('to_trusted', [
       return $scope.$apply();
     }, "json");
   };
+  $scope.updateAgreement = function() {
+    return $.post("groups/ajax/UpdateAgreement", {
+      id_group: $scope.Group.id,
+      day_and_time: $scope.Group.day_and_time,
+      id_teacher: $scope.Group.id_teacher,
+      students: $scope.Group.students
+    }, function(response) {
+      $scope.getTeacher($scope.Group.id_teacher).agreement = response.teacher_agreement;
+      $.each(response.student_agreements, function(id_student, id_status) {
+        return $scope.getStudent(id_student).agreement = id_status;
+      });
+      return $scope.$apply();
+    }, "json");
+  };
   $scope.changeTeacher = function() {
+    if (!$scope.Group.id) {
+      return;
+    }
+    $.post("groups/ajax/changeTeacher", {
+      id_group: $scope.Group.id,
+      day_and_time: $scope.Group.day_and_time,
+      id_teacher: $scope.Group.id_teacher,
+      students: $scope.Group.students
+    }, function(response) {
+      console.log(response);
+      $scope.getTeacher($scope.Group.id_teacher).agreement = response.agreement;
+      $.each(response.teacher_like_statuses, function(id_student, id_status) {
+        return $scope.getStudent(id_student).teacher_like_status = id_status;
+      });
+      return $scope.$apply();
+    }, "json");
     if ($scope.Group.id_teacher === "0") {
       return;
     }
@@ -466,7 +541,8 @@ angular.module("Group", []).filter('to_trusted', [
     return $.post("groups/ajax/GetTeacherFreetime", {
       id_group: $scope.Group.id,
       id_teacher: $scope.Group.id_teacher,
-      id_branch: $scope.Group.id_branch
+      id_branch: $scope.Group.id_branch,
+      day_and_time: $scope.Group.day_and_time
     }, function(freetime) {
       console.log(freetime);
       ajaxEnd();
@@ -475,9 +551,15 @@ angular.module("Group", []).filter('to_trusted', [
       $scope.teacher_freetime_orange_half = freetime.orange;
       $scope.teacher_freetime_orange_full = freetime.orange_full;
       $scope.teacher_freetime_doubleblink = freetime.red_doubleblink;
-      $scope.Group.teacher_status = freetime.teacher_status;
+      $scope.getTeacher($scope.Group.id_teacher).agreement = freetime.agreement;
       return $scope.$apply();
     }, "json");
+  };
+  $scope.updateGroup = function(data) {
+    return $.post("groups/ajax/updateGroup", {
+      id_group: $scope.Group.id,
+      data: data
+    });
   };
   $scope.selectAllWorking = function(id_branch) {
     $.each($scope.weekdays, function(index, weekday) {
@@ -617,7 +699,35 @@ angular.module("Group", []).filter('to_trusted', [
     }
     return $scope.getStudent(id_student).review_status = $scope.Group.student_statuses[id_student].review_status;
   };
-  $scope.smsNotify = function(id_student) {
+  $scope.reloadSmsNotificationStatuses = function() {
+    return $.post("groups/ajax/ReloadSmsNotificationStatuses", {
+      students: $scope.Group.students,
+      id_branch: $scope.Group.id_branch,
+      id_subject: $scope.Group.id_subject,
+      cabinet: $scope.Group.cabinet,
+      first_schedule: $scope.Group.first_schedule
+    }, function(response) {
+      $.each(response.sms_notification_statuses, function(id_student, id_status) {
+        return $scope.getStudent(id_student).sms_notified = id_status;
+      });
+      return $scope.$apply();
+    }, "json");
+  };
+  $scope.smsNotify = function(Student, event) {
+    $(event.target).html("отправка...").removeAttr("ng-click").removeClass("pointer").addClass("default");
+    return $.post("groups/ajax/smsNotify", {
+      id_student: Student.id,
+      id_branch: $scope.Group.id_branch,
+      id_subject: $scope.Group.id_subject,
+      cabinet: $scope.Group.cabinet,
+      first_schedule: $scope.Group.first_schedule,
+      id_group: $scope.Group.id
+    }, function(response) {
+      Student.sms_notified = true;
+      return $scope.$apply();
+    });
+  };
+  $scope.smsNotify__DEPRICATED__ = function(id_student) {
     if ($scope.Group.student_statuses[id_student] === void 0) {
       $scope.Group.student_statuses[id_student] = {
         id_status: 0,
@@ -707,6 +817,7 @@ angular.module("Group", []).filter('to_trusted', [
   };
   $scope.getStudent = function(id_student) {
     var Student, i;
+    id_student = parseInt(id_student);
     return Student = ((function() {
       var j, len, ref, results;
       ref = $scope.TmpStudents;
@@ -802,6 +913,11 @@ angular.module("Group", []).filter('to_trusted', [
         $("#group-cabinet").removeAttr("disabled");
       }
       $scope.$apply();
+      $scope.reloadSmsNotificationStatuses();
+      $scope.updateGroup({
+        id_branch: $scope.Group.id_branch,
+        cabinet: $scope.Group.cabinet
+      });
       return clearSelect(50, function() {
         return $("#group-cabinet").selectpicker('refresh');
       });
@@ -820,9 +936,46 @@ angular.module("Group", []).filter('to_trusted', [
     }
   };
   $scope.subjectChange = function() {
+    if (!$scope.Group.id) {
+      return;
+    }
+    $scope.reloadSmsNotificationStatuses();
+    $scope.updateGroup({
+      id_subject: $scope.Group.id_subject
+    });
     $scope.Group.id_teacher = 0;
     return clearSelect();
   };
+  $scope.$watch("Group.grade", function(newVal, oldVal) {
+    if (!$scope.Group.id) {
+      return;
+    }
+    if (newVal !== oldVal) {
+      return $scope.updateGroup({
+        grade: newVal
+      });
+    }
+  });
+  $scope.$watch("Group.teacher_price", function(newVal, oldVal) {
+    if (!$scope.Group.id) {
+      return;
+    }
+    if (newVal !== oldVal) {
+      return $scope.updateGroup({
+        teacher_price: newVal
+      });
+    }
+  });
+  $scope.$watch("Group.level", function(newVal, oldVal) {
+    if (!$scope.Group.id) {
+      return;
+    }
+    if (newVal !== oldVal) {
+      return $scope.updateGroup({
+        level: newVal
+      });
+    }
+  });
   $scope.loading_groups = false;
   $scope.loadGroups = function() {
     if (!$scope.Group.id) {
@@ -904,6 +1057,7 @@ angular.module("Group", []).filter('to_trusted', [
     $scope.saving = true;
     $scope.$apply();
     return $.post("groups/ajax/save", $scope.Group, function(response) {
+      console.log(response);
       if ($scope.Group.id) {
         ajaxEnd();
         $scope.saving = false;
@@ -916,6 +1070,22 @@ angular.module("Group", []).filter('to_trusted', [
   });
 }).controller("ListCtrl", function($scope) {
   var bindDraggable2;
+  $scope.createHelper = function() {
+    lightBoxShow('contract-stats');
+    $scope.create_helper_data = null;
+    return $.post("ajax/GroupCreateHelper", {
+      id_branch: $scope.search.id_branch,
+      subjects: $scope.search.subjects,
+      grade: $scope.search.grade
+    }, function(response) {
+      console.log(response);
+      $scope.create_helper_data = response;
+      return $scope.$apply();
+    }, "json");
+  };
+  $scope.getMonthByNumber = function(n) {
+    return moment().month(n - 1).format("MMMM");
+  };
   $scope.updateStatsCache = function() {
     ajaxStart();
     return $.post("groups/ajax/updateStatsCache", {}, function() {

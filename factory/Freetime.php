@@ -248,10 +248,11 @@
 		public static function inRedFull($id_group,$id_teacher, $day, $time) 
 		{
 			return dbConnection()->query("
-				SELECT g.id FROM group_teacher_statuses gts
-					LEFT JOIN groups g ON g.id = gts.id_group
+				SELECT g.id FROM group_agreement ga
+					LEFT JOIN groups g ON g.id = ga.id_group
 					LEFT JOIN group_time gt ON g.id = gt.id_group
-				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gts.id_status = ". GroupTeacherStatuses::AGREED ." AND gts.id_teacher = $id_teacher
+				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND ga.id_status = ". GroupTeacherStatuses::AGREED ." 
+					AND ga.id_entity = $id_teacher AND ga.type_entity='TEACHER'
 			")->num_rows;	
 		}
 		

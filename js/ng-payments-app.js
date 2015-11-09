@@ -282,5 +282,17 @@
 			$scope.formatDate = function(date){
 		        var dateOut = new Date(date);
 		        return dateOut;
-		    };	
+		    };
+		    
+		    // неподтвержденные платежи по умолчанию
+		    $scope.filter = 5
+		    
+			angular.element(document).ready(function() {
+				set_scope("Payments")
+				
+				$.post("payments/AjaxGetPayments", {}, function(response) {
+					$scope.payments = response 
+					$scope.$apply()
+				}, "json");
+			})
 		})

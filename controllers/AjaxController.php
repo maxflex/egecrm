@@ -15,6 +15,113 @@
 		###################### AJAX ######################
 		##################################################
 		
+		public function actionAjaxEgecentr()
+		{
+			$data = egeCentrData();
+			
+			foreach ($data as $d) {
+				$return[$d['student_id'] . "_" . $d["subjects"]][$d['date']] = $d['status'];
+			}
+			
+			returnJsonAng($return);
+		}
+		
+		public function actionAjaxGroupCreateHelper()
+		{
+			extract($_POST);
+			
+			if ($subjects) {
+				$subjects_ids = implode(",", $subjects);
+			}
+			
+			foreach(range(0, 6) as $day) {
+				$count = 0;
+				$date = date("Y-m", strtotime("-$day months"));
+				
+				$Contracts = Contract::findAll([
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date-01' 
+						AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date-31' 
+						AND cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION
+				]);
+				
+/*
+				$contract_count = Contract::count([
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date-01' 
+						AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date-31' 
+						AND cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION
+				]);
+				
+				$request_count = Request::count([
+					"condition" => "date >= '$date-01' AND date <= '$date-31' 
+						AND id_status!=" . RequestStatuses::DUPLICATE . " AND id_status!=" . RequestStatuses::SPAM
+				]);
+*/
+				foreach ($Contracts as $Contract) {
+					// если предметы указаны
+					$ContractSubjects = ContractSubject::findAll([
+						"condition" => "id_contract=" . $Contract->id . ($subjects ? " AND id_subject IN ($subjects_ids)" : "")
+					]);
+					
+					if ($ContractSubjects) {
+						foreach ($ContractSubjects as $Subject) {
+							// Находим группу по параметрам
+							$Group = Group::count([
+								"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Contract->id_student},%' 
+									AND id_subject = {$Subject->id_subject}
+									" . ($id_branch ? " AND id_branch={$id_branch}" : "") . "
+									" . ($grade ? " AND grade = {$grade}" : "")
+							]);
+							
+							if ($Group) {
+								$count++;
+							}
+						} 
+					}
+				}
+					
+				
+				$return[] = [
+					"month" => date("n", strtotime("-$day months")),
+					"count"	=> $count,
+/*
+					"contract_count"	=> $contract_count,
+					"request_count"		=> $request_count,
+*/
+				];
+			}
+			
+			$return = array_reverse($return);
+			
+			returnJsonAng($return);
+		}
+		
+		public function actionAjaxMissingNoteToggle()
+		{
+			extract($_POST);
+			
+			$GroupNote = GroupNote::find([
+				"condition" => "id_group=$id_group AND id_student=$id_student AND date='$date'"
+			]);
+			
+			if ($GroupNote) {
+				$GroupNote->delete();
+				returnJsonAng(false);
+			} else {
+				GroupNote::add($_POST);
+				returnJsonAng(true);
+			}
+		}
+				
+		public function actionAjaxToggleGroupAgreement()
+		{
+			GroupAgreement::addData($_POST);
+		}
+		
+		public function actionAjaxToggleTeacherLike()
+		{
+			GroupTeacherLike::addData($_POST);
+		}
+		
 		public function actionAjaxTest()
 		{
 			$Request = new Request([
@@ -420,7 +527,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-					// SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
+					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
 					$sent_to[] = $message['number'];
 					
 					// debug

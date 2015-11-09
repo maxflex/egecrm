@@ -12,7 +12,7 @@
 	<div>
 	<div class="list-group">
     <a href="#" class="list-group-item active">Меню</a>
-    <a href="groups" class="list-group-item">Мои группы
+    <a href="students/groups" class="list-group-item">Мои группы
 	    <?php
 			$groups_count = Student::countGroupsStatic(User::fromSession()->id_entity);
 			
@@ -21,9 +21,10 @@
 			}
 		?>
     </a>
-    <a href="promo" class="list-group-item">Получи iPhone 6</a>
-    <a href="reviews" class="list-group-item">Оставить отзыв</a>
-    <a href="faq" class="list-group-item">Необходимая информация</a>
+    <a href="students/promo" class="list-group-item">Получи iPhone 6</a>
+    <a href="students/journal" class="list-group-item">Журнал посещаемости</a>
+    <a href="students/reviews" class="list-group-item">Оставить отзыв</a>
+    <a href="students/faq" class="list-group-item">Необходимая информация</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>

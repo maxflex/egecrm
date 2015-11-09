@@ -7,7 +7,7 @@
 	<div class="panel-heading">Клиенты с договорами
 		<div class="pull-right">
 			<span class="link-like link-reverse link-white" ng-click="smsDialog3()">
-					групповое сообщение</span>
+					групповое SMS</span>
 			<span style="margin: 0 7px; display: inline-block; opacity: .1">|</span>
 			<span style="margin-right: 7px">сортировать по:</span>
 			<span class="link-reverse pointer" ng-click="setOrder(1)" style="margin-right: 7px">имя</span>

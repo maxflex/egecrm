@@ -3,9 +3,8 @@
 	<div class="panel-heading">
 		Расписание группы №<?= $Group->id ?>
 		(ЕГЭ-Центр-<?= Branches::$all[$Group->id_branch] ?>, <?= Subjects::$all[$Group->id_subject] ?>, <?= $Group->grade ?> класс)
-		<span ng-hide="<?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>" class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
 		<div class="pull-right">
-			<a class="like-white" href="groups/journal/{{Group.id}}">журнал посещаемости</a>
+			<a class="like-white" href="teachers/groups/journal/{{Group.id}}">журнал посещаемости</a>
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
@@ -55,7 +54,7 @@
 						'many': 'занятий'
 					}"></ng-pluralize></h3>
 -->
-				<div class="row" ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px">
+				<div class="row" ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
 					<div class="col-sm-4">
 						{{getLine1(Schedule)}}
 					</div>
@@ -67,7 +66,7 @@
 					</div>
 					<div class="col-sm-6">
 						<span ng-show="inDate(Schedule.date, past_lesson_dates)">занятие проведено</span>
-						<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inDate(Schedule.date, past_lesson_dates) && lessonStarted(Schedule)' 
+						<a href='teachers/groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inDate(Schedule.date, past_lesson_dates) && lessonStarted(Schedule)' 
 							ng-class="{'add-to-journal': !inDate(Schedule.date, past_lesson_dates)}">
 							создать запись в журнале
 						</a>

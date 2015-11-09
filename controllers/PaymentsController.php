@@ -20,25 +20,7 @@
 			$this->setRights([User::USER_TYPE]);
 			$this->setTabTitle("Платежи");	
 			
-			$Payments = Payment::findAll();
-			
-
-			foreach ($Payments as &$Payment) {
-				$Payment->Student = $Payment->getStudent();
-			}
-			
-			$Payments = array_reverse($Payments);
-
-/*			
-			// сортировка по номеру договора
-			usort($Students, function($a, $b) {
-				return ($a->Contract->id < $b->Contract->id ? -1 : 1);
-			});
-			
-			$Students = array_reverse($Students);
-*/
 			$ang_init_data = angInit([
-				"payments" 			=> $Payments,
 				"payment_types"		=> PaymentTypes::$all,
 				"payment_statuses"	=> Payment::$all,
 			]);
@@ -64,6 +46,20 @@
 			]);
 		}
 		
+		
+		public function actionAjaxGetPayments()
+		{
+			$Payments = Payment::findAll();
+			
+
+			foreach ($Payments as &$Payment) {
+				$Payment->Student = $Payment->getStudent();
+			}
+			
+			$Payments = array_reverse($Payments);
+			
+			returnJsonAng($Payments);
+		}
 		
 		public function actionAjaxLkTeacher()
 		{

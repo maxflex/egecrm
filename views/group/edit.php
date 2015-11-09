@@ -40,8 +40,7 @@
 				href="requests/relevant?subject={{Group.id_subject}}&branch={{Group.id_branch}}&grade={{Group.grade}}">
 					релевантные заявки</a>
 -->
-			<span class="link-like link-reverse link-white" ng-click="smsDialog2(Group.id)">
-					групповое сообщение</span>
+			<span class="link-like link-reverse link-white" ng-click="smsDialog2(Group.id)">групповое SMS</span>
 			
 			<span style="margin-left: 12px" class="link-reverse pointer" ng-click="deleteGroup(Group.id)" ng-show="Group.id">удалить группу</span>
 		</div>
@@ -98,10 +97,10 @@
 		</div>
 			
 			<div class="row">
-				<div class="col-sm-9">
+				<div class="col-sm-12">
 					<table class="table table-divlike table-students" style="table-layout: fixed">
 						<tr ng-repeat="Student in TmpStudents" class="student-line is-draggable"  data-id="{{Student.id}}">
-							<td style="width: 120px !important">
+							<td>
 								{{$index + 1}}. 
 								<a href="student/{{Student.id}}" ng-class="{
 									'text-warning'	: getSubject(Student.Contract.subjects, Group.id_subject).status == 1,
@@ -111,28 +110,26 @@
 									{{Student.last_name}}
 								</a>
 							</td>
-							<td width="15">
-								<svg class="review-status" style="top: 2px; width: 10px" ng-click="changeReviewStatus(Student.id)"
-									ng-show="Student.already_had_lesson"
-									ng-class="{
-										'not-collected'	: !Student.review_status || Student.review_status == 0,
-										'collected'		: Student.review_status == 1,
-										'orange'		: Student.review_status == 2,
-										'red'			: Student.review_status == 3,
-									}">
-									<circle r="3" cx="7" cy="7"></circle>
-								</svg>
+							<td>
+								<span ng-click="toggleTeacherLike(Student)" class="pointer" ng-show='Group.past_lesson_count > 0'>
+									<span class="half-black" 	ng-show="Student.teacher_like_status == 0">не установлено</span>
+									<span class="text-success"	ng-show="Student.teacher_like_status == 1">нравится</span>
+									<span class="text-warning" 	ng-show="Student.teacher_like_status == 2">средне</span>
+									<span class="text-danger"	ng-show="Student.teacher_like_status == 3">не нравится</span>
+								</span>
 							</td>
-							<td width="50">
-								<?php if ($Group->getSchedule()) :?>
-								<span class="glyphicon glyphicon-envelope gray-hover"  style="margin-right: 0 !important"
-									ng-class="{'group-student-sms-sent': Student.notified}" ng-click="smsNotify(Student.id)"></span>
-								<?php endif ?>
+							<td>
+								<span class="half-black pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified">отправить смс</span>
+								<span class="text-success default" ng-show="Student.sms_notified">смс отправлено</span>
 							</td>
-							<td width="50">
-								<b>{{Student.Contract.subjects[Group.id_subject].score}}</b>
-							</td>
-							<td style="width: 70px !important">
+							<td>
+								<span ng-click="toggleAgreement(Student)" class="pointer">
+									<span class="half-black" 	ng-show="Student.agreement == 0">не установлено</span>
+									<span class="text-success"	ng-show="Student.agreement == 3"><?= GroupAgreement::$all[3] ?></span>
+									<span class="text-warning" 	ng-show="Student.agreement == 2"><?= GroupAgreement::$all[2] ?></span>
+									<span class="half-black"	ng-show="Student.agreement == 1"><?= GroupAgreement::$all[1] ?></span>
+								</span>
+<!--
 								<span class="label group-student-status{{Student.id_status}} s-s-s student-status-span-{{Student.id}}"
 									ng-click="setStudentStatus(Student, $event)">
 									{{Student.id_status ? GroupStudentStatuses[Student.id_status] : "статус"}}
@@ -144,6 +141,7 @@
 										<option ng-repeat="(id_status, name) in GroupStudentStatuses" ng-value="id_status"
 											ng-selected="Student.id_status == id_status">{{name}}</option>
 								</select>
+-->
 							</td>
 							<td width="150">
 								<span ng-repeat="weekday in weekdays" class="group-freetime-block">
@@ -164,7 +162,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="5"></td>
+							<td colspan="4"></td>
 							<td width="150">
 							    <span ng-repeat="weekday in weekdays" class="group-freetime-block" ng-show="Group.cabinet && Group.cabinet != '0'">
 									<span class="freetime-bar green" ng-repeat="time in weekday.schedule track by $index" 
@@ -183,7 +181,7 @@
 							<td width="250">
 								{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}
 							</td>
-							<td colspan="3">
+							<td colspan="2">
 								<span style="margin-right: 5px">
 									<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">ЕЦ</a>
 								</span>
@@ -191,6 +189,13 @@
 									target="_blank">ЕР</a>
 							</td>
 							<td  style="width: 150px !important">
+									<span ng-click="toggleAgreement(getTeacher(Group.id_teacher))" class="pointer">
+										<span class="half-black" 	ng-show="getTeacher(Group.id_teacher).agreement == 0">не установлено</span>
+										<span class="text-primary"	ng-show="getTeacher(Group.id_teacher).agreement == 3"><?= GroupAgreement::$all[3] ?></span>
+										<span class="text-warning" 	ng-show="getTeacher(Group.id_teacher).agreement == 2"><?= GroupAgreement::$all[2] ?></span>
+										<span class="half-black"	ng-show="getTeacher(Group.id_teacher).agreement == 1"><?= GroupAgreement::$all[1] ?></span>
+									</span>
+<!--
 								<span class="label group-teacher-status{{Group.teacher_status}} t-s-s teacher-status-span-{{Group.id_teacher}}"
 									ng-click="setTeacherStatus(getTeacher(Group.id_teacher), $event)">
 									{{Group.teacher_status ? GroupTeacherStatuses[Group.teacher_status] : "статус"}}
@@ -202,6 +207,7 @@
 										<option ng-repeat="(id_status, name) in GroupTeacherStatuses" ng-value="id_status"
 											ng-selected="Group.teacher_status == id_status">{{name}}</option>
 								</select>
+-->
 							</td>
 							<td width="150">
 							    <span ng-repeat="weekday in weekdays" class="group-freetime-block"  ng-show="Group.id_teacher && Group.id_teacher != '0'">
@@ -251,11 +257,6 @@
 			<?php endif ?>
 			<div class="row" style="margin-top: 10px">
 				<div class="col-sm-12 center">
-			    	<button class="btn btn-primary save-button" ng-disabled="saving || !form_changed || !allStudentStatuses()" ng-hide="!Group.id" style="width: 100px">
-			    		<span ng-show="form_changed">Сохранить</span>
-			    		<span ng-show="!form_changed && !saving">Сохранено</span>
-			    	</button>
-			    	
 			    	<button class="btn btn-primary save-button" ng-hide="Group.id" style="width: 100px">
 						добавить
 			    	</button>

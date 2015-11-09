@@ -1,6 +1,13 @@
 .no-hover:hover {
   background: white !important; }
 
+.loading-ajax {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 200px;
+  display: block;
+  text-align: center; }
+
 [ng-app="Promo"] {
   color: #3A6487; }
   [ng-app="Promo"] h4 {
@@ -105,7 +112,16 @@ body {
   float: left;
   display: inline-block;
   padding: 0 3px !important;
-  border-right: none; }
+  border-right: none;
+  position: relative;
+  cursor: pointer;
+  /*
+	&:hover {
+		& .circle-future {
+			opacity: 1;
+		}
+	}
+*/ }
 
 .view-as {
   position: fixed;
@@ -207,6 +223,9 @@ body {
 #how-to-get {
   margin: 10px 0 30px;
   display: none; }
+
+.default {
+  cursor: default !important; }
 
 .teacher-rating {
   height: 40px;
@@ -751,6 +770,19 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   background: #5cb85c;
   top: 2px;
   position: relative; }
+  .day-explain.circle-future, .circle-default.circle-future {
+    background: #999999;
+    cursor: pointer; }
+  .day-explain.circle-future-missing, .circle-default.circle-future-missing {
+    height: 6.5px;
+    width: 6.5px;
+    position: absolute;
+    background: white;
+    opacity: 1;
+    top: 6.5px;
+    left: 6.5px;
+    z-index: 2;
+    cursor: pointer; }
   .day-explain.was-lesson, .day-explain.circle-blue, .circle-default.was-lesson, .circle-default.circle-blue {
     background-color: #337AB7 !important; }
   .day-explain.first-lesson, .day-explain.circle-red, .circle-default.first-lesson, .circle-default.circle-red {
@@ -1103,6 +1135,11 @@ h4.row-header {
   top: 5%;
   max-height: 90%;
   overflow: hidden; }
+
+.lightbox-contract-stats {
+  width: 600px;
+  left: calc(50% - 300px);
+  top: 25%; }
 
 .vertical-header thead th {
   text-align: center;

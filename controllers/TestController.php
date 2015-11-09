@@ -10,8 +10,85 @@
 		
 		public function beforeAction()
 		{
-//			ini_set("display_errors", 1);
-//			error_reporting(E_ALL);
+/*
+			ini_set("display_errors", 1);
+			error_reporting(E_ALL);
+*/
+		}
+		
+		public function actionEgecentr()
+		{
+			$this->addJs("ng-test-app");
+			
+			$date_start = "2013-09-01";
+			$date_end = "2014-05-31";
+			
+			
+			do {
+				$dates[] = $date_start;
+				$date_start = date("Y-m-d", strtotime("$date_start + 1 day"));
+			} while ($date_start <= $date_end);
+			
+			$ang_init_data = angInit([
+				"dates" => $dates,
+			]);
+			
+			$this->setTabTitle("test");
+			$this->render("egecentr", [
+				"ang_init_data" => $ang_init_data,
+			]);
+		}
+		
+		public function actionAgash()
+		{
+			$id_branch 	= 1;
+			$subjects	= [1, 2];
+			$grade 		= 10;
+			
+			$subjects_ids = implode(",", $subjects);
+			
+			foreach(range(0, 7) as $day) {
+				$count = 0;
+				$date = date("Y-m", strtotime("-$day months"));
+				
+				$Contracts = Contract::findAll([
+					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date-01' 
+						AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date-31' 
+						AND cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION
+				]);
+				
+				foreach ($Contracts as $Contract) {
+					$ContractSubjects = ContractSubject::findAll([
+						"condition" => "id_contract=" . $Contract->id . ($id_subject ? " AND id_subject IN ($subjects_ids)" : "")
+					]);
+					
+					if ($ContractSubjects) {
+						foreach ($ContractSubjects as $Subject) {
+							// Находим группу по параметрам
+							$Group = Group::count([
+								"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Contract->id_student},%' 
+									AND id_subject = {$Subject->id_subject}
+									AND grade = {$grade}
+									AND id_branch={$id_branch}"
+							]);
+							
+							if ($Group) {
+								$count++;
+							}
+						} 
+					}
+				}
+					
+				
+				$return[] = [
+					"month" => date("F", strtotime("-$day months")),
+					"count"	=> $count,
+				];
+			}
+			
+			$return = array_reverse($return);
+			
+			preType($return);
 		}
 		
 		public function actionSwitchTest()

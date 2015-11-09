@@ -5,6 +5,15 @@
 				for i in [1...total + 1] by 1
 					input.push i
 				input
+		.controller "Egecentr", ($scope) ->
+			$scope.formatDate = (d) ->
+				moment(d).format "DD MMM"
+			angular.element(document).ready ->
+				set_scope "Test"
+				$.post "ajax/Egecentr", {}, (response) ->
+					$scope.data_2014 = response
+					$scope.$apply()
+				, "json"
 		.controller "MapCtrl", ($scope) ->
 			$scope.$on 'mapInitialized', (event, map) ->
 				map.setCenter MAP_CENTER

@@ -298,3 +298,4 @@
 						$scope.$apply()
 						$.post "teachers/ajax/delete", {id_teacher: id_teacher}
 						console.log "here", index, id_teacher
+						

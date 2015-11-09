@@ -10,6 +10,17 @@ angular.module("Test", ["ngMap"]).filter('range', function() {
     }
     return input;
   };
+}).controller("Egecentr", function($scope) {
+  $scope.formatDate = function(d) {
+    return moment(d).format("DD MMM");
+  };
+  return angular.element(document).ready(function() {
+    set_scope("Test");
+    return $.post("ajax/Egecentr", {}, function(response) {
+      $scope.data_2014 = response;
+      return $scope.$apply();
+    }, "json");
+  });
 }).controller("MapCtrl", function($scope) {
   return $scope.$on('mapInitialized', function(event, map) {
     map.setCenter(MAP_CENTER);

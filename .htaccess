@@ -36,29 +36,31 @@ RewriteRule ^teachers/ajax/([a-zA-Z]+)[/]?$ index.php?controller=teacher&action=
 RewriteRule ^teachers[/]?$ index.php?controller=teacher&action=list [QSA,L]
 
 # Группы
-RewriteRule ^groups/([0-9]+)/lesson/([0-9]{4}-[0-9]{2}-[0-9]{2})?$ index.php?controller=group&action=lesson&id_group=$1&date=$2 [QSA,L]
+RewriteRule ^(students/|teachers/)?groups/([0-9]+)/lesson/([0-9]{4}-[0-9]{2}-[0-9]{2})?$ index.php?controller=group&action=lesson&id_group=$2&date=$3 [QSA,L]
 RewriteRule ^groups/edit/([0-9]+)?$ index.php?controller=group&action=edit&id=$1 [QSA,L]
-RewriteRule ^groups/edit/([0-9]+)/schedule[/]?$ index.php?controller=group&action=schedule&id=$1 [QSA,L]
-RewriteRule ^groups/journal/([0-9]+)$ index.php?controller=group&action=journal&id=$1 [QSA,L]
+RewriteRule ^(students/|teachers/)?groups/edit/([0-9]+)/schedule[/]?$ index.php?controller=group&action=schedule&id=$2 [QSA,L]
+RewriteRule ^(students/|teachers/)?groups/journal/([0-9]+)$ index.php?controller=group&action=journal&id=$2 [QSA,L]
 RewriteRule ^groups/schedule/download[/]?$ index.php?controller=group&action=DownloadSchedule [QSA,L]
 RewriteRule ^groups/add[/]?$ index.php?controller=group&action=add [QSA,L]
 RewriteRule ^groups/ajax/([a-zA-Z]+)[/]?$ index.php?controller=group&action=Ajax$1 [QSA,L]
-RewriteRule ^groups[/]?$ index.php?controller=group&action=list [QSA,L]
+RewriteRule ^(students/|teachers/)?groups[/]?$ index.php?controller=group&action=list [QSA,L]
 
+# Журанал
+RewriteRule ^students/journal[/]?$ index.php?controller=journal [QSA,L]
 
 # Настройки
 RewriteRule ^settings/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=$1 [QSA,L]
 RewriteRule ^settings/([a-zA-Z]+)/([0-9]+)[/]?$ index.php?controller=settings&action=$1&id=$2 [QSA,L]
 RewriteRule ^settings/ajax/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=Ajax$1 [QSA,L]
 
-RewriteRule ^print[/]?$ index.php?controller=PrintTasks&action=list [QSA,L]
-RewriteRule ^print/add[/]?$ index.php?controller=PrintTasks&action=add [QSA,L]
+RewriteRule ^(teachers/)?print[/]?$ index.php?controller=PrintTasks&action=list [QSA,L]
+RewriteRule ^(teachers/)?print/add[/]?$ index.php?controller=PrintTasks&action=add [QSA,L]
 RewriteRule ^print/ajax/([a-zA-Z]+)[/]?$ index.php?controller=PrintTasks&action=Ajax$1 [QSA,L]
 
 RewriteRule ^tasks[/]?$ index.php?controller=task&action=list [QSA,L]
 RewriteRule ^tasks/([0-9]+)[/]?$ index.php?controller=task&action=list&list=$1 [QSA,L]
 
-RewriteRule ^promo[/]?$ index.php?controller=promo [QSA,L]
+RewriteRule ^students/promo[/]?$ index.php?controller=promo [QSA,L]
 
 
 RewriteRule ^tasks/ajax/([a-zA-Z]+)[/]?$ index.php?controller=task&action=Ajax$1 [QSA,L]
@@ -79,11 +81,11 @@ RewriteRule ^clients/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=$1 [QS
 RewriteRule ^clients/ajax/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=Ajax$1 [QSA,L]
 
 RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
-RewriteRule ^payments/([a-zA-Z]+)[/]?$ index.php?controller=payments&action=$1 [QSA,L]
+RewriteRule ^(teachers/)?payments/([a-zA-Z]+)[/]?$ index.php?controller=payments&action=$2 [QSA,L]
 RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
 
-RewriteRule ^faq[/]?$ index.php?controller=faq&action=faq[QSA,L]
-RewriteRule ^reviews[/]?$ index.php?controller=TeacherReviews&action=main[QSA,L]
+RewriteRule ^(teachers/|students/)?faq[/]?$ index.php?controller=faq&action=faq[QSA,L]
+RewriteRule ^students/reviews[/]?$ index.php?controller=TeacherReviews&action=main[QSA,L]
 RewriteRule ^reviews/ajax/([a-zA-Z]+)[/]?$ index.php?controller=TeacherReviews&action=Ajax$1 [QSA,L]
 
 RewriteRule ^templates[/]?$ index.php?controller=templates&action=list[QSA,L]

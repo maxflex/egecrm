@@ -3,7 +3,7 @@
 	<div id="panel-loading">Загрузка...</div>
 	<div class="panel panel-primary panel-edit">
 		<div class="panel-heading">
-			
+			 
 			<?php if ($Request->adding) :?>
 			Добавление заявки
 			<?php else :?>
@@ -78,11 +78,12 @@
 					<select class="form-control" id="user-print-select" ng-model="id_user_print">
 						<option selected="" value="">пользователь</option>
 						<option disabled="" value="">──────────────</option>
+						<option value="0">без менеджера</option>
 						<option ng-repeat="user in users" ng-value="user.id" ng-hide="!user.agreement">{{user.login}}</option>
 					</select>
 			<center style="margin-top: 20px">
 				<button class="btn btn-primary" ng-click="editBeforePrint()" ng-disabled="!id_user_print" style="width: 140px">Редактировать</button>
-				<button class="btn btn-primary" ng-click="runPrint()" ng-disabled="!id_user_print" style="width: 140px">Печать</button>
+				<button class="btn btn-primary" ng-click="runPrint()" ng-disabled="id_user_print == ''" style="width: 140px">Печать</button>
 			</center>
 		</div>
 		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
@@ -915,26 +916,8 @@
 	    </div>
     </div>
     
-    <div class="row" ng-show="Journal.length > 0">
-	    <div class="col-sm-12">
-		     <h4 class="row-header">ПОСЕЩАЕМОСТЬ</h4>
-				 <div ng-repeat="id_group in getJournalGroups()" class="visit-div" style="top: -{{6 * $index}}px">
-					 <div class="visit-div-group" ng-class="{'gray-bg': !inActiveGroup(id_group)}">
-						<a href="groups/edit/{{id_group}}">Группа №{{id_group}}</a>
-					</div>
-					 <div ng-repeat="Visit in getVisitsByGroup(id_group)" class="visit-div-circle" ng-class="{'gray-bg': !inActiveGroup(id_group)}">
-						<span class="circle-default" title="{{formatVisitDate(Visit.lesson_date)}}"
-						ng-class="{
-							'circle-red'	: Visit.presence == 2,
-							'circle-orange'	: Visit.presence == 1 && Visit.late > 0
-						}"></span>
-					 </div>
-					 <div ng-repeat="i in [] | range:(getMaxVisits() - getVisitsByGroup(id_group).length)" class="visit-div-circle" ng-class="{'gray-bg': !inActiveGroup(id_group)}"> 
-						 <span class="circle-default invisible"></span>
-					 </div>
-				 </div>
-	    </div>
-    </div>
+	<?= partial("visits") ?>
+    <?= partial("teacher_likes") ?>
     
     <?= partial("save_button", ["Request" => $Request]) ?>
 	<?= partial("bill_print") ?>

@@ -26,6 +26,14 @@
 	}		
 }
 
+.loading-ajax {
+	font-size: 12px;
+	color: $half_black;
+	padding: 200px;
+	display: block;
+	text-align: center;
+}
+
 [ng-app="Promo"] {
 	color: $promo;
 	& h4 {
@@ -160,6 +168,15 @@ body {
 	display: inline-block;
 	padding: 0 3px !important;
 	border-right: none;
+	position: relative;
+	cursor: pointer;
+/*
+	&:hover {
+		& .circle-future {
+			opacity: 1;
+		}
+	}
+*/
 }
 
 .view-as {
@@ -283,6 +300,10 @@ body {
 #how-to-get {
 	margin: 10px 0 30px;
 	display: none;
+}
+
+.default {
+	cursor: default !important;
 }
 
 .teacher-rating {
@@ -808,6 +829,22 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     background: #5cb85c;
     top: 2px;
     position: relative;
+    &.circle-future {
+	    background: #999999;
+	//    opacity: .5;
+	    cursor: pointer;
+    }
+    &.circle-future-missing {
+	    height: 6.5px;
+	    width: 6.5px;
+	    position: absolute;
+	    background: white;
+	    opacity: 1;
+	    top: 6.5px;
+	    left: 6.5px;
+	    z-index: 2;
+	    cursor: pointer;
+    }
     &.was-lesson, &.circle-blue {
 	    background-color: $blue !important;
     }
@@ -1247,6 +1284,12 @@ h4.row-header {
     top: 5%;
     max-height: 90%;
     overflow: hidden;
+}
+
+.lightbox-contract-stats {
+	width: 600px;
+    left: calc(50% - 300px);
+    top: 25%;
 }
 
 .vertical-header thead th {

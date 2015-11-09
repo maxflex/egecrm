@@ -36,13 +36,14 @@
     <div class="col-sm-12">
 	    
 	    <div class="top-links">
-		    <span class="link-like active" ng-click="filter = 6" ng-class="{'active': filter == 6}">все платежи</span>
+		    <span class="link-like" ng-click="filter = 6" ng-class="{'active': filter == 6}">все платежи</span>
 		    <span class="link-like" ng-click="filter = 5" ng-class="{'active': filter == 5}">только неподтвержденные</span>
 		    <span class="link-like" ng-click="filter = 4" ng-class="{'active': filter == 4}">платежи по картам</span>
 		    <span class="link-like" ng-click="filter = 3" ng-class="{'active': filter == 3}">наличные</span>
 		    <span class="link-like" ng-click="filter = 2" ng-class="{'active': filter == 2}">счета</span>
 		    <span class="link-like" ng-click="filter = 1" ng-class="{'active': filter == 1}">карты онлайн</span>
 	    </div>
+	    <div class="loading-ajax" ng-show="payments === undefined">загрузка...</div>
 	    <div class="form-group payment-line">
 			<div ng-repeat="payment in payments | filter:paymentsFilter" style="margin-bottom: 10px">
 				<span ng-show="payment.Student.id">

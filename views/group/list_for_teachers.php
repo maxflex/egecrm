@@ -34,10 +34,10 @@
 			<span>ЕГЭ-Центр-{{Branches[Group.id_branch]}}</span>
 		</td>
 		<td>
-			<a href="groups/edit/{{Group.id}}/schedule">расписание</a>
+			<a href="teachers/groups/edit/{{Group.id}}/schedule">расписание</a>
 		</td>
 		<td>
-			<a href="groups/journal/{{Group.id}}">посещаемость</a>
+			<a href="teachers/groups/journal/{{Group.id}}">посещаемость</a>
 		</td>
 	</tr>
 </table>

@@ -223,9 +223,11 @@
 				
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
+					"Branches"		=> Branches::$all,
 					"Teachers"		=> $Teachers,
 					"Subjects" 		=> Subjects::$three_letters,
 					"SubjectsShort" => Subjects::$short,
+					"SubjectsFull"	=> Subjects::$all,
 					"Grades"		=> Grades::$all,
 					"mode" 			=> $mode,
 					"change_mode" 	=> $mode,
@@ -362,12 +364,32 @@
 			
 			$Teachers = Teacher::findAll();
 			
+			if ($Group->id_teacher) {
+				foreach ($Teachers as &$Teacher) {
+					if ($Teacher->id == $Group->id_teacher) {
+						$Teacher->agreement =  GroupAgreement::getStatus([
+													'type_entity' 	=> Teacher::USER_TYPE,
+													'id_entity'		=> $Teacher->id,
+													'id_group'		=> $Group->id,
+													'day_and_time'	=> $Group->day_and_time,
+												]);
+					}
+				}
+			}
+			
 			$Students = [];
 			foreach ($Group->students as $id_student) {
 				$Student = Student::findById($id_student);
 				$Student->Contract 	= $Student->getLastContract();
 				
-				$Student->teacher_like_status = StudentTeacherLike::getStatus($Student->id, $Teacher->id_teacher);
+				$Student->teacher_like_status 	= GroupTeacherLike::getStatus($Student->id, $Group->id_teacher);
+				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet);
+				$Student->agreement				= GroupAgreement::getStatus([
+					'type_entity' 	=> Student::USER_TYPE,
+					'id_entity'		=> $Student->id,
+					'id_group'		=> $Group->id,
+					'day_and_time'	=> $Group->day_and_time,
+				]);
 						
 				foreach ($Student->branches as $id_branch) {
 					if (!$id_branch) {
@@ -494,13 +516,10 @@
 					$Group['students'] = [];
 				}
 				Group::updateById($Group['id'], $Group);
-				GroupStudentStatuses::saveData($Group['id'], $Group['student_statuses']);
-				GroupTeacherStatuses::saveData($Group['id'], $Group['teacher_status'], $Group['Teacher']['id']);
 				GroupTime::addData($Group['day_and_time'], $Group['id']);
 			} else {
 				$NewGroup = new Group($Group);
 				$NewGroup->save();
-				GroupStudentStatuses::saveData($NewGroup->id, $Group['student_statuses']);
 				returnJson($NewGroup->id);
 			}
 		}
@@ -509,12 +528,6 @@
 		{
 			Group::deleteById($_POST["id_group"]);
 			GroupTime::deleteAll([
-				"condition" => "id_group=".$_POST["id_group"]
-			]);
-			GroupStudentStatuses::deleteAll([
-				"condition" => "id_group=".$_POST["id_group"]
-			]);
-			GroupTeacherStatuses::deleteAll([
 				"condition" => "id_group=".$_POST["id_group"]
 			]);
 		}
@@ -626,22 +639,20 @@
 			$teacher_freetime_orange_full = $teacher_freetime_orange['full'];
 			
 			// статус согласия нового препода
-			$teacher_status = GroupTeacherStatuses::getStatus($id_group, $id_teacher);
-			if ($teacher_status) {
-				$teacher_status = $teacher_status->id_status;
-			}
-			if (!$teacher_status) {
-				$teacher_status = "";
-			}
+			$agreement =  GroupAgreement::getStatus([
+							'type_entity' 	=> Teacher::USER_TYPE,
+							'id_entity'		=> $id_teacher,
+							'id_group'		=> $id_group,
+							'day_and_time'	=> $day_and_time,
+						]);
 
-			
 			returnJsonAng([
 				"red" 		=> $teacher_freetime_red,
 				"red_full" 	=> $teacher_freetime_red_full,
 				"orange"	=> $teacher_freetime_orange_half,
+				"agreement"	=> $agreement,
 				"orange_full"		=> $teacher_freetime_orange_full,
 				"red_doubleblink" 	=> $teacher_freetime_doubleblink,
-				"teacher_status"=> $teacher_status,
 			]);
 		}
 		
@@ -705,6 +716,8 @@
 		{
 			extract($_POST);
 			
+			GroupSms::notify($_POST);
+			
 			$Student = Student::findById($id_student);
 			$Group 	 = Group::findById($id_group);
 			
@@ -741,7 +754,11 @@
 				foreach (Student::$_phone_fields as $phone_field) {
 					$student_number = $Student->{$phone_field};
 					if (!empty($student_number)) {
-						SMS::send($student_number, $message);
+						if (LOCAL_DEVELOPMENT) {						
+							Email::send("makcyxa-k@yandex.ru", "Уведомление ученику", $message);
+						} else {
+							SMS::send($student_number, $message);
+						}
 					}
 				}
 			}
@@ -751,7 +768,11 @@
 					foreach (Student::$_phone_fields as $phone_field) {
 						$representative_number = $Student->Representative->{$phone_field};
 						if (!empty($representative_number)) {
-							SMS::send($representative_number, $message);
+							if (LOCAL_DEVELOPMENT) {						
+								Email::send("makcyxa-k@yandex.ru", "Уведомление представителю", $message);
+							} else {
+								SMS::send($representative_number, $message);
+							}
 						}
 					}
 				}
@@ -984,4 +1005,66 @@
 			return $col.$row;
 		}
 		
+		
+		public function actionAjaxChangeTeacher()
+		{
+			extract($_POST);
+			
+			foreach ($students as $id_student) {
+				$return['teacher_like_statuses'][$id_student] = GroupTeacherLike::getStatus($id_student, $id_teacher);
+			}
+			
+			$return['agreement'] = GroupAgreement::getStatus([
+										'type_entity' 	=> Teacher::USER_TYPE,
+										'id_entity'		=> $id_teacher,
+										'id_group'		=> $id_group,
+										'day_and_time'	=> $day_and_time,
+									]);
+			
+			Group::updateById($id_group, [
+				"id_teacher" => $id_teacher,
+			]);
+			
+			returnJsonAng($return);
+		}
+		
+		public function actionAjaxUpdateAgreement()
+		{
+			extract($_POST);
+			
+			foreach ($students as $id_student) {
+				$response['student_agreements'][$id_student] = GroupAgreement::getStatus([
+																'type_entity' 	=> Student::USER_TYPE,
+																'id_entity'		=> $id_student,
+																'id_group'		=> $id_group,
+																'day_and_time'	=> $day_and_time,
+															]);
+			}
+			
+			$response['teacher_agreement'] = GroupAgreement::getStatus([
+												'type_entity' 	=> Teacher::USER_TYPE,
+												'id_entity'		=> $id_teacher,
+												'id_group'		=> $id_group,
+												'day_and_time'	=> $day_and_time,
+											]);
+			returnJsonAng($response);
+		}
+		
+		public function actionAjaxReloadSmsNotificationStatuses()
+		{
+			extract($_POST);
+			
+			foreach ($students as $id_student) {
+				$return['sms_notification_statuses'][$id_student] = GroupSms::getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet);
+			}
+			
+			returnJsonAng($return);
+		}
+		
+		public function actionAjaxUpdateGroup()
+		{
+			extract($_POST);
+			
+			Group::updateById($id_group, $data);
+		}
 	}

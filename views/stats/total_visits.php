@@ -17,25 +17,25 @@
 		<?php if ($_GET["group"] == "d" || empty($_GET["group"])) { ?>
 		<span style="margin-right: 15px; font-weight: bold">по дням</span>
 		<?php } else { ?>
-		<a href="stats/visits/students?group=d" style="margin-right: 15px">по дням</a>
+		<a href="stats/visits/total?group=d" style="margin-right: 15px">по дням</a>
 		<?php } ?>
 		
 		<?php if ($_GET["group"] == "w") { ?>
 		<span style="margin-right: 15px; font-weight: bold">по неделям</span>
 		<?php } else { ?>
-		<a href="stats/visits/students?group=w" style="margin-right: 15px">по неделям</a>
+		<a href="stats/visits/total?group=w" style="margin-right: 15px">по неделям</a>
 		<?php } ?>
 		
 		<?php if ($_GET["group"] == "m") { ?>
 		<span style="margin-right: 15px; font-weight: bold">по месяцам</span>
 		<?php } else { ?>
-		<a href="stats/visits/students?group=m" style="margin-right: 15px">по месяцам</a>
+		<a href="stats/visits/total?group=m" style="margin-right: 15px">по месяцам</a>
 		<?php } ?>
 		
 		<?php if ($_GET["group"] == "y") { ?>
 		<span style="margin-right: 15px; font-weight: bold">по годам</span>
 		<?php } else { ?>
-		<a href="stats/visits/students?group=y" style="margin-right: 15px">по годам</a>
+		<a href="stats/visits/total?group=y" style="margin-right: 15px">по годам</a>
 		<?php } ?>
 		
 		<div class="pull-right">

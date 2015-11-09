@@ -18,25 +18,21 @@
 				$this->students = [];
 			}
 			
-			$this->Teacher	= Teacher::findById($this->id_teacher);
+			$this->first_schedule 		= $this->getFirstSchedule();
+			
+			if ($this->id_teacher) {
+				$this->Teacher	= Teacher::findById($this->id_teacher);
+			}
 			
 			if (!$this->isNewRecord) {
 				$this->past_lesson_count = VisitJournal::getLessonCount($this->id);
-				
-				$this->student_statuses = GroupStudentStatuses::getByGroupId($this->id);
-				
-				$this->agreed_students_count 	= 0;
-				$this->notified_students_count 	= 0;
-				foreach ($this->student_statuses as $id_student => $data) {
-					if ($data['id_status'] == GroupStudentStatuses::AGREED && in_array($id_student, $this->students)) {
-						$this->agreed_students_count++;
-					}
-					if ($data['notified'] && in_array($id_student, $this->students)) {
-						$this->notified_students_count++;
-					}
-				}
-				
+				$this->agreed_students_count 	= $this->getAgreedStudentsCount();
+				$this->notified_students_count 	= $this->getNotifiedStudentsCount();
 				$this->schedule_count = $this->getScheduleCountCached();
+				
+				if ($this->Teacher) {
+					$this->teacher_agreed = $this->Teacher->agreedToBeInGroup($this->id);
+				}
 			}
 			
 			if (!$this->student_statuses) {
@@ -53,24 +49,7 @@
 				);
 			}
 			
-			if ($this->id_teacher) {
-				$this->teacher_status = GroupTeacherStatuses::getStatus($this->id, $this->id_teacher);
-				if ($this->teacher_status) {
-					$this->teacher_status = $this->teacher_status->id_status;
-				}
-				// $this->teacher_agreed = $this->Teacher->agreedToBeInGroup($this->id);
-				$this->teacher_agreed = $this->Teacher ? $this->Teacher->agreedToBeInGroup($this->id) : false;
-			}
-		
-			
-			if (!$this->teacher_status) {
-				$this->teacher_status = "";
-			}
-			
-			
-			
 			$this->is_special 			= $this->isSpecial();
-			$this->first_schedule 		= $this->getFirstSchedule();
 			$this->day_and_time 		= $this->getDayAndTime();
 			
 			$this->Comments	= Comment::findAll([
@@ -80,6 +59,27 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		
+		public function getAgreedStudentsCount()
+		{
+			if (!count($this->students)) {
+				return 0;
+			}
+			return GroupAgreement::count([
+				"condition" => "id_group = {$this->id} AND type_entity='STUDENT' AND id_entity IN (" . implode(",", $this->students) . ") AND id_status=3"
+			]);
+		}
+		
+		public function getNotifiedStudentsCount()
+		{
+			if (!count($this->students) || !$this->id_branch || !$this->id_subject || !$this->first_schedule || !$this->cabinet) {
+				return 0;
+			}
+			return GroupSms::count([
+				"condition" => "id_branch = {$this->id_branch} AND id_student IN (" . implode(",", $this->students) . ") AND notified=1
+								 AND id_subject = {$this->id_subject} AND first_schedule = '{$this->first_schedule}' AND cabinet={$this->cabinet}"
+			]);
+		}
 		
 		/**
 		 * Получить даты проведенных занятий.
@@ -544,8 +544,6 @@
 	
 	class GroupTeacherStatuses extends Model
 	{
-		public static $mysql_table	= "group_teacher_statuses";
-		
 		# Список предметов
 		const NBT 		= 1;
 		const AWAITING	= 2;
@@ -557,34 +555,8 @@
 			self::AWAITING	=> "ожидает",
 			self::AGREED	=> "согласен",
 		];
-		
-		# Заголовок
-		static $title = "статус";
-		
-		
-		public function getStatus($id_group, $id_teacher) {
-			return GroupTeacherStatuses::find([
-				"condition" => "id_group=$id_group AND id_teacher=$id_teacher"
-			]);
-		}
-		
-		public function saveData($id_group, $id_status, $id_teacher)
-		{
-			if ($id_teacher) {
-				GroupTeacherStatuses::deleteAll([
-					"condition" => "id_group=$id_group"
-				]);
-				if ($id_status) {
-					GroupTeacherStatuses::add([
-						"id_group" 	=> $id_group,
-						"id_teacher"=> $id_teacher,
-						"id_status" => $id_status,
-					]);
-				}
-			}
-		}
 
-	
+		
 		/**
 		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "согласен", 
 		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
@@ -593,20 +565,18 @@
 		public static function inRedFreetime($id_group, $day, $time, $id_teacher) 
 		{
 			return dbConnection()->query("
-				SELECT g.id FROM group_teacher_statuses gts
-					LEFT JOIN groups g ON g.id = gts.id_group
+				SELECT g.id FROM group_agreement ga
+					LEFT JOIN groups g ON g.id = ga.id_group
 					LEFT JOIN group_time gt ON g.id = gt.id_group
-				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gts.id_status = ". self::AGREED ." AND gts.id_teacher = $id_teacher
-					AND (gts.id_teacher = g.id_teacher AND g.id = gts.id_group)
+				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND ga.id_status = ". self::AGREED ." AND ga.id_entity = $id_teacher
+					AND ga.type_entity='TEACHER' AND (ga.id_entity = g.id_teacher AND g.id = ga.id_group)
 				LIMIT 1
 			")->num_rows;	
 		}
 	}
 	
-	class GroupStudentStatuses extends Model
+	class GroupStudentStatuses
 	{
-		public static $mysql_table	= "group_student_statuses";
-		
 		# Список предметов
 		const NBT 		= 1;
 		const AWAITING	= 2;
@@ -619,34 +589,6 @@
 			self::AGREED	=> "согласен",
 		];
 		
-		# Заголовок
-		static $title = "статус";
-		
-		
-		public function saveData($id_group, $student_statuses)
-		{
-			if (count($student_statuses)) {
-				GroupStudentStatuses::deleteAll([
-					"condition" => "id_group=$id_group"
-				]);
-				
-				foreach ($student_statuses as $id_student => $data) {
-					if (!$data['id_status'] && !$data['notified']) {
-						continue;
-					}
-					
-					GroupStudentStatuses::add([
-						"id_group" 		=> $id_group,
-						"id_student"	=> $id_student,
-						"id_status" 	=> $data['id_status'],
-						"notified"		=> $data['notified'],
-						"review_status"	=> $data['review_status'],
-					]);
-				}
-			}
-		}
-
-	
 		/**
 		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "согласен", 
 		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
@@ -655,11 +597,11 @@
 		public static function inRedFreetime($id_group, $day, $time, $id_student) 
 		{
 			return dbConnection()->query("
-				SELECT g.id FROM group_student_statuses gss
-					LEFT JOIN groups g ON g.id = gss.id_group
+				SELECT g.id FROM group_agreement ga
+					LEFT JOIN groups g ON g.id = ga.id_group
 					LEFT JOIN group_time gt ON g.id = gt.id_group
-				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND gss.id_status = ". self::AGREED ." AND gss.id_student = $id_student
-					AND (CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', gss.id_student ,',%') AND g.id = gss.id_group)
+				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND ga.id_status = ". self::AGREED ." AND ga.id_entity = $id_student
+					AND ga.type_entity='STUDENT' AND (CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', ga.id_entity ,',%') AND g.id = ga.id_group)
 			")->num_rows;	
 		}
 		
@@ -671,23 +613,6 @@
 				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day'
 					 AND CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'
 			")->num_rows;	
-		}
-		
-		public function getByGroupId($id_group)
-		{
-			$data = GroupStudentStatuses::findAll([
-				"condition" => "id_group=$id_group"
-			]);
-			
-			foreach ($data as $data_line) {
-				$return[$data_line->id_student] = [
-					'id_status' 	=> $data_line->id_status,
-					'notified'		=> $data_line->notified,
-					'review_status'	=> $data_line->review_status,
-				];
-			}
-			
-			return $return;			
 		}
 	}
 	
@@ -728,5 +653,9 @@
 				}
 			}
 		}
-
+	}
+	
+	class GroupNote extends Model
+	{
+		public static $mysql_table	= "group_missing_notes";	
 	}

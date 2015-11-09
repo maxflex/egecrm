@@ -115,11 +115,12 @@
 			
 			foreach ($Teachers as &$Teacher) {
 				$Teacher->login_count = User::getLoginCount($Teacher->id, Teacher::USER_TYPE);
-				
 				$Groups = Teacher::getGroups($Teacher->id);
 				foreach ($Groups as $Group) {
 					foreach ($Group->students as $id_student) {
-						
+						$status = GroupTeacherLike::getStatus($id_student, $Teacher->id);
+						$Teacher->statuses[$status]++;
+/*
 						$Student = Student::findById($id_student);
 						
 						$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
@@ -147,6 +148,7 @@
 								}
 							}
 						}
+*/
 					}
 				}
 			}

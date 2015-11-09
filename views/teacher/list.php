@@ -16,35 +16,33 @@
 							</span>
 						</a>
 					</td>
-					<td style="width: 20%">
-						<span ng-show="Teacher.gray_count">
-							<svg class="review-status not-collected" style="top: 4px; width: 15px">
-								<circle r="3" cx="7" cy="7"></circle>
-							</svg>{{Teacher.gray_count}}
-						</span>
-						<span ng-show="Teacher.green_count">
-							<svg class="review-status collected" style="top: 4px; width: 15px">
-								<circle r="3" cx="7" cy="7"></circle>
-							</svg>{{Teacher.green_count}}
-						</span>
-						<span ng-show="Teacher.orange_count">
-							<svg class="review-status orange" style="top: 4px; width: 15px">
-								<circle r="3" cx="7" cy="7"></circle>
-							</svg>{{Teacher.orange_count}}
-						</span>
-						<span ng-show="Teacher.red_count">
-							<svg class="review-status red" style="top: 4px; width: 15px">
-								<circle r="3" cx="7" cy="7"></circle>
-							</svg>{{Teacher.red_count}}
+					<td>
+						<span ng-show="Teacher.statuses[1] > 0" class="text-success">
+							{{Teacher.statuses[1]}} нравится
 						</span>
 					</td>
-					<td style="width: 10%">
+					<td>
+						<span ng-show="Teacher.statuses[2] > 0" class="text-warning">
+							{{Teacher.statuses[2]}} средне
+						</span>
+					</td>
+					<td>
+						<span ng-show="Teacher.statuses[3] > 0" class="text-danger">
+							{{Teacher.statuses[3]}} не нравится
+						</span>
+					</td>
+					<td>
+						<span ng-show="Teacher.statuses[0] > 0" class="half-black">
+							{{Teacher.statuses[0]}} не установлено
+						</span>
+					</td>
+					<td>
 						<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
 					</td>
-					<td style="width: 10%">
+					<td>
 						<span ng-show="Teacher.schedule_date">{{Teacher.schedule_date}}</span>
 					</td>
-					<td style="width: 10%">
+					<td>
 						{{Teacher.login_count}}
 					</td>
 				</tr>

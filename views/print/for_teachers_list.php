@@ -2,7 +2,7 @@
 	<div class="panel-heading">
 		Список заданий на печать
 		<div class="pull-right">
-			<a href="print/add" id="add-task">добавить задание</a>
+			<a href="teachers/print/add" id="add-task">добавить задание</a>
 		</div>
 	</div>
 	<div class="panel-body">

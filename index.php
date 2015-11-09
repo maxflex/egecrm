@@ -18,18 +18,20 @@
 	$_controller	 = $_GET["controller"];	// Получаем название контроллера
 	$_action		 = $_GET["action"];		// Получаем название экшена
 		
-	/* // Проверка на аякс-запрос
+	// Проверка на аякс-запрос
 	if (strtolower(mb_strimwidth($_action, 0, 4)) == "ajax") {
 		
 		$_ajax_request = true;
 		
 		// Это аякс-запрос, к скрипту можно обращаться только через AJAX
+/*
 		if (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest') {
 			die("SECURITY RESTRICTION: THIS PAGE ACCEPTS AJAX REQUESTS ONLY (poshel nahuj)");	// Выводим мега-сообщение
 		}
+*/
 	} else {
 		$_ajax_request = false;
-	} */
+	}
 	
 	/* Основные действия */	
 	$_controllerName = ucfirst(strtolower($_controller))."Controller";	// Преобразуем название контроллера в NameController
@@ -45,16 +47,25 @@
 	// Пытаемся войти
 	User::rememberMeLogin();
 	
+	$IndexController = new $_controllerName;	// Создаем объект контроллера
+	
 	if ((!User::loggedIn() || !User::rememberMeLogin()) && !in_array($_controllerName, $bypass_login)) {
 	//	$this->redirect(BASE_ADDON . "login"); // Можно сделать так же редирект на страницу входа
 		$_controllerName	= "LoginController";
 		$_actionName		= "actionLogin";
+	} else {
+		// если у учителя в URL нет teachers/ или у ученика нет students/
+		if (!$_ajax_request && $_controllerName != "AsController" && $_controllerName != "LoginController") {
+			if (User::fromSession()->type == Teacher::USER_TYPE || User::fromSession()->type == Student::USER_TYPE) {
+				if (strpos($_SERVER['REQUEST_URI'], BASE_ADDON . strtolower(User::fromSession()->type)) === false) {
+					$IndexController->renderRestricted();	
+				}
+			} 
+		}
 	}
 	
 // 	preType([$_GET, $_controller, $_action, $_controllerName, $_actionName], true);
 
-	
-	$IndexController = new $_controllerName;	// Создаем объект контроллера
 	
 	// проверка прав доступа к контроллеру
 	if (!in_array(User::fromSession()->type, $IndexController::$allowed_users) && !in_array($_controllerName, $bypass_login)) {

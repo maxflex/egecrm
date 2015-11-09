@@ -275,6 +275,10 @@
 				}, 100)
 			})
 			
+			$scope.getGroup = function(id) {
+				return _.findWhere($scope.Groups, {id: parseInt(id)})
+			}
+			
 			// получить группы из журнала
 			$scope.getJournalGroups = function() {
 				return Object.keys(_.chain($scope.Journal).groupBy('id_group').value())
@@ -293,12 +297,28 @@
 			$scope.getMaxVisits = function() {
 				max = -1;
 				$.each($scope.Groups, function(i, group) {
-					count = $scope.getVisitsByGroup(group.id).length
+					count = $scope.getVisitsByGroup(group.id).length 
+					if ($scope.getGroup(group.id).Schedule) {
+						count += $scope.getGroup(group.id).Schedule.length	
+					}
 					if (count > max) {
 						max = count
 					}
 				});
 				return max;
+			}
+			
+			$scope.toggleMissingNote = function(Schedule) {
+				note = Schedule.missing_note
+				note++
+				$.post("ajax/MissingNoteToggle", {
+					id_student: $scope.student.id,
+					id_group: Schedule.id_group,
+					date: Schedule.hasOwnProperty('lesson_date') ? Schedule.lesson_date : Schedule.date,
+				}, function(response) {
+					Schedule.missing_note = response 
+					$scope.$apply()
+				}, "json")
 			}
 			
 			$scope.formatVisitDate = function (date) {
@@ -418,7 +438,7 @@
 			}
 
 
-
+			$scope.id_user_print = ''
 			/**
 			 * Выбрать ID контракта для последующей печати договора
 			 *

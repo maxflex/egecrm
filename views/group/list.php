@@ -1,7 +1,9 @@
 <div class="panel panel-primary" ng-app="Group" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
+	<?= partial("create_helper") ?>
 	<div class="panel-heading">
 		Группы
 		<div class="pull-right">
+			<span class="link-like link-white link-reverse" ng-click="createHelper()" style="margin-right: 10px">помощник при создании групп</span>
 			<a href="groups/schedule/download" style="margin-right: 10px">скачать расписание</a>
 			<a href='groups/add'>добавить группу</a>
 		</div>

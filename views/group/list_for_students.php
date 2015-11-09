@@ -7,7 +7,7 @@
 	<tr ng-repeat="Group in Groups" 
 		class="group-list" data-id="{{Group.id}}">
 		<td width="100">
-			<a href="groups/edit/{{Group.id}}/schedule">Группа №{{Group.id}}</a>
+			<a href="students/groups/edit/{{Group.id}}/schedule">Группа №{{Group.id}}</a>
 		</td>
 		<td>
 			<span>ЕГЭ-Центр-{{Branches[Group.id_branch]}}</span>
@@ -33,9 +33,5 @@
 			
 			<div ng-show="Groups.length == 0" class="center half-black small" style="margin-bottom: 30px">список групп пуст</div>
 		</div>
-	</div>
-	
-	<div class="alert alert-danger center">
-		<span style="font-size: 16px; font-weight: bold">Уважаемый клиент! Если вы хотите узнать расписание и дату первого занятия, следите за актуальной информацией из личного кабинета - это будет указано в информации по конкретной группе. Специалисты ЕГЭ-Центра в данный момент активно занимаются формированием расписания и запуском групп.</span>
 	</div>
 </div>

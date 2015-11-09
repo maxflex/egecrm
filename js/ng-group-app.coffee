@@ -220,6 +220,34 @@
 				$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()					
 									
 		.controller "EditCtrl", ($scope) ->
+			
+			$scope.toggleAgreement = (Entity) ->
+				type_entity = if Entity.hasOwnProperty('id_a_pers') then 'TEACHER' else 'STUDENT'
+				console.log type_entity
+				id_status = Entity.agreement
+				if id_status is 0 then id_status = 3 else id_status--
+				$.post "ajax/toggleGroupAgreement",
+					id_entity: Entity.id
+					type_entity: type_entity
+					id_group: $scope.Group.id
+					day_and_time: $scope.Group.day_and_time
+					id_status: id_status
+				, (response) ->
+					Entity.agreement = id_status
+					$scope.$apply()
+			
+			$scope.toggleTeacherLike = (Student) ->
+				id_status = Student.teacher_like_status
+				id_status++;
+				id_status = 0 if id_status > 3
+				$.post "ajax/toggleTeacherLike",
+					id_student: Student.id
+					id_teacher: $scope.Group.id_teacher
+					id_status: id_status
+				, (response) ->
+					Student.teacher_like_status = id_status
+					$scope.$apply()
+			
 			$scope.allStudentStatuses = ->
 				student_statuses_count = _.filter $scope.Group.student_statuses, (s, id_student) ->
 											s isnt undefined and s.id_status and _.where($scope.TmpStudents, {id: parseInt(id_student)}).length
@@ -339,6 +367,7 @@
 			$scope.saveDayAndTime = ->
 				lightBoxHide()
 				rebindBlinking()
+				$scope.updateAgreement()
 				$(".save-button").mousedown()
 			
 			initDayAndTime = (day) ->
@@ -368,6 +397,11 @@
 				current_index = $.inArray(time, $scope.weekdays[day - 1].schedule)
 			
 			$scope.changeCabinet = ->
+				return if not $scope.Group.id
+				$scope.reloadSmsNotificationStatuses()
+				$scope.updateGroup
+					cabinet: $scope.Group.cabinet
+					
 				$("#group-cabinet").attr "disabled", "disabled"
 				ajaxStart()
 				$.post "groups/ajax/GetCabinetFreetime", {id_group: $scope.Group.id, cabinet: $scope.Group.cabinet}, (freetime) ->
@@ -377,11 +411,44 @@
 					$scope.$apply()
 				, "json"
 			
+			$scope.updateAgreement = ->
+				$.post "groups/ajax/UpdateAgreement",
+					id_group: $scope.Group.id
+					day_and_time: $scope.Group.day_and_time
+					id_teacher: $scope.Group.id_teacher
+					students: $scope.Group.students
+				, (response) ->
+					$scope.getTeacher($scope.Group.id_teacher).agreement = response.teacher_agreement
+					$.each response.student_agreements, (id_student, id_status)->
+						$scope.getStudent(id_student).agreement = id_status
+					$scope.$apply()
+				, "json"
+			
 			$scope.changeTeacher = ->
+				return if not $scope.Group.id
+				
+				$.post "groups/ajax/changeTeacher",
+					id_group: $scope.Group.id
+					day_and_time: $scope.Group.day_and_time
+					id_teacher: $scope.Group.id_teacher
+					students: $scope.Group.students
+				, (response) ->
+					console.log response
+					$scope.getTeacher($scope.Group.id_teacher).agreement = response.agreement
+					$.each response.teacher_like_statuses, (id_student, id_status)->
+						$scope.getStudent(id_student).teacher_like_status = id_status
+					$scope.$apply()
+				, "json"
+				
 # 				$("#group-cabinet").attr "disabled", "disabled"
 				return if $scope.Group.id_teacher is "0"
 				ajaxStart()
-				$.post "groups/ajax/GetTeacherFreetime", {id_group: $scope.Group.id, id_teacher: $scope.Group.id_teacher, id_branch: $scope.Group.id_branch}, (freetime) ->
+				$.post "groups/ajax/GetTeacherFreetime",
+					id_group: $scope.Group.id
+					id_teacher: $scope.Group.id_teacher
+					id_branch: $scope.Group.id_branch
+					day_and_time: $scope.Group.day_and_time
+				, (freetime) ->
 					console.log freetime
 					ajaxEnd()
 # 					$("#group-cabinet").removeAttr "disabled"
@@ -393,10 +460,16 @@
 					
 					$scope.teacher_freetime_doubleblink	= freetime.red_doubleblink
 					
-					$scope.Group.teacher_status = freetime.teacher_status
+					$scope.getTeacher($scope.Group.id_teacher).agreement = freetime.agreement					
 					
 					$scope.$apply()
 				, "json"
+			
+			
+			$scope.updateGroup = (data) ->
+				$.post "groups/ajax/updateGroup", 
+					id_group: $scope.Group.id
+					data: data
 			
 			$scope.selectAllWorking = (id_branch) ->
 				$.each $scope.weekdays, (index, weekday) ->
@@ -525,8 +598,39 @@
 				else
 					$scope.Group.student_statuses[id_student].review_status++
 				$scope.getStudent(id_student).review_status = $scope.Group.student_statuses[id_student].review_status
+			
+			$scope.reloadSmsNotificationStatuses = ->
+				$.post "groups/ajax/ReloadSmsNotificationStatuses",
+					students: $scope.Group.students
+					id_branch: $scope.Group.id_branch
+					id_subject: $scope.Group.id_subject
+					cabinet: $scope.Group.cabinet
+					first_schedule: $scope.Group.first_schedule
+				, (response) ->
+					$.each response.sms_notification_statuses, (id_student, id_status)->
+						$scope.getStudent(id_student).sms_notified = id_status
+					$scope.$apply()
+				, "json"
+			
+			$scope.smsNotify = (Student, event) ->
+				$(event.target)
+					.html "отправка..."
+					.removeAttr "ng-click"
+					.removeClass "pointer"
+					.addClass "default"
+				$.post "groups/ajax/smsNotify", 
+					id_student: Student.id
+					id_branch: $scope.Group.id_branch
+					id_subject: $scope.Group.id_subject
+					cabinet: $scope.Group.cabinet
+					first_schedule: $scope.Group.first_schedule
+					id_group: $scope.Group.id
+				, (response) ->
+					Student.sms_notified = true 
+					$scope.$apply()
 				
-			$scope.smsNotify = (id_student) ->
+			
+			$scope.smsNotify__DEPRICATED__ = (id_student) ->
 				$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0, review_status: 0} if $scope.Group.student_statuses[id_student] is undefined
 				return false if $scope.Group.student_statuses[id_student].notified
 				$scope.Group.student_statuses[id_student].notified = 1
@@ -589,6 +693,7 @@
 				id_student in $scope.Group.students
 			
 			$scope.getStudent = (id_student) ->
+				id_student = parseInt id_student
 				Student = (i for i in $scope.TmpStudents when i.id is id_student)[0]
 			
 			$scope.getTeacher = (id_teacher) ->
@@ -641,11 +746,15 @@
 					$scope.Cabinets = cabinets
 					if cabinets isnt undefined and cabinets.length
 						$scope.Group.cabinet = cabinets[0].id
-						
+					
 					if cabinets.length isnt 1 
 						$("#group-cabinet").removeAttr "disabled"
 					
 					$scope.$apply()
+					$scope.reloadSmsNotificationStatuses()
+					$scope.updateGroup
+						id_branch: $scope.Group.id_branch
+						cabinet: $scope.Group.cabinet
 					clearSelect 50, ->
 						$("#group-cabinet").selectpicker 'refresh'
 				, "json"
@@ -660,8 +769,34 @@
 			
 			
 			$scope.subjectChange = ->
+				return if not $scope.Group.id
+				
+				$scope.reloadSmsNotificationStatuses()
+				$scope.updateGroup
+					id_subject: $scope.Group.id_subject
 				$scope.Group.id_teacher = 0
 				clearSelect()
+			
+			$scope.$watch "Group.grade", (newVal, oldVal) ->
+				return if not $scope.Group.id
+				
+				if newVal isnt oldVal
+					$scope.updateGroup
+						grade: newVal
+			
+			$scope.$watch "Group.teacher_price", (newVal, oldVal) ->
+				return if not $scope.Group.id
+				
+				if newVal isnt oldVal
+					$scope.updateGroup
+						teacher_price: newVal
+			
+			$scope.$watch "Group.level", (newVal, oldVal) ->
+				return if not $scope.Group.id
+				
+				if newVal isnt oldVal
+					$scope.updateGroup
+						level: newVal
 			
 			$scope.loading_groups = false
 			$scope.loadGroups = ->
@@ -720,15 +855,32 @@
 					$scope.$apply()
 					
 					$.post "groups/ajax/save", $scope.Group, (response) ->
+						console.log response
 						if $scope.Group.id
 							ajaxEnd()
 							$scope.saving = false
 							$scope.form_changed = false
 							$scope.$apply()
 						else
-							redirect "groups/edit/#{response}"	
+						 	redirect "groups/edit/#{response}"	
 						
 		.controller "ListCtrl", ($scope) ->
+			$scope.createHelper = ->
+				lightBoxShow 'contract-stats'
+				$scope.create_helper_data = null
+				$.post "ajax/GroupCreateHelper",
+					id_branch: $scope.search.id_branch
+					subjects: $scope.search.subjects
+					grade: $scope.search.grade
+				, (response) ->
+					console.log response
+					$scope.create_helper_data = response
+					$scope.$apply()
+				, "json"
+			
+			$scope.getMonthByNumber = (n) ->
+				moment().month(n - 1).format("MMMM")
+
 			$scope.updateStatsCache = ->
 				ajaxStart()
 				$.post "groups/ajax/updateStatsCache", {}, ->
