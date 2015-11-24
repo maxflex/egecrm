@@ -95,12 +95,18 @@
 					d = 7 if d is 0
 					key = Object.keys(Group.day_and_time[d])[0]
 					v.time = Group.day_and_time[d][key]
+					v.cabinet = Group.cabinet if Group.cabinet
 				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
 				$scope.$apply()
 			
 			$scope.lessonCount = ->
 				Object.keys($scope.Group.day_and_time).length
 			
+			$scope.changeCabinet = (Schedule) ->
+				$.post "groups/ajax/changeScheduleCabinet",
+					id: Schedule.id
+					cabinet: Schedule.cabinet
+				
 			$scope.setTime = (Schedule, event) ->
 				$(event.target).hide()
 				
@@ -366,8 +372,6 @@
 			
 			$scope.saveDayAndTime = ->
 				lightBoxHide()
-				rebindBlinking()
-				$scope.updateAgreement()
 				$(".save-button").mousedown()
 			
 			initDayAndTime = (day) ->
@@ -401,16 +405,9 @@
 				$scope.reloadSmsNotificationStatuses()
 				$scope.updateGroup
 					cabinet: $scope.Group.cabinet
-					
-				$("#group-cabinet").attr "disabled", "disabled"
-				ajaxStart()
-				$.post "groups/ajax/GetCabinetFreetime", {id_group: $scope.Group.id, cabinet: $scope.Group.cabinet}, (freetime) ->
-					ajaxEnd()
-					$("#group-cabinet").removeAttr "disabled"
-					$scope.cabinet_freetime = freetime
-					$scope.$apply()
-				, "json"
-			
+				
+				$scope.updateCabinetBar()
+
 			$scope.updateAgreement = ->
 				$.post "groups/ajax/UpdateAgreement",
 					id_group: $scope.Group.id
@@ -429,6 +426,7 @@
 				
 				$.post "groups/ajax/changeTeacher",
 					id_group: $scope.Group.id
+					id_branch: $scope.Group.id_branch
 					day_and_time: $scope.Group.day_and_time
 					id_teacher: $scope.Group.id_teacher
 					students: $scope.Group.students
@@ -440,32 +438,44 @@
 					$scope.$apply()
 				, "json"
 				
-# 				$("#group-cabinet").attr "disabled", "disabled"
+				$scope.updateTeacherBar()
+				
+			$scope.updateTeacherBar = ->
 				return if $scope.Group.id_teacher is "0"
 				ajaxStart()
-				$.post "groups/ajax/GetTeacherFreetime",
+				$.post "groups/ajax/GetTeacherBar",
 					id_group: $scope.Group.id
 					id_teacher: $scope.Group.id_teacher
 					id_branch: $scope.Group.id_branch
-					day_and_time: $scope.Group.day_and_time
-				, (freetime) ->
-					console.log freetime
+				, (bar) ->
 					ajaxEnd()
-# 					$("#group-cabinet").removeAttr "disabled"
-					$scope.teacher_freetime 		= freetime.red
-					$scope.teacher_freetime_red	 	= freetime.red_full
-					
-					$scope.teacher_freetime_orange_half	= freetime.orange
-					$scope.teacher_freetime_orange_full	= freetime.orange_full
-					
-					$scope.teacher_freetime_doubleblink	= freetime.red_doubleblink
-					
-					$scope.getTeacher($scope.Group.id_teacher).agreement = freetime.agreement					
-					
+					$scope.getTeacher($scope.Group.id_teacher).bar = bar				
 					$scope.$apply()
+					rebindBlinking()
 				, "json"
 			
+			$scope.updateCabinetBar = (ajax_animation = true) ->
+				ajaxStart() if ajax_animation
+				$.post "groups/ajax/GetCabinetBar", {id_group: $scope.Group.id, cabinet: $scope.Group.cabinet}, (bar) ->
+					ajaxEnd() if ajax_animation
+					$scope.cabinet_bar = bar
+					$scope.$apply()
+					rebindBlinking()
+				, "json"
 			
+			$scope.updateStudentBars = ->
+				$.post "groups/ajax/GetStudentBars",
+					student_ids: $scope.Group.students
+					id_group: $scope.Group.id
+					id_branch: $scope.Group.id_branch
+				, (response) ->
+					console.log response, 'students'
+					$.each response, (id_student, bar) ->
+						$scope.getStudent(id_student).bar = bar						
+					$scope.$apply()
+					rebindBlinking()
+				, "json"
+				
 			$scope.updateGroup = (data) ->
 				$.post "groups/ajax/updateGroup", 
 					id_group: $scope.Group.id
@@ -755,6 +765,11 @@
 					$scope.updateGroup
 						id_branch: $scope.Group.id_branch
 						cabinet: $scope.Group.cabinet
+					
+					$scope.updateTeacherBar()
+					$scope.updateCabinetBar(false)
+					$scope.updateStudentBars()
+					
 					clearSelect 50, ->
 						$("#group-cabinet").selectpicker 'refresh'
 				, "json"
@@ -860,6 +875,11 @@
 							ajaxEnd()
 							$scope.saving = false
 							$scope.form_changed = false
+							
+							$scope.updateAgreement()
+							$scope.updateTeacherBar()
+							$scope.updateStudentBars()
+							
 							$scope.$apply()
 						else
 						 	redirect "groups/edit/#{response}"	

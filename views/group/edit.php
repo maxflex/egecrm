@@ -144,36 +144,16 @@
 -->
 							</td>
 							<td width="150">
-								<span ng-repeat="weekday in weekdays" class="group-freetime-block">
-									<span class="freetime-bar empty" ng-repeat="time in weekday.time track by $index" 
-										ng-class="{
-											'red-gray-empty' 	: justInDayFreetime($parent.$index + 1, time, Student.freetime_red_half),
-											'red'				: inRedFreetime(time, Student, $parent.$index + 1),
-											'orange-emptygray'  : justInDayFreetime($parent.$index + 1, time, Student.freetime_orange),
-											'orange' 			: justInDayFreetime($parent.$index + 1, time, Student.freetime_orange_full),
-											'blink'				: (inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0)
-																	&& justInDayFreetime($parent.$index + 1, time, Student.freetime_red_half)
-																	|| ( (inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0)
-																	&& (justInDayFreetime($parent.$index + 1, time, Student.freetime_orange) || justInDayFreetime($parent.$index + 1, time, Student.freetime_orange_full)) ),
-											'double-blink'		: justInDayFreetime($parent.$index + 1, time, Student.red_doubleblink)
-										}" ng-hide="time == ''">
-									</span>
+								<span ng-repeat="(day, data) in Student.bar" class="group-freetime-block">
+									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
 								</span>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="4"></td>
 							<td width="150">
-							    <span ng-repeat="weekday in weekdays" class="group-freetime-block" ng-show="Group.cabinet && Group.cabinet != '0'">
-									<span class="freetime-bar green" ng-repeat="time in weekday.schedule track by $index" 
-										ng-class="{
-											'empty-green'	: !inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0,
-											'red'			: (!inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0) 
-																&& inCabinetFreetime(time, cabinet_freetime[$parent.$index + 1]),
-											'red-green'		: !(!inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0) 
-																&& (inCabinetFreetime(time, cabinet_freetime[$parent.$index + 1]))
-										}" ng-hide="time == ''" style="position: relative; top: 3px">
-									</span>
+							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
+									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
 								</span>
 							</td>
 						</tr>
@@ -210,20 +190,8 @@
 -->
 							</td>
 							<td width="150">
-							    <span ng-repeat="weekday in weekdays" class="group-freetime-block"  ng-show="Group.id_teacher && Group.id_teacher != '0'">
-									<span class="freetime-bar empty-blue" ng-repeat="time in weekday.time track by $index" 
-										ng-class="{
-											'red-blue-empty'	: justInDayFreetime($parent.$index + 1, time, teacher_freetime),
-											'red'				: justInDayFreetime($parent.$index + 1, time, teacher_freetime_red),
-											'orange-emptyblue' 	: justInDayFreetime($parent.$index + 1, time, teacher_freetime_orange_half),
-											'orange' 		: justInDayFreetime($parent.$index + 1, time, teacher_freetime_orange_full),
-											'blink'			: (inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0)
-																	&& justInDayFreetime($parent.$index + 1, time, teacher_freetime)
-																|| ( (inDayAndTime2(time, Group.day_and_time[$parent.$index + 1]) || Group.cabinet == 0)
-																	&& (justInDayFreetime($parent.$index + 1, time, teacher_freetime_orange_half) || justInDayFreetime($parent.$index + 1, time, teacher_freetime_orange_full)) ),
-											'double-blink'		: justInDayFreetime($parent.$index + 1, time, teacher_freetime_doubleblink)
-										}" ng-hide="time == ''" style="position: relative; top: 3px">
-									</span>
+							   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">
+									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
 								</span>
 							</td>
 						</tr>

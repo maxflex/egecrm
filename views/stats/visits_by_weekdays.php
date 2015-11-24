@@ -64,7 +64,6 @@
 		<thead style="font-weight: bold">
 			<tr>
 				<td>
-					<span ng-show="days_mode" ng-click="plusDays()" class="half-black pointer" style="font-weight: normal">+3 дня</span>
 				</td>
 				<td>
 					кол-во занятий
@@ -84,10 +83,9 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat-start="stat in sortByDate(stats)" ng-class="{'pointer': days_mode}" ng-click="dateLoad(stat.date)">
+			<tr ng-repeat-start="stat in stats">
 				<td>
-					{{formatDate(stat.date)}}
-					<span ng-show="errors[stat.date].length > 0" class="badge badge-danger" style="margin-left: 10px">{{errors[stat.date].length}}</span>
+					{{stat.title}}
 				</td>
 				<td>
 					{{stat.lesson_count ? stat.lesson_count : ''}}
@@ -175,21 +173,4 @@
 			</tr>
 		</tbody>
 	</table>
-	
-	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
-<!--
-	<pagination
-	  ng-model="currentPage"
-	  ng-change="pageStudentChanged()"
-	  total-items="<?= round(VisitJournal::fromFirstLesson() / StatsController::PER_PAGE) ?>"
-	  max-size="10"
-	  items-per-page="<?= StatsController::PER_PAGE ?>"
-	  first-text="«"
-	  last-text="»"
-	  previous-text="«"
-	  next-text="»"
-	>
-	</pagination>
--->
-	<?php endif ?>
 </div>

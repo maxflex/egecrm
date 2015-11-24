@@ -138,7 +138,7 @@
 		?>
 	</a>
     <a href="clients/errors" class="list-group-item">Ошибки</a>
-	
+    <a href="testing" class="list-group-item">Тестирование</a>	
 	<a class="list-group-item active">Преподаватели</a>
     <a href="teachers" class="list-group-item">Профили</a>
 	<a href="teachers/salary" class="list-group-item">Дебет</a>

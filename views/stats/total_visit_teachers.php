@@ -6,9 +6,11 @@
 
 <div ng-app="Stats" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="top-links pull-right">
-		<a href="stats/visits/days">по дням</a>
-		<a href="stats/visits/students">по ученикам</a>
-		<span class="link-like active" style="margin-right: 0">по преподавателям</span>
+		<a href="stats/visits/total">хронологически</a>
+		<a href="stats/visits/students">ученики</a>
+		<span class="link-like active">преподаватели</span>
+		<a href="stats/visits/grades">классы</a>
+		<a href="stats/visits/subjects" style="margin-right: 0">предметы</a>
 	</div>
 	
 	<table class="table table-hover">

@@ -18,7 +18,6 @@
 	<div class="row center small half-black" ng-show="create_helper_data === null" style="margin: 50px 0 30px">
 		загрузка...
 	</div>
-<!--
 	<div class="row" style="margin-bottom: 10px" ng-show="create_helper_data !== null">
 		<div class="col-sm-3">
 		</div>
@@ -29,22 +28,21 @@
 			договоров
 		</div>
 	</div>
--->
 	<div class="row" ng-repeat="data in create_helper_data">
 		<div class="col-sm-3">
 			{{getMonthByNumber(data.month)}}
 		</div>
+<!--
 		<div class="col-sm-9">
 			{{data.count}}
 		</div>
-<!--
+-->
 		<div class="col-sm-3">
 			{{data.request_count}}
 		</div>
 		<div class="col-sm-3">
 			{{data.contract_count}}
 		</div>
--->
 	</div>
 </div>
 <!-- /ЛАЙТБОКС ДОБАВЛЕНИЕ ДОГОВОРА -->

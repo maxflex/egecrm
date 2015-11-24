@@ -252,6 +252,11 @@
 
 			// анимация загрузки RENDER ANGULAR
 			angular.element(document).ready(function() {
+				$scope.student.minimized = $scope.contracts.length > 0 ? false : true
+				$scope.show_request_panel = $scope.contracts.length > 0 ? false : true
+				
+				console.log($scope.student.contracts) 
+				 
 				$scope.weekdays = [
 					{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", $scope.time[1], $scope.time[2]]},
 					{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
@@ -1511,10 +1516,15 @@
 			        }
 			    })
 		    }
-
+			
+			
 		    $scope.toggleMinimizeStudent = function(minimized) {
 			    $scope.student.minimized = !$scope.student.minimized
-			    $.post("ajax/MinimizeStudent", {"minimized": ($scope.student.minimized ? 1 : 0), "id_student": $scope.student.id})
+// 			    $.post("ajax/MinimizeStudent", {"minimized": ($scope.student.minimized ? 1 : 0), "id_student": $scope.student.id})
+		    }
+		    
+		    $scope.toggleMinimizeRequest = function() {
+			    $scope.show_request_panel = !$scope.show_request_panel
 		    }
 
 

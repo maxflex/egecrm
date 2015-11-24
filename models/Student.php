@@ -59,6 +59,11 @@
 			return implode(" ", $name_ordered);
 		}
 		
+		public function getBar($id_group, $id_branch)
+		{
+			return Freetime::getStudentBar($id_group, $id_branch, $this->id);
+		}
+		
 		/**
 		 * Получить студентов с договорами.
 		 * 

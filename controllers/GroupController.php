@@ -332,6 +332,7 @@
 					"past_lesson_dates" => $Group->getPastLessonDates(),
 					"vocation_dates"	=> GroupSchedule::getVocationDates(),
 					"time" 				=> Freetime::TIME,
+					"Cabinets"			=> Cabinet::getByBranch($Group->id_branch),
 				]);
 				
 				$this->render("schedule", [
@@ -359,6 +360,7 @@
 			if (!$Group) {
 				$this->addJs("dnd");
 				$Group = Group::findById($_GET['id']);
+				
 				$Group->day_and_time_2 = $Group->day_and_time;
 			}
 			
@@ -367,6 +369,7 @@
 			if ($Group->id_teacher) {
 				foreach ($Teachers as &$Teacher) {
 					if ($Teacher->id == $Group->id_teacher) {
+						$Teacher->bar 		= $Teacher->getBar($Group->id, $Group->branch);
 						$Teacher->agreement =  GroupAgreement::getStatus([
 													'type_entity' 	=> Teacher::USER_TYPE,
 													'id_entity'		=> $Teacher->id,
@@ -398,15 +401,8 @@
 					$Student->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
 				}
 				
-				$freetime = $Student->getGroupFreetime($Group->id, $Group->id_branch);
-				$Student->freetime_red 		= $freetime["freetime_red"];
-				$Student->freetime_red_half = $freetime["freetime_red_half"];
-				$Student->red_doubleblink 	= $freetime["red_doubleblink"];
-				
-				$Student->freetime_orange	 	= $freetime["freetime_orange"];
-				$Student->freetime_orange_full 	= $freetime["freetime_orange_full"];
-				
 				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
+				$Student->bar					= $Student->getBar($Group->id, $Group->branch);
 				
 				# Статус доставки СМС
 				// $Student->delivery_data			= $Student->getAwaitingSmsStatuses($Group->id);
@@ -424,20 +420,6 @@
 				return ($a->Contract->id < $b->Contract->id ? -1 : 1);
 			});
 			
-			
-			// Свободное время препода
-			$teacher_freetime_all 		= TeacherFreetime::getRedAll($Group->id, $Group->id_teacher);
-			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
-			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
-			
-			$teacher_freetime_doubleblink = $teacher_freetime_all['red_doubleblink'];
-			
-			$teacher_freetime_orange	= TeacherFreetime::getOrange($Group->id, $Group->id_branch, $Group->id_teacher, $teacher_freetime_red, $teacher_freetime_red_full);
-			$teacher_freetime_orange_half = $teacher_freetime_orange['half'];
-			$teacher_freetime_orange_full = $teacher_freetime_orange['full'];
-			
-			
-			
 			$ang_init_data = angInit([
 				"Group" 	=> $Group,
 				"Teachers"	=> $Teachers,
@@ -450,7 +432,7 @@
 				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
 				"GroupTeacherStatuses"	=> GroupTeacherStatuses::$all,
 				"branches_brick"		=> Branches::getShortColored(),
-				"cabinet_freetime"		=> Cabinet::getFreetime($Group->id, $Group->cabinet),
+				"cabinet_bar"			=> Freetime::getCabinetBar($Group->id, $Group->cabinet),
 				"teacher_freetime"		=> $teacher_freetime_red, // red half
 				"teacher_freetime_red"	=> $teacher_freetime_red_full,
 				"teacher_freetime_orange_half" 	=> $teacher_freetime_orange_half,
@@ -579,6 +561,11 @@
 				}
 				$Schedule->time = end($Group->day_and_time[$d]);
 				$Schedule->save("time");
+				
+				if ($Group->cabinet) {
+					$Schedule->cabinet = $Group->cabinet;
+					$Schedule->save("cabinet");
+				}
 			}
 //			dbConnection()->query("UPDATE ".GroupSchedule::$mysql_table." SET time='$time' WHERE time IS NULL AND id_group=$id_group");
 		}
@@ -612,48 +599,37 @@
 			$Group->save("students");
 		}
 		
-		public function actionAjaxGetCabinetFreetime() 
+		public function actionAjaxGetCabinetBar() 
 		{
 			extract($_POST);
 			
 			returnJsonAng(
-				Cabinet::getFreetime($id_group, $cabinet)	
+				Freetime::getCabinetBar($id_group, $cabinet)
 			);
 		}
 		
-		public function actionAjaxGetTeacherFreetime() 
+		public function actionAjaxGetTeacherBar() 
 		{
 			extract($_POST);
 			
 			$id_group = $id_group ? $id_group : 0;
 			
-			// Свободное время препода
-			$teacher_freetime_all 		= TeacherFreetime::getRedAll($id_group, $id_teacher);
-			$teacher_freetime_red 		= $teacher_freetime_all['red_half'];
-			$teacher_freetime_red_full	= $teacher_freetime_all['red_full'];
+			returnJsonAng(
+				Freetime::getTeacherBar($id_group, $id_branch, $id_teacher)	
+			);
+		}
+		
+		public function actionAjaxGetStudentBars() 
+		{
+			extract($_POST);
 			
-			$teacher_freetime_doubleblink = $teacher_freetime_all['red_doubleblink'];
+			$id_group = $id_group ? $id_group : 0;
 			
-			$teacher_freetime_orange	= TeacherFreetime::getOrange($id_group, $id_branch, $id_teacher, $teacher_freetime_red, $teacher_freetime_red_full);
-			$teacher_freetime_orange_half = $teacher_freetime_orange['half'];
-			$teacher_freetime_orange_full = $teacher_freetime_orange['full'];
+			foreach ($student_ids as $id_student) {
+				$return[$id_student] = Freetime::getStudentBar($id_group, $id_branch, $id_student);
+			}
 			
-			// статус согласия нового препода
-			$agreement =  GroupAgreement::getStatus([
-							'type_entity' 	=> Teacher::USER_TYPE,
-							'id_entity'		=> $id_teacher,
-							'id_group'		=> $id_group,
-							'day_and_time'	=> $day_and_time,
-						]);
-
-			returnJsonAng([
-				"red" 		=> $teacher_freetime_red,
-				"red_full" 	=> $teacher_freetime_red_full,
-				"orange"	=> $teacher_freetime_orange_half,
-				"agreement"	=> $agreement,
-				"orange_full"		=> $teacher_freetime_orange_full,
-				"red_doubleblink" 	=> $teacher_freetime_doubleblink,
-			]);
+			returnJsonAng($return);
 		}
 		
 		public function actionAjaxGetGroups()
@@ -1021,6 +997,8 @@
 										'day_and_time'	=> $day_and_time,
 									]);
 			
+			$return['bar'] = Freetime::getTeacherBar($id_group, $id_branch, $id_teacher);
+			
 			Group::updateById($id_group, [
 				"id_teacher" => $id_teacher,
 			]);
@@ -1066,5 +1044,14 @@
 			extract($_POST);
 			
 			Group::updateById($id_group, $data);
+		}
+		
+		public function actionAjaxChangeScheduleCabinet()
+		{
+			extract($_POST);
+			
+			GroupSchedule::updateById($id, [
+				"cabinet" => $cabinet,
+			]);
 		}
 	}

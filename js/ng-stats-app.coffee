@@ -73,11 +73,14 @@ angular.module "Stats", ["ui.bootstrap"]
 		
 		$scope.sortByDate = (stats) ->
 			tmp = []
-			$.each stats, (date, obj) ->
+			$.each stats, (date, obj) -> 
 				obj.date = date
 				tmp.push obj
 			
 			_.sortBy(tmp, 'date').reverse()
+		
+		$scope.formatDay = (day) ->
+			$scope.weekdays[day].short
 		
 		$scope.toggleDiv = (id)->
 			$(".user-#{id}").slideToggle()

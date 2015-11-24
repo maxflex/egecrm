@@ -1,30 +1,7 @@
+<div id="panel-loading">Загрузка...</div>
 <form id="request-edit" ng-app="Request" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>" autocomplete='off'>
 	
-	<div id="panel-loading">Загрузка...</div>
-	<div class="panel panel-primary panel-edit">
-		<div class="panel-heading">
-			 
-			<?php if ($Request->adding) :?>
-			Добавление заявки
-			<?php else :?>
-			Редактирование заявки №<?= $Request->id ?>
-			<?php endif ?>
-			
-			<?php if (!$Request->adding) :?>
-			<div class="pull-right">
-				<span class="link-reverse pointer" onclick="lightBoxShow('glue')">перенести в другой профиль</span>
-				
-				<?php if ($Request->getDuplicates()): ?>
-				<span class="link-reverse pointer" style="margin-left: 10px" onclick='deleteRequest(<?= $Request->id ?>)'>удалить заявку</span>
-				<?php endif ?>
-			</div>
-			<?php endif ?>
-		</div>
-		<div class="panel-body">
-			
-<!-- 	<img src="img/svg/loading-bars.svg" alt="Загрузка страницы..." id="svg-loading"> -->
-		
-		<!-- ЛАЙТБОКС РЕДАКТИРОВАНИЕ ПЕЧАТИ ДОГОВОРА ВРУЧНУЮ -->
+	<!-- ЛАЙТБОКС РЕДАКТИРОВАНИЕ ПЕЧАТИ ДОГОВОРА ВРУЧНУЮ -->
 		<div class="lightbox-new lightbox-manualedit">
 			<h4 style="margin-bottom: 20px">РЕДАКТИРОВАНИЕ ДОГОВОРА</h4>
 			<div class="row">
@@ -106,8 +83,33 @@
 			<button class="btn btn-default map-save-button" ng-click="saveMarkersToServer()">Сохранить</button>
 		</div>
 		<!-- КОНЕЦ /КАРТА И ЛАЙТБОКС -->
-
-
+	
+	<div class="panel panel-primary panel-edit" ng-show="show_request_panel">
+		<div class="panel-heading">
+			 
+			<?php if ($Request->adding) :?>
+			Добавление заявки
+			<?php else :?>
+			Редактирование заявки №<?= $Request->id ?>
+			<?php endif ?>
+			
+			
+			<div class="pull-right">
+				
+				<span class="link-reverse pointer" ng-click="toggleMinimizeStudent()">{{student.minimized ? "развернуть" : "свернуть"}}</span>
+				
+				<?php if (!$Request->adding) :?>
+					<span class="link-reverse pointer" style="margin-left: 10px" onclick="lightBoxShow('glue')">перенести в другой профиль</span>
+					
+					<?php if ($Request->getDuplicates()): ?>
+						<span class="link-reverse pointer" style="margin-left: 10px" onclick='deleteRequest(<?= $Request->id ?>)'>удалить заявку</span>
+					<?php endif ?>
+				<?php endif ?>
+			</div>
+		</div>
+		<div class="panel-body">
+			
+<!-- 	<img src="img/svg/loading-bars.svg" alt="Загрузка страницы..." id="svg-loading"> -->
 		<!-- СКЛЕЙКА КЛИЕНТОВ -->
 		<div class="lightbox-new lightbox-glue">
 			<div style="height: 75px">
@@ -330,16 +332,15 @@
 	<!-- ЗАКАРЫВАЕМ СТАРЫЙ PANEL-BODY И ОТКРЫВАЕМ НОВЫЙ -->
 	</div></div>
 	
-	<div class="panel panel-primary panel-edit">
+	<div class="panel panel-primary panel-edit" ng-hide="student.minimized">
 		<div class="panel-heading">
 			Редактирование профиля ученика №<?= $Request->Student->id ?>
-			<a class="link-reverse link-white pointer" ng-click="toggleMinimizeStudent()" style="font-size: 12px; margin-left: 7px">
-				{{student.minimized ? "развернуть" : "свернуть"}}
-			</a>
-			
 			<div class="pull-right">
+				
+				<span class="link-reverse pointer" ng-click="toggleMinimizeRequest()">{{show_request_panel ? "свернуть" : "развернуть"}}</span>
+				
 				<?php if (!empty($Request->Student->login)) :?>
-				<a class="like-white" href="as/student/<?= $Request->Student->id ?>">режим просмотра</a>
+				<a style="margin-left: 10px" class="like-white" href="as/student/<?= $Request->Student->id ?>">режим просмотра</a>
 				<?php endif ?>
 				
 				<?php if (!$Request->adding) :?>
@@ -347,7 +348,7 @@
 				<?php endif ?>
 			</div>
 		</div>
-		<div class="panel-body"  ng-hide="student.minimized">
+		<div class="panel-body">
     
     <div class="row" ng-hide="student.minimized">
 	    <div class="col-sm-12">

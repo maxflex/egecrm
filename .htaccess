@@ -72,6 +72,8 @@ RewriteRule ^stats/payments[/]?$ index.php?controller=stats&action=payments [QSA
 RewriteRule ^stats/visits/total[/]?$ index.php?controller=stats&action=TotalVisits [QSA,L]
 RewriteRule ^stats/visits/teachers[/]?$ index.php?controller=stats&action=TotalVisitTeachers [QSA,L]
 RewriteRule ^stats/visits/students[/]?$ index.php?controller=stats&action=TotalVisitStudents [QSA,L]
+RewriteRule ^stats/visits/grades[/]?$ index.php?controller=stats&action=TotalVisitGrades [QSA,L]
+RewriteRule ^stats/visits/subjects[/]?$ index.php?controller=stats&action=TotalVisitSubjects [QSA,L]
 
 
 
@@ -105,6 +107,11 @@ RewriteRule ^sms/([0-9]+)[/]?$ index.php?controller=sms&page=$1 [QSA,L]
 # Пользователи
 RewriteRule ^users[/]?$ index.php?controller=users [QSA,L]
 RewriteRule ^users/ajax/([a-zA-Z]+)[/]?$ index.php?controller=users&action=Ajax$1 [QSA,L]
+
+# Пробные тестирования
+RewriteRule ^testing[/]?$ index.php?controller=testing [QSA,L]
+RewriteRule ^testing/edit/([0-9]+)[/]?$ index.php?controller=testing&action=edit&id=$1 [QSA,L]
+RewriteRule ^testing/([a-zA-Z]+)[/]?$ index.php?controller=testing&action=$1 [QSA,L]
 
 # as
 RewriteRule ^as/(teacher|student)/([0-9]+)[/]?$ index.php?controller=as&type=$1&id=$2 [QSA,L]

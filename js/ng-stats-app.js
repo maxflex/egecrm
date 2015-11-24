@@ -83,6 +83,9 @@ angular.module("Stats", ["ui.bootstrap"]).config([
     });
     return _.sortBy(tmp, 'date').reverse();
   };
+  $scope.formatDay = function(day) {
+    return $scope.weekdays[day].short;
+  };
   $scope.toggleDiv = function(id) {
     return $(".user-" + id).slideToggle();
   };

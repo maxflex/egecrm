@@ -366,6 +366,81 @@
 			return $stats;
 		}
 		
+		private function getTotalVisitsByWeekdays()
+		{
+// 			foreach(range(0, 6) as $day_number) {
+			foreach(Freetime::DAYS_SHORT as $day => $title) {
+				if ($day == 7) {
+					$day_number = 0;
+				} else {
+					$day_number = $day;
+				}
+				
+				$return[$day]['lesson_count'] = VisitJournal::count([
+					"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND type_entity='TEACHER'"
+				]);
+				
+				$return[$day]['in_time'] = VisitJournal::count([
+					"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+				]);
+				
+				$return[$day]['late_count'] = VisitJournal::count([
+					"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND type_entity='STUDENT' AND presence!=2 AND late > 0"
+				]);
+				
+				$return[$day]['abscent_count'] = VisitJournal::count([
+					"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND type_entity='STUDENT' AND presence=2"
+				]);
+				
+				
+				$return[$day]['abscent_percent'] = round($return[$day]['abscent_count'] / ($return[$day]['in_time'] 
+					+ $return[$day]['late_count'] + $return[$day]['abscent_count']) * 100);
+				
+				$return[$day]['title'] = $title;
+			}
+			
+			return $return;
+		}
+		
+		private function getTotalVisitsBySchedule()
+		{
+			foreach (Freetime::$weekdays_time as $day => $time_ids) {
+				foreach ($time_ids as $time_id) {
+					$key = $day . "_" . $time_id;
+					
+					if ($day == 7) {
+						$day_number = 0;
+					} else {
+						$day_number = $day;
+					}
+										
+					$return[$key]['lesson_count'] = VisitJournal::count([
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='TEACHER'"
+					]);
+					
+					$return[$key]['in_time'] = VisitJournal::count([
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+					]);
+					
+					$return[$key]['late_count'] = VisitJournal::count([
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='STUDENT' AND presence!=2 AND late > 0"
+					]);
+					
+					$return[$key]['abscent_count'] = VisitJournal::count([
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='STUDENT' AND presence=2"
+					]);
+					
+					
+					$return[$key]['abscent_percent'] = round($return[$key]['abscent_count'] / ($return[$key]['in_time'] 
+						+ $return[$key]['late_count'] + $return[$key]['abscent_count']) * 100);
+					
+					$return[$key]['title'] = Freetime::DAYS_SHORT[$day] . " в " . Freetime::TIME[$time_id];
+				}
+			}
+			
+			return $return;
+		}
+		
 		public function actionTotalVisits()
 		{
 			$this->setTabTitle("Общая посещаемость");
@@ -384,6 +459,34 @@
 				case "y": {
 					$stats = self::getTotalVisitsByYears();
 					break;
+				}
+				case "wd": {
+					$stats = self::getTotalVisitsByWeekdays();
+					
+					$ang_init_data = angInit([
+						"stats" => $stats,
+						"days_mode" => $days_mode,
+					]);
+					
+					$this->render("visits_by_weekdays", [
+						"ang_init_data" => $ang_init_data,
+					]);
+					
+					return;
+				}
+				case "s": {
+					$stats = self::getTotalVisitsBySchedule();
+					
+					$ang_init_data = angInit([
+						"stats" => $stats,
+						"days_mode" => $days_mode,
+					]);
+					
+					$this->render("visits_by_schedule", [
+						"ang_init_data" => $ang_init_data,
+					]);
+					
+					return;
 				}
 				default: {
 					$stats 	= self::getTotalVisitsByDays();
@@ -528,9 +631,90 @@
 		
 		
 		
+			
+		# ================= #
+		# ==== КЛАССЫ ==== #
+		# ================= #
 		
 		
+		
+		
+		
+		
+		
+		public function actionTotalVisitGrades()
+		{
+			$this->setTabTitle("Общая посещаемость по классам");
+			
+			foreach (range(9, 11) as $grade) {
+				$return[$grade]['lesson_count'] = VisitJournal::count([
+					"condition" => "type_entity='TEACHER' AND grade=$grade"
+				]);
 				
+				$return[$grade]['in_time'] = VisitJournal::count([
+					"condition" => "grade=$grade AND  type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+				]);
+
+				$return[$grade]['late_count'] = VisitJournal::count([
+					"condition" => "grade=$grade AND  type_entity='STUDENT' AND presence!=2 AND late > 0"
+				]);
+				
+				$return[$grade]['abscent_count'] = VisitJournal::count([
+					"condition" => "grade=$grade AND type_entity='STUDENT' AND presence=2"
+				]);
+				
+				$return[$grade]['abscent_percent'] = round($return[$grade]['abscent_count'] / ($return[$grade]['in_time'] + $return[$grade]['late_count'] + $return[$grade]['abscent_count']) * 100);
+			}
+			
+			$this->render("total_visit_grades", [
+				"ang_init_data" => $ang_init_data,
+				"stats"			=> $return,
+			]);
+		}
+
+		
+		# ================= #
+		# ==== ПРЕДМЕТЫ ==== #
+		# ================= #
+		
+		
+		
+		
+		
+		
+		
+		public function actionTotalVisitSubjects()
+		{
+			$this->setTabTitle("Общая посещаемость по предметам");
+			
+			foreach (Subjects::$all as $id_subject => $subject) {
+				$return[$id_subject]['title'] = $subject;
+				
+				$return[$id_subject]['lesson_count'] = VisitJournal::count([
+					"condition" => "type_entity='TEACHER' AND id_subject=$id_subject"
+				]);
+				
+				$return[$id_subject]['in_time'] = VisitJournal::count([
+					"condition" => "id_subject=$id_subject AND  type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+				]);
+
+				$return[$id_subject]['late_count'] = VisitJournal::count([
+					"condition" => "id_subject=$id_subject AND  type_entity='STUDENT' AND presence!=2 AND late > 0"
+				]);
+				
+				$return[$id_subject]['abscent_count'] = VisitJournal::count([
+					"condition" => "id_subject=$id_subject AND type_entity='STUDENT' AND presence=2"
+				]);
+				
+				$return[$id_subject]['abscent_percent'] = round($return[$id_subject]['abscent_count'] / ($return[$id_subject]['in_time'] + $return[$id_subject]['late_count'] + $return[$id_subject]['abscent_count']) * 100);
+			}
+			
+			$this->render("total_visit_subjects", [
+				"ang_init_data" => $ang_init_data,
+				"stats"			=> $return,
+			]);
+		}
+	
 		
 		
 		

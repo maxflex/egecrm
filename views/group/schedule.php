@@ -33,16 +33,25 @@
 						'many': 'занятий'
 					}"></ng-pluralize></h3>
 				<div class="row" ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px">
-					<div class="col-sm-6">
+					<div class="col-sm-4">
 						<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}'>{{getLine1(Schedule)}}</a>
 					</div>
-					<div class="col-sm-6">
+					<div class="col-sm-4">
 						<div class="lessons-table">
 							<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
 							<span  <?= (User::isTeacher() || User::isStudent() ? '' : 'ng-click="setTime(Schedule, $event)"') ?>>
 								{{Schedule.time ? Schedule.time : 'не установлено'}}
 							</span>
 						</div>
+					</div>
+					<div class="col-sm-4">
+						<select ng-model="Schedule.cabinet" style="width: 130px" ng-change="changeCabinet(Schedule)">
+							<option selected value="">выберите кабинет</option>
+							<option disabled>──────────────</option>
+							<option ng-repeat="Cabinet in Cabinets" value="{{Cabinet.id}}" ng-selected="Cabinet.id == Schedule.cabinet">
+								{{Cabinet.number}}
+							</option>
+						</select>
 					</div>
 				</div>
 			</div>

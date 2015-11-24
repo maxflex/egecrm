@@ -32,6 +32,11 @@
 			}
 		}
 		
+		public function getBar($id_group, $id_branch)
+		{
+			return Freetime::getTeacherBar($id_group, $id_branch, $this->id);
+		}
+		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
 		public static function getActiveGroups()

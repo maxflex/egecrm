@@ -15,6 +15,16 @@
 			6 => "18:30",
 		];
 		
+		const DAYS_SHORT = [
+			1 => "ПН",
+			2 => "ВТ",
+			3 => "СР",
+			4 => "ЧТ",
+			5 => "ПТ",
+			6 => "СБ",
+			7 => "ВС",
+		];
+		
 		public static $weekdays_time = [
 			1 => [1, 2],
 			2 => [1, 2],
@@ -73,6 +83,334 @@
 		{
 			return array_search($id_time, self::$weekdays_time);	
 		}
+		
+		// подфункция проверки, что другой филиал
+		private static function _branchDifferentStudent($id_group, $id_branch, $id_student, $day, $time)
+		{
+			return dbConnection()->query("
+				SELECT g.id FROM groups g
+					LEFT JOIN group_time gt ON gt.id_group = g.id
+				WHERE g.id != $id_group AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND g.id_student = $id_student
+			")->num_rows;
+		}
+		
+		public static function getStudentBar($id_group, $id_branch, $id_student)
+		{
+			$Group = Group::findById($id_group);
+			
+			// получаем группы ученика
+			$StudentGroups = Student::getGroupsStatic($id_student);
+			
+			foreach (self::$weekdays_time as $day => $time_data) {
+				foreach ($time_data as $time_index => $time_id) {
+					// подгоняем правильный $time_index
+					if ($day <= 5) {
+						$correct_time_index = $time_index + 2;
+					} else {
+						$correct_time_index = $time_index;
+					}
+					
+					# зуб соответствует времени группы из расписания?
+					if (isset($Group->day_and_time[$day][$correct_time_index])) {
+						# в данное время есть другие группы?
+						
+						// есть ли в данное время другие группы
+						$has_other_groups_at_this_time = false;
+						
+						foreach ($StudentGroups as $StudentGroup) {
+							if ($StudentGroup->id != $Group->id && isset($StudentGroup->day_and_time[$day][$correct_time_index])) {
+								$has_other_groups_at_this_time = true;
+								break;
+							}
+						}
+						
+						if ($has_other_groups_at_this_time) {
+							$bar[$day][$time_id] = 'blink red';							
+						} else {
+							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
+							$neighbour_bars_have_other_branches = false;
+							
+							// проверка зуба слева
+							// получаем зуб слева
+							$left_time_id = self::$weekdays_time[$day][$time_index - 1];
+							// если есть зуб слева
+							if ($left_time_id !== null) {
+								$left_time = self::TIME[$left_time_id];
+								
+								$neighbour_bars_have_other_branches = self::_branchDifferentStudent($id_group, $id_branch, $id_student, $day, $left_time);
+							}
+							
+							// если слева не найдено, проверяем справа
+							if (!$neighbour_bars_have_other_branches) {
+								// получаем зуб слева
+								$right_time_id = self::$weekdays_time[$day][$time_index + 1];
+								
+								// если есть зуб справа
+								if ($right_time_id !== null) {
+									$right_time = self::TIME[$right_time_id];
+									
+									$neighbour_bars_have_other_branches = self::_branchDifferentStudent($id_group, $id_branch, $id_student, $day, $right_time);
+								}
+							}
+							
+							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
+							if ($neighbour_bars_have_other_branches) {
+								$bar[$day][$time_id] = 'blink orange';
+							} else {
+								$bar[$day][$time_id] = 'green';
+							}
+						}
+					} else {
+						# в зубе есть хотя бы 1 группа, отличная от текущей?
+						
+						// подсчитываем кол-во групп в зубе, отличных от текущей группы
+						$other_groups_at_this_time_count = 0;
+						
+						foreach ($StudentGroups as $StudentGroup) {
+							if ($StudentGroup->id != $Group->id && isset($StudentGroup->day_and_time[$day][$correct_time_index + 1])) {
+								$other_groups_at_this_time_count++;
+							}
+						}
+						
+						// в зубе есть хотя бы 1 группа, отличная от текущей?
+						if ($other_groups_at_this_time_count >= 1) {
+							# в зубе есть хотя бы 2 группы, отличных от текущей?
+							if ($other_groups_at_this_time_count >= 2) {
+								$bar[$day][$time_id] = 'blink red';
+							} else {
+								$bar[$day][$time_id] = 'red';
+							}
+						} else {
+							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
+							$neighbour_bars_have_other_branches = false;
+							
+							// проверка зуба слева
+							// получаем зуб слева
+							$left_time_id = self::$weekdays_time[$day][$time_index - 1];
+							// если есть зуб слева
+							if ($left_time_id !== null) {
+								$left_time = self::TIME[$left_time_id];
+								
+								$neighbour_bars_have_other_branches = self::_branchDifferentStudent($id_group, $id_branch, $id_student, $day, $left_time);
+							}
+							
+							// если слева не найдено, проверяем справа
+							if (!$neighbour_bars_have_other_branches) {
+								// получаем зуб слева
+								$right_time_id = self::$weekdays_time[$day][$time_index + 1];
+								
+								// если есть зуб справа
+								if ($right_time_id !== null) {
+									$right_time = self::TIME[$right_time_id];
+									
+									$neighbour_bars_have_other_branches = self::_branchDifferentStudent($id_group, $id_branch, $id_student, $day, $right_time);
+								}
+							}
+							
+							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
+							if ($neighbour_bars_have_other_branches) {
+								$bar[$day][$time_id] = 'orange';
+							} else {
+								$bar[$day][$time_id] = 'gray';
+							}
+						}
+					}
+				}
+			}
+			
+			return $bar;
+		}
+		
+		
+		
+		
+		
+		// подфункция проверки, что другой филиал
+		private static function _branchDifferentTeacher($id_group, $id_branch, $id_teacher, $day, $time)
+		{
+			return dbConnection()->query("
+				SELECT g.id FROM groups g
+					LEFT JOIN group_time gt ON gt.id_group = g.id
+				WHERE g.id != $id_group AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND g.id_teacher = $id_teacher
+			")->num_rows;
+		}
+		
+		public static function getTeacherBar($id_group, $id_branch, $id_teacher)
+		{
+			$Group = Group::findById($id_group);
+			
+			// получаем группы преподавателя
+			$TeacherGroups = Teacher::getGroups($id_teacher);
+			
+			foreach (self::$weekdays_time as $day => $time_data) {
+				foreach ($time_data as $time_index => $time_id) {
+					// подгоняем правильный $time_index
+					if ($day <= 5) {
+						$correct_time_index = $time_index + 2;
+					} else {
+						$correct_time_index = $time_index;
+					}
+					
+					# зуб соответствует времени группы из расписания?
+					if (isset($Group->day_and_time[$day][$correct_time_index])) {
+						# в данное время есть другие группы?
+						
+						// есть ли в данное время другие группы
+						$has_other_groups_at_this_time = false;
+						
+						foreach ($TeacherGroups as $TeacherGroup) {
+							if ($TeacherGroup->id != $Group->id && isset($TeacherGroup->day_and_time[$day][$correct_time_index])) {
+								$has_other_groups_at_this_time = true;
+								break;
+							}
+						}
+						
+						if ($has_other_groups_at_this_time) {
+							$bar[$day][$time_id] = 'blink red';							
+						} else {
+							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
+							$neighbour_bars_have_other_branches = false;
+							
+							// проверка зуба слева
+							// получаем зуб слева
+							$left_time_id = self::$weekdays_time[$day][$time_index - 1];
+							// если есть зуб слева
+							if ($left_time_id !== null) {
+								$left_time = self::TIME[$left_time_id];
+								
+								$neighbour_bars_have_other_branches = self::_branchDifferentTeacher($id_group, $id_branch, $id_teacher, $day, $left_time);
+							}
+							
+							// если слева не найдено, проверяем справа
+							if (!$neighbour_bars_have_other_branches) {
+								// получаем зуб слева
+								$right_time_id = self::$weekdays_time[$day][$time_index + 1];
+								
+								// если есть зуб справа
+								if ($right_time_id !== null) {
+									$right_time = self::TIME[$right_time_id];
+									
+									$neighbour_bars_have_other_branches = self::_branchDifferentTeacher($id_group, $id_branch, $id_teacher, $day, $right_time);
+								}
+							}
+							
+							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
+							if ($neighbour_bars_have_other_branches) {
+								$bar[$day][$time_id] = 'blink orange';
+							} else {
+								$bar[$day][$time_id] = 'green';
+							}
+						}
+					} else {
+						# в зубе есть хотя бы 1 группа, отличная от текущей?
+						
+						// подсчитываем кол-во групп в зубе, отличных от текущей группы
+						$other_groups_at_this_time_count = 0;
+						
+						foreach ($TeacherGroups as $TeacherGroup) {
+							if ($TeacherGroup->id != $Group->id && isset($TeacherGroup->day_and_time[$day][$correct_time_index + 1])) {
+								$other_groups_at_this_time_count++;
+							}
+						}
+						
+						// в зубе есть хотя бы 1 группа, отличная от текущей?
+						if ($other_groups_at_this_time_count >= 1) {
+							# в зубе есть хотя бы 2 группы, отличных от текущей?
+							if ($other_groups_at_this_time_count >= 2) {
+								$bar[$day][$time_id] = 'blink red';
+							} else {
+								$bar[$day][$time_id] = 'red';
+							}
+						} else {
+							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
+							$neighbour_bars_have_other_branches = false;
+							
+							// проверка зуба слева
+							// получаем зуб слева
+							$left_time_id = self::$weekdays_time[$day][$time_index - 1];
+							// если есть зуб слева
+							if ($left_time_id !== null) {
+								$left_time = self::TIME[$left_time_id];
+								
+								$neighbour_bars_have_other_branches = self::_branchDifferentTeacher($id_group, $id_branch, $id_teacher, $day, $left_time);
+							}
+							
+							// если слева не найдено, проверяем справа
+							if (!$neighbour_bars_have_other_branches) {
+								// получаем зуб слева
+								$right_time_id = self::$weekdays_time[$day][$time_index + 1];
+								
+								// если есть зуб справа
+								if ($right_time_id !== null) {
+									$right_time = self::TIME[$right_time_id];
+									
+									$neighbour_bars_have_other_branches = self::_branchDifferentTeacher($id_group, $id_branch, $id_teacher, $day, $right_time);
+								}
+							}
+							
+							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
+							if ($neighbour_bars_have_other_branches) {
+								$bar[$day][$time_id] = 'orange';
+							} else {
+								$bar[$day][$time_id] = 'gray';
+							}
+						}
+					}
+				}
+			}
+			
+			return $bar;
+		}
+		
+		
+		public static function getCabinetBar($id_group, $cabinet)
+		{
+			$Group = Group::findById($id_group);
+			
+			foreach (self::$weekdays_time as $day => $time_data) {
+				foreach ($time_data as $time_index => $time_id) {
+					// подгоняем правильный $time_index
+					if ($day <= 5) {
+						$correct_time_index = $time_index + 2;
+					} else {
+						$correct_time_index = $time_index;
+					}
+					
+					// подсчитываем кол-во других групп в этом кабинете в это время
+					$result = dbConnection()->query("
+						SELECT COUNT(*) AS cnt FROM group_time gt
+						LEFT JOIN groups g ON g.id = gt.id_group
+						WHERE g.cabinet = $cabinet AND g.id != $id_group AND gt.day=$day AND gt.time=$time_id
+					");
+					
+					$other_groups_at_this_time_count = $result->fetch_object()->cnt;
+					
+					# зуб соответствует времени в расписании группы?
+					if (isset($Group->day_and_time[$day][$correct_time_index])) {
+						# в это время в текущем кабинете есть хотя бы еще 1 другая группа?
+						if ($other_groups_at_this_time_count >= 1) {
+							$bar[$day][$time_id] = 'blink red';
+						} else {
+							$bar[$day][$time_id] = 'green';
+						}
+					} else {
+						# в это время в текущем кабинете есть хотя бы еще 1 другая группа?
+						if ($other_groups_at_this_time_count >= 1) {
+							# в это время в текущем кабинете есть хотя бы еще 2 другие группы?
+							if ($other_groups_at_this_time_count >= 2) {
+								$bar[$day][$time_id] = 'blink red';
+							} else {
+								$bar[$day][$time_id] = 'red';
+							}
+						} else {
+							$bar[$day][$time_id] = 'green';
+						}
+					}
+				}
+			}
+			
+			return $bar;
+		}				
 	}
 	
 	class TeacherFreetime

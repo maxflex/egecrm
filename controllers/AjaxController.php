@@ -32,30 +32,72 @@
 			
 			if ($subjects) {
 				$subjects_ids = implode(",", $subjects);
+				
+				$subject_condition = [];
+				foreach ($subjects as $id_subject) {
+					$subject_condition[] = "CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%' ";
+				}
 			}
 			
 			foreach(range(0, 6) as $day) {
 				$count = 0;
 				$date = date("Y-m", strtotime("-$day months"));
 				
+/*
 				$Contracts = Contract::findAll([
 					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date-01' 
 						AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date-31' 
 						AND cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION
 				]);
+*/
 				
 /*
 				$contract_count = Contract::count([
 					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date-01' 
 						AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date-31' 
+						" . ($grade ? " AND grade = {$grade} " : "") . "
 						AND cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION
 				]);
+*/
+				
+				$result = dbConnection()->query("
+					SELECT c.id FROM contracts c 
+						LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
+						LEFT JOIN students s ON s.id = c.id_student
+						LEFT JOIN requests r ON r.id_student = s.id
+					WHERE STR_TO_DATE(c.date, '%d.%m.%Y') >= '$date-01' 
+						AND STR_TO_DATE(c.date, '%d.%m.%Y') <= '$date-31' 
+						" . ($subjects ? " AND cs.id_subject IN ($subjects_ids) " : "") . "
+						" . ($id_branch ? " AND CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
+						" . ($grade ? " AND c.grade = {$grade} " : "") . "
+						AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL)
+					GROUP BY c.id
+				");		
+				
+				//$contract_count = $result->fetch_object()->cnt;
+				$contract_count = $result->num_rows;
 				
 				$request_count = Request::count([
 					"condition" => "date >= '$date-01' AND date <= '$date-31' 
+						" . ($subjects ? " AND (" . implode(' OR ', $subject_condition) . ")" : "") . "
+						" . ($grade ? " AND grade = {$grade} " : "") . "
 						AND id_status!=" . RequestStatuses::DUPLICATE . " AND id_status!=" . RequestStatuses::SPAM
 				]);
+				
+// 				" . ($id_branch ? " AND CONCAT(',', CONCAT(branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
+				
+/*
+				if (User::fromSession()->id == 69) {
+					echo("date >= '$date-01' AND date <= '$date-31' 
+							" . ($subjects ? " AND (" . implode(' OR ', $subject_condition) . ")" : "") . "
+							" . ($id_branch ? " AND CONCAT(',', CONCAT(branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
+							" . ($grade ? " AND grade = {$grade} " : "") . "
+							AND id_status!=" . RequestStatuses::DUPLICATE . " AND id_status!=" . RequestStatuses::SPAM
+					);
+					exit();
+				}
 */
+/*
 				foreach ($Contracts as $Contract) {
 					// если предметы указаны
 					$ContractSubjects = ContractSubject::findAll([
@@ -78,15 +120,14 @@
 						} 
 					}
 				}
+*/
 					
 				
 				$return[] = [
 					"month" => date("n", strtotime("-$day months")),
-					"count"	=> $count,
-/*
+//					"count"	=> $count,
 					"contract_count"	=> $contract_count,
 					"request_count"		=> $request_count,
-*/
 				];
 			}
 			

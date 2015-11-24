@@ -96,6 +96,33 @@
 			self::COMPUTER	=> "inf",	
 		];
 		
+		# Время тестирования
+		static $minutes_9 = [
+			self::MATH 		=> 235,
+			self::PHYSICS	=> 180,
+			self::RUSSIAN	=> 235,
+			self::LITERATURE=> 180,
+			self::ENGLISH	=> 120,
+			self::HISTORY	=> 180,
+			self::SOCIETY	=> 180,
+			self::CHEMISTRY	=> 120,
+			self::BIOLOGY	=> 180,
+			self::COMPUTER	=> 180,		
+		];
+		
+		static $minutes_11 = [
+			self::MATH 		=> 235,
+			self::PHYSICS	=> 235,
+			self::RUSSIAN	=> 210,
+			self::LITERATURE=> 235,
+			self::ENGLISH	=> 180,
+			self::HISTORY	=> 235,
+			self::SOCIETY	=> 235,
+			self::CHEMISTRY	=> 210,
+			self::BIOLOGY	=> 180,
+			self::COMPUTER	=> 235,		
+		];
+		
 		# Заголовок
 		static $title = "предмет";
 		
