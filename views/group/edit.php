@@ -1,8 +1,10 @@
 <div ng-app="Group" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>">
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
+<!--
 	<div class="student-dragout ng-hide" ng-show="is_student_dragging">
 		<span class="glyphicon glyphicon-trash"></span>
 	</div>
+-->
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
@@ -48,7 +50,7 @@
 	<div class="panel-body" style="position: relative">
 		<form id="group-edit" autocomplete='off'>
 			
-		<div class="top-group-menu">
+		<div class="top-group-menu-thin">
 			<div>
 	            <?= 
 	                Branches::buildSvgSelector($Group->id_branch, [
@@ -94,6 +96,7 @@
 		        	"ng-model" 		=> "Group.level",
 		        ]) ?>
             </div>
+            <span ng-show="is_student_dragging" class="student-dragout ng-hide">удалить</span>
 		</div>
 			
 			<div class="row">
@@ -110,6 +113,9 @@
 									{{Student.last_name}}
 								</a>
 							</td>
+							<td width="50">
+								{{Student.Contract.subjects[Group.id_subject].score}}
+							</td>
 							<td>
 								<span ng-click="toggleTeacherLike(Student)" class="pointer" ng-show='Group.past_lesson_count > 0'>
 									<span class="half-black" 	ng-show="Student.teacher_like_status == 0">не установлено</span>
@@ -119,8 +125,10 @@
 								</span>
 							</td>
 							<td>
-								<span class="half-black pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified">отправить смс</span>
-								<span class="text-success default" ng-show="Student.sms_notified">смс отправлено</span>
+								<span ng-hide="Student.already_had_lesson >= 2">
+									<span class="half-black pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified">отправить смс</span>
+									<span class="text-success default" ng-show="Student.sms_notified">смс отправлено</span>
+								</span>
 							</td>
 							<td>
 								<span ng-click="toggleAgreement(Student)" class="pointer">
@@ -150,7 +158,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="4"></td>
+							<td colspan="5"></td>
 							<td width="150">
 							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
@@ -161,7 +169,7 @@
 							<td width="250">
 								{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}
 							</td>
-							<td colspan="2">
+							<td colspan="3">
 								<span style="margin-right: 5px">
 									<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">ЕЦ</a>
 								</span>
@@ -205,19 +213,23 @@
 						<div id="existing-comments-{{Group.id}}">
 							<div ng-repeat="comment in Group.Comments">
 								<div id="comment-block-{{comment.id}}">
-									<span class="glyphicon glyphicon-stop" style="float: left"></span>
+									<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
 									<div style="display: initial" id="comment-{{comment.id}}" commentid="{{comment.id}}" onclick="editComment(this)">{{comment.comment}}</div>
-									<span class="save-coordinates">({{comment.coordinates}})</span>
+									<span class="save-coordinates">{{comment.coordinates}}</span>
 									<span ng-attr-data-id="{{comment.id}}" 
 										class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
 								</div>
 							</div>
 						</div>
 						<div style="height: 25px">
-							<span class="glyphicon glyphicon-forward pointer no-margin-right comment-add" id="comment-add-{{Group.id}}"
-								place="<?= Comment::PLACE_GROUP ?>" id_place="{{Group.id}}"></span>
-							<input class="comment-add-field" id="comment-add-field-{{Group.id}}" type="text"
-								placeholder="Введите комментарий..." request="{{Group.id}}" data-place='GROUP_EDIT' >
+							<span class="pointer no-margin-right comment-add" id="comment-add-{{Group.id}}"
+								place="<?= Comment::PLACE_GROUP ?>" id_place="{{Group.id}}">комментировать</span>
+							
+							<span class="comment-add-hidden">
+								<span class="comment-add-login comment-login" id="comment-add-login-{{Group.id}}" style="color: <?= User::fromSession()->color ?>"><?= User::fromSession()->login ?>: </span>
+								<input class="comment-add-field" id="comment-add-field-{{Group.id}}" type="text"
+									placeholder="введите комментарий..." request="{{Group.id}}" data-place='GROUP_EDIT' >
+							</span>
 						</div>
 				    </div>
 				</div>

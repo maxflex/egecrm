@@ -369,7 +369,7 @@
 			if ($Group->id_teacher) {
 				foreach ($Teachers as &$Teacher) {
 					if ($Teacher->id == $Group->id_teacher) {
-						$Teacher->bar 		= $Teacher->getBar($Group->id, $Group->branch);
+						$Teacher->bar 		= $Teacher->getBar($Group->id, $Group->id_branch);
 						$Teacher->agreement =  GroupAgreement::getStatus([
 													'type_entity' 	=> Teacher::USER_TYPE,
 													'id_entity'		=> $Teacher->id,
@@ -402,7 +402,7 @@
 				}
 				
 				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
-				$Student->bar					= $Student->getBar($Group->id, $Group->branch);
+				$Student->bar					= $Student->getBar($Group->id, $Group->id_branch);
 				
 				# Статус доставки СМС
 				// $Student->delivery_data			= $Student->getAwaitingSmsStatuses($Group->id);
@@ -655,12 +655,8 @@
 				
 				if (($key = array_search($id_group, $errors[$date])) !== false) {
 				    unset($errors[$date][$key]);
-				    memcached()->set("JournalErrors", $errors, 3600 * 24);
+				    memcached()->set("JournalErrors", array_values($errors), 3600 * 24);
 				}
-				
-				$count = memcached()->get("JournalErrorsCount");
-				$count--;
-				memcached()->set("JournalErrorsCount", $count, 3600 * 24);
 			}
 			// CronController::actionUpdateJournalMiss();
 		}

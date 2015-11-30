@@ -20,7 +20,11 @@
 	);
 	
 	setlocale(LC_TIME, 'ru_RU', 'russian');
-
+	
+	// длительность сессии в минутах
+// 	ini_set('session.gc_maxlifetime', 1);
+	
+	
 	/*// Контроллеры и модели 
 	$_controllers	= array(
 		"", "User", "Index", "Profile", "Test", 

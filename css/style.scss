@@ -26,12 +26,20 @@
 	}		
 }
 
+.bootstrap-select.btn-group .dropdown-menu li.disabled a { 
+	cursor: default !important
+}
+
 .loading-ajax {
 	font-size: 12px;
 	color: $half_black;
 	padding: 200px;
 	display: block;
 	text-align: center;
+}
+
+.comment-login {
+	opacity: .6;
 }
 
 [ng-app="Promo"] {
@@ -206,6 +214,25 @@ body {
 	margin-right: 5px;
 }
 
+.top-group-menu-thin > div {
+	width: 12.5%;
+	display: inline-block;
+	margin-right: 5px;
+}
+
+.student-dragout {
+	display: inline-block;
+	color: $red;
+	padding: 6px 10px;
+	z-index: 10000 !important;
+}
+.student-dragout-hover {
+	z-index: 100000 !important;
+	background: $red;
+	color: white;
+	border-radius: 5px;
+}
+
 .manual-request {
 	background-color: rgba(92, 184, 92, 0.06) !important;
 }
@@ -236,38 +263,6 @@ body {
 
 .bootstrap-select.btn-group>.disabled {
 	cursor: default !important;
-}
-
-.student-dragout {
-	display: flex;
-    position: fixed;
-    height: 100%;
-    width: 226px;
-    top: 0;
-    left: 0;
-//    background-color: #ff5f5f;
-	background-color: #ff7c7c;
-    z-index: 99;
-//    border: 5px dashed rgba(255, 255, 255, 0.3);
-    border: 5px dashed rgba(0, 0, 0, 0.2);
-    /* vertical-align: middle; */
-    align-items: center;
-    text-align: center;
-    text-align: -webkit-auto;
-    /* border: 5px dashed red; */
-    & span {
-	    font-size: 64px;
-	    color: white;
-	    display: block;
-	    width: 100%;
-	    text-align: center;
-	    margin: 0;
-    }
-}
-
-.student-dragout-hover {
-	background-color: $red;
- 	border-color: rgba(0, 0, 0, 0.3);
 }
 
 .gray-hover {
@@ -613,9 +608,10 @@ body {
 }
 
 .tr-helper {
-	background: white !important;
-	z-index: 999;
-	width: 93% !important;
+	background: rgba(255, 255, 255, 0.5) !important;
+//	z-index: 999;
+	width: 97% !important;
+	display: table;
 }
 
 .border-dashed-droppable {
@@ -1607,6 +1603,24 @@ white-space: nowrap;
 	font-size: 12px;
 }
 
+div[id^='comment-block'] {
+	& .save-coordinates, & .glyphicon-remove {
+		-webkit-transition: all linear .25s;
+		opacity: 0;
+	}
+	
+	&:hover {
+		& .save-coordinates, & .glyphicon-remove {
+			opacity: 1;
+		}
+	}
+	
+	& .save-coordinates {
+		margin-left: 3px;
+		font-style: normal;
+	}
+}
+
 .modal-open {
 	overflow-y: visible;
 	overflow-x: hidden;
@@ -1731,7 +1745,7 @@ white-space: nowrap;
 	& .glyphicon {
 		color: #337ab7;
 		&.text-danger {
-			color: $red;
+			color: #FF809C;
 		}
 	}
 }
@@ -1739,16 +1753,28 @@ white-space: nowrap;
 .comment-add-field {
   outline: none;
   border: 0;
-  border-bottom: 1px solid $hr_gray;
-  width: calc(100% - 20px);
+  // border-bottom: 1px solid $hr_gray;
+  // width: calc(100% - 20px);
+  width: 50%;
   display: none;
 }
 
+.comment-add-login {
+	display: none;
+}
+
 .comment-add {
+	color: $placeholder_gray;
+	display: inline-block;
+	&:hover {
+		text-decoration: underline;
+	}
+/*
 	margin-top: 5px;
 	font-size: 12px;
 	margin-left: 2px;
 	font-weight: bold;
+*/
 }
 
 .loaded-file {

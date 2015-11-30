@@ -1,12 +1,18 @@
 .no-hover:hover {
   background: white !important; }
 
+.bootstrap-select.btn-group .dropdown-menu li.disabled a {
+  cursor: default !important; }
+
 .loading-ajax {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.5);
   padding: 200px;
   display: block;
   text-align: center; }
+
+.comment-login {
+  opacity: .6; }
 
 [ng-app="Promo"] {
   color: #3A6487; }
@@ -144,6 +150,23 @@ body {
   display: inline-block;
   margin-right: 5px; }
 
+.top-group-menu-thin > div {
+  width: 12.5%;
+  display: inline-block;
+  margin-right: 5px; }
+
+.student-dragout {
+  display: inline-block;
+  color: #ff0039;
+  padding: 6px 10px;
+  z-index: 10000 !important; }
+
+.student-dragout-hover {
+  z-index: 100000 !important;
+  background: #ff0039;
+  color: white;
+  border-radius: 5px; }
+
 .manual-request {
   background-color: rgba(92, 184, 92, 0.06) !important; }
 
@@ -167,33 +190,6 @@ body {
 
 .bootstrap-select.btn-group > .disabled {
   cursor: default !important; }
-
-.student-dragout {
-  display: flex;
-  position: fixed;
-  height: 100%;
-  width: 226px;
-  top: 0;
-  left: 0;
-  background-color: #ff7c7c;
-  z-index: 99;
-  border: 5px dashed rgba(0, 0, 0, 0.2);
-  /* vertical-align: middle; */
-  align-items: center;
-  text-align: center;
-  text-align: -webkit-auto;
-  /* border: 5px dashed red; */ }
-  .student-dragout span {
-    font-size: 64px;
-    color: white;
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin: 0; }
-
-.student-dragout-hover {
-  background-color: #ff0039;
-  border-color: rgba(0, 0, 0, 0.3); }
 
 .gray-hover {
   cursor: pointer;
@@ -589,9 +585,9 @@ body {
   margin-top: 10px; }
 
 .tr-helper {
-  background: white !important;
-  z-index: 999;
-  width: 93% !important; }
+  background: rgba(255, 255, 255, 0.5) !important;
+  width: 97% !important;
+  display: table; }
 
 .border-dashed-droppable {
   border: 3px dashed #eee !important; }
@@ -1382,6 +1378,17 @@ h4.row-header {
 .comment-block {
   font-size: 12px; }
 
+div[id^='comment-block'] .save-coordinates, div[id^='comment-block'] .glyphicon-remove {
+  -webkit-transition: all linear 0.25s;
+  opacity: 0; }
+
+div[id^='comment-block']:hover .save-coordinates, div[id^='comment-block']:hover .glyphicon-remove {
+  opacity: 1; }
+
+div[id^='comment-block'] .save-coordinates {
+  margin-left: 3px;
+  font-style: normal; }
+
 .modal-open {
   overflow-y: visible;
   overflow-x: hidden; }
@@ -1477,20 +1484,28 @@ h4.row-header {
 .comment-block .glyphicon {
   color: #337ab7; }
   .comment-block .glyphicon.text-danger {
-    color: #ff0039; }
+    color: #FF809C; }
 
 .comment-add-field {
   outline: none;
   border: 0;
-  border-bottom: 1px solid #eee;
-  width: calc(100% - 20px);
+  width: 50%;
+  display: none; }
+
+.comment-add-login {
   display: none; }
 
 .comment-add {
-  margin-top: 5px;
-  font-size: 12px;
-  margin-left: 2px;
-  font-weight: bold; }
+  color: #999999;
+  display: inline-block;
+  /*
+	margin-top: 5px;
+	font-size: 12px;
+	margin-left: 2px;
+	font-weight: bold;
+*/ }
+  .comment-add:hover {
+    text-decoration: underline; }
 
 .loaded-file {
   font-size: 12px;

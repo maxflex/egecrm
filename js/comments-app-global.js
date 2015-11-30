@@ -16,12 +16,15 @@
 		
 		// Добавление нового комментария
 		comment_add.on("click", function() {
-			$("#comment-add-field-" + $(this).attr("id_place")).fadeIn(300).focus();
+			$(this).hide()
+			$("#comment-add-field-" + $(this).attr("id_place") + ", #comment-add-login-" + $(this).attr("id_place")).fadeIn(300).focus();
 		})
 		
 		// Уходим из поля добавления комментария
 		comment_add_field.on("blur", function() {
-			$(this).fadeOut(300)	
+			$(this).hide()
+			$(this).parent().children().first().hide()
+			$(this).parent().parent().children().first().fadeIn(300)
 		})
 		
 		// Нажатие ENTER или ESC внутри комментария
@@ -67,6 +70,7 @@
 					
 					comments.push({
 						'id': 			response.id,
+						'User': 		response.User,
 						'coordinates': 	response.coordinates,
 						'comment': 		t.val()
 					})

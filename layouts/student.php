@@ -21,7 +21,8 @@
 			}
 		?>
     </a>
-    <a href="students/promo" class="list-group-item">Получи iPhone 6</a>
+    <a href="students/testing" class="list-group-item">Запись на пробный ЕГЭ</a>
+	<a href="students/promo" class="list-group-item">Получи iPhone 6</a>
     <a href="students/journal" class="list-group-item">Журнал посещаемости</a>
     <a href="students/reviews" class="list-group-item">Оставить отзыв</a>
     <a href="students/faq" class="list-group-item">Необходимая информация</a>

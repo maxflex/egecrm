@@ -1,4 +1,4 @@
-	angular.module "Group", []
+	angular.module "Group", ['ngAnimate']
 		.filter 'to_trusted', ['$sce', ($sce) ->
 	        return (text) ->
 	            return $sce.trustAsHtml(text)
@@ -878,6 +878,7 @@
 							
 							$scope.updateAgreement()
 							$scope.updateTeacherBar()
+							$scope.updateCabinetBar(false)
 							$scope.updateStudentBars()
 							
 							$scope.$apply()

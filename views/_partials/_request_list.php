@@ -48,19 +48,22 @@
 					<div id="existing-comments-{{request.id}}">
 						<div ng-repeat="comment in request.Comments">
 							<div id="comment-block-{{comment.id}}">
-								<span class="glyphicon glyphicon-stop" style="float: left"></span>
+								<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
 								<div style="display: initial" id="comment-{{comment.id}}" onclick="editComment(this)"  commentid="{{comment.id}}">
 									{{comment.comment}}</div>
-								<span class="save-coordinates">({{comment.coordinates}})</span>
-<!-- 								<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span> -->
+								<span class="save-coordinates">{{comment.coordinates}}</span>
 								<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
 							</div>
 						</div>
 					</div>
 					<div style="height: 25px">
-						<span class="glyphicon glyphicon-forward pointer no-margin-right comment-add" id="comment-add-{{request.id}}" place="<?= Comment::PLACE_REQUEST ?>" id_place="{{request.id}}"></span>
-						<input class="comment-add-field" id="comment-add-field-{{request.id}}" type="text"
-							placeholder="Введите комментарий..." request="{{request.id}}" data-place='REQUEST_LIST'>
+						<span class="pointer no-margin-right comment-add" id="comment-add-{{request.id}}"
+								place="<?= Comment::PLACE_REQUEST ?>" id_place="{{request.id}}">комментировать</span>
+						<span class="comment-add-hidden">
+							<span class="comment-add-login comment-login" id="comment-add-login-{{request.id}}" style="color: <?= User::fromSession()->color ?>"><?= User::fromSession()->login ?>: </span>
+							<input class="comment-add-field" id="comment-add-field-{{request.id}}" type="text"
+								placeholder="введите комментарий..." request="{{request.id}}" data-place='REQUEST_LIST'>
+						</span>
 					</div>
 				</div>
 			</div>

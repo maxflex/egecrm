@@ -1,5 +1,6 @@
 	var test;
-
+	var test2;
+	
 	angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		.config( [
 		    '$compileProvider',
@@ -1037,27 +1038,45 @@
 						$("#contract-cancelled-reason").removeClass("has-error")
 					}
 				}
-
-				$scope.current_contract.id_student = $scope.student.id
+				
+				if (!$scope.current_contract.history_edit) {
+					$scope.current_contract.id_student = $scope.student.id
+				}
 
 				if ($scope.current_contract.id) {
 					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
-						
-							angular.forEach($scope.contracts, function(contract, i) {
-								if (contract.id == $scope.current_contract.id) {
-									old_contract = $scope.contracts[i]
-									$scope.contracts[i] = $scope.current_contract
-									// если создалась новая версия, пушим в историю
-									if (!$scope.current_contract.no_version_control) {
-										$scope.contracts[i].History = initIfNotSet($scope.contracts[i].History)
-										$scope.contracts[i].History.push(old_contract)
+							
+							if ($scope.current_contract.history_edit) {
+								console.log($scope.current_contract)
+								parent_contract		= _.findWhere($scope.contracts, {id: $scope.current_contract.id_contract})
+								
+								$.each(parent_contract.History, function(index, contract) {
+									if (contract.id == $scope.current_contract.id) {
+										parent_contract.History[index] = $scope.current_contract
+										// баг - вкладка сбивается
+										setTimeout(function() {
+											$('#contract_history_li_' + parent_contract.id + '_' + $scope.current_contract.id + ' a').click()
+										}, 50)
+										return
 									}
-								}
-							})
-						
+								})
+							} else {
+								angular.forEach($scope.contracts, function(contract, i) {
+									if (contract.id == $scope.current_contract.id) {
+										old_contract = $scope.contracts[i]
+										$scope.contracts[i] = $scope.current_contract
+										// если создалась новая версия, пушим в историю
+										if (!$scope.current_contract.no_version_control) {
+											$scope.contracts[i].History = initIfNotSet($scope.contracts[i].History)
+											$scope.contracts[i].History.push(old_contract)
+										}
+									}
+								})								
+							}
+							
 						$scope.$apply()
 						ajaxEnd('contract')
 						lightBoxHide()
@@ -1160,7 +1179,8 @@
 			// Окно редактирования договора
 			$scope.editContract = function(contract) {
 				contract.no_version_control = 0
-
+				contract.history_edit = 0
+				
 				$scope.callContractEdit(contract)
 			}
 
@@ -1168,7 +1188,15 @@
 			// без проводки
 			$scope.editContractWithoutVersionControl = function(contract) {
 				contract.no_version_control = 1
-
+				contract.history_edit = 0
+				
+				$scope.callContractEdit(contract)
+			}
+			
+			$scope.editHistoryContract = function(contract) {
+				contract.no_version_control = 1
+				contract.history_edit = 1
+				
 				$scope.callContractEdit(contract)
 			}
 

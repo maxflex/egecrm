@@ -19,6 +19,10 @@
 			parent::__construct($array);
 			
 			$this->coordinates = $this->getCoordinates();
+			
+			if ($this->id_user) {
+				$this->User = User::findById($this->id_user);
+			}
 		}
 		
 		
@@ -91,7 +95,7 @@
 		 */
 		public function getCoordinates()
 		{
-			return User::findById($this->id_user)->login . " " . date("d.m.y в H:i", strtotime($this->date));
+			return date("d.m.y в H:i", strtotime($this->date));
 		}
 		
 	}

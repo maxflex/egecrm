@@ -28,6 +28,7 @@
 		<td>
 			{{Group.students.length}}/<span style="color: #62CB64">{{Group.agreed_students_count}}</span> 
 		</td>
+<!--
 		<td width="40">
 			<span class="glyphicon glyphicon-envelope" ng-class="{
 				'group-student-sms-sent': Group.notified_students_count > 0,
@@ -37,6 +38,7 @@
 				'quater-black'			: Group.notified_students_count == 0,
 			}">{{Group.notified_students_count}}</span>
 		</td>
+-->
 		<td>
 			<span ng-show="Group.first_schedule">
 				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span>

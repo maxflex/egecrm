@@ -2,12 +2,14 @@
 	<form class="form-signin" ng-submit="checkFields()">
 <!-- 		<h2 class="form-signin-heading">Вход в систему</h2> -->
 		<input type="text" id="inputLogin" class="form-control" placeholder="Логин" autofocus name="login" ng-model="login">
-		<input type="password" id="inputPassword" class="form-control" placeholder="Пароль" name="password" ng-model="password" style="margin-bottom: 0">
+		<input type="password" id="inputPassword" class="form-control" placeholder="Пароль" name="password" ng-model="password">
+<!--
 		<div class="checkbox pull-left">
           <label>
             <input type="checkbox" value="remember-me" checked> Запомнить
           </label>
         </div>
+-->
 		<button id="login-submit" data-style="zoom-in" ng-disabled="in_process" class="btn btn-lg btn-primary btn-block ladda-button" type="submit"><span class="glyphicon glyphicon-lock"></span><span ng-show="!in_process">Войти</span><span ng-show="in_process">Вход</span>
 		</button>
 		

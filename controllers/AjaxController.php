@@ -9,18 +9,65 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE];
+		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		##################################################
 		###################### AJAX ######################
 		##################################################
+		
+		public function actionAjaxContinueSession()
+		{
+			# ничего не надо, пустая функция для обновления сессии
+		}
+		
+		public function actionAjaxCheckLogout()
+		{
+			// если в режиме просмотра, не делаем логаут
+			if (isset(User::fromSession()->AsUser)) {
+				returnJsonAng(0);	
+			}
+			
+			if (User::fromSession()->type == User::USER_TYPE) {
+				$minutes_limit = 30; // 30 минут для пользователей			
+			} else {
+				$minutes_limit = 15; // 15 минут
+			}
+			
+			// разница во времени между последним действием и сейчас
+			// (сколько минут назад было последнее действие)
+			$time_diff = (time() - User::fromSession()->last_action_time) / 60;
+			
+// 			returnJsonAng($time_diff);
+			
+			// одна минута до выброса из сессии
+			if ($time_diff >= ($minutes_limit - 1) && $time_diff <= $minutes_limit) {
+				returnJsonAng(2);
+			}
+			
+			if ($time_diff >= $minutes_limit) {
+				// Удаляем сессию
+				session_destroy();
+				session_unset();
+				
+				// Очищаем куку залогиненного пользователя
+				removeCookie("egecrm_token");
+				
+				// Очищаем куку сессии PHP
+				removeCookie("PHPSESSID", "/"); 
+				//setcookie("PHPSESSID","",time()-3600,"/"); // delete session cookie
+				
+				returnJsonAng(1);	
+			}
+			
+			returnJsonAng(0);
+		}
 		
 		public function actionAjaxEgecentr()
 		{
 			$data = egeCentrData();
 			
 			foreach ($data as $d) {
-				$return[$d['student_id'] . "_" . $d["subjects"]][$d['date']] = $d['status'];
+				$return[$d['student_id'] . "_" . $d["subjects"] . "_" . $d["grade"]][$d['date']] = $d['status'];
 			}
 			
 			returnJsonAng($return);
@@ -187,7 +234,7 @@
 			// Возвращаем форматированную дату и ник пользователя
 			toJson([
 				"date"			=> date("d.m.y в H:i", time()),
-				"user"			=> User::fromSession()->login,
+				"User"			=> User::fromSession()->dbData(),
 				"id" 			=> $Comment->id,
 				"coordinates"	=> $Comment->getCoordinates(),
 			]);

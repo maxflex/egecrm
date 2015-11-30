@@ -175,8 +175,8 @@
 			}
 			
 			if (!LOCAL_DEVELOPMENT) {
-				memcached()->set("JournalErrorsCount", count($count), 3600 * 24);
-				memcached()->set("JournalErrors", $return, 3600 * 24); 
+// 				memcached()->set("JournalErrorsCount", count($count), 3600 * 24);
+				memcached()->set("JournalErrors", $return, 3600 * 24);
 			} 
 			// var_dump(count($count));
 			return count($count);
@@ -210,7 +210,7 @@
 							"teacher_name"	=> $Group->Teacher->first_name ." " .$Group->Teacher->middle_name
 						]);
 						if (!empty($Group->Teacher->phone)) {
-						//	SMS::send($Group->Teacher->phone, $message);
+							SMS::send($Group->Teacher->phone, $message);
 						//	echo $message . "<hr>";
 							Email::send("makcyxa-k@yandex.ru", "Отсутствие занятий у учителя", $message);
 						}

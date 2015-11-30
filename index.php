@@ -47,22 +47,28 @@
 	// Пытаемся войти
 	User::rememberMeLogin();
 	
-	$IndexController = new $_controllerName;	// Создаем объект контроллера
-	
 	if ((!User::loggedIn() || !User::rememberMeLogin()) && !in_array($_controllerName, $bypass_login)) {
 	//	$this->redirect(BASE_ADDON . "login"); // Можно сделать так же редирект на страницу входа
 		$_controllerName	= "LoginController";
 		$_actionName		= "actionLogin";
 	} else {
+		// обновить время последнего действия
+		if (User::loggedIn()) {
+			User::fromSession()->updateLastActionTime();
+		}
+		
 		// если у учителя в URL нет teachers/ или у ученика нет students/
 		if (!$_ajax_request && $_controllerName != "AsController" && $_controllerName != "LoginController") {
 			if (User::fromSession()->type == Teacher::USER_TYPE || User::fromSession()->type == Student::USER_TYPE) {
 				if (strpos($_SERVER['REQUEST_URI'], BASE_ADDON . strtolower(User::fromSession()->type)) === false) {
+					$IndexController = new $_controllerName;	// Создаем объект контроллера
 					$IndexController->renderRestricted();	
 				}
 			} 
 		}
 	}
+	
+	$IndexController = new $_controllerName;	// Создаем объект контроллера
 	
 // 	preType([$_GET, $_controller, $_action, $_controllerName, $_actionName], true);
 

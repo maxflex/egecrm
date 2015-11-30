@@ -287,20 +287,23 @@
 								<div id="existing-comments-{{id_request}}">
 									<div ng-repeat="comment in request_comments">
 										<div id="comment-block-{{comment.id}}">
-											<span class="glyphicon glyphicon-stop" style="float: left"></span>
+											<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
 											<div style="display: initial" id="comment-{{comment.id}}" onclick="editComment(this)" commentid="{{comment.id}}">
 												{{comment.comment}}</div>
-											<span class="save-coordinates">({{comment.coordinates}})</span>
-<!-- 											<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span> -->
+											<span class="save-coordinates">{{comment.coordinates}}</span>
 											<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" 
 												onclick="deleteComment(this)"></span>
 										</div>
 									</div>
 								</div>
 								<div style="height: 25px">
-									<span class="glyphicon glyphicon-forward pointer no-margin-right comment-add" id="comment-add-{{id_request}}" place="<?= Comment::PLACE_REQUEST ?>" id_place="{{id_request}}"></span>
-									<input class="comment-add-field" id="comment-add-field-{{id_request}}" type="text"
-										placeholder="Введите комментарий..." request="{{id_request}}" data-place='REQUEST_EDIT_REQUEST' >
+									<span class="pointer no-margin-right comment-add" id="comment-add-{{id_request}}"
+								place="<?= Comment::PLACE_REQUEST ?>" id_place="{{id_request}}">комментировать</span>
+									<span class="comment-add-hidden">
+										<span class="comment-add-login comment-login" id="comment-add-login-{{id_request}}" style="color: <?= User::fromSession()->color ?>"><?= User::fromSession()->login ?>: </span>
+										<input class="comment-add-field" id="comment-add-field-{{id_request}}" type="text"
+											placeholder="введите комментарий..." request="{{id_request}}" data-place='REQUEST_EDIT_REQUEST' >
+									</span>
 								</div>
 							</div>
 				        </div>
@@ -644,20 +647,22 @@
 							<div id="existing-comments-{{student.id}}">
 								<div ng-repeat="comment in student_comments">
 									<div id="comment-block-{{comment.id}}">
-										<span class="glyphicon glyphicon-stop" style="float: left"></span>
+										<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
 										<div style="display: initial" id="comment-{{comment.id}}" commentid="{{comment.id}}" onclick="editComment(this)">{{comment.comment}}</div>
 										<span class="save-coordinates">({{comment.coordinates}})</span>
-<!-- 										<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer glyphicon-pencil no-margin-right" onclick="editComment(this)"></span> -->
 										<span ng-attr-data-id="{{comment.id}}" 
 											class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
 									</div>
 								</div>
 							</div>
 							<div style="height: 25px">
-								<span class="glyphicon glyphicon-forward pointer no-margin-right comment-add" id="comment-add-{{student.id}}"
-									place="<?= Comment::PLACE_STUDENT ?>" id_place="{{student.id}}"></span>
-								<input class="comment-add-field" id="comment-add-field-{{student.id}}" type="text"
-									placeholder="Введите комментарий..." request="{{student.id}}" data-place='REQUEST_EDIT_STUDENT' >
+								<span class="pointer no-margin-right comment-add" id="comment-add-{{student.id}}"
+									place="<?= Comment::PLACE_STUDENT ?>" id_place="{{student.id}}">комментировать</span>
+								<span class="comment-add-hidden">
+									<span class="comment-add-login comment-login" id="comment-add-login-{{student.id}}" style="color: <?= User::fromSession()->color ?>"><?= User::fromSession()->login ?>: </span>
+									<input class="comment-add-field" id="comment-add-field-{{student.id}}" type="text"
+										placeholder="введите комментарий..." request="{{student.id}}" data-place='REQUEST_EDIT_STUDENT' >
+								</span>
 							</div>
 					    </div>
 
@@ -857,6 +862,9 @@
 								</div>
 							</div>
 							<div class="col-sm-2"  style="padding: 0; font-size: 12px">
+								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="editHistoryContract(contract_history)">
+									изменить без проводки
+								</div>
 								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContract(contract.id)">
 									печать договора
 								</div>

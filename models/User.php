@@ -15,6 +15,20 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		
+		/**
+		 * Обновить время последнего действия.
+		 * 
+		 */
+		public function updateLastActionTime()
+		{
+			// не засчитываем AjaxCheckLogout за действие. не обновляем
+			if ($_GET['action'] != 'AjaxCheckLogout') {
+				$this->last_action_time = time();
+				$this->save("last_action_time");
+			}
+		}
+		
 		public static function isTeacher($return_string = false)
 		{
 			$return = User::fromSession()->type == Teacher::USER_TYPE;
@@ -125,6 +139,9 @@
 			if (User::loggedIn()) {
 				return true;
 			}
+			
+			// ОТКЛЮЧАЕМ ВХОД ПО REMEMBER-ME. УДАЛИТЬ СТРОЧКУ НИЖЕ, ЕСЛИ ОПЯТЬ ПОНАДОБИТСЯ
+			return false;
 			
 			if (!isset($_COOKIE["egecrm_token"])) {
 				return false;

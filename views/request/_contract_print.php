@@ -6,6 +6,24 @@
     }
     </style>
 	
+	
+	Чтобы зайти в личный кабинет, зайдите на сайт ege-centr.ru, затем вверху справа проследуйте по ссылке "личный кабинет".
+	
+	
+	<h4 style="text-align: left">Ваш логин: {{student.login}}</h4>
+	
+	<h4 style="text-align: left; margin-top: 0">Ваш пароль: {{student.password}}</h4>
+	
+	В вашем личном кабинете вы сможете:
+	
+	<ul>
+		<li>узнать точное расписание занятий</li>
+		<li>получить информацию по посещаемости, отсутствию и опозданиям на занятия</li>
+		<li>записаться на пробный ЕГЭ/ОГЭ</li>
+	</ul>
+	
+	<p style="page-break-after: always; margin-top: 20px">
+		
 	<h4 style="margin-bottom: 0" class="testy2">АГЕНТСКИЙ ДОГОВОР</h4>
 	<h4 style="margin-top: 0">№ {{contract.id}}</h4>
 	<div style="display: inline-block; width: 100%; margin-bottom: 20px">

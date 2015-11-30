@@ -1,4 +1,4 @@
-	angular.module "Testing", []
+	angular.module "Testing", ['angucomplete-alt']
 		.filter 'range', () ->
 			return (input, total) ->
 				total = parseInt total
@@ -6,6 +6,36 @@
 					input.push i
 				input
 		.controller "ListCtrl", ($scope) ->
+			angular.element(document).ready ->
+				set_scope "Testing"
+		.controller "StudentsCtrl", ($scope) ->
+			$scope.addTesting = (Testing) ->
+				$.post 'testing/ajaxAddStudent', 
+					id_testing: Testing.id
+					id_subject: Testing.selected_subject
+					grade: $scope.TestingData.grade
+				, (response) ->
+					Testing.Students = initIfNotSet Testing.Students
+					Testing.Students.push response
+					$scope.$apply()
+				, "json"
+					
+			
+			$scope.getTesting = (Testing) ->
+				_.findWhere(Testing.Students, {id_student: $scope.id_student})
+				
+			$scope.getAvailable = (Testing) ->
+				subject_ids = []
+				if $scope.TestingData.grade is 11
+					$.each Testing.subjects_11, (id_subject, value) ->
+						subject_ids.push(id_subject) if parseInt(id_subject) in $scope.TestingData.subject_ids
+				else
+					$.each Testing.subjects_9, (id_subject, value) ->
+						subject_ids.push(id_subject) if parseInt(id_subject) in $scope.TestingData.subject_ids
+				subject_ids
+				
+			$scope.formatDate = (date) ->
+				moment(date).format 'DD MMMM'
 			angular.element(document).ready ->
 				set_scope "Testing"
 		.controller "AddCtrl", ($scope) ->
@@ -27,6 +57,7 @@
 				
 				
 			$scope.changeDate = ->
+				$scope.cabinet_load = undefined
 				$.post "testing/ajaxChangeDate", 
 					id: $scope.Testing.id
 					date: $scope.Testing.date
@@ -34,6 +65,11 @@
 					$scope.cabinet_load = response
 					$scope.$apply()
 				, "json"
+			
+			$scope.refreshSelect = ->
+				setTimeout ->
+					$('#subject-add-student').selectpicker('refresh')
+				, 100
 			
 			$scope.notEnoughTime = (minutes) ->
 				return true if !$scope.Testing || !$scope.Testing.start_time or !$scope.Testing.end_time
@@ -47,15 +83,55 @@
 # 				console.log (minutes_end - minutes_start), minutes
 				(minutes_end - minutes_start) < minutes
 			
+			$scope.addStudent = ->
+				return if !$scope.selectedSubjectGrade or !$scope.selectedStudent
+				
+				$scope.form_changed = true
+				
+				$scope.Testing.Students ?= []
+				
+				data = $scope.selectedSubjectGrade.split '|'
+				
+				$scope.Testing.Students.push
+					id_student: $scope.selectedStudent.originalObject.id
+					id_subject: data[0]
+					grade: data[1]
+				
+				$scope.selectedSubjectGrade = undefined
+				$scope.selectedStudent = undefined
+				
+				setTimeout ->
+					$scope.$broadcast('angucomplete-alt:clearInput')
+					$scope.$apply()
+					$('#subject-add-student').selectpicker('refresh')
+				, 50
+				
+				return false
+			
+			$scope.getStudent = (id_student) ->
+				_.findWhere $scope.Students,
+					id: id_student
+			
+			$scope.deleteStudent = (id_student) ->
+				$scope.form_changed = true
+				$scope.Testing.Students = _.without($scope.Testing.Students, _.findWhere($scope.Testing.Students, {id_student: id_student}))
+			
+			$scope.form_changed = false
+			
 			$scope.saveTesting = ->
+				$scope.saving = true
+				ajaxStart()
 				$.post "testing/ajaxSave", 
 					Testing: $scope.Testing
 				, (response) ->
-					console.log response
-				, "json"
+					ajaxEnd()
+					$scope.saving = false
+					$scope.form_changed = false
+					$scope.$apply()
 			
 			$scope.addTesting = ->
 				ajaxStart()
+				$scope.adding = true
 				$.post "testing/ajaxAdd", 
 					Testing: $scope.Testing
 				, (response) ->
@@ -64,5 +140,10 @@
 				, "json"
 					
 			angular.element(document).ready ->
+				$(".form-change-control").on 'keyup change', 'input, select', ->
+					$scope.form_changed = true
+					$scope.$apply()
+
 				$scope.changeDate()	if $scope.Testing isnt undefined
+				$('#subject-add-student').selectpicker()
 				set_scope "Testing"

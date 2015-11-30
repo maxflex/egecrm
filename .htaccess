@@ -110,6 +110,7 @@ RewriteRule ^users/ajax/([a-zA-Z]+)[/]?$ index.php?controller=users&action=Ajax$
 
 # Пробные тестирования
 RewriteRule ^testing[/]?$ index.php?controller=testing [QSA,L]
+RewriteRule ^students/testing[/]?$ index.php?controller=testing&action=students [QSA,L]
 RewriteRule ^testing/edit/([0-9]+)[/]?$ index.php?controller=testing&action=edit&id=$1 [QSA,L]
 RewriteRule ^testing/([a-zA-Z]+)[/]?$ index.php?controller=testing&action=$1 [QSA,L]
 

@@ -130,7 +130,15 @@
 	<a href="stats/visits/total" class="list-group-item">Посещаемость 
 		<?php
 			if (!LOCAL_DEVELOPMENT) {
-				$journal_errors_count = memcached()->get("JournalErrorsCount");
+				$journal_errors = memcached()->get("JournalErrors");
+				
+				$journal_errors_count = 0;
+				foreach ($journal_errors as $date => $values) {
+					if (is_string($date)) {
+						$journal_errors_count += count($values);
+					}
+				}
+
 				if ($journal_errors_count > 0) {
 					echo '<span class="badge badge-danger pull-right" >'. $journal_errors_count .'</span>';
 				}
