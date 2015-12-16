@@ -101,16 +101,6 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
     return set_scope("Group");
   });
 }).controller("ScheduleCtrl", function($scope) {
-  $scope.updateCache = function() {
-    ajaxStart();
-    return $.post("groups/ajax/updateCache", {
-      id_group: $scope.Group.id
-    }, function() {
-      $scope.can_update_cache = false;
-      $scope.$apply();
-      return ajaxEnd();
-    });
-  };
   $scope.schedulde_loaded = false;
   $scope.formatDate = function(date) {
     return moment(date).format("D MMMM YYYY г.");
@@ -126,8 +116,10 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
       if (d === 0) {
         d = 7;
       }
-      key = Object.keys(Group.day_and_time[d])[0];
-      v.time = Group.day_and_time[d][key];
+      if (Group.day_and_time[d] !== void 0) {
+        key = Object.keys(Group.day_and_time[d])[0];
+        v.time = Group.day_and_time[d][key];
+      }
       if (Group.cabinet) {
         return v.cabinet = Group.cabinet;
       }
@@ -191,6 +183,9 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
         if ($scope.inDate(d, $scope.vocation_dates)) {
           add_class += ' vocation';
         }
+        if ($scope.inDate(d, $scope.exam_dates)) {
+          add_class += ' exam';
+        }
         return add_class;
       }
     };
@@ -198,13 +193,11 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
   $scope.monthName = function(month) {
     return moment().month(month - 1).format("MMMM");
   };
-  $scope.can_update_cache = false;
   $scope.dateChange = function(e) {
     var d, t;
     if (!$scope.schedule_loaded) {
       return;
     }
-    $scope.can_update_cache = true;
     d = moment(clicked_date).format("YYYY-MM-DD");
     $scope.Group.Schedule = initIfNotSet($scope.Group.Schedule);
     t = $scope.Group.Schedule.filter(function(schedule) {
@@ -284,7 +277,6 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
           year = parseInt(moment(d).format("YYYY"));
           month = parseInt(moment(d).format("M") - 1);
           day = parseInt(moment(d).format("D"));
-          console.log(year, month, day);
           $(this).datepicker("_setDate", new Date(Date.UTC.apply(Date, [year, month, day])));
         }
       }
@@ -413,7 +405,7 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
         $scope.is_student_dragging = true;
         $scope.$apply();
         $(this).css("visibility", "hidden");
-        return $(ui.helper).addClass("tr-helper");
+        return $(ui.helper).addClass("single-dragging");
       },
       stop: function(event, ui) {
         $scope.is_student_dragging = false;
@@ -1105,6 +1097,12 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
   });
 }).controller("ListCtrl", function($scope) {
   var bindDraggable2;
+  $scope.updateCache = function() {
+    ajaxStart();
+    return $.post("groups/ajax/UpdateCacheAll", {}, function() {
+      return redirect("groups");
+    });
+  };
   $scope.createHelper = function() {
     lightBoxShow('contract-stats');
     $scope.create_helper_data = null;
@@ -1120,12 +1118,6 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
   };
   $scope.getMonthByNumber = function(n) {
     return moment().month(n - 1).format("MMMM");
-  };
-  $scope.updateStatsCache = function() {
-    ajaxStart();
-    return $.post("groups/ajax/updateStatsCache", {}, function() {
-      return redirect("groups");
-    });
   };
   $scope.changeBranch = function() {
     $("#group-cabinet").attr("disabled", "disabled");

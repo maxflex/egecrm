@@ -28,6 +28,18 @@ angular.module "Settings", ["ui.bootstrap"]
 		$scope.schedulde_loaded = false
 		$scope.menu = 1
 		
+		$scope.exam_days =
+			9: []
+			11: []
+		
+		$scope.saveExamDays = ->
+			ajaxStart()
+			$scope.adding = true
+			$.post "ajax/saveExamDays", {exam_days: $scope.exam_days}, (response) ->
+				$scope.adding = false
+				$scope.$apply()
+				ajaxEnd()
+		
 		$scope.getLine1 = (Schedule) ->
 			moment(Schedule.date).format "D MMMM YYYY г."
 		
@@ -96,7 +108,7 @@ angular.module "Settings", ["ui.bootstrap"]
 			$scope.$apply()
 
 		angular.element(document).ready ->
-			set_scope 'Group'
+			set_scope 'Settings'
 			
 			init_dates = []
 			for schedule_date in $scope.Group.Schedule

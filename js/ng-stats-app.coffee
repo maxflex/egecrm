@@ -30,7 +30,7 @@ angular.module "Stats", ["ui.bootstrap"]
 		
 		$scope.pageStudentChanged = ->
 			ajaxStart()
-			redirect "stats/visits/students?page=#{$scope.currentPage}"
+			redirect "stats/visits/total?page=#{$scope.currentPage}"
 		
 		$scope.pagePaymentChanged = ->
 			ajaxStart()

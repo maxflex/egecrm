@@ -16,6 +16,72 @@
 */
 		}
 		
+		public function actionTestyTest()
+		{
+			$id_group = 280;
+			$date = '2015-12-03';
+			
+			$errors = [
+				'2015-12-03' => [280]
+			];
+			
+			preType($init_array);
+			
+			if (($key = array_search($id_group, $errors[$date])) !== false) {
+			    unset($errors[$date][$key]);
+			    $errors[$date] = array_values($errors[$date]);
+			    // if no errors now
+			    if (!count($errors[$date])) {
+				    unset($errors[$date]);
+			    }
+				$return = $errors;
+			}
+			
+			preType($return);
+			
+/*
+			VisitJournal::addData($id_group, $date, $data);
+			
+			// Обновляем красные счетчики
+			if (!LOCAL_DEVELOPMENT) {
+				$errors = memcached()->get("JournalErrors");
+				
+				if (($key = array_search($id_group, $errors[$date])) !== false) {
+				    unset($errors[$date][$key]);
+				    memcached()->set("JournalErrors", array_values($errors), 3600 * 24);
+				}
+			}
+*/
+		}
+		
+		public function actionCalculateRemainder()
+		{
+			$Students = Student::getWithContract(true);
+			
+			$student_ids = [];
+			foreach ($Students as $Student) {
+				$Contract = $Student->getContracts()[0];
+				$Payments = $Student->getPayments();
+				
+				// сумма последней версии текущего договора минус сумма платежей и плюс сумма возвратов
+				$remainder = $Contract->sum;
+				
+				foreach ($Payments as $Payment) {
+					if ($Payment->id_type == PaymentTypes::PAYMENT) {
+						$remainder -= $Payment->sum;
+					} else
+					if ($Payment->id_type == PaymentTypes::RETURNN) {
+						$remainder += $Payment->sum;
+					}
+				}
+				
+				PaymentRemainder::add([
+					"id_student"	=> $Student->id,
+					"remainder"		=> $remainder,
+				]);
+			}	
+		}
+		
 		public function actionEgecentr()
 		{
 			$this->addJs("ng-test-app");

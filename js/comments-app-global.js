@@ -53,6 +53,10 @@
 							comments = scope.Group.Comments
 							break
 						}
+						case "TESTING": {
+							comments = scope.Testing.Comments
+							break
+						}
 						case "REQUEST_LIST": {
 							var comments						
 							$.each(scope.requests, function(i, v) {

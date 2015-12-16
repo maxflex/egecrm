@@ -22,6 +22,8 @@
     <link href="css/ng-showhide.css?ver=<?= settings()->version ?>" rel="stylesheet">
 	<link href="css/ios7switch.css" rel="stylesheet">
 	<link href="css/ladda-themeless.css" rel="stylesheet">
+	
+	<link rel="stylesheet" type="text/css" href="css/corner-morph.css" />
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/jquery.cookie.js"></script>
@@ -68,7 +70,7 @@
 	
     <?= $this->_js_additional ?>
   </head>
-  <body>
+  <body class="content">
 	  <div class="lightbox"></div>
 	  
 	  <div id="logout-modal" class="modal" role="dialog">

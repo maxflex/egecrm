@@ -18,6 +18,15 @@ RewriteRule ^login$ index.php?controller=login&action=login [QSA,L]
 # AJAX
 RewriteRule ^ajax/([a-zA-Z]+)[/]?$ index.php?controller=ajax&action=Ajax$1 [QSA,L]
 
+# Отчеты
+RewriteRule ^(students/|teachers/)?reports/add/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=add&id_student=$2&id_subject=$3 [QSA,L]
+RewriteRule ^(students/|teachers/)?reports[/]?$ index.php?controller=reports&action=list [QSA,L]
+RewriteRule ^(students/|teachers/)?reports/([a-zA-Z]+)[/]?$ index.php?controller=reports&action=$2 [QSA,L]
+RewriteRule ^(students/|teachers/)?reports/([0-9]+)[/]?$ index.php?controller=reports&action=view&id=$2 [QSA,L]
+RewriteRule ^(students/|teachers/)?reports/edit/([0-9]+)[/]?$ index.php?controller=reports&action=edit&id=$2 [QSA,L]
+
+
+
 # Заявки
 RewriteRule ^requests/edit/([0-9]+)$ index.php?controller=request&action=edit&id=$1 [QSA,L]
 RewriteRule ^requests/add[/]?$ index.php?controller=request&action=add [QSA,L]
@@ -53,15 +62,8 @@ RewriteRule ^settings/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=$1 [
 RewriteRule ^settings/([a-zA-Z]+)/([0-9]+)[/]?$ index.php?controller=settings&action=$1&id=$2 [QSA,L]
 RewriteRule ^settings/ajax/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=Ajax$1 [QSA,L]
 
-RewriteRule ^(teachers/)?print[/]?$ index.php?controller=PrintTasks&action=list [QSA,L]
-RewriteRule ^(teachers/)?print/add[/]?$ index.php?controller=PrintTasks&action=add [QSA,L]
-RewriteRule ^print/ajax/([a-zA-Z]+)[/]?$ index.php?controller=PrintTasks&action=Ajax$1 [QSA,L]
-
 RewriteRule ^tasks[/]?$ index.php?controller=task&action=list [QSA,L]
 RewriteRule ^tasks/([0-9]+)[/]?$ index.php?controller=task&action=list&list=$1 [QSA,L]
-
-RewriteRule ^students/promo[/]?$ index.php?controller=promo [QSA,L]
-
 
 RewriteRule ^tasks/ajax/([a-zA-Z]+)[/]?$ index.php?controller=task&action=Ajax$1 [QSA,L]
 

@@ -152,6 +152,11 @@
 						{{d.teacher_price | number}} рублей
 					</td>
 				</tr>
+				<tr>
+					<td colspan="2"></td>
+					<td><b>к выплате</b></td>
+					<td><b>{{toBePaid() | number}} рублей</b></td>
+				</tr>
 			</table>
 
 		</div>
@@ -183,6 +188,8 @@
 		    </div>
 		</div>
 	</div>
+	
+	<?= partial('reports') ?>
 	
 	
 	

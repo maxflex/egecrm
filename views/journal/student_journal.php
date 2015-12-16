@@ -20,14 +20,14 @@
 
 <div class="row" ng-show="Journal.length > 0">
     <div class="col-sm-12">
-		 <div ng-repeat="id_group in getJournalGroups()" class="visit-div" style="top: -{{6 * $index}}px">
-			 <div class="visit-div-group" ng-class="{'gray-bg': !inActiveGroup(id_group)}">
+		<div ng-repeat="id_group in getJournalGroups()" class="visit-div">
+			 <div class="visit-div-group">
 				<a ng-show="inActiveGroup(id_group)" href="students/groups/edit/{{id_group}}/schedule">Группа №{{id_group}}</a>
 				<span ng-show="!inActiveGroup(id_group)">Группа №{{id_group}}</span>
 			</div>
 			 <div ng-repeat="Visit in getVisitsByGroup(id_group)"
-				 class="visit-div-circle default" ng-class="{'gray-bg': !inActiveGroup(id_group)}">
-				<span class="circle-default" title="{{formatVisitDate(Visit.lesson_date)}}"
+				 class="visit-div-circle default">
+				<span class="circle-default default" title="{{formatVisitDate(Visit.lesson_date)}}{{(Visit.presence == 1 && Visit.late > 0) ? ', опоздание ' + Visit.late + ' мин.' : ''}}"
 				ng-class="{
 					'circle-red'	: Visit.presence == 2,
 					'circle-orange'	: Visit.presence == 1 && Visit.late > 0
@@ -35,10 +35,6 @@
 			 </div>
 			 <div ng-repeat="Visit in getGroup(id_group).Schedule" class="visit-div-circle default">
 				 <span class="circle-default circle-future default" title="{{formatVisitDate(Visit.date)}}"></span>
-			 </div>
-			 <div ng-repeat="i in [] | range:(getMaxVisits() - getVisitsByGroup(id_group).length - getGroup(id_group).Schedule.length)" 
-				 class="visit-div-circle default" ng-class="{'gray-bg': !inActiveGroup(id_group)}"> 
-				 <span class="circle-default invisible"></span>
 			 </div>
 		 </div>
     </div>

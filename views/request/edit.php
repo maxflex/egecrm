@@ -65,6 +65,26 @@
 		</div>
 		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
 		
+		
+		<!-- ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
+		<div class="lightbox-new lightbox-print-additional">
+			<div class="row">
+				<div class="col-sm-4">
+					<input class="form-control" ng-model="contract_additional.id_additional" placeholder="№ соглашения">
+				</div>
+				<div class="col-sm-4">
+					<input class="form-control" ng-model="contract_additional.add_price_1" placeholder="сумма №1">
+				</div>
+				<div class="col-sm-4">
+					<input class="form-control" ng-model="contract_additional.add_price_2" placeholder="сумма №2">
+				</div>
+			</div>
+			<center style="margin-top: 20px">
+				<button class="btn btn-primary" ng-click="runPrint()" style="width: 140px">Печать</button>
+			</center>
+		</div>
+		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
+		
 		<!-- ЛАЙТБОКС КАРТА -->
 		<div class="lightbox-element lightbox-map">
 			<map zoom="10" disable-default-u-i="true" scale-control="true" zoom-control="true" zoom-control-options="{style:'SMALL'}">
@@ -767,6 +787,10 @@
 									печать договора
 									<?= partial("contract_print", ["Request" => $Request]) ?>
 								</div>
+								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContractAdditional(contract)">
+									печать доп. соглашения
+									<?= partial("additional_agreement_print") ?>
+								</div>
 								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="deleteContract(contract)">
 									удалить
 								</div>
@@ -835,7 +859,7 @@
 								</div>
 								<div ng-repeat="subject in contract_history.subjects" style="margin-bottom: 3px; white-space: nowrap">
 									<span style="display: inline-block; width: 200px" ng-class="{
-										'text-warning'	: subject.status == 1 && !contract.cancelled,	
+										'text-warning'	: subject.status == 1 && !contract_history.cancelled,	
 										'text-danger'	: contract_history.cancelled,
 									}">{{subject.name}}</span>
 									<span ng-show="!subject.count2">{{subject.count}}
@@ -921,12 +945,37 @@
 						<a class="link-like link-reverse small" ng-click="editPayment(payment)">редактировать</a>
 						<a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
 				</div>
+				<div class="half-black small" ng-show="objectLength(remainder)">
+					<?php if (User::fromSession()->id == 65 || User::fromSession()->id == 69) :?>
+						Остаточный платеж <input class="no-border-outline digits-only-minus" ng-model="remainder.remainder" ng-keydown="checkRemainderSave($event)"
+						style="margin: 0; width: {{calculateRemainderWidth()}}px">
+						<ng-pluralize count="remainder.remainder" when="{
+							'one' : 'рубль',
+							'few' : 'рубля',
+							'many': 'рублей',
+						}"></ng-pluralize>
+						<span class="text-danger opacity-pointer" style="margin-left: 5px" ng-click="deleteRemainder()">удалить</span>
+					<?php else :?>
+						Остаточный платеж {{remainder.remainder}}
+						<ng-pluralize count="remainder.remainder" when="{
+							'one' : 'рубль',
+							'few' : 'рубля',
+							'many': 'рублей',
+						}"></ng-pluralize>
+					<?php endif ?>
+				</div>
+				<?php if (User::fromSession()->id == 65 || User::fromSession()->id == 69) :?>
+					<div class="half-black small" ng-show="!objectLength(remainder)">
+						<span class="underline-hover pointer" style="color: #999999" ng-click="addRemainder()">добавить остаточный платеж</span>
+					</div>
+				<?php endif ?>
 		    </div>
 	    </div>
     </div>
     
 	<?= partial("visits") ?>
     <?= partial("teacher_likes") ?>
+    <?= partial("reports") ?>
     
     <?= partial("save_button", ["Request" => $Request]) ?>
 	<?= partial("bill_print") ?>

@@ -164,7 +164,7 @@
 					LEFT JOIN contracts c on c.id_student = s.id
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', s.id ,',%'))
-					WHERE c.id IS NOT NULL AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
+					WHERE c.id IS NOT NULL AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL AND cs.id_subject > 0
 			");
 			
 			while ($row = $result->fetch_assoc()) {
@@ -466,6 +466,19 @@
 			return Comment::findAll([
 				"condition"	=> "place='". Comment::PLACE_STUDENT ."' AND id_place=". $this->id
 			]);
+		}
+		
+		public function getReports()
+		{
+			$Reports = Report::findAll([
+				"condition" => "id_student=" . $this->id
+			]);
+			
+			foreach ($Reports as &$Report) {
+				$Report->Teacher = Teacher::findById($Report->id_teacher);	
+			}
+			
+			return $Reports;
 		}
 		
 		/**

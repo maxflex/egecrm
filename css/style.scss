@@ -19,11 +19,22 @@
 	
 	$hr_gray 			: #eee;
 	$half_black			: rgba(0, 0, 0, .5);
+	$quater_black 		: rgba(0, 0, 0, .25);
+
+.dropdown-menu > .disabled > a, .dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {
+    color: $quater_black !important;
+}
 
 .no-hover {
 	&:hover {
 		background: white !important;
 	}		
+}
+
+.single-dragging {
+	padding: 2px 5px;
+	border-radius: 5px;
+	white-space: nowrap;
 }
 
 .bootstrap-select.btn-group .dropdown-menu li.disabled a { 
@@ -153,7 +164,7 @@ body {
 
 .badge-danger {
 	background-color: $dark_red;
-}
+} 
 
 .visit-div {
 	display: inline-block;
@@ -162,7 +173,7 @@ body {
 }
 
 .visit-div-group {
-	border: 1px solid #ddd;
+// 	border: 1px solid #ddd;
 	border-left: none;
 	border-right: none;
 	float: left;
@@ -171,7 +182,7 @@ body {
 }
 
 .visit-div-circle {
-	border: 1px solid #ddd;
+// 	border: 1px solid #ddd;
 	float: left;
 	display: inline-block;
 	padding: 0 3px !important;
@@ -842,25 +853,37 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 .day-explain, .circle-default {
 	border-radius: 50% !important;
+/*
 	height: 14px;
     width: 14px;
+*/
+	height: 10px;
+	width: 10px;
     display: inline-block;
     background: #5cb85c;
-    top: 2px;
+//     top: 2px;
+	top: .5px;
     position: relative;
     &.circle-future {
 	    background: #999999;
 	//    opacity: .5;
 	    cursor: pointer;
     }
+    &.circle-offline {
+	    background: #64697d;
+    }
     &.circle-future-missing {
+/*
 	    height: 6.5px;
 	    width: 6.5px;
+*/
+		height: 4.5px;
+	    width: 4.5px;
 	    position: absolute;
 	    background: white;
 	    opacity: 1;
-	    top: 6.5px;
-	    left: 6.5px;
+		top: 8.5px;
+	    left: 5.5px;
 	    z-index: 2;
 	    cursor: pointer;
     }
@@ -978,6 +1001,11 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 		background-color: $blue !important;
 		color: white !important;
 	}
+    & .exam {
+	//    background-color: #C07911 !important;
+		background-color: orange !important;
+	    color: white !important;
+    }
 	& .vocation {
 		background-color: $red !important;
 		color: white !important;
@@ -1478,7 +1506,7 @@ white-space: nowrap;
 	top: 25%;
 }
 
-.lightbox-print {
+.lightbox-print, .lightbox-print-additional {
 	width: 670px;
 	left: calc(50% - 335px);
 	top: 25%;
@@ -1935,7 +1963,7 @@ h4 {
 }
 
 .user-list {
-	color: black;
+	color: white;
 	outline: none;
 	&.small {
 		height: 18px;

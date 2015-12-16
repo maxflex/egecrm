@@ -7,8 +7,13 @@
 				<a href="testing/edit/{{Testing.id}}">Тест №{{Testing.id}}</a>
 			</td>
 			<td>
+				{{formatDate(Testing.date)}} в период
 				<span ng-show="Testing.start_time && Testing.end_time">{{Testing.start_time}} – {{Testing.end_time}}</span>
 			</td>
+			<td>
+				<span ng-show="Testing.Cabinet.number">{{Testing.Cabinet.number}} кабинет</span>
+			</td>
+<!--
 			<td>
 				<span ng-repeat="id_subject in Testing.subjects_9">
 					{{Subjects[id_subject]}}-9{{($last && !Testing.subjects_11.length) ? '' : ', '}}
@@ -17,10 +22,14 @@
 					{{Subjects[id_subject]}}-11{{$last ? '' : ', '}}
 				</span>
 			</td>
+-->
 			<td>
+				{{Testing.total_tests_selected}} из {{Testing.total_tests_available}} тестов доступны
 			</td>
 			<td>
-				Кабинет №{{Testing.Cabinet.number}}
+				<span ng-show="Testing.max_students">
+					{{Testing.Students ? Testing.Students.length : 0}} из {{Testing.max_students}} мест занято
+				</span>
 			</td>
 		</tr>
 	</table>

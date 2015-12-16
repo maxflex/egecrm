@@ -117,7 +117,7 @@
 									{{Schedule.time}}
 								</span></td>
 							<td>
-								<div ng-bind-html="Schedule.Group.branch | to_trusted"></div>
+								<div ng-bind-html="Schedule.branch | to_trusted"></div>
 							</td>
 							<td>
 								<a ng-class="{
@@ -177,11 +177,10 @@
 	</table>
 	
 	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
-<!--
 	<pagination
 	  ng-model="currentPage"
 	  ng-change="pageStudentChanged()"
-	  total-items="<?= round(VisitJournal::fromFirstLesson() / StatsController::PER_PAGE) ?>"
+	  total-items="<?= round(VisitJournal::fromFirstLesson()) ?>"
 	  max-size="10"
 	  items-per-page="<?= StatsController::PER_PAGE ?>"
 	  first-text="«"
@@ -190,6 +189,5 @@
 	  next-text="»"
 	>
 	</pagination>
--->
 	<?php endif ?>
 </div>

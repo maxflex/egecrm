@@ -264,6 +264,7 @@
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
 					"vocation_dates"		=> GroupSchedule::getVocationDates(),
+					"exam_dates"			=> [],
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
 					"time" 					=> Freetime::TIME,
 				]);
@@ -300,6 +301,7 @@
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
 					"vocation_dates"		=> GroupSchedule::getVocationDates(),
+					"exam_dates"			=> [],
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
 					"time" 					=> Freetime::TIME,
 				]);
@@ -331,6 +333,7 @@
 					"Group" 			=> $Group,
 					"past_lesson_dates" => $Group->getPastLessonDates(),
 					"vocation_dates"	=> GroupSchedule::getVocationDates(),
+					"exam_dates"		=> ExamDay::getExamDates(),
 					"time" 				=> Freetime::TIME,
 					"Cabinets"			=> Cabinet::getByBranch($Group->id_branch),
 				]);
@@ -433,11 +436,6 @@
 				"GroupTeacherStatuses"	=> GroupTeacherStatuses::$all,
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_bar"			=> Freetime::getCabinetBar($Group->id, $Group->cabinet),
-				"teacher_freetime"		=> $teacher_freetime_red, // red half
-				"teacher_freetime_red"	=> $teacher_freetime_red_full,
-				"teacher_freetime_orange_half" 	=> $teacher_freetime_orange_half,
-				"teacher_freetime_orange_full"	=> $teacher_freetime_orange_full,
-				"teacher_freetime_doubleblink"	=> $teacher_freetime_doubleblink,
 				"time" => Freetime::TIME,
 			]);
 			
@@ -654,8 +652,13 @@
 				$errors = memcached()->get("JournalErrors");
 				
 				if (($key = array_search($id_group, $errors[$date])) !== false) {
-				    unset($errors[$date][$key]);
-				    memcached()->set("JournalErrors", array_values($errors), 3600 * 24);
+					unset($errors[$date][$key]);
+					$errors[$date] = array_values($errors[$date]);
+					// if no errors now
+					if (!count($errors[$date])) {
+						unset($errors[$date]);
+					}
+				    memcached()->set("JournalErrors", $errors, 3600 * 24);
 				}
 			}
 			// CronController::actionUpdateJournalMiss();
@@ -674,9 +677,15 @@
 			
 			$return = $Group->countSchedule();
 			memcached()->set("GroupScheduleCount[{$Group->id}]", $return, 5 * 24 * 3600);
+		}
+		
+		public function actionAjaxUpdateCacheAll()
+		{
+			$Groups = Group::findAll();
 			
-			// обновить циферки в меню ЗАЧЕМ ЭТО ЗДЕСЬ НУЖНО?
-			// CronController::actionUpdateJournalMiss();
+			foreach ($Groups as $Group) {
+				memcached()->set("GroupScheduleCount[{$Group->id}]", $Group->countSchedule(), 5 * 24 * 3600);
+			}
 		}
 		
 		public function actionAjaxUpdateStatsCache()

@@ -6,37 +6,76 @@
 					input.push i
 				input
 		.controller "ListCtrl", ($scope) ->
+			$scope.formatDate = (date) ->
+				moment(date).format 'DD MMMM'
+				
 			angular.element(document).ready ->
 				set_scope "Testing"
 		.controller "StudentsCtrl", ($scope) ->
+			$scope.testingStarted = (Testing) ->
+				moment("#{Testing.date} #{Testing.start_time}").unix() <= Math.floor(Date.now() / 1000)
+				
 			$scope.addTesting = (Testing) ->
+				Testing.adding = true
 				$.post 'testing/ajaxAddStudent', 
 					id_testing: Testing.id
 					id_subject: Testing.selected_subject
-					grade: $scope.TestingData.grade
+					grade: $scope.grade
 				, (response) ->
 					Testing.Students = initIfNotSet Testing.Students
 					Testing.Students.push response
 					$scope.$apply()
+					$('.subject-select').selectpicker('refresh')
 				, "json"
 					
 			
 			$scope.getTesting = (Testing) ->
 				_.findWhere(Testing.Students, {id_student: $scope.id_student})
-				
-			$scope.getAvailable = (Testing) ->
+			
+			$scope.getAllSubjects = (Testing) ->
 				subject_ids = []
-				if $scope.TestingData.grade is 11
+				if $scope.grade is 11 and Testing.subjects_11 isnt null
 					$.each Testing.subjects_11, (id_subject, value) ->
-						subject_ids.push(id_subject) if parseInt(id_subject) in $scope.TestingData.subject_ids
-				else
+						subject_ids.push(id_subject) if id_subject > 0
+				else if $scope.grade is 9 and Testing.subjects_9 isnt null
 					$.each Testing.subjects_9, (id_subject, value) ->
-						subject_ids.push(id_subject) if parseInt(id_subject) in $scope.TestingData.subject_ids
+						subject_ids.push(id_subject) if id_subject > 0
 				subject_ids
+			
+			
+			$scope.getAllSubjects = (Testing) ->
+				subject_ids = []
+				if $scope.grade is 11 and Testing.subjects_11 isnt null
+					$.each Testing.subjects_11, (id_subject, value) ->
+						subject_ids.push(id_subject) if id_subject > 0
+				else if $scope.grade is 9 and Testing.subjects_9 isnt null
+					$.each Testing.subjects_9, (id_subject, value) ->
+						subject_ids.push(id_subject) if id_subject > 0
+				subject_ids
+			
+			$scope.totalTestsCount = (Testing) ->
+				Object.keys(Testing.subjects_9).length + Object.keys(Testing.subjects_11).length
+			
+			$scope.isAvailable = (Testing, id_subject) ->
+				if $scope.grade is 11
+					id_subject in Object.keys(Testing.subjects_11)
+				else
+					id_subject in Object.keys(Testing.subjects_9)
+			
+# 			$scope.getAvailable = (Testing) ->
+# 				subject_ids = []
+# 				if $scope.TestingData.grade is 11
+# 					$.each Testing.subjects_11, (id_subject, value) ->
+# 						subject_ids.push(id_subject) if parseInt(id_subject) in $scope.TestingData.subject_ids
+# 				else
+# 					$.each Testing.subjects_9, (id_subject, value) ->
+# 						subject_ids.push(id_subject) if parseInt(id_subject) in $scope.TestingData.subject_ids
+# 				subject_ids
 				
 			$scope.formatDate = (date) ->
 				moment(date).format 'DD MMMM'
 			angular.element(document).ready ->
+				$(".subject-select").selectpicker()
 				set_scope "Testing"
 		.controller "AddCtrl", ($scope) ->
 			
@@ -55,7 +94,14 @@
 				
 				return $.inArray(parseInt(id_subject), arr) >= 0
 				
-				
+			
+			$scope.deleteTesting = (id_testing) ->
+				bootbox.confirm "Вы уверены, что хотите удалить тестирование №#{id_testing}?", (result) ->
+					if result is true
+						ajaxStart()
+						$.post "testing/ajaxDelete", {id_testing: id_testing}, ->
+							redirect "testing"
+			
 			$scope.changeDate = ->
 				$scope.cabinet_load = undefined
 				$.post "testing/ajaxChangeDate", 
@@ -88,10 +134,9 @@
 				
 				$scope.form_changed = true
 				
-				$scope.Testing.Students ?= []
-				
 				data = $scope.selectedSubjectGrade.split '|'
 				
+				$scope.Testing.Students = initIfNotSet $scope.Testing.Students				
 				$scope.Testing.Students.push
 					id_student: $scope.selectedStudent.originalObject.id
 					id_subject: data[0]
@@ -111,7 +156,7 @@
 			$scope.getStudent = (id_student) ->
 				_.findWhere $scope.Students,
 					id: id_student
-			
+			 
 			$scope.deleteStudent = (id_student) ->
 				$scope.form_changed = true
 				$scope.Testing.Students = _.without($scope.Testing.Students, _.findWhere($scope.Testing.Students, {id_student: id_student}))

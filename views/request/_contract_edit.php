@@ -81,18 +81,6 @@
 				</div>
 			</div>
 			
-			<div class="row" style="margin-bottom: 10px; position: relative">
-				<div class="col-sm-12">
-					<span class="input-label">код</span>
-					    <input ng-model="current_contract.code" id="promo-code" class="form-control" style="text-transform:uppercase" maxlength="4">
-					    <div style="position: absolute; right: 24px; font-size: 23px; top: 3px">
-						    <img id="promo-code-loading" src="img/svg/loading-spokes.svg" style="display: none; height: 26px; top: -4px; position: relative">
-						    <span class="promo-code-status glyphicon glyphicon-ok" style="display: none; color: #4CD964; margin: 0" id="promo-code-ok"></span>
-						    <span class="promo-code-status glyphicon glyphicon-remove" style="display: none; color: #ff0039; opacity: .5; margin: 0" id="promo-code-error"></span>
-					    </div>
-				</div>
-			</div>
-			
 			<h4 style="margin: 24px 0 20px">РАСТОРЖЕНИЕ ДОГОВОРА
 				<label class="ios7-switch transition-control no-transition" style="font-size: 24px; top: 1px">
 				    <input type="checkbox" ng-model="current_contract.cancelled" ng-true-value="1" ng-change="toggleCancelled(current_contract)">
@@ -114,7 +102,7 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<span class="input-label">причина</span>
-						<textarea class="form-control" placeholder="причина" rows="6"
+						<textarea class="form-control" placeholder="причина" rows="7"
 							ng-model="current_contract.cancelled_reason" id="contract-cancelled-reason"
 							style="float: right; width: 230px; margin-top: 7px; display: inline-block"
 						></textarea>

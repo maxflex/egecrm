@@ -8,7 +8,7 @@
 				<input class="form-control" placeholder="пароль" type="password" ng-model="User.new_password">
 			</td>
 			<td>
-				<input class="form-control" ng-model="User.color" style="background-color: {{User.color}}; color: black" placeholder="цвет">
+				<input class="form-control" ng-model="User.color" style="background-color: {{User.color}}; color: white" placeholder="цвет">
 			</td>
 			<td>
 				<input class="form-control" ng-model="User.agreement" placeholder="соглашение">

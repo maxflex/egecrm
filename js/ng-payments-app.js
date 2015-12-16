@@ -111,6 +111,12 @@
 							payment.confirmed = payment.confirmed ? 0 : 1
 							$.post("ajax/confirmPayment", {id: payment.id, confirmed: payment.confirmed})	
 							$scope.$apply()
+						} else if (result != null) {
+							$('.bootbox-form').addClass('has-error').children().first().focus()
+							$('.bootbox-input-text').on('keydown', function() {
+								$(this).parent().removeClass('has-error')	
+							})
+							return false
 						}
 					},
 					buttons: {
@@ -140,6 +146,12 @@
 							$scope.new_payment = angular.copy(payment)
 							$scope.$apply()
 							lightBoxShow('addpayment')		
+						} else if (result != null) {
+							$('.bootbox-form').addClass('has-error').children().first().focus()
+							$('.bootbox-input-text').on('keydown', function() {
+								$(this).parent().removeClass('has-error')	
+							})
+							return false
 						}
 					},
 					buttons: {
@@ -263,6 +275,12 @@
 										$scope.$apply()
 									}
 								})
+							} else if (result != null) {
+								$('.bootbox-form').addClass('has-error').children().first().focus()
+								$('.bootbox-input-text').on('keydown', function() {
+									$(this).parent().removeClass('has-error')	
+								})
+								return false
 							}
 						},
 						buttons: {

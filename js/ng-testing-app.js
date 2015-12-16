@@ -11,19 +11,27 @@ angular.module("Testing", ['angucomplete-alt']).filter('range', function() {
     return input;
   };
 }).controller("ListCtrl", function($scope) {
+  $scope.formatDate = function(date) {
+    return moment(date).format('DD MMMM');
+  };
   return angular.element(document).ready(function() {
     return set_scope("Testing");
   });
 }).controller("StudentsCtrl", function($scope) {
+  $scope.testingStarted = function(Testing) {
+    return moment(Testing.date + " " + Testing.start_time).unix() <= Math.floor(Date.now() / 1000);
+  };
   $scope.addTesting = function(Testing) {
+    Testing.adding = true;
     return $.post('testing/ajaxAddStudent', {
       id_testing: Testing.id,
       id_subject: Testing.selected_subject,
-      grade: $scope.TestingData.grade
+      grade: $scope.grade
     }, function(response) {
       Testing.Students = initIfNotSet(Testing.Students);
       Testing.Students.push(response);
-      return $scope.$apply();
+      $scope.$apply();
+      return $('.subject-select').selectpicker('refresh');
     }, "json");
   };
   $scope.getTesting = function(Testing) {
@@ -31,30 +39,57 @@ angular.module("Testing", ['angucomplete-alt']).filter('range', function() {
       id_student: $scope.id_student
     });
   };
-  $scope.getAvailable = function(Testing) {
+  $scope.getAllSubjects = function(Testing) {
     var subject_ids;
     subject_ids = [];
-    if ($scope.TestingData.grade === 11) {
+    if ($scope.grade === 11 && Testing.subjects_11 !== null) {
       $.each(Testing.subjects_11, function(id_subject, value) {
-        var ref;
-        if (ref = parseInt(id_subject), indexOf.call($scope.TestingData.subject_ids, ref) >= 0) {
+        if (id_subject > 0) {
           return subject_ids.push(id_subject);
         }
       });
-    } else {
+    } else if ($scope.grade === 9 && Testing.subjects_9 !== null) {
       $.each(Testing.subjects_9, function(id_subject, value) {
-        var ref;
-        if (ref = parseInt(id_subject), indexOf.call($scope.TestingData.subject_ids, ref) >= 0) {
+        if (id_subject > 0) {
           return subject_ids.push(id_subject);
         }
       });
     }
     return subject_ids;
   };
+  $scope.getAllSubjects = function(Testing) {
+    var subject_ids;
+    subject_ids = [];
+    if ($scope.grade === 11 && Testing.subjects_11 !== null) {
+      $.each(Testing.subjects_11, function(id_subject, value) {
+        if (id_subject > 0) {
+          return subject_ids.push(id_subject);
+        }
+      });
+    } else if ($scope.grade === 9 && Testing.subjects_9 !== null) {
+      $.each(Testing.subjects_9, function(id_subject, value) {
+        if (id_subject > 0) {
+          return subject_ids.push(id_subject);
+        }
+      });
+    }
+    return subject_ids;
+  };
+  $scope.totalTestsCount = function(Testing) {
+    return Object.keys(Testing.subjects_9).length + Object.keys(Testing.subjects_11).length;
+  };
+  $scope.isAvailable = function(Testing, id_subject) {
+    if ($scope.grade === 11) {
+      return indexOf.call(Object.keys(Testing.subjects_11), id_subject) >= 0;
+    } else {
+      return indexOf.call(Object.keys(Testing.subjects_9), id_subject) >= 0;
+    }
+  };
   $scope.formatDate = function(date) {
     return moment(date).format('DD MMMM');
   };
   return angular.element(document).ready(function() {
+    $(".subject-select").selectpicker();
     return set_scope("Testing");
   });
 }).controller("AddCtrl", function($scope) {
@@ -72,6 +107,18 @@ angular.module("Testing", ['angucomplete-alt']).filter('range', function() {
       arr = $scope.Testing.subjects_9;
     }
     return $.inArray(parseInt(id_subject), arr) >= 0;
+  };
+  $scope.deleteTesting = function(id_testing) {
+    return bootbox.confirm("Вы уверены, что хотите удалить тестирование №" + id_testing + "?", function(result) {
+      if (result === true) {
+        ajaxStart();
+        return $.post("testing/ajaxDelete", {
+          id_testing: id_testing
+        }, function() {
+          return redirect("testing");
+        });
+      }
+    });
   };
   $scope.changeDate = function() {
     $scope.cabinet_load = void 0;
@@ -100,15 +147,13 @@ angular.module("Testing", ['angucomplete-alt']).filter('range', function() {
     return (minutes_end - minutes_start) < minutes;
   };
   $scope.addStudent = function() {
-    var base, data;
+    var data;
     if (!$scope.selectedSubjectGrade || !$scope.selectedStudent) {
       return;
     }
     $scope.form_changed = true;
-    if ((base = $scope.Testing).Students == null) {
-      base.Students = [];
-    }
     data = $scope.selectedSubjectGrade.split('|');
+    $scope.Testing.Students = initIfNotSet($scope.Testing.Students);
     $scope.Testing.Students.push({
       id_student: $scope.selectedStudent.originalObject.id,
       id_subject: data[0],

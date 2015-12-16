@@ -61,7 +61,9 @@
 			$Group->Schedule = $Group->getSchedule();
 			
 			$ang_init_data = angInit([
-				"Group" => $Group,
+				"Group" 	=> $Group,
+				"Subjects"	=> Subjects::$three_letters,
+				"exam_days" => ExamDay::getData(),
 			]);
 			
 			$this->render("vocations", [

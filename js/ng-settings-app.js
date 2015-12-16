@@ -59,6 +59,21 @@ angular.module("Settings", ["ui.bootstrap"]).filter('to_trusted', [
 }).controller("VocationsCtrl", function($scope) {
   $scope.schedulde_loaded = false;
   $scope.menu = 1;
+  $scope.exam_days = {
+    9: [],
+    11: []
+  };
+  $scope.saveExamDays = function() {
+    ajaxStart();
+    $scope.adding = true;
+    return $.post("ajax/saveExamDays", {
+      exam_days: $scope.exam_days
+    }, function(response) {
+      $scope.adding = false;
+      $scope.$apply();
+      return ajaxEnd();
+    });
+  };
   $scope.getLine1 = function(Schedule) {
     return moment(Schedule.date).format("D MMMM YYYY г.");
   };
@@ -133,7 +148,7 @@ angular.module("Settings", ["ui.bootstrap"]).filter('to_trusted', [
   };
   return angular.element(document).ready(function() {
     var init_dates, j, len, ref, schedule_date;
-    set_scope('Group');
+    set_scope('Settings');
     init_dates = [];
     ref = $scope.Group.Schedule;
     for (j = 0, len = ref.length; j < len; j++) {

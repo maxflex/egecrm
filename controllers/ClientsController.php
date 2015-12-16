@@ -21,14 +21,15 @@
 			
 			$without_contract = LOCAL_DEVELOPMENT ? Student::countWithoutContract() : memcached()->get("TotalStudentsWithNoContract");
 			
+/*
 			$ang_init_data = angInit([
 				"Students" 			=> $Students,
 			]);
+*/
 			
 			$this->render("list", [
 				"sort"		=> $_GET['sort'],
-				"ang_init_data" => $ang_init_data,
-				"Students" => $Students,
+//				"ang_init_data" => $ang_init_data,
 				"without_contract" => $without_contract,
 			]);
 		}
@@ -46,6 +47,8 @@
 			foreach ($Students as &$Student) {
 				$Student->Contract 	= $Student->getLastContract();
 				$Student->User = User::find(["condition" => "id_entity=" . $Student->id]);
+				
+				$Student->Remainder = PaymentRemainder::getByStudentId($Student->id);
 				
 				$date_formatted = new DateTime($Student->Contract->date);
 				$Student->date_formatted = $date_formatted->format("Y-m-d");

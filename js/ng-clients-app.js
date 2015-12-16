@@ -17,6 +17,16 @@ angular.module("Clients", []).filter('to_trusted', [
   });
 }).controller("ListCtrl", function($scope) {
   $scope.filter_cancelled = 0;
+  $scope.remainderSum = function() {
+    var sum;
+    sum = 0;
+    $.each($scope.Students, function(index, Student) {
+      if (Student.Remainder.id) {
+        return sum += Student.Remainder.remainder;
+      }
+    });
+    return sum;
+  };
   $scope.clientsFilter = function(Student) {
     if ($scope.filter_cancelled === 2) {
       return _.findWhere(Student.Contract.subjects, {

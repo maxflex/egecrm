@@ -15,6 +15,55 @@
 		###################### AJAX ######################
 		##################################################
 		
+		public function actionAjaxSaveExamDays()
+		{
+			extract($_POST);
+			
+			ExamDay::addData($exam_days);
+		}
+		
+		public function actionAjaxDeleteRemainder()
+		{
+			PaymentRemainder::deleteById($_POST['id']);
+		}
+		
+		public function actionAjaxUpdateRemainder()
+		{
+			extract($_POST);
+			
+			PaymentRemainder::updateById($id, [
+				"remainder" => $remainder
+			]);
+		}
+		
+		public function actionAjaxAddRemainder()
+		{
+			extract($_POST);
+			
+			$Student	= Student::findById($id_student);
+			$Contract 	= $Student->getContracts()[0];
+			$Payments 	= $Student->getPayments();
+			
+			// сумма последней версии текущего договора минус сумма платежей и плюс сумма возвратов
+			$remainder = $Contract->sum;
+			
+			foreach ($Payments as $Payment) {
+				if ($Payment->id_type == PaymentTypes::PAYMENT) {
+					$remainder -= $Payment->sum;
+				} else
+				if ($Payment->id_type == PaymentTypes::RETURNN) {
+					$remainder += $Payment->sum;
+				}
+			}
+			
+			$PaymentRemainder = PaymentRemainder::add([
+				"id_student"	=> $Student->id,
+				"remainder"		=> $remainder,
+			]);
+			
+			returnJsonAng($PaymentRemainder);
+		}
+		
 		public function actionAjaxContinueSession()
 		{
 			# ничего не надо, пустая функция для обновления сессии
@@ -28,7 +77,7 @@
 			}
 			
 			if (User::fromSession()->type == User::USER_TYPE) {
-				$minutes_limit = 30; // 30 минут для пользователей			
+				$minutes_limit = 40; // 40 минут для пользователей			
 			} else {
 				$minutes_limit = 15; // 15 минут
 			}
@@ -457,6 +506,49 @@
 			returnJSON($SMS);
 		}
 		
+		public function actionAjaxSendGroupSmsTeachers()
+		{
+			extract($_POST);
+			
+			$Teachers = Teacher::findAll();
+			
+			foreach ($Teachers as $Teacher) {
+				foreach (Student::$_phone_fields as $phone_field) {
+					$number = $Teacher->{$phone_field};
+					
+					if (!empty(trim($number))) {
+						$msg = $message;
+						if ($Teacher->login && $Teacher->password) {
+							$msg = str_replace('{entity_login}', $Teacher->login, $msg);
+							$msg = str_replace('{entity_password}', $Teacher->password, $msg);
+						}
+						$messages[] = [
+							"type"      => "Преподавателю #" . $Teacher->id,
+							'number' 	=> $number,
+							'message'	=> $msg,
+						];
+					}
+				}
+			}
+			
+			$sent_to = [];
+			foreach ($messages as $message) {
+				if (!in_array($message['number'], $sent_to)) {
+					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
+					$sent_to[] = $message['number'];
+					
+					// debug
+					$body .= "<h3>" . $message["type"] . "</h3>";
+					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+				}
+			}
+
+			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
+			
+			returnJSON(count($sent_to));
+		}
+		
 		public function actionAjaxSendGroupSms()
 		{
 			extract($_POST);
@@ -862,20 +954,6 @@
 			returnJsonAng($Students);
 		}
 		
-		public function actionAjaxCheckPromoCode()
-		{
-			extract($_POST);
-			$code = strtoupper($code);
-			
-			$code_valid = Student::count(["condition" => "code='$code'"]);
-			
-			if ($code_valid) {
-				returnJsonAng(true);				
-			} else {
-				returnJsonAng(false);
-			}
-		}
-		
 		public function actionAjaxSmsCheckOk()
 		{
 			extract($_POST);
@@ -904,6 +982,10 @@
 				$S->lesson_number = GroupSchedule::count([
 					"condition" => "id_group={$S->id_group} AND date <= '{$date}'"
 				]);
+				
+				$S->branch = Branches::getShortColoredById($S->Group->id_branch, 
+					($S->cabinet ? "-".Cabinet::findById($S->cabinet)->number : "")
+				);
 			}
 			
 			usort($Schedule, function($a, $b) {

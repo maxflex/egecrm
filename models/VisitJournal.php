@@ -67,6 +67,7 @@
 					"comment"				=> $data[$id_student]['comment'],
 					"id_user_saved"			=> User::fromSession()->id,
 					"id_teacher"			=> $Group->id_teacher,
+					"grade"					=> $Group->grade,
 				]);
 			}
 			
@@ -83,6 +84,7 @@
 				"date"					=> now(),
 				"teacher_price"			=> $Group->teacher_price,
 				"id_user_saved"			=> User::fromSession()->id,
+				"grade"					=> $Group->grade,
 			]);
 		}
 		
@@ -109,11 +111,11 @@
 		{
 			$today = time(); // or your date as well
 		    $first_lesson_date = self::find(["order" => "lesson_date ASC"])->lesson_date;
-
+			
 		    $first_lesson_date = strtotime($first_lesson_date);
 		    
 		    $datediff = $today - $first_lesson_date;
-
+			
 		    switch ($mode) {
 			    case 'days': {
 				    return ceil($datediff / (60 * 60 * 24));

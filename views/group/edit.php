@@ -102,10 +102,10 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<table class="table table-divlike table-students" style="table-layout: fixed">
-						<tr ng-repeat="Student in TmpStudents" class="student-line is-draggable"  data-id="{{Student.id}}">
+						<tr ng-repeat="Student in TmpStudents">
 							<td>
 								{{$index + 1}}. 
-								<a href="student/{{Student.id}}" ng-class="{
+								<a class="student-line is-draggable"  data-id="{{Student.id}}" href="student/{{Student.id}}" ng-class="{
 									'text-warning'	: getSubject(Student.Contract.subjects, Group.id_subject).status == 1,
 									'text-danger'	: Student.Contract.cancelled
 								}">
@@ -183,19 +183,6 @@
 										<span class="text-warning" 	ng-show="getTeacher(Group.id_teacher).agreement == 2"><?= GroupAgreement::$all[2] ?></span>
 										<span class="half-black"	ng-show="getTeacher(Group.id_teacher).agreement == 1"><?= GroupAgreement::$all[1] ?></span>
 									</span>
-<!--
-								<span class="label group-teacher-status{{Group.teacher_status}} t-s-s teacher-status-span-{{Group.id_teacher}}"
-									ng-click="setTeacherStatus(getTeacher(Group.id_teacher), $event)">
-									{{Group.teacher_status ? GroupTeacherStatuses[Group.teacher_status] : "статус"}}
-								</span>
-								<select ng-model="getTeacher(Group.id_teacher).id_status" class="teacher-status-select-{{Group.id_teacher}}" 
-									style="display: none; width: 150px" data-id="{{Group.id_teacher}}">
-										<option selected value="">статус</option>
-										<option disabled>──────────────</option>
-										<option ng-repeat="(id_status, name) in GroupTeacherStatuses" ng-value="id_status"
-											ng-selected="Group.teacher_status == id_status">{{name}}</option>
-								</select>
--->
 							</td>
 							<td width="150">
 							   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">

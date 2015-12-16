@@ -7,7 +7,7 @@
 		<div>
 			<div class="row">
 				<div class="col-sm-9">
-					<table class="table table-divlike">
+					<table class="table table-hover">
 						<thead>
 							<td colspan="2"></td>
 							<td>

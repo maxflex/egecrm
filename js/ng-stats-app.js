@@ -29,7 +29,7 @@ angular.module("Stats", ["ui.bootstrap"]).config([
   };
   $scope.pageStudentChanged = function() {
     ajaxStart();
-    return redirect("stats/visits/students?page=" + $scope.currentPage);
+    return redirect("stats/visits/total?page=" + $scope.currentPage);
   };
   $scope.pagePaymentChanged = function() {
     ajaxStart();

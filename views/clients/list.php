@@ -23,7 +23,7 @@
 	    </div>
 		<table class="table table-divlike">
 			<tr ng-repeat="Student in Students | orderBy:orderStudents():asc | filter:clientsFilter">
-				<td style="width: 40%">
+				<td style="width: 30%">
 					{{$index + 1}}. <a href="student/{{Student.id}}">{{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}</a>
 				</td>
 				<td  style="width: 15%">
@@ -51,8 +51,20 @@
 <!-- 					</div> -->
 				</td>
 				<td>
-					{{Student.User.login_count}}/{{Student.promo_visit_count}}
+					<span ng-show="Student.Remainder.id">{{Student.Remainder.remainder | number}} <ng-pluralize count="Student.Remainder.remainder" when="{
+						'one' : 'рубль',
+						'few' : 'рубля',
+						'many': 'рублей',
+					}"></ng-pluralize></span>
 				</td>
+			</tr>
+			<tr>
+				<td colspan="5"></td>
+				<td><b ng-show="Students">{{remainderSum() | number}} <ng-pluralize count="remainderSum()" when="{
+						'one' : 'рубль',
+						'few' : 'рубля',
+						'many': 'рублей',
+					}"></ng-pluralize></b></td>
 			</tr>
 		</table>
 		

@@ -62,7 +62,7 @@
 				
 				// дни совпали
 				$days_match = GroupSchedule::count([
-					"condition" => "id_group={$this->id} AND DATE_FORMAT('" . date("Y-m-d", strtotime("tomorrow")) . "', '%w') NOT IN (" . implode(',', $days) . ")"
+					"condition" => "id_group={$Group->id} AND DATE_FORMAT('" . date("Y-m-d", strtotime("tomorrow")) . "', '%w') NOT IN (" . implode(',', $days) . ")"
 				]) > 0 ? false : true;
 				
 				if (!$days_match) {
@@ -115,7 +115,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-					// SMS::send($message['number'], $message['message'], ["additional" => 3]);
+					SMS::send($message['number'], $message['message'], ["additional" => 3]);
 					$sent_to[] = $message['number'];
 					
 					// debug

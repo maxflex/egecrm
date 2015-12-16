@@ -3,7 +3,7 @@ var ajaxEnd, ajaxStart, checkLogout, clearSelect, continueSession, deleteTeacher
 
 logout_interval = false;
 
-if ($('[ng-app=Login]').length) {
+if ($('[ng-app=Login]').length <= 0) {
   setInterval(function() {
     return checkLogout();
   }, 60000);
@@ -14,6 +14,7 @@ $(window).on('focus', function() {
 });
 
 checkLogout = function() {
+  console.log('checking');
   if ($('[ng-app=Login]').length) {
     return location.reload();
   } else {

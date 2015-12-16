@@ -1,3 +1,27 @@
+<?php if (in_array(User::fromSession()->id, [69])) :?>
+<div class="menu-wrap">
+	<nav class="menu">
+		<div class="profile">
+			<span class="circle-default"></span><span style="margin-left: 5px"><?= User::fromSession()->login ?></span>
+		</div>
+		<div class="link-list">
+			<?php foreach (User::getOnlineList()->online as $User) :?>
+				<div>
+					<span class="circle-default"></span><a href="<?= $User->last_action_link?>" target="_blank"><span><?= $User->login?></span></a>
+				</div>
+			<?php endforeach ?>
+			<?php foreach (User::getOnlineList()->offline as $User) :?>
+				<div>
+					<span class="circle-default circle-offline"></span><a href="<?= $User->last_action_link?>" target="_blank"><span><?= $User->login?></span></a>
+					<i><script>document.write( moment(<?= $User->last_action_time?> * 1000).fromNow() )</script></i>
+				</div>
+			<?php endforeach ?>
+		</div>
+	</nav>
+</div>
+<button class="menu-button" id="open-button"><?= count(User::getOnlineList()->online) + 1 ?> <span class="circle-default"></span></button>
+<?php endif ?>
+
 <!-- ЛАЙТБОКС ОТПРАВКА SMS -->
 <div class="lightbox-new lightbox-sms">
 	<input type="hidden" id="sms-mode" value="1">
@@ -134,9 +158,7 @@
 				
 				$journal_errors_count = 0;
 				foreach ($journal_errors as $date => $values) {
-					if (is_string($date)) {
-						$journal_errors_count += count($values);
-					}
+					$journal_errors_count += count($values);
 				}
 
 				if ($journal_errors_count > 0) {
@@ -154,7 +176,7 @@
 	
 	
     <a class="list-group-item active">Настройки</a>
-	<?php if (in_array(User::fromSession()->id, [1, 69])): ?>
+	<?php if (in_array(User::fromSession()->id, [1, 69, 93])): ?>
 	    <a href="tasks" class="list-group-item">Задачи
 		<?php
 			// Количество новых заявок
@@ -166,17 +188,6 @@
 			}
 		?>
 	<?php endif ?>
-	<a href="print" class="list-group-item">Печать 
-	    <?php
-			// Количество новых заявок
-			$new_print_count = PrintTask::countNew();
-			
-			// Если есть новые заявки
-			if ($new_print_count) {
-				echo '<span class="badge pull-right">'. $new_print_count .'</span>';
-			}
-		?>
-	</a>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="settings/cabinets" class="list-group-item">Кабинеты</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>

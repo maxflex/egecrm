@@ -106,9 +106,8 @@
 		
 		public function actionList()
 		{
-			$this->setTabTitle("Преподователи");
-			$this->setRightTabTitle("<a href='teachers/add'>добавить преподавателя</a>");
-			
+			$this->_custom_panel = true;
+						
 			$Teachers = Teacher::findAll([
 				"order" => "last_name ASC"
 			]);
@@ -120,35 +119,6 @@
 					foreach ($Group->students as $id_student) {
 						$status = GroupTeacherLike::getStatus($id_student, $Teacher->id);
 						$Teacher->statuses[$status]++;
-/*
-						$Student = Student::findById($id_student);
-						
-						$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
-						
-						$Student->review_status	= $Group->student_statuses[$Student->id]['review_status'];
-						
-						if ($Student->already_had_lesson) {
-							if (!$Student->review_status) {
-								$Teacher->gray_count++;
-								//echo "GROUP ID: {$Group->id} | STUDENT ID: {$Student->id} <br>";
-							} else {
-								switch ($Student->review_status) {
-									case 1: {
-										$Teacher->green_count++;
-										break;
-									}
-									case 2: {
-										$Teacher->orange_count++;
-										break;
-									}
-									case 3: {
-										$Teacher->red_count++;
-										break;
-									}
-								}
-							}
-						}
-*/
 					}
 				}
 			}
@@ -202,6 +172,7 @@
 				"teacher_phone_level"	=> $Teacher->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"Groups"				=> $Groups,
+				"Reports"				=> $Teacher->getReports(),
 				"GroupLevels"			=> GroupLevels::$all,
 				"Subjects"	=> Subjects::$three_letters,
 				"payment_statuses"	=> Payment::$all,

@@ -13,6 +13,13 @@ angular.module "Clients", []
 	.controller "ListCtrl", ($scope) ->
 		$scope.filter_cancelled = 0
 		
+		$scope.remainderSum = ->
+			sum = 0
+			$.each $scope.Students, (index, Student) ->
+				if Student.Remainder.id
+					sum += Student.Remainder.remainder
+			sum
+		
 		$scope.clientsFilter = (Student) ->
 			if $scope.filter_cancelled is 2
 				return _.findWhere(Student.Contract.subjects, {status: 1}) isnt undefined and Student.Contract.cancelled is 0

@@ -338,7 +338,8 @@
 		{
 			$date_end = date("Y-m-d", time());
 			
-			for ($i = 1; $i <= VisitJournal::fromFirstLesson('months'); $i++) {
+			// +1 день на будущий месяц
+			for ($i = 1; $i <= VisitJournal::fromFirstLesson('months') + 1; $i++) {
 				$last_day_of_month = strtotime("last day of -$i months");
 				$date_start = date("Y-m-d", $last_day_of_month);
 				

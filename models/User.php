@@ -4,17 +4,43 @@
 		const SALT 					= "32dg9823dldfg2o001-2134>?erj&*(&(*^";	// Для генерации кук
 		
 		const USER_TYPE = "USER";
+		const LAST_REAL_USER_ID = 112;
+		const ONLINE_TIME_MINUTES = 15;
 		
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "users";
 		
+		public static $online_list;
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 	
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		
+		public static function getOnlineList()
+		{
+			if (!static::$online_list) {
+				$online = User::findAll([
+					"condition" => "id <= " . self::LAST_REAL_USER_ID . " AND banned=0
+						AND (UNIX_TIMESTAMP(NOW()) - last_action_time) / 60 < " . self::ONLINE_TIME_MINUTES . " AND id != " . User::fromSession()->id,
+					"order" => "last_action_time DESC"
+				]);
+				
+				$offline = User::findAll([
+					"condition" => "id <= " . self::LAST_REAL_USER_ID . " AND banned=0
+						AND (UNIX_TIMESTAMP(NOW()) - last_action_time) / 60 >= " . self::ONLINE_TIME_MINUTES . " AND id != " . User::fromSession()->id,
+					"order" => "last_action_time DESC"
+				]);
+				
+				static::$online_list = (object)[
+					'online'	=> $online,
+					'offline'	=> $offline,
+				];
+			}			
+			return static::$online_list;
+		}
 		
 		/**
 		 * Обновить время последнего действия.
@@ -25,7 +51,12 @@
 			// не засчитываем AjaxCheckLogout за действие. не обновляем
 			if ($_GET['action'] != 'AjaxCheckLogout') {
 				$this->last_action_time = time();
-				$this->save("last_action_time");
+				// если не ajax-действие, записываем ссылку последнего действия
+				if (strpos(strtolower($_GET['action']), "ajax") !== 0) {
+					$this->last_action_link = $_SERVER['REQUEST_URI'];
+					$this->save('last_action_link');
+				}
+				$this->save('last_action_time');
 			}
 		}
 		
@@ -79,18 +110,30 @@
 				$Users = memcached()->get("Users");
 				
 				if (!$Users) {
-					$Users = self::findAll();
-				
-					foreach ($Users as $User) {
-						$return[$User->id] = $User->dbData();
-					}
-					
-					$Users = $return;
-					memcached()->set("Users", $Users, 2 * 24 * 3600); // кеш на 2 дня
+					self::updateCache();
 				}
 				
 				return $Users;
 			}
+		}
+		
+		public static function updateCache()
+		{
+			$Users = self::findAllReal();
+				
+			foreach ($Users as $User) {
+				$return[$User->id] = $User->dbData();
+			}
+			
+			$Users = $return;
+			memcached()->set("Users", $Users, 2 * 24 * 3600); // кеш на 2 дня
+		}
+		
+		public static function findAllReal()
+		{
+			return self::findAll([
+				"condition" => "id <=" . self::LAST_REAL_USER_ID,
+			]);
 		}
 		
 		/**

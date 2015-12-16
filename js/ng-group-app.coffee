@@ -72,13 +72,6 @@
 				set_scope "Group"
 				
 		.controller "ScheduleCtrl", ($scope) ->
-			$scope.updateCache = ->
-				ajaxStart()
-				$.post "groups/ajax/updateCache", {id_group: $scope.Group.id}, () ->
-					$scope.can_update_cache = false
-					$scope.$apply()
-					ajaxEnd()
-			
 			$scope.schedulde_loaded = false
 			
 			$scope.formatDate = (date) ->
@@ -93,8 +86,11 @@
 					d = moment(v.date).format("d")
 					d = parseInt d 
 					d = 7 if d is 0
-					key = Object.keys(Group.day_and_time[d])[0]
-					v.time = Group.day_and_time[d][key]
+					# если в этот день установлено расписание и время в группе. иначе не устанавливать
+					# console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
+					if Group.day_and_time[d] isnt undefined
+						key = Object.keys(Group.day_and_time[d])[0]
+						v.time = Group.day_and_time[d][key]
 					v.cabinet = Group.cabinet if Group.cabinet
 				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
 				$scope.$apply()
@@ -151,17 +147,17 @@
 						add_class = 'was-lesson'
 					if $scope.inDate(d, $scope.vocation_dates)
 						add_class += ' vocation'
+					if $scope.inDate(d, $scope.exam_dates)
+						add_class += ' exam'
 					add_class
 					
 			$scope.monthName = (month) ->
 				moment().month(month - 1).format "MMMM"
 				
-			$scope.can_update_cache = false
 			$scope.dateChange = (e) ->
 				return if not $scope.schedule_loaded
 				# console.log clicked_date
 				
-				$scope.can_update_cache = true
 				d = moment(clicked_date).format("YYYY-MM-DD")
 				
 				$scope.Group.Schedule = initIfNotSet $scope.Group.Schedule
@@ -213,7 +209,7 @@
 							year 	= parseInt moment(d).format("YYYY")
 							month 	= parseInt moment(d).format("M") - 1 # fix. because months are zero-based
 							day 	= parseInt moment(d).format("D")
-							console.log year, month, day
+							# console.log year, month, day
 							$(this).datepicker "_setDate", new Date(Date.UTC.apply(Date, [year, month, day]))
 					# schedule loaded after 500 ms
 					setTimeout ->
@@ -313,7 +309,7 @@
 						$scope.is_student_dragging = true
 						$scope.$apply()
 						$(this).css "visibility", "hidden"
-						$(ui.helper).addClass "tr-helper"
+						$(ui.helper).addClass "single-dragging"
 					stop: (event, ui) ->
 						$scope.is_student_dragging = false
 						$scope.$apply()
@@ -886,6 +882,11 @@
 						 	redirect "groups/edit/#{response}"	
 						
 		.controller "ListCtrl", ($scope) ->
+			$scope.updateCache = ->
+				ajaxStart()
+				$.post "groups/ajax/UpdateCacheAll", {}, ->
+					redirect "groups"
+					
 			$scope.createHelper = ->
 				lightBoxShow 'contract-stats'
 				$scope.create_helper_data = null
@@ -902,11 +903,6 @@
 			$scope.getMonthByNumber = (n) ->
 				moment().month(n - 1).format("MMMM")
 
-			$scope.updateStatsCache = ->
-				ajaxStart()
-				$.post "groups/ajax/updateStatsCache", {}, ->
-					redirect "groups"
-			
 			$scope.changeBranch = ->
 				$("#group-cabinet").attr "disabled", "disabled"
 				ajaxStart()

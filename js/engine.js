@@ -14,6 +14,9 @@
 		// закрываем лайтбокс
 		$(".lightbox").on("click", function() {
 			lightBoxHide();
+			if (isOpen) {
+				toggleMenu()
+			}
 		})
 		
 		$(".question").children("span").on("click", function() {
@@ -117,7 +120,7 @@
 				password = false
 			}
 		} else 
-		if ($('[ng-app="Group"],[ng-app="Clients"]').length) {
+		if ($('[ng-app="Group"],[ng-app="Clients"],[ng-app="Teacher"]').length) {
 			login = '{entity_login}'
 			password = '{entity_password}'
 		}
@@ -193,6 +196,11 @@
 	
 	function smsDialog3() {
 		$("#sms-number").text("Групповое сообщение клиентам");
+		lightBoxShow('sms')
+	}
+	
+	function smsDialogTeachers() {
+		$("#sms-number").text("Групповое сообщение преподавателям");
 		lightBoxShow('sms')
 	}
 	
@@ -293,6 +301,21 @@
 			};
 			console.log(data);
 			$.post("ajax/sendGroupSmsClients", data, function(response) {
+				ajaxEnd("sms")
+				lightBoxHide();
+				notifySuccess("Отправлено " + response + " СМС");
+				message.val("")
+			});
+		}
+		
+		if (mode == 4) {
+			ajaxStart("sms");
+			data = {
+				"message": message.val().trim(),
+				"place": "TEACHERS",
+			};
+
+			$.post("ajax/sendGroupSmsTeachers", data, function(response) {
 				ajaxEnd("sms")
 				lightBoxHide();
 				notifySuccess("Отправлено " + response + " СМС");
@@ -458,6 +481,7 @@
 			
 			// REGEX для полей типа "число" и "1-5"
 			$(".digits-only-float").inputmask("Regex", {regex: "[0-9]*[.]?[0-9]+"});
+			$(".digits-only-minus").inputmask("Regex", {regex: "[-]?[0-9]*"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
 			
 			
@@ -915,3 +939,26 @@ function ExpandSelect(select, maxOptionsVisible)
 	document.body.appendChild(select);
 	select.focus();
 }
+
+
+//
+//
+//
+
+	isOpen = false;
+
+	function toggleMenu() {
+		if( isOpen ) {
+			$('body').removeClass('show-menu');
+			$(".lightbox").fadeOut(300);
+		}
+		else {
+			$('body').addClass('show-menu');
+			$(".lightbox").fadeIn(300);
+		}
+		isOpen = !isOpen;
+	}
+	
+	$(document).ready(function() {
+		$("#open-button").on("click", toggleMenu)
+	});

@@ -56,9 +56,6 @@
 				</div>
 			</div>
 		</div>
-			<div style="clear: both; margin-top: 15px; text-align: center">
-		<button class="btn btn-primary" ng-click="updateCache()" ng-disabled="!can_update_cache">обновить кеш</button>
-	</div>
 	</div>
 </div>
 </div>

@@ -44,8 +44,23 @@
 
 	$bypass_login = ["LoginController", "ApiController", "CronController"]; // эти страницы не требуют логина для просмотра
 	
+	$external_requests = ["ApiController", "CronController"];
+	
 	// Пытаемся войти
 	User::rememberMeLogin();
+	
+/*
+	if (User::loggedIn() && User::fromSession()->id == 69) {
+		preType($_SERVER);
+	}
+*/
+	
+	if (!LOCAL_DEVELOPMENT) {
+		if ($_SERVER['HTTP_HOST'] != 'lk.ege-centr.ru' && !in_array($_controllerName, $external_requests)) {
+			header("Location: https://lk.ege-centr.ru" . $_SERVER['REQUEST_URI']);
+			exit();
+		}
+	}
 	
 	if ((!User::loggedIn() || !User::rememberMeLogin()) && !in_array($_controllerName, $bypass_login)) {
 	//	$this->redirect(BASE_ADDON . "login"); // Можно сделать так же редирект на страницу входа

@@ -247,6 +247,44 @@
 				location.href = number;
 			}
 			
+			// REMAINDER
+			$scope.calculateRemainderWidth = function() {
+				return $scope.remainder.remainder.toString().length * 7 + 2
+			}
+			
+			$scope.checkRemainderSave = function($event) {
+				if ($event.keyCode == 13) {
+					$scope.saveRemainder()
+					$($event.target).blur()
+				}
+			}
+			
+			$scope.saveRemainder = function(element) {
+				$.post("ajax/UpdateRemainder", {
+					id: $scope.remainder.id,
+					remainder: $scope.remainder.remainder,
+				}, function(response) {
+					notifySuccess('Платеж сохранен')
+				});
+			}
+			
+			$scope.deleteRemainder = function() {
+				$.post("ajax/DeleteRemainder", {
+					id: $scope.remainder.id,
+				}, function(response) {
+					notifySuccess('Платеж удален')
+					$scope.remainder = []
+					$scope.$apply()
+				});
+			}
+			
+			$scope.addRemainder = function() {
+				$.post("ajax/AddRemainder", {id_student: $scope.student.id}, function(response) {
+					$scope.remainder = response
+					$scope.$apply()
+				}, "json");
+			}
+			
 			// OUTDATED: ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
 			// $scope.new_contract_id = -1;
@@ -288,6 +326,18 @@
 			// получить группы из журнала
 			$scope.getJournalGroups = function() {
 				return Object.keys(_.chain($scope.Journal).groupBy('id_group').value())
+			}
+			
+			$scope.getStudentGroups = function() {
+				group_ids = $scope.getJournalGroups()
+				
+				$.each($scope.Groups, function(index, Group) {
+					if ($.inArray(Group.id.toString(), group_ids) < 0) {
+						group_ids.push(Group.id)
+					}
+				})
+				
+				return group_ids
 			}
 			
 			$scope.getVisitsByGroup = function(id_group) {
@@ -442,7 +492,15 @@
 					$scope.GlueStudent = null
 				}
 			}
-
+			
+			$scope.getFirstVersionDate = function(contract)
+			{
+				if (!contract.History) {
+					return contract.date
+				} else {
+					return contract.History[0].date
+				}
+			}
 
 			$scope.id_user_print = ''
 			/**
@@ -453,6 +511,13 @@
 				$scope.print_mode = 'contract'
 				$scope.id_contract_print = id_contract
 				lightBoxShow('print')
+			}
+			
+			$scope.printContractAdditional = function(contract) {
+				$scope.print_mode = 'agreement'
+				$scope.contract_additional = contract
+				$scope.id_contract_print = contract.id
+				lightBoxShow('print-additional')
 			}
 			
 			$scope.todayDate = function() {
@@ -1171,7 +1236,6 @@
 				$scope.lateApply()
 		
 				setTimeout(function() {
-					$("#promo-code").keyup();
 					$('.triple-switch').slider('reset')	
 				}, 100)
 			}
@@ -1276,6 +1340,12 @@
 							payment.confirmed = payment.confirmed ? 0 : 1
 							$.post("ajax/confirmPayment", {id: payment.id, confirmed: payment.confirmed})
 							$scope.$apply()
+						} else if (result != null) {
+							$('.bootbox-form').addClass('has-error').children().first().focus()
+							$('.bootbox-input-text').on('keydown', function() {
+								$(this).parent().removeClass('has-error')	
+							})
+							return false
 						}
 					},
 					buttons: {
@@ -1305,6 +1375,12 @@
 							$scope.new_payment = angular.copy(payment)
 							$scope.$apply()
 							lightBoxShow('addpayment')		
+						} else if (result != null) {
+							$('.bootbox-form').addClass('has-error').children().first().focus()
+							$('.bootbox-input-text').on('keydown', function() {
+								$(this).parent().removeClass('has-error')	
+							})
+							return false
 						}	
 					},
 					buttons: {
@@ -1428,6 +1504,12 @@
 										$scope.$apply()
 									}
 								})
+							} else if (result != null) {
+								$('.bootbox-form').addClass('has-error').children().first().focus()
+								$('.bootbox-input-text').on('keydown', function() {
+									$(this).parent().removeClass('has-error')	
+								})
+								return false
 							}	
 						},
 						buttons: {
@@ -1439,8 +1521,7 @@
 							}		
 						}
 					})
-				}
-				
+				}	
 			}
 			
 			$scope.dateToStart = function(date) {

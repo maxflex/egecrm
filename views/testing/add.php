@@ -94,7 +94,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-5 form-change-control">
+		<div class="col-sm-3 form-change-control">
 			<div ng-repeat="(id_subject, name) in Subjects">
 				<div class="inline-block" style="margin-right: 10px">
 					<label class="ios7-switch transition-control" style="font-size: 24px; top: 1px">
@@ -116,16 +116,41 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-4">
+		<div class="col-sm-6">
 			<div class="form-group" ng-show="Testing.Students && Testing.Students.length">
 				<p><b>Зарегистрированные участники:</b></p>
 				<div ng-repeat="Student in Testing.Students">
-					{{getStudent(Student.id_student).name}} 
+					{{getStudent(Student.id_student).name}}, {{Subjects[Student.id_subject]}}-{{Student.grade}}<!-- {{SubjectsFull[Student.id_subject]}}, {{Student.grade}} класс -->
 					<span class="text-danger opacity-pointer" style="margin-left: 5px" ng-click="deleteStudent(Student.id_student)">удалить</span>
 				</div>
 			</div>
 		</div>
 	</div>
+	
+	<?php if ($Testing) :?>
+	<div class="row" style="margin-top: 20px">
+		<div class="col-sm-12 form-change-control">
+			<div class="inline-block" style="position: relative; top: -1px; width: 230px" ng-class="{
+				'quater-black': notEnoughTime(minutes_11[id_subject])
+			}">
+				Запись на тестирование закрыта
+			</div>
+			<div class="inline-block" style="margin-right: 10px">
+				<label class="ios7-switch red-switch transition-control" style="font-size: 24px; top: 1px">
+				    <input type="checkbox"  ng-model="Testing.closed" ng-true-value="1" ng-false-value="0">
+				    <span class="switch"></span>
+				</label> 
+			</div>
+		</div>
+	</div>
+	
+	<div class="row" style="margin-top: 10px">
+		<div class="col-sm-12">
+			<?= Html::comments('Testing', Testing::PLACE) ?>			
+		</div>
+	</div>
+
+	<?php endif ?>
 	
 	<div class="row">
 		<div class="col-sm-12 center">

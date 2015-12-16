@@ -29,6 +29,21 @@ angular.module("Teacher", ["ngMap"]).config([
     return set_scope("Teacher");
   });
 }).controller("EditCtrl", function($scope) {
+  $scope.toBePaid = function() {
+    var lessons_sum, payments_sum;
+    if (!$scope.Data.length) {
+      return;
+    }
+    lessons_sum = 0;
+    $.each($scope.Data, function(index, value) {
+      return lessons_sum += parseInt(value.teacher_price);
+    });
+    payments_sum = 0;
+    $.each($scope.payments, function(index, value) {
+      return payments_sum += parseInt(value.sum);
+    });
+    return lessons_sum - payments_sum;
+  };
   $scope.sipNumber = function(number) {
     number = number.toString();
     return "sip:" + number.replace(/[^0-9]/g, '');
@@ -56,6 +71,12 @@ angular.module("Teacher", ["ngMap"]).config([
             confirmed: payment.confirmed
           });
           $scope.$apply();
+        } else if (result !== null) {
+          $('.bootbox-form').addClass('has-error').children().first().focus();
+          $('.bootbox-input-text').on('keydown', function() {
+            $(this).parent().removeClass('has-error');
+          });
+          return false;
         }
       },
       buttons: {
@@ -83,6 +104,12 @@ angular.module("Teacher", ["ngMap"]).config([
           $scope.new_payment = angular.copy(payment);
           $scope.$apply();
           lightBoxShow('addpayment');
+        } else if (result !== null) {
+          $('.bootbox-form').addClass('has-error').children().first().focus();
+          $('.bootbox-input-text').on('keydown', function() {
+            $(this).parent().removeClass('has-error');
+          });
+          return false;
         }
       },
       buttons: {
@@ -160,10 +187,13 @@ angular.module("Teacher", ["ngMap"]).config([
     if (!payment.confirmed) {
       bootbox.confirm('Вы уверены, что хотите удалить платеж?', function(result) {
         if (result === true) {
+          console.log(index);
           $.post('ajax/deleteTeacherPayment', {
             'id_payment': payment.id
           });
-          $scope.payments.splice(index, 1);
+          $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
+            id: payment.id
+          }));
           $scope.$apply();
         }
       });
@@ -175,13 +205,21 @@ angular.module("Teacher", ["ngMap"]).config([
           if (result === '363') {
             bootbox.confirm('Вы уверены, что хотите удалить платеж?', function(result) {
               if (result === true) {
-                $.post('ajax/deleteTeacherPayment', {
+                $.post('ajax/deletePayment', {
                   'id_payment': payment.id
                 });
-                $scope.payments.splice(index, 1);
+                $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
+                  id: payment.id
+                }));
                 $scope.$apply();
               }
             });
+          } else if (result !== null) {
+            $('.bootbox-form').addClass('has-error').children().first().focus();
+            $('.bootbox-input-text').on('keydown', function() {
+              $(this).parent().removeClass('has-error');
+            });
+            return false;
           }
         },
         buttons: {
@@ -322,6 +360,7 @@ angular.module("Teacher", ["ngMap"]).config([
       had_lesson: 0
     }).length;
   };
+  $scope.smsDialog = smsDialogTeachers;
   $scope.showHidden = function() {
     $scope.show_others = !$scope.show_others;
     if ($scope.show_others) {
@@ -334,7 +373,7 @@ angular.module("Teacher", ["ngMap"]).config([
       }, 400);
     }
   };
-  return $scope.deleteTeacher = function(id_teacher, index) {
+  $scope.deleteTeacher = function(id_teacher, index) {
     return bootbox.confirm("Вы уверены, что хотите удалить преподавателя №" + id_teacher + "?", function(result) {
       if (result === true) {
         $scope.Teachers.splice(index, 1);
@@ -346,4 +385,7 @@ angular.module("Teacher", ["ngMap"]).config([
       }
     });
   };
+  return angular.element(document).ready(function() {
+    return smsMode(4);
+  });
 });

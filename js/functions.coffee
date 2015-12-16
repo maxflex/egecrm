@@ -2,7 +2,7 @@
 	logout_interval = false
 	
 	# интервал для проверки логина
-	if $('[ng-app=Login]').length
+	if $('[ng-app=Login]').length <= 0
 		setInterval ->
 			checkLogout()
 		, 60000
@@ -11,6 +11,7 @@
 		checkLogout()
 	
 	checkLogout = ->
+		console.log 'checking'
 		# на странице логина, то просто обновляем страницу, вдруг с других вкладок
 		# уже перезалогинились
 		if $('[ng-app=Login]').length
@@ -97,7 +98,7 @@
 			when 3
 				$(".sms-group-controls").show()
 				$("#sms-to-teacher").hide()
-	
+				
 	ajaxStart = (element = false) ->
 		if element isnt false
 			$(".ajax-#{element}-button").attr("disabled", "disabled")

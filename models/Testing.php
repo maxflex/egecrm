@@ -6,6 +6,8 @@ class Testing extends Model
 	
 	protected $_inline_data = ["subjects_9", "subjects_11"];
 	
+	const PLACE = 'TESTING';
+	
 	public function __construct($array)
 	{
 		parent::__construct($array);
@@ -16,10 +18,41 @@ class Testing extends Model
 			}
 			
 			$this->Students = TestingStudent::getByTestingId($this->id);
+			$this->Comments = Comment::getByPlace(self::PLACE, $this->id);
 			
 			Testing::_convertSubjects($this->subjects_9);
 			Testing::_convertSubjects($this->subjects_11);
+			
+			$this->getTestCount();
 		}
+	}
+	
+	
+	/**
+	 * Получить кол-во доступных тестов.
+	 * 
+	 */
+	public function getTestCount()
+	{
+		$this->total_tests_available = 0;
+		// получить сколько предметов подходит под временной диапазон
+		if ($this->start_time && $this->end_time) {
+			$diff = (strtotime($this->end_time) - strtotime($this->start_time)) / 60; // разница в минутах между началом и концом – интервал
+			
+			foreach(Subjects::$minutes_9 as $minutes) {
+				if ($diff >= $minutes) {
+					$this->total_tests_available++;
+				}
+			}
+			
+			foreach(Subjects::$minutes_11 as $minutes) {
+				if ($diff >= $minutes) {
+					$this->total_tests_available++;
+				}
+			}
+		}
+		
+		$this->total_tests_selected = count($this->subjects_9) + count($this->subjects_11);
 	}
 	
 	public static function getAvailable($id_student)

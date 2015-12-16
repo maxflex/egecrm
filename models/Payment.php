@@ -140,6 +140,17 @@
 		}
 	}
 	
+	class PaymentRemainder extends Model 
+	{
+		public static $mysql_table	= "payments_remainder";
+		
+		public static function getByStudentId($id_student)
+		{
+			return PaymentRemainder::find([
+				"condition" => "id_student=$id_student"
+			]);
+		}
+	}
 	
 	class TeacherPayment extends Model 
 	{

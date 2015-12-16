@@ -21,8 +21,8 @@
 			}
 		?>
     </a>
+    <a href="teachers/reports" class="list-group-item">Отчеты</a>
     <a href="teachers/payments/teacher" class="list-group-item">Оплата</a>
-    <a href="teachers/print" class="list-group-item">Печать</a>
     <a href="teachers/faq" class="list-group-item">Необходимая информация</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>

@@ -21,6 +21,34 @@
 				</div>
 			</div>
 			<div class="col-sm-5">
+				<h4>Дни экзаменов:</h4>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="row" ng-repeat="(id_subject, name) in Subjects" style="margin-bottom: 10px">
+							<div class="col-sm-3" style="line-height: 34px">
+								{{name}}-9
+							</div>
+							<div class="col-sm-9">
+								<input class="form-control bs-date" ng-model="exam_days[9][id_subject]">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="row" ng-repeat="(id_subject, name) in Subjects" style="margin-bottom: 10px">
+							<div class="col-sm-3" style="line-height: 34px">
+								{{name}}-11
+							</div>
+							<div class="col-sm-9">
+								<input class="form-control bs-date" ng-model="exam_days[11][id_subject]">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row" style="margin-top: 10px">
+					<div class="col-sm-12 center">
+						<button class="btn btn-primary" ng-click="saveExamDays()" ng-disabled="adding">сохранить дни экзаменов</button>
+					</div>
+				</div>
 			</div>
 		</div>		
 	</div>

@@ -164,6 +164,19 @@
 			return $this->last_name . " " . mb_substr($this->first_name, 0, 1, 'utf-8') . ". " . mb_substr($this->middle_name, 0, 1, 'utf-8') . ".";
 		}
 		
+		public function getReports()
+		{
+			$Reports = Report::findAll([
+				"condition" => "id_teacher=" . $this->id
+			]);
+			
+			foreach ($Reports as &$Report) {
+				$Report->Student = Student::findById($Report->id_student);	
+			}
+			
+			return $Reports;
+		}
+		
 		public function agreedToBeInGroup($id_group)
 		{
 			return GroupAgreement::count([
