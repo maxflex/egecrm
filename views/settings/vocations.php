@@ -24,24 +24,93 @@
 				<h4>Дни экзаменов:</h4>
 				<div class="row">
 					<div class="col-sm-6">
-						<div class="row" ng-repeat="(id_subject, name) in Subjects" style="margin-bottom: 10px">
-							<div class="col-sm-3" style="line-height: 34px">
-								{{name}}-9
+						<span ng-repeat="(id_subject, name) in Subjects">
+							<div class="row" style="margin-bottom: 10px" ng-if="id_subject != 10">
+								<div class="col-sm-5" style="line-height: 34px">
+									{{name}}-9
+								</div>
+								<div class="col-sm-7">
+									<input class="form-control bs-date" ng-model="exam_days[9][id_subject][0]">
+								</div>
 							</div>
-							<div class="col-sm-9">
-								<input class="form-control bs-date" ng-model="exam_days[9][id_subject]">
-							</div>
-						</div>
+							<!-- Английский -->
+							<span ng-if="id_subject == 10">
+								<div class="row" style="margin-bottom: 10px">
+									<div class="col-sm-5" style="line-height: 34px">
+										{{name}}-9-1
+									</div>
+									<div class="col-sm-7">
+										<input class="form-control bs-date" ng-model="exam_days[9][id_subject][1]">
+									</div>
+								</div>
+								<div class="row" style="margin-bottom: 10px">
+									<div class="col-sm-5" style="line-height: 34px">
+										{{name}}-9-2
+									</div>
+									<div class="col-sm-7">
+										<input class="form-control bs-date" ng-model="exam_days[9][id_subject][2]">
+									</div>
+								</div>
+							</span>
+						</span>
 					</div>
 					<div class="col-sm-6">
-						<div class="row" ng-repeat="(id_subject, name) in Subjects" style="margin-bottom: 10px">
-							<div class="col-sm-3" style="line-height: 34px">
-								{{name}}-11
+						<span ng-repeat="(id_subject, name) in Subjects">
+							<div class="row" style="margin-bottom: 10px" ng-if="id_subject != 10 && id_subject != 1">
+								<div class="col-sm-5" style="line-height: 34px">
+									{{name}}-11
+								</div>
+								<div class="col-sm-7">
+									<input class="form-control bs-date" ng-model="exam_days[11][id_subject][0]">
+								</div>
 							</div>
-							<div class="col-sm-9">
-								<input class="form-control bs-date" ng-model="exam_days[11][id_subject]">
-							</div>
-						</div>
+							<!-- Английский -->
+							<span ng-if="id_subject == 10">
+								<div class="row" style="margin-bottom: 10px">
+									<div class="col-sm-5" style="line-height: 34px">
+										{{name}}-11-У
+									</div>
+									<div class="col-sm-7">
+										<input class="form-control bs-date" ng-model="exam_days[11][id_subject][0]">
+									</div>
+								</div>
+								<div class="row" style="margin-bottom: 10px">
+									<div class="col-sm-5" style="line-height: 34px">
+										{{name}}-11-У
+									</div>
+									<div class="col-sm-7">
+										<input class="form-control bs-date" ng-model="exam_days[11][id_subject][1]">
+									</div>
+								</div>
+								<div class="row" style="margin-bottom: 10px">
+									<div class="col-sm-5" style="line-height: 34px">
+										{{name}}-11-П
+									</div>
+									<div class="col-sm-7">
+										<input class="form-control bs-date" ng-model="exam_days[11][id_subject][2]">
+									</div>
+								</div>
+							</span>
+							<!-- Математика -->
+							<span ng-if="id_subject == 1">
+								<div class="row" style="margin-bottom: 10px">
+									<div class="col-sm-5" style="line-height: 34px">
+										{{name}}-11-Б
+									</div>
+									<div class="col-sm-7">
+										<input class="form-control bs-date" ng-model="exam_days[11][id_subject][0]">
+									</div>
+								</div>
+								<div class="row" style="margin-bottom: 10px">
+									<div class="col-sm-5" style="line-height: 34px">
+										{{name}}-11-П
+									</div>
+									<div class="col-sm-7">
+										<input class="form-control bs-date" ng-model="exam_days[11][id_subject][1]">
+									</div>
+								</div>
+							</span>
+						</span>
 					</div>
 				</div>
 				<div class="row" style="margin-top: 10px">

@@ -4,6 +4,8 @@
 		const SALT 					= "32dg9823dldfg2o001-2134>?erj&*(&(*^";	// Для генерации кук
 		
 		const USER_TYPE = "USER";
+		const SEO_TYPE = "SEO";
+		
 		const LAST_REAL_USER_ID = 112;
 		const ONLINE_TIME_MINUTES = 15;
 		

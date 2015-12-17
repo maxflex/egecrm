@@ -11,16 +11,16 @@
 	border: none;
 	font-size: 16px;
 	color: #373a47;
-	background: transparent;
 	outline: none;
 	/* margin-right: 1em; */
-	background: #ebedf4;
+	background: rgba(234, 237, 245, 0.75);
 	/* width: 200px; */
 	text-align: right;
 	padding: 5px 0;
 	margin-right: 5px;
 	text-align: center;
 	width: 50px;
+	border-radius: 7px 7px 0 0;
 }
 
 .menu-button span {
@@ -30,6 +30,7 @@
 
 .menu-button:hover {
 	/* opacity: 0.8; */
+	// background: rgba(234, 237, 245, .75);
 }
 
 /* Menu */

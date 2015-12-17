@@ -20,13 +20,16 @@
 			self::deleteAll();
 			
 			foreach($data as $grade => $d) {
-				foreach($d as $id_subject => $date) {
-					if ($date) {
-						self::add([
-							"id_subject"	=> $id_subject,
-							"date"			=> $date,
-							"grade"			=> $grade,
-						]);
+				foreach($d as $id_subject => $d2) {
+					foreach ($d2 as $letter => $date) {
+						if ($date) {
+							self::add([
+								"id_subject"	=> $id_subject,
+								"letter"		=> $letter,
+								"date"			=> $date,
+								"grade"			=> $grade,
+							]);
+						}
 					}
 				}
 			}
@@ -37,18 +40,29 @@
 			$data = self::findAll();
 			
 			foreach($data as $d) {
-				$return[$d->grade][$d->id_subject] = $d->date;
+				$return[$d->grade][$d->id_subject][$d->letter] = $d->date;
 			}
 			
 			return $return;
 		}
 		
-		public static function getExamDates()
+		public static function getExamDates($Group)
 		{
-			$data = self::findAll();
+			$data = self::findAll([
+				"condition" => "grade={$Group->grade}"
+			]);
+			
+			$return = [
+				'this_subject' 	=> [],
+				'other_subject' => [],
+			];
 			
 			foreach($data as $d) {
-				$return[] = date("Y-m-d", strtotime($d->date));
+				if ($d->id_subject == $Group->id_subject) {
+					$return['this_subject'][] = date("Y-m-d", strtotime($d->date));
+				} else {
+					$return['other_subject'][] = date("Y-m-d", strtotime($d->date));
+				}
 			}
 			
 			return $return;

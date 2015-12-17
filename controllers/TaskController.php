@@ -4,7 +4,9 @@
 	class TaskController extends Controller
 	{
 		public $defaultAction = "list";
-
+		
+		public static $allowed_users = [User::USER_TYPE, User::SEO_TYPE];
+		
 		// Папка вьюх
 		protected $_viewsFolder	= "tasks";
 		
@@ -15,22 +17,28 @@
 		
 		public function actionList()
 		{
+			$list = $_GET["list"];
+			$type = $_GET["type"];
+			
+			if ($type == 0 && User::fromSession()->type == User::SEO_TYPE) {
+				$this->renderRestricted();
+			}
+			
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 			
-			$list = $_GET["list"];
-			
 			if ($list) {
 				$Tasks = Task::findAll([
-					"condition" => "id_status=" . $list
+					"condition" => "type=$type AND id_status=" . $list,
 				]);
 			} else {
 				$Tasks = Task::findAll([
-					"condition" => "id_status!=" . TaskStatuses::CLOSED,
+					"condition" => "type=$type AND id_status!=" . TaskStatuses::CLOSED,
 				]);
 			}
 			
 			$ang_init_data = angInit([
+				"type"	=> $type,
 				"Tasks" => $Tasks,
 				"task_statuses" => TaskStatuses::$all,
 			]);

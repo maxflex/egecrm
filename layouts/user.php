@@ -139,7 +139,7 @@
 		?>
 	</a>
 	<a href="stats" class="list-group-item">Итоги</a>
-    <a href="clients" class="list-group-item">Клиенты</a>
+    <a href="clients" class="list-group-item">Клиенты <span class="badge pull-right"><?= Student::countWithActiveContract() ?></span></a>
     <a href="sms" class="list-group-item">SMS</a>
     <a href="payments" class="list-group-item">Платежи
 	    <?php
@@ -150,7 +150,7 @@
 		    }
 		?>
     </a>
-    <a href="groups" class="list-group-item">Группы</a>
+    <a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count() ?></span></a>
 	<a href="stats/visits/total" class="list-group-item">Посещаемость 
 		<?php
 			if (!LOCAL_DEVELOPMENT) {
@@ -180,7 +180,7 @@
 	    <a href="tasks" class="list-group-item">Задачи
 		<?php
 			// Количество новых заявок
-			$new_tasks_count = Task::countNew();
+			$new_tasks_count = Task::countNew(0);
 			
 			// Если есть новые заявки
 			if ($new_tasks_count) {

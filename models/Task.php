@@ -7,6 +7,8 @@ class Task extends Model
 	// путь хранения электронных версий договоров
 	const UPLOAD_DIR = "files/task/";
 
+	const PLACE = 'TASK';
+	
 	public $_serialized = ["files"];
 	
 	public function __construct($array)
@@ -15,6 +17,10 @@ class Task extends Model
 		
 		if (!$this->files) {
 			$this->files = [];
+		}
+		
+		if (!$this->isNewRecord) {
+			$this->Comments = Comment::getByPlace(self::PLACE, $this->id);	
 		}
 	}
 	
@@ -34,10 +40,10 @@ class Task extends Model
 		}
 	}
 	
-	public static function countNew()
+	public static function countNew($type = false)
 	{
 		return self::count([
-			"condition" => "id_status = ". TaskStatuses::NEWR . " AND html!=''"
+			"condition" => "id_status = ". TaskStatuses::NEWR . " AND html!=''" . ($type !== false ? " AND type=$type" : "")
 		]);
 	}
 }

@@ -164,6 +164,11 @@
 			return $this->last_name . " " . mb_substr($this->first_name, 0, 1, 'utf-8') . ". " . mb_substr($this->middle_name, 0, 1, 'utf-8') . ".";
 		}
 		
+		public function getFullName()
+		{
+			return $this->last_name . " " . $this->first_name . " " . $this->middle_name;
+		}
+		
 		public function getReports()
 		{
 			$Reports = Report::findAll([

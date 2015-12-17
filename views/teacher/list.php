@@ -46,6 +46,23 @@
 							</span>
 						</td>
 						<td>
+							{{Teacher.student_subject_count}} человеко-<ng-pluralize count="Teacher.student_subject_count" when="{
+								'one': 'предмет',
+								'few': 'предмета',
+								'many': 'предметов',
+							}"></ng-pluralize>, 
+							{{Teacher.reports_count}} <ng-pluralize count="Teacher.reports_count" when="{
+								'one': 'отчет',
+								'few': 'отчета',
+								'many': 'отчетов',
+							}"></ng-pluralize>, 
+							{{Teacher.reports_sent_count}} <ng-pluralize count="Teacher.reports_sent_count" when="{
+								'one': 'отправлен',
+								'few': 'отправлено',
+								'many': 'отправлено',
+							}"></ng-pluralize> по e-mail
+						</td>
+						<td>
 							<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
 						</td>
 						<td>

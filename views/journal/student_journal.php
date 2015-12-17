@@ -9,7 +9,7 @@
 			<span class="day-explain"></span> – был на занятии
 		</div>
 		<div>
-			<span class="day-explain circle-orange"></span> – опоздал на занятие на 15 минут и более
+			<span class="day-explain circle-orange"></span> – опоздал
 		</div>
 		<div>
 			<span class="day-explain vocation"></span> – пропущенные занятия
@@ -42,7 +42,7 @@
 
 <div class="row">
 	<div class="col-sm-12">
-		при наведении на кружок будет показана дата занятия
+		при наведении на кружок будет показана дата занятия и время опоздания
 	</div>
 </div>
 </div>

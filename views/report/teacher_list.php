@@ -10,22 +10,10 @@
 		</div>
 	</div>
 	<div class="panel-body">
-		
-		<hr>
-		<table class="table">
-			<tr ng-repeat-start="Student in Students">
+		<table class="table table-divlike">
+			<tr ng-repeat="Student in Students">
 				<td>
-					{{Student.last_name}} {{Student.first_name}}
-				</td>
-				<td>
-					{{Subjects[Student.id_subject]}}
-				</td>
-				<td>
-					{{Student.visit_count}} <ng-pluralize count="Student.visit_count" when="{
-					'one': 'занятие',
-					'few': 'занятия',
-					'many': 'занятий'
-				}"></ng-pluralize>
+					<a href="teachers/reports/add/{{Student.id}}">{{Student.last_name}} {{Student.first_name}}</a>
 				</td>
 				<td>
 					<span ng-show="Student.Reports.length > 0">{{Student.Reports.length}} <ng-pluralize count="Student.Reports.length" when="{
@@ -34,21 +22,6 @@
 					'many': 'отчетов'
 				}"></ng-pluralize></span>
 					<span ng-show="!Student.Reports.length">отчетов нет</span>
-				</td>
-				<td>
-					<a href="teachers/reports/add/{{Student.id}}/{{Student.id_subject}}/">добавить отчет</a>
-				</td>
-			</tr>
-			<tr ng-repeat="Report in Student.Reports" ng-repeat-end class="inner">
-				<td>
-					<a href="teachers/reports/edit/{{Report.id}}">Отчёт №{{Report.id}}</a>
-				</td>
-				<td>
-					{{Report.date}}
-				</td>
-				<td colspan="1">
-					<span ng-show="Report.available_for_parents" class="half-black">опубликован</span>
-					<span ng-show="!Report.available_for_parents"></span>
 				</td>
 			</tr>
 		</table>

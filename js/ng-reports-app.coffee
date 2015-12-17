@@ -8,7 +8,26 @@ angular.module "Reports", []
 	.controller "ListCtrl", ($scope) ->
 		$scope.getReports = (id_student) ->
 			_.where($scope.Reports, {id_student: id_student})
+		
+		$scope.getSubjects = (Visits) ->
+			Object.keys(Visits)
+		
+		$scope.noReports = (Visits) ->
+			return true if Visits is false or not Visits.length
 			
+			has_reports = false
+			$.each Visits, (index, Visit) ->
+				if Visit.hasOwnProperty('id_student')
+					has_reports = true
+					return 
+			!has_reports
+		
+		$scope.formatDate = (date) ->
+			moment(date).format "DD.MM.YY"
+			
+		$scope.isReport = (Report) ->
+			Report.hasOwnProperty 'homework_grade'
+		
 		angular.element(document).ready ->
 			set_scope "Reports"
 	.controller "AddCtrl", ($scope) ->
@@ -23,15 +42,26 @@ angular.module "Reports", []
 			return if !text or text.length <= 0
 			text.length
 		
-		$scope.addReport = ->
+		$scope.deleteReport = () ->
+				bootbox.confirm "Вы уверены, что хотите удалить отчет №#{$scope.Report.id}?", (result) ->
+					if result is true
+						ajaxStart()
+						$.post "reports/ajaxDelete", {id_report: $scope.Report.id}, ->
+							history.back()
+
+		$scope.with_email = true		
+			
+		$scope.addReport = (with_email) ->
 			return if textareasHaveErrors()
 			ajaxStart()
 			$scope.adding = true
 			$.post "reports/ajaxAdd", 
 				Report: $scope.Report
+				with_email: with_email
 			, (response) ->
 				console.log response
-				redirect "teachers/reports"
+				history.back()
+				#redirect "teachers/reports"
 			, "json"
 		
 		$scope.sendReport = ->

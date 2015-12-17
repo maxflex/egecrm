@@ -10,11 +10,10 @@
 					<a href="student/{{Report.id_student}}">{{Report.Student.last_name}} {{Report.Student.first_name}} {{Report.Student.middle_name}}</a>
 				</td>
 				<td>
-					{{Report.date}}
+					{{SubjectsFull[Report.id_subject]}}
 				</td>
-				<td colspan="3">
-					<span ng-show="Report.available_for_parents" class="half-black">опубликован</span>
-					<span ng-show="!Report.available_for_parents"></span>
+				<td>
+					{{Report.date}}
 				</td>
 			</tr>
 		</table>

@@ -61,6 +61,7 @@
 					Task = 
 						id: id_task
 						id_status: 1
+						type: $scope.type
 						html: "Текст задачи..."
 						
 					$scope.Tasks.push Task 

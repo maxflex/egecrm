@@ -264,7 +264,8 @@
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
 					"vocation_dates"		=> GroupSchedule::getVocationDates(),
-					"exam_dates"			=> [],
+					"exam_dates"			=> ExamDay::getExamDates($Group),
+					"SubjectsDative"		=> Subjects::$dative,
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
 					"time" 					=> Freetime::TIME,
 				]);
@@ -301,7 +302,8 @@
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
 					"vocation_dates"		=> GroupSchedule::getVocationDates(),
-					"exam_dates"			=> [],
+					"SubjectsDative"		=> Subjects::$dative,
+					"exam_dates"			=> ExamDay::getExamDates($Group),
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
 					"time" 					=> Freetime::TIME,
 				]);
@@ -333,7 +335,7 @@
 					"Group" 			=> $Group,
 					"past_lesson_dates" => $Group->getPastLessonDates(),
 					"vocation_dates"	=> GroupSchedule::getVocationDates(),
-					"exam_dates"		=> ExamDay::getExamDates(),
+					"exam_dates"		=> ExamDay::getExamDates($Group),
 					"time" 				=> Freetime::TIME,
 					"Cabinets"			=> Cabinet::getByBranch($Group->id_branch),
 				]);
@@ -507,9 +509,18 @@
 		public function actionAjaxDelete()
 		{
 			Group::deleteById($_POST["id_group"]);
-			GroupTime::deleteAll([
+			
+			$condition = [
 				"condition" => "id_group=".$_POST["id_group"]
-			]);
+			];
+			
+			# Удаляем всё, что связано с группой
+			GroupTime::deleteAll($condition);
+			GroupSchedule::deleteAll($condition);
+			GroupStudentStatuses::deleteAll($condition);
+			GroupTeacherStatuses::deleteAll($condition);
+			GroupAgreement::deleteAll($condition);
+			GroupNote::deleteAll($condition);
 		}
 		
 		

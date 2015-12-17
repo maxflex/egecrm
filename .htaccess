@@ -19,6 +19,7 @@ RewriteRule ^login$ index.php?controller=login&action=login [QSA,L]
 RewriteRule ^ajax/([a-zA-Z]+)[/]?$ index.php?controller=ajax&action=Ajax$1 [QSA,L]
 
 # Отчеты
+RewriteRule ^(students/|teachers/)?reports/add/([0-9]+)[/]?$ index.php?controller=reports&action=addStudent&id_student=$2&id_subject=$3 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/add/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=add&id_student=$2&id_subject=$3 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports[/]?$ index.php?controller=reports&action=list [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/([a-zA-Z]+)[/]?$ index.php?controller=reports&action=$2 [QSA,L]
@@ -62,8 +63,10 @@ RewriteRule ^settings/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=$1 [
 RewriteRule ^settings/([a-zA-Z]+)/([0-9]+)[/]?$ index.php?controller=settings&action=$1&id=$2 [QSA,L]
 RewriteRule ^settings/ajax/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=Ajax$1 [QSA,L]
 
-RewriteRule ^tasks[/]?$ index.php?controller=task&action=list [QSA,L]
-RewriteRule ^tasks/([0-9]+)[/]?$ index.php?controller=task&action=list&list=$1 [QSA,L]
+RewriteRule ^tasks[/]?$ index.php?controller=task&action=list&type=0 [QSA,L]
+RewriteRule ^tasks/seo[/]?$ index.php?controller=task&action=list&type=1 [QSA,L]
+RewriteRule ^tasks/([0-9]+)[/]?$ index.php?controller=task&action=list&list=$1&type=0 [QSA,L]
+RewriteRule ^tasks/seo/([0-9]+)[/]?$ index.php?controller=task&action=list&list=$1&type=1 [QSA,L]
 
 RewriteRule ^tasks/ajax/([a-zA-Z]+)[/]?$ index.php?controller=task&action=Ajax$1 [QSA,L]
 

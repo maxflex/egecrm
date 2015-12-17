@@ -183,8 +183,11 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
         if ($scope.inDate(d, $scope.vocation_dates)) {
           add_class += ' vocation';
         }
-        if ($scope.inDate(d, $scope.exam_dates)) {
+        if ($scope.inDate(d, $scope.exam_dates.other_subject)) {
           add_class += ' exam';
+        }
+        if ($scope.inDate(d, $scope.exam_dates.this_subject)) {
+          add_class += ' exam-subject';
         }
         return add_class;
       }

@@ -5,6 +5,36 @@
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
+		<?php if (User::fromSession()->type == User::USER_TYPE) :?>
+			<div class="top-links pull-left">
+				<?php if ($_GET["type"] == 0 || empty($_GET["type"])) { ?>
+				<span style="margin-right: 15px; font-weight: bold">crm</span>
+				<?php } else { ?>
+				<a href="tasks/" style="margin-right: 15px">crm</a>
+				<?php } ?>
+				
+				<?php if ($_GET["type"] == 1) { ?>
+				<span style="margin-right: 15px; font-weight: bold">seo</span>
+				<?php } else { ?>
+				<a href="tasks/seo" style="margin-right: 15px">seo</a>
+				<?php } ?>
+			</div>
+		<?php endif ?>
+		
+			<div class="top-links pull-right">
+				<?php if ($_GET["list"] != 4) { ?>
+				<span style="margin-right: 15px; font-weight: bold">актуальные</span>
+				<?php } else { ?>
+				<a href="tasks/<?= User::fromSession()->type == User::SEO_TYPE ? 'seo/' : '' ?>" style="margin-right: 15px">актуальные</a>
+				<?php } ?>
+				
+				<?php if ($_GET["list"] == 4) { ?>
+				<span style="margin-right: 0; font-weight: bold">закрытые</span>
+				<?php } else { ?>
+				<a href="tasks/<?= User::fromSession()->type == User::SEO_TYPE ? 'seo/' : '' ?>4" style="margin-right: 0">закрытые</a>
+				<?php } ?>
+			</div>
+		
 		<div id="task-app">
 <!--
 				<div class="task-line" style="padding-bottom: 10px; text-align: right">
@@ -17,30 +47,38 @@
 				</div>
 -->
 				<div ng-repeat="Task in Tasks | reverse" class="row task-line" ng-hide="!Task.html.trim()">
-					<div class="col-sm-11" style="width: 97%">
-						<div class="task-separator"></div>
-						<div ng-bind-html="Task.html | unsafe" name="task-{{Task.id}}" ng-click="editTask(Task)"></div>
-						<span ng-repeat="file in Task.files" class="attachment-no-underline" ng-hide="editingTask(Task)">
-							<span class="glyphicon glyphicon-paperclip"></span><a target="_blank" href="files/task/{{file.name}}" style="">{{file.uploaded_name}}</a> ({{file.size}})
-						</span>
-						
-						<div class="small" style="text-align: right" ng-show="editingTask(Task)">
-							<span class="btn-file link-like link-reverse small" ng-click="deleteTask(Task)">удалить задачу</span>
-							<span class="btn-file link-like link-reverse small" ng-hide="Task.files.length >= 3">
-								<span>добавить файл</span>
-								<input name="task_file" type="file" id="fileupload{{Task.id}}" data-url="upload/task/" style="width: 85px; cursor: pointer">
+					<div class="col-sm-12">
+						<div class="task">
+							<div ng-bind-html="Task.html | unsafe" name="task-{{Task.id}}" ng-click="editTask(Task)"></div>
+							<span ng-repeat="file in Task.files" class="attachment-no-underline" ng-hide="editingTask(Task)">
+								<span class="glyphicon glyphicon-paperclip"></span><a target="_blank" href="files/task/{{file.name}}" style="">{{file.uploaded_name}}</a> ({{file.size}})
 							</span>
 							
-							<div ng-repeat="file in Task.files" class="loaded-file">
-								<span style="color: black">{{file.uploaded_name}}</span>
-								<a target="_blank" href="files/task/{{file.name}}" class="link-reverse small">скачать</a>
-								<span class="link-like link-reverse small" ng-click="deleteTaskFile(Task, $index)">удалить</span>
+							<div class="small" style="text-align: right" ng-show="editingTask(Task)">
+								<span class="btn-file link-like link-reverse small" ng-click="deleteTask(Task)">удалить задачу</span>
+								<span class="btn-file link-like link-reverse small" ng-hide="Task.files.length >= 3">
+									<span>добавить файл</span>
+									<input name="task_file" type="file" id="fileupload{{Task.id}}" data-url="upload/task/" style="width: 85px; cursor: pointer">
+								</span>
+								
+								<div ng-repeat="file in Task.files" class="loaded-file">
+									<span style="color: black">{{file.uploaded_name}}</span>
+									<a target="_blank" href="files/task/{{file.name}}" class="link-reverse small">скачать</a>
+									<span class="link-like link-reverse small" ng-click="deleteTaskFile(Task, $index)">удалить</span>
+								</div>
 							</div>
+							<div style="margin-top: 10px">
+								<?= Html::comments('Task', Task::PLACE) ?>
+							</div>
+							
+							<span class="task-status task-status-{{Task.id_status}}" ng-click="toggleTaskStatus(Task)">
+								<span ng-show="Task.id_status==1">новое</span>
+								<span ng-show="Task.id_status==2">выполнено</span>
+								<span ng-show="Task.id_status==3">требует доработки</span>
+								<span ng-show="Task.id_status==4">закрыто</span>
+							</span>
 						</div>
 					</div>
-					<div class="col-sm-1">
-					</div>
-					<img src="img/task/circle_{{Task.id_status}}.png" class="task-status-toggle" ng-click="toggleTaskStatus(Task)">
 				</div>
 		</div>
 	</div>

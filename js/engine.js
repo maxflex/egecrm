@@ -688,22 +688,11 @@
         frame1.name = "frame1";
         frame1.style.position = "absolute";
         frame1.style.top = "-1000000px";
-/*
-		frame1.style.position = "fixed";
-		frame1.style.top = 0;
-		frame1.style.left = 0;
-		frame1.style.width = "100%";
-		frame1.style.height = "100%";
-		frame1.style.background = "white";
-		frame1.style.zIndex = 99999;
-*/
 		
         document.body.appendChild(frame1);
         var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
         frameDoc.document.open();
         frameDoc.document.write('<html><head><title>ЕГЭ Центр</title>');
-		frameDoc.document.write('<link rel="stylesheet" href="css/bootstrap.css" type="text/css">');
-        frameDoc.document.write('<link rel="stylesheet" href="css/style.css" type="text/css">');
         frameDoc.document.write("<style type='text/css'>\
         	h4 {text-align: center}\
         	p {text-indent: 50px; margin: 0}\

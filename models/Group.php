@@ -252,6 +252,13 @@
 			]);
 		}
 		
+		public function countFutureSchedule()
+		{
+			return GroupSchedule::count([
+				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW())",
+			]);
+		}
+		
 		public function getPastSchedule()
 		{
 			return GroupSchedule::findAll([

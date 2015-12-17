@@ -18,6 +18,12 @@
 						<div>
 							<span class="day-explain vocation"></span> – дни, считающиеся нерабочими по производственному календарю
 						</div>
+						<div>
+							<span class="day-explain exam-day"></span> – дни экзаменов <?= $Group->grade ?> класса
+						</div>
+						<div>
+							<span class="day-explain exam-day-subject"></span> – дни экзаменов по {{SubjectsDative[Group.id_subject]}}
+						</div>
 					</div>
 				</div>
 				<div class="row">

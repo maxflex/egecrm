@@ -1,5 +1,5 @@
 <div ng-app="Users" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
-	<table class="table table-hover">
+	<table class="table table-divlike">
 		<tr ng-repeat="User in Users" class="row">
 			<td>
 				<input class="form-control" ng-model="User.login" placeholder="логин">
@@ -38,3 +38,11 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	.table-divlike tr td {
+	    padding: 8px !important;
+	    line-height: 1.42857143;
+	    vertical-align: top;
+	}
+</style>

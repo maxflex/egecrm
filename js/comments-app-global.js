@@ -57,6 +57,17 @@
 							comments = scope.Testing.Comments
 							break
 						}
+						case "TASK": {
+							var comments						
+							$.each(scope.Tasks, function(i, v) {
+								if (v.id == t.attr("request")) {
+									scope.Tasks[i].Comments = initIfNotSet(scope.Tasks[i].Comments)
+									comments = scope.Tasks[i].Comments
+									return
+								}	
+							})
+							break
+						}
 						case "REQUEST_LIST": {
 							var comments						
 							$.each(scope.requests, function(i, v) {

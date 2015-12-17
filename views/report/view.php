@@ -153,4 +153,10 @@
 		top: -2px;
 		position: relative;
 	}
+	.teacher-rating {
+		height: 28px;
+	    width: 28px;
+	    line-height: 26px;
+	    margin-bottom: 12px !important;
+	}
 </style>

@@ -121,6 +121,21 @@
 						$Teacher->statuses[$status]++;
 					}
 				}
+				
+				
+				# ОТЧЕТЫ
+				if ($Teacher->had_lesson) {
+					$result = dbConnection()->query("SELECT id FROM visit_journal WHERE id_teacher={$Teacher->id} GROUP BY id_entity, id_subject");
+					$Teacher->student_subject_count = $result->num_rows;
+					
+					$Teacher->reports_count = Report::count([
+						"condition" => "id_teacher=" . $Teacher->id,
+					]);
+					
+					$Teacher->reports_sent_count = Report::count([
+						"condition" => "email_sent=1 AND id_teacher=" . $Teacher->id,
+					]);	
+				}
 			}
 			
 			$ang_init_data = angInit([
@@ -175,6 +190,7 @@
 				"Reports"				=> $Teacher->getReports(),
 				"GroupLevels"			=> GroupLevels::$all,
 				"Subjects"	=> Subjects::$three_letters,
+				"SubjectsFull" => Subjects::$all,
 				"payment_statuses"	=> Payment::$all,
 				"payments"			=> TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher"]),
 				"user"				=> User::fromSession(),

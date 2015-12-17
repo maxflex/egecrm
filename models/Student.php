@@ -82,9 +82,8 @@
 		}
 		
 		/**
-		 * Посчитать студентов с действующими договорами.
+		 * Посчитать студентов с не расторгнутыми договорами.
 		 * 
-		 * $only_active - только активные договоры
 		 */
 		public static function countWithActiveContract()
 		{
@@ -200,6 +199,7 @@
 			]);
 		}
 		
+		
 		public function alreadyHadLesson($id_group)
 		{
 			return VisitJournal::count([
@@ -218,16 +218,28 @@
 			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
 				. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
 			
+			
 			while ($row = $query->fetch_array()) {
 				if ($row["id_student"]) {
 					$ids[] = $row["id_student"];
 				}
 			}
 			
-			
 			return self::findAll([
 				"condition"	=> "id IN (". implode(",", $ids) .")"
 			]);
+		}
+		
+		/**
+		 * Посчитать студентов с договорами.
+		 * 
+		 */
+		public static function countWithContract()
+		{
+			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true " 
+				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+			
+			return $query->num_rows;
 		}
 		
 				/**

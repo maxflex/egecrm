@@ -14,6 +14,28 @@ angular.module("Reports", []).filter('range', function() {
       id_student: id_student
     });
   };
+  $scope.getSubjects = function(Visits) {
+    return Object.keys(Visits);
+  };
+  $scope.noReports = function(Visits) {
+    var has_reports;
+    if (Visits === false || !Visits.length) {
+      return true;
+    }
+    has_reports = false;
+    $.each(Visits, function(index, Visit) {
+      if (Visit.hasOwnProperty('id_student')) {
+        has_reports = true;
+      }
+    });
+    return !has_reports;
+  };
+  $scope.formatDate = function(date) {
+    return moment(date).format("DD.MM.YY");
+  };
+  $scope.isReport = function(Report) {
+    return Report.hasOwnProperty('homework_grade');
+  };
   return angular.element(document).ready(function() {
     return set_scope("Reports");
   });
@@ -33,17 +55,31 @@ angular.module("Reports", []).filter('range', function() {
     }
     return text.length;
   };
-  $scope.addReport = function() {
+  $scope.deleteReport = function() {
+    return bootbox.confirm("Вы уверены, что хотите удалить отчет №" + $scope.Report.id + "?", function(result) {
+      if (result === true) {
+        ajaxStart();
+        return $.post("reports/ajaxDelete", {
+          id_report: $scope.Report.id
+        }, function() {
+          return history.back();
+        });
+      }
+    });
+  };
+  $scope.with_email = true;
+  $scope.addReport = function(with_email) {
     if (textareasHaveErrors()) {
       return;
     }
     ajaxStart();
     $scope.adding = true;
     return $.post("reports/ajaxAdd", {
-      Report: $scope.Report
+      Report: $scope.Report,
+      with_email: with_email
     }, function(response) {
       console.log(response);
-      return redirect("teachers/reports");
+      return history.back();
     }, "json");
   };
   $scope.sendReport = function() {
