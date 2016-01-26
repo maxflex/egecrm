@@ -55,69 +55,7 @@
 		
 		public function actionGroups()
 		{
-			$Groups = Group::findAll();
-			
-			$teacher_ids = [];
-			$Teachers = [];
-			
-			foreach ($Groups as &$Group) {
-								
-				if (!in_array($Group->Teacher->id, $teacher_ids)) {
-					$Teachers[] = $Group->Teacher;
-					$teacher_ids[] = $Group->Teacher->id;
-				}
-				
-				$result = dbConnection()->query("
-					SELECT lesson_date FROM visit_journal
-					WHERE id_group={$Group->id}
-					GROUP BY lesson_date
-				");
-				
-				$lesson_dates = [];
-				while ($row = $result->fetch_object()) {
-					$lesson_dates[] = $row->lesson_date;
-				}
-				
-				foreach ($lesson_dates as $date) {
-					$Group->visits[$date] = VisitJournal::count([
-						"condition" => "type_entity='STUDENT' AND id_group={$Group->id} AND lesson_date='{$date}'"
-					]);
-				}
-				
-				$Group->green_count = 0;
-				$Group->yellow_count = 0;
-				$Group->red_count = 0;
-				
-				foreach ($Group->students as $id_student) {
-					$result = dbConnection()->query("
-						SELECT cs.status FROM contract_subjects cs
-						LEFT JOIN contracts c on cs.id_contract = c.id
-						LEFT JOIN students s on c.id_student = s.id
-						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 3
-					");
-					$Group->green_count += $result->num_rows;
-					
-					$result = dbConnection()->query("
-						SELECT cs.status FROM contract_subjects cs
-						LEFT JOIN contracts c on cs.id_contract = c.id
-						LEFT JOIN students s on c.id_student = s.id
-						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 2
-					");
-					$Group->yellow_count += $result->num_rows;
-					
-					$result = dbConnection()->query("
-						SELECT cs.status FROM contract_subjects cs
-						LEFT JOIN contracts c on cs.id_contract = c.id
-						LEFT JOIN students s on c.id_student = s.id
-						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 1
-					");
-					$Group->red_count += $result->num_rows;
-				}
-			}
-			
 			$ang_init_data = angInit([
-				"Groups" => $Groups,
-				"Teachers" => $Teachers,
 				"Subjects" => Subjects::$three_letters,
 			]);
 			

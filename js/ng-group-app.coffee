@@ -1063,6 +1063,28 @@
 					(String(Group.branch) in $scope.search2.branches or $scope.search2.branches.length == 0) and 
 					(Group.subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject)
 			
+			
+			$scope.inGroupDay = (weekday, Group) ->
+				weekday++
+				days = []
+				group_days = Object.keys(Group.day_and_time)
+				$.each group_days, (index, day) ->
+					day = parseInt(day)
+					days.push day if days.indexOf(day) is -1
+				return if days.indexOf(weekday) is -1 then false else true
+			
+			# группировка по дням недели
+			$scope.inGroupDays = (weekday) ->
+				weekday++
+				Groups = $scope.$eval 'Groups | filter:groupsFilter'
+				days = []
+				$.each Groups, (index, Group) ->
+					group_days = Object.keys(Group.day_and_time)
+					$.each group_days, (index, day) ->
+						day = parseInt(day)
+						days.push day if days.indexOf(day) is -1
+				return if days.indexOf(weekday) is -1 then false else true
+			
 			$scope.dateToStart = (date) ->
 				return "" if date is null
 				date = date.split "."

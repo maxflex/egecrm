@@ -549,7 +549,7 @@
 			
 			if ($with_schedule) {
 				foreach ($Groups as &$Group) {
-					$Group->Schedule = $Group->getFutureSchedule();
+					$Group->Schedule = $Group->getSchedule();
 					foreach ($Group->Schedule as &$Schedule) {
 						$Schedule->missing_note = GroupNote::count([
 							"condition" => "id_student={$this->id} AND id_group={$Group->id} AND date='{$Schedule->date}'"

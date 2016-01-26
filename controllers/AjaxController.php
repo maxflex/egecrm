@@ -22,6 +22,11 @@
 			ExamDay::addData($exam_days);
 		}
 		
+		public function actionAjaxStatsGroups()
+		{
+			returnJsonAng(memcached()->get('StatsGroups'));
+		}
+		
 		public function actionAjaxDeleteRemainder()
 		{
 			PaymentRemainder::deleteById($_POST['id']);

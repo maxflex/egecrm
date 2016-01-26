@@ -10,12 +10,18 @@ angular.module "Stats", ["ui.bootstrap"]
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
-	.controller "GroupsCtrl", ($scope) ->
+	.controller "GroupsCtrl", ($scope, $http) ->
 		$scope.getTeacherGroups = (id_teacher) ->
 			_.where($scope.Groups, {id_teacher: id_teacher})
-				
+		
 		angular.element(document).ready ->
 			set_scope "Stats"
+			$http.post "ajax/StatsGroups" 
+				.then (response) ->
+					$scope.Groups = response.data.Groups
+					$scope.Teachers = response.data.Teachers
+					$scope.teacher_red_green = response.data.teacher_red_green
+				
 	.controller "ListCtrl", ($scope) ->	
 		
 		$scope.round1 = (n) ->

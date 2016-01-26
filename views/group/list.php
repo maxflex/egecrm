@@ -8,7 +8,7 @@
 			<a href="groups/schedule/download" style="margin-right: 10px">скачать расписание</a>
 			<a href='groups/add'>добавить группу</a>
 		</div>
-	</div>
+	</div> 
 	<div class="panel-body">
 			<div class="row" style="position: relative">
 				<div class="col-sm-12">
@@ -62,6 +62,7 @@
 					
 					
 					<?= globalPartial("groups_list", ["filter" => true, "loading" => true]) ?>
+					<?= globalPartial("groups_list_weekdays") ?>
 					
 					<div ng-show="Groups.length == 0" class="center half-black small" style="margin-bottom: 30px">список групп пуст</div>
 				</div>

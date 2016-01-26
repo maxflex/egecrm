@@ -1283,6 +1283,44 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
     }
     return ((ref = String(Group.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ((ref1 = String(Group.branch), indexOf.call($scope.search2.branches, ref1) >= 0) || $scope.search2.branches.length === 0) && (Group.subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject);
   };
+  $scope.inGroupDay = function(weekday, Group) {
+    var days, group_days;
+    weekday++;
+    days = [];
+    group_days = Object.keys(Group.day_and_time);
+    $.each(group_days, function(index, day) {
+      day = parseInt(day);
+      if (days.indexOf(day) === -1) {
+        return days.push(day);
+      }
+    });
+    if (days.indexOf(weekday) === -1) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  $scope.inGroupDays = function(weekday) {
+    var Groups, days;
+    weekday++;
+    Groups = $scope.$eval('Groups | filter:groupsFilter');
+    days = [];
+    $.each(Groups, function(index, Group) {
+      var group_days;
+      group_days = Object.keys(Group.day_and_time);
+      return $.each(group_days, function(index, day) {
+        day = parseInt(day);
+        if (days.indexOf(day) === -1) {
+          return days.push(day);
+        }
+      });
+    });
+    if (days.indexOf(weekday) === -1) {
+      return false;
+    } else {
+      return true;
+    }
+  };
   $scope.dateToStart = function(date) {
     var D;
     if (date === null) {

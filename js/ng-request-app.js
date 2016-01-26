@@ -366,6 +366,17 @@
 				return _.where($scope.Journal, {id_group: id_group})
 			}
 			
+			$scope.getVisit = function(id_group, date) {
+				id_group = parseInt(id_group)
+				return _.findWhere($scope.Journal, {id_group: id_group, lesson_date: date})
+			}
+			
+			$scope.getVisitBoolean = function(id_group, date) {
+				id_group = parseInt(id_group)
+				return _.findWhere($scope.Journal, {id_group: id_group, lesson_date: date}) !== undefined
+			}
+			
+			
 			$scope.inActiveGroup = function(id_group) {
 				id_group = parseInt(id_group)
 				return _.where($scope.Groups, {id: id_group}).length
@@ -1606,24 +1617,21 @@
 			    // код подразделения
 			    $("#code-podr").mask("999-999");
 			    
-			    // акционный код
-			    $("#promo-code").inputmask("Regex", {regex: "[a-zA-Z]{1}[0-9]{3}"}).on("keyup", function() {
-				    code = $(this).val();
-					if (code.length >= 4) {
-						$(".promo-code-status").hide();
-						$("#promo-code-loading").show();
-						$.post("ajax/checkPromoCode", {code: code}, function(response) {
-							$("#promo-code-loading").hide();
-							if (response == true) {
-								$("#promo-code-ok").show();
-							} else {
-								$("#promo-code-error").show();
+				// генерируем массив цифр посещаемости
+				$scope.visit_data_counts = {}
+				$.each($scope.getStudentGroups(), function (index, id_group) {
+					$scope.visit_data_counts[id_group] = {}
+					change_index = 0
+					$.each($scope.getGroup(id_group).Schedule, function (index, Visit) {
+						if (index > 0) {
+							if ($scope.getVisitBoolean(id_group, $scope.getGroup(id_group).Schedule[index - 1].date) != $scope.getVisitBoolean(id_group, Visit.date)) {
+								$scope.visit_data_counts[id_group][index] = index - change_index
+								change_index = index
 							}
-						}, "json");
-					} else {
-						$("#promo-code-loading, .promo-code-status").hide();
-					}
-			    });
+						}
+					})
+					$scope.visit_data_counts[id_group]['last'] = $scope.getGroup(id_group).Schedule.length - change_index
+				})
 			    
 			    // promo-code-loading
 			    $(".map-save-button, .bs-datetime").on("click", function() {

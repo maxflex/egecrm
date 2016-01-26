@@ -134,4 +134,26 @@
 			    }
 		    }
 		}
+		
+		
+		/**
+		 * Получить ID преподавателей, которые сейчас ведут группы.
+		 * 
+		 */
+		public function getTeacherIds()
+		{
+			$result = dbConnection()->query("
+				SELECT id_teacher FROM visit_journal
+				WHERE id_teacher > 0
+				GROUP BY id_teacher
+			");
+			
+			$teacher_ids = [];
+			
+			while ($row = $result->fetch_object()) {
+				$teacher_ids[] = $row->id_teacher;
+			}
+			
+			return $teacher_ids;
+		}
 	}

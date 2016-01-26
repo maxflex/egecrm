@@ -4,6 +4,11 @@
   .user-pick:hover {
     text-decoration: none; }
 
+.visit-between-number {
+  display: inline-block;
+  width: 28.1px;
+  text-align: center; }
+
 .tab-link {
   margin-right: 20px; }
   .tab-link.active a {
@@ -932,7 +937,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     background: white;
     opacity: 1;
     top: 8.5px;
-    left: 5.5px;
+    right: 5.5px;
     z-index: 2;
     cursor: pointer; }
   .day-explain.was-lesson, .day-explain.circle-blue, .circle-default.was-lesson, .circle-default.circle-blue {

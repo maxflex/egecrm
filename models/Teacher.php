@@ -265,4 +265,89 @@
 				"condition" => "type_entity='TEACHER' AND id_entity={$this->id}"
 			]);
 		}
+		
+		public static function getGreenRed() {
+			$teacher_ids = VisitJournal::getTeacherIds();
+			
+			foreach ($teacher_ids as $id_teacher) {
+				
+				$result = dbConnection()->query("
+					SELECT id_teacher, id_entity, id_subject, id_group FROM visit_journal
+					WHERE type_entity = 'STUDENT' AND id_teacher=$id_teacher
+					GROUP BY id_entity, id_subject, id_group, id_teacher
+				");
+
+				$res = [];
+				while ($row = $result->fetch_object()) {
+					$res[] = $row;
+				}
+				
+				$return[$id_teacher]['green_count'] = $result->num_rows;
+				$return[$id_teacher]['red_count'] 	= 0;
+				
+				foreach ($res as $data) {
+					#
+					# ИТЕРАЦИЯ 1
+					#
+					
+					// Ищем последнюю запись в журнале в конфигурации с учеником
+					$last_lesson_date_with_student = dbConnection()->query("
+						SELECT lesson_date FROM visit_journal 
+						WHERE id_teacher=$id_teacher AND type_entity='STUDENT' AND id_group={$data->id_group}
+							AND id_entity={$data->id_entity} AND id_subject={$data->id_subject} 
+						ORDER BY lesson_date DESC
+						LIMIT 1
+					")->fetch_object()->lesson_date;
+					
+					// Проверяем был ли урок без этого ученика в будущем
+					$was_lesson_without_student = dbConnection()->query("
+						SELECT lesson_date FROM visit_journal 
+						WHERE id_teacher=$id_teacher AND type_entity='STUDENT' AND id_group={$data->id_group} 
+							AND id_subject={$data->id_subject} AND lesson_date > '{$last_lesson_date_with_student}'
+						LIMIT 1
+					")->num_rows;
+					
+					$iteration_1_minus = false;
+					if ($was_lesson_without_student) {
+						$return[$id_teacher]['red_count']++;
+// 						$return[$id_teacher]['red_count_1']++;
+						$iteration_1_minus = true;
+					}
+					
+					#
+					# ИТЕРАЦИЯ 2
+					#
+					// есть ли ученик в группе?
+					$student_present = dbConnection()->query("
+						SELECT id FROM groups
+						WHERE id = {$data->id_group} AND id_subject={$data->id_subject}
+							AND CONCAT(',', CONCAT(students, ',')) LIKE '%,{$data->id_entity},%'
+					")->num_rows;
+					
+					if ($student_present) {
+						// Проверяем статус предмета ученика по предмету
+						$subject_status = dbConnection()->query("
+							SELECT cs.status FROM contracts c
+							LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
+							WHERE c.id_student = {$data->id_entity} " . Contract::ZERO_OR_NULL_CONDITION_JOIN . "
+								AND cs.id_subject = {$data->id_subject}
+						")->fetch_object()->status;
+						// если статус предмета зеленый или желтый
+						if ($subject_status < 3) {
+							$return[$id_teacher]['red_count']++;
+// 							$return[$id_teacher]['red_count_2']++;
+						}
+					#
+					# ИТЕРАЦИЯ 3
+					#
+					} else if (!$iteration_1_minus) {
+						$return[$id_teacher]['red_count']++;
+// 						$return[$id_teacher]['red_count_3']++;
+					}
+				}	
+			}
+			
+			return $return;
+		}
+		
 	}

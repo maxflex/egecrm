@@ -1,8 +1,13 @@
 <div ng-app="Stats" ng-controller="GroupsCtrl" ng-init="<?= $ang_init_data ?>">
-	<div class="row" ng-repeat="Teacher in Teachers" style="margin-bottom: 15px">
+	<div ng-show="!Teachers" style="padding: 100px" class="small half-black center">
+		загрузка...
+	</div>
+	<div class="row" ng-repeat="Teacher in Teachers" style="margin-bottom: 15px" ng-show="Teachers">
 		<div class="col-sm-12">
 			<div class="row">
-				<div class="col-sm-12"><b>{{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}</b></div>
+				<div class="col-sm-12"><b>{{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}</b>
+					<span ng-show="teacher_red_green[Teacher.id]">({{teacher_red_green[Teacher.id].green_count}}<span ng-show="teacher_red_green[Teacher.id].red_count"> - <span class="text-danger">{{teacher_red_green[Teacher.id].red_count}}</span></span>)</span>
+				</div>
 			</div>
 			<div class="row" ng-repeat="Group in getTeacherGroups(Teacher.id)">
 				<div class="col-sm-12">

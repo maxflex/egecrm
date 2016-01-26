@@ -9,14 +9,19 @@ angular.module("Stats", ["ui.bootstrap"]).config([
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("GroupsCtrl", function($scope) {
+]).controller("GroupsCtrl", function($scope, $http) {
   $scope.getTeacherGroups = function(id_teacher) {
     return _.where($scope.Groups, {
       id_teacher: id_teacher
     });
   };
   return angular.element(document).ready(function() {
-    return set_scope("Stats");
+    set_scope("Stats");
+    return $http.post("ajax/StatsGroups").then(function(response) {
+      $scope.Groups = response.data.Groups;
+      $scope.Teachers = response.data.Teachers;
+      return $scope.teacher_red_green = response.data.teacher_red_green;
+    });
   });
 }).controller("ListCtrl", function($scope) {
   $scope.round1 = function(n) {

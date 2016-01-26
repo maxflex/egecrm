@@ -6,6 +6,11 @@
 			* dateToStart()
 	*/	
 ?>
+
+<?php if ($filter) :?>
+<div ng-show="!search.time.length">
+<?php endif ?>
+
 <table class="table table-divlike" style="position: relative">
 	<?php if ($loading) :?>
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
@@ -59,7 +64,7 @@
 				{{weekdays[day - 1].short}}
 				<span ng-repeat="dd in day_data">
 					в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ","}}
-			</span>
+			</span> 
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
 		</td>
 		<td>
@@ -103,5 +108,7 @@
 <?php if ($filter) : ?>
 <div ng-show="Groups.length > 0 && (Groups | filter:groupsFilter).length == 0" class="center half-black small" style="margin-bottom: 30px">
 	не найдено групп, соответствующих запросу
+</div>
+
 </div>
 <?php endif ?>
