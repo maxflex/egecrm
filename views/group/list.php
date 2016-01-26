@@ -62,7 +62,6 @@
 					
 					
 					<?= globalPartial("groups_list", ["filter" => true, "loading" => true]) ?>
-					<?= globalPartial("groups_list_weekdays") ?>
 					
 					<div ng-show="Groups.length == 0" class="center half-black small" style="margin-bottom: 30px">список групп пуст</div>
 				</div>

@@ -25,6 +25,16 @@
 			7 => "ВС",
 		];
 		
+		const DAYS_FULL = [
+			1 => "Понедельник",
+			2 => "Вторник",
+			3 => "Среда",
+			4 => "Четверг",
+			5 => "Пятница",
+			6 => "Суббота",
+			7 => "Воскресенье",
+		];
+		
 		public static $weekdays_time = [
 			1 => [1, 2],
 			2 => [1, 2],
@@ -69,6 +79,7 @@
 			}
 						
 			foreach (self::$weekdays as $day => $time_data) {
+				echo "<optgroup label='" . self::DAYS_FULL[$day] . "'>";
 				foreach ($time_data as $time_index => $time) {
 					if (empty($time)) {
 						continue;
@@ -77,8 +88,9 @@
 					$option_selected = in_array($time_id, $selected);
 					
 					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
-					echo "<option ".($option_selected ? "selected" : "")." value='{$day}-{$time_index}'>" . self::DAYS_SHORT[$day] . " в " . $time ."</option>";
+					echo "<option ".($option_selected ? "selected" : "")." value='{$day}-{$time_index}'>" . $time ."</option>";
 				}
+				echo '</optgroup>';
 			}
 			echo "</select>";
 		}

@@ -6,11 +6,6 @@
 			* dateToStart()
 	*/	
 ?>
-
-<?php if ($filter) :?>
-<div ng-show="!search.time.length">
-<?php endif ?>
-
 <table class="table table-divlike" style="position: relative">
 	<?php if ($loading) :?>
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
@@ -60,11 +55,12 @@
 -->
 		</td>
 		<td>
-			<span ng-repeat="(day, day_data) in Group.day_and_time">
+			<div ng-repeat="(day, day_data) in Group.day_and_time">
 				{{weekdays[day - 1].short}}
 				<span ng-repeat="dd in day_data">
-					в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ","}}
-			</span> 
+					в {{dd}}{{$last ? "" : ","}}
+				</span>
+			</div>
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
 		</td>
 		<td>
@@ -81,15 +77,8 @@
 			}"></ng-pluralize></span>
 		</td>
 		<td>
-			<span ng-show="Group.days_before_exam !== false">
-				<span ng-show="Group.days_before_exam > 0">
-					запас {{Group.days_before_exam}} <ng-pluralize count="Group.days_before_exam" when="{
-						'one': 'день',
-						'few': 'дня',
-						'many': 'дней'
-					}"></ng-pluralize>
-				</span>
-				<span ng-show="Group.days_before_exam <= 0">запаса нет</span>
+			<span class="label center-label group-teacher-status<?= GroupTeacherStatuses::AGREED ?>" ng-show="Group.teacher_agreed">
+				<?= GroupTeacherStatuses::$all[GroupTeacherStatuses::AGREED] ?>
 			</span>
 		</td>
 <!--
@@ -108,7 +97,5 @@
 <?php if ($filter) : ?>
 <div ng-show="Groups.length > 0 && (Groups | filter:groupsFilter).length == 0" class="center half-black small" style="margin-bottom: 30px">
 	не найдено групп, соответствующих запросу
-</div>
-
 </div>
 <?php endif ?>
