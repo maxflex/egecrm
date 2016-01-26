@@ -27,6 +27,17 @@
 		}
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
+		public static function getReportCount($id_student)
+		{
+			return Report::count([
+				"condition" => "id_student=$id_student AND available_for_parents=1"
+			]);
+		}
+		
+		public function name($order = 'fio')
+		{
+			return getName($this->last_name, $this->first_name, $this->middle_name, $order);
+		}
 		
 		public static function getName($last_name, $first_name, $middle_name, $order = 'fio')
 		{
@@ -87,12 +98,34 @@
 		 */
 		public static function countWithActiveContract()
 		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true AND cancelled=0 " 
-				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+			$query = dbConnection()->query("SELECT c.id_student FROM contracts c 
+				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id WHERE cs.status > 1" 
+				. Contract::ZERO_OR_NULL_CONDITION_JOIN . " GROUP BY c.id_student");
 			
 			return $query->num_rows;
 		}
 		
+		public static function reviewsNeeded()
+		{
+			
+			$VisitJournal = self::getExistedTeachers(User::fromSession()->id_entity);
+						
+			$count = 0;
+			if ($VisitJournal) {
+				foreach ($VisitJournal as $VJ) {
+					$has_review = TeacherReview::count([
+						"condition" => "id_teacher={$VJ->id_teacher} AND id_student={$VJ->id_entity} AND id_subject={$VJ->id_subject}
+							AND rating > 0 AND comment!=''"
+					]);
+					
+					if (!$has_review) {
+						$count++;
+					}
+				}
+			}
+			
+			return $count;
+		}
 		
 		/**
 		 * Получает всех преподавателей, с которым у ученика когда-либо были занятия.
@@ -100,10 +133,12 @@
 		 */
 		public static function getExistedTeachers($id_student)
 		{
-			$VisitJournal = VisitJournal::findAll([
+			return VisitJournal::findAll([
 				"condition" => "id_entity=$id_student AND type_entity='" . self::USER_TYPE . "' AND presence=1",
+				"group"		=> "id_entity, id_subject, id_teacher"
 			]);
 			
+/*
 			$group_ids = [];
 			foreach ($VisitJournal as $VJ) {
 				$group_ids[] = $VJ->id_group;
@@ -127,24 +162,8 @@
 			}
 			
 			return false;
+*/
 		}
-		
-		/**
-		 * Количество человеко-предметов, не прикрепленных к группе. 
-		 	(по каждому предмету в действующем договоре должна быть группа, если нет, то +1)
-		 * 
-		 */
-		public static function countSubjectsWithoutGroup()
-		{
-			return dbConnection()->query("
-				SELECT s.id FROM students s
-					LEFT JOIN contracts c on c.id_student = s.id
-					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', s.id ,',%'))
-					WHERE c.id IS NOT NULL AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL
-			")->num_rows;
-		}
-		
 		
 		/**
 		 * Получить человеко-предметы без групп.
@@ -163,7 +182,8 @@
 					LEFT JOIN contracts c on c.id_student = s.id
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', s.id ,',%'))
-					WHERE c.id IS NOT NULL AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL AND cs.id_subject > 0
+					WHERE c.id IS NOT NULL AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL AND cs.id_subject > 0
+						AND cs.status != 1
 			");
 			
 			while ($row = $result->fetch_assoc()) {
@@ -177,6 +197,56 @@
 			}
 			
 			return $Students;
+		}
+		
+		/**
+		 * Получить человеко-предметы без групп.
+		 * 
+		 * @access public
+		 * @static
+		 * @return void
+		 */
+		public static function getWithoutGroupErrors()
+		{
+			$Students = Student::getWithContract();
+			
+			foreach ($Students as $Student) {
+				$Student->Contract = $Student->getLastContract();
+				// Получаем количество активных предметов
+				$active_subjects_count = 0;
+				foreach ($Student->Contract->subjects as $subject) {
+					if ($subject['status'] >= 2) {
+						$active_subjects_count++;
+					} 
+				}
+				
+				// договор полностью расторгнут -- нет активных предметов
+				if (!$active_subjects_count) {
+					continue;
+				}
+				
+				// Проверяем кол-во групп
+				if ($Student->countGroups() != $active_subjects_count) {
+// 					h1("Not equal at {$Student->id}: " . $Student->countGroups() . " - " . $active_subjects_count);
+					$return[] = $Student;
+					continue;
+				}
+				
+				foreach ($Student->Contract->subjects as $subject) {
+					if ($subject['status'] >= 2) {
+						$count = Group::count([
+							"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Student->id},%' AND id_subject={$subject['id_subject']} AND grade={$Student->Contract->grade}"
+						]);
+						
+						if ($count != 1) {
+							$return[] = $Student;
+							continue;
+						}
+					}
+				}
+			}
+
+			return $return;
 		}
 		
 		
@@ -213,10 +283,10 @@
 		 * 
 		 * $only_active - только активные договоры
 		 */
-		public static function getWithContract($only_active = false)
+		public static function getWithContract()
 		{
 			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
+				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
 			
 			
 			while ($row = $query->fetch_array()) {
@@ -242,7 +312,7 @@
 			return $query->num_rows;
 		}
 		
-				/**
+		/**
 		 * Получить студентов с договорами.
 		 * 
 		 */
@@ -262,47 +332,7 @@
 				"condition"	=> "id IN (". implode(",", $ids) .")"
 			]);
 		}
-		
-		/**
-		 * Получить студентов с договорами.
-		 * 
-		 */
-		public static function getWithContractCancelled()
-		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. " AND cancelled=1 " . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
-			
-			while ($row = $query->fetch_array()) {
-				if ($row["id_student"]) {
-					$ids[] = $row["id_student"];
-				}
-			}
-			
-			
-			return self::findAll([
-				"condition"	=> "id IN (". implode(",", $ids) .")"
-			]);
-		}
 
-		/**
-		 * Последний id договора активный
-		 */
-		public static function getWithActiveContract()
-		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts 
-				WHERE cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student LIMIT 1");
-			
-			while ($row = $query->fetch_array()) {
-				if ($row["id_student"]) {
-					$ids[] = $row["id_student"];
-				}
-			}
-			
-			
-			return self::findAll([
-				"condition"	=> "id IN (". implode(",", $ids) .")"
-			]);
-		}
 		
 		// Удаляет ученика и всё, что с ним связано
 		public static function fullDelete($id_student)
@@ -560,10 +590,10 @@
 		 * Получить постудний договор студента.
 		 * 
 		 */
-		public function getLastContract($only_active = false)
+		public function getLastContract()
 		{
 			return Contract::find([
-				"condition"	=> "deleted=0 AND id_student=" . $this->id . ($only_active ? " AND cancelled=0 " : "") . Contract::ZERO_OR_NULL_CONDITION,
+				"condition"	=> "deleted=0 AND id_student=" . $this->id .  Contract::ZERO_OR_NULL_CONDITION,
 				"order"		=> "id DESC",
 				"limit"		=> "1",
 			]);	
@@ -589,6 +619,13 @@
 		public function getRequest()
 		{
 			return Request::find([
+				"condition" => "id_student={$this->id}"
+			]);
+		}
+		
+		public function getRequests()
+		{
+			return Request::findAll([
 				"condition" => "id_student={$this->id}"
 			]);
 		}
@@ -795,30 +832,6 @@
 			]);
 		}
 		
-		public static function getErrors()
-		{
-			$Students = self::getWithContract(true);
-			
-			foreach ($Students as &$Student) {
-				$Student->Contract = $Student->getLastContract(true);
-				
-				foreach ($Student->Contract->subjects as $subject) {
-					if (!$Student->inOtherSubjectGroup($subject['id_subject'])) {
-						// 1 - это предварительное расторжение
-						if ($subject['status'] != 1) {
-							$ReturnStudent = $Student;
-							$ReturnStudent->subject = $subject;
-							# 18 let osobogo
-							$return[] = $ReturnStudent;	
-						}
-					}
-				}
-			}
-			
-			return $return;
-		}
-		
-		
 		public function getTeacherLikes()
 		{
 			$TeacherLikes = GroupTeacherLike::findAll([
@@ -834,7 +847,7 @@
 		
 		public static function getLayerErrors()
 		{
-			$Students = Student::getWithContract(true);
+			$Students = Student::getWithContract();
 			foreach ($Students as $Student) {
 				$Groups = $Student->getGroups();
 				foreach ($Groups as $Group) {
@@ -963,7 +976,8 @@
 			$query = dbConnection()->query("
 				SELECT s.id, CONCAT_WS(' ', s.last_name, s.first_name, s.middle_name) as name FROM students s
 					LEFT JOIN contracts c 	ON c.id_student = s.id
-				WHERE c.id_student IS NOT NULL AND c.cancelled=0
+					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+				WHERE c.id_student IS NOT NULL AND cs.status > 1
 				GROUP BY s.id
 				ORDER BY name ASC
 			");

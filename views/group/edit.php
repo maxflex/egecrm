@@ -106,8 +106,8 @@
 							<td>
 								{{$index + 1}}. 
 								<a class="student-line is-draggable"  data-id="{{Student.id}}" href="student/{{Student.id}}" ng-class="{
-									'text-warning'	: getSubject(Student.Contract.subjects, Group.id_subject).status == 1,
-									'text-danger'	: Student.Contract.cancelled
+									'text-warning'	: getSubject(Student.Contract.subjects, Group.id_subject).status == 2,
+									'text-danger'	: getSubject(Student.Contract.subjects, Group.id_subject).status == 1
 								}">
 									{{Student.first_name}}
 									{{Student.last_name}}

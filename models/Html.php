@@ -5,6 +5,11 @@
 	 */
 	class Html {
 		
+		public static function teacherImg($model, $class, $attrs)
+		{
+			echo "<img " .self::generateAttrs($attrs) . " class='teacher-img {$class}' 
+				src=\"{{{$model}.has_photo ? 'img/teachers/' + {$model}.id + '_2x.jpg' : 'img/teachers/no-profile-img.gif'}}\">";
+		}
 		
 		/**
 		 * Датапикер.
@@ -72,7 +77,9 @@ echo <<<HTML
     	<input ng-keyup id="{$who}-phone" type="text"
     		placeholder="телефон" class="form-control phone-masked"  ng-model="{$Model}.phone">
     	<div class="input-group-btn">
-	    	<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone') && isMobilePhone('{$who}-phone')" ng-click="callSip('{$who}-phone')">
+	    	<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone')" ng-click="callSip('{$who}-phone')" ng-class="{
+					'addon-bordered' : {$who}_phone_level >= 2  && !isMobilePhone('{$who}-phone')
+				}">
 				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 			</button>
 			<button ng-show="phoneCorrect('{$who}-phone') && isMobilePhone('{$who}-phone')" ng-class="{
@@ -92,7 +99,9 @@ echo <<<HTML
     	<input ng-keyup id="{$who}-phone-2" type="text"
     		placeholder="телефон 2" class="form-control phone-masked" ng-model="{$Model}.phone2">
     	<div class="input-group-btn">
-    		<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone-2') && isMobilePhone('{$who}-phone-2')" ng-click="callSip('{$who}-phone-2')">
+    		<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone-2')" ng-click="callSip('{$who}-phone-2')"  ng-class="{
+					'addon-bordered' : {$who}_phone_level >= 3  && !isMobilePhone('{$who}-phone-2')
+				}">
 				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 			</button>
 			<button ng-show="phoneCorrect('{$who}-phone-2') && isMobilePhone('{$who}-phone-2')" ng-class="{
@@ -112,7 +121,9 @@ echo <<<HTML
         <input type="text" id="{$who}-phone-3" placeholder="телефон 3" 
         	class="form-control phone-masked" ng-model="{$Model}.phone3">
         	<div class="input-group-btn">
-	        	<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone-3') && isMobilePhone('{$who}-phone-3')" ng-click="callSip('{$who}-phone-3')">
+	        	<button class="btn btn-default" ng-show="phoneCorrect('{$who}-phone-3')" ng-click="callSip('{$who}-phone-3')"  ng-class="{
+					'addon-bordered' : !isMobilePhone('{$who}-phone-3')
+				}">
 					<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 				</button>
 				<button ng-show="phoneCorrect('{$who}-phone-3') && isMobilePhone('{$who}-phone-3')" ng-class="{

@@ -33,6 +33,10 @@
 				if ($this->Teacher) {
 					$this->teacher_agreed = $this->Teacher->agreedToBeInGroup($this->id);
 				}
+				
+				if ($this->grade && $this->id_subject) {
+					$this->days_before_exam = $this->daysBeforeExam();
+				}
 			}
 			
 			if (!$this->student_statuses) {
@@ -65,9 +69,17 @@
 			if (!count($this->students)) {
 				return 0;
 			}
+			
+// 			preType("id_group = {$this->id} AND type_entity='STUDENT' AND id_entity IN (" . implode(",", $this->students) . ") AND id_status=3");
+			
+			$result = dbConnection()->query("SELECT COUNT(*) FROM group_agreement WHERE id_group = {$this->id} AND type_entity='STUDENT' AND id_entity IN (" . implode(",", $this->students) . ") AND id_status=3 GROUP BY id_group, id_entity");
+			
+			return $result->num_rows;			
+/*
 			return GroupAgreement::count([
 				"condition" => "id_group = {$this->id} AND type_entity='STUDENT' AND id_entity IN (" . implode(",", $this->students) . ") AND id_status=3"
 			]);
+*/
 		}
 		
 		public function getNotifiedStudentsCount()
@@ -98,6 +110,27 @@
 			}
 			
 			return $dates;
+		}
+		
+		
+		/**
+		 * Получить ID преподавателей, которые сейчас ведут группы.
+		 * 
+		 */
+		public function getTeacherIds()
+		{
+			$result = dbConnection()->query("
+				SELECT id_teacher FROM groups
+				GROUP BY id_teacher
+			");
+			
+			$teacher_ids = [];
+			
+			while ($row = $result->fetch_object()) {
+				$teacher_ids[] = $row->id_teacher;
+			}
+			
+			return $teacher_ids;
 		}
 		
 		
@@ -230,12 +263,38 @@
 				"total_teachers_agreed"	=> $total_teachers_agreed,
 				"total_students_notified" => $total_students_notified,
 				"total_groups"			=> count($Groups),
-			//	"total_witn_no_group"	=> Student::countSubjectsWithoutGroup(),
 			];
 		}
 		
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-
+		
+		public function daysBeforeExam()
+		{
+			if ($this->grade == 10) {
+				return false;
+			}
+			
+			// Получаем дату последнего запланированного занятия
+			$GroupSchedule = GroupSchedule::find([
+				"condition" => "id_group={$this->id}",
+				"order"		=> "date DESC",
+			]);
+			
+			// Дату экзамена
+			$ExamDay = ExamDay::find([
+				"condition" => "id_subject={$this->id_subject} AND grade={$this->grade}"
+			]);
+			
+/*
+			$datetime1 = new DateTime(date("Y-m-d", strtotime($ExamDay->date)));
+			$datetime2 = new DateTime(date("Y-m-d", strtotime($GroupSchedule->date)));
+			$difference = $datetime1->diff($datetime2);
+			return ($difference->d - 1);
+*/
+			$diff = strtotime($ExamDay->date) - strtotime($GroupSchedule->date);
+			return floor($diff/(60*60*24)) - 1;
+		}
+		
 		public function getSchedule()
 		{
 			return GroupSchedule::findAll([
@@ -268,9 +327,12 @@
 		}
 		
 		// LESSON_LENGTH = 105 минут - 1:45 - 30 минут до конца занятия
+		//
+		// ВНИМАНИЕ, ТЕПЕРЬ LESSON_LENGTH = 135 + 30 (165). Раньше было с минусом $minutes = LESSON_LENGTH + $minutes_to_end,
+		// т.е. цифры обновлялись за полчаса 
 		public function getPastScheduleBeforeEnd($minutes_to_end = 30)
 		{
-			$minutes = LESSON_LENGTH - $minutes_to_end;
+			$minutes = LESSON_LENGTH + $minutes_to_end;
 			
 			return GroupSchedule::findAll([
 				// "condition" => "id_group=".$this->id." AND  ((ABS(UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) - UNIX_TIMESTAMP(NOW())) / 60) > {$minutes})
@@ -530,7 +592,29 @@
 				return $result;
 			}
 		}
-
+		
+		public function isUnplanned()
+		{
+			$GroupTimeData = GroupTime::findAll([
+				"condition" => "id_group=" . $this->id_group,
+			]);
+			
+			$is_planned = false;
+			foreach ($GroupTimeData as $GroupTime) {
+				$day_of_the_week = date("w", strtotime($this->date));
+				if ($day_of_the_week == 0) {
+					$day_of_the_week = 7;
+				}
+				
+				// error_log("{$this->id_group} | {$day_of_the_week} / {$GroupTime->day} | " . $GroupTime->time . " / {$this->time}");
+				if ($day_of_the_week == $GroupTime->day && $this->time == $GroupTime->time) {
+					$is_planned = true;
+					break;
+				}
+			}
+			
+			return !$is_planned;
+		}
 		
 		public static function getVocationDates()
 		{

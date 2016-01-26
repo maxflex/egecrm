@@ -20,7 +20,120 @@
 	$hr_gray 			: #eee;
 	$half_black			: rgba(0, 0, 0, .5);
 	$quater_black 		: rgba(0, 0, 0, .25);
-	
+
+
+.user-pick {
+	cursor: pointer;
+	text-decoration: underline;
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+.tab-link {
+	margin-right: 20px;
+	&.active {
+		a {
+			text-decoration: none;
+			color: black;
+			font-weight: bold;
+		}
+	}
+}
+
+.nav-tabs-links {
+	border: none !important;
+}
+
+.nav-tabs-links > li.active > a, .nav-tabs-links > li.active > a:hover, .nav-tabs-links > li.active > a:focus {
+	color: black;
+	border: none;
+	font-weight: bold;
+	&:hover {
+		text-decoration: none !important;
+	}
+}
+
+.nav-tabs-links > li > a:hover {
+	border: none !important;
+    color: #23527c;
+    text-decoration: underline;
+    background: none !important;
+}
+
+.nav-tabs-links > li > a {
+	border: none;
+	background: none;
+	padding: 0;
+	margin-right: 25px;
+}
+    
+.border-transparent {
+	border-color: transparent !important;
+}
+
+.label {
+	border-radius: 5px !important;
+}
+
+.label-transparent {
+	opacity: .25;
+	&:hover {
+		opacity: 1;
+	}
+}
+
+.teacher-img {
+	height: 150px;
+	width: 120px;
+	border-radius: 5px;
+}
+
+.tutor-img {
+	border: 3px dashed #DEDEDE;
+	cursor: pointer;
+	display: inline-block;
+	position: relative;
+	transition: all linear .3s;
+	border-radius: 5px;
+	margin-top: 5px;
+	&:hover {
+		border-color: $blue !important;
+		& div {
+// 			display: block;
+			opacity: 1;
+		}
+	}
+	& img {
+		height: 150px;
+		width: 120px;
+		border-radius: 5px;
+	}
+	& div {
+		transition: all linear .3s;
+		position: absolute;
+	    height: 100%;
+	    width: 100%;
+	    background-color: rgba(255, 255, 255, 0.8);
+	    text-align: center;
+	    padding: 60px 0;
+// 	    display: none;
+		opacity: 0;
+		color: #337ab7;
+	}
+	& .btn-file {
+		height: 100%;
+		width: 100%;
+		display: block !important;
+		position: absolute;
+		& input {
+			position: relative;
+		    height: 100%;
+		    width: 100%;
+		}
+	}
+}
+
 .dropdown-menu > .disabled > a, .dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {
     color: $quater_black !important;
 }
@@ -29,6 +142,40 @@
 	&:hover {
 		background: white !important;
 	}		
+}
+
+.glyphicon-big {
+    font-size: 18px;
+    top: 3px;
+}
+
+.label-inside {
+	& input {
+		box-shadow: none !important;
+		float: left;
+		&:focus {
+			border-color: #ccc !important;
+		}
+	}
+	& input:nth-of-type(1) {
+		background-color: white !important;
+		color: $placeholder_gray;
+		border-radius: 4px 0 0 4px;
+	    border-right: 0;
+	    width: auto;
+	    padding-right: 0;
+	}
+	& input:nth-of-type(2) {
+		border-radius: 0 4px 4px 0;
+	    border-left: 0;	
+	    width: 50px;
+	    padding-left: 0;
+	}
+}
+
+.label-danger-red {
+	background-color: #E40A1F !important;
+	border-radius: 5px !important;
 }
 
 .task {
@@ -324,9 +471,10 @@ body {
 }
 
 .teacher-rating {
-	height: 40px;
-	width: 40px;
-	line-height: 39px;
+	height: 28px;
+    width: 28px;
+    line-height: 26px;
+//     margin-bottom: 12px !important;
 	text-align: center;
 	border-radius: 50% !important;
 	display: inline-block;
@@ -1156,27 +1304,29 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 		}
 	}
 	
-	& .task-status {
-		cursor: pointer;
+	& .task-status-div {
 		position: absolute;
 	    bottom: 4px;
 	    right: 10px;
-	    // opacity: .8;
-		&:hover {
-			opacity: 1;
-		//	text-decoration: underline;
-		}
-		&.task-status-1 {
-			color: $blue;
-		}
-		&.task-status-2 {
-			color: #5FB760;
-		}
-		&.task-status-3 {
-			color: #F9A942;
-		}
-		&.task-status-4 {
-			color: #FC0F3F;
+		& .task-status {
+			cursor: pointer;
+		    // opacity: .8;
+			&:hover {
+				opacity: 1;
+			//	text-decoration: underline;
+			}
+			&.task-status-1 {
+				color: $blue;
+			}
+			&.task-status-2 {
+				color: #5FB760;
+			}
+			&.task-status-3 {
+				color: #F9A942;
+			}
+			&.task-status-4 {
+				color: #FC0F3F;
+			}	
 		}
 	}
 }
@@ -2090,19 +2240,30 @@ h4 {
 }
 
 .request-status-drop-hover {
-	background: #337ab7;
-	border-radius: 4px 4px 0 0;
-	color: white;
+// 	background: #337ab7;
+// 	border-radius: 4px 4px 0 0;
+// 	color: white;
 	& a {
 		color: white !important;
+		background: #337ab7 !important;
+		border-radius: 4px !important;
+	}
+}
+
+.delete-request-li {
+	padding: 0 10px;
+	& a {
+		margin: 0 !important;
 	}
 }
 
 .request-status-drop-hover-delete {
 	background: $red;
-	border-radius: 4px 4px 0 0;
+	border-radius: 4px;
 	color: white;
+	padding: 0 10px;
 	& a {
+		margin: 0 !important;
 		color: white !important;
 	}
 }

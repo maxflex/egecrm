@@ -21,8 +21,129 @@
 		
 		
 		
-		
+		/**
+		 * Она считается так: берем желтого человека в группе, умножаем количество будущих занятий на 1450 (средняя стоимость занятия). 
+		   И так по всем желтым людям.
+		 * 
+		 */
+		public static function calculateYellowLoss()
+		{
+			$Groups = Group::findAll();
+			
+			$return = 0;
+			
+			foreach ($Groups as $Group) {
+				$yellow_count = 0;
 				
+				foreach ($Group->students as $id_student) {
+					$result = dbConnection()->query("
+						SELECT cs.status FROM contract_subjects cs
+						LEFT JOIN contracts c on cs.id_contract = c.id
+						LEFT JOIN students s on c.id_student = s.id
+						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 2
+					");
+					$yellow_count += $result->num_rows;	
+				}
+				
+				if ($yellow_count) {
+					$return += $Group->countFutureSchedule() * $yellow_count * 1450;
+				}
+			}
+			
+			return $return;
+		}
+		
+		public function actionGroups()
+		{
+			$Groups = Group::findAll();
+			
+			$teacher_ids = [];
+			$Teachers = [];
+			
+			foreach ($Groups as &$Group) {
+								
+				if (!in_array($Group->Teacher->id, $teacher_ids)) {
+					$Teachers[] = $Group->Teacher;
+					$teacher_ids[] = $Group->Teacher->id;
+				}
+				
+				$result = dbConnection()->query("
+					SELECT lesson_date FROM visit_journal
+					WHERE id_group={$Group->id}
+					GROUP BY lesson_date
+				");
+				
+				$lesson_dates = [];
+				while ($row = $result->fetch_object()) {
+					$lesson_dates[] = $row->lesson_date;
+				}
+				
+				foreach ($lesson_dates as $date) {
+					$Group->visits[$date] = VisitJournal::count([
+						"condition" => "type_entity='STUDENT' AND id_group={$Group->id} AND lesson_date='{$date}'"
+					]);
+				}
+				
+				$Group->green_count = 0;
+				$Group->yellow_count = 0;
+				$Group->red_count = 0;
+				
+				foreach ($Group->students as $id_student) {
+					$result = dbConnection()->query("
+						SELECT cs.status FROM contract_subjects cs
+						LEFT JOIN contracts c on cs.id_contract = c.id
+						LEFT JOIN students s on c.id_student = s.id
+						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 3
+					");
+					$Group->green_count += $result->num_rows;
+					
+					$result = dbConnection()->query("
+						SELECT cs.status FROM contract_subjects cs
+						LEFT JOIN contracts c on cs.id_contract = c.id
+						LEFT JOIN students s on c.id_student = s.id
+						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 2
+					");
+					$Group->yellow_count += $result->num_rows;
+					
+					$result = dbConnection()->query("
+						SELECT cs.status FROM contract_subjects cs
+						LEFT JOIN contracts c on cs.id_contract = c.id
+						LEFT JOIN students s on c.id_student = s.id
+						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 1
+					");
+					$Group->red_count += $result->num_rows;
+				}
+			}
+			
+			$ang_init_data = angInit([
+				"Groups" => $Groups,
+				"Teachers" => $Teachers,
+				"Subjects" => Subjects::$three_letters,
+			]);
+			
+			$this->setTabTitle("Статистика групп");
+			$this->render("groups", [
+				"ang_init_data" => $ang_init_data,
+			]);
+		}
+		
+/*
+		private function _getSubjectColorCount($Group, $status)
+		{
+			if (!count($Group->students)) {
+				return 0;
+			}
+			
+			$student_ids = implode(",", $Group->students);
+			
+			$result = dbConnection()->query("
+				SELECT COUNT(*) as cnt FROM contract_subjects cs
+				LEFT JOIN contracts c on cs.id_contract = c.id
+				LEFT JOIN students s on c.id_student = s.id
+				WHERE s.id IN {$student_ids} AND cs.id_subject = {$Group->id_subject} AND cs.status = {$status}
+			");
+		}
+*/
 		
 		
 		
@@ -42,10 +163,8 @@
 			
 			$Contracts = Contract::findAll([
 				"condition" => 
-					$date_end 	? "(STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted' AND cancelled=0)
-									OR
-								   (STR_TO_DATE(cancelled_date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(cancelled_date, '%d.%m.%Y') <= '$date_end_formatted' AND cancelled=1)"
-								: "(date='$date_start' AND cancelled=0) OR (cancelled_date='$date_start' AND cancelled=1)"
+					$date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
+								: "date='$date_start'"
 			]);
 			
 			$Payments = Payment::findAll([
@@ -59,6 +178,8 @@
 					$stats['contract_new']++;
 					// сумма заключенных дагаваров
 					$stats['contract_sum_new'] += $Contract->sum;
+					$stats['subjects_new'] += count($Contract->subjects);
+					
 					continue; # если договор оригинальный, у него не может быть предыдущих версий
 				}
 				
@@ -66,37 +187,44 @@
 				$PreviousContract = $Contract->getPreviousVersion();
 				if ($PreviousContract) {
 					// если сумма увеличилась
-					if ($Contract->sum > $PreviousContract->sum && !$PreviousContract->cancelled) {
+					if ($Contract->sum > $PreviousContract->sum) {
 						$stats['contract_sum_changed'] += ($Contract->sum - $PreviousContract->sum);
 					}
 					
 					// если сумма уменьшилась
-					if ($PreviousContract->sum > $Contract->sum && !$PreviousContract->cancelled) {
+					if ($PreviousContract->sum > $Contract->sum) {
 						if (!isset($stats['contract_sum_changed'])) {
 							$stats['contract_sum_changed'] = 0;
 						}
 						$stats['contract_sum_changed'] -= ($PreviousContract->sum - $Contract->sum);
 					}
 					
+					// уменьшение услуг (было БОЛЬШЕ стало МЕНЬШЕ)
+					if ($PreviousContract->activeSubjectsCount() - $Contract->activeSubjectsCount() > 0) {
+						$stats['subjects_minus'] += $PreviousContract->activeSubjectsCount() - $Contract->activeSubjectsCount();
+					}
+					
+					// увеличение услуг
+					if ($Contract->activeSubjectsCount() - $PreviousContract->activeSubjectsCount() > 0) {
+						$stats['subjects_plus'] += $Contract->activeSubjectsCount() - $PreviousContract->activeSubjectsCount();
+					}
+					
+/*
+					
 					// если был НЕ расторжен и стал расторжен
-					if ($Contract->cancelled &&  !$PreviousContract->cancelled) {
-						// кол-во расторгнутых
-						$stats['contract_cancelled']++;
-						
+					if ($Contract->isCancelled() &&  !$PreviousContract->isCancelled()) {
 						// сумма расторгнутых
-						$stats['contract_sum_cancelled'] += $Contract->sum;
+						$stats['contract_sum_changed'] -= $Contract->sum;
 					}
 					
 					
 					// если расторжен и стал НЕ расторжен
-					if (!$Contract->cancelled && $PreviousContract->cancelled) {
-						// кол-во реанимированых
-						$stats['contract_restored']++;
-						
+					if (!$Contract->isCancelled() && $PreviousContract->isCancelled()) {
 						// сумма реанимированых
-						$stats['contract_sum_restored'] += $Contract->sum;
+						$stats['contract_sum_changed'] += $Contract->sum;
 					}
 					
+*/
 				}
 			}
 			
@@ -235,7 +363,9 @@
 			
 			$ang_init_data = angInit([
 				"currentPage" => $_GET['page'],
+				"yellowLoss"  => LOCAL_DEVELOPMENT ? StatsController::calculateYellowLoss() : memcached()->get("YellowLoss"),
 			]);
+			
 			
 			$this->render("list", [
 				"ang_init_data" 	=> $ang_init_data,

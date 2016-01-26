@@ -107,65 +107,44 @@
 			</tr>
 			<tr id="{{stat.date}}" style="display: none" class="no-hover" ng-repeat-end>
 				<td colspan="6">
-					<table class="table table-divlike left-align" style="margin: 0; width: 90%">
+					<table class="table table-divlike left-align" style="margin: 0; width: 95%">
 						<tr ng-repeat="Schedule in Schedules[stat.date]">
 							<td>
-								<span ng-class="{
-									'text-gray'		: isFutureLesson(Schedule),
-									'text-danger'	: isMissingLesson(Schedule),
-								}">
-									{{Schedule.time}}
-								</span></td>
+								{{Schedule.time}}
+							</td>
 							<td>
 								<div ng-bind-html="Schedule.branch | to_trusted"></div>
 							</td>
 							<td>
-								<a ng-class="{
-									'gray-link'		: isFutureLesson(Schedule),
-									'text-danger'	: isMissingLesson(Schedule),
-								}" href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
+								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
 							</td>
-							<td width="150">
-								<span ng-class="{
-									'text-gray'		: isFutureLesson(Schedule),
-									'text-danger'	: isMissingLesson(Schedule),
-								}">
-									{{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade : ''}}
-								</span>
+							<td width="90">
+								{{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade : ''}}
 							</td>
 							<td>
-								<a ng-class="{
-									'gray-link'		: isFutureLesson(Schedule),
-									'text-danger'	: isMissingLesson(Schedule),
-								}" target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule">расписание</a>
+								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule">расписание</a>
 							</td>
 							<td>
-								<span ng-class="{
-									'text-gray'		: isFutureLesson(Schedule),
-									'text-danger'	: isMissingLesson(Schedule),
-								}">
-									{{Schedule.Group.students.length}} <ng-pluralize count="Schedule.Group.students.length" when="{
-										'one': 'ученик',
-										'few': 'ученика',
-										'many': 'учеников',
-									}"></ng-pluralize>
-								</span>
+								{{Schedule.Group.students.length}} <ng-pluralize count="Schedule.Group.students.length" when="{
+									'one': 'ученик',
+									'few': 'ученика',
+									'many': 'учеников',
+								}"></ng-pluralize>
 							</td>
 							<td>
-								<a class="pointer" ng-class="{
-									'gray-link'		: isFutureLesson(Schedule),
-									'text-danger'	: isMissingLesson(Schedule),
-								}" target="_blank" ng-click="callSip(Schedule.Group.Teacher.phone)">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
+								<a class="pointer" target="_blank" href="teachers/edit/{{Schedule.Group.Teacher.id}}">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
+								
+								<span class="label label-danger pointer label-transparent" ng-click="callSip(Schedule.Group.Teacher.phone)"
+									style="margin-left: 3px">позвонить</span>
 							</td>
 							<td>
-								<span ng-class="{
-									'label-red-visits': Schedule.lesson_number == 1,
-								}">
-									<span ng-class="{
-										'text-gray'		: isFutureLesson(Schedule),
-										'text-danger'	: isMissingLesson(Schedule),	
-									}">{{Schedule.lesson_number}} урок</span>
-								</span>
+								{{Schedule.lesson_number}} урок
+							</td>
+							<td>
+								<span class="label label-warning" ng-show="Schedule.lesson_number == 1">старт группы</span>
+								<span class="label label-primary" ng-show="Schedule.is_unplanned">внеплановое</span>
+								<span class="label label-danger" ng-show="isMissingLesson(Schedule)">не зарегистрирован</span>
+								<span class="label label-default" ng-show="Schedule.is_free">бесплатное</span>
 							</td>
 						</tr>
 					</table>
@@ -191,3 +170,10 @@
 	</pagination>
 	<?php endif ?>
 </div>
+
+
+<style> 
+	.no-hover td {
+		border-top: none !important;
+	}
+</style>

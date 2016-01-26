@@ -18,40 +18,179 @@
 		
 		public function actionTestyTest()
 		{
-			$id_group = 280;
-			$date = '2015-12-03';
+			$Students = Student::getWithoutGroupErrors();
 			
-			$errors = [
-				'2015-12-03' => [280]
-			];
+			h1(count($Students));
 			
-			preType($init_array);
+			preType($Students);
+		}
+		
+		public function actionOnlyTeacherSms()
+		{
+			$teacher_ids = Group::getTeacherIds();
 			
-			if (($key = array_search($id_group, $errors[$date])) !== false) {
-			    unset($errors[$date][$key]);
-			    $errors[$date] = array_values($errors[$date]);
-			    // if no errors now
-			    if (!count($errors[$date])) {
-				    unset($errors[$date]);
-			    }
-				$return = $errors;
-			}
+			$Teachers = Teacher::findAll([
+				"condition" => "id IN (" . implode(',', $teacher_ids) . ")"
+			]);
 			
-			preType($return);
+			$message = "Уважаемые преподаватели, пожалуйста, не используйте мобильные телефоны на занятиях. Администрация ЕГЭ-Центра по просьбам учеников.";
 			
-/*
-			VisitJournal::addData($id_group, $date, $data);
-			
-			// Обновляем красные счетчики
-			if (!LOCAL_DEVELOPMENT) {
-				$errors = memcached()->get("JournalErrors");
-				
-				if (($key = array_search($id_group, $errors[$date])) !== false) {
-				    unset($errors[$date][$key]);
-				    memcached()->set("JournalErrors", array_values($errors), 3600 * 24);
+			foreach ($Teachers as $Teacher) {
+				foreach (Student::$_phone_fields as $phone_field) {
+					$phone_number = $Teacher->{$phone_field};
+					if (!empty($phone_number)) {
+						$messages[] = [
+							"type"      => "Учителю #" . $Teacher->id,
+							"number" 	=> $phone_number,
+							"message"	=> $message,
+						];
+					}
 				}
 			}
-*/
+			
+			$sent_to = [];
+			foreach ($messages as $message) {
+				if (!in_array($message['number'], $sent_to)) {
+					SMS::send($message['number'], $message['message'], ["additional" => 3]);
+					$sent_to[] = $message['number'];
+					
+					// debug
+					$body .= "<h3>" . $message["type"] . "</h3>";
+					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+				}
+			}
+			
+			Email::send("makcyxa-k@yandex.ru", "СМС", $body);
+		}
+		
+		public function actionTestingSms()
+		{
+			$Students = Student::getWithContract();
+			
+			foreach ($Students as $Student) {
+				if ($Student->grade == 11) {
+					$message = "ЕГЭ-Центр информирует: в ЕГЭ-Центре-Тургеневская можно пройти пробное тестирование ЕГЭ на официальных бланках. Записаться можно из личного кабинета (логин: {$Student->login}, пароль: {$Student->password}) либо по телефону (495) 646-85-92. Администрация.";
+					
+					foreach (Student::$_phone_fields as $phone_field) {
+						$student_number = $Student->{$phone_field};
+						if (!empty($student_number)) {
+							$messages[] = [
+								"type"      => "Ученику #" . $Student->id,
+								"number" 	=> $student_number,
+								"message"	=> $message,
+							];
+						}
+						
+						if ($Student->Representative) {
+							$representative_number = $Student->Representative->{$phone_field};
+							if (!empty($representative_number)) {
+								$messages[] = [
+									"type"      => "Представителю #" . $Student->Representative->id,
+									"number" 	=> $representative_number,
+									"message"	=> $message,
+								];
+							}
+						}
+					}
+				}
+			}
+			
+			$sent_to = [];
+			foreach ($messages as $message) {
+				if (!in_array($message['number'], $sent_to)) {
+					SMS::send($message['number'], $message['message'], ["additional" => 3]);
+					$sent_to[] = $message['number'];
+					
+					// debug
+					$body .= "<h3>" . $message["type"] . "</h3>";
+					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+				}
+			}
+			
+			Email::send("makcyxa-k@yandex.ru", "СМС о тестировании", $body);
+		}
+		
+		public function actionUpdateSearchData()
+		{
+			$Students = Student::getWithContract();
+			
+			foreach ($Students as $Student) {
+				$text = "";
+				$Requests = $Student->getRequests();
+				foreach ($Requests as $Request) {
+					$text .= $Request->name;
+					$text .= self::_getPhoneNumbers($Request);
+				}
+				// Имя, телефоны ученика и представителя
+				$text .= $Student->name();
+				$text .= self::_getPhoneNumbers($Student);
+				$text .= $Student->email;
+				
+				if ($Student->Passport) {
+					$text .= $Student->Passport->series;
+					$text .= $Student->Passport->number;
+				}
+				
+				if ($Student->Representative) {
+					$text .= $Student->Representative->name();
+					$text .= self::_getPhoneNumbers($Student->Representative);
+					$text .= $Student->Representative->email;
+					$text .= $Student->Representative->address;
+					
+					if ($Student->Representative->Passport) {
+						$text .= $Student->Representative->Passport->series;
+						$text .= $Student->Representative->Passport->number;
+						$text .= $Student->Representative->Passport->issued_by;
+						$text .= $Student->Representative->Passport->address;
+					}
+				}
+				
+				// Последние 4 цифры номер карты
+				$Payments = Payment::findAll([
+					"condition" => "id_status=" . Payment::PAID_CARD . " AND id_student=" . $Student->id . " AND card_number!=''"
+				]);
+				foreach ($Payments as $Payment) {
+					$text .= $Payment->card_number;
+				}
+				
+				$return[$Student->id] = $text;
+			}
+			
+			dbConnection()->query("TRUNCATE TABLE search_students");
+			
+			foreach ($return as $id_student => $text) {
+				$values[] = "($id_student, '" . $text . "')";
+			}
+			
+			dbConnection()->query("INSERT INTO search_students (id_student, search_text) VALUES " . implode(",", $values));
+		}
+		
+		private static function _getPhoneNumbers($Object)
+		{
+			$text = "";
+			foreach (Student::$_phone_fields as $phone_field) {
+				$phone = $Object->{$phone_field};
+				if (!empty($phone)) {
+					$text .= $phone;
+				}
+			}
+			return $text;
+		}
+		
+		public function actionStudentsWithoutGrade()
+		{
+			$Students = Student::getWithContract();
+			
+			$student_ids = [];
+			foreach ($Students as $Student) {
+				if (!$Student->grade) {
+					$student_ids[] = $Student->id;
+				}
+			}
+			
+			echo implode(", ", $student_ids);
 		}
 		
 		public function actionCalculateRemainder()
@@ -324,6 +463,138 @@
 			]);
 						
 // 			echo "GRAY: $gray_count | GREEN: $green_count | ORANGE: $orange_count | RED: $red_count <br> TOTAL: $total_count";
+		}
+		
+		
+		/**
+		 * у которых договор есть, но нет ни одного посещения ни в одной группе.
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public function actionWithContractButNoLessons()
+		{
+			$Students = Student::getWithContract();
+			
+			$student_ids = [];
+			foreach ($Students as $Student) {
+				$result = dbConnection()->query("
+					SELECT COUNT(*) as cnt FROM visit_journal 
+					WHERE id_entity={$Student->id} AND type_entity='STUDENT'
+				");
+				
+				if ($result->fetch_object()->cnt == 0) {
+					$student_ids[] = $Student->id;
+				}
+			}
+			
+			echo implode(", ", $student_ids);
+		}
+		
+		/**
+		 * у которых есть хоть одна группа, в которой ученики прекратили занятия.
+		 * 
+		 */
+		public function actionStoppedGroup()
+		{
+			$Students = Student::getWithContract();
+			
+			$student_ids = [];
+			foreach ($Students as $Student) {
+				$group_ids = Group::getIds([
+					"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Student->id},%'"
+				]);
+				
+				$result = dbConnection()->query("
+					SELECT id_group FROM visit_journal 
+					WHERE id_entity={$Student->id} AND type_entity='STUDENT'
+					GROUP BY id_group
+				");
+				
+				$group_ids2 = [];
+				while ($row = $result->fetch_object()) {
+					$group_ids2[] = $row->id_group;
+				}
+				
+				foreach ($group_ids2 as $id_group) {
+					if (!in_array($id_group, $group_ids)) {
+						$student_ids[] = $Student->id;
+						break;
+					}
+				}
+				
+/*
+				$diff = array_diff($group_ids, $group_ids2);
+				
+				if (count($diff) > 0) {
+					h1($Student->id);
+					preType([
+						$group_ids, $group_ids2
+					]);
+					$student_ids[] = $Student->id;
+				}
+*/
+			}
+			
+			echo implode(", ", $student_ids);
+		}
+		
+		public function actionHasGreenOrYellowSubjectInOriginal()
+		{
+			$result = dbConnection()->query("
+				SELECT c.id_student FROM contract_subjects cs
+				LEFT JOIN contracts c ON c.id = cs.id_contract
+				WHERE cs.status IN (1, 2)
+				GROUP BY c.id_student
+			");
+			
+			while ($row = $result->fetch_object()) {
+				$student_ids[] = $row->id_student;
+			}
+			
+			echo implode(", ", $student_ids);
+		}
+		
+		public function actionHasGreenOrYellowSubjectInVersion()
+		{
+			$result = dbConnection()->query("
+				SELECT c.id_contract FROM contract_subjects cs
+				LEFT JOIN contracts c ON c.id = cs.id_contract
+				WHERE cs.status IN (1, 2) AND (c.id_student IS NULL or c.id_student=0) AND c.id_contract > 0
+				GROUP BY c.id_contract
+			");
+			
+			while ($row = $result->fetch_object()) {
+				$contract_ids[] = $row->id_contract;
+			}
+			$contract_ids_string = implode(", ", $contract_ids);
+			
+			$result = dbConnection()->query("
+				SELECT id_student FROM contracts WHERE id IN ({$contract_ids_string})
+			");
+			
+			while ($row = $result->fetch_object()) {
+				$student_ids[] = $row->id_student;
+			}
+
+			
+			echo implode(", ", $student_ids);
+		}
+		
+		public function actionTwoOrMoreVersions()
+		{
+			$Students = Student::getWithContract();
+			
+			$student_ids = [];
+			foreach ($Students as $Student) {
+				$Student->Contract = $Student->getLastContract();
+				
+				if (!$Student->Contract->isOriginal()) {
+					$student_ids[] = $Student->id;
+				}
+			}
+			
+			echo implode(", ", $student_ids);
 		}
 		
 		public function actionTwoOrMoreContracts()

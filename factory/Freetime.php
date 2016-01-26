@@ -45,12 +45,45 @@
 			7 => [self::TIME[3], self::TIME[4], self::TIME[5], self::TIME[6]],
 		];
 		
+		public static $title = "время занятия";
+		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
 		
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
-
+		
+		/**
+		 * Построить селектор
+		 * $multiple - множественный выбор
+		 */
+		public static function buildMultiSelector($selected = false, $attrs)
+		{
+			$multiple = true;
+			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
+			
+			// Заголовок
+			if (!$multiple) {
+				echo "<option selected style='cursor: default; outline: none' value=''>". static::$title ."</option>";
+				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
+			}
+						
+			foreach (self::$weekdays as $day => $time_data) {
+				foreach ($time_data as $time_index => $time) {
+					if (empty($time)) {
+						continue;
+					}
+					// если это массив выбранных элементов (при $multiple = true)
+					$option_selected = in_array($time_id, $selected);
+					
+					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
+					echo "<option ".($option_selected ? "selected" : "")." value='{$day}-{$time_index}'>" . self::DAYS_SHORT[$day] . " в " . $time ."</option>";
+				}
+			}
+			echo "</select>";
+		}
+		
+		
 		public static function getIndexByTime($time) {
 			switch ($time) {
 				case self::TIME[4]: {

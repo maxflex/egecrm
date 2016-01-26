@@ -45,25 +45,22 @@
 					заявок
 				</td>
 				<td>
-					заключенные
+					новых договоров
 				</td>
 				<td>
-					расторгнутые
+					новых услуг
 				</td>
 				<td>
-					реанимированные
+					сумма новых договоров
 				</td>
 				<td>
-					заключенные
+					уменьшение услуг
 				</td>
 				<td>
-					расторгнутые
+					увеличение услуг
 				</td>
 				<td>
-					реанимированные
-				</td>
-				<td>
-					изменение существующих
+					изменение суммы услуг
 				</td>
 				<td>
 					платежи
@@ -86,19 +83,16 @@
 					<?= $stat['contract_new'] ?>
 				</td>
 				<td>
-					<?= $stat['contract_cancelled'] ?>
-				</td>
-				<td>
-					<?= $stat['contract_restored'] ?>
+					<?= $stat['subjects_new'] ?>
 				</td>
 				<td>
 					<?= $stat['contract_sum_new'] ?>
 				</td>
 				<td>
-					<?= $stat['contract_sum_cancelled'] ?>
+					<?= $stat['subjects_minus'] ?>
 				</td>
 				<td>
-					<?= $stat['contract_sum_restored'] ?>
+					<?= $stat['subjects_plus'] ?>
 				</td>
 				<td>
 					<?= $stat['contract_sum_changed'] ?>
@@ -134,4 +128,8 @@
 	>
 	</pagination>
 	<?php endif ?>
+	
+	<div class="pull-right" style="margin-top: 10px">
+		потеря по планируемым расторжениям: <span class="text-warning">{{yellowLoss | number}}</span>
+	</div>
 </div>

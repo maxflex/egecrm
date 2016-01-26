@@ -24,6 +24,81 @@
 		}
 		
 		
+		public static function actionUpdateYellowLoss()
+		{
+			memcached()->set("YellowLoss", StatsController::calculateYellowLoss(), 3600 * 24 * 30);
+		}
+		
+		public static function actionUpdateSearchData()
+		{
+			$Students = Student::findAll();
+			
+			foreach ($Students as $Student) {
+				$text = "";
+				$Requests = $Student->getRequests();
+				foreach ($Requests as $Request) {
+					$text .= $Request->name;
+					$text .= self::_getPhoneNumbers($Request);
+				}
+				// Имя, телефоны ученика и представителя
+				$text .= $Student->name();
+				$text .= self::_getPhoneNumbers($Student);
+				$text .= $Student->email;
+				
+				if ($Student->Passport) {
+					$text .= $Student->Passport->series;
+					$text .= $Student->Passport->number;
+				}
+				
+				if ($Student->Representative) {
+					$text .= $Student->Representative->name();
+					$text .= self::_getPhoneNumbers($Student->Representative);
+					$text .= $Student->Representative->email;
+					$text .= $Student->Representative->address;
+					
+					if ($Student->Representative->Passport) {
+						$text .= $Student->Representative->Passport->series;
+						$text .= $Student->Representative->Passport->number;
+						$text .= $Student->Representative->Passport->issued_by;
+						$text .= $Student->Representative->Passport->address;
+					}
+				}
+				
+				// Последние 4 цифры номер карты
+				$Payments = Payment::findAll([
+					"condition" => "id_status=" . Payment::PAID_CARD . " AND id_student=" . $Student->id . " AND card_number!=''"
+				]);
+				foreach ($Payments as $Payment) {
+					$text .= $Payment->card_number;
+				}
+				
+				$return[$Student->id] = $text;
+			}
+			
+			dbConnection()->query("TRUNCATE TABLE search_students");
+			
+			foreach ($return as $id_student => $text) {
+				$values[] = "($id_student, '" . $text . "')";
+			}
+			
+			dbConnection()->query("INSERT INTO search_students (id_student, search_text) VALUES " . implode(",", $values));
+		}
+		
+		private static function _getPhoneNumbers($Object)
+		{
+			$text = "";
+			foreach (Student::$_phone_fields as $phone_field) {
+				$phone = $Object->{$phone_field};
+				if (!empty($phone)) {
+					$text .= $phone;
+				}
+			}
+			return $text;
+		}
+		
+		
+		
+		
 		/**
 		 * Сообщить о незапланированных занятиях.
 		 * 
@@ -130,13 +205,16 @@
 		
 		private function _generateMessage2($Group, $Entity, $tomorrow)
 		{
+			$GroupSchedule = GroupSchedule::find([
+				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."'"
+			]);
 			return Template::get(10, [
 				'tomorrow'		=> $tomorrow,
-				'time'			=> $Group->getFirstSchedule(false)->time,
+				'time'			=> $GroupSchedule->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
 				'address'		=> Branches::$address[$Group->id_branch],
 				'branch' 		=> Branches::$all[$Group->id_branch],
-				'cabinet'		=> trim(Cabinet::findById($Group->cabinet)->number),
+				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
 			]);
@@ -165,6 +243,13 @@
 					
 					// если занятия не было, добавляем в ошибки
 					if (!$was_lesson) {
+						// с начала занятия должно пройти полчаса
+/*
+						$datetime1 = time();
+						$datetime2 = strtotime("{$Schedule->lesson_date} {$Schedule->lesson_time}:00");
+						$interval  = $datetime1 - $datetime2;
+						$minutes   = round($interval / 60);
+*/						
  						$return[$Schedule->date][] = $Schedule->id_group;
 						
 						if (!in_array($Schedule->id_group, $count)) {
@@ -353,35 +438,21 @@
 		
 		private function _generateMessage($Group, $Entity, $tomorrow)
 		{
+			$GroupSchedule = GroupSchedule::find([
+				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."'"
+			]);
 			return Template::get(5, [
 				'tomorrow'		=> $tomorrow,
-				'time'			=> $Group->getFirstSchedule(false)->time,
+				'time'			=> $GroupSchedule->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
 				'address'		=> Branches::$address[$Group->id_branch],
 				'branch' 		=> Branches::$all[$Group->id_branch],
-				'cabinet'		=> trim(Cabinet::findById($Group->cabinet)->number),
+				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
 			]);
 		}
-		
-		/**
-		 * Разослать уведомления
-		 * 
-		 */
-		public static function actionNotify()
-		{
-			// Получаем завтрашние уведомления
-			$Notifications = Notification::findAll([
-				"condition" => Notification::$mysql_table . ".date='". dateFormat("tomorrow", true) ."' AND ". Notification::$mysql_table . ".noted=0",
-			]);
-			
-			// Отсылаем СМСки по уведомлениям
-			foreach ($Notifications as $Notification) {
-				$Notification->notify();
-			}
-		}
-		
+
 		
 		/**
 		 * Обновить статусы СМС. На самом деле запускается не кроном, а сервисом sms.ru

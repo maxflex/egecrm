@@ -7,7 +7,7 @@
 	  
 	// Подключаем файл конфигураций
 	include_once("config.php");
-	
+
 	// Если сессия уже когда-то была начата (если пользователь залогинен), то возобновляем ее
 	/*if(isset($_COOKIE["PHPSESSID"])) {
 	  session_start();
@@ -87,7 +87,7 @@
 	
 // 	preType([$_GET, $_controller, $_action, $_controllerName, $_actionName], true);
 
-	
+
 	// проверка прав доступа к контроллеру
 	if (!in_array(User::fromSession()->type, $IndexController::$allowed_users) && !in_array($_controllerName, $bypass_login)) {
 		$IndexController->renderRestricted();
@@ -108,6 +108,7 @@
 		$IndexController->{"action".$IndexController->defaultAction}();
 	}
 	
+
 	// Когда понадобится AfterAction – раскомментировать
 	/* // Запускаем afterAction, если существует
 	if (method_exists($IndexController, "afterAction")) {

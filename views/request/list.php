@@ -2,7 +2,7 @@
 	ng-init="<?= $ang_init_data ?>">
 	<div class="row">
 		<div class="col-sm-12" style="padding-right: 0">
-			<ul class="nav nav-tabs">
+			<ul class="nav nav-tabs nav-tabs-links" style="margin-bottom: 20px">
 				<li ng-repeat="request_status in request_statuses" data-id="{{request_status.id}}"
 					ng-class="{'active' : chosen_list == request_status.id, 'request-status-li': request_status.id != 8 && (chosen_list != request_status.id)}" 
 					ng-hide="request_status.id == <?= RequestStatuses::SPAM ?> && request_statuses_count[request_status.id] == 0"

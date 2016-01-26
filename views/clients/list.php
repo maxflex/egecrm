@@ -18,8 +18,9 @@
 	<div class="panel-body">
 		<div class="top-links">
 		    <span class="link-like" ng-click="filter_cancelled = 0" ng-class="{'active': filter_cancelled == 0}">договоры в работе</span>
-		    <span class="link-like" ng-click="filter_cancelled = 1" ng-class="{'active': filter_cancelled == 1}">расторгнутые договоры</span>
-		    <span class="link-like" ng-click="filter_cancelled = 2" ng-class="{'active': filter_cancelled == 2}">предварительное расторжение</span>
+		    <span class="link-like" ng-click="filter_cancelled = 3" ng-class="{'active': filter_cancelled == 3}">предварительно расторгнутые</span>
+		    <span class="link-like" ng-click="filter_cancelled = 1" ng-class="{'active': filter_cancelled == 1}">частично расторгнутые</span>
+		    <span class="link-like" ng-click="filter_cancelled = 2" ng-class="{'active': filter_cancelled == 2}">полностью расторгнутые</span>
 	    </div>
 		<table class="table table-divlike">
 			<tr ng-repeat="Student in Students | orderBy:orderStudents():asc | filter:clientsFilter">
@@ -28,7 +29,10 @@
 				</td>
 				<td  style="width: 15%">
 <!-- 					<div ng-repeat="Contract in Student.Contracts"> -->
-						{{Student.Contract.id}}
+						<span class="inline-block" style="width: 30px">{{Student.Contract.id}}</span>
+						<span ng-show="Student.Contract.History">
+							<span class="circle-default" style="top: -.5px"></span>
+						</span>
 <!-- 					</div> -->
 				</td>
 				<td  style="width: 15%">
@@ -41,14 +45,12 @@
 						{{Student.Contract.date ? Student.Contract.date : "неизвестно"}}
 <!-- 					</div> -->
 				</td>
-				<td  style="width: 15%">
-<!-- 					<div ng-repeat="Contract in Student.Contracts"> -->
-						{{getSubjectsCount(Student.Contract)}} <ng-pluralize count="getSubjectsCount(Student.Contract)" when="{
-							'one': 'предмет',
-							'few': 'предмета',
-							'many': 'предметов'
-						}"></ng-pluralize>
-<!-- 					</div> -->
+				<td style="width: 15%">
+					<span ng-repeat="info in Student.subject_count | orderBy:'status':true" ng-class="{
+						'text-success': info.status == 3,
+						'text-warning': info.status == 2,
+						'text-danger': info.status == 1,
+					}">{{info.count}}<span style="color: black !important">{{$last ? '' : '+'}}</span></span>
 				</td>
 				<td>
 					<span ng-show="Student.Remainder.id">{{Student.Remainder.remainder | number}} <ng-pluralize count="Student.Remainder.remainder" when="{

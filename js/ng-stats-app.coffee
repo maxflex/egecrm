@@ -10,6 +10,12 @@ angular.module "Stats", ["ui.bootstrap"]
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
+	.controller "GroupsCtrl", ($scope) ->
+		$scope.getTeacherGroups = (id_teacher) ->
+			_.where($scope.Groups, {id_teacher: id_teacher})
+				
+		angular.element(document).ready ->
+			set_scope "Stats"
 	.controller "ListCtrl", ($scope) ->	
 		
 		$scope.round1 = (n) ->
@@ -59,6 +65,14 @@ angular.module "Stats", ["ui.bootstrap"]
 			number = $scope.sipNumber(number)
 			location.href = number
 		
+		
+		
+		$scope.clickControl = (Teacher, event) ->
+			if event.shiftKey
+				$scope.callSip(Teacher.phone)
+			else 
+				redirect "teachers/edit/#{Teacher.id}"
+		
 		$scope.day = 0;
 		$scope.plusDays = ->
 			$.post "ajax/plusDays", {day: $scope.day++}, (response) ->
@@ -103,7 +117,7 @@ angular.module "Stats", ["ui.bootstrap"]
 			time_difference_minutes = Math.round((time_now - time_lesson) / 1000 / 60)
 			console.log "Group #{Schedule.id_group}", time_difference_minutes, new Date(), new Date("#{Schedule.date} #{Schedule.time}"), time_now, time_lesson
 			# если уже больше 1:45 минут c начала занятия и до сих пор нет записи в журнале
-			return true if time_difference_minutes > 105
+			return true if time_difference_minutes >= 165
 			
 		angular.element(document).ready ->
 			set_scope "Stats"

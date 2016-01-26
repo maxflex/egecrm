@@ -6,13 +6,15 @@
 	 */
 	function preType($anything, $exit = NULL)
 	{
-		echo "<pre>";
-		print_r($anything);
-		echo "</pre>";
-		
-		if ($exit)
-		{
-			exit();
+		if (User::fromSession()->id == 69) {
+			echo "<pre>";
+			print_r($anything);
+			echo "</pre>";
+			
+			if ($exit)
+			{
+				exit();
+			}
 		}
 	}
 	/*
@@ -31,6 +33,11 @@
 	{
 		global $memcached;
 		return $memcached;
+	}
+	
+	function isAdmin()
+	{
+		return User::fromSession()->id == 69;
 	}
 	
 	/*
@@ -417,6 +424,12 @@
 		return array_map(function($a) {  return array_pop($a); }, $array);
 	}
 	
+	function pathLevelUp($path)
+	{
+		$pos = strripos($path, '/');
+		
+		return mb_strimwidth($path, 0, $pos);
+	}
 	
 	/**
 	 * Форматировать дату в наш формат.
@@ -634,5 +647,36 @@
 	        $randomString .= $characters[rand(0, $charactersLength - 1)];
 	    }
 	    return $randomString;
+	}
+	
+	function getName($last_name, $first_name, $middle_name, $order = 'fio')
+	{
+		if (empty(trim($last_name)) && empty(trim($first_name)) && empty(trim($middle_name))) {
+			return "Неизвестно";
+		}
+		
+		if ($last_name) {
+			$name[0] = $last_name;
+		}
+		
+		if ($first_name) {
+			$name[1] = $first_name;
+		}
+		
+		if ($middle_name) {
+			$name[2] = $middle_name;
+		}
+		
+		$order_values = [
+			'f' => 0,
+			'i' => 1,
+			'o' => 2,
+		];
+		
+		$name_ordered[] = $name[$order_values[$order[0]]];
+		$name_ordered[] = $name[$order_values[$order[1]]];
+		$name_ordered[] = $name[$order_values[$order[2]]];
+		
+		return implode(" ", $name_ordered);
 	}
 ?>

@@ -8,7 +8,7 @@
 		
 		// какие поля не сравнивать при сравнении объектов
 		// в функции self::changed()
-		private static $dont_compare = ["id", "id_student", "id_contract", "id_user", "date_changed", "cancelled_date", "cancelled_by", "files"];	
+		private static $dont_compare = ["id", "id_student", "id_contract", "id_user", "date_changed", "files"];	
 		
 		public $_serialized = ["files"];
 		
@@ -16,7 +16,8 @@
 		const CONTRACTS_DIR = "files/contracts/";
 		
 		// условие, которое не берет в расчет версии договора
-		const ZERO_OR_NULL_CONDITION = " AND (id_contract=0 OR id_contract IS NULL)";
+		const ZERO_OR_NULL_CONDITION 		= " AND (id_contract=0 OR id_contract IS NULL)";
+		const ZERO_OR_NULL_CONDITION_JOIN 	= " AND (c.id_contract=0 OR c.id_contract IS NULL)";
 		
 		// Временная директория электронных версий договоров
 		//const CONTRACTS_TMP_DIR = "files/contracts/tmp/";
@@ -37,15 +38,24 @@
 				]);
 			}
 			
+			$this->_setNull($this->duty);
+			$this->_setNull($this->sum);
+			
 			// логин пользователя
-			if ($this->id_user) {
-				$this->user_login = User::findById($this->id_user)->login;
-			}	
+			if (!$this->isNewRecord) {
+				$this->user_login = User::getLogin($this->id_user);
+			}
 		}
 		
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		private function _setNull(&$field)
+		{
+			if ($field == 0) {
+				$field = null;
+			}
+		}
 		
 		/**
 		 * Добавить новые контракты и обновить старые.
@@ -343,6 +353,7 @@
 				$this->sum = NULL;
 			}
 			
+/*
 			if (!$this->id_contract) {
 				$this->id_contract = NULL;
 				
@@ -353,16 +364,13 @@
 					$this->id_user		= User::fromSession()->id;
 				}
 			}
+*/
 			
-			// Если расторгаем договор
-			// (если расторгнут)
-			if ($this->cancelled) {
-				// если изменили статус (а был НЕ расторгнут)
-				if (!self::findById($this->id)->cancelled) {
-					// сохраняем данные пользователя, который сделал расторжение договора
-					$this->cancelled_by 	= User::fromSession()->id;
-				//	$this->cancelled_date	= now();
-				}
+			if (!$this->id_contract) {
+				// дата изменения и пользователь МЕНЯЮТСЯ ТОЛЬКО В СЛУЧАЕ ЕСЛИ ЭТО НЕ ПОДВЕРСИЯ
+				$this->date_changed = now();
+				// договор всегда создается новый, поэтому нет условия if ($this->isNewRecord) { ... }
+				$this->id_user		= User::fromSession()->id;
 			}
 		}
 		
@@ -428,6 +436,40 @@
 								
 				return $this->id == $OriginalContract->id;
 			}
+		}
+		
+		
+		/**
+		 * Кол-во расторженных предметов в договоре.
+		 * 
+		 */
+		public function cancelledSubjectsCount()
+		{
+			$count = 0;
+			foreach($this->subjects as $subject) {
+				if ($subject['status'] == 1) {
+					$count++;
+				}	
+			}
+			return $count;
+		}
+		
+		/**
+		 * Кол-во активных предметов в договоре.
+		 * 
+		 */
+		public function activeSubjectsCount()
+		{
+			return (count($this->subjects) - $this->cancelledSubjectsCount());
+		}
+		
+		/**
+		 * Договор полностью расторгнут (все предметы внутри расторгнуты).
+		 * 
+		 */
+		public function isCancelled()
+		{
+			return $this->activeSubjectsCount() <= 0;
 		}
 		
 		/**

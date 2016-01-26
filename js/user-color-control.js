@@ -15,8 +15,11 @@
 	
 	function changeUserColor(elem) {
 		id_request = $(elem).data("rid");
-		id_user_new = $(elem).val();
-		
+		id_user_new = $(elem).val();		
+		setTimeout(function() {
+			$("#request-user-select-" + id_request).hide()
+			$("#request-user-display-" + id_request).show()
+		}, 10)
 		$.post("ajax/changeRequestUser", {"id_request" : id_request, "id_user_new" : id_user_new});
 	}
 	

@@ -26,6 +26,11 @@
 				
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
+		public function name($order = 'fio')
+		{
+			return getName($this->last_name, $this->first_name, $this->middle_name, $order);
+		}
+		
 		public function beforeSave()
 		{
 			// Очищаем номера телефонов

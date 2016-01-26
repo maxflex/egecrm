@@ -49,6 +49,27 @@
 				}
 			})
 			
+			$scope.pickUser = function(request, id_user) {
+				if (!request.user_picked && request.id_user != id_user) {
+					request.id_user = id_user
+				} else {
+					request.id_user = selectNextUser(request.id_user)
+/*
+					$("#request-user-display-" + request.id).hide()
+					$("#request-user-select-" + request.id).show().simulate('mousedown')
+*/
+				}
+				$.post("ajax/changeRequestUser", {"id_request" : request.id, "id_user_new" : request.id_user})
+				request.user_picked = true
+			}
+			
+			selectNextUser = function(id_user) {
+				user = _.find($scope.users, function(user) {
+					return user.id > id_user	
+				})
+				return ((user && user.id <= 112) ? user.id : 0)
+			}
+			
 			// проверить номер телефона
 		    $scope.isMobilePhone = function(phone) {
 			    // пустой номер телефона – это тоже правильный номер телефона
@@ -443,12 +464,9 @@
 				
 				// был баг. месяц делал автоматически +1
 				month = date[1] - 1;
-				if (month <= 0) {
-					month = 12
-				}
-				
+				console.log(date[2] + "-" + month + "-" + date[0])
 				date = new Date(date[2], month, date[0])
-				return moment(date).format("DD MMMM YYYY г.")
+				return moment(date).format("D MMMM YYYY г.")
 			}
 			
 			$scope.objectLength = function(object) {
@@ -815,15 +833,6 @@
 				$(".save-button").first().click()
 			}
 
-			$scope.toggleCancelled = function(contract) {
-				console.log(contract)
-				if (contract.cancelled) {
-					console.log("here")
-					contract.cancelled_date = ""
-					contract.cancelled_reason = ""
-				}
-			}
-
 			// Получить общее количество предметов (для печати договора)
 			$scope.subjectCount = function(contract) {
 				count = 0
@@ -953,31 +962,6 @@
 				contract.subjects.splice(index, 1);
 			}
 
-			/**
-			 * Расторгнуть договор/отменить расторжение
-			 *
-			 * status расторжения  [0/1 активен/расторгнут]
-			 */
-			$scope.contractCancelled = function(contract, status) {
-				// отменить расторжение
-				if (contract.cancelled) {
-					bootbox.confirm("Вы уверены, что хотите отменить расторжение?", function(result) {
-						if (result === true) {
-							contract.cancelled = 0
-							$scope.$apply()
-						}
-					})
-				} else {
-					// расторгнуть
-					bootbox.confirm("Вы уверены, что хотите расторгнуть договор?", function(result) {
-						if (result === true) {
-							contract.cancelled = 1
-							$scope.$apply()
-						}
-					})
-				}
-			}
-
 
 			/**
 			 * Проверка на пустой договор. Если пустой, появляется функционал удаления
@@ -1087,23 +1071,6 @@
 					return
 				}
 
-				// валидация формы расторжения
-				if ($scope.current_contract.cancelled) {
-					if (!$scope.current_contract.cancelled_date) {
-						$("#contract-cancelled-date").addClass("has-error").focus()
-						return false
-					} else {
-						$("#contract-cancelled-date").removeClass("has-error")
-					}
-
-					if (!$scope.current_contract.cancelled_reason) {
-						$("#contract-cancelled-reason").addClass("has-error").focus()
-						return false
-					} else {
-						$("#contract-cancelled-reason").removeClass("has-error")
-					}
-				}
-				
 				if (!$scope.current_contract.history_edit) {
 					$scope.current_contract.id_student = $scope.student.id
 				}
@@ -1111,6 +1078,9 @@
 				if ($scope.current_contract.id) {
 					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
+						console.log(response)
+						test = response
+						
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
 							
@@ -1131,7 +1101,8 @@
 							} else {
 								angular.forEach($scope.contracts, function(contract, i) {
 									if (contract.id == $scope.current_contract.id) {
-										old_contract = $scope.contracts[i]
+// 										old_contract = $scope.contracts[i]
+										old_contract = response.History[response.History.length - 1]
 										$scope.contracts[i] = $scope.current_contract
 										// если создалась новая версия, пушим в историю
 										if (!$scope.current_contract.no_version_control) {
@@ -1236,7 +1207,12 @@
 				$scope.lateApply()
 		
 				setTimeout(function() {
-					$('.triple-switch').slider('reset')	
+// 					$('.triple-switch').slider('reset')
+					$('.triple-switch').each(function(index, e) {
+						val = $(e).attr('data-slider-value');
+// 						console.log(val);
+						$(e).slider('setValue', parseInt(val));
+					})
 				}, 100)
 			}
 
@@ -1244,6 +1220,7 @@
 			$scope.editContract = function(contract) {
 				contract.no_version_control = 0
 				contract.history_edit = 0
+				contract.date = moment().format("DD.MM.YYYY")
 				
 				$scope.callContractEdit(contract)
 			}
@@ -1267,6 +1244,7 @@
 			// Показать окно добавления платежа
 			$scope.addContractDialog = function() {
 				$scope.current_contract = {subjects : []}
+				$scope.current_contract.date = moment().format("DD.MM.YYYY")
 				
 				$('.triple-switch').slider('setValue', 0)	
 				
@@ -1555,29 +1533,6 @@
 					"id_contract":	contract.id,
 					"files":		contract.files
 				});
-		    }
-
-		    // расторжение договора
-		    $scope.cancelContract = function(contract) {
-			    $scope.current_contract = angular.copy(contract)
-			    $scope.current_contract.cancelled = 1
-			    lightBoxShow('cancelcontract');
-		    }
-
-		    // отменить расторжение
-		    $scope.cancelCancel = function(contract) {
-				bootbox.confirm("Восстановить договор?", function(result) {
-					if (result === true) {
-						contract.cancelled = 0
-						contract.cancelled_reason = ""
-						contract.cancelled_date	= ""
-
-						$scope.current_contract = contract;
-						$scope.$apply()
-
-						$scope.addContractNew()
-					}
-				})
 		    }
 
 		    // проверить номер телефона

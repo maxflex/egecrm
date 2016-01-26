@@ -25,35 +25,41 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-2"></div>
-			<div class="col-sm-5">
+			<div class="col-sm-7">
 				<h3 style="font-weight: bold; margin: 10px 0 25px">{{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
 						'one': 'занятие',
 						'few': 'занятия',
 						'many': 'занятий'
 					}"></ng-pluralize></h3>
-				<div class="row" ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px">
-					<div class="col-sm-4">
-						<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}'>{{getLine1(Schedule)}}</a>
-					</div>
-					<div class="col-sm-4">
-						<div class="lessons-table">
-							<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
-							<span  <?= (User::isTeacher() || User::isStudent() ? '' : 'ng-click="setTime(Schedule, $event)"') ?>>
-								{{Schedule.time ? Schedule.time : 'не установлено'}}
-							</span>
-						</div>
-					</div>
-					<div class="col-sm-4">
-						<select ng-model="Schedule.cabinet" style="width: 130px" ng-change="changeCabinet(Schedule)">
-							<option selected value="">выберите кабинет</option>
-							<option disabled>──────────────</option>
-							<option ng-repeat="Cabinet in Cabinets" value="{{Cabinet.id}}" ng-selected="Cabinet.id == Schedule.cabinet">
-								{{Cabinet.number}}
-							</option>
-						</select>
-					</div>
-				</div>
+					
+				<table class="table table-divlike">
+					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px">
+						<td>
+							<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}'>{{getLine1(Schedule)}}</a>
+						</td>
+						<td>
+							<div class="lessons-table">
+								<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
+								<span  <?= (User::isTeacher() || User::isStudent() ? '' : 'ng-click="setTime(Schedule, $event)"') ?>>
+									{{Schedule.time ? Schedule.time : 'не установлено'}}
+								</span>
+							</div>
+						</td>
+						<td>
+							<select ng-model="Schedule.cabinet" style="width: 130px" ng-change="changeCabinet(Schedule)">
+								<option selected value="">выберите кабинет</option>
+								<option disabled>──────────────</option>
+								<option ng-repeat="Cabinet in Cabinets" value="{{Cabinet.id}}" ng-selected="Cabinet.id == Schedule.cabinet">
+									{{Cabinet.number}}
+								</option>
+							</select>
+						</td>
+						<td>
+							<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Schedule.is_free" ng-change="changeFree(Schedule)"> 
+							бесплатное занятие
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>

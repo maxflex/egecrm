@@ -9,7 +9,16 @@ angular.module("Stats", ["ui.bootstrap"]).config([
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("ListCtrl", function($scope) {
+]).controller("GroupsCtrl", function($scope) {
+  $scope.getTeacherGroups = function(id_teacher) {
+    return _.where($scope.Groups, {
+      id_teacher: id_teacher
+    });
+  };
+  return angular.element(document).ready(function() {
+    return set_scope("Stats");
+  });
+}).controller("ListCtrl", function($scope) {
   $scope.round1 = function(n) {
     return Math.round(n);
   };
@@ -59,6 +68,13 @@ angular.module("Stats", ["ui.bootstrap"]).config([
     number = $scope.sipNumber(number);
     return location.href = number;
   };
+  $scope.clickControl = function(Teacher, event) {
+    if (event.shiftKey) {
+      return $scope.callSip(Teacher.phone);
+    } else {
+      return redirect("teachers/edit/" + Teacher.id);
+    }
+  };
   $scope.day = 0;
   $scope.plusDays = function() {
     return $.post("ajax/plusDays", {
@@ -104,7 +120,7 @@ angular.module("Stats", ["ui.bootstrap"]).config([
     time_lesson = new Date(Schedule.date + " " + Schedule.time).getTime();
     time_difference_minutes = Math.round((time_now - time_lesson) / 1000 / 60);
     console.log("Group " + Schedule.id_group, time_difference_minutes, new Date(), new Date(Schedule.date + " " + Schedule.time), time_now, time_lesson);
-    if (time_difference_minutes > 105) {
+    if (time_difference_minutes >= 165) {
       return true;
     }
   };

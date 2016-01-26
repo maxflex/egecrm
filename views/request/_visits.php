@@ -20,6 +20,7 @@
 					 <span ng-show="Visit.missing_note"
 					 	class="circle-default circle-future-missing" title="{{formatVisitDate(Visit.date)}}"></span>
 				 </div>
+				 <span style="margin-left: 5px">{{getGroup(id_group).Schedule.length + getVisitsByGroup(id_group).length}}</span>
 			 </div>
     </div>
 </div>

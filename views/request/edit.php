@@ -165,46 +165,17 @@
 	<!-- ВКЛАДКИ ЗАЯВОК -->
 	<div class="row" style="margin-bottom: 20px" ng-hide="<?= ($Request->adding && !$_GET["id_student"]) ?>">
 		<div class="col-sm-12">
-			<ul class="nav nav-tabs">
-			<li ng-repeat="request_duplicate in request_duplicates" ng-class="{'active' : request_duplicate == <?= $Request->id ?>}">
-				<a href="requests/edit/{{request_duplicate}}" ng-class="{'half-opacity-color': request_duplicate_comments[request_duplicate] == false}">
-					Заявка #{{request_duplicate}}
-				</a>
-			</li>
-			<li ng-class="{'active' : <?= ($Request->adding && $Request->id_student) ?>}">
-				<a href="requests/add?id_student=<?= $Request->id_student ?>">
-					добавить заявку
-				</a>
-			</li>
-		</ul>
+			<span class="tab-link" ng-repeat="request_duplicate in request_duplicates" ng-class="{'active' : request_duplicate == <?= $Request->id ?>}">
+				<a href="requests/edit/{{request_duplicate}}">Заявка №{{request_duplicate}}</a>
+			</span>
+			<span class="tab-link" ng-class="{'active' : <?= ($Request->adding && $Request->id_student) ?>}">
+				<a href="requests/add?id_student=<?= $Request->id_student ?>">добавить заявку</a>
+			</span>
 		</div>
 	</div>
 	<!-- /ВКЛАДКИ ЗАЯВОК -->
 
 	<!-- ДАННЫЕ ПО ЗАЯВКЕ С САЙТА И УВЕДОМЛЕНИЯ -->
-	<div class="row page-title">
-		<div class="col-sm-12">
-			<h4>Данные по заявке
-
-				<span ng-hide="<?= $Request->adding ?>">
-					<span class="hint--right" data-hint="Время создания: <?= dateFormat($Request->date) ?>">
-						<span class="glyphicon glyphicon-info-sign opacity-pointer no-margin-right" style="font-size: 14px; cursor: default"></span>
-					</span>
-<!--
-					<span class="link-like link-reverse link-in-h" onclick="lightBoxShow('glue')">
-						перенести в другой профиль</span>
--->
-<!--
-					<span class="link-like link-reverse link-in-h" ng-show="request_duplicates.length > 1" onclick='deleteRequest(<?= $Request->id ?>)'>
-						удалить заявку
-					</span>
--->
-				</span>
-			</h4>
-		</div>
-	</div>
-
-
     <div class="row">
         <div class="col-sm-9">
             <div class="row">
@@ -704,7 +675,7 @@
 			<div ng-repeat="contract in contracts | reverse" ng-hide="contract.deleted">
 
 				<!-- вкладки догаваров -->
-				<ul class="nav nav-tabs" ng-show="contract.History.length > 0">
+				<ul class="nav nav-tabs nav-tabs-links" ng-show="contract.History.length > 0">
 					<li ng-repeat="contract_history in contract.History" id="contract_history_li_{{contract.id}}_{{contract_history.id}}">
 						<a href="#contract_history_{{contract.id}}_{{contract_history.id}}" data-toggle="tab" aria-expanded="false">{{$index + 1}} версия</a>
 					</li>
@@ -728,30 +699,32 @@
 									<span>{{contract.grade}}</span>
 								</div>
 								<div style="margin-bottom: 3px">
-									<span style="display: inline-block; width: 200px">дата заключения</span>
+									<span style="display: inline-block; width: 200px">дата создания версии</span>
 									<span>{{formatContractDate(contract.date)}}</span>
 								</div>
-								<div style="margin-bottom: 3px" ng-show="contract.cancelled">
-									<span style="display: inline-block; width: 200px">дата расторжения</span>
-									<span>{{formatContractDate(contract.cancelled_date)}}</span>
+								<div style="margin-bottom: 3px" ng-show="contract.duty">
+									<span style="display: inline-block; width: 200px">организационный сбор</span>
+									<span>{{contract.duty | number}} руб.</span>
 								</div>
-								<div style="margin-bottom: 3px">
+								<div style="margin-bottom: 3px" ng-show="contract.sum">
 									<span style="display: inline-block; width: 200px">общая сумма</span>
 									<span>{{contract.sum | number}} руб.</span>
 								</div>
-								<div style="margin-bottom: 3px">
+								<div style="margin-bottom: 3px" ng-show="contractFirstPart(contract)">
 									<span style="display: inline-block; width: 200px">сумма 1 семестра</span>
 									<span>{{contractFirstPart(contract) | number}} руб.</span>
 								</div>
-								<div style="margin-bottom: 25px">
+								<div ng-show="contractSecondPart(contract)">
 									<span style="display: inline-block; width: 200px">сумма 2 семестра</span>
 									<span>{{contractSecondPart(contract) | number}} руб.</span>
 								</div>
 								
+								<div style="margin-bottom: 25px"></div>
+								
 								<div ng-repeat="subject in contract.subjects | orderBy:'id_subject'" style="margin-bottom: 3px; white-space: nowrap">
 									<span style="display: inline-block; width: 200px" ng-class="{
-										'text-warning'	: subject.status == 1 && !contract.cancelled,	
-										'text-danger'	: contract.cancelled,
+										'text-warning'	: subject.status == 2,	
+										'text-danger'	: subject.status == 1,
 									}">{{subject.name}}</span>
 									<span ng-show="!subject.count2">{{subject.count}}
 										<ng-pluralize count="subject.count" when="{
@@ -838,29 +811,32 @@
 									<span>{{contract_history.grade}}</span>
 								</div>
 								<div style="margin-bottom: 3px">
-									<span style="display: inline-block; width: 200px">дата заключения</span>
+									<span style="display: inline-block; width: 200px">дата создания версии</span>
 									<span>{{formatContractDate(contract_history.date)}}</span>
 								</div>
-								<div style="margin-bottom: 3px" ng-show="contract_history.cancelled">
-									<span style="display: inline-block; width: 200px">дата расторжения</span>
-									<span>{{formatContractDate(contract.cancelled_date)}}</span>
+								<div style="margin-bottom: 3px" ng-show="contract_history.duty">
+									<span style="display: inline-block; width: 200px">организационный сбор</span>
+									<span>{{contract_history.duty | number}} руб.</span>
 								</div>
-								<div style="margin-bottom: 3px">
+								<div style="margin-bottom: 3px" ng-show="contract_history.sum">
 									<span style="display: inline-block; width: 200px">общая сумма</span>
 									<span>{{contract_history.sum | number}} руб.</span>
 								</div>
-								<div style="margin-bottom: 3px">
+								<div style="margin-bottom: 3px" ng-show="contractFirstPart(contract_history)">
 									<span style="display: inline-block; width: 200px">сумма 1 семестра</span>
 									<span>{{contractFirstPart(contract_history) | number}} руб.</span>
 								</div>
-								<div style="margin-bottom: 25px">
+								<div ng-show="contractSecondPart(contract_history)">
 									<span style="display: inline-block; width: 200px">сумма 2 семестра</span>
 									<span>{{contractSecondPart(contract_history) | number}} руб.</span>
 								</div>
+								
+								<div style="margin-bottom: 25px"></div>
+								
 								<div ng-repeat="subject in contract_history.subjects" style="margin-bottom: 3px; white-space: nowrap">
 									<span style="display: inline-block; width: 200px" ng-class="{
-										'text-warning'	: subject.status == 1 && !contract_history.cancelled,	
-										'text-danger'	: contract_history.cancelled,
+										'text-warning'	: subject.status == 2,	
+										'text-danger'	: subject.status == 1,
 									}">{{subject.name}}</span>
 									<span ng-show="!subject.count2">{{subject.count}}
 										<ng-pluralize count="subject.count" when="{
@@ -982,3 +958,10 @@
 </div></div>
 
 </form>
+
+
+<style>
+table tr td {
+  font-size: 14px !important;
+}
+</style>

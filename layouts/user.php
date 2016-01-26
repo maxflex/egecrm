@@ -169,6 +169,14 @@
 	</a>
     <a href="clients/errors" class="list-group-item">Ошибки</a>
     <a href="testing" class="list-group-item">Тестирование</a>	
+    <a href="reports" class="list-group-item">Отчеты 
+	    <?php
+		    $report_counts = Teacher::getReportCountsAll();
+		?>
+		<span class="badge badge-danger pull-right"><?= $report_counts['red'] ?></span>
+	    <span class="badge pull-right"><?= Report::count() ?></span>
+    </a>	
+    <a href="stats/groups" class="list-group-item">Статистика групп</a>	
 	<a class="list-group-item active">Преподаватели</a>
     <a href="teachers" class="list-group-item">Профили</a>
 	<a href="teachers/salary" class="list-group-item">Дебет</a>

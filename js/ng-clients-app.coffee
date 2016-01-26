@@ -21,10 +21,21 @@ angular.module "Clients", []
 			sum
 		
 		$scope.clientsFilter = (Student) ->
-			if $scope.filter_cancelled is 2
-				return _.findWhere(Student.Contract.subjects, {status: 1}) isnt undefined and Student.Contract.cancelled is 0
-			else 
-				return Student.Contract.cancelled is $scope.filter_cancelled
+			switch $scope.filter_cancelled
+				when 0 then _.findWhere(Student.Contract.subjects, {status: 3}) isnt undefined
+				when 1
+					count = 0
+					$.each Student.Contract.subjects, (index, subject) ->
+						if subject.status is 1
+							count++
+					count isnt Object.keys(Student.Contract.subjects).length and count > 0
+				when 2 
+					count = 0
+					$.each Student.Contract.subjects, (index, subject) ->
+						if subject.status is 1
+							count++
+					count is Object.keys(Student.Contract.subjects).length
+				when 3 then _.findWhere(Student.Contract.subjects, {status: 2}) isnt undefined
 		
 		$scope.order = 2
 		

@@ -20,6 +20,16 @@
 		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
+		public static function getLogin($id_user)
+		{
+			$User = User::findById($id_user);
+			
+			if ($User) {
+				return $User->login;
+			} else {
+				return 'system';
+			}
+		 }
 		
 		public static function getOnlineList()
 		{

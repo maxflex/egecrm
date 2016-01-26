@@ -45,13 +45,19 @@
 									ng-value="Cabinet.id" ng-selected="Group.cabinet == Cabinet.id">{{Cabinet.number}}</option>
 							</select>
 						</div>
+						<div class="col-sm-2">
+							<?= Freetime::buildMultiSelector(false, ["id" => "time-select", "ng-model" => "search.time"]) ?>
+<!-- 							<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?> -->
+						</div>
 					</div>
 					
 					
 					<div class="top-links">
 						<span style="margin-right: 7px">сортировать по:</span>
 						<span class="link-like" ng-click="orderByFirstLesson()" style="margin-right: 7px">хронология запуска</span>
-						<span class="link-like" ng-click="orderByStudentCount()" style="margin-right: 7px">кол-во учеников</span>
+						<span class="link-like" ng-click="orderByStudentCount()" style="margin-right: 7px">численность групп</span>
+						<span class="link-like" ng-click="orderByDaysBeforeExam()" style="margin-right: 7px">запас дней</span>
+						<span class="link-like" ng-click="orderByCabinet()" style="margin-right: 7px">кабинет</span>
 					</div>
 					
 					
@@ -92,7 +98,7 @@
 									data-group-index="{{$parent.$index}}" data-student="{{Student}}" data-id="{{Student.id}}">
 									<td width="300">
 										<a href="student/{{Student.id}}" ng-class="{
-											'text-warning': Student.status == 1
+											'text-warning': Student.status == 2
 										}">
 										<span ng-show="Student.last_name || Student.first_name || Student.middle_name">{{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}</span>
 										<span ng-show="!Student.last_name && !Student.first_name && !Student.middle_name">Неизвестно</span>
@@ -135,7 +141,7 @@
 			<!-- 							<td width="50"></td> -->
 										<td width="300">
 											<a href="student/{{Student.id}}" ng-class="{
-												'text-warning': getSubject(Student.Contract.subjects, Group.subject).status == 1
+												'text-warning': getSubject(Student.Contract.subjects, Group.subject).status == 2
 											}">
 											<span ng-show="Student.last_name || Student.first_name || Student.middle_name">{{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}</span>
 											<span ng-show="!Student.last_name && !Student.first_name && !Student.middle_name">Неизвестно</span>

@@ -24,13 +24,29 @@
     <?php
 		$Student = Student::findById(User::fromSession()->id_entity);
 		
-		if ($Student->grade == 11) {
+		if ($Student->grade == 11 || $Student->grade == 9) {
 			echo '<a href="students/testing" class="list-group-item">Запись на пробный ЕГЭ</a>';
 		}
 	?>
-	<a href="students/reports" class="list-group-item">Отчеты</a>
+	<a href="students/reports" class="list-group-item">Отчеты
+		<?php  
+			$report_count = Student::getReportCount(User::fromSession()->id_entity);
+			
+			if ($report_count) {
+				echo '<span class="badge pull-right">' . $report_count . '</span>';
+			}
+		?>
+	</a>
     <a href="students/journal" class="list-group-item">Журнал посещаемости</a>
-    <a href="students/reviews" class="list-group-item">Оставить отзыв</a>
+    <a href="students/reviews" class="list-group-item">Оставить отзыв
+	    <?php
+			$reviews_count = Student::reviewsNeeded();
+			
+			if ($reviews_count) {
+				echo '<span class="badge badge-danger pull-right">' . $reviews_count . '</span>';
+			}
+		?>
+    </a>
     <a href="students/faq" class="list-group-item">Необходимая информация</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>

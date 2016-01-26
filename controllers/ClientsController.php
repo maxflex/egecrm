@@ -46,6 +46,24 @@
 			
 			foreach ($Students as &$Student) {
 				$Student->Contract 	= $Student->getLastContract();
+				
+				
+				//
+				foreach ($Student->Contract->subjects as $subject) {
+					$Student->sc[$subject['status']] += $subject['count'] + $subject['count2'];
+				}
+				
+				foreach (range(3, 1) as $status) {
+					if ($Student->sc[$status]) {
+						$Student->subject_count[] = [
+							'status' 	=> $status,
+							'count'		=> $Student->sc[$status],
+						];
+					}
+				}
+				//
+				
+				
 				$Student->User = User::find(["condition" => "id_entity=" . $Student->id]);
 				
 				$Student->Remainder = PaymentRemainder::getByStudentId($Student->id);
@@ -66,68 +84,12 @@
 					$Response = Student::getLayerErrors();
 					break;
 				}
-				case "?mode=duplicate": {
-					$Response = Student::getSameSubjectErrors();
-					break;
-				}
-				case "?mode=nogroup": {
-					$Response = Student::getErrors();
+				case "?mode=correspond": {
+					$Response = Student::getWithoutGroupErrors();
 					break;
 				}
 				case "?mode=phone": {
 					$Response = Student::getPhoneErrors();
-					break;
-				}
-				case "?mode=grouptime": {
-					$Groups = Group::findAll();
-
-					foreach ($Groups as &$Group) {
-						if (!$Group->lessonDaysMatch()) {
-							$r[] = $Group->id;	
-						}
-					}
-					$Response = $r;
-					
-					break;
-				}
-				case "?mode=groupgrade": {
-					$Groups = Group::findAll();
-
-					foreach ($Groups as $Group) {
-						if ($Group->students) {
-							$Students = Student::findAll([
-								"condition" => "id IN (". implode(",", $Group->students) .")"
-							]);
-							
-							foreach ($Students as $Student) {
-								if ($Student->grade != $Group->grade) {
-									$r[] = [
-										"Group"	=> $Group,
-										"Student" 	=> $Student,	
-									];
-								}
-							}
-						}
-					}
-					$Response = $r;
-					
-					break;
-				}
-				case "?mode=cancelled": {
-					$result = dbConnection()->query("
-						select s.id, s.last_name, s.first_name, s.middle_name from students s
-						left join groups g on (CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', s.id ,',%'))
-						left join contracts c on c.id_student = s.id
-						where g.id is not null and (c.id is null or c.cancelled = 1)
-						group by s.id
-					");
-					
-					while ($row = $result->fetch_object()) {
-						$return[] = $row;	
-					}
-					
-					$Response = $return;
-					
 					break;
 				}
 			}

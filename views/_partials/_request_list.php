@@ -4,10 +4,10 @@
 	<div class="row">
 		<div class="col-sm-10">
 			<div>
-				<span ng-show="request.branches_data" style="margin-right: 10px">
+				<span ng-show="request.branches_data || request.has_contract" style="margin-right: 10px">
 					<span ng-class="{'mr3' : !$last}" ng-repeat="branch in request.branches_data"><span class="label label-metro-short" style="background: {{branch.color}}; top: -2px; position: relative">{{branch.short}}</span></span>
+					<span ng-show="request.has_contract" class="label label-success" style="position: relative; top: -2px">договор заключен</span>
 				</span>
-				
 				
 				
 				<span ng-show="request.comment" style="margin-right: 10px">
@@ -86,13 +86,15 @@
 				Напоминание:  {{notification_types[request.Notification.id_type]}} {{request.Notification.timestamp + "000" | date:'dd.MM.yy в HH:mm'}}
 			</div>
 			<div class="half-black">
-				Заявка №{{request.id}} создана {{request.id_user_created ? users[request.id_user_created].login : "system"}}
-				{{request.date_timestamp | date:'dd.MM.yy'}} в <span ng-class="getTimeClass(request)">{{request.date_timestamp | date:'HH:mm'}}</span>
+				Заявка №{{request.id}} создана {{request.id_user_created > 0 ? users[request.id_user_created].login : "system"}}
+				{{request.date_timestamp | date:'dd.MM.yy'}} в {{request.date_timestamp | date:'HH:mm'}}
 				<a class="link-reverse" style="margin-left: 5px" href="requests/edit/{{request.id}}">редактировать</a>
 			</div>
 		</div>
-		<div class="col-sm-2">
-			<select class="user-list small" onchange="changeUserColor(this)" data-rid="{{request.id}}" style="background-color: {{users[request.id_user].color}}">
+		<div class="col-sm-6">
+			ответственный: <span id="request-user-display-{{request.id}}" ng-click="pickUser(request, <?= User::fromSession()->id ?>)" class="user-pick" style="color: {{request.id_user ? users[request.id_user].color : 'rgba(0, 0, 0, 0.5)'}}">{{request.id_user ? users[request.id_user].login : 'system'}}</span>
+<!--
+			<select class="user-list small" onchange="changeUserColor(this)" data-rid="{{request.id}}" style="display: none; background-color: {{users[request.id_user].color}}" id="request-user-select-{{request.id}}" ng-model="request.id_user">
 				<option selected="" value="">пользователь</option>
 				<option disabled="" value="">──────────────</option>
 
@@ -100,11 +102,15 @@
 					{{user.login}}
 				</option>
 			</select>
-		</div>
-		<div class="col-sm-4"  >
-			<span class="label small group-teacher-status3 pull-left" style="position: relative; top: 4px; left: 40px">{{sources[request.id_source]}}</span>
-			<span ng-show="request.has_contract" class="label label-success pull-right" style="position: relative; top: 4px">договор заключен</span>
+-->
 		</div>
 	</div>
 	<hr ng-hide="$last">
 </div>
+
+<script>
+	$(window).on("mouseup", function() {
+		$("[id^='request-user-select-']").hide()
+		$("[id^='request-user-display-']").show()
+	})
+</script>

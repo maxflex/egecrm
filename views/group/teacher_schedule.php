@@ -44,8 +44,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-2"></div>
-			<div class="col-sm-5">
+			<div class="col-sm-1"></div>
+			<div class="col-sm-6">
 				<div style="margin-bottom: 15px; font-weight: bold">Текущий состав группы учеников:</div>
 				<div ng-repeat="Student in Group.Students">
 					{{$index + 1}}. {{Student.last_name}} {{Student.first_name}}
@@ -60,24 +60,29 @@
 						'many': 'занятий'
 					}"></ng-pluralize></h3>
 -->
-				<div class="row" ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
-					<div class="col-sm-4">
-						{{getLine1(Schedule)}}
-					</div>
-					<div class="col-sm-2">
-						<div class="lessons-table">
-							<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
-							<span>{{Schedule.time ? Schedule.time : 'не установлено'}}</span>
-						</div>
-					</div>
-					<div class="col-sm-6">
-						<span ng-show="inDate(Schedule.date, past_lesson_dates)">занятие проведено</span>
-						<a href='teachers/groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inDate(Schedule.date, past_lesson_dates) && lessonStarted(Schedule)' 
-							ng-class="{'add-to-journal': !inDate(Schedule.date, past_lesson_dates)}">
-							создать запись в журнале
-						</a>
-					</div>
-				</div>
+				<table class="table table-divlike">
+					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
+						<td>
+							{{getLine1(Schedule)}}
+						</td>
+						<td>
+							<div class="lessons-table">
+								<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
+								<span>{{Schedule.time ? Schedule.time : 'не установлено'}}</span>
+							</div>
+						</td>
+						<td>
+							кабинет {{Schedule.Cabinet.number}}
+						</td>
+						<td>
+							<span ng-show="inDate(Schedule.date, past_lesson_dates)">занятие проведено</span>
+							<a href='teachers/groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inDate(Schedule.date, past_lesson_dates) && lessonStarted(Schedule)' 
+								ng-class="{'add-to-journal': !inDate(Schedule.date, past_lesson_dates)}">
+								создать запись в журнале
+							</a>
+						</td>
+					</tr>
+				</table>
 				
 				<div style="margin: 15px 0; font-weight: bold">Итого: {{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
 						'one': 'занятие',

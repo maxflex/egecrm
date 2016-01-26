@@ -23,20 +23,31 @@ class SMS extends Model
 	 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
 	 *
 	 */
-	public static function getByPage($page)
+	public static function getByPage($page, $search = false)
 	{
 		if (!$page) {
 			$page = 1;
 		}
 		// С какой записи начинать отображение, по формуле
 		$start_from = ($page - 1) * self::PER_PAGE;
-
-		$SMS = self::findAll([
+		
+		$condition = [
 			"order" 	=> "id DESC",
 			"limit" 	=> $start_from. ", " .self::PER_PAGE
-		]);
+		];
+		
+		if ($search) {
+			$condition['condition'] = "number LIKE '%$search%' OR message LIKE '%$search%'";	
+		}
+		
+		$SMS = self::findAll($condition);
 				
 		return $SMS;
+	}
+	
+	public static function pagesCount($search)
+	{
+		return !empty($search) ? SMS::count(["condition" => "number LIKE '%$search%' OR message LIKE '%$search%'"]) : SMS::count();
 	}
 	
 	public static function sendToNumbers($numbers, $message, $additional = []) {
@@ -102,7 +113,11 @@ class SMS extends Model
 	public function getCoordinates()
 	{
 		if ($this->id_user) {
-			$this->user_login = User::getCached()[$this->id_user]['login'];
+			if ($this->id_user > User::LAST_REAL_USER_ID) {
+				$this->user_login = User::findById($this->id_user)->login;
+			} else {
+				$this->user_login = User::getCached()[$this->id_user]['login'];
+			}
 		} else {
 			$this->user_login = "system";
 		}

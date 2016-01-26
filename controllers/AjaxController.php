@@ -9,7 +9,7 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [User::USER_TYPE, User::SEO_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		##################################################
 		###################### AJAX ######################
@@ -135,26 +135,12 @@
 				}
 			}
 			
-			foreach(range(0, 6) as $day) {
-				$count = 0;
-				$date = date("Y-m", strtotime("-$day months"));
+			
+			foreach(range(0, 6) as $month) {
+				$contract_count = 0;
+// 				$messages = [];
 				
-/*
-				$Contracts = Contract::findAll([
-					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date-01' 
-						AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date-31' 
-						AND cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION
-				]);
-*/
-				
-/*
-				$contract_count = Contract::count([
-					"condition" => "STR_TO_DATE(date, '%d.%m.%Y') >= '$date-01' 
-						AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date-31' 
-						" . ($grade ? " AND grade = {$grade} " : "") . "
-						AND cancelled=0 " . Contract::ZERO_OR_NULL_CONDITION
-				]);
-*/
+				$date = date("Y-m", strtotime("-$month months"));
 				
 				$result = dbConnection()->query("
 					SELECT c.id FROM contracts c 
@@ -166,12 +152,31 @@
 						" . ($subjects ? " AND cs.id_subject IN ($subjects_ids) " : "") . "
 						" . ($id_branch ? " AND CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
 						" . ($grade ? " AND c.grade = {$grade} " : "") . "
-						AND c.cancelled=0 AND (c.id_contract=0 OR c.id_contract IS NULL)
 					GROUP BY c.id
-				");		
+				");
 				
-				//$contract_count = $result->fetch_object()->cnt;
-				$contract_count = $result->num_rows;
+				while ($row = $result->fetch_object()) {
+					$Contract = Contract::findById($row->id);
+					
+					// Если договор оригинальный, то прибавляем + все предметы в количество
+					if ($Contract->isOriginal()) {
+						$contract_count += count($Contract->subjects);
+// 						$messages[] = "Original contract №" . $Contract->id . ": +" . count($Contract->subjects);
+					} else {
+						// если это версия договора
+						$PreviousContract = $Contract->getPreviousVersion();
+						
+						// разница в предметах = кол-во новых договоров
+						$contract_count += count($Contract->subjects) - count($PreviousContract->subjects);
+						
+/*
+						$cnt = count($Contract->subjects) - count($PreviousContract->subjects);
+						if ($cnt > 0) {
+							$messages[] = "Contract №" . $Contract->id . ": +" . $cnt;
+						}
+*/
+					}
+				}
 				
 				$request_count = Request::count([
 					"condition" => "date >= '$date-01' AND date <= '$date-31' 
@@ -179,51 +184,12 @@
 						" . ($grade ? " AND grade = {$grade} " : "") . "
 						AND id_status!=" . RequestStatuses::DUPLICATE . " AND id_status!=" . RequestStatuses::SPAM
 				]);
-				
-// 				" . ($id_branch ? " AND CONCAT(',', CONCAT(branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
-				
-/*
-				if (User::fromSession()->id == 69) {
-					echo("date >= '$date-01' AND date <= '$date-31' 
-							" . ($subjects ? " AND (" . implode(' OR ', $subject_condition) . ")" : "") . "
-							" . ($id_branch ? " AND CONCAT(',', CONCAT(branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
-							" . ($grade ? " AND grade = {$grade} " : "") . "
-							AND id_status!=" . RequestStatuses::DUPLICATE . " AND id_status!=" . RequestStatuses::SPAM
-					);
-					exit();
-				}
-*/
-/*
-				foreach ($Contracts as $Contract) {
-					// если предметы указаны
-					$ContractSubjects = ContractSubject::findAll([
-						"condition" => "id_contract=" . $Contract->id . ($subjects ? " AND id_subject IN ($subjects_ids)" : "")
-					]);
-					
-					if ($ContractSubjects) {
-						foreach ($ContractSubjects as $Subject) {
-							// Находим группу по параметрам
-							$Group = Group::count([
-								"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Contract->id_student},%' 
-									AND id_subject = {$Subject->id_subject}
-									" . ($id_branch ? " AND id_branch={$id_branch}" : "") . "
-									" . ($grade ? " AND grade = {$grade}" : "")
-							]);
-							
-							if ($Group) {
-								$count++;
-							}
-						} 
-					}
-				}
-*/
-					
-				
+
 				$return[] = [
-					"month" => date("n", strtotime("-$day months")),
-//					"count"	=> $count,
+					"month" => date("n", strtotime("-$month months")),
 					"contract_count"	=> $contract_count,
 					"request_count"		=> $request_count,
+// 					"messages"			=> $messages,
 				];
 			}
 			
@@ -900,7 +866,7 @@
 				LEFT JOIN students s ON s.id = c.id_student
 				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
 				WHERE (". implode(" AND ", $condition) .")
-					AND (c.id_contract=0 OR c.id_contract IS NULL) AND c.cancelled=0 GROUP BY s.id");
+					AND (c.id_contract=0 OR c.id_contract IS NULL) AND cs.status > 1 GROUP BY s.id");
 			
 /*
 			ECHO("
@@ -923,11 +889,6 @@
 			
 			foreach ($Students as &$Student) {
 				$Student->Contract 	= $Student->getLastContract();
-				
-				if ($Student->Contract->cancelled) {
-					unset($Students[$index]);
-					continue;
-				}
 				
 				if ($Student->Contract->subjects) {
 					foreach ($Student->Contract->subjects as $subject) {
@@ -977,6 +938,7 @@
 			
 			foreach ($Schedule as &$S) {
 				$S->Group = Group::findById($S->id_group);
+				$S->is_unplanned = $S->isUnplanned();
 				
 				// номер урока
 				$S->lesson_number = GroupSchedule::count([

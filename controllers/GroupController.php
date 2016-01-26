@@ -144,6 +144,7 @@
 					$ang_init_data = angInit([
 						"Group" 	=> $Group,
 						"LessonData"=> $OrderedLessonData,
+						"Schedule"	=> $Schedule,
 						"lesson_statuses" => VisitJournal::$statuses,
 						"id_group"		=> $id_group,
 						"date"			=> $date,
@@ -288,6 +289,12 @@
 				}
 				
 				$Group->Schedule = $Group->getSchedule();
+				foreach ($Group->Schedule as &$Schedule) {
+					if ($Schedule->cabinet) {
+						$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
+					}
+				}
+				
 				$Group->Students = Student::findAll([
 					"condition" => "id IN (" . implode(',', $Group->students) . ")"
 				]);
@@ -447,49 +454,6 @@
 			]);
 		}
 		
-		public function actionAjaxGetStudents()
-		{
-			$Students = Student::getWithContract();
-			$Group    = Group::findById($_POST['id_group']);
-			
-			foreach ($Students as $index => &$Student) {
-				$Student->Contract 	= $Student->getLastContract();
-				
-				$Student->in_other_group = $Student->inOtherGroup($_POST['id_group'], $_POST['id_subject']) ? true : false;
-				
-				$freetime = $Student->getGroupFreetime($_POST['id_group'], $_POST['id_branch']);
-				$Student->freetime_red 			= $freetime['freetime_red'];
-				$Student->freetime_red_half 	= $freetime['freetime_red_half'];
-				$Student->freetime_orange	 	= $freetime["freetime_orange"];
-				$Student->freetime_orange_full 	= $freetime["freetime_orange_full"];
-				$Student->red_doubleblink 		= $freetime["red_doubleblink"];
-				
-				# Статус доставки СМС
-// 				$Student->delivery_data			= $Student->getAwaitingSmsStatuses($_POST['id_group']);
-
-				
-				if ($Group && array_key_exists($Student->id, $Group->student_statuses)) {
-					$Student->id_status 	= $Group->student_statuses[$Student->id]['id_status'];
-					$Student->notified		= $Group->student_statuses[$Student->id]['notified'];
-					$Student->review_status	= $Group->student_statuses[$Student->id]['review_status'];
-				}
-								
-				foreach ($Student->branches as $id_branch) {
-					if (!$id_branch) {
-						continue;
-					}
-					$Student->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
-				}
-			}
-			
-			// сортировка по номеру договора
-			usort($Students, function($a, $b) {
-				return ($a->Contract->id < $b->Contract->id ? -1 : 1);
-			});
-			
-			echo json_encode($Students, JSON_NUMERIC_CHECK);
-		}	
-			
 		public function actionAjaxSave()
 		{
 			$Group = $_POST;
@@ -568,6 +532,12 @@
 				if ($d == 0) {
 					$d = 7;
 				}
+				
+				// если дня нет в расписании группы
+				if (!in_array($d, array_keys($Group->day_and_time))) {
+					continue;
+				}
+				
 				$Schedule->time = end($Group->day_and_time[$d]);
 				$Schedule->save("time");
 				
@@ -730,14 +700,16 @@
 			//=========
 			
 			
-			
+			$GroupSchedule = GroupSchedule::find([
+				"condition" => "id_group={$Group->id} AND date='" . $FirstLesson->date ."'"
+			]);
 			$Template = Template::getFull(8, [
 				"student_name"	=> $Student->last_name . " " . $Student->first_name,
 				"subject"		=> Subjects::$dative[$Group->id_subject],
 				"address"		=> Branches::$address[$Group->id_branch],
 				"branch"		=> Branches::$all[$Group->id_branch],
 				"date"			=> $date_formatted,
-				"cabinet"		=> trim(Cabinet::findById($Group->cabinet)->number),
+				"cabinet"		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
 			]);
 			
 			$message = $Template->text;
@@ -1068,6 +1040,15 @@
 			
 			GroupSchedule::updateById($id, [
 				"cabinet" => $cabinet,
+			]);
+		}
+		
+		public function actionAjaxChangeScheduleFree()
+		{
+			extract($_POST);
+			
+			GroupSchedule::updateById($id, [
+				"is_free" => $is_free,
 			]);
 		}
 	}

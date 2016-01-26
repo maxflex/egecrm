@@ -37,7 +37,30 @@
 				date = date.join "-"
 				D = new Date(date)
 				moment(D).format "D MMMM YYYY г."
+			
+			$scope.timeUntilSave = ->
+				date_now = new Date()
+				date_lesson = new Date($scope.Schedule.date + " " + $scope.Schedule.time + ":00")
+				diff = date_now.getTime() - date_lesson.getTime()
+				data =
+					seconds: 59 - (Math.floor(diff / 1000) - (Math.floor(diff / 1000 / 60) * 60))
+					minutes: 30 - Math.floor(diff / 1000 / 60)
 				
+				if data.minutes < 0 
+					return true
+					
+				if data.minutes == 0 and data.seconds <=0
+					return true
+				else
+					data
+			
+			until_save_interval = setInterval ->
+				$scope.until_save = $scope.timeUntilSave()
+				clearInterval(until_save_interval) if $scope.until_save is true 
+				$scope.$apply()
+			, 1000
+			
+			
 			$scope.editStudent = (Student) ->
 				$scope.EditStudent = Student
 				$scope.EditLessonData = angular.copy $scope.LessonData[$scope.EditStudent.id]
@@ -69,6 +92,8 @@
 								$scope.$apply()
 			
 			angular.element(document).ready ->
+				$scope.until_save = $scope.timeUntilSave()
+				$scope.$apply()
 				set_scope "Group"
 				
 		.controller "ScheduleCtrl", ($scope) ->
@@ -97,6 +122,11 @@
 			
 			$scope.lessonCount = ->
 				Object.keys($scope.Group.day_and_time).length
+			
+			$scope.changeFree = (Schedule) ->
+				$.post "groups/ajax/changeScheduleFree",
+					id: Schedule.id
+					is_free: Schedule.is_free
 			
 			$scope.changeCabinet = (Schedule) ->
 				$.post "groups/ajax/changeScheduleCabinet",
@@ -136,7 +166,8 @@
 			
 			$scope.getInitParams = (el) ->
 				month = parseInt $(el).attr "month"
-				year = if month >= 8 then parseInt moment().format "YYYY" else moment().add(1, "years").format "YYYY"
+				# year = if month >= 8 then parseInt moment().format "YYYY" else moment().add(1, "years").format "YYYY"
+				year = if month >= 8 then parseInt moment().subtract(1, "years").format "YYYY" else moment().format "YYYY"
 				current_date = new Date "#{year}-#{month}-01"
 				language: 'ru'
 				startDate: current_date
@@ -959,6 +990,15 @@
 				if $scope.order_reverse
 					$scope.Groups.reverse()
 				
+				$scope.order_reverse = !$scope.order_reverse
+			
+			$scope.orderByCabinet = ->
+				$scope.Groups.sort (a, b) ->
+					a.CabinetInfo.number - b.CabinetInfo.number
+					
+				if $scope.order_reverse
+					$scope.Groups.reverse()
+				
 				$scope.order_reverse = !$scope.order_reverse			
 			
 			$scope.orderByFirstLesson = ->
@@ -969,6 +1009,15 @@
 					$scope.Groups.reverse()
 				
 				$scope.order_reverse = !$scope.order_reverse		
+			
+			$scope.orderByDaysBeforeExam = ->
+				$scope.Groups.sort (a, b) ->
+					a.days_before_exam - b.days_before_exam
+					
+				if $scope.order_reverse
+					$scope.Groups.reverse()
+				
+				$scope.order_reverse = !$scope.order_reverse
 			
 			$scope.inDayAndTime2 = (time, freetime) ->
 				return false if freetime is undefined
@@ -988,7 +1037,20 @@
 				id_subject: ""
 			
 			$scope.groupsFilter = (Group) ->
-				return (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and 
+				#time filtering
+				if $scope.search.time and $scope.search.time.length
+					time_correct = false
+					$.each $scope.search.time, (index, time) ->
+						t = time.split "-"
+						day = t[0]
+						time_index = t[1]
+						if Group.day_and_time[day] isnt undefined and Group.day_and_time[day][time_index] isnt undefined
+							time_correct = true
+							return
+				else 
+					time_correct = true
+
+				return time_correct and (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and 
 					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
 					(Group.id_subject.toString() in $scope.search.subjects or $scope.search.subjects.length is 0) and
 					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher) and
@@ -1127,6 +1189,10 @@
 					if $("#subjects-select").length
 						$("#subjects-select").selectpicker
 							noneSelectedText: "предметы"
+					
+					if $("#time-select").length
+						$("#time-select").selectpicker
+							noneSelectedText: "время занятия"
 	
 					$("#group-branch-filter2").selectpicker
 						noneSelectedText: "филиалы"

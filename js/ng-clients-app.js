@@ -28,12 +28,32 @@ angular.module("Clients", []).filter('to_trusted', [
     return sum;
   };
   $scope.clientsFilter = function(Student) {
-    if ($scope.filter_cancelled === 2) {
-      return _.findWhere(Student.Contract.subjects, {
-        status: 1
-      }) !== void 0 && Student.Contract.cancelled === 0;
-    } else {
-      return Student.Contract.cancelled === $scope.filter_cancelled;
+    var count;
+    switch ($scope.filter_cancelled) {
+      case 0:
+        return _.findWhere(Student.Contract.subjects, {
+          status: 3
+        }) !== void 0;
+      case 1:
+        count = 0;
+        $.each(Student.Contract.subjects, function(index, subject) {
+          if (subject.status === 1) {
+            return count++;
+          }
+        });
+        return count !== Object.keys(Student.Contract.subjects).length && count > 0;
+      case 2:
+        count = 0;
+        $.each(Student.Contract.subjects, function(index, subject) {
+          if (subject.status === 1) {
+            return count++;
+          }
+        });
+        return count === Object.keys(Student.Contract.subjects).length;
+      case 3:
+        return _.findWhere(Student.Contract.subjects, {
+          status: 2
+        }) !== void 0;
     }
   };
   $scope.order = 2;
