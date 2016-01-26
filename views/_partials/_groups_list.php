@@ -55,12 +55,11 @@
 -->
 		</td>
 		<td>
-			<div ng-repeat="(day, day_data) in Group.day_and_time">
+			<span ng-repeat="(day, day_data) in Group.day_and_time">
 				{{weekdays[day - 1].short}}
 				<span ng-repeat="dd in day_data">
-					в {{dd}}{{$last ? "" : ","}}
-				</span>
-			</div>
+					в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ","}}
+			</span> 
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
 		</td>
 		<td>
@@ -77,8 +76,15 @@
 			}"></ng-pluralize></span>
 		</td>
 		<td>
-			<span class="label center-label group-teacher-status<?= GroupTeacherStatuses::AGREED ?>" ng-show="Group.teacher_agreed">
-				<?= GroupTeacherStatuses::$all[GroupTeacherStatuses::AGREED] ?>
+			<span ng-show="Group.days_before_exam !== false">
+				<span ng-show="Group.days_before_exam > 0">
+					запас {{Group.days_before_exam}} <ng-pluralize count="Group.days_before_exam" when="{
+						'one': 'день',
+						'few': 'дня',
+						'many': 'дней'
+					}"></ng-pluralize>
+				</span>
+				<span ng-show="Group.days_before_exam <= 0">запаса нет</span>
 			</span>
 		</td>
 <!--
