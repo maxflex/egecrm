@@ -5,18 +5,22 @@
 				 <div class="visit-div-group">
 					<a href="groups/edit/{{id_group}}">Группа №{{id_group}}</a>
 				</div>
-<!--
-				 <div ng-repeat="Visit in getVisitsByGroup(id_group)" ng-click="toggleMissingNote(Visit)" 
-					 class="visit-div-circle">
-					<span class="circle-default" title="{{formatVisitDate(Visit.lesson_date)}}{{(Visit.presence == 1 && Visit.late > 0) ? ', опоздание ' + Visit.late + ' мин.' : ''}}"
-					ng-class="{
-						'circle-red'	: Visit.presence == 2,
-						'circle-orange'	: Visit.presence == 1 && Visit.late > 0
-					}"></span>
-					<span ng-show="Visit.missing_note"
-					 	class="circle-default circle-future-missing" title="{{formatVisitDate(Visit.lesson_date)}}"></span>
-				 </div>
--->
+				
+				<span ng-if="!getGroup(id_group)">
+					<div ng-repeat="Visit in getVisitsByGroup(id_group)" ng-click="toggleMissingNote(Visit)" 
+						 class="visit-div-circle">
+						<span class="circle-default" title="{{formatVisitDate(Visit.lesson_date)}}{{(Visit.presence == 1 && Visit.late > 0) ? ', опоздание ' + Visit.late + ' мин.' : ''}}"
+						ng-class="{
+							'circle-red'	: Visit.presence == 2,
+							'circle-orange'	: Visit.presence == 1 && Visit.late > 0
+						}"></span>
+						<span ng-show="Visit.missing_note"
+						 	class="circle-default circle-future-missing" title="{{formatVisitDate(Visit.lesson_date)}}"></span>
+					</div>
+					<span class="visit-between-number">{{getVisitsByGroup(id_group).length}}</span>
+				</span>
+				
+				
 				 <div ng-repeat="Visit in getGroup(id_group).Schedule" class="visit-div-circle">
 				 	
 				 	<span class="visit-between-number" ng-show="visit_data_counts[id_group][$index]">{{ visit_data_counts[id_group][$index] }}</span>
@@ -40,8 +44,7 @@
 							class="circle-default circle-future-missing" title="{{formatVisitDate(getVisit(id_group, Visit.date).lesson_date)}}"></span>
 					</span>
 				 </div>
-				 <span  class="visit-between-number" ng-show="visit_data_counts[id_group]['last']">{{ visit_data_counts[id_group]['last'] }}</span>
-<!-- 				 <span style="margin-left: 5px">{{getGroup(id_group).Schedule.length + getVisitsByGroup(id_group).length}}</span> -->
+				 <span class="visit-between-number" ng-show="visit_data_counts[id_group]['last']">{{ visit_data_counts[id_group]['last'] }}</span>
 			 </div>
     </div>
 </div>

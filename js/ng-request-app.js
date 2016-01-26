@@ -1620,17 +1620,19 @@
 				// генерируем массив цифр посещаемости
 				$scope.visit_data_counts = {}
 				$.each($scope.getStudentGroups(), function (index, id_group) {
-					$scope.visit_data_counts[id_group] = {}
-					change_index = 0
-					$.each($scope.getGroup(id_group).Schedule, function (index, Visit) {
-						if (index > 0) {
-							if ($scope.getVisitBoolean(id_group, $scope.getGroup(id_group).Schedule[index - 1].date) != $scope.getVisitBoolean(id_group, Visit.date)) {
-								$scope.visit_data_counts[id_group][index] = index - change_index
-								change_index = index
+					if ($scope.getGroup(id_group)) {
+						$scope.visit_data_counts[id_group] = {}
+						change_index = 0
+						$.each($scope.getGroup(id_group).Schedule, function (index, Visit) {
+							if (index > 0) {
+								if ($scope.getVisitBoolean(id_group, $scope.getGroup(id_group).Schedule[index - 1].date) != $scope.getVisitBoolean(id_group, Visit.date)) {
+									$scope.visit_data_counts[id_group][index] = index - change_index
+									change_index = index
+								}
 							}
-						}
-					})
-					$scope.visit_data_counts[id_group]['last'] = $scope.getGroup(id_group).Schedule.length - change_index
+						})
+						$scope.visit_data_counts[id_group]['last'] = $scope.getGroup(id_group).Schedule.length - change_index
+					}
 				})
 			    
 			    // promo-code-loading
