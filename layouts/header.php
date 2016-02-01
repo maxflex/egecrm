@@ -6,7 +6,7 @@
     <?php
 	    // Дебаг
 	    if (LOCAL_DEVELOPMENT) {
-		    echo '<base href="http://localhost:8080/egecrm/">';
+		    echo '<base href="' . BASE_LOCAL . BASE_ADDON . '">';
 	    } else {
 		    echo '<base href="/egecrm/">';
 	    }
