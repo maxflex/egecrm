@@ -679,4 +679,14 @@
 		
 		return implode(" ", $name_ordered);
 	}
+	
+	
+	function searcharray($value, $key, $array) {
+	   foreach ($array as $k => $val) {
+	       if ($val[$key] == $value) {
+	           return $array[$k];
+	       }
+	   }
+	   return null;
+	}
 ?>

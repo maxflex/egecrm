@@ -71,6 +71,7 @@
 					"id_user_saved"			=> User::fromSession()->id,
 					"id_teacher"			=> $Group->id_teacher,
 					"grade"					=> $Group->grade,
+					"duration"				=> $Group->duration,
 				]);
 			}
 			
@@ -88,6 +89,7 @@
 				"teacher_price"			=> $Group->teacher_price,
 				"id_user_saved"			=> User::fromSession()->id,
 				"grade"					=> $Group->grade,
+				"duration"				=> $Group->duration,
 			]);
 		}
 		

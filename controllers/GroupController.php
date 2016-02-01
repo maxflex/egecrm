@@ -440,6 +440,7 @@
 				"Subjects"	=> Subjects::$three_letters,
 				"GroupLevels" => GroupLevels::$all,
 				"subjects_short" => Subjects::$short,
+				"duration"		=> Group::DURATION,
 				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
 				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
 				"GroupTeacherStatuses"	=> GroupTeacherStatuses::$all,

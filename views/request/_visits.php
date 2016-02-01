@@ -4,6 +4,10 @@
 			 <div ng-repeat="id_group in getStudentGroups()" class="visit-div">
 				 <div class="visit-div-group">
 					<a href="groups/edit/{{id_group}}">Группа №{{id_group}}</a>
+				
+				<span>
+					{{Subjects[getAnyGroup(id_group).id_subject]}}{{getAnyGroup(id_group).grade ? '-' + getAnyGroup(id_group).grade : ''}}				
+				</span>
 				</div>
 				
 				<span ng-if="!getGroup(id_group)">
@@ -45,6 +49,14 @@
 					</span>
 				 </div>
 				 <span class="visit-between-number" ng-show="visit_data_counts[id_group]['last']">{{ visit_data_counts[id_group]['last'] }}</span>
+				 <span class="visit-between-number" style="width: auto">итого {{ getGroup(id_group) ? getGroup(id_group).Schedule.length : getVisitsByGroup(id_group).length }} <ng-pluralize count="getGroup(id_group) ? getGroup(id_group).Schedule.length : getVisitsByGroup(id_group).length" when="{
+					 'one': 'занятие',
+					 'few': 'занятия',
+					 'many': 'занятий',
+				 }"></ng-pluralize></span>
+				 
+				 
+				 
 			 </div>
     </div>
 </div>

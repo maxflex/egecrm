@@ -96,6 +96,10 @@
 		        	"ng-model" 		=> "Group.level",
 		        ]) ?>
             </div>
+            <div class="form-group">
+	           <select class="form-control" ng-model="Group.duration" ng-options="min as min + ' мин.' for min in duration">
+	           </select>
+            </div>
             <span ng-show="is_student_dragging" class="student-dragout ng-hide">удалить</span>
 		</div>
 			

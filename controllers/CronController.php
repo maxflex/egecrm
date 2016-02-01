@@ -528,6 +528,7 @@
 		 */
 		public static function actionUpdateSmsStatus()
 		{
+			// Email::send("makcyxa-k@yandex.ru", "СМС post", json_encode($_POST));
 			foreach ($_POST["data"] as $entry) {
 				$lines = explode("\n",$entry);
 				if ($lines[0] == "sms_status") {

@@ -26,6 +26,11 @@
 			$this->Passport			= Passport::findById($this->id_passport);
 		}
 		
+		public function afterSave()
+		{
+			$this->updateSearchData();
+		}
+		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		public static function getReportCount($id_student)
 		{
@@ -561,6 +566,22 @@
 			return $Groups;
 		}
 		
+		public function getJournalGroups()
+		{
+			$result = dbConnection()->query("
+				SELECT g.* FROM groups g
+				LEFT JOIN visit_journal vj on g.id = vj.id_group
+				WHERE vj.type_entity='STUDENT' AND vj.id_entity={$this->id}
+				GROUP BY g.id
+			");
+			
+			$Groups = [];
+			while ($row = $result->fetch_object()) {
+				$Groups[] = $row;
+			}
+			return $Groups;
+		}
+		
 		public function countGroupsStatic($id_student)
 		{
 			return Group::count([
@@ -1006,6 +1027,75 @@
 			foreach ($marker_data as $marker) {
 				Marker::add($marker + ["id_owner" => $id_student, "owner" => self::MARKER_OWNER]);
 			}
+		}
+		
+		
+		/**
+		 * Обновить данные по поиску.
+		 * 
+		 */
+		public function updateSearchData()
+		{
+			$text = "";
+			$Requests = $this->getRequests();
+			foreach ($Requests as $Request) {
+				$text .= $Request->name;
+				$text .= self::_getPhoneNumbers($Request);
+			}
+			// Имя, телефоны ученика и представителя
+			$text .= $this->name();
+			$text .= self::_getPhoneNumbers($this);
+			$text .= $this->email;
+			
+			if ($this->Passport) {
+				$text .= $this->Passport->series;
+				$text .= $this->Passport->number;
+			}
+			
+			if ($this->Representative) {
+				$text .= $this->Representative->name();
+				$text .= self::_getPhoneNumbers($this->Representative);
+				$text .= $this->Representative->email;
+				$text .= $this->Representative->address;
+				
+				if ($this->Representative->Passport) {
+					$text .= $this->Representative->Passport->series;
+					$text .= $this->Representative->Passport->number;
+					$text .= $this->Representative->Passport->issued_by;
+					$text .= $this->Representative->Passport->address;
+				}
+			}
+			
+			// Последние 4 цифры номер карты
+			$Payments = Payment::findAll([
+				"condition" => "id_status=" . Payment::PAID_CARD . " AND id_student=" . $this->id . " AND card_number!=''"
+			]);
+			foreach ($Payments as $Payment) {
+				$text .= $Payment->card_number;
+			}
+			
+			$exists = dbConnection()->query("
+				SELECT id_student FROM search_students
+				WHERE id_student = {$this->id}
+			")->num_rows;
+			
+			if ($exists) {			
+				dbConnection()->query("UPDATE search_students SET search_text = '{$text}' WHERE id_student = {$this->id}");
+			} else {
+				dbConnection()->query("INSERT INTO search_students (search_text, id_student) VALUES ('{$text}', {$this->id})");
+			}
+		}
+		
+		private static function _getPhoneNumbers($Object)
+		{
+			$text = "";
+			foreach (Student::$_phone_fields as $phone_field) {
+				$phone = $Object->{$phone_field};
+				if (!empty($phone)) {
+					$text .= $phone;
+				}
+			}
+			return $text;
 		}
 					
 	}

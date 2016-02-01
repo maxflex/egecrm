@@ -61,6 +61,18 @@
 			
 			$red_count = 0;
 			foreach ($student_subject as $Object) {
+				// проверяем статус расторжения
+				$status = dbConnection()->query("
+					SELECT cs.status FROM contract_subjects cs
+					LEFT JOIN contracts c on c.id = cs.id_contract
+					WHERE c.id_student = {$Object->id_entity} " . Contract::ZERO_OR_NULL_CONDITION_JOIN . " 
+						AND cs.id_subject = {$Object->id_subject}
+				")->fetch_object()->status;
+				
+				if ($status <= 1) {
+					continue;
+				}
+				
 				// получаем кол-во занятий с последнего отчета по предмету
 				$LatestReport = Report::find([
 					"condition" => "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ." AND id_teacher=" . $id_teacher

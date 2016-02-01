@@ -344,6 +344,19 @@
 				return _.findWhere($scope.Groups, {id: parseInt(id)})
 			}
 			
+			$scope.getJournalGroup = function(id) {
+				return _.findWhere($scope.JournalGroups, {id: parseInt(id)})
+			}
+			
+			// Пытается найти сначала существующую группу, если нет, то пытаетя найти группу из журнала
+			$scope.getAnyGroup = function(id) {
+				Group = $scope.getGroup(id)
+				if (!Group) {
+					Group = $scope.getJournalGroup(id)
+				}
+				return Group
+			}
+			
 			// получить группы из журнала
 			$scope.getJournalGroups = function() {
 				return Object.keys(_.chain($scope.Journal).groupBy('id_group').value())
