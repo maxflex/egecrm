@@ -59,9 +59,6 @@
 						'many': 'рублей',
 					}"></ng-pluralize></span>
 				</td>
-				<td>
-					<span>{{Student.email}}</span>
-				</td>
 			</tr>
 			<tr>
 				<td colspan="5"></td>

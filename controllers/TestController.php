@@ -16,6 +16,11 @@
 */
 		}
 		
+		public function actionMango()
+		{
+			Mango::call();
+		}
+		
 		public function actionTestyTest()
 		{
 			$Students = Student::getWithoutGroupErrors();

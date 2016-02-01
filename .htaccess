@@ -142,3 +142,6 @@ RewriteRule ^upload[/]?$ index.php?controller=upload [QSA,L]
 
 # Если шо, переводим на логин
 RewriteRule ^[/]?$ index.php?controller=login&action=login [QSA,L]
+
+# Mango
+RewriteRule ^mango/events/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=$1 [QSA,L]

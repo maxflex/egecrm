@@ -42,9 +42,9 @@
 	// не на логин контроллер, не на апи контроллер (эти страницы доступны незалогиненным)
 	// (можно сделать и редирект, для этого раскомментить первую строчку)
 
-	$bypass_login = ["LoginController", "ApiController", "CronController"]; // эти страницы не требуют логина для просмотра
+	$bypass_login = ["LoginController", "ApiController", "CronController", "MangoController"]; // эти страницы не требуют логина для просмотра
 	
-	$external_requests = ["ApiController", "CronController"];
+	$external_requests = ["ApiController", "CronController", "MangoController"];
 	
 	// Пытаемся войти
 	User::rememberMeLogin();
