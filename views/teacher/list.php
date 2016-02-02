@@ -52,11 +52,13 @@
 							</span>
 						</td>
 						<td>
-							{{Teacher.reports_sent_count}}/{{Teacher.reports_count}} <ng-pluralize count="Teacher.reports_count" when="{
-								'one': 'отчет',
-								'few': 'отчета',
-								'many': 'отчетов',
-							}"></ng-pluralize> из {{Teacher.student_subject_counts.all}}/<span class="text-danger">{{Teacher.student_subject_counts.red}}</span>
+						    <span class="label label-danger-red" ng-show="Teacher.student_subject_counts.red">
+                                требуется создать {{Teacher.student_subject_counts.red}} <ng-pluralize count="Teacher.student_subject_counts.red" when="{
+                                    'one': 'отчет',
+                                    'few': 'отчета',
+                                    'many': 'отчетов',
+                                }"></ng-pluralize>
+							</span>
 						</td>
 						<td>
 							<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
