@@ -8,7 +8,7 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<?= $Group->id ? "Группа {$Group->id} " . ($Group->is_special ? "(спецгруппа)" : "") : "Добавление группы" ?>
+		<?= $Group->id ? "ГГруппа {$Group->id} " . ($Group->is_special ? "(спецгруппа)" : "") : "Добавление группы" ?>
 		<?php if ($Group->id) :?>
 			<span ng-show="Group.schedule_count > 0 && !Group.past_lesson_count" style="margin-bottom: 20px">({{Group.schedule_count}} <ng-pluralize count="Group.schedule_count" when="{
 				'one': 'занятие',
