@@ -135,27 +135,6 @@
 									<span class="text-success default" ng-show="Student.sms_notified">смс отправлено</span>
 								</span>
 							</td>
-							<td>
-								<span ng-click="toggleAgreement(Student)" class="pointer">
-									<span class="half-black" 	ng-show="Student.agreement == 0">не установлено</span>
-									<span class="text-success"	ng-show="Student.agreement == 3"><?= GroupAgreement::$all[3] ?></span>
-									<span class="text-warning" 	ng-show="Student.agreement == 2"><?= GroupAgreement::$all[2] ?></span>
-									<span class="half-black"	ng-show="Student.agreement == 1"><?= GroupAgreement::$all[1] ?></span>
-								</span>
-<!--
-								<span class="label group-student-status{{Student.id_status}} s-s-s student-status-span-{{Student.id}}"
-									ng-click="setStudentStatus(Student, $event)">
-									{{Student.id_status ? GroupStudentStatuses[Student.id_status] : "статус"}}
-								</span>
-								<select ng-model="Student.id_status" class="student-status-select-{{Student.id}}"
-									style="display: none; width: 150px" data-id="{{Student.id}}">
-										<option selected value="">статус</option>
-										<option disabled>──────────────</option>
-										<option ng-repeat="(id_status, name) in GroupStudentStatuses" ng-value="id_status"
-											ng-selected="Student.id_status == id_status">{{name}}</option>
-								</select>
--->
-							</td>
 							<td width="150">
 								<span ng-repeat="(day, data) in Student.bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
@@ -163,7 +142,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="5"></td>
+							<td colspan="4"></td>
 							<td width="150">
 							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
@@ -180,14 +159,6 @@
 								</span>
 								<a href="https://crm.a-perspektiva.ru/repetitors/edit/?id={{getTeacher(Group.id_teacher).id_a_pers}}"
 									target="_blank">ЕР</a>
-							</td>
-							<td  style="width: 150px !important">
-									<span ng-click="toggleAgreement(getTeacher(Group.id_teacher))" class="pointer">
-										<span class="half-black" 	ng-show="getTeacher(Group.id_teacher).agreement == 0">не установлено</span>
-										<span class="text-primary"	ng-show="getTeacher(Group.id_teacher).agreement == 3"><?= GroupAgreement::$all[3] ?></span>
-										<span class="text-warning" 	ng-show="getTeacher(Group.id_teacher).agreement == 2"><?= GroupAgreement::$all[2] ?></span>
-										<span class="half-black"	ng-show="getTeacher(Group.id_teacher).agreement == 1"><?= GroupAgreement::$all[1] ?></span>
-									</span>
 							</td>
 							<td width="150">
 							   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">

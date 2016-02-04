@@ -468,21 +468,7 @@
 
 			if ($save) {
 				$this->save("id_passport");
-			}
-		}
-
-		public function agreedToBeInGroup($id_group)
-		{
-			return GroupStudentStatuses::count([
-				"condition" => "id_student=" . $this->id . " AND id_group=" . $id_group . " AND id_status=" . GroupStudentStatuses::AGREED
-			]) > 0 ? true : false;
-		}
-
-		public function agreedToBeInGroupStatic($id_student, $id_group)
-		{
-			return GroupStudentStatuses::count([
-				"condition" => "id_student=" . $id_student . " AND id_group=" . $id_group . " AND id_status=" . GroupStudentStatuses::AGREED
-			]) > 0 ? true : false;
+			} 
 		}
 
 		public function notifiedInGroupStatic($id_student, $id_group)

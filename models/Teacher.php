@@ -267,20 +267,6 @@
 			return $Reports;
 		}
 
-		public function agreedToBeInGroup($id_group)
-		{
-			return GroupAgreement::count([
-				"condition" => "id_entity=" . $this->id . " AND id_group=" . $id_group . " AND type_entity='TEACHER' AND id_status=" . GroupTeacherStatuses::AGREED
-			]) > 0 ? true : false;
-		}
-
-		public function agreedToBeInGroupStatic($id_teacher, $id_group)
-		{
-			return GroupAgreement::count([
-				"condition" => "id_entity=" . $id_teacher . " AND id_group=" . $id_group . " AND type_entity='TEACHER' AND id_status=" . GroupTeacherStatuses::AGREED
-			]) > 0 ? true : false;
-		}
-
 		public function hadLesson()
 		{
 			return VisitJournal::count([

@@ -327,43 +327,6 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
   });
 }).controller("EditCtrl", function($scope) {
   var bindDraggable, bindGroupsDroppable, initDayAndTime, initFreetime, justSave, rebindBlinking;
-  $scope.toggleAgreement = function(Entity) {
-    var id_status, type_entity;
-    type_entity = Entity.hasOwnProperty('id_a_pers') ? 'TEACHER' : 'STUDENT';
-    console.log(type_entity);
-    id_status = Entity.agreement;
-    if (id_status === 0) {
-      id_status = 3;
-    } else {
-      id_status--;
-    }
-    return $.post("ajax/toggleGroupAgreement", {
-      id_entity: Entity.id,
-      type_entity: type_entity,
-      id_group: $scope.Group.id,
-      day_and_time: $scope.Group.day_and_time,
-      id_status: id_status
-    }, function(response) {
-      Entity.agreement = id_status;
-      return $scope.$apply();
-    });
-  };
-  $scope.toggleTeacherLike = function(Student) {
-    var id_status;
-    id_status = Student.teacher_like_status;
-    id_status++;
-    if (id_status > 3) {
-      id_status = 0;
-    }
-    return $.post("ajax/toggleTeacherLike", {
-      id_student: Student.id,
-      id_teacher: $scope.Group.id_teacher,
-      id_status: id_status
-    }, function(response) {
-      Student.teacher_like_status = id_status;
-      return $scope.$apply();
-    });
-  };
   $scope.allStudentStatuses = function() {
     var student_statuses_count;
     student_statuses_count = _.filter($scope.Group.student_statuses, function(s, id_student) {
@@ -528,20 +491,6 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
       cabinet: $scope.Group.cabinet
     });
     return $scope.updateCabinetBar();
-  };
-  $scope.updateAgreement = function() {
-    return $.post("groups/ajax/UpdateAgreement", {
-      id_group: $scope.Group.id,
-      day_and_time: $scope.Group.day_and_time,
-      id_teacher: $scope.Group.id_teacher,
-      students: $scope.Group.students
-    }, function(response) {
-      $scope.getTeacher($scope.Group.id_teacher).agreement = response.teacher_agreement;
-      $.each(response.student_agreements, function(id_student, id_status) {
-        return $scope.getStudent(id_student).agreement = id_status;
-      });
-      return $scope.$apply();
-    }, "json");
   };
   $scope.changeTeacher = function() {
     if (!$scope.Group.id) {
@@ -1128,7 +1077,6 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
         ajaxEnd();
         $scope.saving = false;
         $scope.form_changed = false;
-        $scope.updateAgreement();
         $scope.updateTeacherBar();
         $scope.updateCabinetBar(false);
         $scope.updateStudentBars();
