@@ -14,44 +14,44 @@
 		##################################################
 		###################### AJAX ######################
 		##################################################
-		
+
 		public function actionAjaxSaveExamDays()
 		{
 			extract($_POST);
-			
+
 			ExamDay::addData($exam_days);
 		}
-		
+
 		public function actionAjaxStatsGroups()
 		{
 			returnJsonAng(memcached()->get('StatsGroups'));
 		}
-		
+
 		public function actionAjaxDeleteRemainder()
 		{
 			PaymentRemainder::deleteById($_POST['id']);
 		}
-		
+
 		public function actionAjaxUpdateRemainder()
 		{
 			extract($_POST);
-			
+
 			PaymentRemainder::updateById($id, [
 				"remainder" => $remainder
 			]);
 		}
-		
+
 		public function actionAjaxAddRemainder()
 		{
 			extract($_POST);
-			
+
 			$Student	= Student::findById($id_student);
 			$Contract 	= $Student->getContracts()[0];
 			$Payments 	= $Student->getPayments();
-			
+
 			// сумма последней версии текущего договора минус сумма платежей и плюс сумма возвратов
 			$remainder = $Contract->sum;
-			
+
 			foreach ($Payments as $Payment) {
 				if ($Payment->id_type == PaymentTypes::PAYMENT) {
 					$remainder -= $Payment->sum;
@@ -60,109 +60,109 @@
 					$remainder += $Payment->sum;
 				}
 			}
-			
+
 			$PaymentRemainder = PaymentRemainder::add([
 				"id_student"	=> $Student->id,
 				"remainder"		=> $remainder,
 			]);
-			
+
 			returnJsonAng($PaymentRemainder);
 		}
-		
+
 		public function actionAjaxContinueSession()
 		{
 			# ничего не надо, пустая функция для обновления сессии
 		}
-		
+
 		public function actionAjaxCheckLogout()
 		{
 			// если в режиме просмотра, не делаем логаут
 			if (isset(User::fromSession()->AsUser)) {
-				returnJsonAng(0);	
+				returnJsonAng(0);
 			}
-			
+
 			if (User::fromSession()->type == User::USER_TYPE) {
-				$minutes_limit = 40; // 40 минут для пользователей			
+				$minutes_limit = 40; // 40 минут для пользователей
 			} else {
 				$minutes_limit = 15; // 15 минут
 			}
-			
+
 			// разница во времени между последним действием и сейчас
 			// (сколько минут назад было последнее действие)
 			$time_diff = (time() - User::fromSession()->last_action_time) / 60;
-			
+
 // 			returnJsonAng($time_diff);
-			
+
 			// одна минута до выброса из сессии
 			if ($time_diff >= ($minutes_limit - 1) && $time_diff <= $minutes_limit) {
 				returnJsonAng(2);
 			}
-			
+
 			if ($time_diff >= $minutes_limit) {
 				// Удаляем сессию
 				session_destroy();
 				session_unset();
-				
+
 				// Очищаем куку залогиненного пользователя
 				removeCookie("egecrm_token");
-				
+
 				// Очищаем куку сессии PHP
-				removeCookie("PHPSESSID", "/"); 
+				removeCookie("PHPSESSID", "/");
 				//setcookie("PHPSESSID","",time()-3600,"/"); // delete session cookie
-				
-				returnJsonAng(1);	
+
+				returnJsonAng(1);
 			}
-			
+
 			returnJsonAng(0);
 		}
-		
+
 		public function actionAjaxEgecentr()
 		{
 			$data = egeCentrData();
-			
+
 			foreach ($data as $d) {
 				$return[$d['student_id'] . "_" . $d["subjects"] . "_" . $d["grade"]][$d['date']] = $d['status'];
 			}
-			
+
 			returnJsonAng($return);
 		}
-		
+
 		public function actionAjaxGroupCreateHelper()
 		{
 			extract($_POST);
-			
+
 			if ($subjects) {
 				$subjects_ids = implode(",", $subjects);
-				
+
 				$subject_condition = [];
 				foreach ($subjects as $id_subject) {
 					$subject_condition[] = "CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%' ";
 				}
 			}
-			
-			
+
+
 			foreach(range(0, 6) as $month) {
 				$contract_count = 0;
 // 				$messages = [];
-				
+
 				$date = date("Y-m", strtotime("-$month months"));
-				
+
 				$result = dbConnection()->query("
-					SELECT c.id FROM contracts c 
+					SELECT c.id FROM contracts c
 						LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
 						LEFT JOIN students s ON s.id = c.id_student
 						LEFT JOIN requests r ON r.id_student = s.id
-					WHERE STR_TO_DATE(c.date, '%d.%m.%Y') >= '$date-01' 
-						AND STR_TO_DATE(c.date, '%d.%m.%Y') <= '$date-31' 
+					WHERE STR_TO_DATE(c.date, '%d.%m.%Y') >= '$date-01'
+						AND STR_TO_DATE(c.date, '%d.%m.%Y') <= '$date-31'
 						" . ($subjects ? " AND cs.id_subject IN ($subjects_ids) " : "") . "
 						" . ($id_branch ? " AND CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
 						" . ($grade ? " AND c.grade = {$grade} " : "") . "
 					GROUP BY c.id
 				");
-				
+
 				while ($row = $result->fetch_object()) {
 					$Contract = Contract::findById($row->id);
-					
+
 					// Если договор оригинальный, то прибавляем + все предметы в количество
 					if ($Contract->isOriginal()) {
 						$contract_count += count($Contract->subjects);
@@ -170,10 +170,10 @@
 					} else {
 						// если это версия договора
 						$PreviousContract = $Contract->getPreviousVersion();
-						
+
 						// разница в предметах = кол-во новых договоров
 						$contract_count += count($Contract->subjects) - count($PreviousContract->subjects);
-						
+
 /*
 						$cnt = count($Contract->subjects) - count($PreviousContract->subjects);
 						if ($cnt > 0) {
@@ -182,9 +182,9 @@
 */
 					}
 				}
-				
+
 				$request_count = Request::count([
-					"condition" => "date >= '$date-01' AND date <= '$date-31' 
+					"condition" => "date >= '$date-01' AND date <= '$date-31'
 						" . ($subjects ? " AND (" . implode(' OR ', $subject_condition) . ")" : "") . "
 						" . ($grade ? " AND grade = {$grade} " : "") . "
 						AND id_status!=" . RequestStatuses::DUPLICATE . " AND id_status!=" . RequestStatuses::SPAM
@@ -197,20 +197,20 @@
 // 					"messages"			=> $messages,
 				];
 			}
-			
+
 			$return = array_reverse($return);
-			
+
 			returnJsonAng($return);
 		}
-		
+
 		public function actionAjaxMissingNoteToggle()
 		{
 			extract($_POST);
-			
+
 			$GroupNote = GroupNote::find([
 				"condition" => "id_group=$id_group AND id_student=$id_student AND date='$date'"
 			]);
-			
+
 			if ($GroupNote) {
 				$GroupNote->delete();
 				returnJsonAng(false);
@@ -219,27 +219,27 @@
 				returnJsonAng(true);
 			}
 		}
-				
+
 		public function actionAjaxToggleGroupAgreement()
 		{
 			GroupAgreement::addData($_POST);
 		}
-		
+
 		public function actionAjaxToggleTeacherLike()
 		{
 			GroupTeacherLike::addData($_POST);
 		}
-		
+
 		public function actionAjaxTest()
 		{
 			$Request = new Request([
 				"phone" => "+7 (911) 111-11-11"
 			]);
-			
+
 			$Request->processIncoming();
-			
+
 			preType($Request);
-			
+
 			exit("here");
 		}
 
@@ -272,8 +272,8 @@
 			$Comment->comment = $comment;
 			$Comment->save("comment");
 		}
-		
-		
+
+
 		public function actionAjaxTestDeleteStudent()
 		{
 			Student::fullDelete(651);
@@ -292,11 +292,11 @@
 		{
 			echo Payment::add($_POST)->id;
 		}
-		
+
 		public function actionAjaxConfirmPayment()
 		{
 			extract($_POST);
-			
+
 			Payment::updateById($id, [
 				"confirmed" => $confirmed
 			]);
@@ -321,16 +321,16 @@
 		{
 			echo TeacherPayment::add($_POST)->id;
 		}
-		
+
 		public function actionAjaxConfirmTeacherPayment()
 		{
 			extract($_POST);
-			
+
 			TeacherPayment::updateById($id, [
 				"confirmed" => $confirmed
 			]);
 		}
-		
+
 		public function actionAjaxDeleteTeacherPayment()
 		{
 			TeacherPayment::deleteById($_POST["id_payment"]);
@@ -342,9 +342,9 @@
 			$Payment->save();
 		}
 		# / TEACHER PAYMENTS
-		
-		
-		
+
+
+
 		public function actionAjaxContractSave()
 		{
 			returnJson(Contract::addNewAndReturn($_POST));
@@ -354,7 +354,7 @@
 		{
 			returnJson(Contract::edit($_POST));
 		}
-		
+
 		public function actionAjaxUploadFiles()
 		{
 			$Contract = Contract::findById($_POST["id_contract"]);
@@ -398,11 +398,11 @@
 		public function actionAjaxDeleteRequest()
 		{
 			extract($_POST);
-			
+
 			// нельзя удалять, если меньше одной заявки
 			$Request = Request::findById($id_request);
 			$RequestDuplicates = $Request->getDuplicates();
-			
+
 			// удаляем заявку только если есть дубликаты (если она не единственная)
 			if ($RequestDuplicates) {
 				Request::deleteById($id_request);
@@ -455,38 +455,38 @@
 			$Student->save("minimized");
 		}
 
-		
+
 		/**
 		 * Эта функция вынесена в отдельную функцию в isDuplicate (functions.php).
-		 * 
+		 *
 		 */
 		public function actionAjaxCheckPhone()
 		{
 			extract($_POST);
-			
+
 			returnJSON(isDuplicate($phone, $id_request));
 		}
-		
+
 		public function actionAjaxSendSms()
 		{
 			extract($_POST);
-			
+
 			$SMS = SMS::send($number, $message);
 			$SMS->getCoordinates();
-			
+
 			returnJSON($SMS);
 		}
-		
+
 		public function actionAjaxSendGroupSmsTeachers()
 		{
 			extract($_POST);
-			
+
 			$Teachers = Teacher::findAll();
-			
+
 			foreach ($Teachers as $Teacher) {
 				foreach (Student::$_phone_fields as $phone_field) {
 					$number = $Teacher->{$phone_field};
-					
+
 					if (!empty(trim($number))) {
 						$msg = $message;
 						if ($Teacher->login && $Teacher->password) {
@@ -501,13 +501,13 @@
 					}
 				}
 			}
-			
+
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
 					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
 					$sent_to[] = $message['number'];
-					
+
 					// debug
 					$body .= "<h3>" . $message["type"] . "</h3>";
 					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
@@ -516,23 +516,23 @@
 			}
 
 			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
-			
+
 			returnJSON(count($sent_to));
 		}
-		
+
 		public function actionAjaxSendGroupSms()
 		{
 			extract($_POST);
-			
+
 			$Group = Group::findById($id_place);
-				
+
 			$Students = $Group->getStudents();
-			
+
 			if ($to_students == "true") {
 				foreach ($Students as $Student) {
 					foreach (Student::$_phone_fields as $phone_field) {
 						$number = $Student->{$phone_field};
-						
+
 						if (!empty(trim($number))) {
 							$msg = $message;
 							if ($Student->login && $Student->password) {
@@ -548,13 +548,13 @@
 					}
 				}
 			}
-			
+
 			if ($to_representatives == "true") {
 				foreach ($Students as $Student) {
 					if ($Student->Representative) {
 						foreach (Student::$_phone_fields as $phone_field) {
 							$number = $Student->Representative->{$phone_field};
-							
+
 							if (!empty(trim($number))) {
 								$msg = $message;
 								if ($Student->login && $Student->password) {
@@ -571,7 +571,7 @@
 					}
 				}
 			}
-			
+
 			if ($to_teacher == "true") {
 				$Teacher = Teacher::findById($Group->id_teacher);
 				$msg = $message;
@@ -579,11 +579,11 @@
 					$msg = str_replace('{entity_login}', $Teacher->login, $msg);
 					$msg = str_replace('{entity_password}', $Teacher->password, $msg);
 				}
-				
+
 				foreach (Student::$_phone_fields as $phone_field) {
 					$number = $Teacher->{$phone_field};
-					
-					if (!empty(trim($number))) {				
+
+					if (!empty(trim($number))) {
 						$messages[] = [
 							"type"      => "Учителю #" . $Teacher->id,
 							'number' 	=> $number,
@@ -592,13 +592,13 @@
 					}
 				}
 			}
-			
+
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
 					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
 					$sent_to[] = $message['number'];
-					
+
 					// debug
 					$body .= "<h3>" . $message["type"] . "</h3>";
 					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
@@ -607,35 +607,35 @@
 			}
 
 			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
-			
+
 //			SMS::sendToNumbers($numbers, $message, $_POST + ["additional" => $additional]);
-			
+
 			returnJSON(count($sent_to));
 /*
 			$SMS = SMS::send($number, $message);
 			$SMS->getCoordinates();
-			
+
 			returnJSON($SMS);
 */
 		}
-		
+
 		public function actionAjaxSendGroupSmsClients()
 		{
 			extract($_POST);
-			
-			
+
+
 			$student_ids = implode(",", $student_ids);
-			
+
 			$Students = Student::findAll([
 				"condition" => "id IN ($student_ids)"
 			]);
 
-			
+
 			if ($to_students == "true") {
 				foreach ($Students as $Student) {
 					foreach (Student::$_phone_fields as $phone_field) {
 						$number = $Student->{$phone_field};
-						
+
 						if (!empty(trim($number))) {
 							$msg = $message;
 							if ($Student->login && $Student->password) {
@@ -651,13 +651,13 @@
 					}
 				}
 			}
-			
+
 			if ($to_representatives == "true") {
 				foreach ($Students as $Student) {
 					if ($Student->Representative) {
 						foreach (Student::$_phone_fields as $phone_field) {
 							$number = $Student->Representative->{$phone_field};
-							
+
 							if (!empty(trim($number))) {
 								$msg = $message;
 								if ($Student->login && $Student->password) {
@@ -674,13 +674,13 @@
 					}
 				}
 			}
-			
+
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
 					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
 					$sent_to[] = $message['number'];
-					
+
 					// debug
 					$body .= "<h3>" . $message["type"] . "</h3>";
 					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
@@ -689,33 +689,33 @@
 			}
 
 			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
-			
+
 			returnJSON(count($sent_to));
 		}
-		
+
 		public function actionAjaxSmsHistory() {
 			extract($_POST);
-			
+
 			$number = cleanNumber($number);
-			
+
 			$History = SMS::findAll([
 				"condition" => "number='$number'",
 				"order"		=> "date DESC",
 			]);
-			
+
 			returnJSON($History);
 		}
-		
+
 		public function actionAjaxSendEmail()
 		{
 			extract($_POST);
-			
+
 			// Group send
 			if ($mode == 2) {
 				$Group = Group::findById($id_place);
-				
+
 				$Students = $Group->getStudents();
-				
+
 				if ($to_students == "true") {
 					foreach ($Students as $Student) {
 						if (!empty($Student->email)) {
@@ -724,7 +724,7 @@
 					}
 					$additional = 1;
 				}
-				
+
 				if ($to_representatives == "true") {
 					foreach ($Students as $Student) {
 						if ($Student->Representative) {
@@ -737,149 +737,149 @@
 					// 1 if only to students
 					// 2 if only to representatives
 					// 3 if to both
-					$additional += 2; 
+					$additional += 2;
 				}
 			}
-			
+
 			$Email = Email::send($email, $subject, $message, $files, $place, $id_place, $additional);
 			$Email->getCoordinates();
-			
+
 			returnJSON($Email);
 		}
-		
+
 		public function actionAjaxEmailHistory() {
 			extract($_POST);
-			
+
 			$History = Email::findAll([
 				"condition" => $email ? "email='$email'" : "place='$place' AND id_place=$id_place",
 				"order"		=> "date DESC",
 			]);
-			
+
 			returnJSON($History);
 		}
-		
+
 		public function actionAjaxUpdateUserCache()
 		{
 			$Users = User::findAll();
-							
+
 			foreach ($Users as $User) {
 				$return[$User->id] = $User->dbData();
 			}
-			
+
 			$Users = $return;
 			memcached()->set("Users", $Users, 2 * 24 * 3600); // кеш на 2 дня
 		}
-		
+
 		public function actionAjaxGetFile()
 		{
 			extract($_GET);
-			
+
 			if (file_exists($file_name)) {
 				// указываем размер
 				$size = round(filesize($file_name) / 1000000, 3); // в мегабайтах, 1 цифра после запятой
-				
+
 				// если размер меньше мегабайта, отобразить в киллобайтах
 				if ($size < 1) {
 					$size = round($size * 1000) . " Кб";
 				} else {
 					$size = round($size, 1) . " Мб";
 				}
-				
+
 				returnJson($size);
 			} else {
-				returnJson(false);	
+				returnJson(false);
 			}
 		}
-		
+
 		public function actionAjaxBranchLoadAdd()
 		{
 			BranchLoad::add($_POST);
 		}
-		
+
 		public function actionAjaxBranchLoadChange()
 		{
 			extract($_POST);
-			
+
 			$BranchLoad = BranchLoad::findAll([
 				"condition" => "id_branch=$id_branch AND id_subject IS NULL AND grade IS NULL",
 				"limit"		=> "$index, 1"
 			])[0];
-			
+
 			if ($BranchLoad->color == 3) {
 				$BranchLoad->delete();
 			} else {
 				$BranchLoad->color++;
 				$BranchLoad->save('color');
 			}
-						
+
 		}
-		
+
 		public function actionAjaxBranchLoadChangeFull()
 		{
 			extract($_POST);
-			
+
 			$BranchLoad = BranchLoad::findAll([
 				"condition" => "id_branch=$id_branch AND id_subject=$id_subject AND grade=$grade",
 				"limit"		=> "$index, 1"
 			])[0];
-			
+
 			if ($BranchLoad->color == 3) {
 				$BranchLoad->delete();
 			} else {
 				$BranchLoad->color++;
 				$BranchLoad->save('color');
 			}
-						
+
 		}
-		
+
 		public function actionAjaxClientsMap()
 		{
 			extract($_GET);
-			
+
 // 			preType($_GET);
-			
+
 			if (!$branches_invert && !$branches && !$grades && !$subjects) {
 				returnJsonAng(false);
 			}
-			
+
 			if ($branches_invert) {
 				foreach ($branches_invert as $id_branch) {
 					$condition_branches_invert[] = "CONCAT(',', CONCAT(s.branches, ',')) NOT LIKE '%,{$id_branch},%'";
 				}
 				$condition[] = "(".implode(" AND ", $condition_branches_invert).")";
 			}
-			
+
 			if ($branches) {
 				foreach ($branches as $id_branch) {
 					$condition_branches[] = "CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%'";
 				}
 				$condition[] = "(".implode(" OR ", $condition_branches).")";
 			}
-			
+
 			if ($subjects) {
 				$condition_subjects = "(cs.id_subject IN (". implode(",", $subjects) ."))";
 				$condition[] = $condition_subjects;
 			}
-			
+
 			if ($grades) {
 				$condition_grades = "(c.grade IN (". implode(",", $grades) ."))";
 				$condition[] = $condition_grades;
 			}
-			
+
 			$query = dbConnection()->query("
 				SELECT s.id FROM contracts c
 				LEFT JOIN students s ON s.id = c.id_student
 				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
 				WHERE (". implode(" AND ", $condition) .")
 					AND (c.id_contract=0 OR c.id_contract IS NULL) AND cs.status > 1 GROUP BY s.id");
-			
+
 /*
 			ECHO("
 				SELECT s.id FROM contracts c
 				LEFT JOIN students s ON s.id = c.id_student
 				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
 				WHERE (". implode(" AND ", $condition) .")
-					AND (c.id_contract=0 OR c.id_contract IS NULL) GROUP BY s.id");		
+					AND (c.id_contract=0 OR c.id_contract IS NULL) GROUP BY s.id");
 */
 
 			while ($row = $query->fetch_array()) {
@@ -887,24 +887,24 @@
 					$ids[] = $row["id"];
 				}
 			}
-			
+
 			$Students = Student::findAll([
 				"condition"	=> "id IN (". implode(",", $ids) .")"
 			]);
-			
+
 			foreach ($Students as &$Student) {
 				$Student->Contract 	= $Student->getLastContract();
-				
+
 				if ($Student->Contract->subjects) {
 					foreach ($Student->Contract->subjects as $subject) {
-						$Student->subjects_string[] = $subject['count'] > 40 
+						$Student->subjects_string[] = $subject['count'] > 40
 							? "<span class='text-danger bold'>" . Subjects::$short[$subject['id_subject']] . "</span>" : Subjects::$short[$subject['id_subject']];
 					}
 					$Student->subjects_string = implode("+", $Student->subjects_string);
 				}
-				
+
 				$Student->markers = $Student->getMarkers();
-				
+
 				if ($Student->branches) {
 					foreach ($Student->branches as $id_branch) {
 						if (!$id_branch) {
@@ -912,82 +912,82 @@
 						}
 						$Student->branches_string[] = Branches::getName($id_branch);
 					}
-					
+
 					$Student->branches_string = implode("<br>", $Student->branches_string);
 				}
 			}
-			
+
 			returnJsonAng($Students);
 		}
-		
+
 		public function actionAjaxSmsCheckOk()
 		{
 			extract($_POST);
 			dbConnection()->query("UPDATE sms SET force_ok = 1 WHERE id=$id");
 		}
-		
+
 		public function actionAjaxSmsCheckDelete()
 		{
 			extract($_POST);
 			dbConnection()->query("UPDATE sms SET force_ok = 0 WHERE id=$id");
 		}
-		
+
 		public function actionAjaxLoadStatsSchedule()
 		{
 			extract($_POST);
-			
+
 			$Schedule = GroupSchedule::findAll([
 				"condition" => "date='$date' AND id_group!=0",
 				"group"		=> "id_group",
 			]);
-			
+
 			foreach ($Schedule as &$S) {
 				$S->Group = Group::findById($S->id_group);
 				$S->is_unplanned = $S->isUnplanned();
-				
+
 				// номер урока
 				$S->lesson_number = GroupSchedule::count([
 					"condition" => "id_group={$S->id_group} AND date <= '{$date}'"
 				]);
-				
-				$S->branch = Branches::getShortColoredById($S->Group->id_branch, 
+
+				$S->branch = Branches::getShortColoredById($S->Group->id_branch,
 					($S->cabinet ? "-".Cabinet::findById($S->cabinet)->number : "")
 				);
 			}
-			
+
 			usort($Schedule, function($a, $b) {
 				return $b->time - $a->time;
 			});
-			
+
 			returnJsonAng($Schedule);
 		}
-		
+
 		public function actionAjaxPlusDays()
 		{
 			extract($_POST);
-			
+
 			$return = StatsController::plusDays($day);
-			
+
 			returnJsonAng($return);
 		}
-		
+
 		public function actionAjaxCheckTeacherPass()
 		{
 			extract($_POST);
-			
+
 			$Teacher = Teacher::find([
 				"condition" => "id=" . User::fromSession()->id_entity
 			]);
-			
+
 			returnJsonAng($password == $Teacher->password);
 		}
-		
+
 		public function actionAjaxStudentsWithNoGroup()
 		{
 			$Students = Student::getWithoutGroup();
-			
+
 			// preType($Students, true);
-			
+
 			returnJsonAng($Students);
 		}
 	}

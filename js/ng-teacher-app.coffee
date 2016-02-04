@@ -24,12 +24,12 @@
 			angular.element(document).ready ->
 				set_scope "Teacher"
 		.controller "EditCtrl", ($scope) ->
-			
+
 			$scope.picture_version = 1;
 			bindFileUpload = ->
 				# загрузка файла договора
 				$('#fileupload').fileupload({
-					formData: 
+					formData:
 						id_teacher: $scope.Teacher.id
 					dataType: 'json',
 					maxFileSize: 10000000, # 10 MB
@@ -58,21 +58,21 @@
 						$.each data.messages, (index, error) ->
 							notifyError error
 				})
-			
+
 			# солько нужно выплатить репетитору
 			$scope.toBePaid = ->
 				return if not $scope.Data.length
-				
+
 				lessons_sum = 0
 				$.each $scope.Data, (index, value) ->
 					lessons_sum += parseInt(value.teacher_price)
-				
+
 				payments_sum = 0
 				$.each $scope.payments, (index, value) ->
 					payments_sum += parseInt(value.sum)
-				
+
 				lessons_sum - payments_sum
-				
+
 			$scope.sipNumber = (number) ->
 				number = number.toString()
 				return "sip:" + number.replace(/[^0-9]/g, '')
@@ -87,7 +87,7 @@
 			  dateOut = new Date(date)
 			  dateOut
 
-			
+
 			$scope.confirmPayment = (payment) ->
 			  bootbox.prompt
 			    title: 'Введите пароль'
@@ -110,7 +110,7 @@
 			      confirm: label: 'Подтвердить'
 			      cancel: className: 'display-none'
 			  return
-			
+
 			# Окно редактирования платежа
 			$scope.editPayment = (payment) ->
 			  if !payment.confirmed
@@ -278,19 +278,23 @@
 				setTimeout ->
 					$scope.$apply()
 				, 100
-			
+
 			$scope.toggleBanned = ->
 				$scope.Teacher.banned = !$scope.Teacher.banned
 				$scope.form_changed = true
-			
+
 			$scope.goToTutor = ->
 				window.open "https://crm.a-perspektiva.ru/repetitors/edit/?id=#{$scope.Teacher.id_a_pers}", "_blank"
 
 			$(document).ready ->
 				bindFileUpload()
-				
+
 				$("#subjects-select").selectpicker
 					noneSelectedText: "предметы"
+					multipleSeparator: ", "
+
+				$('#public-grades').selectpicker
+					noneSelectedText: "классы"
 					multipleSeparator: ", "
 
 				$("#teacher-branches").selectpicker
@@ -326,6 +330,11 @@
 					$("#teacher-branches option:selected").each ->
 						if $(@).val()
 							$scope.Teacher.branches.push $(@).val()
+
+					$scope.Teacher.public_grades = []
+					$("#public-grades option:selected").each ->
+						if $(@).val()
+							$scope.Teacher.public_grades.push $(@).val()
 
 					ajaxStart()
 					$scope.saving = true

@@ -344,6 +344,10 @@ angular.module("Teacher", ["ngMap"]).config([
       noneSelectedText: "предметы",
       multipleSeparator: ", "
     });
+    $('#public-grades').selectpicker({
+      noneSelectedText: "классы",
+      multipleSeparator: ", "
+    });
     $("#teacher-branches").selectpicker({
       noneSelectedText: "удобные филиалы для преподавателя"
     });
@@ -380,6 +384,12 @@ angular.module("Teacher", ["ngMap"]).config([
     $("#teacher-branches option:selected").each(function() {
       if ($(this).val()) {
         return $scope.Teacher.branches.push($(this).val());
+      }
+    });
+    $scope.Teacher.public_grades = [];
+    $("#public-grades option:selected").each(function() {
+      if ($(this).val()) {
+        return $scope.Teacher.public_grades.push($(this).val());
       }
     });
     ajaxStart();

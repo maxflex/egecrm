@@ -11,7 +11,7 @@
 
 
 		// Ключ API, проверяется при каждом запросе к API
-		const API_KEY = "44327d40af8a93c23497047c08688a50"; // MD5 «А то ругать будут!»
+		const API_KEY = "44327d40af8a93c23497047c08688a50"; // MD5 от «А то ругать будут!»
 
 		// Перед выполнением любого действия, устанавливаем заголовок для JSON данных API
 		public function beforeAction()
@@ -57,7 +57,7 @@
 			$ch = curl_init($url);
 			//curl_setopt($ch, CURLOPT_POST, 1);
 			//curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-			
+
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -75,35 +75,42 @@
 		public function actionGetSchedule()
 		{
 			extract($_POST);
-			
+
 			$Groups = Group::findAll([
 				"condition" => ($id_branch > 0 ? "id_branch=$id_branch AND " : "" ) . "id_subject=$id_subject AND grade=$id_grade"
 			]);
-			
+
 			returnJSON($Groups);
 		}
-		
+
 		// Получить ученика по коду
 		// Возвращает имя ученика в родительном падеже
 		public function actionGetStudentByCode()
 		{
 			extract($_POST);
-			
+
 			$Student = Student::find([
 				"condition" => "code='$code'"
 			]);
-			
+
 			if ($Student) {
-				$nc = new NCLNameCaseRu(); 
-				
+				$nc = new NCLNameCaseRu();
+
 				$name = $nc->setFirstName($Student->first_name)->setSecondName($Student->last_name)->getFormatted(NCL::$RODITLN, "N S");
-				
+
 				returnJSON($name);
 			} else {
 				returnJSON(false);
 			}
 		}
-		
+
+		public function actionGetTeachers()
+		{
+			$Teachers = Teacher::getPublished();
+
+			returnJSON($Teachers);
+		}
+
 		############################################################################################
 		#################################### ДОБАВЛЕНИЕ ДАННЫХ #####################################
 		############################################################################################
@@ -120,5 +127,5 @@
 			// Сохраняем заявку
 			$Request->save();
 		}
-		
+
 	}

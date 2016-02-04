@@ -1,6 +1,6 @@
 <div id="panel-loading">Загрузка...</div>
 <form id="request-edit" ng-app="Request" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>" autocomplete='off'>
-	
+
 	<!-- ЛАЙТБОКС РЕДАКТИРОВАНИЕ ПЕЧАТИ ДОГОВОРА ВРУЧНУЮ -->
 		<div class="lightbox-new lightbox-manualedit">
 			<h4 style="margin-bottom: 20px">РЕДАКТИРОВАНИЕ ДОГОВОРА</h4>
@@ -13,9 +13,9 @@
 			</div>
 		</div>
 		<!-- /ЛАЙТБОКС РЕДАКТИРОВАНИЕ ПЕЧАТИ ДОГОВОРА ВРУЧНУЮ -->
-		
+
 		<?= partial('contract_edit') ?>
-		
+
 		<!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
 		<div class="lightbox-new lightbox-addpayment">
 			<h4>{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
@@ -36,10 +36,10 @@
 			<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
 				<h4>Номер карты</h4>
 				<div class="form-group inline-block">
-					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block; margin-left: 5px"> - 
-					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> - 
-					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> - 
-					<input class="form-control digits-only" maxlength="4" ng-model="new_payment.card_number" 
+					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block; margin-left: 5px"> -
+					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> -
+					<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> -
+					<input class="form-control digits-only" maxlength="4" ng-model="new_payment.card_number"
 						style="width: 60px; display: inline-block">
 				</div>
 			</div>
@@ -64,8 +64,8 @@
 			</center>
 		</div>
 		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
-		
-		
+
+
 		<!-- ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
 		<div class="lightbox-new lightbox-print-additional">
 			<div class="row">
@@ -84,7 +84,7 @@
 			</center>
 		</div>
 		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
-		
+
 		<!-- ЛАЙТБОКС КАРТА -->
 		<div class="lightbox-element lightbox-map">
 			<map zoom="10" disable-default-u-i="true" scale-control="true" zoom-control="true" zoom-control-options="{style:'SMALL'}">
@@ -103,24 +103,24 @@
 			<button class="btn btn-default map-save-button" ng-click="saveMarkersToServer()">Сохранить</button>
 		</div>
 		<!-- КОНЕЦ /КАРТА И ЛАЙТБОКС -->
-	
+
 	<div class="panel panel-primary panel-edit" ng-show="show_request_panel">
 		<div class="panel-heading">
-			 
+
 			<?php if ($Request->adding) :?>
 			Добавление заявки
 			<?php else :?>
 			Редактирование заявки №<?= $Request->id ?>
 			<?php endif ?>
-			
-			
+
+
 			<div class="pull-right">
-				
+
 				<span class="link-reverse pointer" ng-click="toggleMinimizeStudent()">{{student.minimized ? "развернуть" : "свернуть"}}</span>
-				
+
 				<?php if (!$Request->adding) :?>
 					<span class="link-reverse pointer" style="margin-left: 10px" onclick="lightBoxShow('glue')">перенести в другой профиль</span>
-					
+
 					<?php if ($Request->getDuplicates()): ?>
 						<span class="link-reverse pointer" style="margin-left: 10px" onclick='deleteRequest(<?= $Request->id ?>)'>удалить заявку</span>
 					<?php endif ?>
@@ -128,7 +128,7 @@
 			</div>
 		</div>
 		<div class="panel-body">
-			
+
 <!-- 	<img src="img/svg/loading-bars.svg" alt="Загрузка страницы..." id="svg-loading"> -->
 		<!-- СКЛЕЙКА КЛИЕНТОВ -->
 		<div class="lightbox-new lightbox-glue">
@@ -138,7 +138,7 @@
 			</div>
 			<center>
 				<span ng-show="request_duplicates.length > 1">
-					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(0)" id="save-glue-button">перенести</button>		
+					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(0)" id="save-glue-button">перенести</button>
 				</span>
 				<span ng-show="request_duplicates.length <= 1">
 					<button class="btn btn-primary" type="button" ng-disabled="!GlueStudent" ng-click="glue(1)">перенести с удалением ученика</button>
@@ -147,7 +147,7 @@
 			</center>
 		</div>
 		<!-- /СКЛЕЙКА КЛИЕНТОВ -->
-		
+
 	<!-- Скрытые поля -->
 	<input type="hidden" name="id_request" value="<?= $Request->id ?>">
 
@@ -190,9 +190,9 @@
                     </div>
 
                     <div class="form-group">
-						
+
 						<div class="form-group">
-				            <div class="input-group" 
+				            <div class="input-group"
 					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone') || (!isMobilePhone('request-phone') && request_phone_level >= 2) }">
 			                	<input ng-keyup id="request-phone" type="text"
 			                		placeholder="телефон" class="form-control phone-masked"  name="Request[phone]" value="<?= $Request->phone ?>">
@@ -211,9 +211,9 @@
 						            </div>
 							</div>
 						</div>
-						
+
 						<div class="form-group" ng-show="request_phone_level >= 2">
-				            <div class="input-group" 
+				            <div class="input-group"
 					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone-2')  || (!isMobilePhone('request-phone') && request_phone_level >= 3) }">
 			                	<input ng-keyup id="request-phone-2" type="text"
 			                		placeholder="телефон 2" class="form-control phone-masked"  name="Request[phone2]" value="<?= $Request->phone2 ?>">
@@ -232,12 +232,12 @@
 					            </div>
 							</div>
 						</div>
-						
-						
+
+
 						<div class="form-group" ng-show="request_phone_level >= 3">
-							<div class="input-group" 
+							<div class="input-group"
 								ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone-3')  || !isMobilePhone('request-phone-3') }">
-				                <input type="text" id="request-phone-3" placeholder="телефон 3" 
+				                <input type="text" id="request-phone-3" placeholder="телефон 3"
 				                	class="form-control phone-masked"  name="Request[phone3]" value="<?= $Request->phone3 ?>">
 				                	<div class="input-group-btn">
 					                	<button class="btn btn-default" ng-show="phoneCorrect('request-phone-3') && isMobilePhone('request-phone-3')" ng-click="callSip('request-phone-3')">
@@ -282,7 +282,7 @@
 											<div style="display: initial" id="comment-{{comment.id}}" onclick="editComment(this)" commentid="{{comment.id}}">
 												{{comment.comment}}</div>
 											<span class="save-coordinates">{{comment.coordinates}}</span>
-											<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" 
+											<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px"
 												onclick="deleteComment(this)"></span>
 										</div>
 									</div>
@@ -304,7 +304,7 @@
         </div>
 		<div class="col-sm-3">
 			<div class="form-group">
-                <input type="text" class="form-control bs-datetime" placeholder="дата создания заявки" name="Request[date]" 
+                <input type="text" class="form-control bs-datetime" placeholder="дата создания заявки" name="Request[date]"
                 	value="<?= $Request->adding ? "" : $Request->date ?>">
 			</div>
 			<div class="form-group">
@@ -325,25 +325,27 @@
 
 	<!-- ЗАКАРЫВАЕМ СТАРЫЙ PANEL-BODY И ОТКРЫВАЕМ НОВЫЙ -->
 	</div></div>
-	
+
 	<div class="panel panel-primary panel-edit" ng-hide="student.minimized">
 		<div class="panel-heading">
 			Редактирование профиля ученика №<?= $Request->Student->id ?>
 			<div class="pull-right">
-				
+
+				<a style="margin-right: 10px" class="like-white" href="reviews/<?= $Request->Student->id ?>">отзывы</a>
+
 				<span class="link-reverse pointer" ng-click="toggleMinimizeRequest()">{{show_request_panel ? "свернуть" : "развернуть"}}</span>
-				
+
 				<?php if (!empty($Request->Student->login)) :?>
 				<a style="margin-left: 10px" class="like-white" href="as/student/<?= $Request->Student->id ?>">режим просмотра</a>
 				<?php endif ?>
-				
+
 				<?php if (!$Request->adding) :?>
 				<span style="margin-left: 10px" class='link-reverse pointer' id='delete-student' onclick='deleteStudent(<?= $Request->Student->id ?>)'>удалить профиль</span>
 				<?php endif ?>
 			</div>
 		</div>
 		<div class="panel-body">
-    
+
     <div class="row" ng-hide="student.minimized">
 	    <div class="col-sm-12">
 		    <div class="row">
@@ -369,12 +371,12 @@
 				                	<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 				                </button>
 			                </div>
-			            </div>			                
+			            </div>
 		            </div>
 
 					<div>
 			        	<div class="form-group">
-				            <div class="input-group" 
+				            <div class="input-group"
 					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone')  || (!isMobilePhone('student-phone') && student_phone_level >= 2) }">
 			                	<input ng-keyup id="student-phone" type="text"
 			                		placeholder="телефон" class="form-control phone-masked"  name="Student[phone]" ng-model="student.phone">
@@ -393,9 +395,9 @@
 						            </div>
 							</div>
 						</div>
-						
+
 						<div class="form-group" ng-show="student_phone_level >= 2">
-				            <div class="input-group" 
+				            <div class="input-group"
 					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-2')  || (!isMobilePhone('student-phone-2') && student_phone_level >= 3) }">
 			                	<input ng-keyup id="student-phone-2" type="text"
 			                		placeholder="телефон 2" class="form-control phone-masked"  name="Student[phone2]" ng-model="student.phone2">
@@ -414,11 +416,11 @@
 					            </div>
 							</div>
 						</div>
-						
-						
+
+
 						<div class="form-group" ng-show="student_phone_level >= 3">
 							<div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-3') || !isMobilePhone('student-phone-3') }">
-				                <input type="text" id="student-phone-3" placeholder="телефон 3" 
+				                <input type="text" id="student-phone-3" placeholder="телефон 3"
 				                	class="form-control phone-masked"  name="Student[phone3]" ng-model="student.phone3">
 				                	<div class="input-group-btn">
 					                	<button class="btn btn-default" ng-show="phoneCorrect('student-phone-3') && isMobilePhone('student-phone-3')" ng-click="callSip('student-phone-3')">
@@ -431,13 +433,13 @@
 										</button>
 						            </div>
 							</div>
-			            </div>    
+			            </div>
 					</div>
-					
+
 					 <div class="form-group">
 			            <input class="form-control" ng-model="student.school" name="Student[school]" placeholder="№ школы">
 		            </div>
-					
+
 					<div class="form-group">
 						<input placeholder="серия" class="form-control half-field passport-number" id="student-passport-series"
 							name="StudentPassport[series]" value="<?= $Request->Student->Passport->series ?>">
@@ -485,15 +487,15 @@
 								</div>
 			            </div>
 		            </div>
-		      
+
 					<div>
 			        	<div class="form-group">
-				            <div class="input-group" 
+				            <div class="input-group"
 				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone')  || (!isMobilePhone('representative-phone') && representative_phone_level >= 2)  }">
 			                	<input ng-keyup id="representative-phone" type="text"
 			                		placeholder="телефон" class="form-control phone-masked"  name="Representative[phone]" ng-model="representative.phone">
 			                	<div class="input-group-btn">
-				                	<button class="btn btn-default" ng-show="phoneCorrect('representative-phone') && isMobilePhone('representative-phone')" 
+				                	<button class="btn btn-default" ng-show="phoneCorrect('representative-phone') && isMobilePhone('representative-phone')"
 				                		ng-click="callSip('representative-phone')">
 					                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 	                				</button>
@@ -508,14 +510,14 @@
 						            </div>
 							</div>
 						</div>
-						
+
 						<div class="form-group" ng-show="representative_phone_level >= 2">
-				            <div class="input-group" 
+				            <div class="input-group"
 				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-2')  || (!isMobilePhone('representative-phone-2') && representative_phone_level >= 3)  }">
 			                	<input ng-keyup id="representative-phone-2" type="text"
 			                		placeholder="телефон 2" class="form-control phone-masked"  name="Representative[phone2]" ng-model="representative.phone2">
 			                	<div class="input-group-btn">
-				                	<button class="btn btn-default" ng-show="phoneCorrect('representative-phone-2') && isMobilePhone('representative-phone-2')" 
+				                	<button class="btn btn-default" ng-show="phoneCorrect('representative-phone-2') && isMobilePhone('representative-phone-2')"
 				                		ng-click="callSip('representative-phone-2')">
 					                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 	                				</button>
@@ -530,15 +532,15 @@
 					            </div>
 							</div>
 						</div>
-						
-						
+
+
 						<div class="form-group" ng-show="representative_phone_level >= 3">
-							<div class="input-group" 
+							<div class="input-group"
 				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-3')  || !isMobilePhone('representative-phone-3')  }">
-				                <input type="text" id="representative-phone-3" placeholder="телефон 3" 
+				                <input type="text" id="representative-phone-3" placeholder="телефон 3"
 				                	class="form-control phone-masked"  name="Representative[phone3]" ng-model="representative.phone3">
 				                	<div class="input-group-btn">
-					                	<button class="btn btn-default" ng-show="phoneCorrect('representative-phone-3') && isMobilePhone('representative-phone-3')" 
+					                	<button class="btn btn-default" ng-show="phoneCorrect('representative-phone-3') && isMobilePhone('representative-phone-3')"
 					                		ng-click="callSip('representative-phone-3')">
 						                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 		                				</button>
@@ -549,26 +551,26 @@
 										</button>
 						            </div>
 							</div>
-			            </div>    
+			            </div>
 					</div>
-					
+
 					<div class="form-group">
 						 <textarea placeholder="адрес фактического проживания"  style="height: 123px"
 						 	class="form-control" name="Representative[address]" ng-model="representative.address">
 		                </textarea>
 					</div>
-		      
-		      
-		      
-		      
-		      
+
+
+
+
+
 			    </div>
 			    <div class="col-sm-3">
 				    <h4 style="margin-top: 0" class="row-header">Паспорт</h4>
 				    <div class="form-group">
 						<input placeholder="серия" class="form-control half-field passport-number" id="passport-series"
 							name="Passport[series]" ng-model="representative.Passport.series">
-						
+
 						<input placeholder="номер" class="form-control half-field pull-right passport-number" id="passport-number"
 							name="Passport[number]" ng-model="representative.Passport.number">
 		            </div>
@@ -626,7 +628,7 @@
 			    <div class="col-sm-9">
 					<div class="form-group">
 			            <?= Branches::buildSvgSelector($Request->Student->branches, [
-				            "name" => "Student[branches][]", 
+				            "name" => "Student[branches][]",
 				            "ng-model" => "student.branches",
 				            "id" => "student-branches",
 				        ], true) ?>
@@ -641,7 +643,7 @@
 										<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
 										<div style="display: initial" id="comment-{{comment.id}}" commentid="{{comment.id}}" onclick="editComment(this)">{{comment.comment}}</div>
 										<span class="save-coordinates">({{comment.coordinates}})</span>
-										<span ng-attr-data-id="{{comment.id}}" 
+										<span ng-attr-data-id="{{comment.id}}"
 											class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
 									</div>
 								</div>
@@ -718,12 +720,12 @@
 									<span style="display: inline-block; width: 200px">сумма 2 семестра</span>
 									<span>{{contractSecondPart(contract) | number}} руб.</span>
 								</div>
-								
+
 								<div style="margin-bottom: 25px"></div>
-								
+
 								<div ng-repeat="subject in contract.subjects | orderBy:'id_subject'" style="margin-bottom: 3px; white-space: nowrap">
 									<span style="display: inline-block; width: 200px" ng-class="{
-										'text-warning'	: subject.status == 2,	
+										'text-warning'	: subject.status == 2,
 										'text-danger'	: subject.status == 1,
 									}">{{subject.name}}</span>
 									<span ng-show="!subject.count2">{{subject.count}}
@@ -830,12 +832,12 @@
 									<span style="display: inline-block; width: 200px">сумма 2 семестра</span>
 									<span>{{contractSecondPart(contract_history) | number}} руб.</span>
 								</div>
-								
+
 								<div style="margin-bottom: 25px"></div>
-								
+
 								<div ng-repeat="subject in contract_history.subjects" style="margin-bottom: 3px; white-space: nowrap">
 									<span style="display: inline-block; width: 200px" ng-class="{
-										'text-warning'	: subject.status == 2,	
+										'text-warning'	: subject.status == 2,
 										'text-danger'	: subject.status == 1,
 									}">{{subject.name}}</span>
 									<span ng-show="!subject.count2">{{subject.count}}
@@ -906,7 +908,7 @@
 				<div ng-repeat="payment in payments | reverse" style="margin-bottom: 5px">
 					<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">
 					{{payment_statuses[payment.id_status]}}<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">{{payment.card_number ? " *" + payment.card_number.trim() : ""}}</span></span>
-					
+
 					<span class="capitalize">{{payment_types[payment.id_type]}}</span>
 					на сумму {{payment.sum}} <ng-pluralize count="payment.sum" when="{
 						'one' : 'рубль',
@@ -948,11 +950,11 @@
 		    </div>
 	    </div>
     </div>
-    
+
 	<?= partial("visits") ?>
     <?= partial("teacher_likes") ?>
     <?= partial("reports") ?>
-    
+
     <?= partial("save_button", ["Request" => $Request]) ?>
 	<?= partial("bill_print") ?>
 </div></div>

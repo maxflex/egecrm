@@ -6,7 +6,7 @@ RewriteBase /egecrm
 RewriteRule ^(css|js|img|fonts|compass)($|/) - [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d 
+RewriteCond %{REQUEST_FILENAME} !-d
 
 ###### Правила ######
 
@@ -91,8 +91,10 @@ RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
 RewriteRule ^(teachers/)?payments/([a-zA-Z]+)[/]?$ index.php?controller=payments&action=$2 [QSA,L]
 RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
 
-RewriteRule ^(teachers/|students/)?faq[/]?$ index.php?controller=faq&action=faq[QSA,L]
-RewriteRule ^students/reviews[/]?$ index.php?controller=TeacherReviews&action=main[QSA,L]
+RewriteRule ^(teachers/|students/)?faq[/]?$ index.php?controller=faq&action=faq [QSA,L]
+RewriteRule ^students/reviews[/]?$ index.php?controller=TeacherReviews&action=main [QSA,L]
+RewriteRule ^reviews/([0-9]+)[/]?$ index.php?controller=TeacherReviews&action=admins&id_student=$1 [QSA,L]
+
 RewriteRule ^reviews/ajax/([a-zA-Z]+)[/]?$ index.php?controller=TeacherReviews&action=Ajax$1 [QSA,L]
 
 RewriteRule ^templates[/]?$ index.php?controller=templates&action=list[QSA,L]
@@ -144,4 +146,5 @@ RewriteRule ^upload[/]?$ index.php?controller=upload [QSA,L]
 RewriteRule ^[/]?$ index.php?controller=login&action=login [QSA,L]
 
 # Mango
-RewriteRule ^mango/events/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=$1 [QSA,L]
+RewriteRule ^mango/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=$1 [QSA,L]
+RewriteRule ^mango/events/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=Event$1 [QSA,L]

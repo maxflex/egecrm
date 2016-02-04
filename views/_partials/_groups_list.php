@@ -102,6 +102,5 @@
 </table>
 <?php if ($filter) : ?>
 <div ng-show="Groups.length > 0 && (Groups | filter:groupsFilter).length == 0" class="center half-black small" style="margin-bottom: 30px">
-	не найдено групп, соответствующих запросу
-</div>
+	не найдено групп, соответствующих запросу</div>
 <?php endif ?>

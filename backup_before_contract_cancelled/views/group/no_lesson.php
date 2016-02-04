@@ -1,1 +1,0 @@
-<h4 class="center text-danger" style="margin: 50px 0"><?= $message ?></h4>

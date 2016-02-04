@@ -1,4 +1,4 @@
-<?php if (in_array(User::fromSession()->id, [69])) :?>
+<?php if (in_array(User::fromSession()->id, [-1])) :?>
 <div class="menu-wrap">
 	<nav class="menu">
 		<div class="profile">
@@ -111,6 +111,8 @@
 </div>
 <!-- /ЛАЙТБОКС ОТПРАВКА EMAIL -->
 
+
+<?= globalPartial('phone_api') ?>
 
 <div class="row">
   <div class="col-sm-2" style="margin-left: 10px">

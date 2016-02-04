@@ -31,6 +31,38 @@
 					<textarea maxlength="1024" class="teacher-review-textarea form-control" placeholder="Понравилось: 1) ... 2) ... 3) ...&#10;Не понравилось: 1) ... 2) ... 3) ..." rows="5" ng-model="RatingInfo[Teacher.id][Teacher.id_subject].comment"></textarea>
 				</div>
 			</div>
+
+
+		<!--  -->
+		<div ng-show='<?= User::fromSession()->isUser(true) ?>'>
+				<div class="row">
+					<div class="col-sm-8">
+						<label class="ios7-switch" style="font-size: 18px; font-weight: normal; top: 11px">
+						    <input type="checkbox" ng-model='RatingInfo[Teacher.id][Teacher.id_subject].published'
+								ng-true-value='1' ng-false-value='0'>
+						    <span></span>
+						    <span style="font-size: 14px">Опубликован на сайте</span>
+						</label>
+					</div>
+					<div class="col-sm-4">
+						<div class="pull-right">
+							<span style="margin-right: 10px">Оценка администратора:</span>
+							<span ng-repeat="n in []| range:5">
+								<span class="teacher-rating" ng-click="RatingInfo[Teacher.id][Teacher.id_subject].admin_rating = n" ng-class="{'active': RatingInfo[Teacher.id][Teacher.id_subject].admin_rating == n}">{{n}}</span>
+							</span>
+						</div>
+					</div>
+				</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<textarea maxlength="1024" class="teacher-review-textarea form-control" placeholder="Понравилось: 1) ... 2) ... 3) ...&#10;Не понравилось: 1) ... 2) ... 3) ..." rows="5" ng-model="RatingInfo[Teacher.id][Teacher.id_subject].admin_comment"></textarea>
+				</div>
+			</div>
+		</div>
+		<!--  -->
+
+
 		</div>
 		<div class="row" style="margin-top: 30px">
 			<div class="col-sm-12 center">

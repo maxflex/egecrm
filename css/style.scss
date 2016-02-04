@@ -34,6 +34,23 @@
 	}
 }
 
+.flex-inputs {
+	display: flex;
+	& input, & .bootstrap-select {
+		margin-right: 5px;
+	}
+}
+
+.review-small {
+	display: inline-block;
+    background: $green;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+
 .visit-between-number {
 	display: inline-block;
 	width: 28.1px;

@@ -14,7 +14,8 @@ angular.module("TeacherReview", []).filter('range', function() {
   $scope.saveReviews = function() {
     ajaxStart();
     return $.post("reviews/ajax/save", {
-      RatingInfo: $scope.RatingInfo
+      RatingInfo: $scope.RatingInfo,
+      id_student: $scope.id_student
     }, function(response) {
       ajaxEnd();
       $scope.form_changed = false;
@@ -28,7 +29,7 @@ angular.module("TeacherReview", []).filter('range', function() {
       $scope.form_changed = true;
       return $scope.$apply();
     });
-    return $(".teacher-rating").on('click', function() {
+    return $(".teacher-rating, .ios7-switch").on('click', function() {
       $scope.form_changed = true;
       return $scope.$apply();
     });

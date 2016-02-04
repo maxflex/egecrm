@@ -9,13 +9,13 @@
 		</div>
 	</div>
 	<div class="panel-body">
-			
+
 		<div class="row" style="position: relative">
 			<div id="frontend-loading"></div>
 			<div class="col-sm-12">
 				<table class="table table-divlike" id="teachers-list">
 					<tr ng-repeat="Teacher in Teachers" ng-hide="!Teacher.had_lesson">
-						<td width="300">
+						<td width="400">
 							<a href="teachers/edit/{{Teacher.id}}">
 								<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
 									{{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
@@ -24,6 +24,7 @@
 									Неизвестно
 								</span>
 							</a>
+							 (<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>)
 						</td>
 						<td>
 							<span ng-show="Teacher.has_photo" class="glyphicon glyphicon-camera"></span>
@@ -52,35 +53,31 @@
 							</span>
 						</td>
 						<td>
-							{{Teacher.reports_sent_count}}/{{Teacher.reports_count}} <ng-pluralize count="Teacher.reports_count" when="{
-								'one': 'отчет',
-								'few': 'отчета',
-								'many': 'отчетов',
-							}"></ng-pluralize> из {{Teacher.student_subject_counts.all}}/<span class="text-danger">{{Teacher.student_subject_counts.red}}</span>
-						</td>
-						<td>
-							<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
+							<span class="label label-danger-red" ng-show="Teacher.student_subject_counts.red">
+								требуется создать {{Teacher.student_subject_counts.red}} <ng-pluralize count="Teacher.student_subject_counts.red" when="{
+									'one': 'отчет',
+									'few': 'отчета',
+									'many': 'отчетов',
+								}"></ng-pluralize>
+							</span>
 						</td>
 						<td>
 							<span ng-show="Teacher.schedule_date">{{Teacher.schedule_date}}</span>
 						</td>
-						<td>
-							{{Teacher.login_count}}
-						</td>
 					</tr>
 				</table>
-				
-				
+
+
 				<fieldset class="hidden-thoughts" id="hidden-teachers-button">
 				    <legend ng-click="showHidden()">Остальные: {{othersCount()}}</legend>
 				</fieldset>
-				
-				
-				
-				
+
+
+
+
 				<table class="table table-divlike" ng-show="show_others" style="margin-top: 20px">
 					<tr ng-repeat="Teacher in Teachers" ng-show="!Teacher.had_lesson">
-						<td width="300">
+						<td width="400">
 							<a href="teachers/edit/{{Teacher.id}}">
 								<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
 									{{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
@@ -89,6 +86,7 @@
 									Неизвестно
 								</span>
 							</a>
+							 (<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>)
 						</td>
 						<td style="width: 20%">
 							<span ng-show="Teacher.gray_count">
@@ -113,19 +111,13 @@
 							</span>
 						</td>
 						<td style="width: 10%">
-							<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
-						</td>
-						<td style="width: 10%">
 							<span ng-show="Teacher.schedule_date">{{Teacher.schedule_date}}</span>
-						</td>
-						<td style="width: 10%">
-							{{Teacher.login_count}}
 						</td>
 					</tr>
 				</table>
-				
-				
-				
+
+
+
 			</div>
 		</div>
 	</div>

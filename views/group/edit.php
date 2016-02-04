@@ -15,8 +15,8 @@
 				'few': 'занятия',
 				'many': 'занятий'
 			}"></ng-pluralize> (<span ng-repeat="(day, day_data) in Group.day_and_time_2">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : " и "}}</span>), первое занятие {{Group.first_schedule | date:"d MMMM yyyy"}})</span>
-					
-					
+
+
 			<span ng-show="Group.past_lesson_count" style="margin-bottom: 20px">({{Group.schedule_count}} <ng-pluralize count="Group.schedule_count" when="{
 				'one': 'занятие',
 				'few': 'занятия',
@@ -26,38 +26,38 @@
 					'few': 'занятия',
 					'many': 'занятий'
 				}"></ng-pluralize>)</span>
-				
+
 			<span ng-show="!Group.schedule_count && !Group.past_lesson_count" style="margin-bottom: 20px">(расписание не установлено)</span>
 		<?php endif ?>
-		<div class="pull-right">		
+		<div class="pull-right">
 			 <?php if ($Group->id): ?>
 				<a style="margin-right: 12px" class="link-reverse" href="groups/journal/<?= $Group->id ?>">посещаемость</a>
 	            <a style="margin-right: 12px" class="link-reverse" href="groups/edit/<?= $Group->id ?>/schedule">расписание</a>
 	            <span style="margin-right: 12px" class="link-like link-reverse link-white" ng-click="dayAndTime()">день и время</span>
 	        <?php endif ?>
 			<span class="link-like link-reverse link-white" ng-click="addGroupsPanel()" style="margin-right: 12px">
-					похожие группы</span>							
+					похожие группы</span>
 <!--
 			<a class="link-reverse" target="_blank" style="margin-right: 12px"
 				href="requests/relevant?subject={{Group.id_subject}}&branch={{Group.id_branch}}&grade={{Group.grade}}">
 					релевантные заявки</a>
 -->
 			<span class="link-like link-reverse link-white" ng-click="smsDialog2(Group.id)">групповое SMS</span>
-			
+
 			<span style="margin-left: 12px" class="link-reverse pointer" ng-click="deleteGroup(Group.id)" ng-show="Group.id">удалить группу</span>
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
 		<form id="group-edit" autocomplete='off'>
-			
+
 		<div class="top-group-menu-thin">
 			<div>
-	            <?= 
+	            <?=
 	                Branches::buildSvgSelector($Group->id_branch, [
-		                "id"		=> "group-branch", 
-		                "ng-model"	=> "Group.id_branch", 
+		                "id"		=> "group-branch",
+		                "ng-model"	=> "Group.id_branch",
 		                "ng-change"	=> "changeBranch()",
-	                ]) 
+	                ])
 	            ?>
 			</div>
 			<div class="form-group">
@@ -71,7 +71,7 @@
             </div>
             <div class="form-group">
 				<?= Subjects::buildSelector(false, false, [
-					"ng-model" => "Group.id_subject", 
+					"ng-model" => "Group.id_subject",
 					"ng-change" => "subjectChange()",
 				]) ?>
 			</div>
@@ -88,7 +88,7 @@
 				</select>
 			</div>
 			 <div class="form-group">
-	            <input class="form-control digits-only" 
+	            <input class="form-control digits-only"
 	            	ng-model="Group.teacher_price" placeholder="цена преподавателя">
             </div>
             <div class="form-group">
@@ -102,13 +102,13 @@
             </div>
             <span ng-show="is_student_dragging" class="student-dragout ng-hide">удалить</span>
 		</div>
-			
+
 			<div class="row">
 				<div class="col-sm-12">
 					<table class="table table-divlike table-students" style="table-layout: fixed">
 						<tr ng-repeat="Student in TmpStudents">
 							<td>
-								{{$index + 1}}. 
+								{{$index + 1}}.
 								<a class="student-line is-draggable"  data-id="{{Student.id}}" href="student/{{Student.id}}" ng-class="{
 									'text-warning'	: getSubject(Student.Contract.subjects, Group.id_subject).status == 2,
 									'text-danger'	: getSubject(Student.Contract.subjects, Group.id_subject).status == 1
@@ -121,11 +121,12 @@
 								{{Student.Contract.subjects[Group.id_subject].score}}
 							</td>
 							<td>
-								<span ng-click="toggleTeacherLike(Student)" class="pointer" ng-show='Group.past_lesson_count > 0'>
-									<span class="half-black" 	ng-show="Student.teacher_like_status == 0">не установлено</span>
-									<span class="text-success"	ng-show="Student.teacher_like_status == 1">нравится</span>
-									<span class="text-warning" 	ng-show="Student.teacher_like_status == 2">средне</span>
-									<span class="text-danger"	ng-show="Student.teacher_like_status == 3">не нравится</span>
+								<span ng-show='Group.past_lesson_count > 0'>
+									<span class="review-small" ng-if='Student.teacher_like_status'>{{ Student.teacher_like_status }}</span>
+									<span class="half-black" ng-if="!Student.teacher_like_status">не установлено</span>
+									<!-- <span class="text-success"	ng-show="Student.teacher_like_status == 1">нравится</span>
+									<span class="text-warning" 	ng-show="Student.teacher_like_status == 2">средне</span> -->
+									<!-- <span class="text-danger" ng-if="Student.teacher_like_status == 3">не нравится</span> -->
 								</span>
 							</td>
 							<td>
@@ -146,7 +147,7 @@
 									ng-click="setStudentStatus(Student, $event)">
 									{{Student.id_status ? GroupStudentStatuses[Student.id_status] : "статус"}}
 								</span>
-								<select ng-model="Student.id_status" class="student-status-select-{{Student.id}}" 
+								<select ng-model="Student.id_status" class="student-status-select-{{Student.id}}"
 									style="display: none; width: 150px" data-id="{{Student.id}}">
 										<option selected value="">статус</option>
 										<option disabled>──────────────</option>
@@ -177,7 +178,7 @@
 								<span style="margin-right: 5px">
 									<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">ЕЦ</a>
 								</span>
-								<a href="https://crm.a-perspektiva.ru/repetitors/edit/?id={{getTeacher(Group.id_teacher).id_a_pers}}" 
+								<a href="https://crm.a-perspektiva.ru/repetitors/edit/?id={{getTeacher(Group.id_teacher).id_a_pers}}"
 									target="_blank">ЕР</a>
 							</td>
 							<td  style="width: 150px !important">
@@ -207,7 +208,7 @@
 									<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
 									<div style="display: initial" id="comment-{{comment.id}}" commentid="{{comment.id}}" onclick="editComment(this)">{{comment.comment}}</div>
 									<span class="save-coordinates">{{comment.coordinates}}</span>
-									<span ng-attr-data-id="{{comment.id}}" 
+									<span ng-attr-data-id="{{comment.id}}"
 										class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
 								</div>
 							</div>
@@ -215,7 +216,7 @@
 						<div style="height: 25px">
 							<span class="pointer no-margin-right comment-add" id="comment-add-{{Group.id}}"
 								place="<?= Comment::PLACE_GROUP ?>" id_place="{{Group.id}}">комментировать</span>
-							
+
 							<span class="comment-add-hidden">
 								<span class="comment-add-login comment-login" id="comment-add-login-{{Group.id}}" style="color: <?= User::fromSession()->color ?>"><?= User::fromSession()->login ?>: </span>
 								<input class="comment-add-field" id="comment-add-field-{{Group.id}}" type="text"
@@ -231,13 +232,13 @@
 			    	<button class="btn btn-primary save-button" ng-hide="Group.id" style="width: 100px">
 						добавить
 			    	</button>
-			    	
+
 				</div>
 			</div>
 		</form>
-		
+
 		<?= partial("groups_list") ?>
-		
+
 </div>
 	<?= partial("day_and_time") ?>
 </div>

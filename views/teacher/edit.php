@@ -102,11 +102,29 @@
 			<textarea class="form-control" ng-model="Teacher.comment" rows="4"></textarea>
 		</div>
 	</div>
+
+	<!-- Публичная информация -->
 	<div class="row" style="margin-bottom: 10px">
 		<div class="col-sm-12">
 			<textarea class="form-control" ng-model="Teacher.description" rows="4" placeholder="описание на сайте"></textarea>
 		</div>
 	</div>
+
+	<div class='flex-inputs form-group'>
+			<?= Grades::buildMultiSelector($Teacher->public_grades, ["id" => "public-grades"]) ?>
+			<input type="text" class="form-control" ng-model="Teacher.public_seniority" placeholder="педагогический стаж">
+			<input type="text" class="form-control" ng-model='Teacher.public_ege_start' placeholder="опыт подготовки к ЕГЭ/ОГЭ">
+			<div class="form-control" style="box-shadow: none; border: 0">
+				<label class="ios7-switch" style="font-size: 18px; font-weight: normal">
+				    <input type="checkbox" ng-model='Teacher.published'
+						ng-true-value='1' ng-false-value='0'>
+				    <span></span>
+				    <span style="font-size: 14px">Опубликован на сайте</span>
+				</label>
+			</div>
+	</div>
+
+	<!-- /Публичная информация -->
 	<?php if ($Teacher->id) :?>
 	<div class="row" style="margin-bottom: 10px">
 		<div class="col-sm-12">
@@ -114,13 +132,13 @@
 		    <?= globalPartial("groups_list") ?>
 		</div>
 	</div>
-	
+
 	<div class="row" style="margin-bottom: 10px">
 		<div class="col-sm-12">
 		    <h4 style="margin-top: 0" class="row-header">{{(Teacher.Reviews && Teacher.Reviews.length > 0) ? 'ОТЗЫВЫ' : 'НЕТ ОТЗЫВОВ'}}</h4>
-			
+
 			<div class="row">
-				<div class="col-sm-12">	
+				<div class="col-sm-12">
 					<div ng-repeat="Review in Teacher.Reviews" class="clear-sms" style="margin-left: 11px">
 						<div class="from-them">
 							<span>{{Review.comment}}</span>
@@ -133,12 +151,12 @@
 					</div>
 				</div>
 			</div>
-		</div>	
+		</div>
 	</div>
-	
-	
-	
-		
+
+
+
+
 	<!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
 	<div class="lightbox-new lightbox-addpayment" style="width: 551px; left: calc(50% - 275px)">
 		<h4>{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
@@ -159,10 +177,10 @@
 		<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
 			<h4>Номер карты</h4>
 			<div class="form-group inline-block">
-				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block; margin-left: 5px"> - 
-				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> - 
-				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> - 
-				<input class="form-control digits-only" maxlength="4" ng-model="new_payment.card_number" 
+				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block; margin-left: 5px"> -
+				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> -
+				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> -
+				<input class="form-control digits-only" maxlength="4" ng-model="new_payment.card_number"
 					style="width: 60px; display: inline-block">
 			</div>
 		</div>
@@ -171,7 +189,7 @@
 		</center>
 	</div>
 	<!-- /ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
-		
+
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
 			<h4 class="row-header">
@@ -202,17 +220,17 @@
 
 		</div>
 	</div>
-	
+
 	<div class="row">
 		<div class="col-sm-12">
 			<h4 class="row-header">ПЛАТЕЖИ
 			    <a class="link-like link-reverse link-in-h" ng-click="addPaymentDialog()">добавить</a>
 		    </h4>
 		    <div class="form-group payment-line">
-				<div ng-repeat="payment in payments | reverse" style="margin-bottom: 5px"> 
+				<div ng-repeat="payment in payments | reverse" style="margin-bottom: 5px">
 					<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">
 					{{payment_statuses[payment.id_status]}}<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">{{payment.card_number ? " *" + payment.card_number.trim() : ""}}</span></span>
-					
+
 					<span class="capitalize">{{payment_types[payment.id_type]}}</span>
 					Платеж на сумму {{payment.sum}} <ng-pluralize count="payment.sum" when="{
 						'one' : 'рубль',
@@ -229,11 +247,11 @@
 		    </div>
 		</div>
 	</div>
-	
+
 	<?= partial('reports') ?>
-	
-	
-	
+
+
+
 	<?php endif ?>
 	<div class="row" style="margin-top: 10px">
 		<div class="col-sm-12 center">
@@ -241,11 +259,11 @@
 	    		<span ng-show="form_changed">Сохранить</span>
 	    		<span ng-show="!form_changed && !saving">Сохранено</span>
 	    	</button>
-	    	
+
 	    	<button class="btn btn-primary save-button" ng-hide="Teacher.id" style="width: 100px">
 				добавить
 	    	</button>
-	    	
+
 		</div>
 	</div>
 </form>

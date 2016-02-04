@@ -69,11 +69,11 @@
 					}"></ng-pluralize></b></td>
 			</tr>
 		</table>
-		
+
  		<div ng-show="!Students.length" style="padding: 100px" class="small half-black center">
 			загрузка клиентов...
 		</div>
-		
+
 		<div class="pull-right">
 			<b class="text-success">+<?= $without_contract ?></b> <?= pluralize('ученик', 'ученика', 'учеников', $without_contract) ?> без договора
 		</div>

@@ -547,18 +547,23 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
     if (!$scope.Group.id) {
       return;
     }
+    console.log('changin teacher');
     $.post("groups/ajax/changeTeacher", {
       id_group: $scope.Group.id,
+      id_subject: $scope.Group.id_subject,
       id_branch: $scope.Group.id_branch,
       day_and_time: $scope.Group.day_and_time,
       id_teacher: $scope.Group.id_teacher,
       students: $scope.Group.students
     }, function(response) {
-      console.log(response);
-      $scope.getTeacher($scope.Group.id_teacher).agreement = response.agreement;
+      console.log('teacher changed', response);
       $.each(response.teacher_like_statuses, function(id_student, id_status) {
+        console.log('hiiaa');
         return $scope.getStudent(id_student).teacher_like_status = id_status;
       });
+      if ($scope.Group.id_teacher) {
+        $scope.getTeacher($scope.Group.id_teacher).agreement = response.agreement;
+      }
       return $scope.$apply();
     }, "json");
     return $scope.updateTeacherBar();
@@ -1004,6 +1009,7 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
       id_subject: $scope.Group.id_subject
     });
     $scope.Group.id_teacher = 0;
+    $scope.changeTeacher();
     return clearSelect();
   };
   $scope.$watch("Group.grade", function(newVal, oldVal) {
@@ -1274,7 +1280,7 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
     } else {
       time_correct = true;
     }
-    return time_correct && (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && ((ref = Group.id_subject.toString(), indexOf.call($scope.search.subjects, ref) >= 0) || $scope.search.subjects.length === 0) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
+    return time_correct && (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && ((Group.id_subject && (ref = Group.id_subject.toString(), indexOf.call($scope.search.subjects, ref) >= 0)) || $scope.search.subjects.length === 0) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
   };
   $scope.groupsFilter2 = function(Group) {
     var ref, ref1;

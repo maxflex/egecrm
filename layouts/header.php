@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-  	<meta charset="utf-8"> 
+  	<meta charset="utf-8">
     <title><?= $this->_html_title ?></title>
     <?php
 	    // Дебаг
@@ -15,6 +15,7 @@
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet">
     <link href="css/jquery.timepicker.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/hint.css"></link>
+    <link rel="stylesheet" href="css/phone.css"></link>
     <link href="css/bootstrap.css?ver=<?= settings()->version ?>" rel="stylesheet">
     <link href="css/animate.css?ver=<?= settings()->version ?>" rel="stylesheet">
 	<link href="css/nprogress.css" rel="stylesheet">
@@ -22,7 +23,7 @@
     <link href="css/ng-showhide.css?ver=<?= settings()->version ?>" rel="stylesheet">
 	<link href="css/ios7switch.css" rel="stylesheet">
 	<link href="css/ladda-themeless.css" rel="stylesheet">
-	
+
 	<link rel="stylesheet" type="text/css" href="css/corner-morph.css" />
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/jquery.js"></script>
@@ -50,29 +51,34 @@
 	<script type="text/javascript" src="js/user-color-control.js"></script>
 <!-- 	<script type="text/javascript" src="js/jquery.datetimepicker.js"></script> -->
 	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
-	
+
 	<script type="text/javascript" src="js/jquery.ui.widget.js"></script>
 	<script type="text/javascript" src="js/jquery.iframe-transport.js"></script>
 	<script type="text/javascript" src="js/jquery.fileupload.js"></script>
-	
+
 	<script type="text/javascript" src="js/underscore.js"></script>
-	
+
 	<script type="text/javascript" src="js/engine.js?ver=<?= settings()->version ?>"></script>
 	<script type="text/javascript" src="js/functions.js?ver=<?= settings()->version ?>"></script>
-	
+
+    <script type="text/javascript" src="//js.pusher.com/3.0/pusher.min.js"></script>
+    <script type="text/javascript" src="js/pusher.js?ver=<?= settings()->version ?>"></script>
+    <script type="text/javascript" src="js/bower/vue/dist/vue.js"></script>
+    <!-- <script src="js/bower/vue-resource/dist/vue-resource.js"></script> -->
+
 	<script src="js/spin.js"></script>
 	<script src="js/ladda.js"></script>
-	
-	<?php if ((User::fromSession()->type == Teacher::USER_TYPE || User::fromSession()->type == Student::USER_TYPE) 
+
+	<?php if ((User::fromSession()->type == Teacher::USER_TYPE || User::fromSession()->type == Student::USER_TYPE)
 			&& !LOCAL_DEVELOPMENT && !User::fromSession()->AsUser) :?>
 	<script type="text/javascript" src="js/ga.js"></script>
 	<?php endif ?>
-	
+
     <?= $this->_js_additional ?>
   </head>
   <body class="content">
 	  <div class="lightbox"></div>
-	  
+
 	  <div id="logout-modal" class="modal" role="dialog">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
