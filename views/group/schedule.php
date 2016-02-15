@@ -54,6 +54,8 @@
                             </select>
                             <!-- /branches selector -->
 
+                            <?= partial("_cabinets_list") ?>
+
 							<select ng-model="Schedule.cabinet" style="width: 130px" ng-change="changeCabinet(Schedule)">
 								<option selected value="">выберите кабинет</option>
 								<option disabled>──────────────</option>

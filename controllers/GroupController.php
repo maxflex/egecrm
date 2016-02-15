@@ -1005,6 +1005,10 @@
             GroupSchedule::updateById($id, [
                 "id_branch" => $id_branch,
             ]);
+
+            returnJsonAng(
+                Cabinet::getByBranch($id_branch)
+            );
         }
 
 		public function actionAjaxChangeScheduleFree()

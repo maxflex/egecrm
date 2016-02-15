@@ -1,7 +1,7 @@
 	angular.module "Group", ['ngAnimate']
 		.filter 'to_trusted', ['$sce', ($sce) ->
-	        return (text) ->
-	            return $sce.trustAsHtml(text)
+					return (text) ->
+							return $sce.trustAsHtml(text)
 		]
 		.filter 'orderByDayNumber', () ->
 			return (items, field, reverse) ->
@@ -132,6 +132,16 @@
 				$.post "groups/ajax/changeScheduleCabinet",
 					id: Schedule.id
 					cabinet: Schedule.cabinet
+
+			$scope.changeBranch = (Schedule) ->
+				$.post "groups/ajax/changeScheduleBranch",
+				id: Schedule.id
+				id_branch: Schedule.id_branch
+				, (response) ->
+					console.log 'branch changed', response
+					$scope.$apply()
+				, "json"
+
 
 			$scope.setTime = (Schedule, event) ->
 				$(event.target).hide()
@@ -535,7 +545,7 @@
 										<div class="from-them">		\
 											' + v.message + ' 		\
 											<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '\
-									    </div>						\
+											</div>						\
 									</div>';
 						$("#email-history").html(html)
 					else
@@ -876,7 +886,7 @@
 
 							$scope.$apply()
 						else
-						 	redirect "groups/edit/#{response}"
+							redirect "groups/edit/#{response}"
 
 		.controller "ListCtrl", ($scope) ->
 			$scope.updateCache = ->
