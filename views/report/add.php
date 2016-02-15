@@ -47,9 +47,9 @@
 			<div class="col-sm-6">
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
-					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('homework_grade', n)" ng-class="{'active': Report.homework_grade == n}">{{n}}</span>
-					</span>
+                    <span ng-repeat="n in []| range:5">
+                        <span class="teacher-rating" ng-click="setGrade('homework_grade', n)" ng-class="{'active': Report.homework_grade == n,'bg-red': Report.homework_grade <= 3 && Report.homework_grade == n,'bg-orange': Report.homework_grade == 4 && Report.homework_grade == n,}">{{n}}</span>
+                    </span>
 				</div>
 				<div class="from-them">
 					<span class="red">ПИШИТЕ ПОДРОБНЕЕ.</span> Например: выполняет домашние задания регулярно, относится ответственно. Однако, достаточно встретиться нетипичным, но по сути легким заданиям, Алексей теряется и не может их решить. Довольно распространенное явление у 11-классников. Считаю, что в ближайшие 3 месяца сможем общими усилиями устранить этот недостаток.
@@ -69,16 +69,15 @@
 			<div class="col-sm-6">
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
-					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('activity_grade', n)" ng-class="{'active': Report.activity_grade == n}">{{n}}</span>
-					</span>
+                    <span ng-repeat="n in []| range:5">
+                        <span class="teacher-rating" ng-click="setGrade('activity_grade', n)" ng-class="{'active': Report.activity_grade == n,'bg-red': Report.activity_grade <= 3 && Report.activity_grade == n,'bg-orange': Report.activity_grade == 4 && Report.activity_grade == n,}">{{n}}</span>
+                    </span>
 				</div>
 				<div class="from-them">
 					<span class="red">ПИШИТЕ ПОДРОБНЕЕ.</span> Например: Алексей работает активно. Даже иногда слишком активно, что раньше мешало остальным ученикам в группе, но сейчас этого не происходит. Хорошо усваивает материал на уроках.
 				</div>
 			</div>
 		</div>
-
 
 		
 		
@@ -92,7 +91,7 @@
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
 					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('behavior_grade', n)" ng-class="{'active': Report.behavior_grade == n}">{{n}}</span>
+                        <span class="teacher-rating" ng-click="setGrade('behavior_grade', n)" ng-class="{'active': Report.behavior_grade == n,'bg-red': Report.behavior_grade <= 3 && Report.behavior_grade == n,'bg-orange': Report.behavior_grade == 4 && Report.behavior_grade == n,}">{{n}}</span>
 					</span>
 				</div>
 				<div class="from-them">
@@ -112,8 +111,8 @@
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
 					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('material_grade', n)" ng-class="{'active': Report.material_grade == n}">{{n}}</span>
-					</span>
+                        <span class="teacher-rating" ng-click="setGrade('material_grade', n)" ng-class="{'active': Report.material_grade == n,'bg-red': Report.material_grade <= 3 && Report.material_grade == n,'bg-orange': Report.material_grade == 4 && Report.material_grade == n,}">{{n}}</span>
+                    </span>
 				</div>
 				<div class="from-them">
 					<span class="red">ПИШИТЕ ПОДРОБНЕЕ.</span> Например: как уже было указано ранее Леша хорошо усваивает новый материал и ведет себя активно на уроках. Если будет заниматься дома, то очень хорошо напишет ЕГЭ. При такой скорости усвоения материала на уроках удивляет факт неспособности справиться с нестандартными задачами. Но как уже отмечалось, должен научиться справляться с такими ситуациями.
@@ -132,7 +131,7 @@
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
 					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('tests_grade', n)" ng-class="{'active': Report.tests_grade == n}">{{n}}</span>
+                        <span class="teacher-rating" ng-click="setGrade('tests_grade', n)" ng-class="{'active': Report.tests_grade == n,'bg-red': Report.tests_grade <= 3 && Report.tests_grade == n,'bg-orange': Report.tests_grade == 4 && Report.tests_grade == n,}">{{n}}</span>
 					</span>
 				</div>
 				<div class="from-them">

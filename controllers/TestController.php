@@ -2,18 +2,40 @@
 
 	// Контроллер
 	class TestController extends Controller
-	{
-		public $defaultAction = "test";
-		// Папка вьюх
-		protected $_viewsFolder	= "test";
+    {
+        public $defaultAction = "test";
+        // Папка вьюх
+        protected $_viewsFolder = "test";
 
 
-		public function beforeAction()
-		{
-			ini_set("display_errors", 1);
-			error_reporting(E_ALL);
-		}
+    //        public function beforeAction()
+    //        {
+    //            ini_set("display_errors", 1);
+    //            error_reporting(E_ALL);
+    //        }
 
+        /**
+         * Updating old group schedule records.
+         * Sets group id for records.
+         */
+        public function actionTransferSchedule()
+        {
+            $Groups = Group::findAll();
+            if ($Groups) {
+                /* @var $Groups Group[] */
+                foreach($Groups as $Group) {
+                    $GroupSchedules = GroupSchedule::findAll(['condition' => 'id_group='.$Group->id]);
+                    if ($GroupSchedules) {
+                        /* @var $GroupSchedules GroupSchedule[] */
+                        foreach ($GroupSchedules as $GroupSchedule) {
+                            $GroupSchedule->update(['id_branch' => $Group->id_branch]);
+                        }
+                    }
+                }
+            } else {
+                echo 'No group schedule updated';
+            }
+        }
 		public function actionTeacherLikes()
 		{
 			$Students = Student::getWithContract();

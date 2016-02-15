@@ -68,7 +68,7 @@
 			</div>
 			
 			<div class="center" ng-hide="students_picker" style="margin: 10px 0">
-				<span class="link-like small link-reverse" ng-click="loadStudentPicker()">пьфывфодобрать учеников</span>
+				<span class="link-like small link-reverse" ng-click="loadStudentPicker()">подобрать учеников</span>
 			</div>
 			
 			<div ng-show="students_picker">

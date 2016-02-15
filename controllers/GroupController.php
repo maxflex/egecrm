@@ -325,7 +325,6 @@
 
 				$id_group = $_GET['id'];
 				$Group = Group::findById($id_group);
-
 				$Group->Schedule = $Group->getSchedule();
 
 				foreach ($Group->day_and_time as $day_data) {
@@ -345,6 +344,7 @@
 					"exam_dates"		=> ExamDay::getExamDates($Group),
 					"time" 				=> Freetime::TIME,
 					"Cabinets"			=> Cabinet::getByBranch($Group->id_branch),
+                    "Branches"          => Branches::get(),
 				]);
 
 				$this->render("schedule", [
@@ -997,6 +997,15 @@
 				"cabinet" => $cabinet,
 			]);
 		}
+
+        public function actionAjaxChangeScheduleBranch()
+        {
+            extract($_POST);
+
+            GroupSchedule::updateById($id, [
+                "id_branch" => $id_branch,
+            ]);
+        }
 
 		public function actionAjaxChangeScheduleFree()
 		{

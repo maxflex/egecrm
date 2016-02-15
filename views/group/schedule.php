@@ -46,6 +46,14 @@
 							</div>
 						</td>
 						<td>
+                            <!-- branches selector -->
+                            <select ng-model="Schedule.id_branch" style="width: 130px" ng-change="changeBranch(Schedule)">
+                                <option ng-repeat="Branch in Branches" value="{{Branch.id}}" ng-selected="Branch.id == Schedule.id_branch">
+                                    {{Branch.name}}
+                                </option>
+                            </select>
+                            <!-- /branches selector -->
+
 							<select ng-model="Schedule.cabinet" style="width: 130px" ng-change="changeCabinet(Schedule)">
 								<option selected value="">выберите кабинет</option>
 								<option disabled>──────────────</option>
