@@ -275,10 +275,20 @@
 		}
 
 
+		/**
+		 * Уже было хотя бы одно занятие
+		 */
 		public function alreadyHadLesson($id_group)
 		{
 			return VisitJournal::count([
 				"condition" => "id_entity={$this->id} AND type_entity='STUDENT' AND presence=1 AND id_group=$id_group"
+			]);
+		}
+
+		public static function alreadyHadLessonStatic($id_student, $id_group)
+		{
+			return VisitJournal::count([
+				"condition" => "id_entity={$id_student} AND type_entity='STUDENT' AND presence=1 AND id_group=$id_group"
 			]);
 		}
 
@@ -468,7 +478,7 @@
 
 			if ($save) {
 				$this->save("id_passport");
-			} 
+			}
 		}
 
 		public function notifiedInGroupStatic($id_student, $id_group)

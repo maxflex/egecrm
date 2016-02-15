@@ -20,6 +20,8 @@
   width: 20px;
   height: 20px;
   text-align: center; }
+  .review-small.gray {
+    background: #999999 !important; }
 
 .visit-between-number {
   display: inline-block;
@@ -305,7 +307,7 @@ body {
   margin-right: 5px; }
 
 .top-group-menu-thin > div {
-  width: 10.8%;
+  width: 9.5%;
   display: inline-block;
   margin-right: 5px; }
 
@@ -391,7 +393,7 @@ body {
   .teacher-rating:hover {
     background-color: #eee; }
   .teacher-rating.active {
-    background-color: #5cb85c !important;
+    background-color: #5cb85c;
     color: white !important; }
 
 .fixed-menu {
@@ -2182,6 +2184,12 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
   width: 100px;
   position: relative;
   top: -1px; }
+
+.bg-red {
+  background: #ff0039 !important; }
+
+.bg-orange {
+  background: #fbaa33 !important; }
 
 /* make sidebar nav vertical */
 @media (min-width: 768px) {

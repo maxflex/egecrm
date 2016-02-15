@@ -16,35 +16,98 @@
 
 		public function actionTeacherLikes()
 		{
-			$TeacherLikes = GroupTeacherLike::findAll([
-				'condition' => 'id_status > 0'
-			]);
+			$Students = Student::getWithContract();
 
-			foreach ($TeacherLikes as $TeacherLike) {
-				$TeacherReviews = TeacherReview::findAll([
-					'condition' => "id_teacher={$TeacherLike->id_teacher} AND id_student={$TeacherLike->id_student}"
-				]);
+			foreach ($Students as $Student) {
+				$VisitJournal = Student::getExistedTeachers($Student->id);
+				foreach ($VisitJournal as $VJ) {
+					$Like = GroupTeacherLike::find([
+						'condition' => "id_status > 0 AND id_student={$VJ->id_entity} AND id_teacher={$VJ->id_teacher}"
+					]);
 
-				foreach ($TeacherReviews as $TeacherReview) {
-					switch($TeacherLike->id_status) {
-						case 1: {
-							$TeacherReview->admin_rating = 5;
-							break;
+					if ($Like) {
+						switch($Like->id_status) {
+							case 1: {
+								$new_rating = 5;
+								break;
+							}
+							case 2: {
+								$new_rating = 4;
+								break;
+							}
+							case 3: {
+								$new_rating = 3;
+								break;
+							}
 						}
-						case 2: {
-							$TeacherReview->admin_rating = 4;
-							break;
-						}
-						case 3: {
-							$TeacherReview->admin_rating = 3;
-							break;
+
+						$TeacherReview = TeacherReview::find([
+							'condition' => "id_teacher={$VJ->id_teacher} AND id_student={$VJ->id_entity} AND id_subject={$VJ->id_subject}"
+						]);
+
+						if ($TeacherReview) {
+							$TeacherReview->admin_rating = $new_rating;
+							$TeacherReview->save('admin_rating');
+						} else {
+							TeacherReview::add([
+								'id_student' => $Like->id_student,
+								'id_teacher' => $Like->id_teacher,
+								'id_subject' => $VJ->id_subject,
+								'admin_rating' => $new_rating,
+							]);
 						}
 					}
-					$TeacherReview->save('admin_rating');
 				}
 			}
 
-			preType($TeacherLikes);
+
+
+
+
+
+
+
+			// $TeacherLikes = GroupTeacherLike::findAll([
+			// 	'condition' => 'id_status > 0'
+			// ]);
+			//
+			// foreach ($TeacherLikes as $TeacherLike) {
+			// 	switch($TeacherLike->id_status) {
+			// 		case 1: {
+			// 			$new_rating = 5;
+			// 			break;
+			// 		}
+			// 		case 2: {
+			// 			$new_rating = 4;
+			// 			break;
+			// 		}
+			// 		case 3: {
+			// 			$new_rating = 3;
+			// 			break;
+			// 		}
+			// 	}
+			//
+			// 	$VisitJournal = Student::getExistedTeachers($TeacherLike->id_student);
+			//
+			//
+			// 	foreach ($VisitJournal as $VJ) {
+			// 		$TeacherReview = TeacherReview::find([
+			// 			'condition' => "id_teacher={$VJ->id_teacher} AND id_student={$VJ->id_entity} AND id_subject={$VJ->id_subject}"
+			// 		]);
+			//
+			// 		if ($TeacherReview) {
+			// 			$TeacherReview->admin_rating = $new_rating;
+			// 			$TeacherReview->save('admin_rating');
+			// 		} else {
+			// 			TeacherReview::add([
+			// 				'id_student' => $TeacherLike->id_student,
+			// 				'id_teacher' => $TeacherLike->id_teacher,
+			// 				'id_subject' => $VJ->id_subject,
+			// 				'admin_rating' => $new_rating,
+			// 			]);
+			// 		}
+			// 	}
+			// }
 		}
 
 		public function actionMango()

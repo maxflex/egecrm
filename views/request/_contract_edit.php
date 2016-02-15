@@ -7,12 +7,12 @@
 				    <input class="triple-switch" id="checkbox-subject-{{id_subject}}"
 				    	ng-model="current_contract.subjects[id_subject].status"
 				    	ng-change="subjectHandle(id_subject)"
-					    data-slider-min="0" data-slider-max="3" data-slider-step="1" 
+					    data-slider-min="0" data-slider-max="3" data-slider-step="1"
 					    data-slider-value="{{current_contract.subjects[id_subject].status}}"
 				    >
 				    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(id_subject)}">{{subject_name}}</span>
 				<div class="pull-right" style="top: -5px; position: relative">
-					
+
 					<span class="dogavar-label zero" ng-show="subjectChecked(id_subject)">
 						<ng-pluralize ng-show="current_contract.subjects[id_subject].count" count="current_contract.subjects[id_subject].count" when="{
 							'one' 	: 'урок',
@@ -20,7 +20,7 @@
 							'many'	: 'уроков',
 						}"></ng-pluralize>
 					</span>
-					
+
 					<span class="dogavar-label first" ng-show="subjectChecked(id_subject)">
 						<ng-pluralize ng-show="current_contract.subjects[id_subject].count2" count="current_contract.subjects[id_subject].count2" when="{
 							'one' 	: 'урок',
@@ -28,7 +28,7 @@
 							'many'	: 'уроков',
 						}"></ng-pluralize>
 					</span>
-					
+
 					<span class="dogavar-label second" ng-show="subjectChecked(id_subject)">
 						<ng-pluralize ng-show="current_contract.subjects[id_subject].score" count="current_contract.subjects[id_subject].score" when="{
 							'one' 	: 'балл',
@@ -36,22 +36,22 @@
 							'many'	: 'баллов',
 						}"></ng-pluralize>
 					</span>
-					
+
 					<input type="text" class="form-control contract-score" style="margin-left: 5px" placeholder="балл"
-						ng-show="subjectChecked(id_subject)" 
+						ng-show="subjectChecked(id_subject)"
 						ng-model="current_contract.subjects[id_subject].score">
-					
+
 					<input type="text" class="form-control contract-lessons" style="margin-left: 5px" placeholder="2й семестр"
-						ng-show="subjectChecked(id_subject)" 
+						ng-show="subjectChecked(id_subject)"
 						ng-model="current_contract.subjects[id_subject].count2">
-					
+
 					<input type="text" class="form-control contract-lessons" placeholder="1й семестр"
-						ng-show="subjectChecked(id_subject)" 
+						ng-show="subjectChecked(id_subject)"
 						ng-model="current_contract.subjects[id_subject].count">
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="col-sm-6">
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
@@ -89,8 +89,15 @@
 					</div>
 				</div>
 			</div>
+			<div class="row" style="margin-bottom: 10px">
+				<div class="col-sm-12">
+					<span class="input-label">учебный год</span>
+						<select class="form-control" ng-model="current_contract.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015]">
+					 </select>
+				</div>
+			</div>
 		</div>
-		
+
 	</div>
 	<center>
 		<button class="btn btn-primary ajax-contract-button" ng-click="addContractNew()">Сохранить</button>

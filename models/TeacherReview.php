@@ -58,7 +58,7 @@
 			]);
 
 			if ($StudentTeacherLike) {
-				return $StudentTeacherLike->rating;
+				return $StudentTeacherLike->admin_rating;
 			} else {
 				return 0;
 			}

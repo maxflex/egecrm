@@ -21,7 +21,11 @@
 					<div class="pull-right">
 						<span style="margin-right: 10px">Поставьте оценку:</span>
 						<span ng-repeat="n in []| range:5">
-							<span class="teacher-rating" ng-click="RatingInfo[Teacher.id][Teacher.id_subject].rating = n" ng-class="{'active': RatingInfo[Teacher.id][Teacher.id_subject].rating == n}">{{n}}</span>
+							<span class="teacher-rating" ng-click="RatingInfo[Teacher.id][Teacher.id_subject].rating = n" ng-class="{
+								'active': RatingInfo[Teacher.id][Teacher.id_subject].rating == n,
+								'bg-red': RatingInfo[Teacher.id][Teacher.id_subject].rating <= 3 && RatingInfo[Teacher.id][Teacher.id_subject].rating == n,
+								'bg-orange': RatingInfo[Teacher.id][Teacher.id_subject].rating == 4 && RatingInfo[Teacher.id][Teacher.id_subject].rating == n,
+							}">{{n}}</span>
 						</span>
 					</div>
 				</div>
@@ -48,7 +52,11 @@
 						<div class="pull-right">
 							<span style="margin-right: 10px">Оценка администратора:</span>
 							<span ng-repeat="n in []| range:5">
-								<span class="teacher-rating" ng-click="RatingInfo[Teacher.id][Teacher.id_subject].admin_rating = n" ng-class="{'active': RatingInfo[Teacher.id][Teacher.id_subject].admin_rating == n}">{{n}}</span>
+								<span class="teacher-rating" ng-click="RatingInfo[Teacher.id][Teacher.id_subject].admin_rating = n" ng-class="{
+									'active': RatingInfo[Teacher.id][Teacher.id_subject].admin_rating == n,
+									'bg-red': RatingInfo[Teacher.id][Teacher.id_subject].admin_rating <= 3 && RatingInfo[Teacher.id][Teacher.id_subject].admin_rating == n,
+									'bg-orange': RatingInfo[Teacher.id][Teacher.id_subject].admin_rating == 4 && RatingInfo[Teacher.id][Teacher.id_subject].admin_rating == n,
+								}">{{n}}</span>
 							</span>
 						</div>
 					</div>

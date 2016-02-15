@@ -340,9 +340,18 @@
 
 		public function countSchedule()
 		{
-			return GroupSchedule::count([
-				"condition" => "id_group=".$this->id,
+			$paid = GroupSchedule::count([
+				"condition" => "is_free=0 AND id_group=".$this->id,
 			]);
+
+			$free = GroupSchedule::count([
+				"condition" => "is_free=1 AND id_group=".$this->id,
+			]);
+
+			return [
+				'free' => $free,
+				'paid' => $paid,
+			];
 		}
 
 /*
@@ -615,80 +624,6 @@
 		}
 	}
 
-
-	class GroupTeacherStatuses extends Model
-	{
-		# Список предметов
-		const NBT 		= 1;
-		const AWAITING	= 2;
-		const AGREED	= 3;
-
-		# Все предметы
-		static $all = [
-			self::NBT 		=> "нбт",
-			self::AWAITING	=> "ожидает",
-			self::AGREED	=> "согласен",
-		];
-
-
-		/**
-		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "согласен",
-		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
-		 *
-		 */
-		public static function inRedFreetime($id_group, $day, $time, $id_teacher)
-		{
-			return dbConnection()->query("
-				SELECT g.id FROM group_agreement ga
-					LEFT JOIN groups g ON g.id = ga.id_group
-					LEFT JOIN group_time gt ON g.id = gt.id_group
-				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND ga.id_status = ". self::AGREED ." AND ga.id_entity = $id_teacher
-					AND ga.type_entity='TEACHER' AND (ga.id_entity = g.id_teacher AND g.id = ga.id_group)
-				LIMIT 1
-			")->num_rows;
-		}
-	}
-
-	class GroupStudentStatuses
-	{
-		# Список предметов
-		const NBT 		= 1;
-		const AWAITING	= 2;
-		const AGREED	= 3;
-
-		# Все предметы
-		static $all = [
-			self::NBT 		=> "нбт",
-			self::AWAITING	=> "ожидает",
-			self::AGREED	=> "согласен",
-		];
-
-		/**
-		 * Если ученик присутствует в группе и вместе с этим у него стоит метка "согласен",
-		   если у этого ученика есть другие группы, то в них расписании у него соответствующий кирпичик должен быть красным.
-		 *
-		 */
-		public static function inRedFreetime($id_group, $day, $time, $id_student)
-		{
-			return dbConnection()->query("
-				SELECT g.id FROM group_agreement ga
-					LEFT JOIN groups g ON g.id = ga.id_group
-					LEFT JOIN group_time gt ON g.id = gt.id_group
-				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day' AND ga.id_status = ". self::AGREED ." AND ga.id_entity = $id_student
-					AND ga.type_entity='STUDENT' AND (CONCAT(',', CONCAT(g.students, ',')) LIKE CONCAT('%,', ga.id_entity ,',%') AND g.id = ga.id_group)
-			")->num_rows;
-		}
-
-		public static function inRedFreetimeHalf($id_group, $day, $time, $id_student)
-		{
-			return dbConnection()->query("
-				SELECT g.id FROM groups g
-					LEFT JOIN group_time gt ON g.id = gt.id_group
-				WHERE g.id != $id_group AND gt.time = '$time' AND gt.day = '$day'
-					 AND CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'
-			")->num_rows;
-		}
-	}
 
 	class GroupTime extends Model
 	{

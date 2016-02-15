@@ -186,7 +186,7 @@
 	
 	
     <a class="list-group-item active">Настройки</a>
-	<?php if (in_array(User::fromSession()->id, [1, 69, 93, 106])): ?>
+	<?php if (in_array(User::fromSession()->id, [1, 69, 93, 104, 102])): ?> 
 	    <a href="tasks" class="list-group-item">Задачи
 		<?php
 			// Количество новых заявок

@@ -14,7 +14,20 @@
 			<div id="frontend-loading"></div>
 			<div class="col-sm-12">
 				<table class="table table-divlike" id="teachers-list">
+					<tr>
+						<td colspan="3">
+						</td>
+						<td><span class="review-small">5</span></td>
+						<td><span class="review-small">4</span></td>
+						<td><span class="review-small">3</span></td>
+						<td><span class="review-small">2</span></td>
+						<td><span class="review-small">1</span></td>
+						<td><span class="review-small gray">?</span></td>
+					</tr>
 					<tr ng-repeat="Teacher in Teachers" ng-hide="!Teacher.had_lesson">
+						<td width='20'>
+							<span ng-show="Teacher.has_photo" class="glyphicon glyphicon-camera"></span>
+						</td>
 						<td width="400">
 							<a href="teachers/edit/{{Teacher.id}}">
 								<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
@@ -27,31 +40,14 @@
 							 (<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>)
 						</td>
 						<td>
-							<span ng-show="Teacher.has_photo" class="glyphicon glyphicon-camera"></span>
-						</td>
-						<td>
 							<span ng-show="Teacher.banned" class="glyphicon glyphicon-lock text-danger"></span>
 						</td>
-						<td>
-							<span ng-show="Teacher.statuses[1] > 0" class="text-success">
-								{{Teacher.statuses[1]}} нравится
-							</span>
-						</td>
-						<td>
-							<span ng-show="Teacher.statuses[2] > 0" class="text-warning">
-								{{Teacher.statuses[2]}} средне
-							</span>
-						</td>
-						<td>
-							<span ng-show="Teacher.statuses[3] > 0" class="text-danger">
-								{{Teacher.statuses[3]}} не нравится
-							</span>
-						</td>
-						<td>
-							<span ng-show="Teacher.statuses[0] > 0" class="half-black">
-								{{Teacher.statuses[0]}} не установлено
-							</span>
-						</td>
+						<td><span style='margin-left: 6px'>{{ Teacher.statuses[5] }}</span></td>
+						<td><span style='margin-left: 6px'>{{ Teacher.statuses[4] }}</span></td>
+						<td><span style='margin-left: 6px'>{{ Teacher.statuses[3] }}</span></td>
+						<td><span style='margin-left: 6px'>{{ Teacher.statuses[2] }}</span></td>
+						<td><span style='margin-left: 6px'>{{ Teacher.statuses[1] }}</span></td>
+						<td width='100' class="text-gray"><span style='margin-left: 6px'>{{ Teacher.statuses[0] }}</span></td>
 						<td>
 							<span class="label label-danger-red" ng-show="Teacher.student_subject_counts.red">
 								требуется создать {{Teacher.student_subject_counts.red}} <ng-pluralize count="Teacher.student_subject_counts.red" when="{

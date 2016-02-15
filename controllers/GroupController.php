@@ -162,6 +162,7 @@
 
 		public function actionList()
 		{
+			
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity);
@@ -221,7 +222,6 @@
 				}
 
 				$Teachers = Teacher::getActiveGroups();
-
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
 					"Branches"		=> Branches::$all,
@@ -430,8 +430,6 @@
 				"subjects_short" => Subjects::$short,
 				"duration"		=> Group::DURATION,
 				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
-				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
-				"GroupTeacherStatuses"	=> GroupTeacherStatuses::$all,
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_bar"			=> Freetime::getCabinetBar($Group->id, $Group->cabinet),
 				"time" => Freetime::TIME,
@@ -470,8 +468,6 @@
 			# Удаляем всё, что связано с группой
 			GroupTime::deleteAll($condition);
 			GroupSchedule::deleteAll($condition);
-			GroupStudentStatuses::deleteAll($condition);
-			GroupTeacherStatuses::deleteAll($condition);
 			GroupNote::deleteAll($condition);
 		}
 

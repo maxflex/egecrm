@@ -160,7 +160,7 @@
 		public static function getReviews($id_teacher)
 		{
 			$Reviews = TeacherReview::findAll([
-				"condition" => "id_teacher = $id_teacher",
+				"condition" => "rating > 0 AND id_teacher = $id_teacher",
 				"order"		=> "date DESC"
 			]);
 

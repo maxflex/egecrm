@@ -440,6 +440,7 @@ angular.module("Teacher", ["ngMap"]).config([
     });
   };
   return angular.element(document).ready(function() {
+    set_scope('Teacher');
     return smsMode(4);
   });
 });
