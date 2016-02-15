@@ -73,7 +73,12 @@
 			</span>
 		</td>
 		<td>
-			<span ng-show="Group.schedule_count.paid > 0">{{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}</span></span>
+            <span ng-show="Group.schedule_count.paid > 0">
+                {{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}
+                </span>
+                <ng-pluralize count="Group.schedule_count.paid" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize>
+            </span>
+			<!--<span ng-show="Group.schedule_count.paid > 0">{{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}</span></span>-->
 		</td>
 		<td>
 			<span ng-show="Group.days_before_exam !== false">
