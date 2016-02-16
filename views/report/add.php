@@ -48,7 +48,11 @@
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
 					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('homework_grade', n)" ng-class="{'active': Report.homework_grade == n}">{{n}}</span>
+						<span class="teacher-rating" ng-click="setGrade('homework_grade', n)" ng-class="{
+						'active': Report.homework_grade == n,
+						'bg-red': Report.homework_grade <= 3 && Report.homework_grade == n,
+						'bg-orange': Report.homework_grade == 4 && Report.homework_grade == n,
+						}">{{n}}</span>
 					</span>
 				</div>
 				<div class="from-them">
@@ -70,7 +74,11 @@
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
 					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('activity_grade', n)" ng-class="{'active': Report.activity_grade == n}">{{n}}</span>
+						<span class="teacher-rating" ng-click="setGrade('activity_grade', n)" ng-class="{
+						'active': Report.activity_grade == n,
+						'bg-red': Report.activity_grade <= 3 && Report.activity_grade == n,
+						'bg-orange': Report.activity_grade == 4 && Report.activity_grade == n,
+						}">{{n}}</span>
 					</span>
 				</div>
 				<div class="from-them">
@@ -92,7 +100,11 @@
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
 					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('behavior_grade', n)" ng-class="{'active': Report.behavior_grade == n}">{{n}}</span>
+						<span class="teacher-rating" ng-click="setGrade('behavior_grade', n)" ng-class="{
+						'active': Report.behavior_grade == n,
+						'bg-red': Report.behavior_grade <= 3 && Report.behavior_grade == n,
+						'bg-orange': Report.behavior_grade == 4 && Report.behavior_grade == n,
+						}">{{n}}</span>
 					</span>
 				</div>
 				<div class="from-them">
@@ -112,7 +124,11 @@
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
 					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('material_grade', n)" ng-class="{'active': Report.material_grade == n}">{{n}}</span>
+						<span class="teacher-rating" ng-click="setGrade('material_grade', n)" ng-class="{
+						'active': Report.material_grade == n,
+						'bg-red': Report.material_grade <= 3 && Report.material_grade == n,
+						'bg-orange': Report.material_grade == 4 && Report.material_grade == n,
+						}">{{n}}</span>
 					</span>
 				</div>
 				<div class="from-them">
@@ -132,7 +148,11 @@
 				<div class="pull-right">
 					<span style="margin-right: 10px">Поставьте оценку:</span>
 					<span ng-repeat="n in []| range:5">
-						<span class="teacher-rating" ng-click="setGrade('tests_grade', n)" ng-class="{'active': Report.tests_grade == n}">{{n}}</span>
+						<span class="teacher-rating" ng-click="setGrade('tests_grade', n)" ng-class="{
+						'active': Report.tests_grade == n,
+						'bg-red': Report.tests_grade <= 3 && Report.tests_grade == n,
+						'bg-orange': Report.tests_grade == 4 && Report.tests_grade == n,
+						}">{{n}}</span>
 					</span>
 				</div>
 				<div class="from-them">

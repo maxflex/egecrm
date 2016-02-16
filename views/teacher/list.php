@@ -18,10 +18,10 @@
 						<td colspan="3">
 						</td>
 						<td><span class="review-small">5</span></td>
-						<td><span class="review-small">4</span></td>
-						<td><span class="review-small">3</span></td>
-						<td><span class="review-small">2</span></td>
-						<td><span class="review-small">1</span></td>
+						<td><span class="review-small bg-orange">4</span></td>
+						<td><span class="review-small bg-red">3</span></td>
+						<td><span class="review-small bg-red">2</span></td>
+						<td><span class="review-small bg-red">1</span></td>
 						<td><span class="review-small gray">?</span></td>
 					</tr>
 					<tr ng-repeat="Teacher in Teachers" ng-hide="!Teacher.had_lesson">
