@@ -12,14 +12,14 @@ angular.module "Reports", []
 	.controller "UserListCtrl", ($scope) ->
 		angular.element(document).ready ->
 			set_scope "Reports"
-			
-			
-			
+
+
+
 			$scope.list = 1
 			$scope.$watch 'list', (newValue, oldValue) ->
 				if newValue is 2
 					if $scope.SentReports is undefined
-						$.post "reports/AjaxGetReports", 
+						$.post "reports/AjaxGetReports",
 							available_for_parents: 1
 						, (response) ->
 							$scope.SentReports = response
@@ -29,43 +29,49 @@ angular.module "Reports", []
 					$scope.SelectedReports = $scope.SentReports
 				else
 					$scope.SelectedReports = $scope.NotSentReports
-					
-			$.post "reports/AjaxGetReports", 
+
+			$.post "reports/AjaxGetReports",
 				available_for_parents: 0
 			, (response) ->
 				$scope.NotSentReports = response
 				$scope.SelectedReports = $scope.NotSentReports
 				$scope.$apply()
 			, "json"
-		
+
 	.controller "ListCtrl", ($scope) ->
 		$scope.getReports = (id_student) ->
 			_.where($scope.Reports, {id_student: id_student})
-		
+
 		$scope.getSubjects = (Visits) ->
 			Object.keys(Visits)
-		
+
 		$scope.noReports = (Visits) ->
 			return true if Visits is false or not Visits.length
-			
+
 			has_reports = false
 			$.each Visits, (index, Visit) ->
 				if Visit.hasOwnProperty('id_student')
 					has_reports = true
-					return 
+					return
 			!has_reports
-		
+
 		$scope.formatDate = (date) ->
 			moment(date).format "DD.MM.YY"
-			
+
+		$scope.getDay = (date) ->
+			moment(date).format "dddd"
+
+		$scope.formatTime = (time) ->
+			time.slice(0, 5)
+
 		$scope.isReport = (Report) ->
 			Report.hasOwnProperty 'homework_grade'
-		
+
 		$scope.getByGrade = (grade, id_group) ->
-			_.where $scope.Students, 
+			_.where $scope.Students,
 				grade: grade
-				id_group: id_group						
-		
+				id_group: id_group
+
 		angular.element(document).ready ->
 			$scope.weekdays = [
 				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", $scope.time[1], $scope.time[2]]},
@@ -76,11 +82,11 @@ angular.module "Reports", []
 				{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
 			]
-			
+
 			setTimeout ->
 				$scope.$apply()
 			, 50
-			
+
 			set_scope "Reports"
 	.controller "AddCtrl", ($scope) ->
 		$scope.setGrade = (prop, n) ->
@@ -89,11 +95,11 @@ angular.module "Reports", []
 				$scope.Report[prop] = n
 			else
 				$scope.Report[prop] = 0
-		
+
 		$scope.countSymbols = (text) ->
 			return if !text or text.length <= 0
 			text.length
-		
+
 		$scope.deleteReport = () ->
 				bootbox.confirm "Вы уверены, что хотите удалить отчет №#{$scope.Report.id}?", (result) ->
 					if result is true
@@ -101,13 +107,13 @@ angular.module "Reports", []
 						$.post "reports/ajaxDelete", {id_report: $scope.Report.id}, ->
 							history.back()
 
-		$scope.with_email = true		
-			
+		$scope.with_email = true
+
 		$scope.addReport = (with_email) ->
 			return if textareasHaveErrors()
 			ajaxStart()
 			$scope.adding = true
-			$.post "reports/ajaxAdd", 
+			$.post "reports/ajaxAdd",
 				Report: $scope.Report
 				with_email: with_email
 			, (response) ->
@@ -115,23 +121,23 @@ angular.module "Reports", []
 				history.back()
 				#redirect "teachers/reports"
 			, "json"
-		
+
 		$scope.sendReport = ->
 			bootbox.confirm "Отправить отчет родителю?", (result) ->
 				if result is true
 					ajaxStart()
 					$.post "reports/ajaxSendEmail",
-						Report: $scope.Report 
+						Report: $scope.Report
 					, (response) ->
 						ajaxEnd()
 						$scope.Report.email_sent= true
 						$scope.Report.date_sent = response
 						$scope.$apply()
 					, "json"
-					
+
 		$scope.formatDate = (date) ->
 			moment(date).format "DD.MM.YY"
-		
+
 		$scope.formatDate2 = (date) ->
 				date = date.split "."
 				date = date.reverse()
@@ -139,12 +145,12 @@ angular.module "Reports", []
 				D = new Date(date)
 				moment(D).format "D MMMM YYYY года"
 
-		
+
 		$scope.editReport = ->
-			return if textareasHaveErrors()			
+			return if textareasHaveErrors()
 			ajaxStart()
 			$scope.saving = true
-			$.post "reports/ajaxEdit", 
+			$.post "reports/ajaxEdit",
 				Report: $scope.Report
 			, (response) ->
 				ajaxEnd()
@@ -152,7 +158,7 @@ angular.module "Reports", []
 				$scope.saving = false
 				$scope.$apply()
 				console.log response
-		
+
 		textareasHaveErrors = ->
 			if $(".teacher-rating.active").length < 5
 # 				error_field = $(".teacher-rating").not('.active').first().parent().parent().parent().parent().find("b").text()
@@ -168,7 +174,7 @@ angular.module "Reports", []
 				else
 					$(element).removeClass "has-error"
 			return has_errors
-		
+
 		angular.element(document).ready ->
 			$(".form-change-control").on 'keyup change', 'input, select, textarea', ->
 				$scope.form_changed = true

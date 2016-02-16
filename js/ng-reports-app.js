@@ -67,6 +67,12 @@ angular.module("Reports", []).filter('to_trusted', [
   $scope.formatDate = function(date) {
     return moment(date).format("DD.MM.YY");
   };
+  $scope.getDay = function(date) {
+    return moment(date).format("dddd");
+  };
+  $scope.formatTime = function(time) {
+    return time.slice(0, 5);
+  };
   $scope.isReport = function(Report) {
     return Report.hasOwnProperty('homework_grade');
   };

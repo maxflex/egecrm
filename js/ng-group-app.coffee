@@ -256,33 +256,6 @@
 
 		.controller "EditCtrl", ($scope) ->
 
-			$scope.toggleAgreement = (Entity) ->
-				type_entity = if Entity.hasOwnProperty('id_a_pers') then 'TEACHER' else 'STUDENT'
-				console.log type_entity
-				id_status = Entity.agreement
-				if id_status is 0 then id_status = 3 else id_status--
-				$.post "ajax/toggleGroupAgreement",
-					id_entity: Entity.id
-					type_entity: type_entity
-					id_group: $scope.Group.id
-					day_and_time: $scope.Group.day_and_time
-					id_status: id_status
-				, (response) ->
-					Entity.agreement = id_status
-					$scope.$apply()
-
-			$scope.toggleTeacherLike = (Student) ->
-				id_status = Student.teacher_like_status
-				id_status++;
-				id_status = 0 if id_status > 3
-				$.post "ajax/toggleTeacherLike",
-					id_student: Student.id
-					id_teacher: $scope.Group.id_teacher
-					id_status: id_status
-				, (response) ->
-					Student.teacher_like_status = id_status
-					$scope.$apply()
-
 			$scope.allStudentStatuses = ->
 				student_statuses_count = _.filter $scope.Group.student_statuses, (s, id_student) ->
 											s isnt undefined and s.id_status and _.where($scope.TmpStudents, {id: parseInt(id_student)}).length
@@ -436,19 +409,6 @@
 					cabinet: $scope.Group.cabinet
 
 				$scope.updateCabinetBar()
-
-			$scope.updateAgreement = ->
-				$.post "groups/ajax/UpdateAgreement",
-					id_group: $scope.Group.id
-					day_and_time: $scope.Group.day_and_time
-					id_teacher: $scope.Group.id_teacher
-					students: $scope.Group.students
-				, (response) ->
-					$scope.getTeacher($scope.Group.id_teacher).agreement = response.teacher_agreement
-					$.each response.student_agreements, (id_student, id_status)->
-						$scope.getStudent(id_student).agreement = id_status
-					$scope.$apply()
-				, "json"
 
 			$scope.changeTeacher = ->
 				return if not $scope.Group.id
@@ -910,7 +870,6 @@
 							$scope.saving = false
 							$scope.form_changed = false
 
-							$scope.updateAgreement()
 							$scope.updateTeacherBar()
 							$scope.updateCabinetBar(false)
 							$scope.updateStudentBars()
@@ -1054,10 +1013,10 @@
 							return
 				else
 					time_correct = true
-
+				Group.id_subject = Group.id_subject || 0
 				return time_correct and (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and
 					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
-					((Group.id_subject and Group.id_subject.toString() in $scope.search.subjects) or $scope.search.subjects.length is 0) and
+					((Group.id_subject.toString() in $scope.search.subjects) or $scope.search.subjects.length is 0) and
 					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher) and
 					(parseInt($scope.search.cabinet) is parseInt(Group.cabinet) or not parseInt($scope.search.cabinet))
 

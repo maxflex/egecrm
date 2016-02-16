@@ -169,11 +169,12 @@
 												<b ng-show="subject.id_subject == Group.subject">{{subject.score}}</b>
 											</div>
 										</td>
+
 									</tr>
 								</tbody>
 							</table>
 						</div>
-						<div ng-show="(Groups2 | filter:groupsFilter2).length == 0" class="center half-black small" style="margin: 30px 0 15px">не найдено групп, соответствующих запросу</div>
+						<div ng-show="(Groups2 | filter:groupsFilter2).length == 0" class="center half-black small" style="margin: 30px 0 15px">не найдено групп</div>
 				</div>
 			</div>
 		</div>

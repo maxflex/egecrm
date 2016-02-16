@@ -220,16 +220,6 @@
 			}
 		}
 
-		public function actionAjaxToggleGroupAgreement()
-		{
-			GroupAgreement::addData($_POST);
-		}
-
-		public function actionAjaxToggleTeacherLike()
-		{
-			GroupTeacherLike::addData($_POST);
-		}
-
 		public function actionAjaxTest()
 		{
 			$Request = new Request([

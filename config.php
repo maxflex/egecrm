@@ -8,10 +8,10 @@
 	// Константы
 	$_constants = array(
 		"DB_LOGIN"		=> "root",
-		"DB_PASSWORD"	=> "root",
+		"DB_PASSWORD"	=> "",
 		"DB_HOST"		=> "localhost",
 		"DB_PREFIX"		=> "",
-		"BASE_LOCAL"	=> "http://localhost:8080",
+		"BASE_LOCAL"	=> "http://localhost",
 		"BASE_ADDON"	=> "/egecrm/",
 		"BASE_ROOT"		=> $_SERVER["DOCUMENT_ROOT"]."/egecrm",
 		

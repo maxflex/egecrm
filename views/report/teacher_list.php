@@ -13,18 +13,18 @@
 		<div class="alert alert-info" role="alert">
 			Каждый ученик, заключающий договор с ЕГЭ-Центром оплачивает обучение двумя платежами. Первый платеж производится при заключении договора, второй - в январе 2016 года. Отчет преподавателя - один из главных факторов, влияющих на долю родителей, желающих продолжать обучение, дающий родителям понимание за что он заплатил и стоит ли ему платить дальше. Пожалуйста, заполняйте отчет каждого ученика внимательно и подробно.
 		</div>
-		
-		
-		<span ng-repeat="Group in Groups">
+
+
+		<!-- <span ng-repeat="Group in Groups">
 			<span ng-repeat="grade in [9, 10, 11]" ng-show="getByGrade(grade, Group.id).length">
-				<h4>{{grade}} класс, группа {{Group.id}} 
+				<h4>{{grade}} класс, группа {{Group.id}}
 					(занятия по <span ng-repeat="(day, day_data) in Group.day_and_time">
 						{{weekdays[day - 1].short}}
 						<span ng-repeat="dd in day_data">
 							в {{dd}}{{$last ? "" : " и "}}</span></span>)
-				</h4>
+				</h4> -->
 				<table class="table table-divlike">
-					<tr ng-repeat="Student in getByGrade(grade, Group.id)">
+					<tr ng-repeat="Student in Students">
 						<td style="width: 20%">
 							<a href="teachers/reports/add/{{Student.id}}">{{Student.last_name}} {{Student.first_name}}</a>
 						</td>
@@ -50,13 +50,13 @@
 						</td>
 					</tr>
 				</table>
-			</span>
-		</span>
-		
-		
+			<!-- </span>
+		</span> -->
+
+
 <!-- БЕЗ ГРУПП -->
-		
-		<span ng-repeat="grade in [9, 10, 11]" ng-show="getByGrade(grade, false).length">
+
+		<!-- <span ng-repeat="grade in [9, 10, 11]" ng-show="getByGrade(grade, false).length">
 			<h4>{{grade}} класс</h4>
 			<table class="table table-divlike">
 				<tr ng-repeat="Student in getByGrade(grade, false)">
@@ -85,9 +85,9 @@
 					</td>
 				</tr>
 			</table>
-		</span>
-		
-		
+		</span> -->
+
+
 	</div>
 </div>
 

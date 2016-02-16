@@ -10,18 +10,10 @@
 	<div class="panel-heading">
 		<?= $Group->id ? "Группа {$Group->id} " . ($Group->is_special ? "(спецгруппа)" : "") : "Добавление группы" ?>
 		<?php if ($Group->id) :?>
-			<span ng-show="Group.schedule_count > 0 && !Group.past_lesson_count" style="margin-bottom: 20px">({{Group.schedule_count}} <ng-pluralize count="Group.schedule_count" when="{
-				'one': 'занятие',
-				'few': 'занятия',
-				'many': 'занятий'
-			}"></ng-pluralize> (<span ng-repeat="(day, day_data) in Group.day_and_time_2">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : " и "}}</span>), первое занятие {{Group.first_schedule | date:"d MMMM yyyy"}})</span>
+			<span ng-show="Group.schedule_count.paid > 0 && !Group.past_lesson_count" style="margin-bottom: 20px">({{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span> (<span ng-repeat="(day, day_data) in Group.day_and_time_2">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : " и "}}</span>), первое занятие {{Group.first_schedule | date:"d MMMM yyyy"}})</span>
 
 
-			<span ng-show="Group.past_lesson_count" style="margin-bottom: 20px">({{Group.schedule_count}} <ng-pluralize count="Group.schedule_count" when="{
-				'one': 'занятие',
-				'few': 'занятия',
-				'many': 'занятий'
-			}"></ng-pluralize>, <span ng-repeat="(day, day_data) in Group.day_and_time_2">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : " и "}}</span>, прошло {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
+			<span ng-show="Group.past_lesson_count" style="margin-bottom: 20px">({{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span>, <span ng-repeat="(day, day_data) in Group.day_and_time_2">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : " и "}}</span>, прошло {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
 					'one': 'занятие',
 					'few': 'занятия',
 					'many': 'занятий'
@@ -100,6 +92,10 @@
 	           <select class="form-control" ng-model="Group.duration" ng-options="min as min + ' мин.' for min in duration">
 	           </select>
             </div>
+			<div class="form-group">
+	           <select class="form-control" ng-model="Group.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015]">
+	           </select>
+            </div>
             <span ng-show="is_student_dragging" class="student-dragout ng-hide">удалить</span>
 		</div>
 
@@ -121,9 +117,12 @@
 								{{Student.Contract.subjects[Group.id_subject].score}}
 							</td>
 							<td>
-								<span ng-show='Group.past_lesson_count > 0'>
-									<span class="review-small" ng-if='Student.teacher_like_status'>{{ Student.teacher_like_status }}</span>
-									<span class="half-black" ng-if="!Student.teacher_like_status">не установлено</span>
+								<span ng-show='Student.already_had_lesson'>
+									<span class="review-small" ng-class="{
+										'bg-red': Student.teacher_like_status <= 3,
+										'bg-orange': Student.teacher_like_status == 4 
+									}" ng-if='Student.teacher_like_status'>{{ Student.teacher_like_status }}</span>
+									<span class="review-small gray" ng-if="!Student.teacher_like_status">?</span>
 									<!-- <span class="text-success"	ng-show="Student.teacher_like_status == 1">нравится</span>
 									<span class="text-warning" 	ng-show="Student.teacher_like_status == 2">средне</span> -->
 									<!-- <span class="text-danger" ng-if="Student.teacher_like_status == 3">не нравится</span> -->
@@ -135,27 +134,6 @@
 									<span class="text-success default" ng-show="Student.sms_notified">смс отправлено</span>
 								</span>
 							</td>
-							<td>
-								<span ng-click="toggleAgreement(Student)" class="pointer">
-									<span class="half-black" 	ng-show="Student.agreement == 0">не установлено</span>
-									<span class="text-success"	ng-show="Student.agreement == 3"><?= GroupAgreement::$all[3] ?></span>
-									<span class="text-warning" 	ng-show="Student.agreement == 2"><?= GroupAgreement::$all[2] ?></span>
-									<span class="half-black"	ng-show="Student.agreement == 1"><?= GroupAgreement::$all[1] ?></span>
-								</span>
-<!--
-								<span class="label group-student-status{{Student.id_status}} s-s-s student-status-span-{{Student.id}}"
-									ng-click="setStudentStatus(Student, $event)">
-									{{Student.id_status ? GroupStudentStatuses[Student.id_status] : "статус"}}
-								</span>
-								<select ng-model="Student.id_status" class="student-status-select-{{Student.id}}"
-									style="display: none; width: 150px" data-id="{{Student.id}}">
-										<option selected value="">статус</option>
-										<option disabled>──────────────</option>
-										<option ng-repeat="(id_status, name) in GroupStudentStatuses" ng-value="id_status"
-											ng-selected="Student.id_status == id_status">{{name}}</option>
-								</select>
--->
-							</td>
 							<td width="150">
 								<span ng-repeat="(day, data) in Student.bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
@@ -163,7 +141,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="5"></td>
+							<td colspan="4"></td>
 							<td width="150">
 							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
@@ -180,14 +158,6 @@
 								</span>
 								<a href="https://crm.a-perspektiva.ru/repetitors/edit/?id={{getTeacher(Group.id_teacher).id_a_pers}}"
 									target="_blank">ЕР</a>
-							</td>
-							<td  style="width: 150px !important">
-									<span ng-click="toggleAgreement(getTeacher(Group.id_teacher))" class="pointer">
-										<span class="half-black" 	ng-show="getTeacher(Group.id_teacher).agreement == 0">не установлено</span>
-										<span class="text-primary"	ng-show="getTeacher(Group.id_teacher).agreement == 3"><?= GroupAgreement::$all[3] ?></span>
-										<span class="text-warning" 	ng-show="getTeacher(Group.id_teacher).agreement == 2"><?= GroupAgreement::$all[2] ?></span>
-										<span class="half-black"	ng-show="getTeacher(Group.id_teacher).agreement == 1"><?= GroupAgreement::$all[1] ?></span>
-									</span>
 							</td>
 							<td width="150">
 							   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">

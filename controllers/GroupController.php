@@ -162,6 +162,7 @@
 
 		public function actionList()
 		{
+			
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity);
@@ -216,12 +217,15 @@
 				$Groups = Group::findAll();
 
 				// исключить некоторые данные для более быстрой front-end загрузки
-				foreach ($Groups as &$Group) {
+				foreach ($Groups as  $index => &$Group) {
 					unset($Group->Comments);
+					if ($Group->schedule_is_finished) {
+//						echo 1;
+						unset($Groups[$index]);
+					}
 				}
 
 				$Teachers = Teacher::getActiveGroups();
-
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
 					"Branches"		=> Branches::$all,
@@ -382,12 +386,6 @@
 				foreach ($Teachers as &$Teacher) {
 					if ($Teacher->id == $Group->id_teacher) {
 						$Teacher->bar 		= $Teacher->getBar($Group->id, $Group->id_branch);
-						$Teacher->agreement =  GroupAgreement::getStatus([
-													'type_entity' 	=> Teacher::USER_TYPE,
-													'id_entity'		=> $Teacher->id,
-													'id_group'		=> $Group->id,
-													'day_and_time'	=> $Group->day_and_time,
-												]);
 					}
 				}
 			}
@@ -399,12 +397,6 @@
 
 				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject);
 				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet);
-				$Student->agreement				= GroupAgreement::getStatus([
-					'type_entity' 	=> Student::USER_TYPE,
-					'id_entity'		=> $Student->id,
-					'id_group'		=> $Group->id,
-					'day_and_time'	=> $Group->day_and_time,
-				]);
 
 				foreach ($Student->branches as $id_branch) {
 					if (!$id_branch) {
@@ -442,8 +434,6 @@
 				"subjects_short" => Subjects::$short,
 				"duration"		=> Group::DURATION,
 				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
-				"GroupStudentStatuses"	=> GroupStudentStatuses::$all,
-				"GroupTeacherStatuses"	=> GroupTeacherStatuses::$all,
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_bar"			=> Freetime::getCabinetBar($Group->id, $Group->cabinet),
 				"time" => Freetime::TIME,
@@ -482,9 +472,6 @@
 			# Удаляем всё, что связано с группой
 			GroupTime::deleteAll($condition);
 			GroupSchedule::deleteAll($condition);
-			GroupStudentStatuses::deleteAll($condition);
-			GroupTeacherStatuses::deleteAll($condition);
-			GroupAgreement::deleteAll($condition);
 			GroupNote::deleteAll($condition);
 		}
 
@@ -979,13 +966,6 @@
 				$return['teacher_like_statuses'][$id_student] = TeacherReview::getStatus($id_student, $id_teacher, $id_subject);
 			}
 
-			$return['agreement'] = GroupAgreement::getStatus([
-										'type_entity' 	=> Teacher::USER_TYPE,
-										'id_entity'		=> $id_teacher,
-										'id_group'		=> $id_group,
-										'day_and_time'	=> $day_and_time,
-									]);
-
 			$return['bar'] = Freetime::getTeacherBar($id_group, $id_branch, $id_teacher);
 
 			Group::updateById($id_group, [
@@ -993,28 +973,6 @@
 			]);
 
 			returnJsonAng($return);
-		}
-
-		public function actionAjaxUpdateAgreement()
-		{
-			extract($_POST);
-
-			foreach ($students as $id_student) {
-				$response['student_agreements'][$id_student] = GroupAgreement::getStatus([
-																'type_entity' 	=> Student::USER_TYPE,
-																'id_entity'		=> $id_student,
-																'id_group'		=> $id_group,
-																'day_and_time'	=> $day_and_time,
-															]);
-			}
-
-			$response['teacher_agreement'] = GroupAgreement::getStatus([
-												'type_entity' 	=> Teacher::USER_TYPE,
-												'id_entity'		=> $id_teacher,
-												'id_group'		=> $id_group,
-												'day_and_time'	=> $day_and_time,
-											]);
-			returnJsonAng($response);
 		}
 
 		public function actionAjaxReloadSmsNotificationStatuses()

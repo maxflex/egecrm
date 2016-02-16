@@ -275,10 +275,20 @@
 		}
 
 
+		/**
+		 * Уже было хотя бы одно занятие
+		 */
 		public function alreadyHadLesson($id_group)
 		{
 			return VisitJournal::count([
 				"condition" => "id_entity={$this->id} AND type_entity='STUDENT' AND presence=1 AND id_group=$id_group"
+			]);
+		}
+
+		public static function alreadyHadLessonStatic($id_student, $id_group)
+		{
+			return VisitJournal::count([
+				"condition" => "id_entity={$id_student} AND type_entity='STUDENT' AND presence=1 AND id_group=$id_group"
 			]);
 		}
 
@@ -471,20 +481,6 @@
 			}
 		}
 
-		public function agreedToBeInGroup($id_group)
-		{
-			return GroupStudentStatuses::count([
-				"condition" => "id_student=" . $this->id . " AND id_group=" . $id_group . " AND id_status=" . GroupStudentStatuses::AGREED
-			]) > 0 ? true : false;
-		}
-
-		public function agreedToBeInGroupStatic($id_student, $id_group)
-		{
-			return GroupStudentStatuses::count([
-				"condition" => "id_student=" . $id_student . " AND id_group=" . $id_group . " AND id_status=" . GroupStudentStatuses::AGREED
-			]) > 0 ? true : false;
-		}
-
 		public function notifiedInGroupStatic($id_student, $id_group)
 		{
 			return GroupStudentStatuses::count([
@@ -541,9 +537,18 @@
 
 		public static function getGroupsStatic($id_student)
 		{
-			return Group::findAll([
+			$Groups = Group::findAll([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
 			]);
+
+			foreach ($Groups as  $index => &$Group) {
+				unset($Group->Comments);
+				if ($Group->schedule_is_finished) {
+					unset($Groups[$index]);
+				}
+			}
+
+			return $Groups;
 		}
 
 		public function getGroups($with_schedule = false)
@@ -560,6 +565,13 @@
 							"condition" => "id_student={$this->id} AND id_group={$Group->id} AND date='{$Schedule->date}'"
 						]);
 					}
+				}
+			}
+
+			foreach ($Groups as  $index => &$Group) {
+				unset($Group->Comments);
+				if ($Group->schedule_is_finished) {
+					unset($Groups[$index]);
 				}
 			}
 

@@ -21,7 +21,6 @@
 	$half_black			: rgba(0, 0, 0, .5);
 	$quater_black 		: rgba(0, 0, 0, .25);
 
-
 .dropdown-menu .divider {
 	display: none;
 }
@@ -49,6 +48,9 @@
     width: 20px;
     height: 20px;
     text-align: center;
+    &.gray {
+	   background: $placeholder_gray !important; 
+    }
 }
 
 .visit-between-number {
@@ -416,7 +418,7 @@ body {
 }
 
 .top-group-menu-thin > div {
-	width: 10.8%;
+	width: 9.5%;
 	display: inline-block;
 	margin-right: 5px;
 }
@@ -518,7 +520,7 @@ body {
 		background-color: $hr_gray;
 	}
 	&.active {
-		background-color: $green !important;
+		background-color: $green;
 		color: white !important;
 	}
 }
@@ -2654,6 +2656,14 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 		position: relative;
 		top: -1px;
 	}
+}
+
+.bg-red {
+	background: $red !important;
+}
+
+.bg-orange {
+	background: $orange !important;
 }
 
 

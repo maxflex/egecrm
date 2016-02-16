@@ -21,7 +21,6 @@
 	 */
 	function preType($anything, $exit = NULL)
 	{
-		if (User::fromSession()->id == 69) {
 			echo "<pre>";
 			print_r($anything);
 			echo "</pre>";
@@ -30,7 +29,6 @@
 			{
 				exit();
 			}
-		}
 	}
 	/*
 	 * Возвращает соединение DB_SETTINGS

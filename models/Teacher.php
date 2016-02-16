@@ -144,9 +144,16 @@
 		public static function getGroups($id_teacher = false)
 		{
 			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
-			return Group::findAll([
+			$Groups = Group::findAll([
 				"condition" => "id_teacher=$id_teacher"
 			]);
+			foreach ($Groups as  $index => &$Group) {
+				unset($Group->Comments);
+				if ($Group->schedule_is_finished) {
+					unset($Groups[$index]);
+				}
+			}
+			return $Groups;
 		}
 
 		public static function countGroups($id_teacher = false)
@@ -160,7 +167,7 @@
 		public static function getReviews($id_teacher)
 		{
 			$Reviews = TeacherReview::findAll([
-				"condition" => "id_teacher = $id_teacher",
+				"condition" => "rating > 0 AND id_teacher = $id_teacher",
 				"order"		=> "date DESC"
 			]);
 
@@ -265,20 +272,6 @@
 			}
 
 			return $Reports;
-		}
-
-		public function agreedToBeInGroup($id_group)
-		{
-			return GroupAgreement::count([
-				"condition" => "id_entity=" . $this->id . " AND id_group=" . $id_group . " AND type_entity='TEACHER' AND id_status=" . GroupTeacherStatuses::AGREED
-			]) > 0 ? true : false;
-		}
-
-		public function agreedToBeInGroupStatic($id_teacher, $id_group)
-		{
-			return GroupAgreement::count([
-				"condition" => "id_entity=" . $id_teacher . " AND id_group=" . $id_group . " AND type_entity='TEACHER' AND id_status=" . GroupTeacherStatuses::AGREED
-			]) > 0 ? true : false;
 		}
 
 		public function hadLesson()

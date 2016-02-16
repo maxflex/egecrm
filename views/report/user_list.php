@@ -27,16 +27,19 @@
 			</td>
 		</tr>
 	</table>
-	
-	<div ng-show="!SelectedReports.length" style="padding: 100px" class="small half-black center">
+
+	<div ng-show="SelectedReports !== false && !SelectedReports.length" style="padding: 100px" class="small half-black center">
 		загрузка отчетов...
 	</div>
-	
+	<div ng-show="SelectedReports === false" style="padding: 100px" class="small half-black center">
+		нет отчетов
+	</div>
+
 	<div style="margin-top: 20px" ng-show="<?= $report_counts['red'] ?> > 0"><span class="glyphicon glyphicon-exclamation-sign text-danger glyphicon-big"></span><span class="text-danger"><?= $report_counts['red'] ?> <ng-pluralize count="<?= $report_counts['red'] ?>" when="{
 								'one': 'отчет',
 								'few': 'отчета',
 								'many': 'отчетов',
 							}"></ng-pluralize> требуется создать</span>
 	</div>
-	
+
 </div>

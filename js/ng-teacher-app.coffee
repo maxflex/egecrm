@@ -379,4 +379,5 @@
 						console.log "here", index, id_teacher
 
 			angular.element(document).ready ->
+				set_scope 'Teacher'
 				smsMode 4
