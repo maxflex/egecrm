@@ -287,6 +287,9 @@
 			]);
 		}
 
+		public static function isDev() {
+			return (int)in_array(User::fromSession()->id, [62 /* Maxim  Kolyadin */, 102 /* Shamshod Zhamolov */]);
+		}
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 
 		public function promoVisit()

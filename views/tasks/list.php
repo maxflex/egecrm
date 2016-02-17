@@ -49,6 +49,7 @@
 				<div ng-repeat="Task in Tasks | reverse" class="row task-line" ng-hide="!Task.html.trim()">
 					<div class="col-sm-12">
 						<div class="task">
+							<div ng-show="<?= User::isDev(); ?>" style="text-align: right">Task ID: #{{Task.id}}</div>
 							<div ng-bind-html="Task.html | unsafe" name="task-{{Task.id}}" ng-click="editTask(Task)"></div>
 							<span ng-repeat="file in Task.files" class="attachment-no-underline" ng-hide="editingTask(Task)">
 								<span class="glyphicon glyphicon-paperclip"></span><a target="_blank" href="files/task/{{file.name}}" style="">{{file.uploaded_name}}</a> ({{file.size}})
