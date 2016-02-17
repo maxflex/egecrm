@@ -1,4 +1,5 @@
 <?php
+
 	class User extends Model
 	{
 		const SALT 					= "32dg9823dldfg2o001-2134>?erj&*(&(*^";	// Для генерации кук
@@ -8,6 +9,10 @@
 
 		const LAST_REAL_USER_ID = 112;
 		const ONLINE_TIME_MINUTES = 15;
+
+		// Id пользователей для простмотра меню задач
+		public static $ALLOW_TASKS_MENU = [1, 62, 93, 104, 102];
+		public static $DEVELOPERS = [62,102];
 
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
@@ -288,7 +293,7 @@
 		}
 
 		public static function isDev() {
-			return (int)in_array(User::fromSession()->id, [62 /* Maxim  Kolyadin */, 102 /* Shamshod Zhamolov */]);
+			return (int)in_array(User::fromSession()->id, self::$DEVELOPERS);
 		}
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 
