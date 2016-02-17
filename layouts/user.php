@@ -40,13 +40,13 @@
 				0 СМС
 			</span>
 			</div>
-			
+
 			<div class="sms-template-list">
 				<span onclick="smsTemplate(1)">подтверждение договоренности</span>
 				<span onclick="smsTemplate(2)">нет связи с клиентом</span>
 				<span onclick="smsTemplate(3)">нет связи с ожидающими и не решившими</span>
 				<span onclick="loginPasswordTemplate()">логин/пароль</span>
-				
+
 				<div class="sms-group-controls" style="float: right; display: none">
 					<span style="margin-right: 7px; color: black; border-bottom: none">
 						<input type="checkbox" onclick="ang_scope.to_students = !ang_scope.to_students; ang_scope.$apply()" checked> ученикам
@@ -59,7 +59,7 @@
 					</span>
 				</div>
 			</div>
-			
+
 			<div style="clear: both">
 				<button class="btn btn-primary ajax-sms-button" onclick="sendSms()">Отправить</button>
 			</div>
@@ -129,11 +129,11 @@
 		</form>
 	<div class="list-group">
     <a class="list-group-item active">Меню</a>
-    <a href="requests" class="list-group-item">Заявки 
+    <a href="requests" class="list-group-item">Заявки
 	    <?php
 			// Количество новых заявок
 			$new_request_count = Request::countNew();
-			
+
 			// Если есть новые заявки
 			if ($new_request_count) {
 				echo '<span class="badge pull-right">'. $new_request_count .'</span>';
@@ -146,18 +146,18 @@
     <a href="payments" class="list-group-item">Платежи
 	    <?php
 		    $unconfirmed_payment_count = Payment::countUnconfirmed();
-		    
+
 		    if ($unconfirmed_payment_count) {
-				echo '<span class="badge pull-right">'. $unconfirmed_payment_count .'</span>';	    
+				echo '<span class="badge pull-right">'. $unconfirmed_payment_count .'</span>';
 		    }
 		?>
     </a>
     <a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count() ?></span></a>
-	<a href="stats/visits/total" class="list-group-item">Посещаемость 
+	<a href="stats/visits/total" class="list-group-item">Посещаемость
 		<?php
 			if (!LOCAL_DEVELOPMENT) {
 				$journal_errors = memcached()->get("JournalErrors");
-				
+
 				$journal_errors_count = 0;
 				foreach ($journal_errors as $date => $values) {
 					$journal_errors_count += count($values);
@@ -170,28 +170,28 @@
 		?>
 	</a>
     <a href="clients/errors" class="list-group-item">Ошибки</a>
-    <a href="testing" class="list-group-item">Тестирование</a>	
-    <a href="reports" class="list-group-item">Отчеты 
+    <a href="testing" class="list-group-item">Тестирование</a>
+    <a href="reports" class="list-group-item">Отчеты
 	    <?php
 		    $report_counts = Teacher::getReportCountsAll();
 		?>
 		<span class="badge badge-danger pull-right"><?= $report_counts['red'] ?></span>
 	    <span class="badge pull-right"><?= Report::count() ?></span>
-    </a>	
-    <a href="stats/groups" class="list-group-item">Статистика групп</a>	
+    </a>
+    <a href="stats/groups" class="list-group-item">Статистика групп</a>
 	<a class="list-group-item active">Преподаватели</a>
     <a href="teachers" class="list-group-item">Профили</a>
 	<a href="teachers/salary" class="list-group-item">Дебет</a>
-	
-	
-	
+
+
+
     <a class="list-group-item active">Настройки</a>
-	<?php if (in_array(User::fromSession()->id, User::$ALLOW_TASKS_MENU)): ?>
+	<?php if (User::fromSession()->allowedToSeeTasks()) :?>
 	    <a href="tasks" class="list-group-item">Задачи
 		<?php
 			// Количество новых заявок
 			$new_tasks_count = Task::countNew(0);
-			
+
 			// Если есть новые заявки
 			if ($new_tasks_count) {
 				echo '<span class="badge pull-right">'. $new_tasks_count .'</span>';
@@ -242,7 +242,7 @@
 	</div>
   </div>
   <div class="col-sm-9 content-col" style="padding: 0; width: 80.6%;">
-    
+
   	<?php if (!$this->_custom_panel) { ?>
 		<div class="panel panel-primary">
 		<div class="panel-heading">

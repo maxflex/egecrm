@@ -10,9 +10,11 @@
 		const LAST_REAL_USER_ID = 112;
 		const ONLINE_TIME_MINUTES = 15;
 
-		// Id пользователей для простмотра меню задач
-		public static $ALLOW_TASKS_MENU = [1, 62, 93, 104, 102];
-		public static $DEVELOPERS = [62,102];
+		// ID пользователей для простмотра меню задач
+		const ALLOW_TASKS_MENU = [1, 69, 93, 104, 102];
+
+		// ID разработчиков
+		const DEVELOPERS = [69, 102];
 
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
@@ -80,7 +82,7 @@
 		public static function isUser($return_string = false)
 		{
 			$return = User::fromSession()->type == User::USER_TYPE;
-			
+
 			if ($return_string) {
 				return $return ? 'true' : 'false';
 			} else {
@@ -293,8 +295,13 @@
 		}
 
 		public static function isDev() {
-			return (int)in_array(User::fromSession()->id, self::$DEVELOPERS);
+			return in_array(User::fromSession()->id, static::DEVELOPERS);
 		}
+
+		public static function allowedToSeeTasks() {
+			return in_array(User::fromSession()->id, static::ALLOW_TASKS_MENU);
+		}
+
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 
 		public function promoVisit()
