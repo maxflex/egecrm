@@ -23,8 +23,14 @@
 		 * 
 		 * $branch – если передан массив, ищет все кабинеты по ID, если передано число,
 		 * то ищутстя только кабинеты этого id филиала
+		 *
+		 * @param bool $groupByBranches     Groups cabinets by branches,
+		 * 									multilevel array returned instead of dimensional array
+		 *
+		 * @return Cabinet[] 					Array of cabinets.
+		 * 									Cabinets are grouped by branch if groupByBranches param passed
 		 */
-		public static function getByBranch($branch, $id_group = 0)
+		public static function getByBranch($branch, $id_group = 0, $groupByBranches = false)
 		{
 			if (!$branch) {
 				return false;
@@ -44,7 +50,25 @@
 				$cabinet->number = "Кабинет №".$cabinet->number;
 				$cabinet->freetime = self::getFreetime($id_group, $cabinet->id);
 			}
-			
+
+
+			//группировка по филиалам
+			if ($groupByBranches) {
+				$groupedCabinets = [];
+
+				foreach ($return as $cabinet) {
+					if(isset($groupedCabinets[$cabinet->id_branch])) {
+						$groupedCabinets[$cabinet->id_branch] = array_merge(
+																		$br = $groupedCabinets[$cabinet->id_branch],
+																		[$cabinet]
+																);
+					} else {
+						$groupedCabinets[$cabinet->id_branch] = [$cabinet];
+					}
+				}
+				return $groupedCabinets;
+			}
+
 			// если выбрано много филиалов, подписывать название филиала к кабинету
 			// чтобы было понятно филиал какого кабинета это
 			if (is_array($branch) && count($branch) > 1) {

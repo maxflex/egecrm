@@ -286,6 +286,22 @@
 			]);
 		}
 
+		/**
+		 * Gets all schedules of group, where schedule time is not defined.
+		 *
+		 * @return GroupSchedule[]|bool		Group schedules, where time is not defined if found,
+		 * 									false otherwise.
+		 */
+		public function getScheduleWithoutTime()
+		{
+			return GroupSchedule::findAll([
+				"condition" => "id_group=".$this->id." AND ".
+							   "(time IS NULL OR time = '00:00:00' OR cabinet IS NULL OR id_branch IS NULL OR ".
+							   "0 in (cabinet, id_branch))",
+				"order"		=> "date ASC, time ASC",
+			]);
+		}
+
 		public function getFutureSchedule()
 		{
 			return GroupSchedule::findAll([
@@ -621,6 +637,26 @@
 			}
 
 			return $vocation_dates;
+		}
+
+		/**
+		 * Return array of ids of branches, where group lessons are held.
+		 *
+		 * @param int $id_group     	Id of group
+		 * @return string[] 		    Array of branch ids
+		 */
+		public static function getBranchIds($id_group,$asArray = true)
+		{
+			$result = dbConnection()->query(
+				"SELECT GROUP_CONCAT(DISTINCT gs.id_branch ORDER BY gs.id_branch ASC) as ids ".
+				"FROM  `group_schedule` gs ".
+				"WHERE gs.id_branch <> 0 AND gs.id_group = ".intval($id_group)
+			);
+			if ($result) {
+				return explode(',',$result->fetch_object()->ids);
+			} else {
+				return [];
+			}
 		}
 	}
 

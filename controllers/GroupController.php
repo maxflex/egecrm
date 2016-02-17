@@ -343,7 +343,8 @@
 					"vocation_dates"	=> GroupSchedule::getVocationDates(),
 					"exam_dates"		=> ExamDay::getExamDates($Group),
 					"time" 				=> Freetime::TIME,
-					"Cabinets"			=> Cabinet::getByBranch($Group->id_branch),
+//					"Cabinets"			=> Cabinet::getByBranch($Group->id_branch),
+					"Cabinets"			=> Cabinet::getByBranch(GroupSchedule::getBranchIds($Group->id),0,true),
                     "Branches"          => Branches::get(),
 				]);
 
@@ -494,14 +495,19 @@
 			$GroupSchedule->save("time");
 		}
 
+		/**
+		 * Adds schedule record.
+		 * @return int       Id of new record
+		 */
 		public function actionAjaxAddScheduleDate()
 		{
 			extract($_POST);
 
-			GroupSchedule::add([
-				"date" => $date,
-				"id_group" => $id_group,
-			]);
+			$obj = GroupSchedule::add([
+						"date" => $date,
+						"id_group" => $id_group,
+				   ]);
+			returnJson($obj->id);
 		}
 
 		public function actionAjaxTimeFromGroup()
@@ -509,7 +515,7 @@
 			extract($_POST);
 			$Group = Group::findById($id_group);
 
-			$Group->Schedule = $Group->getSchedule();
+			$Group->Schedule = $Group->getScheduleWithoutTime();
 
 			foreach($Group->Schedule as $Schedule) {
 				$d = date("w", strtotime($Schedule->date));
@@ -517,18 +523,23 @@
 					$d = 7;
 				}
 
-				// если дня нет в расписании группы
-				if (!in_array($d, array_keys($Group->day_and_time))) {
-					continue;
+//				// если дня нет в расписании группы
+//				if (!in_array($d, array_keys($Group->day_and_time))) {
+//					continue;
+//				}
+
+				if (!$Schedule->time || $Schedule->time == '00:00' || $Schedule->time == '00:00') {
+					$Schedule->time = end($Group->day_and_time[$d]);
 				}
 
-				$Schedule->time = end($Group->day_and_time[$d]);
-				$Schedule->save("time");
+				if ($Group->id_branch && !$Schedule->id_branch) {
+					$Schedule->id_branch = $Group->id_branch;
+				}
 
-				if ($Group->cabinet) {
+				if ($Group->cabinet && !$Schedule->cabinet && $Group->id_branch == $Schedule->id_branch) {
 					$Schedule->cabinet = $Group->cabinet;
-					$Schedule->save("cabinet");
 				}
+				$Schedule->save();
 			}
 //			dbConnection()->query("UPDATE ".GroupSchedule::$mysql_table." SET time='$time' WHERE time IS NULL AND id_group=$id_group");
 		}
@@ -993,23 +1004,40 @@
 		{
 			extract($_POST);
 
-			GroupSchedule::updateById($id, [
-				"cabinet" => $cabinet,
-			]);
+			$gs = GroupSchedule::find(['condition' => "date='".$date."' AND id_group=".intval($id_group)]);
+			if ($gs) {
+				$gs->cabinet = $cabinet;
+				$gs->save("cabinet");
+			}
+
+//			GroupSchedule::updateById($id, [
+//				"cabinet" => $cabinet,
+//			]);
 		}
 
+		/**
+		 * Updates branch field of group schedule with given date.
+		 *
+		 * @return bool|String     Array of Cabinets of branch with id $id_branch in JSON format
+		 * 						   if found, false otherwise
+		 */
         public function actionAjaxChangeScheduleBranch()
         {
             extract($_POST);
 
-            GroupSchedule::updateById($id, [
-                "id_branch" => $id_branch,
-            ]);
+			if($date && $id_branch && $id_group) {
+				$gs = GroupSchedule::find(['condition' => "date='".$date."' AND id_group=".intval($id_group)]);
+				if ($gs) {
+					$gs->id_branch = $id_branch;
+					$gs->save('id_branch');
 
-            returnJsonAng(
-                Cabinet::getByBranch($id_branch)
-            );
-        }
+					$gs->cabinet = 0;
+					$gs->save('cabinet');
+					returnJsonAng(Cabinet::getByBranch($id_branch));
+				}
+			}
+			return false;
+		}
 
 		public function actionAjaxChangeScheduleFree()
 		{

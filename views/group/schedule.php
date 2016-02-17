@@ -48,18 +48,18 @@
 						<td>
                             <!-- branches selector -->
                             <select ng-model="Schedule.id_branch" style="width: 130px" ng-change="changeBranch(Schedule)">
-                                <option ng-repeat="Branch in Branches" value="{{Branch.id}}" ng-selected="Branch.id == Schedule.id_branch">
+								<option selected value="">выберите филиал</option>
+								<option disabled>──────────────</option>
+								<option ng-repeat="Branch in Branches" value="{{Branch.id}}" ng-selected="Branch.id == Schedule.id_branch">
                                     {{Branch.name}}
                                 </option>
                             </select>
                             <!-- /branches selector -->
 
-                            <?= partial("_cabinets_list") ?>
-
 							<select ng-model="Schedule.cabinet" style="width: 130px" ng-change="changeCabinet(Schedule)">
 								<option selected value="">выберите кабинет</option>
 								<option disabled>──────────────</option>
-								<option ng-repeat="Cabinet in Cabinets" value="{{Cabinet.id}}" ng-selected="Cabinet.id == Schedule.cabinet">
+								<option ng-repeat="Cabinet in Cabinets[Schedule.id_branch]" value="{{Cabinet.id}}" ng-selected="Cabinet.id == Schedule.cabinet">
 									{{Cabinet.number}}
 								</option>
 							</select>

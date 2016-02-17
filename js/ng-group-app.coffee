@@ -107,16 +107,20 @@
 
 			$scope.setTimeFromGroup = (Group) ->
 				$.each $scope.Group.Schedule, (i, v) ->
-					#if not v.time
-					d = moment(v.date).format("d")
-					d = parseInt d
-					d = 7 if d is 0
-					# если в этот день установлено расписание и время в группе. иначе не устанавливать
-					# console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
-					if Group.day_and_time[d] isnt undefined
-						key = Object.keys(Group.day_and_time[d])[0]
-						v.time = Group.day_and_time[d][key]
-					v.cabinet = Group.cabinet if Group.cabinet
+					if not v.time
+						d = moment(v.date).format("d")
+						d = parseInt d
+						d = 7 if d is 0
+						# если в этот день установлено расписание и время в группе. иначе не устанавливать
+						# console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
+						if Group.day_and_time[d] isnt undefined
+							key = Object.keys(Group.day_and_time[d])[0]
+							v.time = Group.day_and_time[d][key]
+					# устанавливаем филиалы и кабинеты для дат где не указаны филиал/кабинеты
+					if Group.id_branch && not v.id_branch
+							v.id_branch = Group.id_branch
+							$scope.changeBranch(v)
+							v.cabinet = Group.cabinet if Group.cabinet
 				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
 				$scope.$apply()
 
@@ -130,17 +134,19 @@
 
 			$scope.changeCabinet = (Schedule) ->
 				$.post "groups/ajax/changeScheduleCabinet",
-					id: Schedule.id
+					date: Schedule.date
+					id_group: $scope.Group.id
 					cabinet: Schedule.cabinet
 
 			$scope.changeBranch = (Schedule) ->
 				$.post "groups/ajax/changeScheduleBranch",
-				id: Schedule.id
-				id_branch: Schedule.id_branch
-				, (response) ->
-					console.log 'branch changed', response
-					$scope.$apply()
-				, "json"
+					date: Schedule.date
+					id_group: $scope.Group.id
+					id_branch: Schedule.id_branch
+					, (response) ->
+						$scope.Cabinets[Schedule.id_branch] = response if not $scope.Cabinets[Schedule.id_branch]?
+						$scope.$apply()
+					, "json"
 
 
 			$scope.setTime = (Schedule, event) ->
