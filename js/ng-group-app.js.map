@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "ng-group-app.js",
+  "sourceRoot": "",
+  "sources": [
+    "ng-group-app.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAE;EAAA,KAAA,CAAM,CAAN;AAAA"
+}
