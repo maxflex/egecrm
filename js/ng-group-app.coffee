@@ -116,11 +116,11 @@
 						if Group.day_and_time[d] isnt undefined
 							key = Object.keys(Group.day_and_time[d])[0]
 							v.time = Group.day_and_time[d][key]
-					# устанавливаем филиалы и кабинеты для дат где не указаны филиал/кабинеты
-					if Group.id_branch && not v.id_branch
-							v.id_branch = Group.id_branch
-							$scope.changeBranch(v)
-							v.cabinet = Group.cabinet if Group.cabinet
+							# устанавливаем филиалы и кабинеты для дат где не указаны филиал/кабинеты
+							if Group.id_branch && not v.id_branch
+									v.id_branch = Group.id_branch
+									$scope.changeBranch(v)
+									v.cabinet = Group.cabinet if Group.cabinet
 				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
 				$scope.$apply()
 
