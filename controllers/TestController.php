@@ -14,7 +14,54 @@
     //            error_reporting(E_ALL);
     //        }
 
-        /**
+		/**
+		 * Сравниние на предмет полного соответствия филиала и кабинета в журнале посещений и в расписании занятий,
+		 * которые уже прошли.
+		 */
+		public function actionJournalScheduleConsistency()
+		{
+			/* VisitJournal[] несоответствующие элементы */
+			$discrepancy = [];
+			$checkCnt = 0;
+			$VisitJournals = VisitJournal::findAll(['limit'=>500]);
+			if ($VisitJournals) {
+				/* @var $VisitJournals VisitJournal[] */
+				foreach($VisitJournals as $VisitJournal) {
+					$GroupSchedule = GroupSchedule::find([
+												'condition' => "id_group={$VisitJournal->id_group}' ".
+															   "AND date='{$VisitJournal->lesson_date}' ".
+															   "AND time='{$VisitJournal->lesson_time}' "
+									  ]);
+					if ($GroupSchedule) {
+						if ($GroupSchedule->id_branch != $VisitJournal->id_branch || $GroupSchedule->cabinet != $VisitJournal->cabinet) {
+							$discrepancy[] = [$VisitJournal->id, $GroupSchedule->id];
+						} else {
+							$checkCnt++;
+						}
+					} else {
+						$discrepancy[] = $VisitJournal;
+					}
+				}
+
+				if (empty($discrepancy)) {
+					echo 'Все записи журнала и расписания соответствуют по параметру филиал/кабинет';
+				} else {
+					echo 'количество несоответствий '.count($discrepancy).'<br>';
+					foreach($discrepancy as $elem) {
+						if(is_array($elem)) {
+							echo 'Филиал/кабинеты не соотвт визит-'.$elem[0].' расписание- '.$elem[1].'<br>';
+						} else {
+							echo 'Не найдено занятие соотвт визиту '.$elem->id.'<br>';
+						}
+					}
+				}
+			} else {
+				echo 'No visits';
+			}
+		}
+
+
+		/**
          * Updating old group schedule records.
          * Sets group id for records.
          */
@@ -28,7 +75,16 @@
                     if ($GroupSchedules) {
                         /* @var $GroupSchedules GroupSchedule[] */
                         foreach ($GroupSchedules as $GroupSchedule) {
-                            $GroupSchedule->update(['id_branch' => $Group->id_branch]);
+                        	$data = [];
+                        	if ($Group->id_branch) {
+                        		$data['id_branch'] = $Group->id_branch;
+//                        		if ($Group->cabinet) {
+//                        			$data['cabinet'] = $Group->cabinet;
+//                        		}
+                        	}
+                        	if (!empty($data)) {
+								$GroupSchedule->update($data);
+							}
                         }
                     }
                 }
@@ -36,7 +92,8 @@
                 echo 'No group schedule updated';
             }
         }
-		public function actionTeacherLikes()
+
+        public function actionTeacherLikes()
 		{
 			$Students = Student::getWithContract();
 

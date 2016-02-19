@@ -940,7 +940,7 @@
 					"condition" => "id_group={$S->id_group} AND date <= '{$date}'"
 				]);
 
-				$S->branch = Branches::getShortColoredById($S->Group->id_branch,
+				$S->branch = Branches::getShortColoredById($S->id_branch,
 					($S->cabinet ? "-".Cabinet::findById($S->cabinet)->number : "")
 				);
 			}
