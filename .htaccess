@@ -127,7 +127,7 @@ RewriteRule ^as/cancel[/]?$ index.php?controller=as&action=cancel [QSA,L]
 
 # API
 RewriteRule ^api/([a-zA-Z]+)[/]?$ index.php?controller=api&action=$1 [QSA,L]
-RewriteRule ^metro/([a-zA-Z]+)[/]?$ index.php?controller=metro&action=$1 [QSA,L]
+RewriteRule ^metro/([a-zA-Z0-9]+)[/]?$ index.php?controller=metro&action=$1 [QSA,L]
 
 # CRON
 RewriteRule ^cron/([a-zA-Z]+)[/]?$ index.php?controller=cron&action=$1 [QSA,L]
