@@ -56,10 +56,10 @@
 			if ($groupByBranches) {
 				$groupedCabinets = [];
 
-				foreach ($return as $cabinet) {
+				foreach ($return as &$cabinet) {
 					if(isset($groupedCabinets[$cabinet->id_branch])) {
 						$groupedCabinets[$cabinet->id_branch] = array_merge(
-																		$br = $groupedCabinets[$cabinet->id_branch],
+																		$groupedCabinets[$cabinet->id_branch],
 																		[$cabinet]
 																);
 					} else {
