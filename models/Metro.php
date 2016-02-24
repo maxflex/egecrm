@@ -3,29 +3,49 @@
 	{
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
-		public static $mysql_table	= "geo_station";
+		public static $mysql_table	= "stations";
+		
+		const LINE_COLORS = [
+			1 => '#EF1E25',	// Красный
+			2 => '#029A55', // Зеленый
+			3 => '#0252A2', // Синий
+			4 => '#019EE0', // Голубой
+			5 => '#745C2F', // Коричневый
+			6 => '#C07911', // Оранжевый
+			7 => '#B61D8E', // Фиолетовый
+			8 => '#FFD803',	// Желтый
+			9 => '#ACADAF', // Серый
+			10 => '#B1D332',// Салатовый
+			11 => '#5091BB',// Бледно-синий (Варшавская)
+			12 => '#85D4F3',// Светло-голубая (Бульвар Адмирала Ушакова)
+		];
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
-		/*
-		 * Функция определяет соединение БД
-		 */
-		public static function dbConnection()
-		{
-			// Открываем соединение с основной БД		
-			$db_repetitors = new mysqli(DB_HOST, DB_LOGIN, DB_PASSWORD, DB_PREFIX."repetitors");
-			
-			// Устанавливаем кодировку
-			$db_repetitors->set_charset("utf8");
-			
-			return $db_repetitors;	
-		}
-		
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
+		
+/*
+		public function __construct($array)
+		{
+			parent::__construct($array);
+			$this->color = static::LINE_COLORS[$this->line_id];
+		}
+*/
+		
 		
 		// Получить пользователей из кеша
 		public static function getCached()
 		{
+			$Metros = static::findAll();
+
+			foreach ($Metros as $Metro) {
+				$return[$Metro->id] = $Metro->dbData();
+// 				$return[$Metro->id]['color'] = static::LINE_COLORS[$Metro->line_id];
+			}
+			
+			return $return;	
+			
+/*
 			if (LOCAL_DEVELOPMENT) {
 				$Metros = self::findAll();
 				
@@ -50,6 +70,7 @@
 				
 				return $Metros;
 			}
+*/
 		}
 		
 		private static function _getDistance($lat1, $lon1, $lat2, $lon2, $unit = "K") {
@@ -76,24 +97,22 @@
 		 */
 		private static function _getClosest($lat, $lng)
 		{
-			$Metors = self::getCached();
-			
+			$Metors = static::getCached();
 			foreach ($Metors as $Metro) {
-				$Metro = (object)$Metro;
-				$distance = self::_getDistance($Metro->lat, $Metro->lng, $lat, $lng);
-
-				$return[] = [
-					"id" 		=> $Metro->id,
-					"title"		=> $Metro->title,
-					"lat"		=> $Metro->lat,
-					"lng"		=> $Metro->lng,
-					"distance"	=> $distance,
+				$distance = self::_getDistance($Metro['lat'], $Metro['lng'], $lat, $lng);
+				$return[] = $Metro + [
+					'meters' 	=> $distance,
+					'station'	=> [
+						'id'	=> $Metro['id'],
+						'title' => $Metro['title'],
+						'color'	=> static::LINE_COLORS[$Metro['line_id']],
+					],
 				];
 			}
 			
 			$d = [];
 			foreach ($return as $id => $row) {
-				$d[$id] = $row['distance'];
+				$d[$id] = $row['meters'];
 			}
 			array_multisort($d, SORT_ASC, $return);
 			
@@ -131,22 +150,24 @@
 			return round($t, 1);
 		}
 		
-		public static function calculate2($lat, $lng)
+		// Новый алгоритм нахождения ближайших станций метро #703
+		public static function calculate($lat, $lng)
 		{
 			$Metros =  self::_getClosest($lat, $lng);
 			
 			// первую самую ближайшую станцию включать всегда
 			$ClosestMetro = $Metros[0];
-			$ClosestMetro['minutes'] = self::_metersToMinutes($ClosestMetro['distance']);
+			$ClosestMetro['minutes'] = self::_metersToMinutes($ClosestMetro['meters']);
 			$return[] = $ClosestMetro;
 			
 			// смотрим другие 2 ближайшие станции
 			foreach (range(1, 2) as $n) {
 				// если до первой другой ближайшей станции расстояние больше,
 				// чем 2x (где х – расстояние до первой ближайшей станции), то завершить
-				if ($Metros[$n]['distance'] > ($ClosestMetro['distance'] * 2)) {
+				if ($Metros[$n]['meters'] > ($ClosestMetro['meters'] * 2)) {
 					break;	
 				} else {
+					$Metros[$n]['minutes'] = self::_metersToMinutes($Metros[$n]['meters']);
 					$return[] = $Metros[$n];
 				}
 			}
@@ -158,7 +179,7 @@
 		 * Алгоритм подсчета ближайших станций метро.
 		 * 
 		 */
-		public static function calculate($lat, $lng)
+		public static function calculateOld($lat, $lng)
 		{
 			$Metros =  self::_getClosest($lat, $lng);
 			// первую самую ближайшую станцию включать всегда
