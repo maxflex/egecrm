@@ -28,7 +28,7 @@
 		 * 									multilevel array returned instead of dimensional array
 		 *
 		 * @return Cabinet[] 					Array of cabinets.
-		 * 									Cabinets are grouped by branch if groupByBranches param passed
+		 * 										Cabinets are grouped by branch if groupByBranches param passed
 		 */
 		public static function getByBranch($branch, $id_group = 0, $groupByBranches = false)
 		{
@@ -76,7 +76,7 @@
 					$cabinet->number = Branches::$short[$cabinet->id_branch] . ": " . $cabinet->number;
 				}
 			}
-			
+
 			return $return;
 		}
 		
@@ -121,7 +121,7 @@
 			$result = dbConnection()->query("
 				SELECT gt.id FROM group_time gt
 				LEFT JOIN groups g ON g.id = gt.id_group
-				WHERE g.cabinet = $cabinet " . ($id_group ? "AND g.id != $id_group" : "") ."
+				WHERE g.ended = 0 AND g.cabinet = $cabinet " . ($id_group ? "AND g.id != $id_group" : "") ."
 			");
 			
 			while ($row = $result->fetch_assoc()) {

@@ -846,7 +846,7 @@
 
 				// Cabinet groups
 				$Groups = Group::findAll([
-					"condition" => "cabinet=" . $Cabinet->id
+					"condition" => "cabinet=" . $Cabinet->id." AND ended = 0 "
 				]);
 
 				foreach ($Groups as $Group) {

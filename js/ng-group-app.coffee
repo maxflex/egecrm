@@ -823,6 +823,17 @@
 					$scope.updateGroup
 						level: newVal
 
+			$scope.$watch "Group.ended", () ->
+				return if not $scope.Group.id
+
+				$scope.updateGroup
+					ended: $scope.Group.ended
+
+					$scope.updateTeacherBar()
+					$scope.updateCabinetBar(false)
+					$scope.updateStudentBars()
+
+
 			$scope.loading_groups = false
 			$scope.loadGroups = ->
 				return if not $scope.Group.id

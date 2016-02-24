@@ -135,7 +135,7 @@
 			return dbConnection()->query("
 				SELECT g.id FROM groups g
 					LEFT JOIN group_time gt ON gt.id_group = g.id
-				WHERE g.id != $id_group AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND CONCAT(',', CONCAT(g.students, ',')) LIKE '%,{$id_student},%'
+				WHERE g.id != $id_group AND g.ended = 0 AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND CONCAT(',', CONCAT(g.students, ',')) LIKE '%,{$id_student},%'
 			")->num_rows;
 		}
 		
@@ -170,11 +170,11 @@
 						}
 						
 						if ($has_other_groups_at_this_time) {
-							$bar[$day][$time_id] = 'blink red';							
+							$bar[$day][$time_id] = 'blink red';
 						} else {
 							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							$neighbour_bars_have_other_branches = false;
-							
+
 							// проверка зуба слева
 							// получаем зуб слева
 							$left_time_id = self::$weekdays_time[$day][$time_index - 1];
@@ -268,7 +268,7 @@
 			return dbConnection()->query("
 				SELECT g.id FROM groups g
 					LEFT JOIN group_time gt ON gt.id_group = g.id
-				WHERE g.id != $id_group AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND g.id_teacher = $id_teacher
+				WHERE g.id != $id_group AND g.ended = 0 AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND g.id_teacher = $id_teacher
 			")->num_rows;
 		}
 		
@@ -409,12 +409,12 @@
 					$result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
-						WHERE g.cabinet = $cabinet AND g.id != $id_group AND gt.day=$day AND gt.time=$time_id
+						WHERE g.cabinet = $cabinet AND g.ended = 0 AND g.id != $id_group AND gt.day=$day AND gt.time=$time_id
 					");
 					
 					// если в это время не было групп
 					if ($result === false) {
-						$other_groups_at_this_time_count = false;					
+						$other_groups_at_this_time_count = false;
 					} else {
 						$other_groups_at_this_time_count = $result->fetch_object()->cnt;
 					}

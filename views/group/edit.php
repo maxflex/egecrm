@@ -82,7 +82,7 @@
 					</option>
 				</select>
 			</div>
-			 <div class="form-group">
+			<div class="form-group">
 	            <input class="form-control digits-only"
 	            	ng-model="Group.teacher_price" placeholder="цена преподавателя">
             </div>
@@ -96,9 +96,15 @@
 	           </select>
             </div>
 			<div class="form-group">
-	           <select class="form-control" ng-model="Group.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015]">
-	           </select>
-            </div>
+				<select class="form-control" ng-model="Group.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015]">
+				</select>
+			</div>
+			<div class="form-group">
+				<select class="form-control" ng-model="Group.ended">
+					<option value="0">незакончившаяся гпуппа</option>
+					<option value="1">закончившаяся гпуппа</option>
+				</select>
+			</div>
             <span ng-show="is_student_dragging" class="student-dragout ng-hide">удалить</span>
 		</div>
 

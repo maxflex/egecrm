@@ -538,7 +538,7 @@
 		public static function getGroupsStatic($id_student)
 		{
 			return Group::findAll([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0 "
 			]);
 		}
 
