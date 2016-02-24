@@ -23,36 +23,32 @@
 			/* VisitJournal[] несоответствующие элементы */
 			$discrepancy = [];
 			$checkCnt = 0;
-			$VisitJournals = VisitJournal::findAll(['limit'=>500]);
-			if ($VisitJournals) {
-				/* @var $VisitJournals VisitJournal[] */
-				foreach($VisitJournals as $VisitJournal) {
-					$GroupSchedule = GroupSchedule::find([
-												'condition' => "id_group={$VisitJournal->id_group}' ".
-															   "AND date='{$VisitJournal->lesson_date}' ".
-															   "AND time='{$VisitJournal->lesson_time}' "
-									  ]);
-					if ($GroupSchedule) {
+
+			$GroupSchedules = GroupSchedule::findAll();
+			if ($GroupSchedules) {
+				/* @var $GroupSchedules GroupSchedule[] */
+				foreach($GroupSchedules as $GroupSchedule) {
+					$VisitJournal = VisitJournal::find([
+												'condition' => "id_group={$GroupSchedule->id_group} ".
+															   "AND lesson_date='{$GroupSchedule->date}' ".
+															   "AND lesson_time='{$GroupSchedule->time}' "
+									]);
+					if ($VisitJournal) {
 						if ($GroupSchedule->id_branch != $VisitJournal->id_branch || $GroupSchedule->cabinet != $VisitJournal->cabinet) {
-							$discrepancy[] = [$VisitJournal->id, $GroupSchedule->id];
+							$discrepancy[] = [$GroupSchedule, $VisitJournal];
 						} else {
 							$checkCnt++;
 						}
-					} else {
-						$discrepancy[] = $VisitJournal;
 					}
 				}
 
 				if (empty($discrepancy)) {
 					echo 'Все записи журнала и расписания соответствуют по параметру филиал/кабинет';
 				} else {
-					echo 'количество несоответствий '.count($discrepancy).'<br>';
-					foreach($discrepancy as $elem) {
-						if(is_array($elem)) {
-							echo 'Филиал/кабинеты не соотвт визит-'.$elem[0].' расписание- '.$elem[1].'<br>';
-						} else {
-							echo 'Не найдено занятие соотвт визиту '.$elem->id.'<br>';
-						}
+					$f = fopen('files/discrepancy.txt', 'w+');
+					fwrite($f, "Количество несоответствий ".count($discrepancy)."\n");
+					foreach ($discrepancy as $elem) {
+						fwrite($f, "Занятие {$elem[0]->date} {$elem[0]->time} в группе № {$elem[0]->id_group} (не соответстует кабинет.)\n");
 					}
 				}
 			} else {
