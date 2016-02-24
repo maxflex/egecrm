@@ -81,10 +81,12 @@
 			foreach ($Metors as $Metro) {
 				$Metro = (object)$Metro;
 				$distance = self::_getDistance($Metro->lat, $Metro->lng, $lat, $lng);
-				
+
 				$return[] = [
 					"id" 		=> $Metro->id,
 					"title"		=> $Metro->title,
+					"lat"		=> $Metro->lat,
+					"lng"		=> $Metro->lng,
 					"distance"	=> $distance,
 				];
 			}
@@ -127,6 +129,29 @@
 			$t = $s / 100 * $k;
 			
 			return round($t, 1);
+		}
+		
+		public static function calculate2($lat, $lng)
+		{
+			$Metros =  self::_getClosest($lat, $lng);
+			
+			// первую самую ближайшую станцию включать всегда
+			$ClosestMetro = $Metros[0];
+			$ClosestMetro['minutes'] = self::_metersToMinutes($ClosestMetro['distance']);
+			$return[] = $ClosestMetro;
+			
+			// смотрим другие 2 ближайшие станции
+			foreach (range(1, 2) as $n) {
+				// если до первой другой ближайшей станции расстояние больше,
+				// чем 2x (где х – расстояние до первой ближайшей станции), то завершить
+				if ($Metros[$n]['distance'] > ($ClosestMetro['distance'] * 2)) {
+					break;	
+				} else {
+					$return[] = $Metros[$n];
+				}
+			}
+			
+			return $return;
 		}
 		
 		/**

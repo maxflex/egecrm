@@ -23,6 +23,31 @@
 					getDistance event.latLng, (response) ->
 						$scope.data = response
 						$scope.$apply()
+		.controller "MapNewCtrl", ($scope) ->
+			markers = []
+			
+			unsetAllMarkers = ->
+				console.log 'unsetting', markers
+				$.each markers, (index, marker) ->
+					marker.setMap null
+				markers = []
+			
+			setClosestMetroMarkers = (data, map) ->
+				$.each data, (index, metro) ->
+					marker = addMarker map, new google.maps.LatLng(metro.lat, metro.lng), ICON_SEARCH
+					markers.push marker
+			
+			$scope.$on 'mapInitialized', (event, map) ->
+				map.setCenter MAP_CENTER
+				
+				google.maps.event.addListener map, 'click', (event) ->
+					unsetAllMarkers()
+					marker = addMarker map, event.latLng
+					markers.push marker
+					getDistance2 event.latLng, (response) ->
+						$scope.data = response
+						setClosestMetroMarkers(response, map)
+						$scope.$apply()
 		.controller "ClientsMapCtrl", ($scope) ->
 			$scope.filters =
 				branches_invert: [],

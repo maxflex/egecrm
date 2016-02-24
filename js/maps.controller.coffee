@@ -44,10 +44,11 @@
 		    type: type
 			
 	# Просто добавляет метку, без всякого функционала
-	addMarker = (map, latLng) ->
+	addMarker = (map, latLng, icon = undefined) ->
 		new google.maps.Marker
 			map: map
 			position: latLng
+			icon: icon
 	
 	infoWindow = (contentString) ->
 		new google.maps.InfoWindow
@@ -56,6 +57,15 @@
 	# GEO
 	getDistance = (latLng, callback) ->
 		$.get "metro/getDistance", 
+			lat: latLng.lat()
+			lng: latLng.lng(),
+			(response) ->
+				callback(response)
+		, "json"
+	
+	# GEO2
+	getDistance2 = (latLng, callback) ->
+		$.get "metro/getDistance2", 
 			lat: latLng.lat()
 			lng: latLng.lng(),
 			(response) ->

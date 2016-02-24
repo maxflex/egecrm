@@ -33,6 +33,37 @@ angular.module("Test", ["ngMap"]).filter('range', function() {
       });
     });
   });
+}).controller("MapNewCtrl", function($scope) {
+  var markers, setClosestMetroMarkers, unsetAllMarkers;
+  markers = [];
+  unsetAllMarkers = function() {
+    console.log('unsetting', markers);
+    $.each(markers, function(index, marker) {
+      return marker.setMap(null);
+    });
+    return markers = [];
+  };
+  setClosestMetroMarkers = function(data, map) {
+    return $.each(data, function(index, metro) {
+      var marker;
+      marker = addMarker(map, new google.maps.LatLng(metro.lat, metro.lng), ICON_SEARCH);
+      return markers.push(marker);
+    });
+  };
+  return $scope.$on('mapInitialized', function(event, map) {
+    map.setCenter(MAP_CENTER);
+    return google.maps.event.addListener(map, 'click', function(event) {
+      var marker;
+      unsetAllMarkers();
+      marker = addMarker(map, event.latLng);
+      markers.push(marker);
+      return getDistance2(event.latLng, function(response) {
+        $scope.data = response;
+        setClosestMetroMarkers(response, map);
+        return $scope.$apply();
+      });
+    });
+  });
 }).controller("ClientsMapCtrl", function($scope) {
   $scope.filters = {
     branches_invert: [],
