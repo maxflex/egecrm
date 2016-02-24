@@ -85,7 +85,8 @@
 
 				// получаем кол-во занятий с последнего отчета по предмету
 				$LatestReport = Report::find([
-					"condition" => "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ." AND id_teacher=" . $id_teacher
+					"condition" => "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ." AND id_teacher=" . $id_teacher,
+					'order' => 'date asc'
 				]);
 
 				if ($LatestReport) {
