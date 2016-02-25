@@ -160,17 +160,20 @@
 						# в данное время есть другие группы?
 						
 						// есть ли в данное время другие группы
-						$has_other_groups_at_this_time = false;
+						$has_other_groups_at_this_time = 0;
 						
 						foreach ($StudentGroups as $StudentGroup) {
 							if ($StudentGroup->id != $Group->id && isset($StudentGroup->day_and_time[$day][$correct_time_index])) {
-								$has_other_groups_at_this_time = true;
-								break;
+								$has_other_groups_at_this_time++;
 							}
 						}
-						
-						if ($has_other_groups_at_this_time) {
-							$bar[$day][$time_id] = 'blink red';
+
+						if ($has_other_groups_at_this_time >= 1) {
+							if ($has_other_groups_at_this_time == 1 && $Group->ended) {
+								$bar[$day][$time_id] = 'red';
+							} else {
+								$bar[$day][$time_id] = 'blink red';
+							}
 						} else {
 							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							$neighbour_bars_have_other_branches = false;
@@ -196,9 +199,17 @@
 							
 							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							if ($neighbour_bars_have_other_branches) {
-								$bar[$day][$time_id] = 'blink orange';
+								if (!$Group->ended) {
+									$bar[$day][$time_id] = 'blink orange';
+								} else {
+									$bar[$day][$time_id] = 'orange';
+								}
 							} else {
-								$bar[$day][$time_id] = 'green';
+								if (!$Group->ended) {
+									$bar[$day][$time_id] = 'green';
+								} else {
+									$bar[$day][$time_id] = 'gray';
+								}
 							}
 						}
 					} else {
@@ -246,7 +257,11 @@
 							
 							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							if ($neighbour_bars_have_other_branches) {
-								$bar[$day][$time_id] = 'orange';
+								if ($Group->ended) {
+									$bar[$day][$time_id] = 'orange';
+								} else {
+									$bar[$day][$time_id] = 'orange';
+								}
 							} else {
 								$bar[$day][$time_id] = 'gray';
 							}
@@ -293,17 +308,20 @@
 						# в данное время есть другие группы?
 						
 						// есть ли в данное время другие группы
-						$has_other_groups_at_this_time = false;
+						$has_other_groups_at_this_time = 0;
 						
 						foreach ($TeacherGroups as $TeacherGroup) {
 							if ($TeacherGroup->id != $Group->id && isset($TeacherGroup->day_and_time[$day][$correct_time_index])) {
-								$has_other_groups_at_this_time = true;
-								break;
+								$has_other_groups_at_this_time++;
 							}
 						}
 						
-						if ($has_other_groups_at_this_time) {
-							$bar[$day][$time_id] = 'blink red';							
+						if ($has_other_groups_at_this_time >=1) {
+							if ($has_other_groups_at_this_time == 1 && $Group->ended) {
+								$bar[$day][$time_id] = 'red';
+							} else {
+								$bar[$day][$time_id] = 'blink red';
+							}
 						} else {
 							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							$neighbour_bars_have_other_branches = false;
@@ -329,9 +347,17 @@
 							
 							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							if ($neighbour_bars_have_other_branches) {
-								$bar[$day][$time_id] = 'blink orange';
+								if ($Group->ended) {
+									$bar[$day][$time_id] = 'green';
+								} else {
+									$bar[$day][$time_id] = 'blink orange';
+								}
 							} else {
-								$bar[$day][$time_id] = 'green';
+								if ($Group->ended) {
+									$bar[$day][$time_id] = 'gray';
+								} else {
+									$bar[$day][$time_id] = 'green';
+								}
 							}
 						}
 					} else {
@@ -423,9 +449,19 @@
 					if (isset($Group->day_and_time[$day][$correct_time_index])) {
 						# в это время в текущем кабинете есть хотя бы еще 1 другая группа?
 						if ($other_groups_at_this_time_count >= 1) {
-							$bar[$day][$time_id] = 'blink red';
+							// если группа неактивна, красим на красный, т.е. в этом зубе только 1активная группа.
+							if ($other_groups_at_this_time_count == 1 && $Group->ended) {
+								$bar[$day][$time_id] = 'red';
+							} else {
+								$bar[$day][$time_id] = 'blink red';
+							}
 						} else {
-							$bar[$day][$time_id] = 'green';
+							// если группа неактивна, красим на серый
+							if ($Group->ended) {
+								$bar[$day][$time_id] = 'gray';
+							} else {
+								$bar[$day][$time_id] = 'green';
+							}
 						}
 					} else {
 						# в это время в текущем кабинете есть хотя бы еще 1 другая группа?
