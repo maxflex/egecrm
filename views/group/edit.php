@@ -101,8 +101,8 @@
 			</div>
 			<div class="form-group">
 				<select class="form-control" ng-model="Group.ended">
-					<option value="0">незакончившаяся гпуппа</option>
-					<option value="1">закончившаяся гпуппа</option>
+					<option value="0">активная</option>
+					<option value="1">занятия завершены</option>
 				</select>
 			</div>
             <span ng-show="is_student_dragging" class="student-dragout ng-hide">удалить</span>

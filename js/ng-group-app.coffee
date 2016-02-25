@@ -823,7 +823,7 @@
 					$scope.updateGroup
 						level: newVal
 
-			$scope.$watch "Group.ended", () ->
+			$scope.$watch "Group.ended", ->
 				return if not $scope.Group.id
 
 				$scope.updateGroup
