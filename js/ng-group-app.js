@@ -123,6 +123,29 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
       }
     });
   };
+  $scope.changeRegisterInJournal = function() {
+    return bootbox.confirm("Сохранить изменения?", function(result) {
+      if (result === true) {
+        if (_.without($scope.LessonData, void 0).length !== $scope.Group.Students.length) {
+          return bootbox.alert("Заполните данные по всем ученикам перед записью в журнал");
+        } else {
+          $scope.saving = true;
+          $scope.$apply();
+          ajaxStart();
+          return $.post("groups/ajax/registerInJournalWithoutSMS", {
+            id_group: $scope.id_group,
+            date: $scope.date,
+            data: $scope.LessonData
+          }, function(response) {
+            ajaxEnd();
+            $scope.saving = false;
+            $scope.registered_in_journal = true;
+            return $scope.$apply();
+          });
+        }
+      }
+    });
+  };
   return angular.element(document).ready(function() {
     $scope.until_save = $scope.timeUntilSave();
     $scope.$apply();

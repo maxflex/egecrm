@@ -94,7 +94,43 @@
 				"duration"				=> $Group->duration,
 			]);
 		}
-		
+
+		/**
+		 * Изменение истории журнала. Доступен только для админов.
+		 * @param int $id_group 	ID кабинета.
+		 * @param string $date		Дата урока.
+		 * @param array $data		Данные студентов.
+		 */
+		public static function updateData($id_group, $date, $data)
+		{
+			$Schedule = GroupSchedule::find([
+				"condition" => "id_group=$id_group AND date='$date'"
+			]);
+
+			$Group = Group::findById($id_group);
+			$updatedElemCnt = 0;
+			foreach ($Group->students as $id_student)
+			{
+				$VisitJournal = VisitJournal::find([
+										'condition' => 	"id_entity = ".$id_student." AND ".
+														"type_entity = '".Student::USER_TYPE."' AND ".
+														"id_group = ".$id_group." AND ".
+														"lesson_date = '".$date."' AND ".
+														"lesson_time = '".$Schedule->time."' "
+								]);
+
+				if ($VisitJournal) {
+					$res = $VisitJournal->update([
+									"presence" => $data[$id_student]['presence'],
+									"late"     => $data[$id_student]['late'],
+									"comment"  => $data[$id_student]['comment']
+							]);
+					$updatedElemCnt += $res ? 1 : 0;
+				}
+			}
+			echo $updatedElemCnt;
+		}
+
 		public static function getLessonCount($id_group)
 		{
 			return dbConnection()->query("SELECT id as c FROM visit_journal WHERE true AND id_group=$id_group GROUP BY lesson_date")->num_rows;

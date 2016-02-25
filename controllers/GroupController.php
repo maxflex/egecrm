@@ -141,6 +141,8 @@
 						$Group->Students = $Group->getStudents();
 					}
 
+					$isAdmin = User::fromSession()->type == User::USER_TYPE;
+
 					$ang_init_data = angInit([
 						"Group" 	=> $Group,
 						"LessonData"=> $OrderedLessonData,
@@ -148,13 +150,21 @@
 						"lesson_statuses" => VisitJournal::$statuses,
 						"id_group"		=> $id_group,
 						"date"			=> $date,
+						"isAdmin"		=> $isAdmin,
 						"registered_in_journal" => $Group->registeredInJournal($date),
 					]);
 
+					//изменение исторических данных: доступен только админам
+					if ($isAdmin) {
+						$this->render("lesson_admin", [
+							"ang_init_data" => $ang_init_data,
+						]);
+					} else {	// т.е. User::fromSession()->type == Teacher::USER_TYPE
+						$this->render("lesson", [
+							"ang_init_data" => $ang_init_data,
+						]);
+					}
 
-					$this->render("lesson", [
-						"ang_init_data" => $ang_init_data,
-					]);
 				}
 
 			}
@@ -640,6 +650,37 @@
 			// CronController::actionUpdateJournalMiss();
 		}
 
+		/**
+		 * Изменение данных журнала без отправки СМС. Доступен только админам.
+		 *
+		 */
+		public function actionAjaxRegisterInJournalWithoutSMS()
+		{
+			extract($_POST);
+
+			// Дополнительный вход
+			User::rememberMeLogin();
+			if (User::fromSession()->type == User::USER_TYPE) {
+				$data = array_filter($data);
+				VisitJournal::updateData($id_group, $date, $data);
+
+				// Обновляем красные счетчики
+				if (!LOCAL_DEVELOPMENT) {
+					$errors = memcached()->get("JournalErrors");
+
+					if (($key = array_search($id_group, $errors[$date])) !== false) {
+						unset($errors[$date][$key]);
+						$errors[$date] = array_values($errors[$date]);
+						// if no errors now
+						if (!count($errors[$date])) {
+							unset($errors[$date]);
+						}
+						memcached()->set("JournalErrors", $errors, 3600 * 24);
+					}
+				}
+				// CronController::actionUpdateJournalMiss();
+			}
+		}
 
 		/**
 		 * Обновить кеш групп.

@@ -91,6 +91,26 @@
 								# $scope.form_changed = false
 								$scope.$apply()
 
+			$scope.changeRegisterInJournal = ->
+				bootbox.confirm "Сохранить изменения?", (result) ->
+					if result is true
+						if _.without($scope.LessonData, undefined).length isnt $scope.Group.Students.length
+							bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
+						else
+							$scope.saving = true
+							$scope.$apply()
+							ajaxStart()
+							$.post "groups/ajax/registerInJournalWithoutSMS",
+								id_group: 	$scope.id_group
+								date:		$scope.date
+								data:		$scope.LessonData
+							, (response) ->
+								ajaxEnd()
+								$scope.saving = false
+								$scope.registered_in_journal = true
+								# $scope.form_changed = false
+								$scope.$apply()
+
 			angular.element(document).ready ->
 				$scope.until_save = $scope.timeUntilSave()
 				$scope.$apply()
