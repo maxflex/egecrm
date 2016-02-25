@@ -264,6 +264,11 @@
 				$Group = Group::findById($id_group);
 
 				$Group->Schedule = $Group->getSchedule();
+				foreach ($Group->Schedule as &$Schedule) {
+					if ($Schedule->cabinet) {
+						$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
+					}
+				}
 
 				$Teacher = Teacher::findById($Group->id_teacher);
 

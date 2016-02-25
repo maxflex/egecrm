@@ -50,18 +50,26 @@
 				
 				<div style="margin: 15px 0; font-weight: bold">Расписание занятий:</div>
 				
-				<div class="row" ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
-					<div class="col-sm-4">
-						{{getLine1(Schedule)}}
-					</div>
-					<div class="col-sm-8">
-						<div class="lessons-table">
-							<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
-							<span>{{Schedule.time ? Schedule.time : 'не установлено'}}</span>
-						</div>
-					</div>
-				</div>
-				
+				<table class="table table-divlike">
+					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
+						<td>
+							{{getLine1(Schedule)}}
+						</td>
+						<td>
+							<div class="lessons-table">
+								<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
+								<span>{{Schedule.time ? Schedule.time : 'не установлено'}}</span>
+							</div>
+						</td>
+						<td>
+							кабинет {{Schedule.Cabinet.number}}
+						</td>
+						<td>
+							<span ng-show="inDate(Schedule.date, past_lesson_dates)">занятие проведено</span>
+						</td>
+					</tr>
+				</table>
+
 				<div style="margin: 15px 0; font-weight: bold">Итого: {{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
 						'one': 'занятие',
 						'few': 'занятия',
