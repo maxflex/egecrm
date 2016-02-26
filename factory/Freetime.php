@@ -156,24 +156,21 @@
 					}
 					
 					# зуб соответствует времени группы из расписания?
-					if (isset($Group->day_and_time[$day][$correct_time_index])) {
+					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended) {
 						# в данное время есть другие группы?
 						
 						// есть ли в данное время другие группы
-						$has_other_groups_at_this_time = 0;
+						$has_other_groups_at_this_time = false;
 						
 						foreach ($StudentGroups as $StudentGroup) {
 							if ($StudentGroup->id != $Group->id && isset($StudentGroup->day_and_time[$day][$correct_time_index])) {
-								$has_other_groups_at_this_time++;
+								$has_other_groups_at_this_time = true;
+								break;
 							}
 						}
 
-						if ($has_other_groups_at_this_time >= 1) {
-							if ($has_other_groups_at_this_time == 1 && $Group->ended) {
-								$bar[$day][$time_id] = 'red';
-							} else {
-								$bar[$day][$time_id] = 'blink red';
-							}
+						if ($has_other_groups_at_this_time) {
+							$bar[$day][$time_id] = 'blink red';
 						} else {
 							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							$neighbour_bars_have_other_branches = false;
@@ -199,17 +196,9 @@
 							
 							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							if ($neighbour_bars_have_other_branches) {
-								if (!$Group->ended) {
-									$bar[$day][$time_id] = 'blink orange';
-								} else {
-									$bar[$day][$time_id] = 'orange';
-								}
+								$bar[$day][$time_id] = 'blink orange';
 							} else {
-								if (!$Group->ended) {
-									$bar[$day][$time_id] = 'green';
-								} else {
-									$bar[$day][$time_id] = 'gray';
-								}
+								$bar[$day][$time_id] = 'green';
 							}
 						}
 					} else {
@@ -257,11 +246,7 @@
 							
 							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							if ($neighbour_bars_have_other_branches) {
-								if ($Group->ended) {
-									$bar[$day][$time_id] = 'orange';
-								} else {
-									$bar[$day][$time_id] = 'orange';
-								}
+								$bar[$day][$time_id] = 'orange';
 							} else {
 								$bar[$day][$time_id] = 'gray';
 							}
@@ -304,24 +289,21 @@
 					}
 					
 					# зуб соответствует времени группы из расписания?
-					if (isset($Group->day_and_time[$day][$correct_time_index])) {
+					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended) {
 						# в данное время есть другие группы?
 						
 						// есть ли в данное время другие группы
-						$has_other_groups_at_this_time = 0;
+						$has_other_groups_at_this_time = false;
 						
 						foreach ($TeacherGroups as $TeacherGroup) {
 							if ($TeacherGroup->id != $Group->id && isset($TeacherGroup->day_and_time[$day][$correct_time_index])) {
-								$has_other_groups_at_this_time++;
+								$has_other_groups_at_this_time = true;
+								break;
 							}
 						}
 						
-						if ($has_other_groups_at_this_time >=1) {
-							if ($has_other_groups_at_this_time == 1 && $Group->ended) {
-								$bar[$day][$time_id] = 'red';
-							} else {
-								$bar[$day][$time_id] = 'blink red';
-							}
+						if ($has_other_groups_at_this_time) {
+							$bar[$day][$time_id] = 'blink red';
 						} else {
 							# в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							$neighbour_bars_have_other_branches = false;
@@ -347,17 +329,9 @@
 							
 							// если в соседних зубах есть другие группы в других филиалах в рамках одного дня
 							if ($neighbour_bars_have_other_branches) {
-								if ($Group->ended) {
-									$bar[$day][$time_id] = 'green';
-								} else {
-									$bar[$day][$time_id] = 'blink orange';
-								}
+								$bar[$day][$time_id] = 'blink orange';
 							} else {
-								if ($Group->ended) {
-									$bar[$day][$time_id] = 'gray';
-								} else {
-									$bar[$day][$time_id] = 'green';
-								}
+								$bar[$day][$time_id] = 'green';
 							}
 						}
 					} else {
@@ -446,22 +420,12 @@
 					}
 					
 					# зуб соответствует времени в расписании группы?
-					if (isset($Group->day_and_time[$day][$correct_time_index])) {
+					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended) {
 						# в это время в текущем кабинете есть хотя бы еще 1 другая группа?
 						if ($other_groups_at_this_time_count >= 1) {
-							// если группа неактивна, красим на красный, т.е. в этом зубе только 1активная группа.
-							if ($other_groups_at_this_time_count == 1 && $Group->ended) {
-								$bar[$day][$time_id] = 'red';
-							} else {
-								$bar[$day][$time_id] = 'blink red';
-							}
+							$bar[$day][$time_id] = 'blink red';
 						} else {
-							// если группа неактивна, красим на серый
-							if ($Group->ended) {
-								$bar[$day][$time_id] = 'gray';
-							} else {
-								$bar[$day][$time_id] = 'green';
-							}
+							$bar[$day][$time_id] = 'green';
 						}
 					} else {
 						# в это время в текущем кабинете есть хотя бы еще 1 другая группа?
