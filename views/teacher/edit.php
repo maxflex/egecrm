@@ -123,7 +123,14 @@
 				</label>
 			</div>
 	</div>
-
+	<div class="form-control" style="box-shadow: none; border: 0">
+		<label class="ios7-switch" style="font-size: 18px; font-weight: normal">
+				<input type="checkbox" ng-model='Teacher.in_egecentr'
+				   ng-true-value='1' ng-false-value='0'>
+			<span></span>
+			<span style="font-size: 14px">в ЕГЭ центре</span>
+		</label>
+	</div>
 	<!-- /Публичная информация -->
 	<?php if ($Teacher->id) :?>
 	<div class="row" style="margin-bottom: 10px">

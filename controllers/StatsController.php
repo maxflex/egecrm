@@ -668,7 +668,7 @@
 			}
 
 			$Teachers = Teacher::findAll([
-				"condition" => "id IN (" . implode(",", $teacher_ids) . ")",
+				"condition" => "in_egecentr = 1 AND id IN (" . implode(",", $teacher_ids) . ")",
 				"order"		=> "last_name ASC, first_name ASC, middle_name ASC"
 			]);
 

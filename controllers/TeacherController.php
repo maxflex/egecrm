@@ -109,6 +109,7 @@
 			$this->_custom_panel = true;
 
 			$Teachers = Teacher::findAll([
+				"condition" => "in_egecentr = 1",
 				"order" => "last_name ASC"
 			]);
 
