@@ -27,7 +27,7 @@
 				$table_name = $Table["Tables_in_".DB_PREFIX."egecrm"];
 				memcached()->delete($table_name."Columns");
 
-				$Query = dbConnection()->query("SHOW COLUMNS FROM ".$table_name);
+				$Query = dbConnection()->query("SHOW COLUMNS FROM `".$table_name."`");
 				$mysql_vars = [];
 				while ($data = $Query->fetch_assoc()) {
 					$mysql_vars[] = $data["Field"];
