@@ -5,6 +5,9 @@
 		exit();	
 	}*/
 	  
+	// Время выполнения скрипта
+	$time_start = microtime(true);
+	
 	// Подключаем файл конфигураций
 	include_once("config.php");
 
@@ -115,5 +118,13 @@
 		$IndexController->afterAction();
 	} */
 	
+	// Конец выполнения скрипта
+	$time_end = microtime(true);
+	
+	if (User::isDev() || isset($_GET['execution_time'])) {
+		$time = $time_end - $time_start;
+	    echo "<span class='pull-right small text-gray' style='margin-right: 15px'>время выполнения: " . round($time, 2) . " сек</span>";	
+	}
+ 	
 	/*********************/
 ?>
