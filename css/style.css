@@ -1093,17 +1093,17 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   #calendar-app .vocation.active {
     background: #00b700 !important;
     /* Old browsers */
-    background: -moz-linear-gradient(top, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: -moz-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
     /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00b700), color-stop(50%, #00b700), color-stop(51%, #ff0039), color-stop(100%, #ff0039)) !important;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00b700), color-stop(50%, #00b700), color-stop(51%, #c40000), color-stop(100%, #c40000)) !important;
     /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: -webkit-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
     /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: -o-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
     /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: -ms-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
     /* IE10+ */
-    background: linear-gradient(to bottom, #00b700 0%, #00b700 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: linear-gradient(to bottom, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
     /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#ff0039',GradientType=0 );
     /* IE6-9 */ }
@@ -1111,17 +1111,17 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#337ab7+0,337ab7+50,ff0039+51,ff0039+100 */
     background: #337ab7 !important;
     /* Old browsers */
-    background: -moz-linear-gradient(top, #337ab7 0%, #337ab7 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: -moz-linear-gradient(top, #337ab7 0%, #337ab7 50%, #c40000 51%, #c40000 100%) !important;
     /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #337ab7), color-stop(50%, #337ab7), color-stop(51%, #ff0039), color-stop(100%, #ff0039)) !important;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #337ab7), color-stop(50%, #337ab7), color-stop(51%, #c40000), color-stop(100%, #c40000)) !important;
     /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #337ab7 0%, #337ab7 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: -webkit-linear-gradient(top, #337ab7 0%, #337ab7 50%, #c40000 51%, #c40000 100%) !important;
     /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #337ab7 0%, #337ab7 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: -o-linear-gradient(top, #337ab7 0%, #337ab7 50%, #c40000 51%, #c40000 100%) !important;
     /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #337ab7 0%, #337ab7 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: -ms-linear-gradient(top, #337ab7 0%, #337ab7 50%, #c40000 51%, #c40000 100%) !important;
     /* IE10+ */
-    background: linear-gradient(to bottom, #337ab7 0%, #337ab7 50%, #ff0039 51%, #ff0039 100%) !important;
+    background: linear-gradient(to bottom, #337ab7 0%, #337ab7 50%, #c40000 51%, #c40000 100%) !important;
     /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#337ab7', endColorstr='#ff0039',GradientType=0 ) !important;
     /* IE6-9 */ }
