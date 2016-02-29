@@ -77,13 +77,32 @@
 			}
 		}
 
+		/**
+		 * Получение полей таблицы. Используется Memcached.
+		 *
+		 * @return array		Поля таблицы.
+		 */
+		public static function getMysqlVars()
+		{
+			if (LOCAL_DEVELOPMENT) {
+				return self::_getMysqlVars();
+			} else {
+				$mysql_vars = memcached()->get(static::$mysql_table."Columns");
 
+				if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+					$mysql_vars = self::_getMysqlVars();
+					memcached()->set(static::$mysql_table."Columns", $mysql_vars, 3600 * 24);
+				}
+
+				return $mysql_vars;
+			}
+		}
 
 		/**
 		 * Поулчить список полей MYSQL.
 		 *
 		 */
-		public static function getMysqlVars()
+		public static function _getMysqlVars()
 		{
 			// Запрос к текущей БД на показ столбцов
 			$Query = static::dbConnection()->query("SHOW COLUMNS FROM ".static::$mysql_table);
