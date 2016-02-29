@@ -177,7 +177,19 @@
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-
+		
+		// Перезаписываем функцию findAll
+		public static function findAll($params = [])
+		{
+			if (! isset($params['condition'])) {
+				$params['condition'] = 'in_egecentr = 1';
+			} else {
+				$params['condition'] .= ' AND in_egecentr = 1';
+			}
+			
+			return parent::findAll($params);
+		}
+		
 		public function beforeSave()
 		{
 			// Очищаем номера телефонов
