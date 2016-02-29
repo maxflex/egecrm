@@ -23,10 +23,10 @@
     </a>
     <a href="teachers/reports" class="list-group-item">Отчеты 
 	    <?php
-		    $report_counts = Teacher::getReportCountsStatic(User::fromSession()->id_entity);
+		    $red_report_count = Teacher::redReportCountStatic(User::fromSession()->id_entity);
 			
-			if ($report_counts['red']) {
-				echo '<span class="badge badge-danger pull-right">'. $report_counts['red'] .'</span>';
+			if ($red_report_count) {
+				echo '<span class="badge badge-danger pull-right">'. $red_report_count .'</span>';
 			}
 	   ?>
     </a>

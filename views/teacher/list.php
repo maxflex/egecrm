@@ -49,8 +49,8 @@
 						<td><span style='margin-left: 6px'>{{ Teacher.statuses[1] }}</span></td>
 						<td width='100' class="text-gray"><span style='margin-left: 6px'>{{ Teacher.statuses[0] }}</span></td>
 						<td>
-							<span class="label label-danger-red" ng-show="Teacher.student_subject_counts.red">
-								требуется создать {{Teacher.student_subject_counts.red}} <ng-pluralize count="Teacher.student_subject_counts.red" when="{
+							<span class="label label-danger-red" ng-show="Teacher.student_subject_counts">
+								требуется создать {{Teacher.student_subject_counts}} <ng-pluralize count="Teacher.student_subject_counts" when="{
 									'one': 'отчет',
 									'few': 'отчета',
 									'many': 'отчетов',

@@ -135,7 +135,7 @@
 				if ($Teacher->had_lesson) {
 // 					$result = dbConnection()->query("SELECT id FROM visit_journal WHERE id_teacher={$Teacher->id} GROUP BY id_entity, id_subject");
 // 					$Teacher->student_subject_count = $result->num_rows;
-					$Teacher->student_subject_counts = $Teacher->getReportCounts();
+					$Teacher->student_subject_counts = $Teacher->redReportCount();
 
 					// $Teacher->reports_count = Report::count([
 					// 	"condition" => "id_teacher=" . $Teacher->id,

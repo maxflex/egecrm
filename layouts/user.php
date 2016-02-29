@@ -173,9 +173,9 @@
     <a href="testing" class="list-group-item">Тестирование</a>
     <a href="reports" class="list-group-item">Отчеты
 	    <?php
-		    $report_counts = Teacher::getReportCountsAll();
+		    $red_report_count = Teacher::redReportCountAll();
 		?>
-		<span class="badge badge-danger pull-right"><?= $report_counts['red'] ?></span>
+		<span class="badge badge-danger pull-right"><?= $red_report_count ?></span>
 	    <span class="badge pull-right"><?= Report::count() ?></span>
     </a>
     <a href="stats/groups" class="list-group-item">Статистика групп</a>

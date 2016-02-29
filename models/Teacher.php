@@ -43,9 +43,9 @@
 		}
 
 		// 	количество красных меток "требуется создание отчета"
-		public function getReportCounts()
+		public function redReportCount()
 		{
-			return self::getReportCountsStatic($this->id);
+			return self::redReportCountStatic($this->id);
 		}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -61,7 +61,7 @@
 		}
 
 		// 	количество красных меток "требуется создание отчета"
-		public static function getReportCountsStatic($id_teacher)
+		public static function redReportCountStatic($id_teacher)
 		{
 			$result = dbConnection()->query("SELECT id_entity, id_subject FROM visit_journal WHERE id_teacher={$id_teacher} GROUP BY id_entity, id_subject");
 
@@ -105,23 +105,27 @@
 				}
 			}
 
-			return [
-				'all' => $result->num_rows,
-				'red' => $red_count,
-			];
+			return $red_count;
 		}
 
-		public static function getReportCountsAll()
+		public static function redReportCountAll()
 		{
-			foreach (self::getIds() as $id_teacher) {
-				$red_count += Teacher::getReportCountsStatic($id_teacher)['red'];
-				$all_count += Teacher::getReportCountsStatic($id_teacher)['all'];
+			if (LOCAL_DEVELOPMENT) {
+				return;
 			}
-
-			return [
-				'red' => $red_count,
-				'all' => $all_count,
-			];
+			
+			// Try to get from memcached first
+			$red_count = memcached()->get("redReportCountAll");
+			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+				$red_count = 0;
+				
+				foreach (self::getIds(['condition' => 'in_egecentr = 1']) as $id_teacher) {
+					$red_count += Teacher::redReportCountStatic($id_teacher);
+				}
+				
+				memcached()->set('redReportCountAll', $red_count, 3600 * 24 * 30);
+			}
+			return $red_count;
 		}
 
 		public static function getActiveGroups()
