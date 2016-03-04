@@ -357,6 +357,7 @@
 					"past_lesson_dates" => $Group->getPastLessonDates(),
 					"vocation_dates"	=> GroupSchedule::getVocationDates(),
 					"exam_dates"		=> ExamDay::getExamDates($Group),
+					"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
 					"time" 				=> Freetime::TIME,
 //					"Cabinets"			=> Cabinet::getByBranch($Group->id_branch),
 					"Cabinets"			=> Cabinet::getByBranch(GroupSchedule::getBranchIds($Group->id),0,true),
@@ -495,6 +496,21 @@
 			GroupSchedule::deleteAll([
 				"condition" => "date='$date' AND id_group=$id_group"
 			]);
+		}
+
+		/**
+		 * Отмена урока в группе
+		 */
+		public function actionAjaxCancelScheduleDate()
+		{
+			extract($_POST);
+			$gs = GroupSchedule::find([
+					"condition" => "date='$date' AND id_group='$id_group'"
+			]);
+			if ($gs) {
+				$gs->cancelled = 1;
+				$gs->save("cancelled");
+			}
 		}
 
 		public function actionAjaxAddScheduleTime()

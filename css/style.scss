@@ -1113,6 +1113,9 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     &.exam-day-subject {
 	    background-color: #9954bb !important;
     }
+    &.cancelled {
+        background-color: $quater_black;
+    }
 }
 
 #calendar-app {
@@ -1225,6 +1228,10 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#337ab7', endColorstr='#ffa700',GradientType=0 ); /* IE6-9 */
 	    }
     }
+	& .cancelled {
+		background-color: $half_black !important;
+		color: white !important;
+	}
     & .exam-subject {
 	    background-color: #9954bb !important;
 	    color: white !important;

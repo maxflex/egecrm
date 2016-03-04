@@ -110,6 +110,25 @@
 			return $dates;
 		}
 
+		/**
+		 * Получить даты отмененных занятий.
+		 *
+		 * @return string[]			Даты отмененных занятий в формате гггг-мм-дд
+		 */
+		public function getCancelledLessonDates()
+		{
+			$dates = [];
+			$Schedules = GroupSchedule::findAll([
+				"condition" => "id_group={$this->id} AND cancelled = 1"
+			]);
+
+			/* @var $Schedules GroupSchedule[] */
+			foreach ($Schedules as $Schedule) {
+				$dates[] = $Schedule->date;
+			}
+
+			return $dates;
+		}
 
 		/**
 		 * Получить ID преподавателей, которые сейчас ведут группы.

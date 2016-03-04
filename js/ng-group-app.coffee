@@ -218,6 +218,8 @@
 						add_class += ' exam'
 					if $scope.inDate(d, $scope.exam_dates.this_subject)
 						add_class += ' exam-subject'
+					if $scope.inDate(d, $scope.cancelled_lesson_dates)
+						add_class += ' cancelled'
 					add_class
 
 			$scope.monthName = (month) ->
@@ -238,6 +240,7 @@
 				if t.length is 0
 					$scope.Group.Schedule.push
 						date: d
+						cancelled: 0
 					$.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}
 				else
 # 					index = $scope.schedule.indexOf d
@@ -245,8 +248,12 @@
 					$.each $scope.Group.Schedule, (i, v) ->
 						if v isnt undefined
 							if v.date is d
-								$scope.Group.Schedule.splice i, 1
-					$.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}
+								if not v.cancelled
+									v.cancelled = 1
+									$.post "groups/ajax/CancelScheduleDate", {date: d, id_group: $scope.Group.id}
+								else
+									$scope.Group.Schedule.splice i, 1
+									$.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}
 				$scope.$apply()
 
 			angular.element(document).ready ->

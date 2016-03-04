@@ -1,0 +1,1 @@
+ALTER TABLE `group_schedule` ADD COLUMN `cancelled` TINYINT(1) NULL DEFAULT 0
