@@ -1113,8 +1113,8 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     &.exam-day-subject {
 	    background-color: #9954bb !important;
     }
-    &.cancelled {
-        background-color: $quater_black;
+    &.cancelled, &.circle-cancelled {
+        background-color: $quater_black!important;
     }
 }
 

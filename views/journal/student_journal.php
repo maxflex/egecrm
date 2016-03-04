@@ -26,6 +26,7 @@
 				<span ng-show="!inActiveGroup(id_group)">Группа №{{id_group}}</span>
 			</div>
 			 <div ng-repeat="Visit in getVisitsByGroup(id_group)"
+				  ng-hide="getScheduleByDate(Visit.id_group, Visit.lesson_date).cancelled"
 				 class="visit-div-circle default">
 				<span class="circle-default default" title="{{formatVisitDate(Visit.lesson_date)}}{{(Visit.presence == 1 && Visit.late > 0) ? ', опоздание ' + Visit.late + ' мин.' : ''}}"
 				ng-class="{

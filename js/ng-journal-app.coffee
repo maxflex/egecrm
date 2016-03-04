@@ -11,7 +11,12 @@ angular.module "Journal", []
 		$scope.getVisitsByGroup = (id_group) ->
 		  id_group = parseInt(id_group)
 		  _.where $scope.Journal, id_group: id_group
-		
+
+		$scope.getScheduleByDate = (id_group, lesson_date) ->
+			return _.findWhere $scope.getGroup(id_group).Schedule, date: lesson_date
+
+
+
 		$scope.inActiveGroup = (id_group) ->
 		  id_group = parseInt(id_group)
 		  _.where($scope.Groups, id: id_group).length

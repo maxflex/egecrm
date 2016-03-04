@@ -14,6 +14,92 @@
     //            error_reporting(E_ALL);
     //        }
 
+		/**
+		 * Проверка отправки смс при отмене уроков
+		 */
+		public function actionTestCancelLesson()
+		{
+			$tomorrow_month = date("n", strtotime("tomorrow"));
+			$tomorrow_month = russian_month($tomorrow_month);
+
+			$tomorrow = date("j", strtotime("tomorrow")) . " " . $tomorrow_month;
+
+			// все отмененные завтрашние занятия
+			$GroupSchedule = GroupSchedule::findAll([
+				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "' AND cancelled = 1 ",
+				"group"		=> "id_group",
+			]);
+
+			$group_ids = [];
+			foreach ($GroupSchedule as $GS) {
+				$group_ids[] = $GS->id_group;
+			}
+
+			$Groups = Group::findAll([
+				"condition" => "id IN (" . implode(",", $group_ids) . ")"
+			]);
+
+			foreach($Groups as $Group) {
+				if ($Group->id_teacher) {
+					$Teacher = Teacher::findById($Group->id_teacher);
+					if ($Teacher) {
+						foreach (Student::$_phone_fields as $phone_field) {
+							$teacher_number = $Teacher->{$phone_field};
+							if (!empty($teacher_number)) {
+								$messages[] = [
+									"type"      => "Учителю #" . $Teacher->id,
+									"number" 	=> $teacher_number,
+									"message"	=> CronController::_generateCancelledMessage($Group, $Teacher, $tomorrow),
+								];
+							}
+						}
+					}
+				}
+				foreach ($Group->students as $id_student) {
+					$Student = Student::findById($id_student);
+					if (!$Student) {
+						continue;
+					}
+
+					foreach (Student::$_phone_fields as $phone_field) {
+						$student_number = $Student->{$phone_field};
+						if (!empty($student_number)) {
+							$messages[] = [
+								"type"      => "Ученику #" . $Student->id,
+								"number" 	=> $student_number,
+								"message"	=> CronController::_generateCancelledMessage($Group, $Student, $tomorrow),
+							];
+						}
+
+						if ($Student->Representative) {
+							$representative_number = $Student->Representative->{$phone_field};
+							if (!empty($representative_number)) {
+								$messages[] = [
+									"type"      => "Представителю #" . $Student->Representative->id,
+									"number" 	=> $representative_number,
+									"message"	=> CronController::_generateCancelledMessage($Group, $Student, $tomorrow),
+								];
+							}
+						}
+					}
+				}
+			}
+
+			$sent_to = [];
+			foreach ($messages as $message) {
+				if (!in_array($message['number'], $sent_to)) {
+					//SMS::send($message['number'], $message['message'], ["additional" => 3]);
+//					$sent_to[] = $message['number'];
+
+					// debug
+					$body .= "<h3>" . $message["type"] . "</h3>";
+					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+				}
+			}
+
+			Email::send("shamik1551@mail.ru", "СМС о отмененных занятиях завтра", $body);
+		}
 
 		/**
 		 * Обновление кеша полей таблиц.

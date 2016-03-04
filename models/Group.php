@@ -170,7 +170,7 @@
 
 				// дни совпали
 				$days_match = GroupSchedule::count([
-					"condition" => "id_group={$this->id} AND DATE_FORMAT(date, '%w') NOT IN (" . implode(',', $days) . ")"
+					"condition" => "id_group={$this->id} AND DATE_FORMAT(date, '%w') NOT IN (" . implode(',', $days) . ") AND cancelled = 0"
 				]) > 0 ? false : true;
 
 				// если дни совпали, проверяем время
@@ -193,7 +193,7 @@
 
 					// время совпало?
 					return GroupSchedule::count([
-						"condition" => "id_group={$this->id} AND (" . implode(" OR ", $sql) . ")"
+						"condition" => "id_group={$this->id} AND (" . implode(" OR ", $sql) . ") AND cancelled = 0"
 					]) > 0 ? false : true;
 				} else {
 					return false;
@@ -297,12 +297,17 @@
 			return floor($diff/(60*60*24)) - 1;
 		}
 
-		public function getSchedule()
+		/**
+		 * @param bool $withoutCancelled	whether cancelled lessons should be ignored.
+		 * @return GroupSchedule[]|bool		Schedule elems if found, false otherwise.
+		 */
+		public function getSchedule($withoutCancelled=false)
 		{
 			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id,
+				"condition" => "id_group=".$this->id.($withoutCancelled ? ' AND cancelled = 0 ' : ''),
 				"order"		=> "date ASC, time ASC",
 			]);
+
 		}
 
 		/**
@@ -422,12 +427,12 @@
 
 		/**
 		 * Получить дату первого занятия из расписания.
-		 *
+		 * @todo	надо проверить
 		 */
 		public function getFirstSchedule($unix = true)
 		{
 			$GroupFirstSchedule =  GroupSchedule::find([
-				"condition" => "id_group={$this->id}",
+				"condition" => "id_group={$this->id} AND cancelled = 0 ",
 				"order"		=> "date ASC"
 			]);
 
@@ -643,10 +648,14 @@
 			return !$is_planned;
 		}
 
-		public static function getVocationDates()
+		/**
+		 * @param  bool $withoutCancelled		whether get cancelled lessons too.
+		 * @return GroupSchedule[]|bool		Found elems.
+		 */
+		public static function getVocationDates($withoutCancelled = false)
 		{
 			$Vocations = self::findAll([
-				"condition" => "id_group=0"
+				"condition" => "id_group=0".($withoutCancelled ? ' AND cancelled = 0 ' : '')
 			]);
 
 			$vocation_dates = [];

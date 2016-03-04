@@ -254,6 +254,17 @@
 			}
 		}
 
+
+		public function actionAdd()
+		{
+			$Group = new Group();
+
+			$this->actionEdit($Group);
+		}
+
+		/**
+		 * getSchedule и getVocationDates c параметром true возвращает только активные(не отмененные) занятия.
+		 */
 		public function actionSchedule()
 		{
 			if (User::fromSession()->type == Student::USER_TYPE) {
@@ -263,7 +274,7 @@
 				$id_group = $_GET['id'];
 				$Group = Group::findById($id_group);
 
-				$Group->Schedule = $Group->getSchedule();
+				$Group->Schedule = $Group->getSchedule(true);
 				foreach ($Group->Schedule as &$Schedule) {
 					if ($Schedule->cabinet) {
 						$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
@@ -279,7 +290,7 @@
 				$ang_init_data = angInit([
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
-					"vocation_dates"		=> GroupSchedule::getVocationDates(),
+					"vocation_dates"		=> GroupSchedule::getVocationDates(true),
 					"exam_dates"			=> ExamDay::getExamDates($Group),
 					"SubjectsDative"		=> Subjects::$dative,
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
@@ -291,91 +302,84 @@
 					"ang_init_data" => $ang_init_data,
 				]);
 			} else
-			if (User::fromSession()->type == Teacher::USER_TYPE) {
-				// не надо панель рисовать
-				$this->_custom_panel = true;
+				if (User::fromSession()->type == Teacher::USER_TYPE) {
+					// не надо панель рисовать
+					$this->_custom_panel = true;
 
-				$id_group = $_GET['id'];
-				$Group = Group::findById($id_group);
+					$id_group = $_GET['id'];
+					$Group = Group::findById($id_group);
 
-				// restrict other teachers to access journal
-				if ($Group->id_teacher != User::fromSession()->id_entity) {
-					$this->renderRestricted();
-				}
-
-				$Group->Schedule = $Group->getSchedule();
-				foreach ($Group->Schedule as &$Schedule) {
-					if ($Schedule->cabinet) {
-						$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
+					// restrict other teachers to access journal
+					if ($Group->id_teacher != User::fromSession()->id_entity) {
+						$this->renderRestricted();
 					}
-				}
 
-				$Group->Students = Student::findAll([
-					"condition" => "id IN (" . implode(',', $Group->students) . ")"
-				]);
-
-				$Teacher = Teacher::findById($Group->id_teacher);
-
-				if (!$Teacher) {
-					$Teacher = 0;
-				}
-
-				$ang_init_data = angInit([
-					"Group" 				=> $Group,
-					"Teacher"				=> $Teacher,
-					"vocation_dates"		=> GroupSchedule::getVocationDates(),
-					"SubjectsDative"		=> Subjects::$dative,
-					"exam_dates"			=> ExamDay::getExamDates($Group),
-					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
-					"time" 					=> Freetime::TIME,
-				]);
-
-				$this->render("teacher_schedule", [
-					"Group"			=> $Group,
-					"ang_init_data" => $ang_init_data,
-				]);
-			} else {
-				// не надо панель рисовать
-				$this->_custom_panel = true;
-
-				$id_group = $_GET['id'];
-				$Group = Group::findById($id_group);
-				$Group->Schedule = $Group->getSchedule();
-
-				foreach ($Group->day_and_time as $day_data) {
-					if ($Group->default_time) {
-						break;
+					$Group->Schedule = $Group->getSchedule(true);
+					foreach ($Group->Schedule as &$Schedule) {
+						if ($Schedule->cabinet) {
+							$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
+						}
 					}
-					foreach ($day_data as $index => $time) {
-						$Group->default_time = $time;
-						break;
-					}
-				}
 
-				$ang_init_data = angInit([
-					"Group" 			=> $Group,
-					"past_lesson_dates" => $Group->getPastLessonDates(),
-					"vocation_dates"	=> GroupSchedule::getVocationDates(),
-					"exam_dates"		=> ExamDay::getExamDates($Group),
-					"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
-					"time" 				=> Freetime::TIME,
+					$Group->Students = Student::findAll([
+						"condition" => "id IN (" . implode(',', $Group->students) . ")"
+					]);
+
+					$Teacher = Teacher::findById($Group->id_teacher);
+
+					if (!$Teacher) {
+						$Teacher = 0;
+					}
+
+					$ang_init_data = angInit([
+						"Group" 				=> $Group,
+						"Teacher"				=> $Teacher,
+						"vocation_dates"		=> GroupSchedule::getVocationDates(true),
+						"SubjectsDative"		=> Subjects::$dative,
+						"exam_dates"			=> ExamDay::getExamDates($Group),
+						"past_lesson_dates" 	=> $Group->getPastLessonDates(),
+						"time" 					=> Freetime::TIME,
+					]);
+
+					$this->render("teacher_schedule", [
+						"Group"			=> $Group,
+						"ang_init_data" => $ang_init_data,
+					]);
+				} else {
+					// не надо панель рисовать
+					$this->_custom_panel = true;
+
+					$id_group = $_GET['id'];
+					$Group = Group::findById($id_group);
+					$Group->Schedule = $Group->getSchedule();
+
+					foreach ($Group->day_and_time as $day_data) {
+						if ($Group->default_time) {
+							break;
+						}
+						foreach ($day_data as $index => $time) {
+							$Group->default_time = $time;
+							break;
+						}
+					}
+
+					$ang_init_data = angInit([
+						"Group" 			=> $Group,
+						"past_lesson_dates" => $Group->getPastLessonDates(),
+						"vocation_dates"	=> GroupSchedule::getVocationDates(),
+						"exam_dates"		=> ExamDay::getExamDates($Group),
+						"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
+						"time" 				=> Freetime::TIME,
 //					"Cabinets"			=> Cabinet::getByBranch($Group->id_branch),
-					"Cabinets"			=> Cabinet::getByBranch(GroupSchedule::getBranchIds($Group->id),0,true),
-                    "Branches"          => Branches::get(),
-				]);
+						"Cabinets"			=> Cabinet::getByBranch(GroupSchedule::getBranchIds($Group->id),0,true),
+						"Branches"          => Branches::get(),
+					]);
 
-				$this->render("schedule", [
-					"Group"			=> $Group,
-					"ang_init_data" => $ang_init_data,
-				]);
-			}
-		}
-
-		public function actionAdd()
-		{
-			$Group = new Group();
-
-			$this->actionEdit($Group);
+					$this->render("schedule", [
+						"Group"			=> $Group,
+						"ang_init_data" => $ang_init_data,
+					]);
+				}
 		}
 
 		public function actionEdit($Group = false)
