@@ -270,7 +270,97 @@
 			
 			Email::send("makcyxa-k@yandex.ru", "СМС о внеплановых занятиях завтра", $body);
 		}
-		
+
+
+		/**
+		 * Сообщить о отмененных занятиях.
+		 *
+		 */
+		public static function actionNotifyCancelledLessons()
+		{
+			$tomorrow_month = date("n", strtotime("tomorrow"));
+			$tomorrow_month = russian_month($tomorrow_month);
+
+			$tomorrow = date("j", strtotime("tomorrow")) . " " . $tomorrow_month;
+
+			// все отмененные завтрашние занятия
+			$GroupSchedule = GroupSchedule::findAll([
+				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "' AND cancelled = 1 ",
+				"group"		=> "id_group",
+			]);
+
+			$group_ids = [];
+			foreach ($GroupSchedule as $GS) {
+				$group_ids[] = $GS->id_group;
+			}
+
+			$Groups = Group::findAll([
+				"condition" => "id IN (" . implode(",", $group_ids) . ")"
+			]);
+
+			foreach($Groups as $Group) {
+				if ($Group->id_teacher) {
+					$Teacher = Teacher::findById($Group->id_teacher);
+					if ($Teacher) {
+						foreach (Student::$_phone_fields as $phone_field) {
+							$teacher_number = $Teacher->{$phone_field};
+							if (!empty($teacher_number)) {
+								$messages[] = [
+									"type"      => "Учителю #" . $Teacher->id,
+									"number" 	=> $teacher_number,
+									"message"	=> self::_generateCancelledMessage($Group, $Teacher, $tomorrow),
+								];
+							}
+						}
+					}
+				}
+				foreach ($Group->students as $id_student) {
+					$Student = Student::findById($id_student);
+					if (!$Student) {
+						continue;
+					}
+
+					foreach (Student::$_phone_fields as $phone_field) {
+						$student_number = $Student->{$phone_field};
+						if (!empty($student_number)) {
+							$messages[] = [
+								"type"      => "Ученику #" . $Student->id,
+								"number" 	=> $student_number,
+								"message"	=> self::_generateCancelledMessage($Group, $Student, $tomorrow),
+							];
+						}
+
+						if ($Student->Representative) {
+							$representative_number = $Student->Representative->{$phone_field};
+							if (!empty($representative_number)) {
+								$messages[] = [
+									"type"      => "Представителю #" . $Student->Representative->id,
+									"number" 	=> $representative_number,
+									"message"	=> self::_generateCancelledMessage($Group, $Student, $tomorrow),
+								];
+							}
+						}
+					}
+				}
+			}
+
+			$sent_to = [];
+			foreach ($messages as $message) {
+				if (!in_array($message['number'], $sent_to)) {
+					SMS::send($message['number'], $message['message'], ["additional" => 3]);
+//					$sent_to[] = $message['number'];
+
+					// debug
+					$body .= "<h3>" . $message["type"] . "</h3>";
+					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+				}
+			}
+
+			Email::send("shamik1551@mail.ru", "СМС об отмененных занятиях завтра", $body);
+		}
+
+
 		private function _generateMessage2($Group, $Entity, $tomorrow)
 		{
 			$GroupSchedule = GroupSchedule::find([
@@ -287,7 +377,24 @@
 				'entity_password' => $Entity->password,
 			]);
 		}
-		
+
+		public function _generateCancelledMessage($Group, $Entity, $tomorrow)
+		{
+			$GroupSchedule = GroupSchedule::find([
+				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."'"
+			]);
+			return Template::get(12, [
+				'tomorrow'		=> $tomorrow,
+				'time'			=> $GroupSchedule->time,
+				'subject'		=> Subjects::$dative[$Group->id_subject],
+				'address'		=> Branches::$address[$Group->id_branch],
+				'branch' 		=> Branches::$all[$Group->id_branch],
+				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
+				'entity_login'	=> $Entity->login,
+				'entity_password' => $Entity->password,
+			]);
+		}
+
 		/**
 		 * Обновить отсутствующие фактически занятия, но присутствующие в расписании.
 		 * 

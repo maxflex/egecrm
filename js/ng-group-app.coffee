@@ -211,7 +211,7 @@
 				multidate: true
 				beforeShowDay: (d, inst) ->
 					if $scope.inDate(d, $scope.past_lesson_dates)
-						add_class = 'was-lesson'
+						add_class = 'was-lesson disabled '
 					if $scope.inDate(d, $scope.vocation_dates)
 						add_class += ' vocation'
 					if $scope.inDate(d, $scope.exam_dates.other_subject)

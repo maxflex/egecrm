@@ -143,6 +143,7 @@
 							<td>
 								<span class="label label-warning" ng-show="Schedule.lesson_number == 1">старт группы</span>
 								<span class="label label-primary" ng-show="Schedule.is_unplanned">внеплановое</span>
+								<span class="label label-danger" ng-show="Schedule.cancelled">отменено</span>
 								<span class="label label-danger" ng-show="isMissingLesson(Schedule)">не зарегистрирован</span>
 								<span class="label label-default" ng-show="Schedule.is_free">бесплатное</span>
 							</td>
