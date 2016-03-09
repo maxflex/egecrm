@@ -1276,6 +1276,16 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			background: linear-gradient(to bottom,  #337ab7 0%,#337ab7 50%,$red 51%,$red 100%) !important; /* W3C */
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#337ab7', endColorstr='#ff0039',GradientType=0 ) !important; /* IE6-9 */
 		}
+		&.cancelled {
+		  	background: $quater_black !important; /* Old browsers */
+			background: -moz-linear-gradient(top,  $quater_black 0%, $quater_black 50%, $red 51%, $red 100%) !important; /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$quater_black), color-stop(50%,$quater_black), color-stop(51%,$red), color-stop(100%,$red)) !important; /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  $quater_black 0%,$quater_black 50%,$red 51%,$red 100%) !important; /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, $quater_black 0%,$quater_black 50%,$red 51%,$red 100%) !important; /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, $quater_black 0%,$quater_black 50%,$red 51%,$red 100%) !important; /* IE10+ */
+			background: linear-gradient(to bottom, $quater_black 0%,$quater_black 50%,$red 51%,$red 100%) !important; /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#337ab7', endColorstr='#ff0039',GradientType=0 ) !important; /* IE6-9 */
+	  	}
 	}
 	
 	& .old, & .new {

@@ -925,11 +925,8 @@
 		public function actionAjaxLoadStatsSchedule()
 		{
 			extract($_POST);
-			/**
-			 *	cancaelled нужен чтоы группа не показывалась на странице статистики если в этот день уроки отменены.
-			 */
 			$Schedule = GroupSchedule::findAll([
-				"condition" => "date='$date' AND id_group!=0 AND cancelled = 0",
+				"condition" => "date='$date' AND id_group!=0",
 				"group"		=> "id_group",
 			]);
 
