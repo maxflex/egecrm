@@ -781,47 +781,6 @@
 			}
 		}
 
-		public function actionAjaxBranchLoadAdd()
-		{
-			BranchLoad::add($_POST);
-		}
-
-		public function actionAjaxBranchLoadChange()
-		{
-			extract($_POST);
-
-			$BranchLoad = BranchLoad::findAll([
-				"condition" => "id_branch=$id_branch AND id_subject IS NULL AND grade IS NULL",
-				"limit"		=> "$index, 1"
-			])[0];
-
-			if ($BranchLoad->color == 3) {
-				$BranchLoad->delete();
-			} else {
-				$BranchLoad->color++;
-				$BranchLoad->save('color');
-			}
-
-		}
-
-		public function actionAjaxBranchLoadChangeFull()
-		{
-			extract($_POST);
-
-			$BranchLoad = BranchLoad::findAll([
-				"condition" => "id_branch=$id_branch AND id_subject=$id_subject AND grade=$grade",
-				"limit"		=> "$index, 1"
-			])[0];
-
-			if ($BranchLoad->color == 3) {
-				$BranchLoad->delete();
-			} else {
-				$BranchLoad->color++;
-				$BranchLoad->save('color');
-			}
-
-		}
-
 		public function actionAjaxClientsMap()
 		{
 			extract($_GET);

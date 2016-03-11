@@ -87,7 +87,7 @@
 			<tr ng-repeat-start="stat in sortByDate(stats)" ng-class="{'pointer': days_mode}" ng-click="dateLoad(stat.date)">
 				<td>
 					{{formatDate(stat.date)}}
-					<span ng-show="errors[stat.date].length > 0" class="badge badge-danger" style="margin-left: 10px">{{errors[stat.date].length}}</span>
+					<span ng-show="missing[stat.date] > 0" class="badge badge-danger" style="margin-left: 10px">{{ missing[stat.date] }}</span>
 				</td>
 				<td>
 					{{stat.lesson_count ? stat.lesson_count : ''}}

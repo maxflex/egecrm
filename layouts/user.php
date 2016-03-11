@@ -156,6 +156,13 @@
 	<a href="stats/visits/total" class="list-group-item">Посещаемость
 		<?php
 			if (!LOCAL_DEVELOPMENT) {
+				$journal_errors = Group::getLastWeekMissing(true);
+				
+				if ($journal_errors > 0) {
+					echo '<span class="badge badge-danger pull-right" >'. $journal_errors .'</span>';
+				}
+				
+/*
 				$journal_errors = memcached()->get("JournalErrors");
 
 				$journal_errors_count = 0;
@@ -166,6 +173,7 @@
 				if ($journal_errors_count > 0) {
 					echo '<span class="badge badge-danger pull-right" >'. $journal_errors_count .'</span>';
 				}
+*/
 			}
 		?>
 	</a>
