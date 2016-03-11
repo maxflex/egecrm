@@ -95,7 +95,8 @@
 			$date 		= $_GET['date'];
 			$id_group 	= $_GET['id_group'];
 
-			if (!Group::inSchedule($id_group, $date)) {
+            /* третий парам чтобы не учитовать отменные занятия */
+			if (!Group::inSchedule($id_group, $date, true)) {
 				$this->setTabTitle("Ошибка");
 				$this->render("no_lesson", [
 					"message" => "Занятие отсутствует"
