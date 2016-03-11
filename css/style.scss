@@ -1374,14 +1374,26 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 				color: $blue;
 			}
 			&.task-status-2 {
-				color: #5FB760;
+				color: $blue;
 			}
 			&.task-status-3 {
-				color: #F9A942;
+				color: $blue;
 			}
 			&.task-status-4 {
+				color: #5FB760;
+			}
+		  	&.task-status-5 {
+				color: #5FB760;
+			}
+		  	&.task-status-6 {
+				color: #5FB760;
+			}
+			&.task-status-7 {
+				color: #F9A942;
+			}
+			&.task-status-8 {
 				color: #FC0F3F;
-			}	
+			}
 		}
 	}
 }

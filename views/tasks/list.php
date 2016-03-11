@@ -22,16 +22,16 @@
 		<?php endif ?>
 
 			<div class="top-links pull-right">
-				<?php if ($_GET["list"] != 4) { ?>
+				<?php if ($_GET["list"] != TaskStatuses::CLOSED) { ?>
 				<span style="margin-right: 15px; font-weight: bold">актуальные</span>
 				<?php } else { ?>
 				<a href="<?= pathLevelUp($_SERVER['REQUEST_URI']) ?>" style="margin-right: 15px">актуальные</a>
 				<?php } ?>
 
-				<?php if ($_GET["list"] == 4) { ?>
+				<?php if ($_GET["list"] == TaskStatuses::CLOSED) { ?>
 				<span style="margin-right: 0; font-weight: bold">закрытые</span>
 				<?php } else { ?>
-				<a href="<?= $_SERVER['REQUEST_URI'] ?>/4" style="margin-right: 0">закрытые</a>
+				<a href="<?= $_SERVER['REQUEST_URI'] ?>/<?= TaskStatuses::CLOSED ?>" style="margin-right: 0">закрытые</a>
 				<?php } ?>
 			</div>
 
@@ -76,9 +76,13 @@
 								<span style="margin-right: 10px; opacity: .8; color: {{Task.User.color}}">{{Task.User.login}}</span>
 								<span class="task-status task-status-{{Task.id_status}}" ng-click="toggleTaskStatus(Task)">
 									<span ng-show="Task.id_status==1">новое</span>
-									<span ng-show="Task.id_status==2">выполнено</span>
-									<span ng-show="Task.id_status==3">требует доработки</span>
-									<span ng-show="Task.id_status==4">закрыто</span>
+									<span ng-show="Task.id_status==2">новое для Макса</span>
+									<span ng-show="Task.id_status==3">новое для Шамшода</span>
+									<span ng-show="Task.id_status==4">выгружено на GitHub</span>
+									<span ng-show="Task.id_status==5">выгружено на Production (тестируется)</span>
+									<span ng-show="Task.id_status==6">выгружено на Production (готово)</span>
+									<span ng-show="Task.id_status==7">требует доработки</span>
+									<span ng-show="Task.id_status==8">закрыто</span>
 								</span>
 							</div>
 						</div>
