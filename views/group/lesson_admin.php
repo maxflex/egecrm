@@ -50,7 +50,7 @@
 
 					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true && !(registered_in_journal === true)"
 						ng-disabled="registered_in_journal === true || saving">
-						<span ng-show="registered_in_journal !== true">Записать в журнал</span>
+						<span ng-show="registered_in_journal !== true">Сохранить</span>
 					</button>
 					<span ng-show="until_save !== true">
 						<button disabled class="btn btn-default">
