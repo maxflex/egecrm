@@ -158,7 +158,7 @@
 		{
 			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
 			return Group::count([
-				"condition" => "id_teacher=$id_teacher"
+				"condition" => "id_teacher=$id_teacher AND ended = 0"
 			]);
 		}
 

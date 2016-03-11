@@ -581,7 +581,7 @@
 		public function countGroupsStatic($id_student)
 		{
 			return Group::count([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0"
 			]);
 		}
 
