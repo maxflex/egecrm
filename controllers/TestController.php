@@ -14,6 +14,29 @@
     //            error_reporting(E_ALL);
     //        }
 
+        /**
+         * Обновление статусов задач
+         */
+        public function actionUpdateTasksStatuses()
+        {
+            $Tasks = Task::findAll();
+            /* @var $Tasks Group[] */
+            foreach ($Tasks as $Task) {
+                switch ($Task->id_status) {
+                    case 2: // выполнено  => выгружен в гитхаб
+                        $Task->id_status = 4;
+                        break;
+                    case 3: // требует доработки
+                        $Task->id_status = 7;
+                        break;
+                    case 4: // Закрыто
+                        $Task->id_status = 8;
+                        break;
+                }
+                $Task->save('id_status');
+            }
+        }
+
 		/**
 		 * Проверка отправки смс при отмене уроков
 		 */

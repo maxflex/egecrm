@@ -218,10 +218,16 @@
 		}
 
 */
-		public function inSchedule($id_group, $date)
+        /**
+         * @param $id_group                 ID группы
+         * @param $date                     Дата
+         * @param bool $withoutCancelled    Надо ли учитовать отмененные пары
+         * @return GroupSchedule[]|bool
+         */
+		public function inSchedule($id_group, $date, $withoutCancelled = false)
 		{
 			return GroupSchedule::find([
-				"condition" => "id_group=$id_group AND date='$date'"
+				"condition" => "id_group=$id_group AND date='$date'".($withoutCancelled ? " AND cancelled = 0 " : "")
 			]);
 		}
 		

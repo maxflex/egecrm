@@ -40,10 +40,10 @@
 			</div>
 			<div class="row" ng-hide="<?= User::isStudent(true) ?>">
 				<div class="col-sm-12 center">
-					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true"
+					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true && !(registered_in_journal === true)"
 						ng-disabled="registered_in_journal === true || saving">
 						<span ng-show="registered_in_journal !== true">Записать в журнал</span>
-						<span ng-show="registered_in_journal === true">Записано</span>
+<!--						<span >Записано</span>-->
 					</button>
 					<span ng-show="until_save !== true">
 						<button disabled class="btn btn-default">

@@ -10,6 +10,10 @@
 	table.left-align tr td {
 		text-align: left;
 	}
+
+	.opacitied { /* OPACITIED! XD */
+		opacity: .25;
+	}
 </style>
 
 <div ng-app="Stats" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
@@ -109,35 +113,35 @@
 				<td colspan="6">
 					<table class="table table-divlike left-align" style="margin: 0; width: 95%">
 						<tr ng-repeat="Schedule in Schedules[stat.date]">
-							<td>
+							<td ng-class="Schedule.cancelled?'opacitied':''">
 								{{Schedule.time}}
 							</td>
 							<td>
 								<div ng-bind-html="Schedule.branch | to_trusted"></div>
 							</td>
-							<td>
+							<td ng-class="Schedule.cancelled?'opacitied':''">
 								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
 							</td>
-							<td width="90">
+							<td width="90" ng-class="opacitied: Schedule.cancelled">
 								{{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade : ''}}
 							</td>
-							<td>
+							<td ng-class="Schedule.cancelled?'opacitied':''">
 								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule">расписание</a>
 							</td>
-							<td>
+							<td ng-class="Schedule.cancelled?'opacitied':''">
 								{{Schedule.Group.students.length}} <ng-pluralize count="Schedule.Group.students.length" when="{
 									'one': 'ученик',
 									'few': 'ученика',
 									'many': 'учеников',
 								}"></ng-pluralize>
 							</td>
-							<td>
+							<td ng-class="Schedule.cancelled?'opacitied':''">
 								<a class="pointer" target="_blank" href="teachers/edit/{{Schedule.Group.Teacher.id}}">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
 								
 								<span class="label label-danger pointer label-transparent" ng-click="callSip(Schedule.Group.Teacher.phone)"
 									style="margin-left: 3px">позвонить</span>
 							</td>
-							<td>
+							<td ng-class="Schedule.cancelled?'opacitied':''">
 								{{Schedule.lesson_number}} урок
 							</td>
 							<td>
