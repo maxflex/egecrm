@@ -180,7 +180,7 @@
 			
 			// все завтрашние занятия
 			$GroupSchedule = GroupSchedule::findAll([
-				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "'",
+				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "' AND cancelled  = 0",
 				"group"		=> "id_group",
 			]);
 			
@@ -205,7 +205,7 @@
 				
 				// дни совпали
 				$days_match = GroupSchedule::count([
-					"condition" => "id_group={$Group->id} AND DATE_FORMAT('" . date("Y-m-d", strtotime("tomorrow")) . "', '%w') NOT IN (" . implode(',', $days) . ")"
+					"condition" => "id_group={$Group->id} AND DATE_FORMAT('" . date("Y-m-d", strtotime("tomorrow")) . "', '%w') NOT IN (" . implode(',', $days) . ") AND cancelled = 0"
 				]) > 0 ? false : true;
 				
 				if (!$days_match) {
@@ -269,11 +269,12 @@
 			}
 			
 			Email::send("makcyxa-k@yandex.ru", "СМС о внеплановых занятиях завтра", $body);
+			Email::send("shamik1551@mail.ru", "СМС о внеплановых занятиях завтра", $body);
 		}
 
 
 		/**
-		 * Сообщить о отмененных занятиях.
+		 * Сообщить об отмененных занятиях.
 		 *
 		 */
 		public static function actionNotifyCancelledLessons()
@@ -513,7 +514,7 @@
 		{
 			// все завтрашние занятия
 			$GroupSchedule = GroupSchedule::findAll([
-				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "'",
+				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "' AND cancelled = 0",
 				"group"		=> "id_group",
 			]);
 			
@@ -609,12 +610,13 @@
 			}
 			
 			Email::send("makcyxa-k@yandex.ru", "СМС о занятиях завтра", $body);
+			Email::send("shamik1551@mail.ru", "СМС о первых занятиях завтра", $body);
 		}
 		
 		private function _generateMessage($Group, $Entity, $tomorrow)
 		{
 			$GroupSchedule = GroupSchedule::find([
-				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."'"
+				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."' AND cancelled = 0"
 			]);
 			return Template::get(5, [
 				'tomorrow'		=> $tomorrow,

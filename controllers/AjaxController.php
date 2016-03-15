@@ -895,7 +895,7 @@
 
 				// номер урока
 				$S->lesson_number = GroupSchedule::count([
-					"condition" => "id_group={$S->id_group} AND date <= '{$date}'"
+					"condition" => "id_group={$S->id_group} AND date <= '{$date}' AND cancelled = 0"
 				]);
 
                 $Cabinet = Cabinet::findById($S->cabinet);
