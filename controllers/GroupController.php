@@ -526,9 +526,19 @@
 				"condition" => "date='$date' AND id_group='$id_group'"
 			]);
 
-			$GroupSchedule->time = $time;
+            $GroupSchedule->time = $time;
+            $GroupSchedule->save("time");
 
-			$GroupSchedule->save("time");
+            /* прорка наслоений, если найдены то вернем имена студентов */
+            if (!$GroupSchedule->cancelled) {
+                if ($students = $GroupSchedule->isLayered()) {
+                    $Students = Student::findAll([
+                        "condition" => "id IN (".implode(',', $students).")"
+                    ]);
+
+                    returnJsonAng($Students);
+                }
+            }
 		}
 
 		/**
@@ -553,6 +563,8 @@
 
 			$Group->Schedule = $Group->getScheduleWithoutTime();
 
+            $layerData = []; // здесь храним данные о наслоении если оно возникает
+
 			foreach($Group->Schedule as $Schedule) {
 				$d = date("w", strtotime($Schedule->date));
 				if ($d == 0) {
@@ -576,7 +588,16 @@
 					$Schedule->cabinet = $Group->cabinet;
 				}
 				$Schedule->save();
+
+                if (!$Schedule->cancelled) {
+                    if ($students = $Schedule->isLayered()) {
+                        $layerData[$Schedule->date] = Student::findAll([
+                            "condition" => "id IN (".implode(',', $students).")"
+                        ]);
+                    }
+                }
 			}
+            returnJsonAng($layerData);
 //			dbConnection()->query("UPDATE ".GroupSchedule::$mysql_table." SET time='$time' WHERE time IS NULL AND id_group=$id_group");
 		}
 

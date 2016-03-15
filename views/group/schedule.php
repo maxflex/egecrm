@@ -33,7 +33,9 @@
 					}"></ng-pluralize></h3>
 					
 				<table class="table table-divlike">
-					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px">
+					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px"
+                        ng-class="Schedule.title ? 'students-11' : '';"
+                        ng-attr-title="{{Schedule.title || undefined}}">
 						<td>
 							<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}'>{{getLine1(Schedule)}}</a>
 						</td>

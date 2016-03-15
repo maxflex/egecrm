@@ -351,7 +351,7 @@
 		}
 
 		/**
-		 * Gets all schedules of group, where schedule time is not defined.
+		 * Gets all schedules of group, where schedule time is not defined and lesson isn't cancelled.
 		 *
 		 * @return GroupSchedule[]|bool		Group schedules, where time is not defined if found,
 		 * 									false otherwise.
@@ -361,7 +361,7 @@
 			return GroupSchedule::findAll([
 				"condition" => "id_group=".$this->id." AND ".
 							   "(time IS NULL OR time = '00:00:00' OR cabinet IS NULL OR id_branch IS NULL OR ".
-							   "0 in (cabinet, id_branch))",
+							   "0 in (cabinet, id_branch)) AND cancelled = 0",
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
@@ -725,7 +725,52 @@
 				return [];
 			}
 		}
-	}
+
+        /**
+         * Проверка на наслоенность
+         *
+         * @return bool|int[]       False если нет наслоения,
+         *                          иначе ID студента, в расписании которого возникло наслоение
+         */
+        public function isLayered()
+        {
+            /* find groups with same schedule */
+            $GroupSchedules = GroupSchedule::findAll([
+                "condition" => "date='{$this->date}' AND time='{$this->time}' AND cancelled=0"
+            ]);
+
+            $group_ids = [];
+            /* @var $GroupSchedules     $GroupSchedule[] */
+            foreach ($GroupSchedules as $GroupSchedule) {
+                $group_ids[] = $GroupSchedule->id_group;
+            }
+
+            if (!empty($group_ids)) {
+                $Groups = Group::findAll([
+                    "condition" => "id IN (".implode(',', $group_ids).") AND ended=0"
+                ]);
+
+                $currentGroup = false;
+                foreach ($Groups as $Group) {
+                    if ($Group->id == $this->id_group) {
+                        $currentGroup = $Group;
+                        break;
+                     }
+                }
+
+                /* @var $Groups     Group[] */
+                foreach ($Groups as $Group) {
+                    if ($Group->id != $currentGroup->id) {
+                        if ($layerdata = array_intersect($currentGroup->students, $Group->students)) {
+                            return $layerdata;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
 
 
 	class GroupTime extends Model

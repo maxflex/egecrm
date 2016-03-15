@@ -125,6 +125,15 @@
 			$scope.getLine1 = (Schedule) ->
 				moment(Schedule.date).format "D MMMM YYYY г."
 
+			$scope.studentsToLayeredScheduleTitle = (Schedule, students) ->
+				title = ''
+				[...,last] = students
+				for student in students
+					title += student.first_name + ' ' + student.last_name
+					if last isnt student then title += ','
+				Schedule.title = title
+				$scope.$apply()
+
 			$scope.setTimeFromGroup = (Group) ->
 				$.each $scope.Group.Schedule, (i, v) ->
 					if not v.time
@@ -142,6 +151,13 @@
 									$scope.changeBranch(v)
 									v.cabinet = Group.cabinet if Group.cabinet
 				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
+				, (response) ->
+					if response
+						$.each $scope.Group.Schedule, (i, v) ->
+							if response[v.date]
+								$scope.studentsToLayeredScheduleTitle(v, response[v.date])
+				, "json"
+
 				$scope.$apply()
 
 			$scope.lessonCount = ->
@@ -181,6 +197,10 @@
 						if time
 							Schedule.time = time
 							$.post "groups/ajax/AddScheduleTime", {time: time, date: Schedule.date, id_group: $scope.Group.id}
+							, (response) ->
+								if response
+									$scope.studentsToLayeredScheduleTitle(Schedule, response)
+							, "json"
 							$scope.$apply()
 						$(this)
 							.hide()
@@ -249,6 +269,7 @@
 						if v isnt undefined
 							if v.date is d
 								if not v.cancelled
+									v.title = false
 									v.cancelled = 1
 									$.post "groups/ajax/CancelScheduleDate", {date: d, id_group: $scope.Group.id}
 								else

@@ -113,41 +113,45 @@
 				<td colspan="6">
 					<table class="table table-divlike left-align" style="margin: 0; width: 95%">
 						<tr ng-repeat="Schedule in Schedules[stat.date]">
-							<td ng-class="Schedule.cancelled?'opacitied':''">
+							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
 								{{Schedule.time}}
 							</td>
 							<td>
 								<div ng-bind-html="Schedule.branch | to_trusted"></div>
 							</td>
-							<td ng-class="Schedule.cancelled?'opacitied':''">
+							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
 								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
 							</td>
-							<td width="90" ng-class="opacitied: Schedule.cancelled">
+							<td width="90" ng-class="Schedule.cancelled ? 'opacitied' : ''">
 								{{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade : ''}}
 							</td>
-							<td ng-class="Schedule.cancelled?'opacitied':''">
+							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
 								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule">расписание</a>
 							</td>
-							<td ng-class="Schedule.cancelled?'opacitied':''">
+							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
 								{{Schedule.Group.students.length}} <ng-pluralize count="Schedule.Group.students.length" when="{
 									'one': 'ученик',
 									'few': 'ученика',
 									'many': 'учеников',
 								}"></ng-pluralize>
 							</td>
-							<td ng-class="Schedule.cancelled?'opacitied':''">
+							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
 								<a class="pointer" target="_blank" href="teachers/edit/{{Schedule.Group.Teacher.id}}">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
 								
 								<span class="label label-danger pointer label-transparent" ng-click="callSip(Schedule.Group.Teacher.phone)"
 									style="margin-left: 3px">позвонить</span>
 							</td>
-							<td ng-class="Schedule.cancelled?'opacitied':''">
+							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
 								{{Schedule.lesson_number}} урок
 							</td>
 							<td>
 								<span class="label label-warning" ng-show="Schedule.lesson_number == 1">старт группы</span>
 								<span class="label label-primary" ng-show="Schedule.is_unplanned">внеплановое</span>
 								<span class="label label-danger" ng-show="Schedule.cancelled">отменено</span>
+								<span class="label label-danger"
+                                      ng-show="Schedule.cabinetLayered || Schedule.studentLayered"
+                                      title="{{ (Schedule.cabinetLayered ? 'Наслоение кабинета:\nКабинет № ' + Schedule.cabinetNumber + '\n': '') +
+                                                (Schedule.studentLayered ? 'Наслоение студентов:\n' + Schedule.studentLayered : '') }}">наслоение</span>
 								<span class="label label-danger" ng-show="isMissingLesson(Schedule)">не зарегистрирован</span>
 								<span class="label label-default" ng-show="Schedule.is_free">бесплатное</span>
 							</td>
