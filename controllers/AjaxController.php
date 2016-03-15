@@ -916,7 +916,7 @@
                 for ($j = $i+1; $j < count($Schedule); $j++) {
                     $S2 = &$Schedule[$j];
 
-                    if ($S1->id != $S2->id) {
+                    if ($S1->id != $S2->id && $S1->time == $S2->time) {
                         /* если найдены общие студенты, запоминаем их фамилии */
                         if ($layerData = array_intersect($S1->Group->students, $S2->Group->students)) {
                             $Students = Student::findAll([
