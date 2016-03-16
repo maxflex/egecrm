@@ -16,6 +16,9 @@
 			{{Subjects[Group.id_subject]}}
 		</td>
 		<td>
+            <a href="students/groups/edit/{{Group.id}}/schedule">расписание</a>
+        </td>
+		<td>
 			{{Group.grade}} класс
 		</td>
 		<td>
