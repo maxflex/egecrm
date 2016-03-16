@@ -260,7 +260,7 @@
 					}	
 				}
 				
-				$date = date('Y-m-d', strtotime($date . "+$i day"));
+				$date = date('Y-m-d', strtotime($date . "-$i day"));
 			}
 			
 			return $total_count ? $total_missing_count : $return;
