@@ -92,6 +92,9 @@
 				<span ng-show="Group.days_before_exam <= 0">запаса нет</span>
 			</span>
 		</td>
+		<td>
+			<span ng-show='Group.ended' class="badge badge-gray">группа заархивирована</span>
+		</td>
 <!--
 		<td width="150">
 		    <span ng-repeat="weekday in weekdays" class="group-freetime-block">

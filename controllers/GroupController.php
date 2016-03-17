@@ -224,7 +224,8 @@
 
 				$this->addCss("bootstrap-select");
 				$this->addJs("bootstrap-select, dnd");
-
+				
+				// @refactored
 				$Groups = Group::findAll();
 
 				// исключить некоторые данные для более быстрой front-end загрузки
@@ -528,17 +529,6 @@
 
             $GroupSchedule->time = $time;
             $GroupSchedule->save("time");
-
-            /* прорка наслоений, если найдены то вернем имена студентов */
-            if (!$GroupSchedule->cancelled) {
-                if ($students = $GroupSchedule->isLayered()) {
-                    $Students = Student::findAll([
-                        "condition" => "id IN (".implode(',', $students).")"
-                    ]);
-
-                    returnJsonAng($Students);
-                }
-            }
 		}
 
 		/**
@@ -588,14 +578,6 @@
 					$Schedule->cabinet = $Group->cabinet;
 				}
 				$Schedule->save();
-
-                if (!$Schedule->cancelled) {
-                    if ($students = $Schedule->isLayered()) {
-                        $layerData[$Schedule->date] = Student::findAll([
-                            "condition" => "id IN (".implode(',', $students).")"
-                        ]);
-                    }
-                }
 			}
             returnJsonAng($layerData);
 //			dbConnection()->query("UPDATE ".GroupSchedule::$mysql_table." SET time='$time' WHERE time IS NULL AND id_group=$id_group");
@@ -662,9 +644,11 @@
 
 			returnJsonAng($return);
 		}
-
+		
+		// Похожие гуппы (вверху из редактирования группы)
 		public function actionAjaxGetGroups()
 		{
+			// @reafactored
 			$Groups = Group::findAll();
 
 			returnJsonAng($Groups);
@@ -745,16 +729,12 @@
 
 		public function actionAjaxUpdateCacheAll()
 		{
+			// @refactored
 			$Groups = Group::findAll();
 
 			foreach ($Groups as $Group) {
 				memcached()->set("GroupScheduleCount[{$Group->id}]", $Group->countSchedule(), 5 * 24 * 3600);
 			}
-		}
-
-		public function actionAjaxUpdateStatsCache()
-		{
-			memcached()->set("GroupStats", Group::_getStats(), 3600 * 24);
 		}
 
 		public function actionAjaxSmsNotify()
@@ -931,8 +911,9 @@
 				$objPHPExcel->getActiveSheet()->getStyle($col.$row)->getFont()
 								->setName('Apple SD Gothic Neo')
 								->setSize(18);
-
+								
 				// Cabinet groups
+				// @refactored
 				$Groups = Group::findAll([
 					"condition" => "cabinet=" . $Cabinet->id." AND ended = 0 "
 				]);

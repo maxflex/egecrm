@@ -80,14 +80,6 @@
 			extract($_POST);
 			
 			switch($mode) {
-				case "?mode=layer": {
-					$Response = Student::getLayerErrors();
-					break;
-				}
-				case "?mode=correspond": {
-					$Response = Student::getWithoutGroupErrors();
-					break;
-				}
 				case "?mode=phone": {
 					$Response = Student::getPhoneErrors();
 					break;

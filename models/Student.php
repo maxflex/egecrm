@@ -204,57 +204,6 @@
 			return $Students;
 		}
 
-		/**
-		 * Получить человеко-предметы без групп.
-		 *
-		 * @access public
-		 * @static
-		 * @return void
-		 */
-		public static function getWithoutGroupErrors()
-		{
-			$Students = Student::getWithContract();
-
-			foreach ($Students as $Student) {
-				$Student->Contract = $Student->getLastContract();
-				// Получаем количество активных предметов
-				$active_subjects_count = 0;
-				foreach ($Student->Contract->subjects as $subject) {
-					if ($subject['status'] >= 2) {
-						$active_subjects_count++;
-					}
-				}
-
-				// договор полностью расторгнут -- нет активных предметов
-				if (!$active_subjects_count) {
-					continue;
-				}
-
-				// Проверяем кол-во групп
-				if ($Student->countGroups() != $active_subjects_count) {
-// 					h1("Not equal at {$Student->id}: " . $Student->countGroups() . " - " . $active_subjects_count);
-					$return[] = $Student;
-					continue;
-				}
-
-				foreach ($Student->Contract->subjects as $subject) {
-					if ($subject['status'] >= 2) {
-						$count = Group::count([
-							"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Student->id},%' AND id_subject={$subject['id_subject']} AND grade={$Student->Contract->grade}"
-						]);
-
-						if ($count != 1) {
-							$return[] = $Student;
-							continue;
-						}
-					}
-				}
-			}
-
-			return $return;
-		}
-
-
 		public static function getWithContractByBranch($id_branch)
 		{
 			$query = dbConnection()->query("
@@ -537,6 +486,7 @@
 
 		public static function getGroupsStatic($id_student)
 		{
+			// @refactored
 			return Group::findAll([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0 "
 			]);
@@ -544,6 +494,7 @@
 
 		public function getGroups($with_schedule = false)
 		{
+			// @refactored
 			$Groups = Group::findAll([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
 			]);
@@ -561,30 +512,17 @@
 
 			return $Groups;
 		}
-
-		public function getJournalGroups()
-		{
-			$result = dbConnection()->query("
-				SELECT g.* FROM groups g
-				LEFT JOIN visit_journal vj on g.id = vj.id_group
-				WHERE vj.type_entity='STUDENT' AND vj.id_entity={$this->id}
-				GROUP BY g.id
-			");
-
-			$Groups = [];
-			while ($row = $result->fetch_object()) {
-				$Groups[] = $row;
-			}
-			return $Groups;
-		}
-
+		
+		// Подсчитывает кол-во групп (кружочек в ЛК ученика)
 		public function countGroupsStatic($id_student)
 		{
+			// @refactored
 			return Group::count([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0"
 			]);
 		}
-
+		
+		
 		public function countGroups()
 		{
 			return Group::count([
@@ -870,30 +808,6 @@
 			// }
 			//
 			// return $TeacherLikes;
-		}
-
-		public static function getLayerErrors()
-		{
-			$Students = Student::getWithContract();
-			foreach ($Students as $Student) {
-				$Groups = $Student->getGroups();
-				foreach ($Groups as $Group) {
-					foreach ($Group->day_and_time as $day => $time_data) {
-						foreach ($time_data as $time) {
-							$result = dbConnection()->query("
-								SELECT COUNT(*) AS cnt FROM groups g
-									LEFT JOIN group_time gt ON gt.id_group = g.id
-									WHERE CONCAT(',', CONCAT(g.students, ',')) LIKE '%,{$Student->id},%' AND gt.day = {$day} AND gt.time = '{$time}'
-							");
-							$count = $result->fetch_object()->cnt;
-							if ($count > 1) {
-								$return[] = $Student;
-							}
-						}
-					}
-				}
-			}
-			return $return;
 		}
 
 		public static function getPhoneErrors()

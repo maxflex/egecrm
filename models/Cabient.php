@@ -87,6 +87,7 @@
 			]);
 		}
 		
+		// @refactored используется в TestController
 		public static function getCabinetGroups($id_branch)
 		{
 			$ids = self::getBranchCabinetIds($id_branch);

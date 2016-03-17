@@ -136,6 +136,7 @@
 		 */
 		public function getTeacherIds()
 		{
+			// @refactored
 			$result = dbConnection()->query("
 				SELECT id_teacher FROM groups
 				GROUP BY id_teacher
@@ -243,7 +244,7 @@
 			foreach(range(1, 7) as $i) {
 				$GroupSchedule = GroupSchedule::findAll([
 					"condition" => "date='$date'  AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) >  {$minutes}
-						AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW())"
+						AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW()) AND id_group > 0"
 				]);
 				
 				
@@ -264,48 +265,6 @@
 			}
 			
 			return $total_count ? $total_missing_count : $return;
-		}
-
-		/**
-		 *  Всего человеко групп - это количество человек, записанных в любые группы. Если один человек записан в 3 группы, то это 3 человеко-группы
-			Согласных с расписание - это количество учеников, согласных в конкретной группе с отметкой согласен
-			Запланировано групп - это просто
-			Преподов, согласных с расписанием - это количество синих "согласен" у преподов
-			Человеко-групп не в группах - это количество человеко-групп с действующими договорами, не прикрепленных к группам.
-		 *
-		 */
-		public static function getStats()
-		{
-			if (LOCAL_DEVELOPMENT) {
-				return self::_getStats();
-			} else {
-				$return = memcached()->get("GroupStats");
-
-				if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-					$return = self::_getStats();
-					memcached()->set("GroupStats", $return, 3600 * 24);
-				}
-
-				return $return;
-			}
-		}
-
-		public static function _getStats()
-		{
-			$Groups = Group::findAll();
-
-			foreach ($Groups as $Group) {
-
-				if ($Group->students) {
-					$total_group_students += count($Group->students);
-				}
-			}
-
-			return [
-				"total_group_students" 	=> $total_group_students,
-				"total_students_notified" => $total_students_notified,
-				"total_groups"			=> count($Groups),
-			];
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
@@ -515,14 +474,15 @@
 
 		/**
 		 * Если в группе состоит хотя бы 1 ученик с занятиями больше 40, то в списке групп предмет выглядит вместо "русский" пишем "русский (спецгруппа)"
-		 *
+		 * 
 		 */
 		public function isSpecial()
 		{
 			if (!$this->id_subject) {
 				return false;
 			}
-
+			
+			// @refactored
 			return dbConnection()->query("
 				SELECT g.id FROM groups g
 					LEFT JOIN students s ON s.id IN (" . implode(",", $this->students) . ")
@@ -725,51 +685,6 @@
 				return [];
 			}
 		}
-
-        /**
-         * Проверка на наслоенность
-         *
-         * @return bool|int[]       False если нет наслоения,
-         *                          иначе ID студента, в расписании которого возникло наслоение
-         */
-        public function isLayered()
-        {
-            /* find groups with same schedule */
-            $GroupSchedules = GroupSchedule::findAll([
-                "condition" => "date='{$this->date}' AND time='{$this->time}' AND cancelled=0"
-            ]);
-
-            $group_ids = [];
-            /* @var $GroupSchedules     $GroupSchedule[] */
-            foreach ($GroupSchedules as $GroupSchedule) {
-                $group_ids[] = $GroupSchedule->id_group;
-            }
-
-            if (!empty($group_ids)) {
-                $Groups = Group::findAll([
-                    "condition" => "id IN (".implode(',', $group_ids).") AND ended=0"
-                ]);
-
-                $currentGroup = false;
-                foreach ($Groups as $Group) {
-                    if ($Group->id == $this->id_group) {
-                        $currentGroup = $Group;
-                        break;
-                     }
-                }
-
-                /* @var $Groups     Group[] */
-                foreach ($Groups as $Group) {
-                    if ($Group->id != $currentGroup->id) {
-                        if ($layerdata = array_intersect($currentGroup->students, $Group->students)) {
-                            return $layerdata;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
     }
 
 

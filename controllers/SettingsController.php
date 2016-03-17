@@ -14,39 +14,6 @@
 			$this->addJs("ng-settings-app, bootstrap-select");
 		}
 		
-		public function actionCabinets()
-		{
-			// Выводить только кабинеты, в которых есть хотя бы 1 группа.
-			$result = dbConnection()->query("SELECT cabinet FROM groups GROUP BY cabinet");
-			
-			$cabinet_ids = [];
-			while ($row = $result->fetch_object()) {
-				if (!empty($row->cabinet)) {
-					$cabinet_ids[] = $row->cabinet;
-				}
-			}
-			
-			$Cabinets = Cabinet::findAll([
-				"condition" => "id IN (". implode(",", $cabinet_ids) .")",
-				"order"		=> "ABS(number) ASC"
-			]);
-			
-			foreach ($Cabinets as &$Cabinet) {
-				$Cabinet->freetime = Cabinet::getFreetime(0, $Cabinet->id);
-			}
-
-			$ang_init_data = angInit([
-				"Cabinets" 	=> $Cabinets,
-				"Branches"	=> Branches::getBranches(),
-			]);
-			
-			
-			$this->setTabTitle("Свободное время кабинетов");
-			$this->render("cabinets_freetime", [
-				"ang_init_data" => $ang_init_data,
- 			]);
-		}
-		
 		public function actionVocations()
 		{
 			// не надо панель рисовать

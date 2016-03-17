@@ -132,6 +132,7 @@
 		// подфункция проверки, что другой филиал
 		private static function _branchDifferentStudent($id_group, $id_branch, $id_student, $day, $time)
 		{
+			// @refactored
 			return dbConnection()->query("
 				SELECT g.id FROM groups g
 					LEFT JOIN group_time gt ON gt.id_group = g.id
@@ -265,6 +266,7 @@
 		// подфункция проверки, что другой филиал
 		private static function _branchDifferentTeacher($id_group, $id_branch, $id_teacher, $day, $time)
 		{
+			// @refactored
 			return dbConnection()->query("
 				SELECT g.id FROM groups g
 					LEFT JOIN group_time gt ON gt.id_group = g.id

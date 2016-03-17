@@ -185,7 +185,7 @@
 					"order"		=> "lesson_date DESC, lesson_time DESC",
 				]);
 
-				$Groups = Teacher::getGroups($id_teacher);
+				$Groups = Teacher::getGroups($id_teacher, false);
 			}
 
 			$this->addJs("bootstrap-select");
