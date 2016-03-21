@@ -9,54 +9,7 @@ angular.module("Settings", ["ui.bootstrap"]).filter('to_trusted', [
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("CabinetsCtrl", function($scope) {
-  $scope.weekdays = [
-    {
-      "short": "ПН",
-      "full": "Понедельник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ВТ",
-      "full": "Вторник",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СР",
-      "full": "Среда",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ЧТ",
-      "full": "Четверг",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "ПТ",
-      "full": "Пятница",
-      "schedule": ["", "", "16:15", "18:40"]
-    }, {
-      "short": "СБ",
-      "full": "Суббота",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }, {
-      "short": "ВС",
-      "full": "Воскресенье",
-      "schedule": ["11:00", "13:30", "16:00", "18:30"]
-    }
-  ];
-  $scope.inCabinetFreetime = function(time, freetime) {
-    if (freetime === void 0) {
-      return false;
-    }
-    freetime = objectToArray(freetime);
-    return $.inArray(time, freetime) >= 0;
-  };
-  $scope.getBranchCabinets = function(id_branch) {
-    return _.where($scope.Cabinets, {
-      id_branch: id_branch
-    });
-  };
-  return angular.element(document).ready(function() {
-    return set_scope("Settings");
-  });
-}).controller("VocationsCtrl", function($scope) {
+]).controller("VocationsCtrl", function($scope) {
   $scope.schedulde_loaded = false;
   $scope.menu = 1;
   $scope.exam_days = {

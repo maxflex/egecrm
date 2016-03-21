@@ -40,6 +40,12 @@
 		global $db_connection;
 		return $db_connection;
 	}
+	
+	function dbEgerep()
+	{
+		global $db_egerep;
+		return $db_egerep;
+	}
 
 	/*
 	 * Возвращает соединение DB_SETTINGS

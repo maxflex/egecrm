@@ -26,7 +26,7 @@
 				</div>
 			</div>
 			<div class="col-sm-7">
-				<h3 style="font-weight: bold; margin: 10px 0 25px">{{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
+				<h3 style="font-weight: bold; margin: 10px 0 25px">{{ countNotCancelled(Group.Schedule) }} <ng-pluralize count="countNotCancelled(Group.Schedule)" when="{
 						'one': 'занятие',
 						'few': 'занятия',
 						'many': 'занятий'
@@ -37,7 +37,9 @@
                         ng-class="Schedule.title ? 'students-11' : '';"
                         ng-attr-title="{{Schedule.title || undefined}}">
 						<td>
-							<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}'>{{getLine1(Schedule)}}</a>
+							<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-class="{
+								'link-grey': Schedule.cancelled 
+							}">{{getLine1(Schedule)}}</a>
 						</td>
 						<td>
 							<div class="lessons-table">

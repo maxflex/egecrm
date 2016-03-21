@@ -14,6 +14,11 @@ angular.module("Journal", []).controller("StudentsCtrl", function($scope) {
       id_group: id_group
     });
   };
+  $scope.getScheduleByDate = function(id_group, lesson_date) {
+    return _.findWhere($scope.getGroup(id_group).Schedule, {
+      date: lesson_date
+    });
+  };
   $scope.inActiveGroup = function(id_group) {
     id_group = parseInt(id_group);
     return _.where($scope.Groups, {

@@ -96,6 +96,7 @@
 			$id_group 	= $_GET['id_group'];
 
             /* третий парам чтобы не учитовать отменные занятия */
+            // @refactored
 			if (!Group::inSchedule($id_group, $date, true)) {
 				$this->setTabTitle("Ошибка");
 				$this->render("no_lesson", [
@@ -178,10 +179,6 @@
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity);
 
-				foreach ($Groups as &$Group) {
-					$Group->Schedule = $Group->getSchedule();
-				}
-
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
 					"Subjects" 		=> Subjects::$all,
@@ -200,10 +197,6 @@
 			if (User::fromSession()->type == Student::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
 				$Groups = Student::getGroupsStatic(User::fromSession()->id_entity);
-
-				foreach ($Groups as &$Group) {
-					$Group->Schedule = $Group->getSchedule();
-				}
 
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -275,8 +268,10 @@
 
 				$id_group = $_GET['id'];
 				$Group = Group::findById($id_group);
-
-				$Group->Schedule = $Group->getSchedule(true);
+				
+				// @refactored
+				$Group->Schedule = $Group->getSchedule();
+				
 				foreach ($Group->Schedule as &$Schedule) {
 					if ($Schedule->cabinet) {
 						$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
@@ -296,6 +291,7 @@
 					"exam_dates"			=> ExamDay::getExamDates($Group),
 					"SubjectsDative"		=> Subjects::$dative,
 					"past_lesson_dates" 	=> $Group->getPastLessonDates(),
+					"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
 					"time" 					=> Freetime::TIME,
 				]);
 
@@ -315,8 +311,9 @@
 					if ($Group->id_teacher != User::fromSession()->id_entity) {
 						$this->renderRestricted();
 					}
-
-					$Group->Schedule = $Group->getSchedule(true);
+					
+					// @refactored
+					$Group->Schedule = $Group->getSchedule();
 					foreach ($Group->Schedule as &$Schedule) {
 						if ($Schedule->cabinet) {
 							$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
@@ -340,6 +337,7 @@
 						"SubjectsDative"		=> Subjects::$dative,
 						"exam_dates"			=> ExamDay::getExamDates($Group),
 						"past_lesson_dates" 	=> $Group->getPastLessonDates(),
+						"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
 						"time" 					=> Freetime::TIME,
 					]);
 
@@ -724,14 +722,15 @@
 			$Group = Group::findById($id_group);
 
 			$return = $Group->countSchedule();
+			// @refactored
 			memcached()->set("GroupScheduleCount[{$Group->id}]", $return, 5 * 24 * 3600);
 		}
 
 		public function actionAjaxUpdateCacheAll()
 		{
-			// @refactored
 			$Groups = Group::findAll();
-
+			
+			// @refactored
 			foreach ($Groups as $Group) {
 				memcached()->set("GroupScheduleCount[{$Group->id}]", $Group->countSchedule(), 5 * 24 * 3600);
 			}
@@ -769,8 +768,8 @@
 			$Template = Template::getFull(8, [
 				"student_name"	=> $Student->last_name . " " . $Student->first_name,
 				"subject"		=> Subjects::$dative[$Group->id_subject],
-				"address"		=> Branches::$address[$Group->id_branch],
-				"branch"		=> Branches::$all[$Group->id_branch],
+				"address"		=> Branches::$address[$GroupSchedule->id_branch],
+				"branch"		=> Branches::$all[$GroupSchedule->id_branch],
 				"date"			=> $date_formatted,
 				"cabinet"		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
 			]);

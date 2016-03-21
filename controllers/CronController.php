@@ -109,6 +109,7 @@
 			
 			$tomorrow = date("j", strtotime("tomorrow")) . " " . $tomorrow_month;
 			
+			// @refactored
 			// все завтрашние занятия
 			$GroupSchedule = GroupSchedule::findAll([
 				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "' AND cancelled  = 0",
@@ -217,6 +218,7 @@
 			$tomorrow = date("j", strtotime("tomorrow")) . " " . $tomorrow_month;
 
 			// все отмененные завтрашние занятия
+			// @refacored
 			$GroupSchedule = GroupSchedule::findAll([
 				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "' AND cancelled = 1 ",
 				"group"		=> "id_group",
@@ -304,8 +306,8 @@
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
-				'address'		=> Branches::$address[$Group->id_branch],
-				'branch' 		=> Branches::$all[$Group->id_branch],
+				'address'		=> Branches::$address[$GroupSchedule->id_branch],
+				'branch' 		=> Branches::$all[$GroupSchedule->id_branch],
 				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
@@ -321,8 +323,8 @@
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
-				'address'		=> Branches::$address[$Group->id_branch],
-				'branch' 		=> Branches::$all[$Group->id_branch],
+				'address'		=> Branches::$address[$GroupSchedule->id_branch],
+				'branch' 		=> Branches::$all[$GroupSchedule->id_branch],
 				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
@@ -333,6 +335,7 @@
 		/**
 		 * Уведомить учителя об отсутствии записи в журнале
 		 * 
+		 * @todo: переделать функцию, чтобы она использовала даты из Group::lastWeekMissing
 		 */
 		public static function actionTeacherNotifyJournalMiss()
 		{
@@ -404,6 +407,7 @@
 		public static function actionNotifyGroupsFirstLesson()
 		{
 			// все завтрашние занятия
+			// @refactored
 			$GroupSchedule = GroupSchedule::findAll([
 				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "' AND cancelled = 0",
 				"group"		=> "id_group",
@@ -514,8 +518,8 @@
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
-				'address'		=> Branches::$address[$Group->id_branch],
-				'branch' 		=> Branches::$all[$Group->id_branch],
+				'address'		=> Branches::$address[$GroupSchedule->id_branch],
+				'branch' 		=> Branches::$all[$GroupSchedule->id_branch],
 				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
