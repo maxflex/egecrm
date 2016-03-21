@@ -10,10 +10,6 @@
 	table.left-align tr td {
 		text-align: left;
 	}
-
-	.opacitied { /* OPACITIED! XD */
-		opacity: .25;
-	}
 </style>
 
 <div ng-app="Stats" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
@@ -112,36 +108,38 @@
 			<tr id="{{stat.date}}" style="display: none" class="no-hover" ng-repeat-end>
 				<td colspan="6">
 					<table class="table table-divlike left-align" style="margin: 0; width: 95%">
-						<tr ng-repeat="Schedule in Schedules[stat.date]">
-							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
+						<tr ng-repeat="Schedule in Schedules[stat.date]" ng-class="{
+							'quater-opacity': Schedule.cancelled
+						}">
+							<td>
 								{{Schedule.time}}
 							</td>
 							<td>
 								<div ng-bind-html="Schedule.branch | to_trusted"></div>
 							</td>
-							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
+							<td>
 								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
 							</td>
-							<td width="90" ng-class="Schedule.cancelled ? 'opacitied' : ''">
+							<td width="90">
 								{{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade : ''}}
 							</td>
-							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
+							<td>
 								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule">расписание</a>
 							</td>
-							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
+							<td>
 								{{Schedule.Group.students.length}} <ng-pluralize count="Schedule.Group.students.length" when="{
 									'one': 'ученик',
 									'few': 'ученика',
 									'many': 'учеников',
 								}"></ng-pluralize>
 							</td>
-							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
+							<td>
 								<a class="pointer" target="_blank" href="teachers/edit/{{Schedule.Group.Teacher.id}}">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
 								
 								<span class="label label-danger pointer label-transparent" ng-click="callSip(Schedule.Group.Teacher.phone)"
 									style="margin-left: 3px">позвонить</span>
 							</td>
-							<td ng-class="Schedule.cancelled ? 'opacitied' : ''">
+							<td>
 								{{Schedule.lesson_number}} урок
 							</td>
 							<td>

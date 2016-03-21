@@ -19,6 +19,9 @@
 							<span class="day-explain vocation"></span> – дни, считающиеся нерабочими по производственному календарю
 						</div>
 						<div>
+							<span class="day-explain cancelled"></span> – отмененные занятия
+						</div>
+						<div>
 							<span class="day-explain exam-day"></span> – дни экзаменов <?= $Group->grade ?> класса
 						</div>
 						<div>
@@ -66,11 +69,12 @@
 						</td>
 						<td>
 							<span ng-show="inDate(Schedule.date, past_lesson_dates)">занятие проведено</span>
+							<span ng-show="Schedule.cancelled">занятие отменено</span>
 						</td>
 					</tr>
 				</table>
 
-				<div style="margin: 15px 0; font-weight: bold">Итого: {{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
+				<div style="margin: 15px 0; font-weight: bold">Итого: {{ countNotCancelled(Group.Schedule) }} <ng-pluralize count="countNotCancelled(Group.Schedule)" when="{
 						'one': 'занятие',
 						'few': 'занятия',
 						'many': 'занятий'

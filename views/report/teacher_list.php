@@ -15,14 +15,6 @@
 		</div>
 
 
-		<!-- <span ng-repeat="Group in Groups">
-			<span ng-repeat="grade in [9, 10, 11]" ng-show="getByGrade(grade, Group.id).length">
-				<h4>{{grade}} класс, группа {{Group.id}}
-					(занятия по <span ng-repeat="(day, day_data) in Group.day_and_time">
-						{{weekdays[day - 1].short}}
-						<span ng-repeat="dd in day_data">
-							в {{dd}}{{$last ? "" : " и "}}</span></span>)
-				</h4> -->
 				<table class="table table-divlike">
 					<tr ng-repeat="Student in Students">
 						<td style="width: 20%">

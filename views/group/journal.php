@@ -10,8 +10,9 @@
 		<thead>
 			<tr>
 				<th style="border: none !important"></th>
-				<th ng-repeat="Schedule in Group.Schedule" ng-hide="Schedule.cancelled" style="height: 70px; position: relative" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
+				<th ng-repeat="Schedule in Group.Schedule" style="height: 70px; position: relative" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
 					<span>{{formatDate(Schedule.date)}}</span>
+					<span class='lesson-cancelled-journal ng-hide' ng-show='Schedule.cancelled'>занятие отменено</span>
 				</th>
 			</tr>
 		</thead>
@@ -20,8 +21,7 @@
 				<td style="text-align: left; width: 250px">
 					<a style="white-space: nowrap" href="student/{{Student.id}}">{{Student.first_name}} {{Student.last_name}}</a>
 				</td>
-				<td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}"
-					ng-hide="Schedule.cancelled">
+				<td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
 					<span class="circle-default"
 						ng-class="{
 							'circle-red'	: getInfo(Student.id, Schedule.date).presence == 2,

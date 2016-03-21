@@ -9,21 +9,7 @@ angular.module("Stats", ["ui.bootstrap"]).config([
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("GroupsCtrl", function($scope, $http) {
-  $scope.getTeacherGroups = function(id_teacher) {
-    return _.where($scope.Groups, {
-      id_teacher: id_teacher
-    });
-  };
-  return angular.element(document).ready(function() {
-    set_scope("Stats");
-    return $http.post("ajax/StatsGroups").then(function(response) {
-      $scope.Groups = response.data.Groups;
-      $scope.Teachers = response.data.Teachers;
-      return $scope.teacher_red_green = response.data.teacher_red_green;
-    });
-  });
-}).controller("ListCtrl", function($scope) {
+]).controller("ListCtrl", function($scope) {
   $scope.round1 = function(n) {
     return Math.round(n);
   };
@@ -59,7 +45,19 @@ angular.module("Stats", ["ui.bootstrap"]).config([
       return $.post("ajax/loadStatsSchedule", {
         date: date
       }, function(response) {
-        console.log(response);
+        var d1, d2, i, j, len, len1;
+        for (i = 0, len = response.length; i < len; i++) {
+          d1 = response[i];
+          if (!d1.layered && !d1.cancelled) {
+            for (j = 0, len1 = response.length; j < len1; j++) {
+              d2 = response[j];
+              if ((d1.id !== d2.id) && (d1.time === d2.time) && (d1.id_branch === d2.id_branch) && (d1.cabinet === d2.cabinet) && !d2.cancelled) {
+                d1.cabinetLayered = true;
+                d2.cabinetLayered = true;
+              }
+            }
+          }
+        }
         $scope.Schedules[date] = response;
         return $scope.$apply();
       }, "json");
@@ -118,7 +116,7 @@ angular.module("Stats", ["ui.bootstrap"]).config([
   };
   $scope.isMissingLesson = function(Schedule) {
     var time_difference_minutes, time_lesson, time_now;
-    if (Schedule.was_lesson || $scope.isFutureLesson(Schedule)) {
+    if (Schedule.was_lesson || $scope.isFutureLesson(Schedule) || Schedule.cancelled) {
       return false;
     }
     time_now = new Date().getTime();

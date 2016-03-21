@@ -7,6 +7,11 @@
   .user-pick:hover {
     text-decoration: none; }
 
+.link-grey {
+  color: #999999; }
+  .link-grey:hover {
+    color: #999999; }
+
 .badge-gray {
   background-color: #999999;
   font-size: 12px;
@@ -917,6 +922,13 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
       left: -12px;
       top: 27px;
       font-size: 12px; }
+    .table-journal th .lesson-cancelled-journal {
+      position: absolute;
+      width: 200px;
+      left: -92px;
+      top: 125px;
+      color: #337ab7;
+      font-size: 14px; }
   .table-journal td:last-child, .table-journal th:last-child {
     border-right: none !important; }
   .table-journal .circle-default {
@@ -1262,6 +1274,9 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 .half-opacity {
   opacity: .5; }
+
+.quater-opacity {
+  opacity: .25; }
 
 .half-opacity-color {
   color: rgba(51, 122, 184, 0.5); }

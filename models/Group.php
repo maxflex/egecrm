@@ -170,6 +170,7 @@
 				}
 
 				// дни совпали
+				// @refactored – используется в тесте
 				$days_match = GroupSchedule::count([
 					"condition" => "id_group={$this->id} AND DATE_FORMAT(date, '%w') NOT IN (" . implode(',', $days) . ") AND cancelled = 0"
 				]) > 0 ? false : true;
@@ -224,9 +225,11 @@
          * @param $date                     Дата
          * @param bool $withoutCancelled    Надо ли учитовать отмененные пары
          * @return GroupSchedule[]|bool
+         * @refactored
          */
 		public function inSchedule($id_group, $date, $withoutCancelled = false)
 		{
+			// @refactored
 			return GroupSchedule::find([
 				"condition" => "id_group=$id_group AND date='$date'".($withoutCancelled ? " AND cancelled = 0 " : "")
 			]);
@@ -242,9 +245,10 @@
 			$minutes = LESSON_LENGTH + 30; // 30 минут после окончания урока
 			
 			foreach(range(1, 7) as $i) {
+				// @refactored
 				$GroupSchedule = GroupSchedule::findAll([
 					"condition" => "date='$date'  AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) >  {$minutes}
-						AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW()) AND id_group > 0"
+						AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW()) AND id_group > 0 AND cancelled=0"
 				]);
 				
 				
@@ -268,7 +272,10 @@
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-
+		
+		
+		// @test – используется только в TestController
+		// @refactored
 		public function daysBeforeExam()
 		{
 			if ($this->grade == 10) {
@@ -276,8 +283,9 @@
 			}
 
 			// Получаем дату последнего запланированного занятия
+			// @refactored
 			$GroupSchedule = GroupSchedule::find([
-				"condition" => "id_group={$this->id}",
+				"condition" => "id_group={$this->id} AND cancelled=0",
 				"order"		=> "date DESC",
 			]);
 
@@ -324,7 +332,8 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
-
+		
+		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
 		public function getFutureSchedule()
 		{
 			return GroupSchedule::findAll([
@@ -332,14 +341,17 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
-
+		
+		// @refactored
 		public function countFutureSchedule()
 		{
+			// @refactored
 			return GroupSchedule::count([
-				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW())",
+				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW()) AND cancelled=0",
 			]);
 		}
-
+		
+		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
 		public function getPastSchedule()
 		{
 			return GroupSchedule::findAll([
@@ -347,6 +359,8 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
+		
+		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
 
 		// LESSON_LENGTH = 105 минут - 1:45 - 30 минут до конца занятия
 		//
@@ -363,7 +377,8 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
-
+		
+		// @delete – удалить после обновления крона
 		// получить прошлое расписание для уведомления учителя об отсутсвии записи в журнале
 		public function getPastScheduleTeacherReport()
 		{
@@ -379,12 +394,14 @@
 
 		public function countSchedule()
 		{
+			// @REFACTORED
 			$paid = GroupSchedule::count([
-				"condition" => "is_free=0 AND id_group=".$this->id,
+				"condition" => "is_free=0 AND cancelled=0 AND id_group=".$this->id,
 			]);
 
+			// @REFACTORED
 			$free = GroupSchedule::count([
-				"condition" => "is_free=1 AND id_group=".$this->id,
+				"condition" => "is_free=1 AND cancelled=0 AND id_group=".$this->id,
 			]);
 
 			return [
@@ -429,8 +446,9 @@
 		 */
 		public function getFirstSchedule($unix = true)
 		{
+			// @refactored
 			$GroupFirstSchedule =  GroupSchedule::find([
-				"condition" => "id_group={$this->id} AND cancelled = 0 ",
+				"condition" => "id_group={$this->id} AND cancelled = 0",
 				"order"		=> "date ASC"
 			]);
 
@@ -466,8 +484,9 @@
 		 */
 		public function getFirstLesson($from_today = false)
 		{
+			// @refactored
 			return GroupSchedule::find([
-				"condition" => "id_group={$this->id}" . ($from_today ? " AND date >= '" . date("Y-m-d") . "'" : ""),
+				"condition" => "id_group={$this->id} AND cancelled=0 " . ($from_today ? " AND date >= '" . date("Y-m-d") . "'" : ""),
 				"order"		=> "date ASC"
 			]);
 		}
@@ -549,80 +568,8 @@
 			}
 
 			$this->was_lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
-			$this->is_first_lesson = $this->date == $this->getFirstLessonDate();
 		}
 
-
-		public function getFirstLessonDate()
-		{
-/*
-			return self::find([
-				"condition" => "id_group=" . $this->id_group,
-				"order"		=> "date ASC"
-			])->date;
-*/
-			$result = dbConnection()->query("SELECT date FROM group_schedule WHERE id_group={$this->id_group} ORDER BY date ASC LIMIT 1");
-			return $result->fetch_object()->date;
-		}
-
-		/**
-		 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
-		 *
-		 */
-		public static function getByPage($page)
-		{
-			if (!$page) {
-				$page = 1;
-			}
-
-			// С какой записи начинать отображение, по формуле
-			$start_from = ($page - 1) * self::PER_PAGE;
-
-			$Schedule = GroupSchedule::findAll([
-				"order" => "date ASC, time ASC",
-				"limit" 	=> $start_from. ", " .self::PER_PAGE
-			]);
-
-			foreach ($Schedule as &$S) {
-				$Group = Group::findById($S->id_group);
-				if ($Group) {
-					$S->Group = $Group;
-					$ExistingSchedule[] = $S;
-				}
-			}
-
-			return $ExistingSchedule;
-		}
-
-		public static function countAll()
-		{
-			if (LOCAL_DEVELOPMENT) {
-				$result = dbConnection()->query("
-					SELECT COUNT(gs.id) as cnt FROM group_schedule gs
-					LEFT JOIN groups g ON g.id = gs.id_group
-					WHERE g.id IS NOT NULL
-					ORDER BY date ASC, time ASC
-				");
-
-				return $result->fetch_object()->cnt;
-			} else {
-				$result = memcached()->get("GroupScheduleCount");
-
-				if (!$result) {
-					$result = dbConnection()->query("
-						SELECT COUNT(gs.id) as cnt FROM group_schedule gs
-						LEFT JOIN groups g ON g.id = gs.id_group
-						WHERE g.id IS NOT NULL
-						ORDER BY date ASC, time ASC
-					");
-
-					$result = $result->fetch_object()->cnt;
-					memcached()->set($result, 24 * 3600);
-				}
-
-				return $result;
-			}
-		}
 
 		public function isUnplanned()
 		{
@@ -672,7 +619,7 @@
 		 * @param int $id_group     	Id of group
 		 * @return string[] 		    Array of branch ids
 		 */
-		public static function getBranchIds($id_group,$asArray = true)
+		public static function getBranchIds($id_group, $asArray = true)
 		{
 			$result = dbConnection()->query(
 				"SELECT GROUP_CONCAT(DISTINCT gs.id_branch ORDER BY gs.id_branch ASC) as ids ".

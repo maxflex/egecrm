@@ -4,6 +4,7 @@
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "teachers";
+// 		public static $mysql_table = "tutors";
 
 		protected $_inline_data = ["branches", "subjects", "public_grades"];
 		protected $_additional_vars = ["banned"];
@@ -36,6 +37,13 @@
 				$this->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
 			}
 		}
+		
+/*
+		public static function dbConnection()
+		{
+			return dbEgerep();
+		}
+*/
 
 		public function getBar($id_group, $id_branch)
 		{

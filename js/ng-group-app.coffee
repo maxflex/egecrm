@@ -124,6 +124,9 @@
 
 			$scope.getLine1 = (Schedule) ->
 				moment(Schedule.date).format "D MMMM YYYY г."
+			
+			$scope.countNotCancelled = (Schedule) ->
+				_.where(Schedule, { cancelled: 0 }).length
 
 			$scope.studentsToLayeredScheduleTitle = (Schedule, students) ->
 				title = ''

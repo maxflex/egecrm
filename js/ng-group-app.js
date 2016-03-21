@@ -159,6 +159,25 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
   $scope.getLine1 = function(Schedule) {
     return moment(Schedule.date).format("D MMMM YYYY г.");
   };
+  $scope.countNotCancelled = function(Schedule) {
+    return _.where(Schedule, {
+      cancelled: 0
+    }).length;
+  };
+  $scope.studentsToLayeredScheduleTitle = function(Schedule, students) {
+    var j, last, len, student, title;
+    title = '';
+    last = students[students.length - 1];
+    for (j = 0, len = students.length; j < len; j++) {
+      student = students[j];
+      title += student.first_name + ' ' + student.last_name;
+      if (last !== student) {
+        title += ',';
+      }
+    }
+    Schedule.title = title;
+    return $scope.$apply();
+  };
   $scope.setTimeFromGroup = function(Group) {
     $.each($scope.Group.Schedule, function(i, v) {
       var d, key;
@@ -183,7 +202,15 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
     });
     $.post("groups/ajax/TimeFromGroup", {
       id_group: Group.id
-    });
+    }, function(response) {
+      if (response) {
+        return $.each($scope.Group.Schedule, function(i, v) {
+          if (response[v.date]) {
+            return $scope.studentsToLayeredScheduleTitle(v, response[v.date]);
+          }
+        });
+      }
+    }, "json");
     return $scope.$apply();
   };
   $scope.lessonCount = function() {
@@ -225,7 +252,11 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
           time: time,
           date: Schedule.date,
           id_group: $scope.Group.id
-        });
+        }, function(response) {
+          if (response) {
+            return $scope.studentsToLayeredScheduleTitle(Schedule, response);
+          }
+        }, "json");
         $scope.$apply();
       }
       return $(this).hide().parent().children("span").html(time ? time : "не установлено").show();
@@ -254,7 +285,7 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
       beforeShowDay: function(d, inst) {
         var add_class;
         if ($scope.inDate(d, $scope.past_lesson_dates)) {
-          add_class = 'was-lesson';
+          add_class = 'was-lesson disabled ';
         }
         if ($scope.inDate(d, $scope.vocation_dates)) {
           add_class += ' vocation';
@@ -264,6 +295,9 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
         }
         if ($scope.inDate(d, $scope.exam_dates.this_subject)) {
           add_class += ' exam-subject';
+        }
+        if ($scope.inDate(d, $scope.cancelled_lesson_dates)) {
+          add_class += ' cancelled';
         }
         return add_class;
       }
@@ -284,7 +318,8 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
     });
     if (t.length === 0) {
       $scope.Group.Schedule.push({
-        date: d
+        date: d,
+        cancelled: 0
       });
       $.post("groups/ajax/AddScheduleDate", {
         date: d,
@@ -294,13 +329,22 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
       $.each($scope.Group.Schedule, function(i, v) {
         if (v !== void 0) {
           if (v.date === d) {
-            return $scope.Group.Schedule.splice(i, 1);
+            if (!v.cancelled) {
+              v.title = false;
+              v.cancelled = 1;
+              return $.post("groups/ajax/CancelScheduleDate", {
+                date: d,
+                id_group: $scope.Group.id
+              });
+            } else {
+              $scope.Group.Schedule.splice(i, 1);
+              return $.post("groups/ajax/DeleteScheduleDate", {
+                date: d,
+                id_group: $scope.Group.id
+              });
+            }
           }
         }
-      });
-      $.post("groups/ajax/DeleteScheduleDate", {
-        date: d,
-        id_group: $scope.Group.id
       });
     }
     return $scope.$apply();
