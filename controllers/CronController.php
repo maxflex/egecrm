@@ -23,75 +23,6 @@
 			}
 		}
 		
-		public static function actionStatsGroups()
-		{
-			$Groups = Group::findAll();
-			
-			$teacher_ids = [];
-			$Teachers = [];
-			
-			foreach ($Groups as &$Group) {
-				
-				if (!in_array($Group->Teacher->id, $teacher_ids)) {
-					$Teachers[] = $Group->Teacher;
-					$teacher_ids[] = $Group->Teacher->id;
-				}
-				
-				$result = dbConnection()->query("
-					SELECT lesson_date FROM visit_journal
-					WHERE id_group={$Group->id}
-					GROUP BY lesson_date
-				");
-				
-				$lesson_dates = [];
-				while ($row = $result->fetch_object()) {
-					$lesson_dates[] = $row->lesson_date;
-				}
-				
-				foreach ($lesson_dates as $date) {
-					$Group->visits[$date] = VisitJournal::count([
-						"condition" => "type_entity='STUDENT' AND id_group={$Group->id} AND lesson_date='{$date}'"
-					]);
-				}
-				
-				$Group->green_count = 0;
-				$Group->yellow_count = 0;
-				$Group->red_count = 0;
-				
-				foreach ($Group->students as $id_student) {
-					$result = dbConnection()->query("
-						SELECT cs.status FROM contract_subjects cs
-						LEFT JOIN contracts c on cs.id_contract = c.id
-						LEFT JOIN students s on c.id_student = s.id
-						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 3
-					");
-					$Group->green_count += $result->num_rows;
-					
-					$result = dbConnection()->query("
-						SELECT cs.status FROM contract_subjects cs
-						LEFT JOIN contracts c on cs.id_contract = c.id
-						LEFT JOIN students s on c.id_student = s.id
-						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 2
-					");
-					$Group->yellow_count += $result->num_rows;
-					
-					$result = dbConnection()->query("
-						SELECT cs.status FROM contract_subjects cs
-						LEFT JOIN contracts c on cs.id_contract = c.id
-						LEFT JOIN students s on c.id_student = s.id
-						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 1
-					");
-					$Group->red_count += $result->num_rows;
-				}
-			}
-			
-			memcached()->set("StatsGroups", [
-				'Groups' => $Groups,
-				'Teachers' => $Teachers,
-				'teacher_red_green' => Teacher::getGreenRed(),
-			], 3600 * 24 * 30);
-		}
-		
 		public static function actionUpdateYellowLoss()
 		{
 			memcached()->set("YellowLoss", StatsController::calculateYellowLoss(), 3600 * 24 * 30);
@@ -189,8 +120,9 @@
 				$group_ids[] = $GS->id_group;
 			}
 			
+			// @refactored
 			$Groups = Group::findAll([
-				"condition" => "id IN (" . implode(",", $group_ids) . ")"
+ 				"condition" => "id IN (" . implode(",", $group_ids) . ") AND ended=0"
 			]);
 			
 			foreach($Groups as $Group) {
@@ -294,9 +226,10 @@
 			foreach ($GroupSchedule as $GS) {
 				$group_ids[] = $GS->id_group;
 			}
-
+			
+			// @refactored
 			$Groups = Group::findAll([
-				"condition" => "id IN (" . implode(",", $group_ids) . ")"
+				"condition" => "id IN (" . implode(",", $group_ids) . ") AND ended=0"
 			]);
 
 			foreach($Groups as $Group) {
@@ -396,52 +329,6 @@
 			]);
 		}
 
-		/**
-		 * Обновить отсутствующие фактически занятия, но присутствующие в расписании.
-		 * 
-		 */
-		public static function actionUpdateJournalMiss()
-		{
-			// Высчитываем полностью отсутствующие занятия
-			$Groups = Group::findAll();
-			
-			// для подсчета цифры ВСЕГО ОТСУТСТВУЮЩИХ ГРУПП
-			// (будет отображаться кружочком в меню)
-			$count = [];
-			foreach ($Groups as $Group) {
-				$PastSchedule = $Group->getPastScheduleBeforeEnd();
-				
-				foreach ($PastSchedule as $Schedule) {
-					// Проверяем было ли это занятие
-					$was_lesson = VisitJournal::find([
-						"condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
-					]);
-					
-					// если занятия не было, добавляем в ошибки
-					if (!$was_lesson) {
-						// с начала занятия должно пройти полчаса
-/*
-						$datetime1 = time();
-						$datetime2 = strtotime("{$Schedule->lesson_date} {$Schedule->lesson_time}:00");
-						$interval  = $datetime1 - $datetime2;
-						$minutes   = round($interval / 60);
-*/						
- 						$return[$Schedule->date][] = $Schedule->id_group;
-						
-						if (!in_array($Schedule->id_group, $count)) {
-							$count[] = $Schedule->id_group;
-						}
-					}
-				}
-			}
-			
-			if (!LOCAL_DEVELOPMENT) {
-// 				memcached()->set("JournalErrorsCount", count($count), 3600 * 24);
-				memcached()->set("JournalErrors", $return, 3600 * 24);
-			} 
-			// var_dump(count($count));
-			return count($count);
-		}
 		
 		/**
 		 * Уведомить учителя об отсутствии записи в журнале
@@ -449,8 +336,11 @@
 		 */
 		public static function actionTeacherNotifyJournalMiss()
 		{
+			// @refactored
 			// Высчитываем полностью отсутствующие занятия
-			$Groups = Group::findAll();
+			$Groups = Group::findAll([
+				'condition' => 'ended=0',
+			]);
 			
 			foreach ($Groups as $Group) {
 				if (!$Group->Teacher) {
@@ -488,6 +378,7 @@
 		{
 			for ($i = 9; $i <= 11; $i += 2) {
 				foreach (Subjects::$short_eng as $id_subject => $subject) {
+					// @refactored
 					$count = Group::count([
 						"condition" => "id_subject=$id_subject AND grade=$i"
 					]);
@@ -523,8 +414,9 @@
 				$group_ids[] = $GS->id_group;
 			}
 			
+			// @refactored
 			$Groups = Group::findAll([
-				"condition" => "id IN (" . implode(",", $group_ids) . ")"
+				"condition" => "id IN (" . implode(",", $group_ids) . ") AND ended=0"
 			]);
 			
 			$tomorrow_month = date("n", strtotime("tomorrow"));

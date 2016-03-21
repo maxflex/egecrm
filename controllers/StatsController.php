@@ -28,6 +28,7 @@
 		 */
 		public static function calculateYellowLoss()
 		{
+			// @refactored
 			$Groups = Group::findAll();
 
 			$return = 0;
@@ -51,18 +52,6 @@
 			}
 
 			return $return;
-		}
-
-		public function actionGroups()
-		{
-			$ang_init_data = angInit([
-				"Subjects" => Subjects::$three_letters,
-			]);
-
-			$this->setTabTitle("Статистика групп");
-			$this->render("groups", [
-				"ang_init_data" => $ang_init_data,
-			]);
 		}
 
 /*

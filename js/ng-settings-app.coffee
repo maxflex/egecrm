@@ -5,25 +5,6 @@ angular.module "Settings", ["ui.bootstrap"]
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
-	.controller "CabinetsCtrl", ($scope) ->
-		$scope.weekdays = [
-			{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", "16:15", "18:40"]},
-			{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", "16:15", "18:40"]},
-			{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", "16:15", "18:40"]},
-			{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", "16:15", "18:40"]},
-			{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", "16:15", "18:40"]},
-			{"short" : "СБ", "full" : "Суббота", 		"schedule": ["11:00", "13:30", "16:00", "18:30"]},
-			{"short" : "ВС", "full" : "Воскресенье",	"schedule": ["11:00", "13:30", "16:00", "18:30"]}
-		]
-			
-		$scope.inCabinetFreetime = (time, freetime) ->
-			return false if freetime is undefined
-			freetime = objectToArray freetime
-			return $.inArray(time, freetime) >= 0
-		$scope.getBranchCabinets = (id_branch) ->
-			_.where($scope.Cabinets, {id_branch: id_branch})
-		angular.element(document).ready ->
-			set_scope "Settings"
 	.controller "VocationsCtrl", ($scope) ->
 		$scope.schedulde_loaded = false
 		$scope.menu = 1

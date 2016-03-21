@@ -33,6 +33,13 @@
 	}
 }
 
+.badge-gray {
+	background-color: #999999;
+	font-size: 12px;
+	border-radius: 5px;
+	font-weight: normal;
+}
+
 .flex-inputs {
 	display: flex;
 	& input, & .bootstrap-select {

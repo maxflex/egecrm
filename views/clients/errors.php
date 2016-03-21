@@ -1,22 +1,11 @@
 <div ng-app="Clients" ng-controller="ErrorsCtrl" ng-init="<?= $ang_init_data ?>">
 	
 	<div class="top-links">
-		<?php if ($_GET["mode"] == "correspond") { ?>
-		<span style="margin-right: 15px; font-weight: bold">несоответствия между договорами и фактическими услугами</span>
-		<?php } else { ?>
-		<a href="clients/errors/?mode=correspond" style="margin-right: 15px">несоответствия между договорами и фактическими услугами</a>
-		<?php } ?>
-		
-		<?php if ($_GET["mode"] == "layer") { ?>
-		<span style="margin-right: 15px; font-weight: bold">наслоения в расписании учеников</span>
-		<?php } else { ?>
-		<a href="clients/errors/?mode=layer" style="margin-right: 15px">наслоения в расписании учеников</a>
-		<?php } ?>
 		
 		<?php if ($_GET["mode"] == "phone") { ?>
-		<span style="margin-right: 15px; font-weight: bold">дубли телефонов</span>
+			<span style="margin-right: 15px; font-weight: bold">дубли телефонов</span>
 		<?php } else { ?>
-		<a href="clients/errors/?mode=phone" style="margin-right: 15px">дубли телефонов</a>
+			<a href="clients/errors/?mode=phone" style="margin-right: 15px">дубли телефонов</a>
 		<?php } ?>
 		
 		

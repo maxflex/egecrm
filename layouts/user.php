@@ -152,7 +152,8 @@
 		    }
 		?>
     </a>
-    <a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count() ?></span></a>
+	<!-- @refactored -->
+    <a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count(['condition' => 'ended=0']) ?></span></a>
 	<a href="stats/visits/total" class="list-group-item">Посещаемость
 		<?php
 			if (!LOCAL_DEVELOPMENT) {
@@ -186,7 +187,6 @@
 		<span class="badge badge-danger pull-right"><?= $red_report_count ?></span>
 	    <span class="badge pull-right"><?= Report::count() ?></span>
     </a>
-    <a href="stats/groups" class="list-group-item">Статистика групп</a>
 	<a class="list-group-item active">Преподаватели</a>
     <a href="teachers" class="list-group-item">Профили</a>
 	<a href="teachers/salary" class="list-group-item">Дебет</a>
@@ -207,7 +207,6 @@
 		?>
 	<?php endif ?>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
-    <a href="settings/cabinets" class="list-group-item">Кабинеты</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
     <a href="templates" class="list-group-item">Шаблоны</a>
     <a href="users" class="list-group-item">Пользователи</a>
