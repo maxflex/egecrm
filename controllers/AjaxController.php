@@ -906,38 +906,39 @@
 
                 фор, а не форич, чтобы не проверить уже проверенные пары  (s2,s1) = (s1,s2)
             */
-            for ($i = 0; $i < count($Schedule); $i++) {
-                $S1 = &$Schedule[$i];
-                for ($j = $i+1; $j < count($Schedule); $j++) {
-                    $S2 = &$Schedule[$j];
+            if($Schedule) {
+                for ($i = 0; $i < count($Schedule); $i++) {
+                    $S1 = &$Schedule[$i];
+                    for ($j = $i + 1; $j < count($Schedule); $j++) {
+                        $S2 = &$Schedule[$j];
 
-                    if ($S1->id != $S2->id && $S1->time == $S2->time) {
-                        /* если найдены общие студенты, запоминаем их фамилии */
-                        if ($layerData = array_intersect($S1->Group->students, $S2->Group->students)) {
-                            $Students = Student::findAll([
-                                "condition" => "id IN (".implode(",", $layerData).")"
-                            ]);
+                        if ($S1->id != $S2->id && $S1->time == $S2->time) {
+                            /* если найдены общие студенты, запоминаем их фамилии */
+                            if ($layerData = array_intersect($S1->Group->students, $S2->Group->students)) {
+                                $Students = Student::findAll([
+                                    "condition" => "id IN (" . implode(",", $layerData) . ")"
+                                ]);
 
-                            foreach ($Students as $Student) {
-                                /* чтобы одного и того же студента не добавить 2 раза */
-                                if(!in_array($Student->id, $S1->layerData)) {
-                                    $S1->studentLayered .= $S1->studentLayered ? ', ' : '';
-                                    $S1->studentLayered .= $Student->last_name.' '.$Student->first_name;
+                                foreach ($Students as $Student) {
+                                    /* чтобы одного и того же студента не добавить 2 раза */
+                                    if (!in_array($Student->id, $S1->layerData)) {
+                                        $S1->studentLayered .= $S1->studentLayered ? ', ' : '';
+                                        $S1->studentLayered .= $Student->last_name . ' ' . $Student->first_name;
+                                    }
+
+                                    if (!in_array($Student->id, $S2->layerData)) {
+                                        $S2->studentLayered .= $S2->studentLayered ? ', ' : '';
+                                        $S2->studentLayered .= $Student->last_name . ' ' . $Student->first_name;
+                                    }
                                 }
 
-                                if(!in_array($Student->id, $S2->layerData)) {
-                                    $S2->studentLayered .= $S2->studentLayered ? ', ' : '';
-                                    $S2->studentLayered .= $Student->last_name . ' ' . $Student->first_name;
-                                }
+                                $S1->layerData = array_merge($S1->layerData ? $S1->layerData : [], $layerData);
+                                $S2->layerData = array_merge($S2->layerData ? $S2->layerData : [], $layerData);
                             }
-
-                            $S1->layerData = array_merge($S1->layerData ? $S1->layerData : [], $layerData);
-                            $S2->layerData = array_merge($S2->layerData ? $S2->layerData : [], $layerData);
                         }
                     }
                 }
             }
-
 
 			usort($Schedule, function($a, $b) {
 				return $b->time - $a->time;
