@@ -136,12 +136,24 @@
 				
 				data = $scope.selectedSubjectGrade.split '|'
 				
-				$scope.Testing.Students = initIfNotSet $scope.Testing.Students				
+				$scope.Testing.Students = initIfNotSet $scope.Testing.Students
 				$scope.Testing.Students.push
 					id_student: $scope.selectedStudent.originalObject.id
 					id_subject: data[0]
-					grade: data[1]
-				
+					grade:      data[1]
+
+
+				$.post 'testing/ajaxGetStudentGroupsBySubject',
+					id_student: $scope.selectedStudent.originalObject.id
+					id_subject: data[0]
+					grade:      data[1]
+				, (response) ->
+                    l = $scope.Testing.Students.length
+                    $scope.Testing.Students[l-1].group_ids = response
+                    $scope.$apply()
+				, "json"
+
+
 				$scope.selectedSubjectGrade = undefined
 				$scope.selectedStudent = undefined
 				
