@@ -35,7 +35,7 @@
 		нет отчетов
 	</div>
 
-	<div style="margin-top: 20px" ng-show="<?= isset($report_counts['red']) ? $report_counts['red'] : 0 ?> > 0"><span class="glyphicon glyphicon-exclamation-sign text-danger glyphicon-big"></span><span class="text-danger"><?= $report_counts['red'] ?> <ng-pluralize count="<?= $report_counts['red'] ?>" when="{
+	<div style="margin-top: 20px" ng-show="<?= Teacher::redReportCountAll(); ?> > 0"><span class="glyphicon glyphicon-exclamation-sign text-danger glyphicon-big"></span><span class="text-danger"><?= Teacher::redReportCountAll(); ?> <ng-pluralize count="<?= Teacher::redReportCountAll(); ?>" when="{
 								'one': 'отчет',
 								'few': 'отчета',
 								'many': 'отчетов',
