@@ -81,7 +81,7 @@
 							<span ng-show="inDate(Schedule.date, past_lesson_dates)">занятие проведено</span>
 							<span ng-show="Schedule.cancelled">занятие отменено</span>
 							<a href='teachers/groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inDate(Schedule.date, past_lesson_dates) && lessonStarted(Schedule) && !Schedule.cancelled' 
-								ng-class="{'add-to-journal': !inDate(Schedule.date, past_lesson_dates)}">
+								ng-class="{'add-to-journal': !inDate(Schedule.date, past_lesson_dates) && !Schedule.cancelled}">
 								создать запись в журнале
 							</a>
 						</td>
