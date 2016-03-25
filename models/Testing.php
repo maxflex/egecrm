@@ -134,8 +134,14 @@ class TestingStudent extends Model
 	
 	public function getByTestingId($id_testing)
 	{
-		return TestingStudent::findAll([
-			"condition" => "id_testing=$id_testing"
-		]);
+        $TestingStudents = TestingStudent::findAll([
+                               "condition" => "id_testing=$id_testing"
+                           ]);
+
+        foreach ($TestingStudents as &$ts) {
+            $ts->group_ids = VisitJournal::getGroupIdsBySubject($ts->id_student, $ts->id_subject, $ts->grade);
+        }
+
+        return $TestingStudents;
 	}
 }

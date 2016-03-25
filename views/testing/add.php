@@ -120,8 +120,12 @@
 			<div class="form-group" ng-show="Testing.Students && Testing.Students.length">
 				<p><b>Зарегистрированные участники:</b></p>
 				<div ng-repeat="Student in Testing.Students">
-					{{getStudent(Student.id_student).name}}, {{Subjects[Student.id_subject]}}-{{Student.grade}}<!-- {{SubjectsFull[Student.id_subject]}}, {{Student.grade}} класс -->
-					<span class="text-danger opacity-pointer" style="margin-left: 5px" ng-click="deleteStudent(Student.id_student)">удалить</span>
+					{{getStudent(Student.id_student).name}},
+                    {{Subjects[Student.id_subject]}}-{{Student.grade}}
+                    <span ng-if="Student.group_ids.length">
+                        (<span ng-repeat="group_id in Student.group_ids">№{{group_id}}{{$last?'':', '}}</span>)
+                    </span>
+                    <span class="text-danger opacity-pointer" style="margin-left: 5px" ng-click="deleteStudent(Student.id_student)">удалить</span>
 				</div>
 			</div>
 		</div>
