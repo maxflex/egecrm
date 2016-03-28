@@ -53,7 +53,7 @@
 	// width: 70%;
 	position: absolute;
 	top: 8px;
-	z-index: 999;
+	z-index: 98;
 	left: 170px;
 }
 
@@ -2793,4 +2793,8 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
   .modal-dialog {
 	  margin: 15% auto;
 	}
+}
+
+#teacher-edit h4.row-header{
+	cursor: pointer;
 }

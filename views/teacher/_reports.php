@@ -1,8 +1,8 @@
 <div class="row" ng-show="Reports.length > 0">
     <div class="col-sm-6">
-		<h4 class="row-header">ОТЧЕТЫ</h4>
+		<h4 class="row-header" ng-model="report_collapsed" ng-click="report_collapsed = Reports.length && !report_collapsed">ОТЧЕТЫ</h4>
 		<table class="table table-divlike">
-			<tr ng-repeat="Report in Reports">
+			<tr ng-repeat="Report in Reports" ng-show="report_collapsed">
 				<td width="100">
 					<a href="reports/edit/{{Report.id}}">Отчёт №{{Report.id}}</a>
 				</td>

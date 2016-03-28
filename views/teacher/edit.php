@@ -146,8 +146,8 @@
 			    	</div>
 					
 					<div class="input-group-btn">
-						<button class="btn btn-default" type="button" ng-click="emailDialog(Teacher.email)">
-							<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+						<button class="btn btn-default" type="button" ng-disabled="!Teacher.email" ng-click="emailDialog(Teacher.email)">
+							<span class="glyphicon glyphicon-envelope no-margin-right small" ></span>
 						</button>
 					</div>
 				</div>
@@ -206,16 +206,20 @@
 	<?php if ($Teacher->id) :?>
 	<div class="row" style="margin-bottom: 10px">
 		<div class="col-sm-12">
-		    <h4 style="margin-top: 0" class="row-header">{{(Groups && Groups.length > 0) ? 'ГРУППЫ' : 'НЕТ ГРУПП'}}</h4>
-		    <?= globalPartial("groups_list") ?>
+		    <h4 style="margin-top: 0" class="row-header" ng-model="group_collapsed" ng-click="group_collapsed = Groups.length && !group_collapsed">{{(Groups && Groups.length > 0) ? 'ГРУППЫ' : 'НЕТ ГРУПП'}}</h4>
+		    <div ng-show="group_collapsed">
+                <?= globalPartial("groups_list") ?>
+            </div>
 		</div>
 	</div>
 
 	<div class="row" style="margin-bottom: 10px">
 		<div class="col-sm-12">
-		    <h4 style="margin-top: 0" class="row-header">{{(Teacher.Reviews && Teacher.Reviews.length > 0) ? 'ОТЗЫВЫ' : 'НЕТ ОТЗЫВОВ'}}</h4>
+		    <h4 style="margin-top: 0" class="row-header" ng-model="review_collapsed" ng-click="review_collapsed = Teacher.Reviews.length && !review_collapsed">
+                {{(Teacher.Reviews && Teacher.Reviews.length > 0) ? 'ОТЗЫВЫ' : 'НЕТ ОТЗЫВОВ'}}
+            </h4>
 
-			<div class="row">
+			<div class="row"  ng-show="review_collapsed">
 				<div class="col-sm-12">
 					<div ng-repeat="Review in Teacher.Reviews" class="clear-sms" style="margin-left: 11px">
 						<div class="from-them">
@@ -270,11 +274,11 @@
 
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
-			<h4 class="row-header">
-				<span ng-show="Data.length">ЗАНЯТИЯ</span>
+			<h4 class="row-header" style="margin-top: 0">
+				<span ng-show="Data.length" ng-model="data_collapsed" ng-click="data_collapsed = !data_collapsed">ЗАНЯТИЯ</span>
 				<span ng-show="!Data.length">НЕТ ЗАНЯТИЙ</span>
 			</h4>
-			<table class="table table-divlike">
+			<table class="table table-divlike" ng-show="data_collapsed">
 				<tr ng-repeat="d in Data">
 					<td>
 						<a href="groups/edit/{{d.id_group}}">Группа №{{d.id_group}}</a>
@@ -301,10 +305,10 @@
 
 	<div class="row">
 		<div class="col-sm-12">
-			<h4 class="row-header">ПЛАТЕЖИ
+			<h4 class="row-header" ng-model="payment_collapsed" ng-click="payment_collapsed = !payment_collapsed">ПЛАТЕЖИ
 			    <a class="link-like link-reverse link-in-h" ng-click="addPaymentDialog()">добавить</a>
 		    </h4>
-		    <div class="form-group payment-line">
+		    <div class="form-group payment-line" ng-show="payment_collapsed">
 				<div ng-repeat="payment in payments | reverse" style="margin-bottom: 5px">
 					<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">
 					{{payment_statuses[payment.id_status]}}<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">{{payment.card_number ? " *" + payment.card_number.trim() : ""}}</span></span>

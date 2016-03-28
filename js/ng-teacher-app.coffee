@@ -392,6 +392,27 @@
 						else
 							redirect "teachers/edit/#{response}"
 
+			$scope.emailDialog = (email) ->
+				$('#email-history').html '<center class="text-gray">загрузка истории сообщений...</center>'
+				$('.email-template-list').hide()
+				html = ''
+				$.post 'ajax/emailHistory'
+				,  'email': email
+				, (response) ->
+					console.log response
+					if response
+						$.each response, (i, v) ->
+							files_html = ''
+							$.each v.files, (i, file) ->
+								files_html += '<div class="sms-coordinates"><a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">' + file.uploaded_name + '</a><span> (' + file.size + ')</span></div>'
+							html += '<div class="clear-sms"><div class="from-them">' + v.message + '<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '</div></div>'
+						$('#email-history').html html
+					else
+						$('#email-history').html ''
+				, 'json'
+				$('#email-address').text email
+				lightBoxShow 'email'
+
 		.controller "ListCtrl", ($scope) ->
 			# The amount of hidden teachers
 			$scope.othersCount = ->

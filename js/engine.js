@@ -120,7 +120,7 @@
 				password = false
 			}
 		} else
-		if ($('[ng-app="Group"],[ng-app="Clients"],[ng-app="Teacher"]').length) {
+		if ($('[ng-app="Group"],[ng-app="Clients"],[ng-app="Teacher"]').length && ang_scope.entity_login && ang_scope.entity_password) {
 			login = '{entity_login}'
 			password = '{entity_password}'
 		}
