@@ -133,26 +133,24 @@
             </div>
 	</div>
 </div>
+            <div class="input-group fakeInput">
+                <input placeholder="email" ng-model="Teacher.email" disabled class="form-control no-border-outline">
+
+                <div class='comment-inside-input'>
+                    <span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.email_comment'></span>
+                    <input type="text" class='no-border-outline phone-comment' ng-model='Teacher.email_comment' disabled="">
+                </div>
 
 
+                <div class="input-group-btn" style="box-sizing: border-box;">
+                    <button class="btn btn-default" type="button" ng-disabled="!Teacher.email" ng-click="emailDialog(Teacher.email)">
+                        <span class="glyphicon glyphicon-envelope no-margin-right small" ></span>
+                    </button>
+                </div>
+            </div>
 
-			<div class="form-group">
-				<div class="input-group">
-					<input placeholder="email" ng-model="Teacher.email" class="form-control" disabled>
-					
-					<div class='comment-inside-input'>
-						<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.email_comment'></span>
-						<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.email_comment' disabled="">
-			    	</div>
-					
-					<div class="input-group-btn">
-						<button class="btn btn-default" type="button" ng-disabled="!Teacher.email" ng-click="emailDialog(Teacher.email)">
-							<span class="glyphicon glyphicon-envelope no-margin-right small" ></span>
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
+
+        </div>
 		<div class="col-sm-3"  style="width: 20%">
 			<div class="form-group">
 				<select class="form-control" ng-model="Teacher.in_egecentr" placeholder="пол" disabled>

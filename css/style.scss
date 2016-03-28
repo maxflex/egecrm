@@ -2798,3 +2798,18 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 #teacher-edit h4.row-header{
 	cursor: pointer;
 }
+.fakeInput {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #eee;
+  margin-right: 5px;
+  & > input {
+	width: 165px!important;
+	box-shadow: none;
+  }
+  & button {
+	border: none;
+	padding: 7px 12px;
+	border-left: 1px solid #ccc;
+  }
+}
