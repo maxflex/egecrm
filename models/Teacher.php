@@ -6,7 +6,7 @@
 // 		public static $mysql_table	= "teachers";
 		public static $mysql_table = "tutors";
 
-		protected $_inline_data = ["branches", "subjects", "public_grades"];
+		protected $_inline_data = ["branches", "subjects", "grades", "public_grades"];
 		protected $_additional_vars = ["banned"];
 
 		const USER_TYPE = "TEACHER";
@@ -25,7 +25,7 @@
 			// Было ли занятие?
 			if (!$this->isNewRecord) {
 				$this->had_lesson = $this->hadLesson();
-				$this->has_photo = file_exists(self::UPLOAD_DIR . $this->id . ".jpg");
+				$this->has_photo = 'http://lk.a-perspektiva.ru:8085/img/tutors/' . $this->id . '@2x.' . $this->photo_extension;
 
 				$this->banned = User::findTeacher($this->id)->banned;
 			}

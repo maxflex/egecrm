@@ -160,10 +160,21 @@
 		 * Построить селектор с кружочками метро
 		 * $multiple - множественный выбор
 		 */
-		public static function buildMultiSelector($selected = false, $attrs)
+		public static function buildMultiSelector($selected = false, $attrs, $mode = 'all')
 		{
 			$multiple = true;
 			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
+			
+			switch($mode) {
+				case 'all': {
+					$options = static::$all;
+					break;
+				}
+				case 'three_letters': {
+					$options = static::$three_letters;
+					break;
+				}
+			}
 			
 			// Заголовок
 			if (!$multiple) {
@@ -171,7 +182,7 @@
 				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
 			}
 						
-			foreach (static::$all as $id_subject => $name) {
+			foreach ($options as $id_subject => $name) {
 				echo "<script>console.log($id_subject)</script>";
 				// если это массив выбранных элементов (при $multiple = true)
 				$option_selected = in_array($id_subject, $selected);

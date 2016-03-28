@@ -23,8 +23,10 @@
 		.controller "SalaryCtrl", ($scope) ->
 			angular.element(document).ready ->
 				set_scope "Teacher"
-		.controller "EditCtrl", ($scope) ->
-
+		.controller "EditCtrl", ($scope, $timeout) ->
+			$scope.yearDifference = (year) ->
+	            moment().format("YYYY") - year
+	            
 			$scope.picture_version = 1;
 			bindFileUpload = ->
 				# загрузка файла договора
@@ -285,17 +287,56 @@
 
 			$scope.goToTutor = ->
 				window.open "https://crm.a-perspektiva.ru/repetitors/edit/?id=#{$scope.Teacher.id_a_pers}", "_blank"
-
+			
+			# разбить "1 класс, 2 класс, 3 класс" на "1-3 классы"
+			$scope.shortenGrades = ->
+			    a = $scope.Teacher.grades
+			    return if a.length < 1
+			    limit = a.length - 1
+			    combo_end = -1
+			    pairs = []
+			    i = 0
+			    while i <= limit
+			        combo_start = parseInt(a[i])
+			
+			        if combo_start > 11
+			            i++
+			            combo_end = -1
+			            pairs.push $scope.Grades[combo_start]
+			            continue
+			
+			        if combo_start <= combo_end
+			            i++
+			            continue
+			
+			        j = i
+			        while j <= limit
+			            combo_end = parseInt(a[j])
+			            # если уже начинает искать по студентам
+			            break if combo_end >= 11
+			            break if parseInt(a[j + 1]) - combo_end > 1
+			            j++
+			        if combo_start != combo_end
+			            pairs.push combo_start + '–' + combo_end + ' классы'
+			        else
+			            pairs.push combo_start + ' класс'
+			        i++
+			    $timeout ->
+			        $('#public-grades').parent().find('.filter-option').html pairs.join ', '
+			    return
+			
 			$(document).ready ->
 				bindFileUpload()
 
 				$("#subjects-select").selectpicker
 					noneSelectedText: "предметы"
-					multipleSeparator: ", "
+					multipleSeparator: "+"
 
 				$('#public-grades').selectpicker
 					noneSelectedText: "классы"
 					multipleSeparator: ", "
+				
+				$scope.shortenGrades()
 
 				$("#teacher-branches").selectpicker
 					noneSelectedText: "удобные филиалы для преподавателя"
@@ -369,14 +410,6 @@
 					$('html, body').animate({
 				        scrollTop: $("#teachers-list").prop("scrollHeight") - 420
 				    }, 400)
-
-			$scope.deleteTeacher = (id_teacher, index) ->
-				bootbox.confirm "Вы уверены, что хотите удалить преподавателя №#{id_teacher}?", (result) ->
-					if result is true
-						$scope.Teachers.splice index, 1
-						$scope.$apply()
-						$.post "teachers/ajax/delete", {id_teacher: id_teacher}
-						console.log "here", index, id_teacher
 
 			angular.element(document).ready ->
 				set_scope 'Teacher'

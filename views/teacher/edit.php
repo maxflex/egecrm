@@ -2,36 +2,170 @@
 	<?= partial("freetime") ?>
 	<div class="row">
 		<div class="col-sm-3" style="width: 13%">
-			<div class="tutor-img" ng-class="{'border-transparent': Teacher.has_photo}">
-				<div>
-					загрузить фото
-				</div>
-				<span class="btn-file">
-					<input name="teacher_photo" type="file" id="fileupload" data-url="upload/teacher/" accept="image/jpg">
-				</span>
-				<img src="{{Teacher.has_photo ? 'img/teachers/' + Teacher.id + '_2x.jpg?ver=' + picture_version : 'img/teachers/no-profile-img.gif'}}">
+			<div class='tutor-img-new'>
+				<img src="{{Teacher.has_photo ? 'https://lk.a-perspektiva.ru/img/tutors/' + Teacher.id + '@2x.' + Teacher.photo_extension : 'img/teachers/no-profile-img.gif'}}">
 			</div>
 		</div>
-		<div class="col-sm-3" style="width: 28.7%">
+		<div class="col-sm-3" style="width: 20%">
 			<div class="form-group">
-				<input class="form-control" ng-model="Teacher.last_name" placeholder="фамилия">
+				<input class="form-control" ng-model="Teacher.last_name" placeholder="фамилия" disabled>
 			</div>
 			<div class="form-group">
-				<input class="form-control" ng-model="Teacher.first_name" placeholder="имя">
+				<input class="form-control" ng-model="Teacher.first_name" placeholder="имя" disabled>
 			</div>
 			<div class="form-group">
-				<input class="form-control" ng-model="Teacher.middle_name" placeholder="отчество">
+				<input class="form-control" ng-model="Teacher.middle_name" placeholder="отчество" disabled>
 			</div>
 			<div class="form-group">
-				<?= Subjects::buildMultiSelector($Teacher->subjects, ["id" => "subjects-select"]) ?>
+				<select class="form-control" ng-model="Teacher.gender" placeholder="пол" disabled>
+					<option value='male'>мужской</option>
+					<option value='female'>женский</option>
+				</select>
+			</div>
+			<div class="form-group" style="position: relative">
+				<input class="form-control" ng-model="Teacher.birth_year" placeholder="год рождения" disabled>
+				<span class="inside-input">– {{ yearDifference(Teacher.birth_year) }} <ng-pluralize count="yearDifference(Teacher.birth_year)" when="{
+                    'one': 'год',
+                    'few': 'года',
+                    'many': 'лет',
+                }">лет</ng-pluralize></span>
+			</div>
+			<div class="form-group" style="position: relative">
+				<input class="form-control" ng-model="Teacher.birth_year" placeholder="стаж" disabled>
+				<span class="inside-input">– стаж {{ yearDifference(Teacher.start_career_year) }} <ng-pluralize count="yearDifference(Teacher.start_career_year)" when="{
+                    'one': 'год',
+                    'few': 'года',
+                    'many': 'лет',
+                }">лет</ng-pluralize></span>
+			</div>
+			<div class="form-group">
+				<?= Subjects::buildMultiSelector($Teacher->subjects, ["id" => "subjects-select", 'disabled' => 'disabled'], 'three_letters') ?>
+			</div>
+			<div class="form-group">
+				<?= Grades::buildMultiSelector($Teacher->grades, ["id" => "public-grades", 'disabled' => 'disabled']) ?>
 			</div>
 		</div>
-		<div class="col-sm-3"  style="width: 28.7%">
+		<div class="col-sm-3" style="width: 46%">
+
+
+
+
+<div class="form-group">
+    <div class="input-group" 
+        ng-class="{'input-group-with-hidden-span' : !phoneCorrect('teacher-phone') || (!isMobilePhone('teacher-phone') && teacher_phone_level >= 2) }">
+    	<input ng-keyup id="teacher-phone" type="text" disabled
+    		placeholder="телефон" class="form-control phone-masked"  ng-model="Teacher.phone">
+    		
+    	<div class='comment-inside-input'>
+			<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.phone_comment'></span>
+			<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.phone_comment' disabled="">
+    	</div>
+    	
+    	<div class="input-group-btn">
+	    	<button class="btn btn-default" ng-show="phoneCorrect('teacher-phone')" ng-click="callSip('teacher-phone')" ng-class="{
+					'addon-bordered' : teacher_phone_level >= 2  && !isMobilePhone('teacher-phone')
+				}">
+				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+			</button>
+			<button ng-show="phoneCorrect('teacher-phone') && isMobilePhone('teacher-phone')" ng-class="{
+					'addon-bordered' : teacher_phone_level >= 2 || !phoneCorrect('teacher-phone')
+				}" class="btn btn-default" type="button" onclick="smsDialog('teacher-phone')">
+					<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+			</button>
+	    	<button disabled ng-hide="teacher_phone_level >= 2 || !phoneCorrect('teacher-phone')" class="btn btn-default" style='background: #EEE; color: black' type="button" ng-click="teacher_phone_level = teacher_phone_level + 1">
+	    		<span class="glyphicon glyphicon-plus no-margin-right small"></span>
+	    	</button>
+        </div>
+	</div>
+</div>
+<div class="form-group" ng-show="teacher_phone_level >= 2">
+    <div class="input-group" 
+        ng-class="{'input-group-with-hidden-span' : !phoneCorrect('teacher-phone-2')  || (!isMobilePhone('teacher-phone') && teacher_phone_level >= 3) }">
+    	<input ng-keyup id="teacher-phone-2" type="text" disabled
+    		placeholder="телефон 2" class="form-control phone-masked" ng-model="Teacher.phone2">
+    		
+    	<div class='comment-inside-input'>
+			<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.phone2_comment'></span>
+			<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.phone2_comment' disabled="">
+    	</div>
+
+			
+    	<div class="input-group-btn">
+    		<button class="btn btn-default" ng-show="phoneCorrect('teacher-phone-2')" ng-click="callSip('teacher-phone-2')"  ng-class="{
+					'addon-bordered' : teacher_phone_level >= 3  && !isMobilePhone('teacher-phone-2')
+				}">
+				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+			</button>
+			<button ng-show="phoneCorrect('teacher-phone-2') && isMobilePhone('teacher-phone-2')" ng-class="{
+					'addon-bordered' : teacher_phone_level >= 3 || !phoneCorrect('teacher-phone-2')
+				}" class="btn btn-default" type="button"  onclick="smsDialog('teacher-phone-2')">
+					<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+			</button>
+        	<button style='background: #EEE; color: black' disabled ng-hide="teacher_phone_level >= 3 || !phoneCorrect('teacher-phone-2')" class="btn btn-default" type="button" ng-click="teacher_phone_level = teacher_phone_level + 1">
+        		<span class="glyphicon glyphicon-plus no-margin-right small"></span>
+        	</button>
+        </div>
+	</div>
+</div>
+<div class="form-group" ng-show="teacher_phone_level >= 3">
+	<div class="input-group" 
+		ng-class="{'input-group-with-hidden-span' : !phoneCorrect('teacher-phone-3')  || !isMobilePhone('teacher-phone-3') }">
+        <input type="text" id="teacher-phone-3" placeholder="телефон 3"  disabled
+        	class="form-control phone-masked" ng-model="Teacher.phone3">
+        	
+        	<div class='comment-inside-input'>
+				<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.phone3_comment'></span>
+				<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.phone3_comment' disabled="">
+	    	</div>
+
+        	
+        	<div class="input-group-btn">
+	        	<button class="btn btn-default" ng-show="phoneCorrect('teacher-phone-3')" ng-click="callSip('teacher-phone-3')"  ng-class="{
+					'addon-bordered' : !isMobilePhone('teacher-phone-3')
+				}">
+					<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+				</button>
+				<button style='background: #EEE; color: black' disabled ng-show="phoneCorrect('teacher-phone-3') && isMobilePhone('teacher-phone-3')" ng-class="{
+						!phoneCorrect('teacher-phone-3')
+					}" class="btn btn-default" type="button"  onclick="smsDialog('teacher-phone-3')">
+						<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+				</button>
+            </div>
+	</div>
+</div>
+
+
+
 			<div class="form-group">
 				<div class="input-group">
-			      <input placeholder="логин" ng-model="Teacher.login" class="form-control" ng-disabled="Teacher.banned">
+					<input placeholder="email" ng-model="Teacher.email" class="form-control" disabled>
+					
+					<div class='comment-inside-input'>
+						<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.email_comment'></span>
+						<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.email_comment' disabled="">
+			    	</div>
+					
+					<div class="input-group-btn">
+						<button class="btn btn-default" type="button" ng-click="emailDialog(Teacher.email)">
+							<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-3"  style="width: 20%">
+			<div class="form-group">
+				<select class="form-control" ng-model="Teacher.in_egecentr" placeholder="пол" disabled>
+					<option value='0'>не работает в ЕГЭ-Центре</option>
+					<option value='1'>работает в ЕГЭ-Центре</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<div class="input-group">
+			      <input placeholder="логин" disabled ng-model="Teacher.login" class="form-control">
 			      <span class="input-group-addon pointer" ng-click="toggleBanned()">
-			      	<span class="glyphicon glyphicon-lock no-margin-right" ng-class="{
+			      	<span class="glyphicon glyphicon-lock no-margin-right small" ng-class="{
 				      	'text-danger': Teacher.banned
 			      	}"></span>
 <!-- 			        <input type="checkbox" aria-label="заблокирован"> -->
@@ -39,26 +173,11 @@
 			    </div>
 			</div>
 			<div class="form-group">
-				<input placeholder="пароль" type="text" ng-model="Teacher.password" class="form-control" ng-disabled="Teacher.banned">
+				<input placeholder="пароль" disabled type="text" ng-model="Teacher.password" class="form-control">
 			</div>
+			
 			<div class="form-group">
-				<input placeholder="email" ng-model="Teacher.email" class="form-control">
-			</div>
-			<div class="form-group">
-				<input placeholder="оценка эксперта" ng-model="Teacher.expert_mark" class="form-control">
-			</div>
-		</div>
-		<div class="col-sm-3" style="width: 28.7%">
-			<?= Html::phones('teacher') ?>
-			<div class="form-group">
-				<div class="input-group">
-					<input placeholder="ID в базе" ng-model="Teacher.id_a_pers" class="form-control digits-only">
-					<span class="input-group-btn">
-			        	<button class="btn btn-default" type="button" ng-disabled="!Teacher.id_a_pers" ng-click="goToTutor()">
-			        		<span class="glyphicon glyphicon-user no-margin-right"></span>
-			        	</button>
-					</span>
-				</div>
+				<?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches", 'disabled' => 'disabled']) ?>
 			</div>
 		</div>
 <!--
@@ -82,55 +201,7 @@
 		</div>
 -->
 	</div>
-	<div class="row" style="margin-bottom: 10px">
-		<div class="col-sm-9" style="width: 70.4%">
-			<?php if ($Teacher->id) :?>
-	        	<?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches"]) ?>
-			<?php else :?>
-	            <?= Branches::buildSvgSelector($Teacher->branches, [
-		            "ng-model" => "Teacher.branches",
-		            "id" => "teacher-branches",
-		        ], true) ?>
-		    <?php endif ?>
-		</div>
-		<div class="col-sm-3" style="width: 28.7%">
-			<input ng-model="Teacher.rubbles" placeholder="кол-во рублей за занятие" class="form-control">
-		</div>
-	</div>
-	<div class="row" style="margin-bottom: 10px">
-		<div class="col-sm-12">
-			<textarea class="form-control" ng-model="Teacher.comment" rows="4"></textarea>
-		</div>
-	</div>
 
-	<!-- Публичная информация -->
-	<div class="row" style="margin-bottom: 10px">
-		<div class="col-sm-12">
-			<textarea class="form-control" ng-model="Teacher.description" rows="4" placeholder="описание на сайте"></textarea>
-		</div>
-	</div>
-
-	<div class='flex-inputs form-group'>
-			<?= Grades::buildMultiSelector($Teacher->public_grades, ["id" => "public-grades"]) ?>
-			<input type="text" class="form-control" ng-model="Teacher.public_seniority" placeholder="педагогический стаж">
-			<input type="text" class="form-control" ng-model='Teacher.public_ege_start' placeholder="опыт подготовки к ЕГЭ/ОГЭ">
-			<div class="form-control" style="box-shadow: none; border: 0">
-				<label class="ios7-switch" style="font-size: 18px; font-weight: normal">
-				    <input type="checkbox" ng-model='Teacher.published'
-						ng-true-value='1' ng-false-value='0'>
-				    <span></span>
-				    <span style="font-size: 14px">Опубликован на сайте</span>
-				</label>
-			</div>
-	</div>
-	<div class="form-control" style="box-shadow: none; border: 0">
-		<label class="ios7-switch" style="font-size: 18px; font-weight: normal">
-				<input type="checkbox" ng-model='Teacher.in_egecentr'
-				   ng-true-value='1' ng-false-value='0'>
-			<span></span>
-			<span style="font-size: 14px">в ЕГЭ центре</span>
-		</label>
-	</div>
 	<!-- /Публичная информация -->
 	<?php if ($Teacher->id) :?>
 	<div class="row" style="margin-bottom: 10px">
@@ -260,17 +331,4 @@
 
 
 	<?php endif ?>
-	<div class="row" style="margin-top: 10px">
-		<div class="col-sm-12 center">
-	    	<button class="btn btn-primary save-button" ng-disabled="saving || !form_changed" ng-hide="!Teacher.id" style="width: 100px">
-	    		<span ng-show="form_changed">Сохранить</span>
-	    		<span ng-show="!form_changed && !saving">Сохранено</span>
-	    	</button>
-
-	    	<button class="btn btn-primary save-button" ng-hide="Teacher.id" style="width: 100px">
-				добавить
-	    	</button>
-
-		</div>
-	</div>
 </form>

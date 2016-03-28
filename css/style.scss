@@ -22,6 +22,48 @@
 	$half_black			: rgba(0, 0, 0, .5);
 	$quater_black 		: rgba(0, 0, 0, .25);
 
+.tutor-img-new {
+	& img {
+		border-radius: 5px;
+		height: 150px;
+	    width: 120px;	
+	}
+}
+
+.tutor-list-comment, .phone-comment {
+	height: 18px;
+	padding: 0;
+}
+
+.phone-comment {
+	width: 218px;
+}
+
+.bootstrap-select {
+	& .btn-default.disabled {
+		background-color: #EEE;
+	    border-color: #CCC;
+	    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	    color: black !important;
+	}
+}
+
+.comment-inside-input {
+	// width: 70%;
+	position: absolute;
+	top: 8px;
+	z-index: 999;
+	left: 170px;
+}
+
+.inside-input {
+    position: absolute;
+    top: 7px;
+    color: #999999;
+    left: 49px;
+}
+
 .dropdown-menu .divider {
 	display: none;
 }
@@ -944,6 +986,9 @@ body {
 .no-border-outline {
 	border: none !important;
 	outline: none !important;
+	&:disabled {
+		background-color: #EEE;
+	}
 }
 
 .sort-link {

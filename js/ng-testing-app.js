@@ -159,6 +159,16 @@ angular.module("Testing", ['angucomplete-alt']).filter('range', function() {
       id_subject: data[0],
       grade: data[1]
     });
+    $.post('testing/ajaxGetStudentGroupsBySubject', {
+      id_student: $scope.selectedStudent.originalObject.id,
+      id_subject: data[0],
+      grade: data[1]
+    }, function(response) {
+      var l;
+      l = $scope.Testing.Students.length;
+      $scope.Testing.Students[l - 1].group_ids = response;
+      return $scope.$apply();
+    }, "json");
     $scope.selectedSubjectGrade = void 0;
     $scope.selectedStudent = void 0;
     setTimeout(function() {

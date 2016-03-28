@@ -157,36 +157,24 @@
 			]);
 		}
 
-		public function actionAdd()
+		public function actionEdit()
 		{
-			$Teacher = new Teacher();
+			$id_teacher = $_GET['id'];
+			$this->setTabTitle("Редактирование преподавателя №{$id_teacher}");
+			$this->setRightTabTitle("
+				<a class='link-white' style='margin-right: 10px' href='http://crm.a-perspektiva.ru:8080/egerep/public//tutors/{$id_teacher}/edit'>егэ-репетитор</a>
+				<a class='link-white' href='as/teacher/{$id_teacher}'>режим просмотра</a>
+			");
+			$Teacher = Teacher::findById($id_teacher);
+			$Teacher->Reviews = Teacher::getReviews($Teacher->id);
 
-			$this->setTabTitle("Добавление преподавателя");
-			$this->actionEdit($Teacher);
-		}
+			# Данные по занятиям/выплатам
+			$Data = VisitJournal::findAll([
+				"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'",
+				"order"		=> "lesson_date DESC, lesson_time DESC",
+			]);
 
-		# если передан $Teacher, то идет добавление
-		public function actionEdit($Teacher = false)
-		{
-			if (!$Teacher) {
-				$id_teacher = $_GET['id'];
-				$this->setTabTitle("Редактирование преподавателя №{$id_teacher}");
-				$this->setRightTabTitle("
-					<a class='link-white' style='margin-right: 10px' href='http://crm.a-perspektiva.ru:8080/egerep/public//tutors/{$id_teacher}/edit'>егэ-репетитор</a>
-					<a class='link-white' style='margin-right: 10px' href='as/teacher/{$id_teacher}'>режим просмотра</a>
-					<span class='link-reverse pointer' onclick='deleteTeacher($id_teacher)'>удалить преподавателя</span>
-				");
-				$Teacher = Teacher::findById($id_teacher);
-				$Teacher->Reviews = Teacher::getReviews($Teacher->id);
-
-				# Данные по занятиям/выплатам
-				$Data = VisitJournal::findAll([
-					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'",
-					"order"		=> "lesson_date DESC, lesson_time DESC",
-				]);
-
-				$Groups = Teacher::getGroups($id_teacher, false);
-			}
+			$Groups = Teacher::getGroups($id_teacher, false);
 
 			$this->addJs("bootstrap-select");
 			$this->addCss("bootstrap-select");
@@ -204,7 +192,8 @@
 				"payment_statuses"	=> Payment::$all,
 				"payments"			=> TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher"]),
 				"user"				=> User::fromSession(),
-				"time" 					=> Freetime::TIME,
+				"time" 				=> Freetime::TIME,
+				"Grades"			=> Grades::$all,
 			]);
 
 			$this->render("edit", [
@@ -212,29 +201,4 @@
 				"ang_init_data" => $ang_init_data
 			]);
 		}
-
-		public function actionAjaxSave()
-		{
-			$Teacher = $_POST;
-
-			if ($Teacher['id']) {
-				if (!isset($Teacher['subjects'])) {
-					$Teacher['subjects'] = '';
-				}
-				if (!isset($Teacher['branches'])) {
-					$Teacher['branches'] = '';
-				}
-				Teacher::updateById($Teacher['id'], $Teacher);
-			} else {
-				$NewTeacher = new Teacher($Teacher);
-				$saved = $NewTeacher->save();
-				returnJSON($saved);
-			}
-		}
-
-		public function actionAjaxDelete()
-		{
-			Teacher::deleteById($_POST["id_teacher"]);
-		}
-
 	}

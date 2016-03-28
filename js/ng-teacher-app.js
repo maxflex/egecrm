@@ -17,9 +17,9 @@ angular.module("Teacher", ["ngMap"]).config([
   };
 }).filter('range', function() {
   return function(input, total) {
-    var i, j, ref;
+    var i, k, ref;
     total = parseInt(total);
-    for (i = j = 0, ref = total; j < ref; i = j += 1) {
+    for (i = k = 0, ref = total; k < ref; i = k += 1) {
       input.push(i);
     }
     return input;
@@ -28,8 +28,11 @@ angular.module("Teacher", ["ngMap"]).config([
   return angular.element(document).ready(function() {
     return set_scope("Teacher");
   });
-}).controller("EditCtrl", function($scope) {
+}).controller("EditCtrl", function($scope, $timeout) {
   var bindFileUpload;
+  $scope.yearDifference = function(year) {
+    return moment().format("YYYY") - year;
+  };
   $scope.picture_version = 1;
   bindFileUpload = function() {
     return $('#fileupload').fileupload({
@@ -338,16 +341,61 @@ angular.module("Teacher", ["ngMap"]).config([
   $scope.goToTutor = function() {
     return window.open("https://crm.a-perspektiva.ru/repetitors/edit/?id=" + $scope.Teacher.id_a_pers, "_blank");
   };
+  $scope.shortenGrades = function() {
+    var a, combo_end, combo_start, i, j, limit, pairs;
+    a = $scope.Teacher.grades;
+    if (a.length < 1) {
+      return;
+    }
+    limit = a.length - 1;
+    combo_end = -1;
+    pairs = [];
+    i = 0;
+    while (i <= limit) {
+      combo_start = parseInt(a[i]);
+      if (combo_start > 11) {
+        i++;
+        combo_end = -1;
+        pairs.push($scope.Grades[combo_start]);
+        continue;
+      }
+      if (combo_start <= combo_end) {
+        i++;
+        continue;
+      }
+      j = i;
+      while (j <= limit) {
+        combo_end = parseInt(a[j]);
+        if (combo_end >= 11) {
+          break;
+        }
+        if (parseInt(a[j + 1]) - combo_end > 1) {
+          break;
+        }
+        j++;
+      }
+      if (combo_start !== combo_end) {
+        pairs.push(combo_start + '–' + combo_end + ' классы');
+      } else {
+        pairs.push(combo_start + ' класс');
+      }
+      i++;
+    }
+    $timeout(function() {
+      return $('#public-grades').parent().find('.filter-option').html(pairs.join(', '));
+    });
+  };
   $(document).ready(function() {
     bindFileUpload();
     $("#subjects-select").selectpicker({
       noneSelectedText: "предметы",
-      multipleSeparator: ", "
+      multipleSeparator: "+"
     });
     $('#public-grades').selectpicker({
       noneSelectedText: "классы",
       multipleSeparator: ", "
     });
+    $scope.shortenGrades();
     $("#teacher-branches").selectpicker({
       noneSelectedText: "удобные филиалы для преподавателя"
     });
@@ -426,18 +474,6 @@ angular.module("Teacher", ["ngMap"]).config([
         scrollTop: $("#teachers-list").prop("scrollHeight") - 420
       }, 400);
     }
-  };
-  $scope.deleteTeacher = function(id_teacher, index) {
-    return bootbox.confirm("Вы уверены, что хотите удалить преподавателя №" + id_teacher + "?", function(result) {
-      if (result === true) {
-        $scope.Teachers.splice(index, 1);
-        $scope.$apply();
-        $.post("teachers/ajax/delete", {
-          id_teacher: id_teacher
-        });
-        return console.log("here", index, id_teacher);
-      }
-    });
   };
   return angular.element(document).ready(function() {
     set_scope('Teacher');

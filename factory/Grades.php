@@ -16,6 +16,8 @@
 		const NINETH	= 9;
 		const TENTH		= 10;
 		const ELEVENTH	= 11;
+		const STUDENTS	= 12;
+		const OTHERS	= 13;
 		
 		# Класс (для формирования надписи)
 		const GRADE 	= "класс";
@@ -33,6 +35,8 @@
 			self::NINETH	=> self::NINETH	." ".self::GRADE,
 			self::TENTH		=> self::TENTH	." ".self::GRADE,
 			self::ELEVENTH	=> self::ELEVENTH." ".self::GRADE,
+			self::STUDENTS	=> 'студенты',
+			self::OTHERS	=> 'остальные',
 		];
 		
 		# Заголовок
