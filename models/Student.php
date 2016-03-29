@@ -914,11 +914,17 @@
 		 */
 		public static function getAllList()
 		{
-			$query = dbConnection()->query("
+//			$query = dbConnection()->query("
+//				SELECT s.id, CONCAT_WS(' ', s.last_name, s.first_name, s.middle_name) as name FROM students s
+//					LEFT JOIN contracts c 	ON c.id_student = s.id
+//					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+//				WHERE c.id_student IS NOT NULL AND cs.status > 1
+//				GROUP BY s.id
+//				ORDER BY name ASC
+//			");
+
+            $query = dbConnection()->query("
 				SELECT s.id, CONCAT_WS(' ', s.last_name, s.first_name, s.middle_name) as name FROM students s
-					LEFT JOIN contracts c 	ON c.id_student = s.id
-					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-				WHERE c.id_student IS NOT NULL AND cs.status > 1
 				GROUP BY s.id
 				ORDER BY name ASC
 			");
