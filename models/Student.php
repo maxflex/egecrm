@@ -924,8 +924,8 @@
 //			");
 
             $query = dbConnection()->query("
-				SELECT s.id, CONCAT_WS(' ', s.last_name, s.first_name, s.middle_name) as name FROM students s
-				GROUP BY s.id
+				SELECT s.id, CONCAT_WS(' ', s.last_name, s.first_name, s.middle_name) as name
+				FROM students s
 				ORDER BY name ASC
 			");
 
