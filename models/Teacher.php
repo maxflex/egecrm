@@ -92,7 +92,8 @@
 				// получаем кол-во занятий с последнего отчета по предмету
 				$LatestReport = Report::find([
 					"condition" => "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ." AND id_teacher=" . $id_teacher,
-					"order" => " DATE(date) asc"
+//					"order" => " DATE(date) asc"
+                    "order" => " STR_TO_DATE(date,'%d.%m.%Y') desc "
 				]);
 
 				if ($LatestReport) {
@@ -197,7 +198,7 @@
 			} else {
 				$params['condition'] .= ' AND in_egecentr = 1';
 			}
-			
+
 			return parent::findAll($params);
 		}
 		
