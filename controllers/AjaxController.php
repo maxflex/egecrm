@@ -140,7 +140,10 @@
 				$contract_count = 0;
 // 				$messages = [];
 
-				$date = date("Y-m", strtotime("-$month months"));
+                // @link http://php.net/manual/ru/function.strtotime.php#107331
+                $month_timestamp = strtotime("first day of -$month months");
+
+				$date = date("Y-m", $month_timestamp);
 
 				$result = dbConnection()->query("
 					SELECT c.id FROM contracts c
@@ -186,7 +189,7 @@
 				]);
 
 				$return[] = [
-					"month" => date("n", strtotime("-$month months")),
+					"month" => date("n", $month_timestamp),
 					"contract_count"	=> $contract_count,
 					"request_count"		=> $request_count,
 // 					"messages"			=> $messages,
