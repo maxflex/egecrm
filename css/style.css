@@ -20,7 +20,7 @@
 .comment-inside-input {
   position: absolute;
   top: 8px;
-  z-index: 999;
+  z-index: 98;
   left: 170px; }
 
 .inside-input {
@@ -2293,3 +2293,19 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
     padding-bottom: 12px; }
   .modal-dialog {
     margin: 15% auto; } }
+
+#teacher-edit h4.row-header {
+  cursor: pointer; }
+
+.fakeInput {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #eee;
+  margin-right: 5px; }
+  .fakeInput > input {
+    width: 165px !important;
+    box-shadow: none; }
+  .fakeInput button {
+    border: none;
+    padding: 7px 10px;
+    border-left: 1px solid #ccc; }

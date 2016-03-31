@@ -31,7 +31,7 @@
                 }">лет</ng-pluralize></span>
 			</div>
 			<div class="form-group" style="position: relative">
-				<input class="form-control" ng-model="Teacher.birth_year" placeholder="стаж" disabled>
+				<input class="form-control" ng-model="Teacher.start_career_year" placeholder="стаж" disabled>
 				<span class="inside-input">– стаж {{ yearDifference(Teacher.start_career_year) }} <ng-pluralize count="yearDifference(Teacher.start_career_year)" when="{
                     'one': 'год',
                     'few': 'года',
