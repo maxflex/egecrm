@@ -110,6 +110,18 @@
 
 			returnJSON($Teachers);
 		}
+
+        public function actionGetTeachersBySubject()
+        {
+            extract($_POST);
+            $Teachers = [];
+            if ($id_subject && intval($id_subject)) {
+                $Teachers = Teacher::findAll([
+                    "condition" => "published = 1 AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%'"
+                ]);
+            }
+            returnJSON($Teachers);
+        }
 		
 		public function actionMetro()
 		{
