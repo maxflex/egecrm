@@ -14,16 +14,16 @@
 		const API_KEY = "44327d40af8a93c23497047c08688a50"; // MD5 от «А то ругать будут!»
 
 		// Перед выполнением любого действия, устанавливаем заголовок для JSON данных API
-		public function beforeAction()
-		{
-			// Тип данных - JSON
-			header('Content-Type: application/json');
-
-			// Первым делом проверяем API_KEY
-			if (trim($_POST["API_KEY"]) != self::API_KEY) {
-				self::errorMessage("Invalid API_KEY");
-			}
-		}
+    //		public function beforeAction()
+    //		{
+    //			// Тип данных - JSON
+    //			header('Content-Type: application/json');
+    //
+    //			// Первым делом проверяем API_KEY
+    //			if (trim($_POST["API_KEY"]) != self::API_KEY) {
+    //				self::errorMessage("Invalid API_KEY");
+    //			}
+    //		}
 
 		/*
 		 * JSON-сообщение с ошибкой
@@ -111,13 +111,18 @@
 			returnJSON($Teachers);
 		}
 
-        public function actionGetTeachersBySubject()
+        /**
+         * $id_subject постом должно быть передано
+         */
+        public function actionGetTeachersBySubjectAndGrade()
         {
             extract($_POST);
             $Teachers = [];
-            if ($id_subject && intval($id_subject)) {
+            if (($id_subject = intval($id_subject)) && ($grade = intval($grade) )) {
                 $Teachers = Teacher::findAll([
-                    "condition" => "published = 1 AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%'"
+                    "condition" => "published = 1 ".
+                        "AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%' ".
+                        "AND CONCAT(',', CONCAT(grades, ',')) LIKE '%,{$grade},%' "
                 ]);
             }
             returnJSON($Teachers);
