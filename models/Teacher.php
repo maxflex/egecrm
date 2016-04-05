@@ -25,7 +25,9 @@
 			// Было ли занятие?
 			if (!$this->isNewRecord) {
 				$this->had_lesson = $this->hadLesson();
-				$this->has_photo = 'http://lk.a-perspektiva.ru:8085/img/tutors/' . $this->id . '@2x.' . $this->photo_extension;
+				
+				
+				$this->has_photo = $this->photoExists();
 
 				$this->banned = User::findTeacher($this->id)->banned;
 			}
@@ -62,8 +64,22 @@
 		public static function getPublished()
 		{
 			return static::findAll([
-				'condition' => 'published = 1'
+				'condition' => "description != ''"
 			]);
+		}
+		
+		/*
+		 * Проверить, есть ли фото у преподавателя
+		 */
+		public function photoExists()
+		{
+			$ch = curl_init('http://lk.a-perspektiva.ru:8085/img/tutors/' . $this->id . '@2x.' . $this->photo_extension);
+			curl_setopt($ch, CURLOPT_NOBODY, true);
+			curl_exec($ch);
+			$retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			// $retcode >= 400 -> not found, $retcode = 200, found.
+			curl_close($ch);
+			return $retcode == 200;
 		}
 
 		// 	количество красных меток "требуется создание отчета"

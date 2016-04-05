@@ -107,7 +107,11 @@
 		public function actionGetTeachers()
 		{
 			$Teachers = Teacher::getPublished();
-
+			
+			foreach ($Teachers as &$Teacher) {
+				unset($Teacher->branch_short);
+			}
+			
 			returnJSON($Teachers);
 		}
 
