@@ -106,13 +106,22 @@
 
 		public function actionGetTeachers()
 		{
+			$allowed_fields = ['id', 'photo_extension', 'first_name', 'last_name', 'middle_name', 'description', 
+				'has_photo', 'subjects', 'public_seniority', 'public_ege_start', 'public_grades'];
+			
 			$Teachers = Teacher::getPublished();
 			
+			$return = [];
+			
 			foreach ($Teachers as &$Teacher) {
-				unset($Teacher->branch_short);
+				$object = [];
+				foreach ($allowed_fields as $field) {
+					$object[$field] = $Teacher->{$field};
+				}
+				$return[] = $object;
 			}
 			
-			returnJSON($Teachers);
+			returnJSON($return);
 		}
 
         /**
