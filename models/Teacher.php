@@ -9,6 +9,13 @@
 		protected $_inline_data = ["branches", "subjects", "grades", "public_grades"];
 		protected $_additional_vars = ["banned"];
 
+        public static $api_fields = [
+            'id', 'photo_extension',
+            'first_name', 'last_name', 'middle_name',
+            'description',  'has_photo',
+            'subjects', 'public_seniority', 'public_ege_start', 'public_grades'
+        ];
+
 		const USER_TYPE = "TEACHER";
 		const UPLOAD_DIR = "img/teachers/";
 

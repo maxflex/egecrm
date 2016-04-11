@@ -106,16 +106,13 @@
 
 		public function actionGetTeachers()
 		{
-			$allowed_fields = ['id', 'photo_extension', 'first_name', 'last_name', 'middle_name', 'description', 
-				'has_photo', 'subjects', 'public_seniority', 'public_ege_start', 'public_grades'];
-			
 			$Teachers = Teacher::getPublished();
 			
 			$return = [];
 			
 			foreach ($Teachers as &$Teacher) {
 				$object = [];
-				foreach ($allowed_fields as $field) {
+				foreach (Teacher::$api_fields as $field) {
 					$object[$field] = $Teacher->{$field};
 				}
 				$return[] = $object;
@@ -130,15 +127,23 @@
         public function actionGetTeachersBySubjectAndGrade()
         {
             extract($_POST);
-            $Teachers = [];
+            $return = [];
             if (($id_subject = intval($id_subject)) && ($grade = intval($grade) )) {
                 $Teachers = Teacher::findAll([
                     "condition" => "published = 1 ".
                         "AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%' ".
                         "AND CONCAT(',', CONCAT(grades, ',')) LIKE '%,{$grade},%' "
                 ]);
+
+                foreach ($Teachers as &$Teacher) {
+                    $object = [];
+                    foreach (Teacher::$api_fields as $field) {
+                        $object[$field] = $Teacher->{$field};
+                    }
+                    $return[] = $object;
+                }
             }
-            returnJSON($Teachers);
+            returnJSON($return);
         }
 		
 		public function actionMetro()
