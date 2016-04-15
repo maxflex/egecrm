@@ -204,7 +204,6 @@
 			// Добавляем дубликаты
 			foreach ($Requests as &$Request) {
 				$Request->duplicates = $Request->getDuplicates();
-				
 				$Request->has_contract = $Request->hasContract();
 				
 				if ($Request->has_contract) {

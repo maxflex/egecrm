@@ -1,3 +1,11 @@
+.row.flex-list {
+  display: flex;
+  margin-left: 0;
+  margin-right: 0; }
+  .row.flex-list div {
+    flex: 1;
+    margin-right: 10px; }
+
 .tutor-img-new img {
   border-radius: 5px;
   height: 150px;
@@ -2300,8 +2308,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .fakeInput {
   border: 1px solid #ccc;
   border-radius: 4px;
-  background: #eee;
-  margin-right: 5px; }
+  background: #eee; }
   .fakeInput > input {
     width: 165px !important;
     box-shadow: none; }

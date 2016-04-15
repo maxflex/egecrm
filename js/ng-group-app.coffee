@@ -1094,6 +1094,7 @@
 				Group.id_subject = Group.id_subject || 0
 				return time_correct and (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and
 					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
+					($scope.search.year is Group.year or not $scope.search.year) and
 					((Group.id_subject.toString() in $scope.search.subjects) or $scope.search.subjects.length is 0) and
 					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher) and
 					(parseInt($scope.search.cabinet) is parseInt(Group.cabinet) or not parseInt($scope.search.cabinet))

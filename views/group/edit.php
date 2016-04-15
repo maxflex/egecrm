@@ -96,7 +96,7 @@
 	           </select>
             </div>
 			<div class="form-group">
-				<select class="form-control" ng-model="Group.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015]">
+				<select class="form-control" ng-model="Group.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015, 2016]">
 				</select>
 			</div>
 			<div class="form-group">

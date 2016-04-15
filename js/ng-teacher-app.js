@@ -404,7 +404,7 @@ angular.module("Teacher", ["ngMap"]).config([
       return $scope.$apply();
     });
   });
-  return $(".save-button").on("click", function() {
+  $(".save-button").on("click", function() {
     var has_errors;
     has_errors = false;
     $(".phone-masked").filter(function() {
@@ -456,6 +456,32 @@ angular.module("Teacher", ["ngMap"]).config([
       }
     });
   });
+  return $scope.emailDialog = function(email) {
+    var html;
+    $('#email-history').html('<center class="text-gray">загрузка истории сообщений...</center>');
+    $('.email-template-list').hide();
+    html = '';
+    $.post('ajax/emailHistory', {
+      'email': email
+    }, function(response) {
+      console.log(response);
+      if (response) {
+        $.each(response, function(i, v) {
+          var files_html;
+          files_html = '';
+          $.each(v.files, function(i, file) {
+            return files_html += '<div class="sms-coordinates"><a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">' + file.uploaded_name + '</a><span> (' + file.size + ')</span></div>';
+          });
+          return html += '<div class="clear-sms"><div class="from-them">' + v.message + '<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '</div></div>';
+        });
+        return $('#email-history').html(html);
+      } else {
+        return $('#email-history').html('');
+      }
+    }, 'json');
+    $('#email-address').text(email);
+    return lightBoxShow('email');
+  };
 }).controller("ListCtrl", function($scope) {
   $scope.othersCount = function() {
     return _.where($scope.Teachers, {

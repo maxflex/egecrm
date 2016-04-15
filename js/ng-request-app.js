@@ -562,6 +562,24 @@
 				lightBoxShow('print-additional')
 			}
 			
+			$scope.printAct = function(contract) {
+				$scope.print_mode = 'act'
+				$scope.contract_act = contract
+				$scope.id_contract_print = contract.id
+				$scope.runPrint()
+			}
+			
+			$scope.getLastLessonDate = function() {
+				date = '0000-00-00'
+				$.each($scope.Groups, function(index, Group) {
+					new_date = _.last(Group.Schedule).date
+					if (new_date > date) {
+						date = new_date
+					}
+				})
+				return $scope.textDate(date)
+			}
+			
 			$scope.todayDate = function() {
 				return moment().format("DD.MM.YYYY");
 			}

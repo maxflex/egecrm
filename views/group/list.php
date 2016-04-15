@@ -13,22 +13,22 @@
 			<div class="row" style="position: relative">
 				<div class="col-sm-12">
 					
-					<div class="row" style="margin-bottom: 15px">
-						<div class="col-sm-2">
+					<div class="row flex-list" style="margin-bottom: 15px">
+						<div>
 							<?= Grades::buildSelector(false, false, ["ng-model" => "search.grade"]) ?>
 						</div>
-						<div class="col-sm-2">
+						<div>
 			                <?= Branches::buildSvgSelector(false, [
 				                "id" => "group-branch-filter", 
 				                "ng-model" => "search.id_branch", 
 				                "ng-change" => "changeBranch()"
 				            ]) ?>
 						</div>
-						<div class="col-sm-2">
+						<div>
 							<?= Subjects::buildMultiSelector(false, ["id" => "subjects-select", "ng-model" => "search.subjects"]) ?>
 <!-- 							<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?> -->
 						</div>
-						<div class="col-sm-2">
+						<div>
 							<select class="form-control" ng-model="search.id_teacher">
 								<option selected value="">преподаватель</option>
 								<option disabled>──────────────</option>
@@ -37,7 +37,7 @@
 								</option>
 							</select>
 						</div>
-						<div class="col-sm-2">
+						<div>
 							<select class="form-control" ng-model="search.cabinet" id="group-cabinet">
 								<option selected value="0">№ кабинета</option>
 								<option disabled>──────────────</option>
@@ -45,9 +45,14 @@
 									ng-value="Cabinet.id" ng-selected="Group.cabinet == Cabinet.id">{{Cabinet.number}}</option>
 							</select>
 						</div>
-						<div class="col-sm-2">
+						<div>
 							<?= Freetime::buildMultiSelector(false, ["id" => "time-select", "ng-model" => "search.time"]) ?>
 <!-- 							<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?> -->
+						</div>
+						<div>
+							<select class="form-control" ng-model="search.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015, 2016]">
+								<option selected value="">все годы</option>
+							</select>
 						</div>
 					</div>
 					

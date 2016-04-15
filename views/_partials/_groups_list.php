@@ -78,6 +78,7 @@
                 </span>
                 <ng-pluralize count="Group.schedule_count.paid" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize>
             </span>
+            <span ng-show="!Group.schedule_count.paid" class="badge badge-gray">без расписания</span>
 			<!--<span ng-show="Group.schedule_count.paid > 0">{{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}</span></span>-->
 		</td>
 		<td>

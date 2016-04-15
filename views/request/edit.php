@@ -766,6 +766,10 @@
 									печать доп. соглашения
 									<?= partial("additional_agreement_print") ?>
 								</div>
+								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printAct(contract)">
+									печать акта сдачи-приемки
+									<?= partial("act") ?>
+								</div>
 								<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="deleteContract(contract)">
 									удалить
 								</div>

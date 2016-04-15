@@ -1323,7 +1323,7 @@ angular.module("Group", ['ngAnimate']).filter('to_trusted', [
       time_correct = true;
     }
     Group.id_subject = Group.id_subject || 0;
-    return time_correct && (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && ((ref = Group.id_subject.toString(), indexOf.call($scope.search.subjects, ref) >= 0) || $scope.search.subjects.length === 0) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
+    return time_correct && (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && ($scope.search.year === Group.year || !$scope.search.year) && ((ref = Group.id_subject.toString(), indexOf.call($scope.search.subjects, ref) >= 0) || $scope.search.subjects.length === 0) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
   };
   $scope.groupsFilter2 = function(Group) {
     var ref, ref1;
