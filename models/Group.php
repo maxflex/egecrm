@@ -33,7 +33,7 @@
 				$this->schedule_count = $this->getScheduleCountCached();
 
                                                         // + group is not ended and has schedule
-				if ($this->grade && $this->id_subject && !$this->ended && $this->schedule_count) {
+				if ($this->grade && $this->id_subject && !$this->ended && $this->schedule_count['paid']) {
 					$this->days_before_exam = $this->daysBeforeExam();
 				}
 			}
