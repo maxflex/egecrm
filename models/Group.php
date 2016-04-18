@@ -32,7 +32,8 @@
 				$this->notified_students_count 	= $this->getNotifiedStudentsCount();
 				$this->schedule_count = $this->getScheduleCountCached();
 
-				if ($this->grade && $this->id_subject) {
+                                                        // + group is not ended and has schedule
+				if ($this->grade && $this->id_subject && !$this->ended && $this->schedule_count) {
 					$this->days_before_exam = $this->daysBeforeExam();
 				}
 			}
