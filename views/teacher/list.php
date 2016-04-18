@@ -5,7 +5,6 @@
 		<div class="pull-right">
 			<span class="link-like link-reverse link-white" ng-click="smsDialog()" style="margin-right: 7px">
 					групповое SMS</span>
-			<a href='teachers/add'>добавить преподавателя</a>
 		</div>
 	</div>
 	<div class="panel-body">
