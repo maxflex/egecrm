@@ -134,6 +134,19 @@
 		}
 
         /**
+         * @param int $id       Teacher id.
+         *
+         * @return string       Teacher data in JSON format.
+         */
+        public function actionGetTeacherById()
+        {
+            extract($_POST);
+            if ($id = intval($id) && $Teacher = Teacher::findById($id)) {
+                returnJSON($Teacher);
+            }
+        }
+
+        /**
          * $id_subject постом должно быть передано
          */
         public function actionGetTeachersBySubjectAndGrade()
