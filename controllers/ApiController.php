@@ -106,7 +106,19 @@
 
 		public function actionGetTeachers()
 		{
-			$Teachers = Teacher::getPublished();
+			extract($_POST);
+			
+			if (isset($subject)) {
+				$id_subject = array_search($subject, Subjects::$short_eng);	
+			}
+			
+			$condition = "published!='' " . (isset($id_subject) ? " AND FIND_IN_SET($id_subject, subjects)" : "") ;
+			
+			
+			$Teachers = Teacher::findAll([
+				'condition' => $condition,
+				'limit' => 2,
+			]);
 			
 			$return = [];
 			
