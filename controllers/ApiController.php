@@ -108,29 +108,29 @@
 		{
 			extract($_POST);
 			
-			if (isset($subject)) {
+			if (isset($subject) && $subject != 'all') {
 				$id_subject = array_search($subject, Subjects::$short_eng);	
 			}
 			
-			$condition = "published!='' " . (isset($id_subject) ? " AND FIND_IN_SET($id_subject, subjects)" : "") ;
-			
-			
+			$condition = "description!='' " . (isset($id_subject) ? " AND FIND_IN_SET($id_subject, subjects)" : "") ;
+/*
+			returnJSON($condition);
+			exit();
+*/
 			$Teachers = Teacher::findAll([
 				'condition' => $condition,
-				'limit' => 2,
+				'limit' => $limit,
 			]);
 			
-			$return = [];
-			
-			foreach ($Teachers as &$Teacher) {
-				$object = [];
-				foreach (Teacher::$api_fields as $field) {
-					$object[$field] = $Teacher->{$field};
-				}
-				$return[] = $object;
-			}
-			
-			returnJSON($return);
+
+			returnJSON(Teacher::forApi($Teachers));
+		}
+		
+		public function actionCountTeachers()
+		{
+			echo Teacher::count([
+				'condition' => "description!=''"
+			]);	
 		}
 
         /**
