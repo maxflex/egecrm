@@ -1,0 +1,1 @@
+ALTER TABLE `users`	ADD COLUMN `show_phone_calls` TINYINT(1) NULL DEFAULT '1' AFTER `banned`;

@@ -41,7 +41,36 @@
 		{
 			extract($_POST);
 
-			# Ищем ученика с таким же номером телефона
+            // Ищем учителя с таким номером
+            $Teacher = Teacher::find([
+                "condition"	=> "phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."'"
+            ]);
+            if ($Teacher) {
+                returnJsonAng([
+                    'name'	=> $Teacher->getInitials(),
+                    'type'	=> 'teacher',
+                    'id'	=> $Teacher->id,
+                ]);
+            }
+
+            # Ищем представителя с таким же номером телефона
+            $represetative = dbConnection()->query("
+				SELECT s.id, r.first_name, r.last_name FROM ".Representative::$mysql_table." r
+				LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
+				WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
+            );
+
+            // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+            if ($represetative->num_rows) {
+                $data = $represetative->fetch_object();
+                returnJsonAng([
+                    'name'	=> $data->last_name . ' ' . $data->first_name,
+                    'type'	=> 'representative',
+                    'id'	=> $data->id,
+                ]);
+            }
+
+            # Ищем ученика с таким же номером телефона
 			$Student = Student::find([
 				"condition"	=> "phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."'"
 			]);
@@ -52,35 +81,6 @@
 					'name'	=> $Student->name('fi'),
 					'type'	=> 'client',
 					'id'	=> $Student->id,
-				]);
-			}
-
-			# Ищем представителя с таким же номером телефона
-			$represetative = dbConnection()->query("
-				SELECT s.id, r.first_name, r.last_name FROM ".Representative::$mysql_table." r
-				LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
-				WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
-			);
-
-			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-			if ($represetative->num_rows) {
-				$data = $represetative->fetch_object();
-				returnJsonAng([
-					'name'	=> $data->last_name . ' ' . $data->first_name,
-					'type'	=> 'representative',
-					'id'	=> $data->id,
-				]);
-			}
-
-			// Ищем учителя с таким номером
-			$Teacher = Teacher::find([
-				"condition"	=> "phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."'"
-			]);
-			if ($Teacher) {
-				returnJsonAng([
-					'name'	=> $Teacher->getInitials(),
-					'type'	=> 'teacher',
-					'id'	=> $Teacher->id,
 				]);
 			}
 

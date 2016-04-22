@@ -1,5 +1,5 @@
 $(document).ready ->
-	vueInit()
+	vueInit() if $('.phone-app').length
 
 # Init Vue
 vueInit = ->
@@ -12,6 +12,7 @@ vueInit = ->
 			connected: false 			# call in progress
 			determined: false			# caller determined?
 			timer:
+				hide_timeout: undefined
 				interval: undefined 	# call length in 01:30
 				diff: 0
 			mango: {}
@@ -31,6 +32,10 @@ vueInit = ->
 				, (request) =>
 					this.caller = request
 					this.determined = true
+
+					clearTimeout this.timer.hide_timeout if this.timer.hide_timeout
+					this.timer.hide_timeout = setTimeout this.endCall, 10*1000
+
 				, 'json'
 			startCall: ->
 				this.connected = true
@@ -41,6 +46,7 @@ vueInit = ->
 				, 1000
 			endCall: ->
 				clearInterval(this.timer.interval) if this.connected
+				clearTimeout this.timer.hide_timeout
 				this.show_element = false
 				this.hide_element = false
 				this.connected = false
@@ -55,14 +61,14 @@ vueInit = ->
 							this.callAppeared()
 						when 'Connected'
 							this.startCall()
-						when 'Disconnected'
-							this.endCall()
+#						when 'Disconnected'
+#							this.endCall()
 		computed:
 			call_length: ->
 				moment(parseInt(this.timer.diff) * 1000).format 'mm:ss'
 			number: ->
-				n = this.mango.from.number
-				"+#{n[0]} (#{n.slice(1, 4)}) #{n.slice(4, 7)}-#{n.slice(7, 9)}-#{n.slice(9, 11)}"
+				"+#{this.mango.from.number}"
+#				"+#{n[0]} (#{n.slice(1, 4)}) #{n.slice(4, 7)}-#{n.slice(7, 9)}-#{n.slice(9, 11)}"
 		ready: ->
 			this.initPusher()
 
