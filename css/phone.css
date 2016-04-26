@@ -21,18 +21,15 @@
 
 .call-popup {
 	position: fixed;
-	right: 40px;
-	bottom: 40px;
-	border: 1px solid #a4a4a4;
-	box-shadow: 0px 3px 18px 6px rgba(0,0,0,0.2);
+	right:0px;
+	bottom:0px;
 	z-index: 999;
-	background: rgba(255,255,255,0.9);
-	padding: 6px 25px;
+	background: rgba(255,255,255,0.8);
+	padding: 12px 22px;
 	min-height: 55px;
-    border-radius: 35px;
-    -webkit-border-radius: 35px;
-    width: 300px;
-    opacity: 0;
+    border-radius: 23px 0 0 0;
+    -webkit-border-radius: 23px 0 0 0;
+    min-width: 250px;
 }
 
 .call-popup a {
@@ -55,7 +52,6 @@
 
 .call-popup-info {
 	display: inline-block;
-	width: 200px;
 	vertical-align: top;
 	float: left;
 }
@@ -74,8 +70,6 @@
 }
 .phone-control:hover {
 	opacity: 1;
-	// transform: rotate(120deg);
-   // -webkit-transform: rotate(120deg); /** Chrome & Safari **/
 }
 	#close-call {
 	    position: absolute;

@@ -1,10 +1,5 @@
-<style>
-    .glyphicon {
-        font-size: 18pt;
-    }
-</style>
 <div ng-app="Users" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
-	<table class="table table-divlike">
+	<table class="table table-divlike" id="user-list">
         <tr class="row">
             <td colspan="4"></td>
             <td align="center"><span class="glyphicon glyphicon-earphone"></span></td>
@@ -31,13 +26,13 @@
 				</label>
 			</td>
 -->
-            <td>
+            <td align="center">
                 <label class="green-switch ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
                     <input type="checkbox" ng-model="User.show_phone_calls" ng-true-value="1">
                     <span class="switch"></span>
                 </label>
 			</td>
-			<td>
+			<td align="center">
 				<label class="red-switch ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
 					<input type="checkbox" ng-model="User.banned" ng-true-value="1">
 					<span class="switch"></span>

@@ -2,13 +2,17 @@
 	// Контроллер
 	class MangoController extends Controller
 	{
+		const TEST_NUMBER = '74955653170';
+		const APERS_NUMBER = '74956461080';
+		const EGECENTR_NUMBER = '74956468592';
+
 		// Папка вьюх
 		protected $_viewsFolder	= "mango";
 
 		public function actionEventCall()
 		{
 			$data = json_decode($_POST['json']);
-			if ($data->to->line_number == '74955653170') {
+			if (static::isEgecentrNumber($data->to->line_number)) {
 				// Email::send("makcyxa-k@yandex.ru", "Mango Info", json_encode($data));
 				Socket::trigger('user_' . $data->to->extension, 'incoming', $data);
 			}
@@ -40,6 +44,10 @@
 		public function actionGetCaller()
 		{
 			extract($_POST);
+            $answeredUserName = false;
+            if ($answeredUser  = $this->getAnsweredUser($phone)) {
+                $answeredUserName = $answeredUser->login;
+            }
 
             // Ищем учителя с таким номером
             $Teacher = Teacher::find([
@@ -47,7 +55,8 @@
             ]);
             if ($Teacher) {
                 returnJsonAng([
-                    'name'	=> $Teacher->getInitials(),
+                    'user'	=> $answeredUserName,
+                    'name'	=> $Teacher->getFullName(),
                     'type'	=> 'teacher',
                     'id'	=> $Teacher->id,
                 ]);
@@ -55,7 +64,7 @@
 
             # Ищем представителя с таким же номером телефона
             $represetative = dbConnection()->query("
-				SELECT s.id, r.first_name, r.last_name FROM ".Representative::$mysql_table." r
+				SELECT s.id, r.first_name, r.last_name, r.middle_name FROM ".Representative::$mysql_table." r
 				LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
 				WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
             );
@@ -64,7 +73,8 @@
             if ($represetative->num_rows) {
                 $data = $represetative->fetch_object();
                 returnJsonAng([
-                    'name'	=> $data->last_name . ' ' . $data->first_name,
+                    'user'	=> $answeredUserName,
+                    'name'	=> getName($data->first_name, $data->last_name, $data->middle_name),
                     'type'	=> 'representative',
                     'id'	=> $data->id,
                 ]);
@@ -77,11 +87,12 @@
 
 			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
 			if ($Student) {
-				returnJsonAng([
-					'name'	=> $Student->name('fi'),
-					'type'	=> 'client',
-					'id'	=> $Student->id,
-				]);
+                returnJsonAng([
+                    'user'	=> $answeredUserName,
+					'name'	=> $Student->name(),
+					'type'	=> 'student',
+					'id'	=> $Student->id
+                ]);
 			}
 
 			# Ищем заявку с таким же номером телефона
@@ -92,13 +103,52 @@
 			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
 			if ($Request) {
 				returnJsonAng([
+                    'user'	=> $answeredUserName,
 					'name'	=> $Request->name,
 					'type'	=> 'request',
-					'id'	=> $Request->id,
-				]);
+					'id'	=> $Request->id
+                ]);
 			}
 
 			// возвращается, если номера нет в базе
-			returnJsonAng(false);
+			returnJsonAng([
+                'user' => $answeredUserName,
+                'type' => false
+            ]);
 		}
+
+        private function getAnsweredUser($phone) {
+            $result = dbConnection()->query(
+                "SELECT user_id FROM last_call_data ".
+                "WHERE phone = '{$phone}' LIMIT 1"
+            );
+
+            if ($result && $result->num_rows) {
+                $data = $result->fetch_assoc();
+                return User::findById($data['user_id']);
+            }
+            return false;
+        }
+
+        public function actionSaveCallState() {
+            extract($_POST);
+            $user_id = intval($user_id);
+            dbConnection()->query(
+                "INSERT INTO last_call_data (phone, user_id) ".
+                "VALUES ('{$phone}', {$user_id}) ".
+                "ON DUPLICATE KEY UPDATE user_id = {$user_id}"
+            );
+        }
+
+        public static function isTestNumber($number) {
+            return $number == static::TEST_NUMBER;
+        }
+
+        public static function isApersNumber($number) {
+            return $number == static::APERS_NUMBER;
+        }
+
+        public static function isEgecentrNumber($number) {
+            return $number == static::EGECENTR_NUMBER;
+        }
 	}

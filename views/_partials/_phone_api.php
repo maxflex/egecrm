@@ -1,4 +1,4 @@
-<div class="phone-app">
+<div class="phone-app" <?= User::fromSession()->show_phone_calls ? '' : 'style="display:none;"'?>>
     <phone user_id="<?= User::fromSession()->id ?>"></phone>
 
     <template id="phone-template">
@@ -15,14 +15,17 @@
                 звонок от {{ number }}<br>
                 <span v-if="determined">
                     <span v-if="caller.type == 'teacher'">преподаватель <a target='_blank' href='teachers/edit/{{caller.id}}'>{{ caller.name }}</a></span>
-                    <span v-if="caller.type == 'representative'">заявка <a target='_blank' href='student/{{caller.id}}' >{{ caller.name }}</a></span>
-                    <span v-if="caller.type == 'student'">заявка <a target='_blank' href='student/{{caller.id}}' >{{ caller.name }}</a></span>
+                    <span v-if="caller.type == 'representative'">представитель <a target='_blank' href='student/{{caller.id}}' >{{ caller.name }}</a></span>
+                    <span v-if="caller.type == 'student'">ученик <a target='_blank' href='student/{{caller.id}}' >{{ caller.name }}</a></span>
                     <span v-if="caller.type == 'request'">по заявке <a target='_blank' href='requests/edit/{{caller.id}}'>{{ caller.name }}</a></span>
                     <span v-if="!caller.type">неизвестный номер</span>
+                    <br/>
+                    <span v-if="caller.user">последняя связь с {{caller.user}}</span>
                 </span>
                 <span v-else>
                     <span class="text-gray">определение...</span>
                 </span>
+
 <!--				<div id="call-description">-->
 <!--                    <span v-if='!connected'>-->
 <!--                        <span v-if='caller'>-->
