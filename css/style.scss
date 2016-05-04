@@ -26,9 +26,10 @@
 	display: flex;
 	margin-left: 0;
 	margin-right: 0;
-	& div {
+	& > div {
 		flex: 1;
 		margin-right: 10px;
+	  	width: calc(100%/7);
 	}
 }
 
