@@ -144,10 +144,36 @@
 			$scope.addPaymentDialog = ->
 			  $scope.new_payment = id_status: 0
 			  lightBoxShow 'addpayment'
+
+			  $scope.handleKeyPress()
+			  setTimeout ->
+				  $($("#addpayment select")[0]).focus()
+			  , 200
+
 			  return
+			$scope.handleKeyPress = ->
+				$('#addpayment').on 'keydown', (e) ->
+					if e.keyCode == 13
+						if $('#payment-select').is(':focus')
+							select_val = $('#payment-select').val();
+							if select_val isnt '0'
+								if select_val is '1'
+									$('#payment-card').focus()
+								else
+									$('#payment-sum').focus()
+						else
+							if $('#payment-card').is(':focus')
+								$('#payment-sum').focus()
+							else
+								if $('#payment-sum').is(':focus')
+									$('#payment-date').focus()
+								else
+									if $('#payment-date').is(':focus')
+
+										$scope.addPayment()
+						e.preventDefault()
 
 			# Добавить платеж
-
 			$scope.addPayment = ->
 			  # Получаем элементы (я знаю, что по-хорошему нужно получить их один раз вне функции
 			  # а не каждый раз, когда функция вызывается, искать их заново. Но забей. Хочу их внутри когда
