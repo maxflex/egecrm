@@ -153,7 +153,7 @@
 					$red_count += Teacher::redReportCountStatic($id_teacher);
 				}
 				
-				memcached()->set('redReportCountAll', $red_count, 3600 * 24 * 30);
+				memcached()->set('redReportCountAll', $red_count, 3600 * 12); // на 12 часов
 			}
 			return $red_count;
 		}
