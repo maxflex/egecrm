@@ -306,7 +306,7 @@
          */
         private function checkRequestLimit() {
             $req_from_ip = dbConnection()->query("
-				SELECT COUNT(*) as cnt FROM ".$this->mysql_table."
+				SELECT COUNT(*) as cnt FROM requests
 				WHERE date > DATE_SUB(NOW(), INTERVAL 1 HOUR) AND ip = '".$this->ip."'
 			");
 
@@ -315,7 +315,7 @@
             }
 
             $total_req = dbConnection()->query("
-				SELECT COUNT(*) as cnt FROM ".$this->mysql_table."
+				SELECT COUNT(*) as cnt FROM requests
 				WHERE date > DATE_SUB(NOW(), INTERVAL 1 HOUR)
 			");
 
