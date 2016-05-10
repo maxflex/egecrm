@@ -191,10 +191,10 @@
 			$Request = new Request($_POST);
 
 			// Обработка входящей заявки
-			$Request->processIncoming();
-
-			// Сохраняем заявку
-			$Request->save();
-		}
+			if ($Request->processIncoming()) {
+                // Сохраняем заявку
+                $Request->save();
+            }
+        }
 
 	}
