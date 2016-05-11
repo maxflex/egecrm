@@ -112,7 +112,7 @@
 <!-- /ЛАЙТБОКС ОТПРАВКА EMAIL -->
 
 
-<?= globalPartial('phone_api') ?>
+<?= globalPartial('phone_api'); ?>
 
 <div class="row">
   <div class="col-sm-2" style="margin-left: 10px">

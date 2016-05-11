@@ -21,27 +21,20 @@
 
 .call-popup {
 	position: fixed;
-	right: 0.5%;
-	bottom: 2%;
-//	border: 1px solid rgba(135,135,135,0.5);
-	box-shadow: 0px 0px 17px 7px rgba(0,0,0,0.3);
+	right:0px;
+	bottom:0px;
 	z-index: 999;
-	background: rgba(255,255,255,0.9);
-	padding: 5px;
-	min-height: 90px;
-	/*width: 277px;*/
-	width: 300px;
-	opacity: 0;
-	/*display: none;*/
-	-webkit-border-radius: 7px;
-	border-radius: 7px;
+	background: rgba(255,255,255,0.8);
+	padding: 12px 22px;
+	min-height: 55px;
+    border-radius: 23px 0 0 0;
+    -webkit-border-radius: 23px 0 0 0;
+    min-width: 250px;
 }
 
 .call-popup a {
-	color: rgba(0,0,0,0.7);
-	text-decoration: none;
+	text-decoration: underline;
 	font-size: 13px;
-//	font-weight: bold;
 }
 
 .call-popup a:hover {
@@ -59,20 +52,13 @@
 
 .call-popup-info {
 	display: inline-block;
-	width: 173px;
 	vertical-align: top;
-//	padding-top: 20px;
-	color: rgba(0,0,0,0.7);
-	text-align: center;
 	float: left;
 }
-
 .call-popup-info a {
-	color: rgba(0,0,0,0.7) !important;
 }
 
 .call-popup-info a:hover {
-	color: black !important;
 }
 
 
@@ -82,13 +68,9 @@
 	opacity: 0.6;
 	cursor: pointer;
 }
-
 .phone-control:hover {
 	opacity: 1;
-	// transform: rotate(120deg);
-   // -webkit-transform: rotate(120deg); /** Chrome & Safari **/
 }
-
 	#close-call {
 	    position: absolute;
 		height: 9px;

@@ -108,29 +108,29 @@
 		{
 			extract($_POST);
 			
-			if (isset($subject)) {
+			if (isset($subject) && $subject != 'all') {
 				$id_subject = array_search($subject, Subjects::$short_eng);	
 			}
 			
-			$condition = "published!='' " . (isset($id_subject) ? " AND FIND_IN_SET($id_subject, subjects)" : "") ;
-			
-			
+			$condition = "description!='' " . (isset($id_subject) ? " AND FIND_IN_SET($id_subject, subjects)" : "") ;
+/*
+			returnJSON($condition);
+			exit();
+*/
 			$Teachers = Teacher::findAll([
 				'condition' => $condition,
-				'limit' => 2,
+				'limit' => $limit,
 			]);
 			
-			$return = [];
-			
-			foreach ($Teachers as &$Teacher) {
-				$object = [];
-				foreach (Teacher::$api_fields as $field) {
-					$object[$field] = $Teacher->{$field};
-				}
-				$return[] = $object;
-			}
-			
-			returnJSON($return);
+
+			returnJSON(Teacher::forApi($Teachers));
+		}
+		
+		public function actionCountTeachers()
+		{
+			echo Teacher::count([
+				'condition' => "description!=''"
+			]);	
 		}
 
         /**
@@ -155,7 +155,7 @@
             $return = [];
             if (($id_subject = intval($id_subject)) && ($grade = intval($grade) )) {
                 $Teachers = Teacher::findAll([
-                    "condition" => "published = 1 ".
+                    "condition" => "description!='' ".
                         "AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%' ".
                         "AND CONCAT(',', CONCAT(grades, ',')) LIKE '%,{$grade},%' "
                 ]);
@@ -191,10 +191,10 @@
 			$Request = new Request($_POST);
 
 			// Обработка входящей заявки
-			$Request->processIncoming();
-
-			// Сохраняем заявку
-			$Request->save();
-		}
+			if ($Request->processIncoming()) {
+                // Сохраняем заявку
+                $Request->save();
+            }
+        }
 
 	}

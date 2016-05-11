@@ -140,7 +140,11 @@
 									style="margin-left: 3px">позвонить</span>
 							</td>
 							<td>
-								{{Schedule.lesson_number}} урок
+								{{Schedule.lesson_number}} из {{Schedule.total_lessons}} <ng-pluralize count="Schedule.total_lessons" when="{
+									'one': 'урока',
+									'few': 'уроков',
+									'many': 'уроков',
+								}"></ng-pluralize>
 							</td>
 							<td>
 								<span class="label label-warning" ng-show="Schedule.lesson_number == 1">старт группы</span>

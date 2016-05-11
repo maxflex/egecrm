@@ -238,7 +238,7 @@
 
 
 	<!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
-	<div class="lightbox-new lightbox-addpayment" style="width: 551px; left: calc(50% - 275px)">
+	<div id="addpayment" class="lightbox-new lightbox-addpayment" style="width: 551px; left: calc(50% - 275px)">
 		<h4>{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
 		<div class="form-group payment-line">
 			<div class="form-group inline-block">
@@ -251,16 +251,19 @@
 				<input type="text" class="form-control digits-only" id="payment-sum" ng-model="new_payment.sum"  ng-keydown="watchEnter($event)"> от
 			</div>
 			<div class="form-group inline-block">
-				<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
+                <input class="form-control bs-date" id="payment-date" ng-model="new_payment.date" pattern="[0-9]{2}.[0-9]{2}.[0-9]{4}">
 			</div>
 		</div>
+        <script>
+            $("#payment-date").inputmask("99.99.9999");
+        </script>
 		<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
 			<h4>Номер карты</h4>
 			<div class="form-group inline-block">
 				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block; margin-left: 5px"> -
 				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> -
 				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> -
-				<input class="form-control digits-only" maxlength="4" ng-model="new_payment.card_number"
+				<input class="form-control digits-only" id="payment-card" maxlength="4" ng-model="new_payment.card_number"
 					style="width: 60px; display: inline-block">
 			</div>
 		</div>

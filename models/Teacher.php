@@ -153,7 +153,7 @@
 					$red_count += Teacher::redReportCountStatic($id_teacher);
 				}
 				
-				memcached()->set('redReportCountAll', $red_count, 3600 * 24 * 30);
+				memcached()->set('redReportCountAll', $red_count, 3600 * 12); // на 12 часов
 			}
 			return $red_count;
 		}
@@ -324,5 +324,30 @@
 			return VisitJournal::count([
 				"condition" => "type_entity='TEACHER' AND id_entity={$this->id}"
 			]);
+		}
+		
+		/*
+		 * Вернуть учителей для API
+		 */
+		public static function forApi($Teachers)
+		{
+			foreach ($Teachers as $Teacher) { 
+				$object = [];
+				foreach (Teacher::$api_fields as $field) {
+					$object[$field] = $Teacher->{$field};
+				}
+				$object['photo_url'] = $Teacher->has_photo ? 'https://lk.a-perspektiva.ru/img/tutors/' . $Teacher->id . '@2x.' . $Teacher->photo_extension : 'https://lk.a-perspektiva.ru/img/tutors/no-profile-img.gif';
+				$object['full_name'] = $Teacher->getFullName();
+				$object['grades_interval'] = $object['public_grades'][0] . (count($object['public_grades']) > 1 ? '-' . end($object['public_grades']) : '');
+				
+				$subject_string = [];
+				foreach ($Teacher->subjects as $index => $id_subject) {
+					$subject_string[] = Subjects::$dative[$id_subject];
+				} 
+				$object['subjects_dative'] = implode(', ', $subject_string);
+				
+				$return[] = $object;
+			}
+			return $return;
 		}
 	}
