@@ -155,7 +155,7 @@
             $return = [];
             if (($id_subject = intval($id_subject)) && ($grade = intval($grade) )) {
                 $Teachers = Teacher::findAll([
-                    "condition" => "published = 1 ".
+                    "condition" => "description!='' ".
                         "AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%' ".
                         "AND CONCAT(',', CONCAT(grades, ',')) LIKE '%,{$grade},%' "
                 ]);
