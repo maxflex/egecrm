@@ -896,6 +896,11 @@
 					"condition" => "id_group={$S->id_group} AND date <= '{$date}' AND cancelled = 0"
 				]);
 
+				// общее кол-во уроков
+				$S->total_lessons = GroupSchedule::count([
+					"condition" => "id_group={$S->id_group} AND cancelled = 0"
+				]);
+
                 $Cabinet = Cabinet::findById($S->cabinet);
 				$S->branch = Branches::getShortColoredById($S->id_branch,
 					($S->cabinet ? "-".$Cabinet->number : "")
