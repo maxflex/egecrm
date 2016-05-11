@@ -570,14 +570,26 @@
 			}
 			
 			$scope.getLastLessonDate = function() {
-				date = '0000-00-00'
-				$.each($scope.Groups, function(index, Group) {
-					new_date = _.last(Group.Schedule).date
-					if (new_date > date) {
-						date = new_date
-					}
-				})
-				return $scope.textDate(date)
+        date = '0000-00-00'
+        // если есть активные группы
+        if ($scope.Groups.length) {
+          $.each($scope.Groups, function(index, Group) {
+            new_date = _.last(Group.Schedule).date
+            if (new_date > date) {
+              date = new_date
+            }
+          })
+        } else {
+          // иначе берем группы которые были посещены
+          $.each($scope.getStudentGroups(), function(index, id_group) {
+            var last_lesson = _.last($scope.getVisitsByGroup(id_group));
+            new_date = last_lesson.lesson_date
+            if (new_date > date) {
+              date = new_date;
+            }
+          })
+        }
+        return $scope.textDate(date)
 			}
 			
 			$scope.todayDate = function() {
