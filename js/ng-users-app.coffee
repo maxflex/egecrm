@@ -16,6 +16,8 @@ angular.module "Users", ['colorpicker.module']
 
 	.controller "EditCtrl", ($scope, $timeout) ->
 		$scope.has_pswd_error = false
+		$scope.psw_changed = false
+		$scope.picture_version = 1
 
 		$scope.clone_user = ->
 			$scope.old_data = angular.copy $.extend $scope.User, { new_password:'', new_password_repeat:''}
@@ -24,11 +26,14 @@ angular.module "Users", ['colorpicker.module']
 			p1 = $scope.User.new_password
 			p2 = $scope.User.new_password_repeat
 			if p1 or p2
+				$scope.psw_changed = true
 				for x in [p1, p2]
 					has_pswd_error = !x || (x && !(x.match('^[a-zA-Z0-9_]{10,}$') and x.match('[a-zA-Z]+') and x.match('[0-9]+') and x.match('[_]+')))
 					break if has_pswd_error
 
 				$scope.has_pswd_error = (p1 isnt p2) or has_pswd_error
+			else
+				$scope.psw_changed = false
 
 		$scope.save = ->
 			ajaxStart()
@@ -62,9 +67,14 @@ angular.module "Users", ['colorpicker.module']
 		$scope.deletePhoto = ->
 			bootbox.confirm 'Удалить фото преподавателя?', (result) ->
 				if result is true
-					$scope.User.$deletePhoto ->
+					ajaxStart()
+					$.post "users/ajax/deletePhoto",
+						user_id: $scope.User.id
+					, (response) ->
+						ajaxEnd()
 						$scope.User.has_photo_cropped = false
 						$scope.User.has_photo_original = false
+						$scope.$apply()
 
 		$scope.formatBytes = (bytes) ->
 			if bytes < 1024
@@ -96,23 +106,22 @@ angular.module "Users", ['colorpicker.module']
 						$scope.$apply()
 						$scope.closeDialog('change-photo')
 
-		$scope.picture_version = 1;
 		bindCropper = ->
-#			$('#photo-edit').cropper 'destroy'
-#			$('#photo-edit').cropper
-#				aspectRatio: 4 / 5
-#				minContainerHeight: 700
-#				minContainerWidth: 700
-#				minCropBoxWidth: 240
-#				minCropBoxHeight: 300
-#				preview: '.img-preview'
-#				viewMode: 1
-#				crop: (e) ->
-#					width = $('#photo-edit').cropper('getCropBoxData').width
-#					if width >= 240
-#						$('.cropper-line, .cropper-point').css 'background-color', '#158E51'
-#					else
-#						$('.cropper-line, .cropper-point').css 'background-color', '#D9534F'
+			$('#photo-edit').cropper 'destroy'
+			$('#photo-edit').cropper
+				aspectRatio: 4 / 5
+				minContainerHeight: 700
+				minContainerWidth: 700
+				minCropBoxWidth: 240
+				minCropBoxHeight: 300
+				preview: '.img-preview'
+				viewMode: 1
+				crop: (e) ->
+					width = $('#photo-edit').cropper('getCropBoxData').width
+					if width >= 240
+						$('.cropper-line, .cropper-point').css 'background-color', '#158E51'
+					else
+						$('.cropper-line, .cropper-point').css 'background-color', '#D9534F'
 
 		bindFileUpload = ->
 			# загрузка файла договора
@@ -149,6 +158,6 @@ angular.module "Users", ['colorpicker.module']
 		$scope.showPhotoEditor = ->
 			$scope.dialog('change-photo')
 			# rare bug fix
-#			$timeout ->
-#				$('#photo-edit').cropper 'resize'
-#			, 100
+			$timeout ->
+				$('#photo-edit').cropper 'resize'
+			, 100

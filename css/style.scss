@@ -2827,3 +2827,9 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 	border-left: 1px solid #ccc;
   }
 }
+.photo-sizes {
+  margin: 20px 0;
+}
+.image-col-right .form-group button {
+  width: 100%;
+}

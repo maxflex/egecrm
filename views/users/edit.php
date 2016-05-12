@@ -3,11 +3,11 @@
     <div class="modal modal-fullscreen" tabindex="-1" id='change-photo'>
         <div class="modal-dialog" style="width: 80%; height: 90%; margin: 3% auto">
             <div class="modal-content" style="height: 100%">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-10 image-col-left">
-                            <div ng-show='User.has_photo_original' style="height: 100%">
-                                <img src="img/users/{{ User.id + '_original.' + User.photo_extension }}?ver={{ picture_version }}" id='photo-edit'>
+                <div class="modal-body" style="height: 100%">
+                    <div class="row" style="height: 100%">
+                        <div class="col-sm-10 image-col-left" style="height: 100%">
+                            <div ng-show='User.has_photo_original' style="height: calc(100% - 10px);">
+                                <img src="img/users/{{ User.id + '_original.' + User.photo_extension }}?ver={{ picture_version }}" id='photo-edit' style="height: 100%">
                             </div>
                         </div>
                         <div class="col-sm-2 center image-col-right">
@@ -19,10 +19,10 @@
 
                             <div class='photo-sizes'>
                                 <div ng-show='User.photo_original_size'>
-                                    @{{ formatBytes(User.photo_original_size) }}
+                                    {{ formatBytes(User.photo_original_size) }}
                                 </div>
-                                <div ng-show='tutor.photo_cropped_size'>
-                                    @{{ formatBytes(User.photo_cropped_size) }}
+                                <div ng-show='User.photo_cropped_size'>
+                                    {{ formatBytes(User.photo_cropped_size) }}
                                 </div>
                             </div>
 
@@ -81,14 +81,14 @@
                 </div>
             </div>
 
-            <div class="form-group" ng-class="{ 'has-error' : form_changed && has_pswd_error, 'has-success' : form_changed && !has_pswd_error && User.new_password }">
+            <div class="form-group" ng-class="{ 'has-error' : psw_changed && has_pswd_error, 'has-success' : psw_changed && !has_pswd_error && User.new_password }">
                 <input type="password"
                        class="form-control"
                        ng-model="User.new_password"
                        placeholder="Пароль">
             </div>
 
-            <div class="form-group" ng-class="{ 'has-error' : form_changed && has_pswd_error, 'has-success' : form_changed && !has_pswd_error && User.new_password }">
+            <div class="form-group" ng-class="{ 'has-error' : psw_changed && has_pswd_error, 'has-success' : psw_changed && !has_pswd_error && User.new_password }">
                 <input type="password"
                        class="form-control"
                        ng-model="User.new_password_repeat"
