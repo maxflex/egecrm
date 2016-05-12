@@ -1,3 +1,8 @@
+<link rel="stylesheet" href="js/bower/angular-bootstrap-colorpicker/css/colorpicker.min.css">
+<script type="text/javascript" src="js/bower/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js"></script>
+<script type="text/javascript" src="js/bower/cropper/dist/cropper.min.js"></script>
+<link rel="stylesheet" href="js/bower/cropper/dist/cropper.css">
+
 <?php if (in_array(User::fromSession()->id, [-1])) :?>
 <div class="menu-wrap">
 	<nav class="menu">

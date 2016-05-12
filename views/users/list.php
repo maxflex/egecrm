@@ -1,11 +1,14 @@
 <div ng-app="Users" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<table class="table table-divlike" id="user-list">
         <tr class="row">
-            <td colspan="4"></td>
+            <td colspan="5"></td>
             <td align="center"><span class="glyphicon glyphicon-earphone"></span></td>
             <td align="center"><span class="glyphicon glyphicon-ban-circle"></span></td>
         </tr>
 		<tr ng-repeat="User in Users" class="row">
+			<td>
+                <a href="users/edit/{{ User.id }}">{{ User.login }}</a>
+			</td>
 			<td>
 				<input class="form-control" ng-model="User.login" placeholder="логин">
 			</td>

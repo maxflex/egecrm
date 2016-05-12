@@ -16,6 +16,10 @@
 		// ID разработчиков
 		const DEVELOPERS = [69, 102];
 
+        const UPLOAD_DIR = 'img/users/';
+        const NO_PHOTO   = 'no-profile-img.gif';
+
+        const PHOTO_EXTENSION = 'png';
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "users";
@@ -24,6 +28,59 @@
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
+        public function photoPath($addon = '')
+        {
+            return static::UPLOAD_DIR . $this->id . $addon . '.' . self::PHOTO_EXTENSION;
+        }
+
+        public function photoUrl()
+        {
+            if ($this->hasPhotoCropped()) {
+                $photo = $this->id . '.' . self::PHOTO_EXTENSION;
+            } else {
+                $photo = static::NO_PHOTO;
+            }
+            return static::UPLOAD_DIR . $photo;
+        }
+
+        public function hasPhotoOriginal()
+        {
+            return file_exists($this->photoPath('_original'));
+        }
+
+        public function hasPhotoCropped()
+        {
+            return file_exists($this->photoPath());
+        }
+
+        public function photoCroppedSize()
+        {
+            if ($this->hasPhotoCropped()) {
+                return filesize($this->photoPath());
+            } else {
+                return 0;
+            }
+        }
+
+        public function photoOriginalSize()
+        {
+            if ($this->hasPhotoOriginal()) {
+                return filesize($this->photoPath('_original'));
+            } else {
+                return 0;
+            }
+        }
+
+        public function __construct($array = [])
+        {
+            parent::__construct($array);
+            $this->photo_extension = self::PHOTO_EXTENSION;
+            $this->has_photo_original = $this->hasPhotoOriginal();
+            $this->photo_original_size = $this->photoOriginalSize();
+            $this->has_photo_cropped = $this->hasPhotoCropped();
+            $this->photo_cropped_size = $this->photoCroppedSize();
+            $this->photo_url = $this->photoUrl();
+        }
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 

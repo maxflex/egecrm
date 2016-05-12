@@ -113,6 +113,7 @@ RewriteRule ^sms/([0-9]+)[/]?$ index.php?controller=sms&page=$1 [QSA,L]
 
 # Пользователи
 RewriteRule ^users[/]?$ index.php?controller=users [QSA,L]
+RewriteRule ^users/edit/([0-9]+)[/]?$ index.php?controller=users&action=edit&id=$1 [QSA,L]
 RewriteRule ^users/ajax/([a-zA-Z]+)[/]?$ index.php?controller=users&action=Ajax$1 [QSA,L]
 
 # Пробные тестирования
