@@ -74,6 +74,8 @@ angular.module "Users", ['colorpicker.module']
 						ajaxEnd()
 						$scope.User.has_photo_cropped = false
 						$scope.User.has_photo_original = false
+						$scope.User.photo_cropped_size = 0
+						$scope.User.photo_original_size = 0
 						$scope.$apply()
 
 		$scope.formatBytes = (bytes) ->
