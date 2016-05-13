@@ -19,7 +19,6 @@
         const UPLOAD_DIR = 'img/users/';
         const NO_PHOTO   = 'no-profile-img.gif';
 
-        const PHOTO_EXTENSION = 'png';
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "users";
@@ -30,13 +29,13 @@
 
         public function photoPath($addon = '')
         {
-            return static::UPLOAD_DIR . $this->id . $addon . '.' . self::PHOTO_EXTENSION;
+            return static::UPLOAD_DIR . $this->id . $addon . '.' . $this->photo_extension;
         }
 
         public function photoUrl()
         {
             if ($this->hasPhotoCropped()) {
-                $photo = $this->id . '.' . self::PHOTO_EXTENSION;
+                $photo = $this->id . '.' . $this->photo_extension;
             } else {
                 $photo = static::NO_PHOTO;
             }
@@ -74,7 +73,7 @@
         public function __construct($array = [])
         {
             parent::__construct($array);
-            $this->photo_extension = self::PHOTO_EXTENSION;
+
             $this->has_photo_original = $this->hasPhotoOriginal();
             $this->photo_original_size = $this->photoOriginalSize();
             $this->has_photo_cropped = $this->hasPhotoCropped();
