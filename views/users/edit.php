@@ -55,8 +55,8 @@
                         изменить фото
                     </div>
                     <span class="btn-file"></span>
-                    <img src="{{ User.photo_url }}?ver={{ picture_version }}">
-<!--                    <img src="img/users/{{ User.id && User.has_photo_cropped ? User.id + '.' + User.photo_extension : 'no-profile-img.gif' }}">-->
+<!--                    <img src="{{ User.photo_url }}?ver={{ picture_version }}">-->
+                    <img src="img/users/{{ User.id && User.has_photo_cropped ? User.id + '.' + User.photo_extension : 'no-profile-img.gif' }}?ver={{ picture_version }}">
                 </div>
             </div>
         </div>

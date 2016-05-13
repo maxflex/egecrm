@@ -2833,3 +2833,16 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .image-col-right .form-group button {
   width: 100%;
 }
+
+.img-preview-container {
+  overflow: hidden;
+  // border: 3px dashed #DEDEDE;
+  border-radius: 5px;
+  height: 150px;
+  width: 120px;
+  margin: 0 auto;
+  & .img-preview {
+	height: 150px;
+	width: 120px;
+  }
+}

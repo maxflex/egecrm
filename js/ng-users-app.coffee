@@ -65,7 +65,7 @@ angular.module "Users", ['colorpicker.module']
 			return
 
 		$scope.deletePhoto = ->
-			bootbox.confirm 'Удалить фото преподавателя?', (result) ->
+			bootbox.confirm 'Удалить фото пользователя?', (result) ->
 				if result is true
 					ajaxStart()
 					$.post "users/ajax/deletePhoto",
@@ -101,7 +101,7 @@ angular.module "Users", ['colorpicker.module']
 					success: (response) ->
 						ajaxEnd()
 						$scope.User.has_photo_cropped = true
-						$scope.photo_cropped_size = response
+						$scope.User.photo_cropped_size = response
 						$scope.picture_version++
 						$scope.$apply()
 						$scope.closeDialog('change-photo')
