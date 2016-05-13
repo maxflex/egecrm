@@ -115,7 +115,7 @@
     </div>
     <div class="row">
         <div class="col-sm-12 center">
-            <button class="btn btn-primary" ng-click="save()" ng-disabled="!form_changed || has_pswd_error">
+            <button class="btn btn-primary" ng-click="save()" ng-disabled="!form_changed || User.login.length == 0 || has_pswd_error">
                 <span ng-show="form_changed">Сохранить</span>
                 <span ng-show="!form_changed">Сохранено</span>
             </button>
