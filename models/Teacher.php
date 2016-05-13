@@ -18,6 +18,7 @@
 
 		const USER_TYPE = "TEACHER";
 		const UPLOAD_DIR = "img/teachers/";
+		const EXTERNAL_PHOTO_PATH = 'http://static.a-perspektiva.ru/img/tutors/';
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
@@ -80,7 +81,7 @@
 		 */
 		public function photoExists()
 		{
-			$ch = curl_init('http://lk.a-perspektiva.ru:8085/img/tutors/' . $this->id . '@2x.' . $this->photo_extension);
+			$ch = curl_init(static::EXTERNAL_PHOTO_PATH . $this->id . '.' . $this->photo_extension);
 			curl_setopt($ch, CURLOPT_NOBODY, true);
 			curl_exec($ch);
 			$retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -336,7 +337,7 @@
 				foreach (Teacher::$api_fields as $field) {
 					$object[$field] = $Teacher->{$field};
 				}
-				$object['photo_url'] = $Teacher->has_photo ? 'https://lk.a-perspektiva.ru/img/tutors/' . $Teacher->id . '@2x.' . $Teacher->photo_extension : 'https://lk.a-perspektiva.ru/img/tutors/no-profile-img.gif';
+				$object['photo_url'] = $Teacher->has_photo ? static::EXTERNAL_PHOTO_PATH . $Teacher->id . '.' . $Teacher->photo_extension : static::EXTERNAL_PHOTO_PATH . 'no-profile-img.gif'; 
 				$object['full_name'] = $Teacher->getFullName();
 				$object['grades_interval'] = $object['public_grades'][0] . (count($object['public_grades']) > 1 ? '-' . end($object['public_grades']) : '');
 				

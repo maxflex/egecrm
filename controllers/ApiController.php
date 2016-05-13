@@ -152,7 +152,6 @@
         public function actionGetTeachersBySubjectAndGrade()
         {
             extract($_POST);
-            $return = [];
             if (($id_subject = intval($id_subject)) && ($grade = intval($grade) )) {
                 $Teachers = Teacher::findAll([
                     "condition" => "description!='' ".
@@ -160,15 +159,8 @@
                         "AND CONCAT(',', CONCAT(grades, ',')) LIKE '%,{$grade},%' "
                 ]);
 
-                foreach ($Teachers as &$Teacher) {
-                    $object = [];
-                    foreach (Teacher::$api_fields as $field) {
-                        $object[$field] = $Teacher->{$field};
-                    }
-                    $return[] = $object;
-                }
             }
-            returnJSON($return);
+            returnJSON($Teachers ? Teacher::forApi($Teachers) : []);
         }
 		
 		public function actionMetro()
