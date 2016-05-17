@@ -948,9 +948,12 @@
                 }
             }
 
-			usort($Schedule, function($a, $b) {
-				return $b->time - $a->time;
-			});
+            usort($Schedule, function($a, $b) {
+                if ($b->time == $a->time)
+                    return $a->cabinetNumber - $b->cabinetNumber;
+                else
+                    return $b->time - $a->time;
+            });
 
 			returnJsonAng($Schedule);
 		}
