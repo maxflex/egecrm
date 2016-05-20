@@ -10,12 +10,6 @@
 		const LAST_REAL_USER_ID = 112;
 		const ONLINE_TIME_MINUTES = 15;
 
-		// ID пользователей для простмотра меню задач
-		const ALLOW_TASKS_MENU = [1, 69, 93, 104, 102];
-
-		// ID разработчиков
-		const DEVELOPERS = [69, 102];
-
         const UPLOAD_DIR = 'img/users/';
         const NO_PHOTO   = 'no-profile-img.gif';
 
@@ -351,11 +345,11 @@
 		}
 
 		public static function isDev() {
-			return in_array(User::fromSession()->id, static::DEVELOPERS);
+            return User::fromSession()->is_dev;
 		}
 
 		public static function allowedToSeeTasks() {
-			return in_array(User::fromSession()->id, static::ALLOW_TASKS_MENU);
+			return User::fromSession()->show_tasks;
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/

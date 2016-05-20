@@ -138,10 +138,17 @@
             </div>
             <div class="row">
                 <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
-                    <input type="checkbox" ng-model="User.dev" ng-true-value="1">
+                    <input type="checkbox" ng-model="User.is_dev" ng-true-value="1">
                     <span class="switch"></span>
                 </label>
                 разработчик
+            </div>
+            <div class="row">
+                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                    <input type="checkbox" ng-model="User.show_tasks" ng-true-value="1">
+                    <span class="switch"></span>
+                </label>
+                показать задачи
             </div>
         </div>
     </div>
