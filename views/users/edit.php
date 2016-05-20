@@ -103,21 +103,28 @@
                 </select>
             </div>
 
-            <td>
+            <div class="form-group">
                 <input class="form-control"
                        style="background-color:{{User.color}};color:white;"
                        ng-model="User.color"
                        colorpicker="hex"
                        colorpicker-size="200"
                        placeholder="цвет">
-            </td>
+            </div>
+
+            <div class="form-group">
+                <select class="form-control" ng-model="User.is_seo">
+                    <option value="0">пользователь</option>
+                    <option value="1">seo</option>
+                </select>
+            </div>
         </div>
     </div>
     <div class="row panel-body">
         <div class="col-sm-12">
             <div class="row">
                 <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
-                    <input type="checkbox" ng-model="User.approve_tutor" ng-true-value="1">
+                    <input type="checkbox" ng-model="User.can_approve_tutor" ng-true-value="1">
                     <span class="switch"></span>
                 </label>
                 одобрение репетиторов

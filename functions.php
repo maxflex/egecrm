@@ -21,7 +21,7 @@
 	 */
 	function preType($anything, $exit = NULL)
 	{
-		if (User::fromSession()->id == 69) {
+		if (User::isDev()) {
 			echo "<pre>";
 			print_r($anything);
 			echo "</pre>";
@@ -58,7 +58,7 @@
 
 	function isAdmin()
 	{
-		return User::fromSession()->id == 69;
+		return User::isDev();
 	}
 
 	/*
