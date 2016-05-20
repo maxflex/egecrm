@@ -113,6 +113,38 @@
             </td>
         </div>
     </div>
+    <div class="row panel-body">
+        <div class="col-sm-12">
+            <div class="row">
+                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                    <input type="checkbox" ng-model="User.approve_tutor" ng-true-value="1">
+                    <span class="switch"></span>
+                </label>
+                одобрение репетиторов
+            </div>
+            <div class="row">
+                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                    <input type="checkbox" ng-model="User.banned" ng-true-value="1">
+                    <span class="switch"></span>
+                </label>
+                заблокирован в егэ-центре
+            </div>
+            <div class="row">
+                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                    <input type="checkbox" ng-model="User.banned_egerep" ng-true-value="1">
+                    <span class="switch"></span>
+                </label>
+                заблокирован в егэ-репетиторе
+            </div>
+            <div class="row">
+                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                    <input type="checkbox" ng-model="User.dev" ng-true-value="1">
+                    <span class="switch"></span>
+                </label>
+                разработчик
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12 center">
             <button class="btn btn-primary" ng-click="save()" ng-disabled="!form_changed || User.login.length == 0 || has_pswd_error">
