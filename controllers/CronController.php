@@ -202,7 +202,6 @@
 			}
 			
 			Email::send("makcyxa-k@yandex.ru", "СМС о внеплановых занятиях завтра", $body);
-			Email::send("shamik1551@mail.ru", "СМС о внеплановых занятиях завтра", $body);
 		}
 
 
@@ -293,7 +292,6 @@
 				}
 			}
 
-			Email::send("shamik1551@mail.ru", "СМС об отмененных занятиях завтра", $body);
 		}
 
 
@@ -506,7 +504,6 @@
 			}
 			
 			Email::send("makcyxa-k@yandex.ru", "СМС о занятиях завтра", $body);
-			Email::send("shamik1551@mail.ru", "СМС о первых занятиях завтра", $body);
 		}
 		
 		private function _generateMessage($Group, $Entity, $tomorrow)

@@ -352,7 +352,7 @@
 			]);
 		}
 		
-		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
+		// @deprecated – нигде не используется, если использовать, то не забыть про cancelled
 		public function getPastSchedule()
 		{
 			return GroupSchedule::findAll([
