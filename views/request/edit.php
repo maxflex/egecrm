@@ -946,7 +946,7 @@
 						}"></ng-pluralize>
 					<?php endif ?>
 				</div>
-				<?php if (User::fromSession()->id == 65 || User::fromSession()->id == 69) :?>
+				<?php if (User::fromSession()->edit_payment) :?>
 					<div class="half-black small" ng-show="!objectLength(remainder)">
 						<span class="underline-hover pointer" style="color: #999999" ng-click="addRemainder()">добавить остаточный платеж</span>
 					</div>
