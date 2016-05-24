@@ -928,7 +928,7 @@
 						<a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
 				</div>
 				<div class="half-black small" ng-show="objectLength(remainder)">
-					<?php if (User::fromSession()->id == 65 || User::fromSession()->id == 69) :?>
+					<?php if (User::fromSession()->edit_payment) :?>
 						Остаточный платеж <input class="no-border-outline digits-only-minus" ng-model="remainder.remainder" ng-keydown="checkRemainderSave($event)"
 						style="margin: 0; width: {{calculateRemainderWidth()}}px">
 						<ng-pluralize count="remainder.remainder" when="{
