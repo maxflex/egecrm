@@ -368,6 +368,7 @@
 			if ($this->isNewRecord) {
 				$this->password = self::password($this->password);
 			}
+            $this->is_dev = $this->is_dev % 2;
 		}
 
 		/*

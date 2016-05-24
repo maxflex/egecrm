@@ -1,5 +1,10 @@
 angular.module "Users", ['colorpicker.module']
 	.controller "ListCtrl", ($scope) ->
+		$scope.is_banned = (user) ->
+			return user.banned || user.banned_egerep
+		$scope.isnot_banned = (user) ->
+			return !$scope.is_banned user
+
 		$scope.save = ->
 			ajaxStart()
 			$.post "users/ajax/save", 

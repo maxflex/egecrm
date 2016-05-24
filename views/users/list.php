@@ -54,17 +54,23 @@
 
     <table class="table table-divlike" id="user-list">
         <tr class="row first">
-            <td><b>Активные пользователи</b></td>
+            <td colspan="3"><b>Активные пользователи</b></td>
         </tr>
-        <tr ng-repeat="User in Users | filter:{banned:0}" class="row">
+        <tr ng-repeat="User in Users | filter:isnot_banned" class="row">
+            <td colspan="2"></td>
             <td>
                 <a href="users/edit/{{ User.id }}">{{ User.login }}</a>
             </td>
         </tr>
         <tr class="row">
-            <td><b>Заблокированные пользователи</b></td>
+            <td colspan="3"><b>Заблокированные пользователи</b></td>
         </tr>
-        <tr ng-repeat="User in Users | filter:{banned:1}" class="row">
+        <tr ng-repeat="User in Users | filter:is_banned" class="row">
+            <td class="ban-ico egecrm-banned">
+                <span class="glyphicon glyphicon-lock small" ng-show="User.banned"></span>
+            <td class="ban-ico egerep-banned">
+                <span class="glyphicon glyphicon-lock small" ng-show="User.banned_egerep"></span>
+            </td>
             <td>
                 <a href="users/edit/{{ User.id }}">{{ User.login }}</a>
             </td>

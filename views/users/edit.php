@@ -55,7 +55,6 @@
                         изменить фото
                     </div>
                     <span class="btn-file"></span>
-<!--                    <img src="{{ User.photo_url }}?ver={{ picture_version }}">-->
                     <img src="img/users/{{ User.id && User.has_photo_cropped ? User.id + '.' + User.photo_extension : 'no-profile-img.gif' }}?ver={{ picture_version }}">
                 </div>
             </div>
@@ -69,6 +68,9 @@
             </div>
             <div class="form-group">
                 <input class="form-control" ng-model="User.middle_name" placeholder="Отчество">
+            </div>
+            <div class="form-group">
+                <input class="form-control" ng-model="User.agreement" placeholder="Cоглашение">
             </div>
         </div>
         <div class="col-sm-3">
@@ -113,10 +115,12 @@
             </div>
 
             <div class="form-group">
-                <select class="form-control" ng-model="User.is_seo">
-                    <option value="0">пользователь</option>
-                    <option value="1">seo</option>
+                <select class="form-control" ng-model="User.is_dev" ng-change="User.is_dev == 2 ? User.type = 'SEO' : User.type = 'USER' ">
+                    <option value="0">менеджер</option>
+                    <option value="1">разработчик</option>
+                    <option value="2">seo</option>
                 </select>
+                <input type="hidden" ng-model="User.type" value="User.type"/>
             </div>
         </div>
     </div>
@@ -131,6 +135,22 @@
             </div>
             <div class="row">
                 <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                    <input type="checkbox" ng-model="User.edit_payment" ng-true-value="1">
+                    <span class="switch"></span>
+                </label>
+                просмотр и редактирование остаточного платежа
+            </div>
+
+            <div class="row">
+                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                    <input type="checkbox" ng-model="User.show_tasks" ng-true-value="1">
+                    <span class="switch"></span>
+                </label>
+                показать задачи
+            </div>
+            <br>
+            <div class="row">
+                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
                     <input type="checkbox" ng-model="User.banned" ng-true-value="1">
                     <span class="switch"></span>
                 </label>
@@ -142,20 +162,6 @@
                     <span class="switch"></span>
                 </label>
                 заблокирован в егэ-репетиторе
-            </div>
-            <div class="row">
-                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
-                    <input type="checkbox" ng-model="User.is_dev" ng-true-value="1">
-                    <span class="switch"></span>
-                </label>
-                разработчик
-            </div>
-            <div class="row">
-                <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
-                    <input type="checkbox" ng-model="User.show_tasks" ng-true-value="1">
-                    <span class="switch"></span>
-                </label>
-                показать задачи
             </div>
         </div>
     </div>

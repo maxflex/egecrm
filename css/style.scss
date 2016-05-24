@@ -2429,7 +2429,7 @@ h4 {
 }
 
 #user-list .glyphicon {
-	font-size: 18pt;
+	font-size: 14pt;
 }
 
 .input-red-bg {
@@ -2845,4 +2845,22 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 	height: 150px;
 	width: 120px;
   }
+}
+
+.egecrm-banned {
+  color:#114975;
+}
+.egerep-banned {
+  color:#0B8949;
+}
+.table.table-divlike > tbody > tr > td.ban-ico {
+  width: 20px;
+  text-align: center;
+  padding-right: 0 !important;
+}
+.table.table-divlike > tbody > tr > td.ban-ico.egecrm-banned {
+  padding-left: 15px !important;
+}
+.table.table-divlike > tbody > tr > td.ban-ico.egerep-banned {
+  padding-left: 5px !important;
 }
