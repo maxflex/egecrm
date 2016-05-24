@@ -30,8 +30,8 @@
 				<td  style="width: 15%">
 <!-- 					<div ng-repeat="Contract in Student.Contracts"> -->
 						<span class="inline-block" style="width: 30px">{{Student.Contract.id}}</span>
-						<span ng-show="Student.Contract.History">
-							<span class="circle-default" style="top: -.5px"></span>
+						<span ng-show="Student.red_circle">
+							<span class="circle-default circle-red" style="top: -.5px"></span>
 						</span>
 <!-- 					</div> -->
 				</td>

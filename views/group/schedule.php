@@ -37,9 +37,8 @@
                         ng-class="Schedule.title ? 'students-11' : '';"
                         ng-attr-title="{{Schedule.title || undefined}}">
 						<td>
-							<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-class="{
-								'link-grey': Schedule.cancelled 
-							}">{{getLine1(Schedule)}}</a>
+							<span class="text-gray" ng-show='Schedule.cancelled'>{{getLine1(Schedule)}}</span>
+							<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-hide='Schedule.cancelled'>{{getLine1(Schedule)}}</a>
 						</td>
 						<td>
 							<div class="lessons-table">

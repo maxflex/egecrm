@@ -61,8 +61,11 @@
 						];
 					}
 				}
-				//
 				
+				// у данного ученика больше не планируется занятий (серьенькие точки в посещаемости)
+				// текущая версия договора последней цепи договоров содержит хотя бы 1 желтый или зеленый предмет
+				$Student->red_circle = !$Student->hasFutureLessons() && ($Student->sc[3] || $Student->sc[2]);
+												
 				
 				$Student->User = User::find(["condition" => "id_entity=" . $Student->id]);
 				

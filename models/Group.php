@@ -352,7 +352,15 @@
 			]);
 		}
 		
-		// @deprecated – нигде не используется, если использовать, то не забыть про cancelled
+		public function countFutureScheduleStatic($id)
+		{
+			// @refactored
+			return GroupSchedule::count([
+				"condition" => "id_group=".$id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW()) AND cancelled=0",
+			]);
+		}
+		
+		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
 		public function getPastSchedule()
 		{
 			return GroupSchedule::findAll([

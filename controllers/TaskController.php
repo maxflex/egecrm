@@ -30,10 +30,13 @@
 			if ($list) {
 				$Tasks = Task::findAll([
 					"condition" => "type=$type AND id_status=" . $list,
+					"order"		=> "id DESC",
+					"limit"		=> 50,
 				]);
 			} else {
 				$Tasks = Task::findAll([
 					"condition" => "type=$type AND id_status!=" . TaskStatuses::CLOSED,
+					"order"		=> "id DESC",
 				]);
 			}
 			

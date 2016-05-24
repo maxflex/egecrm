@@ -92,7 +92,7 @@
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">учебный год</span>
-						<select class="form-control" ng-model="current_contract.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015]">
+						<select class="form-control" ng-model="current_contract.year" ng-options="+(year) as year + '-' + (year + 1) + ' уч. г.' for year in [2014, 2015, 2016]">
 					 </select>
 				</div>
 			</div>

@@ -46,7 +46,7 @@
 					</select>
 				</div>
 -->
-				<div ng-repeat="Task in Tasks | reverse" class="row task-line" ng-hide="!Task.html.trim()">
+				<div ng-repeat="Task in Tasks" class="row task-line" ng-hide="!Task.html.trim()">
 					<div class="col-sm-12">
 						<div class="task">
 							<div class="text-gray pull-right" ng-show="<?= User::isDev() ?>">#{{Task.id}}</div>
