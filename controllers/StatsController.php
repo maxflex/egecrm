@@ -19,41 +19,6 @@
 			$this->addJs("ng-stats-app");
 		}
 
-
-
-		/**
-		 * Она считается так: берем желтого человека в группе, умножаем количество будущих занятий на 1450 (средняя стоимость занятия).
-		 * И так по всем желтым людям.
-		 *
-		 */
-		public static function calculateYellowLoss()
-		{
-			// @refactored
-			$Groups = Group::findAll();
-
-			$return = 0;
-
-			foreach ($Groups as $Group) {
-				$yellow_count = 0;
-
-				foreach ($Group->students as $id_student) {
-					$result = dbConnection()->query("
-						SELECT cs.status FROM contract_subjects cs
-						LEFT JOIN contracts c on cs.id_contract = c.id
-						LEFT JOIN students s on c.id_student = s.id
-						WHERE s.id = {$id_student} AND cs.id_subject = {$Group->id_subject} AND cs.status = 2
-					");
-					$yellow_count += $result->num_rows;
-				}
-
-				if ($yellow_count) {
-					$return += $Group->countFutureSchedule() * $yellow_count * 1450;
-				}
-			}
-
-			return $return;
-		}
-
 /*
 		private function _getSubjectColorCount($Group, $status)
 		{
@@ -290,7 +255,6 @@
 
 			$ang_init_data = angInit([
 				"currentPage" => $_GET['page'],
-				"yellowLoss"  => LOCAL_DEVELOPMENT ? StatsController::calculateYellowLoss() : memcached()->get("YellowLoss"),
 			]);
 
 

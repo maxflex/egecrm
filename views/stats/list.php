@@ -128,8 +128,4 @@
 	>
 	</pagination>
 	<?php endif ?>
-	
-	<div class="pull-right" style="margin-top: 10px">
-		потеря по планируемым расторжениям: <span class="text-warning">{{yellowLoss | number}}</span>
-	</div>
 </div>
