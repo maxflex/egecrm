@@ -214,7 +214,9 @@
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
     <a href="templates" class="list-group-item">Шаблоны</a>
-    <a href="users" class="list-group-item">Пользователи</a>
+    <?php if (User::fromSession()->show_users) : ?>
+        <a href="users" class="list-group-item">Пользователи</a>
+    <?php endif ?>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
 <!--
