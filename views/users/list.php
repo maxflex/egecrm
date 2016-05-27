@@ -58,7 +58,7 @@
         </tr>
         <tr ng-repeat="User in Users | filter:isnot_banned" class="row">
             <td colspan="2"></td>
-            <td>
+            <td style="padding-left: 10px !important">
                 <a href="users/edit/{{ User.id }}">{{ User.login }}</a>
             </td>
         </tr>
@@ -71,7 +71,7 @@
             <td class="ban-ico egerep-banned">
                 <span class="glyphicon glyphicon-lock small" ng-show="User.banned_egerep"></span>
             </td>
-            <td>
+            <td style="padding-left: 10px !important">
                 <a href="users/edit/{{ User.id }}">{{ User.login }}</a>
             </td>
         </tr>

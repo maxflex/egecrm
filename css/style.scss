@@ -217,7 +217,7 @@
 	    text-align: center;
 	    padding: 60px 0;
 // 	    display: none;
-		opacity: 0;
+		opacity: 0; 
 		color: #337ab7;
 	}
 	& .btn-file {
@@ -2429,7 +2429,8 @@ h4 {
 }
 
 #user-list .glyphicon {
-	font-size: 14pt;
+	font-size: 14px;
+	margin-right: 0;
 }
 
 .input-red-bg {

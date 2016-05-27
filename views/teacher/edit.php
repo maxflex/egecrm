@@ -3,7 +3,7 @@
 	<div class="row">
 		<div class="col-sm-3" style="width: 13%">
 			<div class='tutor-img-new'>
-				<img src="{{Teacher.has_photo ? 'https://lk.a-perspektiva.ru/img/tutors/' + Teacher.id + '.' + Teacher.photo_extension : 'img/teachers/no-profile-img.gif'}}">
+				<img src="{{Teacher.has_photo ? 'http://static.a-perspektiva.ru/img/tutors/' + Teacher.id + '.' + Teacher.photo_extension : 'img/teachers/no-profile-img.gif'}}">
 			</div>
 		</div>
 		<div class="col-sm-3" style="width: 20%">
