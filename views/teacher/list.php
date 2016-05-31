@@ -14,8 +14,7 @@
 			<div class="col-sm-12">
 				<table class="table table-divlike" id="teachers-list">
 					<tr>
-						<td colspan="3">
-						</td>
+						<td colspan="2"></td>
 						<td><span class="review-small ">5</span></td>
 						<td><span class="review-small bg-orange">4</span></td>
 						<td><span class="review-small bg-red">3</span></td>
@@ -24,9 +23,6 @@
 						<td><span class="review-small gray">?</span></td>
 					</tr>
 					<tr ng-repeat="Teacher in Teachers" ng-hide="!Teacher.had_lesson">
-						<td width='20'>
-							<span ng-show="Teacher.has_photo" class="glyphicon glyphicon-camera"></span>
-						</td>
 						<td width="400">
 							<a href="teachers/edit/{{Teacher.id}}">
 								<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
