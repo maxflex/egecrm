@@ -218,7 +218,7 @@
 			$date_end = date("d.m.Y", time());
 
 			for ($i = 1; $i <= Request::timeFromFirst('years'); $i++) {
-				$last_day_of_july = strtotime("last day of july -$i year");
+				$last_day_of_july = strtotime("-$i year last day of july");
 				$date_start = date("d.m.Y", $last_day_of_july);
 
 				$stats[$date_end] = self::_getStats($date_start, $date_end);
