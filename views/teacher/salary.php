@@ -40,7 +40,7 @@
 							{{d.sum | number}} 
 						</td>
 						<td class="center">
-							<span ng-hide="!d.payment_sum">{{d.payment_sum}}</span>
+							<span ng-hide="!d.payment_sum">{{d.payment_sum | number}}</span>
 						</td>
 						<td class="center">
 							<span ng-hide="(d.sum - d.payment_sum) == 0">{{(d.sum - d.payment_sum) | number}}</span>
