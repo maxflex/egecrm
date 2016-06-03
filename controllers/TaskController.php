@@ -60,7 +60,7 @@
 			if (empty(trim($Task['html']))) {
 				Task::deleteById($Task['id']);
 			} else {
-				Task::updateById($Task['id'], $Task);				
+				echo Task::updateById($Task['id'], $Task) ? 1 : 0;
 			}			
 		}
 		

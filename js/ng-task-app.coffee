@@ -46,10 +46,16 @@
 				Task.id is $scope.editing_task
 			
 			$scope.toggleTaskStatus = (Task) ->
-				Task.id_status++
-				if Task.id_status > Object.keys($scope.task_statuses).length
-					Task.id_status = 1
-				$scope.saveTask(Task)
+				Task_copy = angular.copy Task
+				Task_copy.id_status++
+
+				if Task_copy.id_status > Object.keys($scope.task_statuses).length
+					Task_copy.id_status = 1
+
+				$scope.saveTask(Task_copy).then (response) ->
+					if response
+						Task.id_status = Task_copy.id_status
+						$scope.$apply()
 			
 			$scope.deleteTask = (Task) ->
 				Task.html = ""
