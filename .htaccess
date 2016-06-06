@@ -115,6 +115,7 @@ RewriteRule ^sms/([0-9]+)[/]?$ index.php?controller=sms&page=$1 [QSA,L]
 RewriteRule ^users[/]?$ index.php?controller=users [QSA,L]
 RewriteRule ^users/edit/([0-9]+)[/]?$ index.php?controller=users&action=edit&id=$1 [QSA,L]
 RewriteRule ^users/ajax/([a-zA-Z]+)[/]?$ index.php?controller=users&action=Ajax$1 [QSA,L]
+RewriteRule ^users/create[/]?$ index.php?controller=users&action=create [QSA,L]
 
 # Пробные тестирования
 RewriteRule ^testing[/]?$ index.php?controller=testing [QSA,L]

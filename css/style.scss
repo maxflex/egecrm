@@ -182,10 +182,17 @@
 	}
 }
 
-.teacher-img {
+.teacher-img, .user-photo-hint {
 	height: 150px;
 	width: 120px;
 	border-radius: 5px;
+}
+.user-photo-hint {
+	color: #ddd;
+	font-size: 8pt;
+	text-align: center;
+	padding: 35px 10px;
+	border: 1px solid #ddd;
 }
 
 .tutor-img {

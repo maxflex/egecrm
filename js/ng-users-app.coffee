@@ -21,7 +21,7 @@ angular.module "Users", ['colorpicker.module']
 
 	.controller "EditCtrl", ($scope, $timeout) ->
 		$scope.has_pswd_error = false
-		$scope.psw_changed = false
+		$scope.psw_filled = false
 		$scope.picture_version = 1
 
 		$scope.clone_user = ->
@@ -31,14 +31,14 @@ angular.module "Users", ['colorpicker.module']
 			p1 = $scope.User.new_password
 			p2 = $scope.User.new_password_repeat
 			if p1 or p2
-				$scope.psw_changed = true
+				$scope.psw_filled = true
 				for x in [p1, p2]
 					has_pswd_error = !x || (x && !(x.match('^[a-zA-Z0-9_]{10,}$') and x.match('[a-zA-Z]+') and x.match('[0-9]+') and x.match('[_]+')))
 					break if has_pswd_error
 
 				$scope.has_pswd_error = (p1 isnt p2) or has_pswd_error
 			else
-				$scope.psw_changed = false
+				$scope.psw_filled = false
 
 		$scope.save = ->
 			ajaxStart()
@@ -168,3 +168,40 @@ angular.module "Users", ['colorpicker.module']
 			$timeout ->
 				$('#photo-edit').cropper 'resize'
 			, 100
+
+	.controller "CreateCtrl", ($scope, $http) ->
+		$scope.user_exists = false
+		$scope.has_pswd_error = true
+		$scope.psw_filled = false
+
+		$scope.$watchCollection '[User.new_password, User.new_password_repeat]', ->
+			p1 = $scope.User.new_password
+			p2 = $scope.User.new_password_repeat
+			if p1 or p2
+				$scope.psw_filled = true
+				for x in [p1, p2]
+					has_pswd_error = !x || (x && !(x.match('^[a-zA-Z0-9_]{10,}$') and x.match('[a-zA-Z]+') and x.match('[0-9]+') and x.match('[_]+')))
+					break if has_pswd_error
+				$scope.has_pswd_error = (p1 isnt p2) or has_pswd_error
+			else
+				$scope.psw_filled = false
+
+		$scope.checkExistance = ->
+			if $scope.User.login.length
+				$.post "users/ajax/exists",
+					login: $scope.User.login
+				.then (response) ->
+					$scope.user_exists = response > 0
+					$scope.$apply()
+
+		$scope.requiredFilled = ->
+			$scope.psw_filled and !$scope.has_pswd_error and $scope.User.login and $scope.User.login.length and !$scope.user_exists
+
+		$scope.save = ->
+			ajaxStart()
+			$.post "users/ajax/create",
+				user: $scope.User
+			, (response) ->
+				ajaxEnd()
+				redirect "users/edit/#{response}"
+
