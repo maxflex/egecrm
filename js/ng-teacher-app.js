@@ -169,6 +169,40 @@ angular.module("Teacher", ["ngMap"]).config([
       id_status: 0
     };
     lightBoxShow('addpayment');
+    $scope.handleKeyPress();
+    setTimeout(function() {
+      return $($("#addpayment select")[0]).focus();
+    }, 200);
+  };
+  $scope.handleKeyPress = function() {
+    return $('#addpayment').on('keydown', function(e) {
+      var select_val;
+      if (e.keyCode === 13) {
+        if ($('#payment-select').is(':focus')) {
+          select_val = $('#payment-select').val();
+          if (select_val !== '0') {
+            if (select_val === '1') {
+              $('#payment-card').focus();
+            } else {
+              $('#payment-sum').focus();
+            }
+          }
+        } else {
+          if ($('#payment-card').is(':focus')) {
+            $('#payment-sum').focus();
+          } else {
+            if ($('#payment-sum').is(':focus')) {
+              $('#payment-date').focus();
+            } else {
+              if ($('#payment-date').is(':focus')) {
+                $scope.addPayment();
+              }
+            }
+          }
+        }
+        return e.preventDefault();
+      }
+    });
   };
   $scope.addPayment = function() {
     var payment_date, payment_select, payment_sum, payment_type;

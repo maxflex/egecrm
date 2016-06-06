@@ -552,21 +552,25 @@
 			$scope.printContract = function(id_contract) {
 				$scope.print_mode = 'contract'
 				$scope.id_contract_print = id_contract
-				lightBoxShow('print')
+				$scope.id_user_print = 0
+				html = $("#contract-print-" + $scope.id_contract_print).html()
+				$scope.editBeforePrint(html)
 			}
 			
 			$scope.printContractAdditional = function(contract) {
 				$scope.print_mode = 'agreement'
 				$scope.contract_additional = contract
 				$scope.id_contract_print = contract.id
-				lightBoxShow('print-additional')
+				html = $("#agreement-print-" + $scope.id_contract_print).html()
+				$scope.editBeforePrint(html)
 			}
 			
 			$scope.printAct = function(contract) {
 				$scope.print_mode = 'act'
 				$scope.contract_act = contract
 				$scope.id_contract_print = contract.id
-				$scope.runPrint()
+				html = $("#act-print-" + $scope.id_contract_print).html()
+				$scope.editBeforePrint(html)
 			}
 			
 			$scope.getLastLessonDate = function() {
@@ -600,12 +604,15 @@
 				return moment(date).format("DD MMMM YYYY")
 			}
 			
-			$scope.editBeforePrint = function() {
-				html = $("#contract-print-" + $scope.id_contract_print).html()
+			$scope.editBeforePrint = function(html) {
 				$("#contract-manual-edit").val(html)
 				
+				if (CKEDITOR.instances['contract-manual-edit'] != undefined) {
+					CKEDITOR.instances['contract-manual-edit'].destroy(true)	
+				}
+				
 				if (CKEDITOR.instances['contract-manual-edit'] == undefined) {
-					CKEDITOR.replace('contract-manual-edit', {
+					editor = CKEDITOR.replace('contract-manual-edit', {
 						fullPage: true,
 						allowedContent: true,
 						language: 'ru',

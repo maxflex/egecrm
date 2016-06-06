@@ -3,7 +3,6 @@
 
 	<!-- ЛАЙТБОКС РЕДАКТИРОВАНИЕ ПЕЧАТИ ДОГОВОРА ВРУЧНУЮ -->
 		<div class="lightbox-new lightbox-manualedit">
-			<h4 style="margin-bottom: 20px">РЕДАКТИРОВАНИЕ ДОГОВОРА</h4>
 			<div class="row">
 				<textarea id="contract-manual-edit"></textarea>
 				<div class="display-none" id="contract-manual-div"></div>
@@ -48,42 +47,6 @@
 			</center>
 		</div>
 		<!-- /ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
-
-		<!-- ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
-		<div class="lightbox-new lightbox-print">
-			<h4>Выберите пользователя</h4>
-					<select class="form-control" id="user-print-select" ng-model="id_user_print">
-						<option selected="" value="">пользователь</option>
-						<option disabled="" value="">──────────────</option>
-						<option value="0">без менеджера</option>
-						<option ng-repeat="user in users" ng-value="user.id" ng-hide="!user.agreement">{{user.login}}</option>
-					</select>
-			<center style="margin-top: 20px">
-				<button class="btn btn-primary" ng-click="editBeforePrint()" ng-disabled="!id_user_print" style="width: 140px">Редактировать</button>
-				<button class="btn btn-primary" ng-click="runPrint()" ng-disabled="id_user_print == ''" style="width: 140px">Печать</button>
-			</center>
-		</div>
-		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
-
-
-		<!-- ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
-		<div class="lightbox-new lightbox-print-additional">
-			<div class="row">
-				<div class="col-sm-4">
-					<input class="form-control" ng-model="contract_additional.id_additional" placeholder="№ соглашения">
-				</div>
-				<div class="col-sm-4">
-					<input class="form-control" ng-model="contract_additional.add_price_1" placeholder="сумма №1">
-				</div>
-				<div class="col-sm-4">
-					<input class="form-control" ng-model="contract_additional.add_price_2" placeholder="сумма №2">
-				</div>
-			</div>
-			<center style="margin-top: 20px">
-				<button class="btn btn-primary" ng-click="runPrint()" style="width: 140px">Печать</button>
-			</center>
-		</div>
-		<!-- /ЛАЙТБОКС ВЫБОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ПЕЧАТИ ДОГОВОРА -->
 
 		<!-- ЛАЙТБОКС КАРТА -->
 		<div class="lightbox-element lightbox-map">
@@ -697,6 +660,10 @@
 									<span>{{contract.id}}</span>
 								</div>
 								<div style="margin-bottom: 3px">
+									<span style="display: inline-block; width: 200px">год</span>
+									<span>{{contract.year}}–{{contract.year + 1}}</span>
+								</div>
+								<div style="margin-bottom: 3px">
 									<span style="display: inline-block; width: 200px">класс</span>
 									<span>{{contract.grade}}</span>
 								</div>
@@ -811,6 +778,10 @@
 								<div style="margin-bottom: 3px">
 									<span style="display: inline-block; width: 200px">договор №</span>
 									<span>{{contract.id}}</span>
+								</div>
+								<div style="margin-bottom: 3px">
+									<span style="display: inline-block; width: 200px">год</span>
+									<span>{{contract.year}}–{{contract.year + 1}}</span>
 								</div>
 								<div style="margin-bottom: 3px">
 									<span style="display: inline-block; width: 200px">класс</span>

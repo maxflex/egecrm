@@ -54,6 +54,8 @@ angular.module("Clients", []).filter('to_trusted', [
         return _.findWhere(Student.Contract.subjects, {
           status: 2
         }) !== void 0;
+      case 4:
+        return true;
     }
   };
   $scope.order = 2;

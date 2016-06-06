@@ -36,6 +36,7 @@ angular.module "Clients", []
 							count++
 					count is Object.keys(Student.Contract.subjects).length
 				when 3 then _.findWhere(Student.Contract.subjects, {status: 2}) isnt undefined
+				when 4 then true
 		
 		$scope.order = 2
 		

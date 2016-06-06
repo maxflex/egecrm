@@ -21,6 +21,7 @@
 		    <span class="link-like" ng-click="filter_cancelled = 3" ng-class="{'active': filter_cancelled == 3}">предварительно расторгнутые</span>
 		    <span class="link-like" ng-click="filter_cancelled = 1" ng-class="{'active': filter_cancelled == 1}">частично расторгнутые</span>
 		    <span class="link-like" ng-click="filter_cancelled = 2" ng-class="{'active': filter_cancelled == 2}">полностью расторгнутые</span>
+		    <span class="link-like" ng-click="filter_cancelled = 4" ng-class="{'active': filter_cancelled == 4}">все</span>
 	    </div>
 		<table class="table table-divlike">
 			<tr ng-repeat="Student in Students | orderBy:orderStudents():asc | filter:clientsFilter">
