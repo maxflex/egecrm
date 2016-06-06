@@ -193,6 +193,8 @@ angular.module "Users", ['colorpicker.module']
 				.then (response) ->
 					$scope.user_exists = response > 0
 					$scope.$apply()
+			else
+				$scope.user_exists = false
 
 		$scope.requiredFilled = ->
 			$scope.psw_filled and !$scope.has_pswd_error and $scope.User.login and $scope.User.login.length and !$scope.user_exists
