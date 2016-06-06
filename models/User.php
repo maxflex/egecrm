@@ -350,7 +350,7 @@
 		}
 
 		public static function isDev() {
-            return User::fromSession()->is_dev;
+            return User::fromSession()->is_dev == 1;
 		}
 
 		public static function allowedToSeeTasks() {
@@ -373,7 +373,7 @@
 			if ($this->isNewRecord) {
 				$this->password = self::password($this->password);
 			}
-            $this->is_dev = $this->is_dev % 2;
+            $this->is_dev = $this->is_dev; // % 2;
 		}
 
 		/*
