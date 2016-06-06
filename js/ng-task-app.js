@@ -70,7 +70,7 @@ angular.module("Task", ['ngSanitize']).filter('reverse', function() {
         type: $scope.type,
         html: "Текст задачи..."
       };
-      $scope.Tasks.push(Task);
+      $scope.Tasks.unshift(Task);
       $scope.$apply();
       $scope.editTask(Task);
       return setTimeout(function() {

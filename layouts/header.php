@@ -12,6 +12,7 @@
 	    }
 	?>
 <!--     <link href="css/jquery.datetimepicker.css" rel="stylesheet"> -->
+	<link rel="shortcut icon" href="favicon.png" />
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet">
     <link href="css/jquery.timepicker.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/hint.css"></link>

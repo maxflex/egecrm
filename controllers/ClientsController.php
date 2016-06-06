@@ -46,10 +46,10 @@
 			
 			foreach ($Students as &$Student) {
 				$Student->Contract 	= $Student->getLastContract();
-				
+				$Student->CurrentYearContract = $Student->getCurrentYearLastContract();
 				
 				//
-				foreach ($Student->Contract->subjects as $subject) {
+				foreach ($Student->CurrentYearContract->subjects as $subject) {
 					$Student->sc[$subject['status']] += $subject['count'] + $subject['count2'];
 				}
 				

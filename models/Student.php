@@ -537,7 +537,7 @@
 		public function getActiveContracts()
 		{
 			return Contract::findAll([
-				"condition"	=> "deleted=0  AND id_student=" . $this->id . Contract::ZERO_OR_NULL_CONDITION
+				"condition"	=> "id_student=" . $this->id . Contract::ZERO_OR_NULL_CONDITION
 			]);
 		}
 
@@ -548,7 +548,21 @@
 		public function getLastContract()
 		{
 			return Contract::find([
-				"condition"	=> "deleted=0 AND id_student=" . $this->id .  Contract::ZERO_OR_NULL_CONDITION,
+				"condition"	=> "id_student=" . $this->id .  Contract::ZERO_OR_NULL_CONDITION,
+				"order"		=> "id DESC",
+				"limit"		=> "1",
+			]);
+		}
+		
+		
+		/**
+		 * Получить постудний договор студента текущего учебного года.
+		 *
+		 */
+		public function getCurrentYearLastContract()
+		{
+			return Contract::find([
+				"condition"	=> "year = " . (date("Y") - 1) . " AND id_student=" . $this->id .  Contract::ZERO_OR_NULL_CONDITION,
 				"order"		=> "id DESC",
 				"limit"		=> "1",
 			]);

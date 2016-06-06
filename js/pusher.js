@@ -2,11 +2,16 @@
 var vueInit;
 
 $(document).ready(function() {
-  return vueInit();
+  var vm;
+  vm = vueInit();
+  return $(window).on("beforeunload", function() {
+    return vm.savePopupData();
+  });
 });
 
 vueInit = function() {
   Vue.config.debug = true;
+  Vue.config.async = false;
   Vue.component('phone', {
     props: ['user_id'],
     data: function() {
@@ -16,6 +21,7 @@ vueInit = function() {
         connected: false,
         determined: false,
         timer: {
+          hide_timeout: void 0,
           interval: void 0,
           diff: 0
         },
@@ -40,9 +46,19 @@ vueInit = function() {
         }, (function(_this) {
           return function(request) {
             _this.caller = request;
-            return _this.determined = true;
+            _this.determined = true;
+            return _this.setHideTimeout();
           };
         })(this), 'json');
+      },
+      setHideTimeout: function(seconds) {
+        if (!seconds) {
+          seconds = 10;
+        }
+        if (this.timer.hide_timeout) {
+          clearTimeout(this.timer.hide_timeout);
+        }
+        return this.timer.hide_timeout = setTimeout(this.endCall, seconds * 1000);
       },
       startCall: function() {
         this.connected = true;
@@ -59,9 +75,33 @@ vueInit = function() {
         if (this.connected) {
           clearInterval(this.timer.interval);
         }
+        clearTimeout(this.timer.hide_timeout);
         this.show_element = false;
         this.hide_element = false;
         return this.connected = false;
+      },
+      saveState: function() {
+        var answered_user, caller_type;
+        answered_user = this.mango.to.extension;
+        if (answered_user === this.user_id) {
+          caller_type = this.caller.type ? this.caller.type : '';
+          return $.post('mango/saveCallState', {
+            phone: this.mango.from.number,
+            user_id: this.user_id
+          });
+        }
+      },
+      savePopupData: function() {
+        if (this.show_element) {
+          return localStorage.setItem('popupData', JSON.stringify({
+            show_element: this.show_element,
+            number: this.mango.from.number,
+            determined: this.determined,
+            caller: this.caller,
+            timestamp: this.mango.timestamp,
+            mango: this.mango
+          }));
+        }
       },
       initPusher: function() {
         var channel, pusher;
@@ -69,19 +109,37 @@ vueInit = function() {
           encrypted: true
         });
         channel = pusher.subscribe("user_" + this.user_id);
-        return channel.bind('incoming', (function(_this) {
+        channel.bind('incoming', (function(_this) {
           return function(data) {
             _this.mango = data;
             switch (data.call_state) {
               case 'Appeared':
                 return _this.callAppeared();
               case 'Connected':
+                _this.saveState();
                 return _this.startCall();
               case 'Disconnected':
                 return _this.endCall();
             }
           };
         })(this));
+        return this.recoverPrevCall();
+      },
+      recoverPrevCall: function() {
+        var popupData, secondsToShow;
+        popupData = localStorage.getItem('popupData');
+        if (popupData) {
+          popupData = JSON.parse(popupData);
+          this.caller = popupData.caller;
+          this.determined = popupData.determined;
+          this.mango = popupData.mango;
+          secondsToShow = Math.floor(Date.now() / 1000) - popupData.timestamp;
+          this.show_element = secondsToShow < 20;
+          if (this.show_element) {
+            this.setHideTimeout(20 - secondsToShow);
+          }
+          return localStorage.removeItem('popupData');
+        }
       }
     },
     computed: {
@@ -89,9 +147,7 @@ vueInit = function() {
         return moment(parseInt(this.timer.diff) * 1000).format('mm:ss');
       },
       number: function() {
-        var n;
-        n = this.mango.from.number;
-        return "+" + n[0] + " (" + (n.slice(1, 4)) + ") " + (n.slice(4, 7)) + "-" + (n.slice(7, 9)) + "-" + (n.slice(9, 11));
+        return "+" + this.mango.from.number;
       }
     },
     ready: function() {
@@ -99,6 +155,11 @@ vueInit = function() {
     }
   });
   return new Vue({
-    el: '.phone-app'
+    el: '.phone-app',
+    methods: {
+      savePopupData: function() {
+        return this.$children[0].savePopupData();
+      }
+    }
   });
 };
