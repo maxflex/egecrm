@@ -124,6 +124,14 @@
 			Email::send("shamik1551@mail.ru", "СМС о отмененных занятиях завтра", $body);
 		}
 
+        /**
+         * update user cache
+         */
+        public function actionClearUserCache()
+        {
+            User::updateCache();
+        }
+
 		/**
 		 * Обновление кеша полей таблиц.
 		 */

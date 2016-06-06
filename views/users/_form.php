@@ -180,6 +180,13 @@
         <br>
         <div class="row">
             <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                <input type="checkbox" ng-model="User.any_device_access" ng-true-value="1">
+                <span class="switch"></span>
+            </label>
+            доступ с любых устройств
+        </div>
+        <div class="row">
+            <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
                 <input type="checkbox" ng-model="User.banned" ng-true-value="1">
                 <span class="switch"></span>
             </label>
