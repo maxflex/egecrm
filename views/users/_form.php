@@ -57,7 +57,7 @@
                 <img src="img/users/{{ User.id && User.has_photo_cropped ? User.id + '.' + User.photo_extension : 'no-profile-img.gif' }}?ver={{ picture_version }}">
             </div>
             <div class="user-photo-hint" ng-show="User.isNewRecord">
-                установка фото доступно после создания пользователя
+                установка фото доступна после создания пользователя
             </div>
         </div>
     </div>
