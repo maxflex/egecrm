@@ -177,6 +177,13 @@
             </label>
             показать пункт "расчеты"
         </div>
+        <div class="row">
+            <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                <input type="checkbox" ng-model="User.remove_requests" ng-true-value="1">
+                <span class="switch"></span>
+            </label>
+            удаление заявок в ЕГЭ-Репетиторе
+        </div>
         <br>
         <div class="row">
             <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
