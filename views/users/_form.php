@@ -190,7 +190,7 @@
                 <input type="checkbox" ng-model="User.worldwide_access" ng-true-value="1">
                 <span class="switch"></span>
             </label>
-            доступ с любых устройств
+            доступ отовсюду
         </div>
         <div class="row">
             <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
