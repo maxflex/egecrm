@@ -408,20 +408,8 @@
 				});
 				return max;
 			}
-			
-			$scope.toggleMissingNote = function(Schedule) {
-				note = Schedule.missing_note
-				note++
-				$.post("ajax/MissingNoteToggle", {
-					id_student: $scope.student.id,
-					id_group: Schedule.id_group,
-					date: Schedule.hasOwnProperty('lesson_date') ? Schedule.lesson_date : Schedule.date,
-				}, function(response) {
-					Schedule.missing_note = response 
-					$scope.$apply()
-				}, "json")
-			}
-			
+
+
 			$scope.formatVisitDate = function (date) {
 				return moment(date).format("DD.MM.YY")
 			}

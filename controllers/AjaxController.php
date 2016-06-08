@@ -200,24 +200,7 @@
 
 			returnJsonAng($return);
 		}
-
-		public function actionAjaxMissingNoteToggle()
-		{
-			extract($_POST);
-
-			$GroupNote = GroupNote::find([
-				"condition" => "id_group=$id_group AND id_student=$id_student AND date='$date'"
-			]);
-
-			if ($GroupNote) {
-				$GroupNote->delete();
-				returnJsonAng(false);
-			} else {
-				GroupNote::add($_POST);
-				returnJsonAng(true);
-			}
-		}
-
+		
 		public function actionAjaxTest()
 		{
 			$Request = new Request([
