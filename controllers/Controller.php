@@ -5,7 +5,7 @@
 		public $defaultAction = "Main";
 		
 		// Заголовок по умолчанию
-		protected $_html_title	= "ЕГЭ Центр";
+		protected $_html_title	= "ЕГЭ-Центр";
 		protected $_add_title	= " | "; // Будет добавляться к TITLE текущей страницы
 		
 		// Заголовок таба
