@@ -875,19 +875,11 @@
 		}
 
 
-		public function getVisits($with_missing = false)
+		public function getVisits()
 		{
 			$visits = VisitJournal::findAll([
 				"condition" => "id_entity={$this->id} AND type_entity='STUDENT'"
 			]);
-
-			if ($with_missing) {
-				foreach ($visits as &$visit) {
-					$visit->missing_note = GroupNote::count([
-						"condition" => "id_student={$visit->id_entity} AND id_group={$visit->id_group} AND date='{$visit->lesson_date}'"
-					]);
-				}
-			}
 
 			return $visits;
 		}

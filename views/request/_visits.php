@@ -11,15 +11,13 @@
                     </td>
                     <td>
                         <span ng-if="!getGroup(id_group)">
-                            <div ng-repeat="Visit in getVisitsByGroup(id_group)" ng-click="toggleMissingNote(Visit)"
+                            <div ng-repeat="Visit in getVisitsByGroup(id_group)"
                                  class="visit-div-circle">
                                 <span class="circle-default" title="{{formatVisitDate(Visit.lesson_date)}}{{(Visit.presence == 1 && Visit.late > 0) ? ', опоздание ' + Visit.late + ' мин.' : ''}}"
                                       ng-class="{
                                     'circle-red'	: Visit.presence == 2,
                                     'circle-orange'	: Visit.presence == 1 && Visit.late > 0
                                 }"></span>
-                                <span ng-show="Visit.missing_note"
-                                      class="circle-default circle-future-missing" title="{{formatVisitDate(Visit.lesson_date)}}"></span>
                             </div>
                             <span class="visit-between-number">{{getVisitsByGroup(id_group).length}}</span>
                         </span>
@@ -29,20 +27,15 @@
                             <span class="visit-between-number" ng-show="visit_data_counts[id_group][$index]">{{ visit_data_counts[id_group][$index] }}</span>
                             <!-- Занятия нет -->
                             <span ng-if="!getVisit(id_group, Visit.date)">
-                                <span class="circle-default circle-future" title="{{formatVisitDate(Visit.date)}}" ng-click="toggleMissingNote(Visit)"></span>
-                                <span ng-show="Visit.missing_note"
-                                      class="circle-default circle-future-missing" title="{{formatVisitDate(Visit.date)}}"></span>
+                                <span class="circle-default circle-future" title="{{formatVisitDate(Visit.date)}}"></span>
                             </span>
                             <!-- Занятие есть -->
                             <span ng-if="getVisit(id_group, Visit.date)">
                                 <span class="circle-default" title="{{formatVisitDate(getVisit(id_group, Visit.date).lesson_date)}}{{(getVisit(id_group, Visit.date).presence == 1 && getVisit(id_group, Visit.date).late > 0) ? ', опоздание ' + getVisit(id_group, Visit.date).late + ' мин.' : ''}}"
-                                      ng-click="toggleMissingNote(getVisit(id_group, Visit.date))"
                                       ng-class="{
                                     'circle-red'	: getVisit(id_group, Visit.date).presence == 2,
                                     'circle-orange'	: getVisit(id_group, Visit.date).presence == 1 && getVisit(id_group, Visit.date).late > 0
                                 }"></span>
-                                <span ng-show="getVisit(id_group, Visit.date).missing_note"
-                                      class="circle-default circle-future-missing" title="{{formatVisitDate(getVisit(id_group, Visit.date).lesson_date)}}"></span>
                             </span>
                         </div>
                         <span class="visit-between-number" ng-show="visit_data_counts[id_group]['last']">{{ visit_data_counts[id_group]['last'] }}</span>
