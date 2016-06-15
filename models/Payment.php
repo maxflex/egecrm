@@ -11,7 +11,8 @@
 		const NOT_PAID_BILL	= 3;	
 		const PAID_BILL		= 4;
 		const CARD_ONLINE	= 5;
-		
+		const MUTUAL_DEBTS	= 6;
+
 		# Все
 		static $all  = [			
 			self::PAID_CARD		=> "карта",
@@ -19,6 +20,7 @@
 			self::NOT_PAID_BILL	=> "не оплаченный счет",
 			self::PAID_BILL		=> "счет",
 			self::CARD_ONLINE	=> "карта онлайн",
+			self::MUTUAL_DEBTS	=> "взаимозачет",
 		];
 		
 		# удаленные записи коллекции
@@ -52,7 +54,7 @@
 		 * $attrs	– остальные атрибуты
 		 * 
 		 */
-		public static function buildSelector($selcted = false, $name = false, $attrs = false)
+		public static function buildSelector($selcted = false, $name = false, $attrs = false, $skip = [])
 		{
 			$class_name = strtolower(get_called_class());
 			echo "<select class='form-control' id='".$class_name."-select' name='".($name ? $name : $class_name)."' ".Html::generateAttrs($attrs).">";
@@ -61,10 +63,12 @@
 				echo "<option disabled>──────────────</option>";
 			}
 			foreach (static::$all as $id => $value) {
-				// удаленные записи коллекции отображать только в том случае, если они уже были выбраны
-				// (т.е. были использованы ранее, до удаления)
-				if (!in_array($id, static::$deleted) || ($id == $selcted)) {
-					echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";
+				if (!in_array($id, $skip)) {
+					// удаленные записи коллекции отображать только в том случае, если они уже были выбраны
+					// (т.е. были использованы ранее, до удаления)
+					if (!in_array($id, static::$deleted) || ($id == $selcted)) {
+						echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";
+					}
 				}
 			}
 			echo "</select>";

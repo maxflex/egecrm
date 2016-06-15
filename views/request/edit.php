@@ -20,7 +20,7 @@
 			<h4>{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
 			<div class="form-group payment-line">
 				<div class="form-group inline-block">
-					<?= Payment::buildSelector(false, false, ["ng-model" => "new_payment.id_status", "style" => "width: 180px"]) ?>
+					<?= Payment::buildSelector(false, false, ["ng-model" => "new_payment.id_status", "style" => "width: 180px"], [Payment::MUTUAL_DEBTS]) ?>
 			    </div>
 				<div class="form-group inline-block">
 					<?= PaymentTypes::buildSelector(false, false, ["ng-model" => "new_payment.id_type"]) ?> на сумму
