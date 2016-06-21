@@ -505,8 +505,10 @@
 					// если есть нижнее подчеркивание, то номер заполнен не полностью
 					not_filled = t.val().match(/_/)
 
+					checkDublicate = !t.attr('untrack-dublicate');
+
 					// если номер полностью заполнен
-					if (!not_filled) {
+					if (!not_filled && checkDublicate) {
 						$.ajax({
 							type: "POST",
 							url: "ajax/checkPhone",

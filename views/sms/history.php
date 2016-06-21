@@ -2,7 +2,7 @@
 	<form method="get" action="sms" style="margin-bottom: 20px">
 		<div class="row">
 			<div class="col-sm-2">
-				<input type="text" placeholder="телефон" class="form-control phone-masked" name="phone" value="<?= $_GET['phone'] ?>"">
+				<input type="text" placeholder="телефон" untrack-dublicate="true" class="form-control phone-masked" name="phone" value="<?= $_GET['phone'] ?>"">
 			</div>
 			<div class="col-sm-6">
 				<input class="form-control" placeholder="поиск" name="search" value="<?= $_GET['search'] ?>">
