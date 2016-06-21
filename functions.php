@@ -472,6 +472,21 @@
 		return preg_replace("/[^0-9]/","",$number);
 	}
 
+	/**
+	 * Возвратить номер телефона в удобном для частичного поиска формате.
+	 *
+	 */
+	function cleanNumberForSearch($number)
+	{
+		// вариант с пропусками
+		// Оствим только знаки 0-9,_
+		//$number = preg_replace("/[^0-9_]/","",$number);
+
+		$number = preg_replace("/^\+7/","",$number);
+		$number = preg_replace("/[^0-9]/","",$number);
+		return $number;
+	}
+
 
 	/**
 	 * Проверка даты на то, что оно пустое.
