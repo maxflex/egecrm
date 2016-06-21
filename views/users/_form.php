@@ -128,6 +128,13 @@
     <div class="col-sm-12">
         <div class="row">
             <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                <input type="checkbox" ng-model="User.worktime" ng-true-value="1" ng-false-value="0">
+                <span class="switch"></span>
+            </label>
+            отображать в списке заявок
+        </div>
+        <div class="row">
+            <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
                 <input type="checkbox" ng-model="User.can_approve_tutor" ng-true-value="1">
                 <span class="switch"></span>
             </label>
