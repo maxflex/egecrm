@@ -8,7 +8,13 @@
 
 		// Папка вьюх
 		protected $_viewsFolder	= "mango";
-
+		
+		public function actionResultStats()
+		{
+			$data = json_decode($_POST['json']);
+			Email::send("makcyxa-k@yandex.ru", "Mango Info", json_encode($data));
+		}
+		
 		public function actionEventCall()
 		{
 			$data = json_decode($_POST['json']);

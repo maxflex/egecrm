@@ -1044,5 +1044,20 @@
 			}
 			return $text;
 		}
+		
+				
+		/*
+		 * Получить легкую версию (имя + id)
+		 */ 
+		public static function getLight($id)
+		{
+			return dbConnection()->query("
+				SELECT id, first_name, last_name, middle_name 
+				FROM " . static::$mysql_table . " 
+				WHERE id = " . $id . " 
+				ORDER BY last_name, first_name, middle_name ASC")
+			->fetch_object(); 
+		}
+		
 
 	}

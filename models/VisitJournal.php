@@ -59,7 +59,6 @@
 					"type_entity"			=> Student::USER_TYPE,
 					"id_group"				=> $id_group,
 					"id_subject"			=> $Group->id_subject,
-//					"id_branch"				=> $Group->id_branch,
 					"id_branch"				=> $Schedule->id_branch,
 					"cabinet"				=> $Group->cabinet,
 					"is_special"			=> $Group->is_special,
@@ -73,6 +72,7 @@
 					"id_teacher"			=> $Group->id_teacher,
 					"grade"					=> $Group->grade,
 					"duration"				=> $Group->duration,
+					"year"					=> static::_academicYear($date),
 				]);
 			}
 			
@@ -81,7 +81,6 @@
 				"type_entity"			=> Teacher::USER_TYPE,
 				"id_group"				=> $id_group,
 				"id_subject"			=> $Group->id_subject,
-//				"id_branch"				=> $Group->id_branch,
 				"id_branch"				=> $Schedule->id_branch,
 				"cabinet"				=> $Group->cabinet,
 				"is_special"			=> $Group->is_special,
@@ -92,6 +91,7 @@
 				"id_user_saved"			=> User::fromSession()->id,
 				"grade"					=> $Group->grade,
 				"duration"				=> $Group->duration,
+				"year"					=> static::_academicYear($date),
 			]);
 		}
 
@@ -223,4 +223,16 @@
             }
             return $group_ids;
         }
+        
+        
+		private static function _academicYear($date)
+		{
+			$year = date("Y", strtotime($date));
+			$day_month = date("m-d", strtotime($date));
+			
+			if ($day_month >= '01-01' && $day_month <= '07-15') {
+				$year--;
+			}
+			return $year;
+		}
 	}

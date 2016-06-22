@@ -20,6 +20,21 @@
 				for i in [0...total] by 1
 					input.push i
 				input
+		.controller "FaqCtrl", ($scope) ->
+			$scope.save = ->
+				ajaxStart()
+				$.post 'ajax/saveTeacherFaq', 
+					html: $scope.editor.getValue()
+				, ->
+					ajaxEnd()
+			
+			angular.element(document).ready ->
+				$scope.editor = ace.edit("editor")
+				$scope.editor.setOptions
+					minLines: 43
+					maxLines: 43
+				$scope.editor.getSession().setMode("ace/mode/html")
+					
 		.controller "SalaryCtrl", ($scope) ->
 			angular.element(document).ready ->
 				set_scope "Teacher"
@@ -439,25 +454,53 @@
 				$('#email-address').text email
 				lightBoxShow 'email'
 
-		.controller "ListCtrl", ($scope) ->
+		.controller "ListCtrl", ($scope, $timeout) ->
+			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr')
+			$scope.filter_subjects = JSON.parse(localStorage.getItem('teachers_subjects'))
+			
 			# The amount of hidden teachers
 			$scope.othersCount = ->
 				_.where($scope.Teachers, {had_lesson: 0}).length
 
 			$scope.smsDialog = smsDialogTeachers
-
-			$scope.showHidden = ->
-				$scope.show_others = !$scope.show_others
-
-				if ($scope.show_others)
-					$('html, body').animate({
-				        scrollTop: $("#hidden-teachers-button").offset().top
-				    }, 400)
-				else
-					$('html, body').animate({
-				        scrollTop: $("#teachers-list").prop("scrollHeight") - 420
-				    }, 400)
-
+				
+			$scope.subjectSelected = (subject_id) ->
+				subject_id in $scope.filter_subjects
+			
+			$scope.changeState = ->
+				localStorage.setItem('teachers_in_egecentr', $scope.in_egecentr)
+				$scope.refreshCounts()
+			
+			$scope.changeSubjects = ->
+				localStorage.setItem('teachers_subjects', JSON.stringify($scope.filter_subjects))
+				$scope.refreshCounts()
+			
+			$scope.teachersFilter = (Teacher) ->
+				Teacher.in_egecentr is (parseInt($scope.in_egecentr) or 1) and (if ($scope.filter_subjects and $scope.filter_subjects.length) then _.intersection(Teacher.subjects, $scope.filter_subjects.map(Number)).length else true)
+					
+			$scope.getCount = (state, subjects) ->
+				subjects = [subjects] if typeof(subjects) is "string"
+				_.filter($scope.Teachers, (Teacher) ->
+					Teacher.in_egecentr is (parseInt(state) or 1) and (if (subjects and subjects.length) then _.intersection(Teacher.subjects, subjects.map(Number)).length else true)
+				).length
+			
+			$scope.refreshCounts = ->
+				$timeout ->
+					$('#state-select option, #subjects-select option').each (index, el) ->
+		                $(el).data 'subtext', $(el).attr 'data-subtext'
+		                $(el).data 'content', $(el).attr 'data-content'
+		            $('#state-select, #subjects-select').selectpicker 'refresh'
+		        , 100
+			
+			
+			
 			angular.element(document).ready ->
 				set_scope 'Teacher'
+				
+				$("#subjects-select").selectpicker
+					noneSelectedText: "предметы"
+					multipleSeparator: "+"
+				
+				$("#state-select").selectpicker()
+				
 				smsMode 4

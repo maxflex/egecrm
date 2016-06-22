@@ -12,7 +12,20 @@
 		{
 			$this->addJs("ng-teacher-app");
 		}
+		
+		public function actionFaq()
+		{
+			$this->setTabTitle("Редактирование FAQ преподавателя");
+			
+			$ang_init_data = angInit([
+				"html" => Settings::get('teachers_faq'),
+			]);
 
+			$this->render("faq", [
+				"ang_init_data" => $ang_init_data,
+			]);
+		}
+		
 		public function actionSalary()
 		{
 			$Data = VisitJournal::findAll([
@@ -107,49 +120,19 @@
 		public function actionList()
 		{
 			$this->_custom_panel = true;
-
+			
+			$this->addJs("bootstrap-select");
+			$this->addCss("bootstrap-select");
+			
 			$Teachers = Teacher::findAll([
-				"condition" => "in_egecentr = 1",
-				"order" => "last_name ASC"
+				"condition" => "in_egecentr > 0",
+				"order" => "last_name ASC",
 			]);
 
-			foreach ($Teachers as &$Teacher) {
-				// $Teacher->login_count = User::getLoginCount($Teacher->id, Teacher::USER_TYPE);
-				$Groups = Teacher::getGroups($Teacher->id);
-				foreach ($Groups as $Group) {
-					foreach ($Group->students as $id_student) {
-						$admin_rating = TeacherReview::getStatus($id_student, $Teacher->id, $Group->id_subject);
-						if ($admin_rating) {
-							$Teacher->statuses[$admin_rating]++;
-						} else {
-							// если в группе не было ни одного занятия
-							if (Student::alreadyHadLessonStatic($id_student, $Group->id)) {
-								$Teacher->statuses[0]++;
-							}
-						}
-					}
-				}
-
-
-				# ОТЧЕТЫ
-				if ($Teacher->had_lesson) {
-// 					$result = dbConnection()->query("SELECT id FROM visit_journal WHERE id_teacher={$Teacher->id} GROUP BY id_entity, id_subject");
-// 					$Teacher->student_subject_count = $result->num_rows;
-					$Teacher->student_subject_counts = $Teacher->redReportCount();
-
-					// $Teacher->reports_count = Report::count([
-					// 	"condition" => "id_teacher=" . $Teacher->id,
-					// ]);
-					//
-					// $Teacher->reports_sent_count = Report::count([
-					// 	"condition" => "email_sent=1 AND id_teacher=" . $Teacher->id,
-					// ]);
-				}
-			}
-
 			$ang_init_data = angInit([
-				"Teachers" => $Teachers,
-				"subjects" => Subjects::$short,
+				"Teachers" 		=> $Teachers,
+				"three_letters"	=> Subjects::$three_letters,
+				"subjects" 		=> Subjects::$short,
 			]);
 
 			$this->render("list", [
@@ -162,7 +145,7 @@
 			$id_teacher = $_GET['id'];
 			$this->setTabTitle("Редактирование преподавателя №{$id_teacher}");
 			$this->setRightTabTitle("
-				<a class='link-white' style='margin-right: 10px' href='http://crm.a-perspektiva.ru:8080/egerep/public//tutors/{$id_teacher}/edit'>егэ-репетитор</a>
+				<a class='link-white' style='margin-right: 10px' href='https://lk.ege-repetitor.ru/tutors/{$id_teacher}/edit'>профиль в системе ЕГЭ-Репетитор</a>
 				<a class='link-white' href='as/teacher/{$id_teacher}'>режим просмотра</a>
 			");
 			$Teacher = Teacher::findById($id_teacher);

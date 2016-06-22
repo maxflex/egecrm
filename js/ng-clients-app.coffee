@@ -3,13 +3,6 @@ angular.module "Clients", []
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
-	.controller "ErrorsCtrl", ($scope) ->
-		angular.element(document).ready ->
-			set_scope "Clients"
-			$.post "clients/ajax/getErrorStudents", {mode: window.location.search}, (response) ->
-				$scope.Response = response
-				$scope.$apply()
-			, "json"
 	.controller "ListCtrl", ($scope) ->
 		$scope.filter_cancelled = 0
 		

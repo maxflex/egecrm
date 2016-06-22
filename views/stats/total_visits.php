@@ -87,10 +87,9 @@
 			<tr ng-repeat-start="stat in sortByDate(stats)" ng-class="{'pointer': days_mode}" ng-click="dateLoad(stat.date)">
 				<td>
 					{{formatDate(stat.date)}}
-					<span ng-show="missing[stat.date] > 0" class="badge badge-danger" style="margin-left: 10px">{{ missing[stat.date] }}</span>
 				</td>
 				<td>
-					{{stat.lesson_count ? stat.lesson_count : ''}}
+					{{stat.lesson_count ? stat.lesson_count : ''}}<span ng-show="missing[stat.date] > 0" class="text-danger">{{stat.lesson_count ? '+' : ''}}{{ missing[stat.date] }}</span>
 				</td>
 				<td>
 					{{stat.in_time ? stat.in_time : ''}}
@@ -154,7 +153,7 @@
                                       ng-show="Schedule.cabinetLayered || Schedule.studentLayered"
                                       title="{{ (Schedule.cabinetLayered ? 'Наслоение кабинета:\nКабинет № ' + Schedule.cabinetNumber + '\n': '') +
                                                 (Schedule.studentLayered ? 'Наслоение студентов:\n' + Schedule.studentLayered : '') }}">наслоение</span>
-								<span class="label label-danger" ng-show="isMissingLesson(Schedule)">не зарегистрирован</span>
+								<span class="label label-danger" ng-show="!Schedule.was_lesson && !isToday()">не зарегистрирован</span>
 								<span class="label label-default" ng-show="Schedule.is_free">бесплатное</span>
 							</td>
 						</tr>

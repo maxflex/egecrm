@@ -241,17 +241,12 @@
 		 */
 		public static function getLastWeekMissing($total_count = false)
 		{
-			$date = date('Y-m-d');
+			$date = date('Y-m-d', strtotime('yesterday'));
 			
-			$minutes = LESSON_LENGTH + 30; // 30 минут после окончания урока
-			
-			foreach(range(1, 7) as $i) {
-				// @refactored
+			foreach(range(1, 10) as $i) {
 				$GroupSchedule = GroupSchedule::findAll([
-					"condition" => "date='$date'  AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) >  {$minutes}
-						AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW()) AND id_group > 0 AND cancelled=0"
+					"condition" => "date='$date' AND id_group > 0 AND cancelled=0"
 				]);
-				
 				
 				foreach ($GroupSchedule as $Schedule) {
 					// Проверяем было ли это занятие
@@ -260,12 +255,11 @@
 					]);
 					
 					// если занятия не было, добавляем в ошибки
-					if (!$was_lesson) {
+					if (! $was_lesson) {
 						$return[$date]++;
 						$total_missing_count++;
 					}	
 				}
-				
 				$date = date('Y-m-d', strtotime($date . "-$i day"));
 			}
 			

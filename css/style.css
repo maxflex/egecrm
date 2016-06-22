@@ -119,10 +119,17 @@
   .label-transparent:hover {
     opacity: 1; }
 
-.teacher-img {
+.teacher-img, .user-photo-hint {
   height: 150px;
   width: 120px;
   border-radius: 5px; }
+
+.user-photo-hint {
+  color: #ddd;
+  font-size: 8pt;
+  text-align: center;
+  padding: 35px 10px;
+  border: 1px solid #ddd; }
 
 .tutor-img {
   border: 3px dashed #DEDEDE;
@@ -2354,3 +2361,42 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .table.table-divlike > tbody > tr > td.ban-ico.egerep-banned {
   padding-left: 5px !important; }
+
+.table.border-reverse > tbody > tr > td {
+  border-top: none;
+  border-bottom: 1px solid #ddd; }
+
+.bootstrap-select.btn-group .dropdown-menu li small {
+  position: absolute;
+  top: 4px;
+  right: 40px;
+  font-size: 100%;
+  padding: 0; }
+
+.filter-option .text-muted {
+  display: none; }
+
+.bootstrap-select.btn-group .dropdown-menu li:not(.disabled) a:hover small, .bootstrap-select.btn-group .dropdown-menu li:not(.disabled) a:focus small, .bootstrap-select.btn-group .dropdown-menu li.active:not(.disabled) a small {
+  color: #777 !important; }
+
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(360deg); } }
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg); }
+  to {
+    transform: rotate(360deg); } }
+
+.spinning {
+  -webkit-animation-name: spin;
+  -webkit-animation-duration: 2000ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  animation-name: spin;
+  animation-duration: 2000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; }

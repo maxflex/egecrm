@@ -26,7 +26,7 @@ angular.module("Users", ['colorpicker.module']).controller("ListCtrl", function(
 }).controller("EditCtrl", function($scope, $timeout) {
   var bindCropper, bindFileUpload;
   $scope.has_pswd_error = false;
-  $scope.psw_changed = false;
+  $scope.psw_filled = false;
   $scope.picture_version = 1;
   $scope.clone_user = function() {
     return $scope.old_data = angular.copy($.extend($scope.User, {
@@ -39,7 +39,7 @@ angular.module("Users", ['colorpicker.module']).controller("ListCtrl", function(
     p1 = $scope.User.new_password;
     p2 = $scope.User.new_password_repeat;
     if (p1 || p2) {
-      $scope.psw_changed = true;
+      $scope.psw_filled = true;
       ref = [p1, p2];
       for (j = 0, len = ref.length; j < len; j++) {
         x = ref[j];
@@ -50,7 +50,7 @@ angular.module("Users", ['colorpicker.module']).controller("ListCtrl", function(
       }
       return $scope.has_pswd_error = (p1 !== p2) || has_pswd_error;
     } else {
-      return $scope.psw_changed = false;
+      return $scope.psw_filled = false;
     }
   });
   $scope.save = function() {
@@ -191,5 +191,52 @@ angular.module("Users", ['colorpicker.module']).controller("ListCtrl", function(
     return $timeout(function() {
       return $('#photo-edit').cropper('resize');
     }, 100);
+  };
+}).controller("CreateCtrl", function($scope, $http) {
+  $scope.user_exists = false;
+  $scope.has_pswd_error = true;
+  $scope.psw_filled = false;
+  $scope.$watchCollection('[User.new_password, User.new_password_repeat]', function() {
+    var has_pswd_error, j, len, p1, p2, ref, x;
+    p1 = $scope.User.new_password;
+    p2 = $scope.User.new_password_repeat;
+    if (p1 || p2) {
+      $scope.psw_filled = true;
+      ref = [p1, p2];
+      for (j = 0, len = ref.length; j < len; j++) {
+        x = ref[j];
+        has_pswd_error = !x || (x && !(x.match('^[a-zA-Z0-9_]{10,}$') && x.match('[a-zA-Z]+') && x.match('[0-9]+') && x.match('[_]+')));
+        if (has_pswd_error) {
+          break;
+        }
+      }
+      return $scope.has_pswd_error = (p1 !== p2) || has_pswd_error;
+    } else {
+      return $scope.psw_filled = false;
+    }
+  });
+  $scope.checkExistance = function() {
+    if ($scope.User.login.length) {
+      return $.post("users/ajax/exists", {
+        login: $scope.User.login
+      }).then(function(response) {
+        $scope.user_exists = response > 0;
+        return $scope.$apply();
+      });
+    } else {
+      return $scope.user_exists = false;
+    }
+  };
+  $scope.requiredFilled = function() {
+    return $scope.psw_filled && !$scope.has_pswd_error && $scope.User.login && $scope.User.login.length && !$scope.user_exists;
+  };
+  return $scope.save = function() {
+    ajaxStart();
+    return $.post("users/ajax/create", {
+      user: $scope.User
+    }, function(response) {
+      ajaxEnd();
+      return redirect("users/edit/" + response);
+    });
   };
 });

@@ -21,7 +21,7 @@ RewriteRule ^ajax/([a-zA-Z]+)[/]?$ index.php?controller=ajax&action=Ajax$1 [QSA,
 # Отчеты
 RewriteRule ^(students/|teachers/)?reports/add/([0-9]+)[/]?$ index.php?controller=reports&action=addStudent&id_student=$2&id_subject=$3 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/add/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=add&id_student=$2&id_subject=$3 [QSA,L]
-RewriteRule ^(students/|teachers/)?reports[/]?$ index.php?controller=reports&action=list [QSA,L]
+RewriteRule ^(students/|teachers/)?reports[?page=(0-9)]?[/]?$ index.php?controller=reports&action=list&page=$1 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/([a-zA-Z]+)[/]?$ index.php?controller=reports&action=$2 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/([0-9]+)[/]?$ index.php?controller=reports&action=view&id=$2 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/edit/([0-9]+)[/]?$ index.php?controller=reports&action=edit&id=$2 [QSA,L]
@@ -41,6 +41,7 @@ RewriteRule ^teachers/salary[/]?$ index.php?controller=teacher&action=Salary [QS
 # RewriteRule ^teachers/salary/([0-9]+)?$ index.php?controller=teacher&action=Salary&id_teacher=$1 [QSA,L]
 RewriteRule ^teachers/edit/([0-9]+)?$ index.php?controller=teacher&action=edit&id=$1 [QSA,L]
 RewriteRule ^teachers/add[/]?$ index.php?controller=teacher&action=add [QSA,L]
+RewriteRule ^teachers/html[/]?$ index.php?controller=teacher&action=faq [QSA,L]
 RewriteRule ^teachers/ajax/([a-zA-Z]+)[/]?$ index.php?controller=teacher&action=Ajax$1 [QSA,L]
 RewriteRule ^teachers[/]?$ index.php?controller=teacher&action=list [QSA,L]
 
@@ -150,3 +151,4 @@ RewriteRule ^[/]?$ index.php?controller=login&action=login [QSA,L]
 # Mango
 RewriteRule ^mango/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=$1 [QSA,L]
 RewriteRule ^mango/events/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=Event$1 [QSA,L]
+RewriteRule ^mango/result/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=Result$1 [QSA,L]

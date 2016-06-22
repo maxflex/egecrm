@@ -969,4 +969,11 @@
 
 			returnJsonAng($Students);
 		}
+		
+		
+		public function actionAjaxSaveTeacherFaq()
+		{
+			extract($_POST);
+			Settings::set('teachers_faq', $html);
+		}
 	}

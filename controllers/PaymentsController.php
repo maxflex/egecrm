@@ -51,7 +51,6 @@
 		{
 			$Payments = Payment::findAll();
 			
-
 			foreach ($Payments as &$Payment) {
 				$Payment->Student = $Payment->getStudent();
 			}

@@ -4,7 +4,7 @@
 				if (items) {
 					return items.slice().reverse();
 				}
-			};
+			}; 
 		})
 		.controller("LkTeacherCtrl", function($scope, $http) {
 			
@@ -89,7 +89,7 @@
 					}
 					case 3: {
 						return payment.id_status == 2
-					}
+					} 
 					case 4: {
 						return payment.id_status == 1
 					}

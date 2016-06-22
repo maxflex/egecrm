@@ -12,8 +12,9 @@
         public static $api_fields = [
             'id', 'photo_extension',
             'first_name', 'last_name', 'middle_name',
-            'description',  'has_photo',
-            'subjects', 'public_seniority', 'public_ege_start', 'public_grades'
+            'description',  'has_photo', 'comment_extended',
+            'subjects', 'public_grades', 'start_career_year',
+            'video_link',
         ];
 
 		const USER_TYPE = "TEACHER";
@@ -101,18 +102,6 @@
 
 			$red_count = 0;
 			foreach ($student_subject as $Object) {
-				// проверяем статус расторжения
-				$status = dbConnection()->query("
-					SELECT cs.status FROM contract_subjects cs
-					LEFT JOIN contracts c on c.id = cs.id_contract
-					WHERE c.id_student = {$Object->id_entity} " . Contract::ZERO_OR_NULL_CONDITION_JOIN . "
-						AND cs.id_subject = {$Object->id_subject}
-				")->fetch_object()->status;
-
-				if ($status <= 1) {
-					continue;
-				}
-
 				// получаем кол-во занятий с последнего отчета по предмету
 				$LatestReport = Report::find([
 					"condition" => "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ." AND id_teacher=" . $id_teacher,
@@ -154,9 +143,93 @@
 					$red_count += Teacher::redReportCountStatic($id_teacher);
 				}
 				
-				memcached()->set('redReportCountAll', $red_count, 3600 * 12); // на 12 часов
+				memcached()->set('redReportCountAll', $red_count, 3600 * 24); // на 24 часа
 			}
 			return $red_count;
+		}
+		
+		/*
+		 * Получить преподавателей для отчета
+		 */
+		public static function getReportTeachers()
+		{
+			$result = dbConnection()->query("
+				SELECT id_entity 
+				FROM visit_journal 
+				WHERE type_entity = 'TEACHER'
+				GROUP BY id_entity
+			");
+			
+			while ($row = $result->fetch_object()) {
+				$return[] = static::getLight($row->id_entity);
+			}
+			
+			return $return;
+		}
+		
+		/*
+		 * Получить легкую версию (имя + id)
+		 */
+		public static function getLight($id)
+		{
+			return dbEgerep()->query("
+				SELECT id, first_name, last_name, middle_name 
+				FROM " . static::$mysql_table . " 
+				WHERE id = " . $id . " 
+				ORDER BY last_name, first_name, middle_name ASC")
+			->fetch_object(); 
+		}
+		
+		/*
+		 * Получить данные для отчета
+		 */
+		public static function getReportData($page)
+		{
+			if (!$page) {
+				$page = 1;
+			}
+			// С какой записи начинать отображение, по формуле
+			$start_from = ($page - 1) * Report::PER_PAGE;
+			
+			$search = json_decode($_COOKIE['reports']);
+			
+			// получаем все человеко-предметы
+			$query = "
+				SELECT vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, rh.lesson_count
+				FROM visit_journal vj
+				LEFT JOIN reports" . static::_connectTables('r') . "
+				JOIN reports_helper" . static::_connectTables('rh', 'AND isnull(rh.id_report) = isnull(r.id)') . "
+				WHERE vj.type_entity='STUDENT' "
+				. (($search->mode == 1) ? " AND r.id IS NOT NULL" : "")
+				. ($search->available_for_parents ? " AND r.available_for_parents={$search->available_for_parents}" : "")
+				. ($search->email_sent ? " AND r.email_sent={$search->email_sent}" : "")
+				. ($search->year ? " AND vj.year={$search->year}" : "")
+				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
+				. ((isset($search->subjects) && count($search->subjects)) ? " AND vj.id_subject IN (" . implode(',', $search->subjects) . ")" : "")
+				. (($search->mode > 1) ? " AND (r.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? ">=8" : "<8") . ")" : "") . "
+				GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id
+				ORDER BY vj.lesson_date DESC";
+			
+			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
+			
+			while ($row = $result->fetch_object()) {
+				$student_subject[] = $row;
+			}
+			
+			foreach ($student_subject as &$ss) {
+				$ss->Student = Student::getLight($ss->id_entity);
+				$ss->Teacher = Teacher::getLight($ss->id_teacher);
+				$ss->force_noreport = ReportForce::check($ss->id_entity, $ss->id_teacher, $ss->id_subject, $ss->year);
+			}
+			
+			return [
+				'data' 	=> $student_subject,
+				'count' => dbConnection()->query($query)->num_rows,
+			];
+		}
+		
+		private static function _connectTables($t, $addon) {
+			return " {$t} ON ({$t}.id_student = vj.id_entity AND {$t}.id_teacher = vj.id_teacher AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year {$addon})";
 		}
 
 		public static function getActiveGroups()
@@ -218,9 +291,9 @@
 		public static function findAll($params = [])
 		{
 			if (! isset($params['condition'])) {
-				$params['condition'] = 'in_egecentr = 1';
+				$params['condition'] = 'in_egecentr >= 1';
 			} else {
-				$params['condition'] .= ' AND in_egecentr = 1';
+				$params['condition'] .= ' AND in_egecentr >= 1';
 			}
 
 			return parent::findAll($params);

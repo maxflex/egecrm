@@ -51,11 +51,18 @@ angular.module("Task", ['ngSanitize']).filter('reverse', function() {
     return Task.id === $scope.editing_task;
   };
   $scope.toggleTaskStatus = function(Task) {
-    Task.id_status++;
-    if (Task.id_status > Object.keys($scope.task_statuses).length) {
-      Task.id_status = 1;
+    var Task_copy;
+    Task_copy = angular.copy(Task);
+    Task_copy.id_status++;
+    if (Task_copy.id_status > Object.keys($scope.task_statuses).length) {
+      Task_copy.id_status = 1;
     }
-    return $scope.saveTask(Task);
+    return $scope.saveTask(Task_copy).then(function(response) {
+      if (response) {
+        Task.id_status = Task_copy.id_status;
+        return $scope.$apply();
+      }
+    });
   };
   $scope.deleteTask = function(Task) {
     Task.html = "";
