@@ -448,6 +448,7 @@
 		{
 			$this->loss = 0; // изначально потеря = 0;
 			$this->loss_data = []; // будем хранить данные о потерях, для проверки результатов и т. д.;
+			$this->total_lessons = 0; // будем хранить данные о потерях, для проверки результатов и т. д.;
 
 			//получаем все группы препода.
 			$condition[] = "id_entity = {$this->id}";
@@ -458,25 +459,52 @@
 			$group_ids = $raw_group_ids ? explode(',', $raw_group_ids) : [];
 
 			foreach ($group_ids as $group_id) {
+				// получаем первое посещение препода в группе.
+				$query = "select lesson_date as first_date from visit_journal where id_group = {$group_id} and type_entity = '".Teacher::USER_TYPE."' and id_entity = {$this->id} order by lesson_date limit 1";
+				$first_lesson = dbConnection()->query($query)->first_date;
+
 				//получаем последнее посещение всех студентов группы.
-				$query = "select id_entity as id, lesson_date, id_teacher as last_teacher ".
+				$query = "select id_entity as id, lesson_date as last_lesson, id_teacher as last_teacher ".
 						 "from (select * from visit_journal where id_group = {$group_id} and type_entity = '".Student::USER_TYPE."' order by lesson_date desc) v ".
 						 "group by id_entity";
 				$result = dbConnection()->query($query);
 
-				while ($student = $result->fetch_object()) {
-					if ($student->last_teacher == $this->id) { // если последный препод студента был этот препод, то считаем потери.
+				while ($result && $student = $result->fetch_object()) {
+					// первое занятие ученика и препода
+					$query = "select lesson_date as first_common_lesson ".
+							 "from visit_journal ".
+							 "where id_group = {$group_id} and type_entity = '".Student::USER_TYPE."' and id_entity = {$student->id} and id_teacher = {$this->id} ".
+							 "order by lesson_date asc limit 1";
+					$first_common_lesson = dbConnection()->query($query)->fetch_object()->first_common_lesson;
+
+					// если последный препод студента был этот препод, то считаем потери.
+					if ($student->last_teacher == $this->id) {
 						$loss = GroupSchedule::count([
-									"condition" => "id_group = {$group_id} and date > '{$student->lesson_date}' and date < now() and cancelled = 0"
+									"condition" => "id_group = {$group_id} and date > '{$student->last_lesson}' and date < now() and cancelled = 0"
 								]);
+
+						// начиная первого занятия студент-препода до конца таблицы
+						$total_lessons = GroupSchedule::count([
+											"condition" => "id_group = {$group_id} and date >= '{$first_common_lesson}' and date <= now() and cancelled = 0"
+										 ]);
+						$this->total_lessons += $total_lessons;
+
 						if ($loss) {
 							$this->loss += $loss;
-							$this->loss_data[$group_id][$student->id] = $loss;
+							$this->loss_data[$group_id][$student->id] = ['loss' => $loss, 'first_common_lesson' => $first_common_lesson, 'total_lessons' => $total_lessons];
+						}
+					} else {
+						// если студент отвалился до урока препода, то не считаем период.
+						// иначе берем период от начала первого занятия до конца таблицы.
+						if (new DateTime($first_common_lesson) < new DateTime($student->last_lesson)) {
+							$this->total_lessons += GroupSchedule::count([
+								"condition" => "id_group = {$group_id} and date >= '{$first_common_lesson}' and date < now() and cancelled = 0"
+							]);
 						}
 					}
 				}
 			}
 
-			$this->hold_coeff = round(100*(count($group_ids)*213 - $this->loss)/(count($group_ids ? $group_ids : 1)*213));  // 213 - теоритическое максимальное количество уроков 1ого препода.
+			$this->hold_coeff = $this->total_lessons ? round(100*($this->total_lessons - $this->loss)/$this->total_lessons) : 0;  // 213 - теоритическое максимальное количество уроков одного препода.
 		}
 	}
