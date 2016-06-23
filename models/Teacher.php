@@ -455,7 +455,7 @@
 			$condition[] = $group_id ? "id_group = {$group_id}" : '1';
 			$query = "select group_concat(distinct id_group) as group_ids from visit_journal where ".implode(" and ", $condition);
 			$raw_group_ids = dbConnection()->query($query)->fetch_object()->group_ids;
-			$group_ids = explode(',', $raw_group_ids);
+			$group_ids = $raw_group_ids ? explode(',', $raw_group_ids) : [];
 
 			foreach ($group_ids as $group_id) {
 				//получаем последнее посещение всех студентов группы.
@@ -477,6 +477,6 @@
 				}
 			}
 
-			$this->hold_coeff = round(100*(count($group_ids)*213 - $this->loss)/(count($group_ids)*213));  // 213 - теоритическое максимальное количество уроков 1ого препода.
+			$this->hold_coeff = round(100*(count($group_ids)*213 - $this->loss)/(count($group_ids ? $group_ids : 1)*213));  // 213 - теоритическое максимальное количество уроков 1ого препода.
 		}
 	}
