@@ -2111,6 +2111,14 @@ div[id^='comment-block'] {
 	}
 }
 
+.link-like-nocolor {
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+	    text-decoration: underline;
+	}
+}
+
 .bootstrap-select .btn:focus, .selectpicker a {
 	outline: none !important;
 }

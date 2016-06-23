@@ -23,5 +23,6 @@
 			$Settings = static::_findByKey($key);
 			$Settings->value = $value;
 			$Settings->save('value');
+			return $value;
 		}
 	}

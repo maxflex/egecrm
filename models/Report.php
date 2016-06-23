@@ -92,6 +92,8 @@
 					'lesson_count'	=> $lessons_count,
 				]);
 			}
+			
+			return Settings::set('reports_updated', now());
 		}
 	}
 	

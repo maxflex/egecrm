@@ -10,10 +10,10 @@ angular.module "Reports", ["ui.bootstrap"]
 				input.push i
 			input
 	.controller "UserListCtrl", ($scope, $timeout) ->
-		$scope.counts = 
-			year: {2015: 20, 2016: 30}
-		
 		$scope.helper_updating = false
+		
+		$scope.formatDateTime = (date) ->
+			moment(date).format "DD.MM.YY в HH:mm"
 		
 		$scope.forceNoreport = (d) ->
 			$.post "reports/AjaxForceNoreport",
@@ -42,7 +42,10 @@ angular.module "Reports", ["ui.bootstrap"]
 			$.post "reports/AjaxRecalcHelper", {}, (response) ->
 				frontendLoadingEnd()
 				$scope.helper_updating = false
+				$scope.reports_updated = response.date
+				$('#red-report-count').html(response.red_count)
 				$scope.$apply()
+			, "json"
 				
 		$scope.filter = ->
 			$.cookie("reports", JSON.stringify($scope.search), { expires: 365, path: '/' });
@@ -60,11 +63,13 @@ angular.module "Reports", ["ui.bootstrap"]
 			frontendLoadingStart()
 			$.post "reports/AjaxGetReports",
 				page: page
+				teachers: $scope.Teachers
 			, (response) ->
 				frontendLoadingEnd()
 				$scope.data  = response.data
-				$scope.count = response.count
+				$scope.counts = response.counts
 				$scope.$apply()
+				$scope.refreshCounts()
 			, "json"
 						 
 		angular.element(document).ready ->
@@ -72,15 +77,8 @@ angular.module "Reports", ["ui.bootstrap"]
 			$scope.search = if $.cookie("reports") then JSON.parse($.cookie("reports")) else {}
 			$scope.current_page = $scope.currentPage
 			$scope.pageChanged()
-			
 			$(".single-select").selectpicker()
-			
-			$("#subjects-select").selectpicker
-					noneSelectedText: "предметы"
-					multipleSeparator: "+"
-			
-			$timeout ->
-				$scope.refreshCounts()
+				
 
 	.controller "ListCtrl", ($scope) ->
 		$scope.getReports = (id_student) ->

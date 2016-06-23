@@ -1793,6 +1793,12 @@ div[id^='comment-block'] .save-coordinates {
   .link-like.red {
     color: #a94442; }
 
+.link-like-nocolor {
+  text-decoration: none;
+  cursor: pointer; }
+  .link-like-nocolor:hover {
+    text-decoration: underline; }
+
 .bootstrap-select .btn:focus, .selectpicker a {
   outline: none !important; }
 

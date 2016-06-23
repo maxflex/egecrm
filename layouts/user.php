@@ -185,15 +185,8 @@
 	</a>
     <a href="testing" class="list-group-item">Тестирование</a>
     <a href="reports" class="list-group-item">Отчеты
-	    <?php
-		    $red_report_count = Teacher::redReportCountAll();
-		    if ($red_report_count) {
-		?>
-			<span class="badge badge-danger pull-right"><?= $red_report_count ?></span>
-		<?php
-			}
-		?>
-	    <span class="badge pull-right"><?= Report::count() ?></span>
+		<span id='red-report-count' class="badge badge-danger pull-right"><?= Teacher::redReportCountAll() ?></span>
+	    <span id='all-report-count' class="badge pull-right"><?= Report::count() ?></span>
     </a>
 	<a class="list-group-item active">Преподаватели</a>
     <a href="teachers" class="list-group-item">Профили</a>

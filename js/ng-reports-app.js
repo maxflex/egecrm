@@ -15,13 +15,10 @@ angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
     return input;
   };
 }).controller("UserListCtrl", function($scope, $timeout) {
-  $scope.counts = {
-    year: {
-      2015: 20,
-      2016: 30
-    }
-  };
   $scope.helper_updating = false;
+  $scope.formatDateTime = function(date) {
+    return moment(date).format("DD.MM.YY в HH:mm");
+  };
   $scope.forceNoreport = function(d) {
     return $.post("reports/AjaxForceNoreport", {
       id_student: d.id_entity,
@@ -51,8 +48,10 @@ angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
     return $.post("reports/AjaxRecalcHelper", {}, function(response) {
       frontendLoadingEnd();
       $scope.helper_updating = false;
+      $scope.reports_updated = response.date;
+      $('#red-report-count').html(response.red_count);
       return $scope.$apply();
-    });
+    }, "json");
   };
   $scope.filter = function() {
     $.cookie("reports", JSON.stringify($scope.search), {
@@ -72,12 +71,14 @@ angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
   $scope.getByPage = function(page) {
     frontendLoadingStart();
     return $.post("reports/AjaxGetReports", {
-      page: page
+      page: page,
+      teachers: $scope.Teachers
     }, function(response) {
       frontendLoadingEnd();
       $scope.data = response.data;
-      $scope.count = response.count;
-      return $scope.$apply();
+      $scope.counts = response.counts;
+      $scope.$apply();
+      return $scope.refreshCounts();
     }, "json");
   };
   return angular.element(document).ready(function() {
@@ -85,14 +86,7 @@ angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
     $scope.search = $.cookie("reports") ? JSON.parse($.cookie("reports")) : {};
     $scope.current_page = $scope.currentPage;
     $scope.pageChanged();
-    $(".single-select").selectpicker();
-    $("#subjects-select").selectpicker({
-      noneSelectedText: "предметы",
-      multipleSeparator: "+"
-    });
-    return $timeout(function() {
-      return $scope.refreshCounts();
-    });
+    return $(".single-select").selectpicker();
   });
 }).controller("ListCtrl", function($scope) {
   $scope.getReports = function(id_student) {
