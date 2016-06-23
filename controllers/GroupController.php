@@ -53,6 +53,17 @@
 				$student_ids[] = $row->id_entity;
 			}
 
+			// get teacher ids
+			$result = dbConnection()->query("
+				SELECT DISTINCT id_entity FROM visit_journal
+				WHERE id_group=$id_group AND type_entity='TEACHER'
+			");
+
+			$teacher_ids = [];
+			while ($row = $result->fetch_object()) {
+				$teacher_ids[] = $row->id_entity;
+			}
+
 
 			if (count($student_ids)) {
 				// get students from journal
@@ -73,14 +84,23 @@
 			}
 			$Group->Students = $students;
 
+			$Teachers = [];
+			if (count($teacher_ids)) {
+				$Teachers = Teacher::findAll(['condition' => 'id in ('.implode(',', array_unique($teacher_ids)).')']);
+				foreach ($Teachers as $Teacher) {
+					$Teacher->calcHoldCoeff($Group->id);
+				}
+			}
+
 			$LessonData = VisitJournal::findAll([
-				"condition" => "id_group=$id_group AND type_entity='". Student::USER_TYPE ."'"
+				"condition" => "id_group=$id_group" //и преподы и студенты
 			]);
 
 
 			$ang_init_data = angInit([
 				"Group" 		=> $Group,
 				"LessonData"	=> $LessonData,
+				"Teachers"		=> $Teachers,
 			]);
 
 			$this->render("journal", [

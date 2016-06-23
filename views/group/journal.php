@@ -4,6 +4,12 @@
 		.panel-body {
 			overflow: scroll;
 		}
+		#k_u td {
+			padding:5px 10px 5px 0;
+		}
+		.table-journal .border-top {
+			border-top: 2px solid #aaa;
+		}
 	</style>
 
 	<table class="table table-journal">
@@ -30,6 +36,32 @@
 						}"></span>
 				</td>
 			</tr>
+			<tr>
+				<td></td>
+			</tr>
+			<tr ng-repeat="Teacher in Teachers">
+				<td style="text-align: left; width: 250px">
+					<a style="white-space: nowrap" href="teacher/{{Teacher.id}}">{{Teacher.first_name}} {{Teacher.last_name}}</a>
+				</td>
+				<td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
+					<span class="circle-default"
+						  ng-class="{
+							'circle-red'	: getInfo(Teacher.id, Schedule.date).presence == 2,
+							'circle-orange'	: getInfo(Teacher.id, Schedule.date).presence == 1 && getInfo(Teacher.id, Schedule.date).late > 0,
+							'invisible'		: getInfo(Teacher.id, Schedule.date) === undefined,
+						}"></span>
+				</td>
+			</tr>
 		</tbody>
+	</table>
+
+	<table id="k_u">
+		<thead>
+			<th colspan="2">КУ</th>
+		</thead>
+		<tr ng-repeat="Teacher in Teachers">
+			<td><a href="teachers/edit/{{Teacher.id}}">{{Teacher.first_name}} {{Teacher.last_name}}</a></td>
+			<td>{{ Teacher.hold_coeff }}% (потеря: <span title="">{{ Teacher.loss }}</span>)</td>
+		</tr>
 	</table>
 </div>

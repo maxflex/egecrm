@@ -351,4 +351,45 @@
 			}
 			return $return;
 		}
+
+		/**
+		 * Коэффициент удержания препода.
+		 * 
+		 * @param bool $group_id		Если передан group_id, то коэффициент считается только для указанной группы.
+		 */
+		public function calcHoldCoeff($group_id = false)
+		{
+			$this->loss = 0; // изначально потеря = 0;
+			$this->loss_data = []; // будем хранить данные о потерях, для проверки результатов и т. д.;
+
+			//получаем все группы препода.
+			$condition[] = "id_entity = {$this->id}";
+			$condition[] = "type_entity = '".Teacher::USER_TYPE."'";
+			$condition[] = $group_id ? "id_group = {$group_id}" : '1';
+			$query = "select group_concat(distinct id_group) as group_ids from visit_journal where ".implode(" and ", $condition);
+			$raw_group_ids = dbConnection()->query($query)->fetch_object()->group_ids;
+			$group_ids = explode(',', $raw_group_ids);
+
+			foreach ($group_ids as $group_id) {
+				//получаем последнее посещение всех студентов группы.
+				$query = "select id_entity as id, lesson_date, id_teacher as last_teacher ".
+						 "from (select * from visit_journal where id_group = {$group_id} and type_entity = '".Student::USER_TYPE."' order by lesson_date desc) v ".
+						 "group by id_entity";
+				$result = dbConnection()->query($query);
+
+				while ($student = $result->fetch_object()) {
+					if ($student->last_teacher == $this->id) { // если последный препод студента был этот препод, то считаем потери.
+						$loss = GroupSchedule::count([
+									"condition" => "id_group = {$group_id} and date > '{$student->lesson_date}' and date < now() and cancelled = 0"
+								]);
+						if ($loss) {
+							$this->loss += $loss;
+							$this->loss_data[$group_id][$student->id] = $loss;
+						}
+					}
+				}
+			}
+
+			$this->hold_coeff = round(100*(count($group_ids)*213 - $this->loss)/(count($group_ids)*213));  // 213 - теоритическое максимальное количество уроков 1ого препода.
+		}
 	}
