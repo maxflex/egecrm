@@ -5,17 +5,7 @@ angular.module("Clients", []).filter('to_trusted', [
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("ErrorsCtrl", function($scope) {
-  return angular.element(document).ready(function() {
-    set_scope("Clients");
-    return $.post("clients/ajax/getErrorStudents", {
-      mode: window.location.search
-    }, function(response) {
-      $scope.Response = response;
-      return $scope.$apply();
-    }, "json");
-  });
-}).controller("ListCtrl", function($scope) {
+]).controller("ListCtrl", function($scope) {
   $scope.filter_cancelled = 0;
   $scope.remainderSum = function() {
     var sum;

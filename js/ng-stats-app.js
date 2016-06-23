@@ -93,6 +93,9 @@ angular.module("Stats", ["ui.bootstrap"]).config([
   $scope.formatDate = function(date) {
     return moment(date).format("D MMM. YYYY");
   };
+  $scope.isToday = function(date) {
+    return date === moment().format("YYYY-MM-DD");
+  };
   $scope.sortByDate = function(stats) {
     var tmp;
     tmp = [];
@@ -107,25 +110,6 @@ angular.module("Stats", ["ui.bootstrap"]).config([
   };
   $scope.toggleDiv = function(id) {
     return $(".user-" + id).slideToggle();
-  };
-  $scope.isFutureLesson = function(Schedule) {
-    var time_lesson, time_now;
-    time_now = new Date().getTime();
-    time_lesson = new Date(Schedule.date + " " + Schedule.time).getTime();
-    return time_lesson > time_now;
-  };
-  $scope.isMissingLesson = function(Schedule) {
-    var time_difference_minutes, time_lesson, time_now;
-    if (Schedule.was_lesson || $scope.isFutureLesson(Schedule) || Schedule.cancelled) {
-      return false;
-    }
-    time_now = new Date().getTime();
-    time_lesson = new Date(Schedule.date + " " + Schedule.time).getTime();
-    time_difference_minutes = Math.round((time_now - time_lesson) / 1000 / 60);
-    console.log("Group " + Schedule.id_group, time_difference_minutes, new Date(), new Date(Schedule.date + " " + Schedule.time), time_now, time_lesson);
-    if (time_difference_minutes >= 165) {
-      return true;
-    }
   };
   return angular.element(document).ready(function() {
     return set_scope("Stats");

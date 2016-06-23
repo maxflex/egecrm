@@ -12,17 +12,29 @@
 		<div class="row" style="position: relative">
 			<div id="frontend-loading"></div>
 			<div class="col-sm-12">
-				<table class="table table-divlike" id="teachers-list">
-					<tr>
-						<td colspan="2"></td>
-						<td><span class="review-small ">5</span></td>
-						<td><span class="review-small bg-orange">4</span></td>
-						<td><span class="review-small bg-red">3</span></td>
-						<td><span class="review-small bg-red">2</span></td>
-						<td><span class="review-small bg-red">1</span></td>
-						<td><span class="review-small gray">?</span></td>
-					</tr>
-					<tr ng-repeat="Teacher in Teachers" ng-hide="!Teacher.had_lesson">
+				<div class="row" style="margin-bottom: 20px">
+					<div class="col-sm-4">
+						<select id='state-select' class="form-control" ng-model='in_egecentr' ng-change='changeState()'>
+							<option value='1' data-subtext="{{ getCount(1, filter_subjects) }}">активен в системе ЕГЭ-Центра</option>
+							<option value='2' data-subtext="{{ getCount(2, filter_subjects) }}">ведет занятия в ЕГЭ-Центре</option>
+							<option value='3' data-subtext="{{ getCount(3, filter_subjects) }}">ранее работал в ЕГЭ-Центре</option>
+						</select>
+					</div>
+					<div class="col-sm-4">
+						<select class='form-control' id='subjects-select' ng-model='filter_subjects' multiple ng-change='changeSubjects()'>
+							<option ng-repeat='(key, name) in three_letters' 
+								ng-selected="subjectSelected(key)"
+								value='{{key}}' 
+								data-subtext="{{ getCount(in_egecentr, key) }}">{{name}}</option>
+						</select>
+<!--
+						<select class='form-control' id='subjects-select' ng-model='filter_subjects' multiple ng-options='key as name for (key, name) in three_letters'>
+						</select>
+-->
+					</div>
+				</div>
+				<table class="table table-hover border-reverse" id="teachers-list">
+					<tr ng-repeat="Teacher in Teachers | filter:teachersFilter">
 						<td width="400">
 							<a href="teachers/edit/{{Teacher.id}}">
 								<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
@@ -32,82 +44,12 @@
 									Неизвестно
 								</span>
 							</a>
-							 (<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>)
 						</td>
 						<td>
-							<span ng-show="Teacher.banned" class="glyphicon glyphicon-lock text-danger"></span>
-						</td>
-						<td><span style='margin-left: 6px'>{{ Teacher.statuses[5] }}</span></td>
-						<td><span style='margin-left: 6px'>{{ Teacher.statuses[4] }}</span></td>
-						<td><span style='margin-left: 6px'>{{ Teacher.statuses[3] }}</span></td>
-						<td><span style='margin-left: 6px'>{{ Teacher.statuses[2] }}</span></td>
-						<td><span style='margin-left: 6px'>{{ Teacher.statuses[1] }}</span></td>
-						<td width='100' class="text-gray"><span style='margin-left: 6px'>{{ Teacher.statuses[0] }}</span></td>
-						<td>
-							<span class="label label-danger-red" ng-show="Teacher.student_subject_counts">
-								требуется создать {{Teacher.student_subject_counts}} <ng-pluralize count="Teacher.student_subject_counts" when="{
-									'one': 'отчет',
-									'few': 'отчета',
-									'many': 'отчетов',
-								}"></ng-pluralize>
-							</span>
-						</td>
-						<td>
-							<span ng-show="Teacher.schedule_date">{{Teacher.schedule_date}}</span>
+							<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
 						</td>
 					</tr>
 				</table>
-
-
-				<fieldset class="hidden-thoughts" id="hidden-teachers-button">
-				    <legend ng-click="showHidden()">Остальные: {{othersCount()}}</legend>
-				</fieldset>
-
-
-
-
-				<table class="table table-divlike" ng-show="show_others" style="margin-top: 20px">
-					<tr ng-repeat="Teacher in Teachers" ng-show="!Teacher.had_lesson">
-						<td width="400">
-							<a href="teachers/edit/{{Teacher.id}}">
-								<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
-									{{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
-								</span>
-								<span ng-hide="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
-									Неизвестно
-								</span>
-							</a>
-							 (<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>)
-						</td>
-						<td style="width: 20%">
-							<span ng-show="Teacher.gray_count">
-								<svg class="review-status not-collected" style="top: 4px; width: 15px">
-									<circle r="3" cx="7" cy="7"></circle>
-								</svg>{{Teacher.gray_count}}
-							</span>
-							<span ng-show="Teacher.green_count">
-								<svg class="review-status collected" style="top: 4px; width: 15px">
-									<circle r="3" cx="7" cy="7"></circle>
-								</svg>{{Teacher.green_count}}
-							</span>
-							<span ng-show="Teacher.orange_count">
-								<svg class="review-status orange" style="top: 4px; width: 15px">
-									<circle r="3" cx="7" cy="7"></circle>
-								</svg>{{Teacher.orange_count}}
-							</span>
-							<span ng-show="Teacher.red_count">
-								<svg class="review-status red" style="top: 4px; width: 15px">
-									<circle r="3" cx="7" cy="7"></circle>
-								</svg>{{Teacher.red_count}}
-							</span>
-						</td>
-						<td style="width: 10%">
-							<span ng-show="Teacher.schedule_date">{{Teacher.schedule_date}}</span>
-						</td>
-					</tr>
-				</table>
-
-
 
 			</div>
 		</div>

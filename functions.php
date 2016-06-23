@@ -725,4 +725,8 @@
 	   }
 	   return null;
 	}
+	
+	function isBlank($value) {
+		return empty($value) && !is_numeric($value);
+	}
 ?>

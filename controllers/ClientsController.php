@@ -34,12 +34,6 @@
 			]);
 		}
 		
-		public function actionErrors()
-		{
-			$this->setTabTitle("Ошибки");
-			$this->render("errors");
-		}
-		
 		public function actionAjaxGetStudents()
 		{
 			$Students = Student::getWithContract();
@@ -76,19 +70,5 @@
  			}
  			
  			returnJsonAng($Students);
-		}
-		
-		public function actionAjaxGetErrorStudents()
-		{
-			extract($_POST);
-			
-			switch($mode) {
-				case "?mode=phone": {
-					$Response = Student::getPhoneErrors();
-					break;
-				}
-			}
-			
-			returnJsonAng($Response);
 		}
 	}

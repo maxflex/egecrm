@@ -1,4 +1,4 @@
-angular.module "Reports", []
+angular.module "Reports", ["ui.bootstrap"]
 	.filter 'to_trusted', ['$sce', ($sce) ->
         return (text) ->
             return $sce.trustAsHtml(text)
@@ -9,34 +9,76 @@ angular.module "Reports", []
 			for i in [1...total + 1] by 1
 				input.push i
 			input
-	.controller "UserListCtrl", ($scope) ->
-		angular.element(document).ready ->
-			set_scope "Reports"
-
-
-
-			$scope.list = 1
-			$scope.$watch 'list', (newValue, oldValue) ->
-				if newValue is 2
-					if $scope.SentReports is undefined
-						$.post "reports/AjaxGetReports",
-							available_for_parents: 1
-						, (response) ->
-							$scope.SentReports = response
-							$scope.SelectedReports = $scope.SentReports
-							$scope.$apply()
-						, "json"
-					$scope.SelectedReports = $scope.SentReports
-				else
-					$scope.SelectedReports = $scope.NotSentReports
-
-			$.post "reports/AjaxGetReports",
-				available_for_parents: 0
+	.controller "UserListCtrl", ($scope, $timeout) ->
+		$scope.helper_updating = false
+		
+		$scope.formatDateTime = (date) ->
+			moment(date).format "DD.MM.YY в HH:mm"
+		
+		$scope.forceNoreport = (d) ->
+			$.post "reports/AjaxForceNoreport",
+				id_student: d.id_entity,
+				id_teacher: d.id_teacher,
+				id_subject: d.id_subject,
+				year: d.year
 			, (response) ->
-				$scope.NotSentReports = response
-				$scope.SelectedReports = $scope.NotSentReports
+				 d.force_noreport = not d.force_noreport
+				 $scope.$apply()
+
+		$scope.yearLabel = (year) ->
+			year + '-' + (parseInt(year) + 1) + ' уч. г.'
+		
+		$scope.refreshCounts = ->
+			$timeout ->
+				$('.watch-select option').each (index, el) ->
+	                $(el).data 'subtext', $(el).attr 'data-subtext'
+	                $(el).data 'content', $(el).attr 'data-content'
+	            $('.watch-select').selectpicker 'refresh'
+	        , 100
+	    
+		$scope.updateHelperTable = ->
+			frontendLoadingStart()
+			$scope.helper_updating = true
+			$.post "reports/AjaxRecalcHelper", {}, (response) ->
+				frontendLoadingEnd()
+				$scope.helper_updating = false
+				$scope.reports_updated = response.date
+				$('#red-report-count').html(response.red_count)
 				$scope.$apply()
 			, "json"
+				
+		$scope.filter = ->
+			$.cookie("reports", JSON.stringify($scope.search), { expires: 365, path: '/' });
+			$scope.current_page = 1
+			$scope.getByPage($scope.current_page)
+		
+		# Страница изменилась
+		$scope.pageChanged = ->
+			console.log $scope.currentPage
+			window.history.pushState {}, '', 'reports/?page=' + $scope.current_page if $scope.current_page > 1
+			# Получаем задачи, соответствующие странице и списку
+			$scope.getByPage($scope.current_page)
+		
+		$scope.getByPage = (page) ->
+			frontendLoadingStart()
+			$.post "reports/AjaxGetReports",
+				page: page
+				teachers: $scope.Teachers
+			, (response) ->
+				frontendLoadingEnd()
+				$scope.data  = response.data
+				$scope.counts = response.counts
+				$scope.$apply()
+				$scope.refreshCounts()
+			, "json"
+						 
+		angular.element(document).ready ->
+			set_scope "Reports"
+			$scope.search = if $.cookie("reports") then JSON.parse($.cookie("reports")) else {}
+			$scope.current_page = $scope.currentPage
+			$scope.pageChanged()
+			$(".single-select").selectpicker()
+				
 
 	.controller "ListCtrl", ($scope) ->
 		$scope.getReports = (id_student) ->

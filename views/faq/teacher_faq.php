@@ -1,5 +1,6 @@
 <div class="row">
 	<div class="col-sm-12">
+		<?= Settings::get('teachers_faq') ?>
 <!--
 
 		<div class="question" style="margin-top: 0">

@@ -12,8 +12,9 @@
         public static $api_fields = [
             'id', 'photo_extension',
             'first_name', 'last_name', 'middle_name',
-            'description',  'has_photo',
-            'subjects', 'public_seniority', 'public_ege_start', 'public_grades'
+            'description',  'has_photo', 'comment_extended',
+            'subjects', 'public_grades', 'start_career_year',
+            'video_link',
         ];
 
 		const USER_TYPE = "TEACHER";
@@ -93,70 +94,156 @@
 		// 	количество красных меток "требуется создание отчета"
 		public static function redReportCountStatic($id_teacher)
 		{
-			$result = dbConnection()->query("SELECT id_entity, id_subject FROM visit_journal WHERE id_teacher={$id_teacher} GROUP BY id_entity, id_subject");
-
-			while ($row = $result->fetch_object()) {
-				$student_subject[] = $row;
-			}
-
-			$red_count = 0;
-			foreach ($student_subject as $Object) {
-				// проверяем статус расторжения
-				$status = dbConnection()->query("
-					SELECT cs.status FROM contract_subjects cs
-					LEFT JOIN contracts c on c.id = cs.id_contract
-					WHERE c.id_student = {$Object->id_entity} " . Contract::ZERO_OR_NULL_CONDITION_JOIN . "
-						AND cs.id_subject = {$Object->id_subject}
-				")->fetch_object()->status;
-
-				if ($status <= 1) {
-					continue;
-				}
-
-				// получаем кол-во занятий с последнего отчета по предмету
-				$LatestReport = Report::find([
-					"condition" => "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ." AND id_teacher=" . $id_teacher,
-//					"order" => " DATE(date) asc"
-                    "order" => " STR_TO_DATE(date,'%d.%m.%Y') desc "
-				]);
-
-				if ($LatestReport) {
-					$latest_report_date = date("Y-m-d", strtotime($LatestReport->date));
-				} else {
-					$latest_report_date = "0000-00-00";
-				}
-
-				$lessons_count = VisitJournal::count([
-					"condition" => "id_subject={$Object->id_subject} AND id_entity={$Object->id_entity} AND id_teacher=" . $id_teacher . "
-						AND lesson_date > '$latest_report_date'"
-				]);
-
-				if ($lessons_count >= 8) {
-					$red_count++;
-				}
-			}
-
-			return $red_count;
+			return dbConnection()->query("
+				SELECT COUNT(*) AS cnt FROM reports_helper rh
+				LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
+				WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL
+			")->fetch_object()->cnt;
 		}
 
 		public static function redReportCountAll()
 		{
-			if (LOCAL_DEVELOPMENT) {
-				return;
+			foreach (self::getIds(['condition' => 'in_egecentr >= 1']) as $id_teacher) {
+				$red_count += Teacher::redReportCountStatic($id_teacher);
+			}
+			return $red_count ? $red_count : null;
+		}
+		
+		/*
+		 * Получить преподавателей для отчета
+		 */
+		public static function getReportTeachers()
+		{
+			$result = dbConnection()->query("
+				SELECT id_entity 
+				FROM visit_journal 
+				WHERE type_entity = 'TEACHER'
+				GROUP BY id_entity
+			");
+			
+			while ($row = $result->fetch_object()) {
+				$return[] = static::getLight($row->id_entity);
 			}
 			
-			// Try to get from memcached first
-			$red_count = memcached()->get("redReportCountAll");
-			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-				$red_count = 0;
-				
-				foreach (self::getIds(['condition' => 'in_egecentr = 1']) as $id_teacher) {
-					$red_count += Teacher::redReportCountStatic($id_teacher);
-				}
-				
-				memcached()->set('redReportCountAll', $red_count, 3600 * 12); // на 12 часов
+			return $return;
+		}
+		
+		/*
+		 * Получить легкую версию (имя + id)
+		 */
+		public static function getLight($id)
+		{
+			return dbEgerep()->query("
+				SELECT id, first_name, last_name, middle_name 
+				FROM " . static::$mysql_table . " 
+				WHERE id = " . $id . " 
+				ORDER BY last_name, first_name, middle_name ASC")
+			->fetch_object(); 
+		}
+		
+		/*
+		 * Получить данные для отчета
+		 * $Teachers – нужен для counts, чтобы не получать заново
+		 */
+		public static function getReportData($page, $Teachers)
+		{
+			if (!$page) {
+				$page = 1;
 			}
-			return $red_count;
+			// С какой записи начинать отображение, по формуле
+			$start_from = ($page - 1) * Report::PER_PAGE;
+			
+			$search = json_decode($_COOKIE['reports']);
+			
+			// получаем данные
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, rh.lesson_count");
+			
+			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
+			
+			while ($row = $result->fetch_object()) {
+				$student_subject[] = $row;
+			}
+			
+			foreach ($student_subject as &$ss) {
+				$ss->Student = Student::getLight($ss->id_entity);
+				$ss->Teacher = Teacher::getLight($ss->id_teacher);
+				$ss->force_noreport = ReportForce::check($ss->id_entity, $ss->id_teacher, $ss->id_subject, $ss->year);
+			}
+			
+			// counts
+			$counts['all'] = static::_count($search);
+			
+			foreach(array_merge([""], Years::$all) as $year) {
+				$new_search = clone $search;
+				$new_search->year = $year;
+				$counts['year'][$year] = static::_count($new_search);
+			}
+			
+			foreach(["", 1, 2, 3] as $mode) {
+				$new_search = clone $search;
+				$new_search->mode = $mode;
+				$counts['mode'][$mode] = static::_count($new_search);
+			}
+			
+			foreach(["", 0, 1] as $available_for_parents) {
+				$new_search = clone $search;
+				$new_search->available_for_parents = $available_for_parents;
+				$counts['available_for_parents'][$available_for_parents] = static::_count($new_search);
+			}
+			
+			foreach(["", 0, 1] as $email_sent) {
+				$new_search = clone $search;
+				$new_search->email_sent = $email_sent;
+				$counts['email_sent'][$email_sent] = static::_count($new_search);
+			}
+			
+			foreach(array_merge([''=>''], Subjects::$all) as $id_subject => $name) {
+				$new_search = clone $search;
+				$new_search->id_subject = $id_subject;
+				$counts['subject'][$id_subject] = static::_count($new_search);
+			}
+			
+			foreach(array_merge(['id' => ''], $Teachers) as $Teacher) {
+				$new_search = clone $search;
+				$new_search->id_teacher = $Teacher['id'];
+				$counts['teacher'][$Teacher['id']] = static::_count($new_search);
+			}
+			
+			
+			return [
+				'data' 	=> $student_subject,
+				'counts' => $counts,
+			];
+		}
+		
+		private static function _count($search) {
+			return dbConnection()
+					->query(static::_generateQuery($search, "COUNT(*) AS cnt FROM (SELECT vj.id", false, ") AS X"))
+					->fetch_object()
+					->cnt;
+		}
+		
+		private static function _connectTables($t, $addon) {
+			return " {$t} ON ({$t}.id_student = vj.id_entity AND {$t}.id_teacher = vj.id_teacher AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year {$addon})";
+		}
+		
+		private static function _generateQuery($search, $select, $order = true, $ending)
+		{
+			$main_query = "
+				FROM visit_journal vj
+				LEFT JOIN reports" . static::_connectTables('r') . "
+				JOIN reports_helper" . static::_connectTables('rh', 'AND isnull(rh.id_report) = isnull(r.id)') . "
+				WHERE vj.type_entity='STUDENT' "
+				. (($search->mode == 1 || !isBlank($search->available_for_parents) || !isBlank($search->email_sent)) ? " AND r.id IS NOT NULL" : "")
+				. (!isBlank($search->available_for_parents) ? " AND r.available_for_parents={$search->available_for_parents}" : "")
+				. (!isBlank($search->email_sent) ? " AND r.email_sent={$search->email_sent}" : "")
+				. ($search->year ? " AND vj.year={$search->year}" : "") 
+				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
+				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
+				. (($search->mode > 1) ? " AND (r.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? ">=8" : "<8") . ")" : "")
+				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id "
+				. ($order ? " ORDER BY vj.lesson_date DESC" : "");
+			return "SELECT " . $select . $main_query . $ending;
 		}
 
 		public static function getActiveGroups()
@@ -218,9 +305,9 @@
 		public static function findAll($params = [])
 		{
 			if (! isset($params['condition'])) {
-				$params['condition'] = 'in_egecentr = 1';
+				$params['condition'] = 'in_egecentr >= 1';
 			} else {
-				$params['condition'] .= ' AND in_egecentr = 1';
+				$params['condition'] .= ' AND in_egecentr >= 1';
 			}
 
 			return parent::findAll($params);

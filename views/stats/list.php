@@ -7,27 +7,27 @@
 <div ng-app="Stats" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="top-links">
 		<?php if ($_GET["group"] == "d" || empty($_GET["group"])) { ?>
-		<span style="margin-right: 15px; font-weight: bold">по дням</span>
+		<span style="margin-right: 15px; font-weight: bold">дни</span>
 		<?php } else { ?>
-		<a href="stats/?group=d" style="margin-right: 15px">по дням</a>
+		<a href="stats/?group=d" style="margin-right: 15px">дни</a>
 		<?php } ?>
 		
 		<?php if ($_GET["group"] == "w") { ?>
-		<span style="margin-right: 15px; font-weight: bold">по неделям</span>
+		<span style="margin-right: 15px; font-weight: bold">недели</span>
 		<?php } else { ?>
-		<a href="stats/?group=w" style="margin-right: 15px">по неделям</a>
+		<a href="stats/?group=w" style="margin-right: 15px">недели</a>
 		<?php } ?>
 		
 		<?php if ($_GET["group"] == "m") { ?>
-		<span style="margin-right: 15px; font-weight: bold">по месяцам</span>
+		<span style="margin-right: 15px; font-weight: bold">месяцы</span>
 		<?php } else { ?>
-		<a href="stats/?group=m" style="margin-right: 15px">по месяцам</a>
+		<a href="stats/?group=m" style="margin-right: 15px">месяцы</a>
 		<?php } ?>
 		
 		<?php if ($_GET["group"] == "y") { ?>
-		<span style="margin-right: 15px; font-weight: bold">по годам</span>
+		<span style="margin-right: 15px; font-weight: bold">годы</span>
 		<?php } else { ?>
-		<a href="stats/?group=y" style="margin-right: 15px">по годам</a>
+		<a href="stats/?group=y" style="margin-right: 15px">годы</a>
 		<?php } ?>
 		
 		<div class="pull-right">

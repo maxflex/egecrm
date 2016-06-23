@@ -85,6 +85,9 @@ angular.module "Stats", ["ui.bootstrap"]
 
 		$scope.formatDate = (date)->
 			moment(date).format "D MMM. YYYY"
+		
+		$scope.isToday = (date)->
+			date is moment().format "YYYY-MM-DD"
 
 		$scope.sortByDate = (stats) ->
 			tmp = []
@@ -99,26 +102,6 @@ angular.module "Stats", ["ui.bootstrap"]
 
 		$scope.toggleDiv = (id)->
 			$(".user-#{id}").slideToggle()
-
-		$scope.isFutureLesson = (Schedule) ->
-			time_now = new Date().getTime()
-			time_lesson = new Date("#{Schedule.date} #{Schedule.time}").getTime()
-			return time_lesson > time_now
-
-		$scope.isMissingLesson = (Schedule) ->
-			# если урок присутствует или будет в будущем
-			# (то он не считается отсутствующим)
-			return false if Schedule.was_lesson or $scope.isFutureLesson(Schedule) or Schedule.cancelled
-
-
-			time_now 	= new Date().getTime()
-			time_lesson = new Date("#{Schedule.date} #{Schedule.time}").getTime()
-
-			# разница в минутах между началом занятия и текущим временем
-			time_difference_minutes = Math.round((time_now - time_lesson) / 1000 / 60)
-			console.log "Group #{Schedule.id_group}", time_difference_minutes, new Date(), new Date("#{Schedule.date} #{Schedule.time}"), time_now, time_lesson
-			# если уже больше 1:45 минут c начала занятия и до сих пор нет записи в журнале
-			return true if time_difference_minutes >= 165
 
 		angular.element(document).ready ->
 			set_scope "Stats"

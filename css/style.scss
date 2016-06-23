@@ -12,7 +12,7 @@
 	$metro_orange		: rgb(251, 170, 51);
 	
 	
-	$green				: #5cb85c;
+	$green				: #5cb85c; 
 	$metro_green		: #029A55;
 	$bright_green		: #5cb85c;
 	
@@ -2111,6 +2111,14 @@ div[id^='comment-block'] {
 	}
 }
 
+.link-like-nocolor {
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+	    text-decoration: underline;
+	}
+}
+
 .bootstrap-select .btn:focus, .selectpicker a {
 	outline: none !important;
 }
@@ -2871,4 +2879,51 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 }
 .table.table-divlike > tbody > tr > td.ban-ico.egerep-banned {
   padding-left: 5px !important;
+}
+
+.table.border-reverse > tbody > tr > td {
+	border-top: none;
+	border-bottom: 1px solid #ddd;
+}
+
+.bootstrap-select.btn-group .dropdown-menu li {
+	& small {
+		position: absolute;
+		top: 4px;
+		right: 40px;
+		font-size: 100%;
+		padding: 0;
+	}
+}
+
+.filter-option .text-muted {
+	display: none;
+}
+
+.bootstrap-select.btn-group .dropdown-menu li:not(.disabled) a:hover small, .bootstrap-select.btn-group .dropdown-menu li:not(.disabled) a:focus small, .bootstrap-select.btn-group .dropdown-menu li.active:not(.disabled) a small {
+	color: #777 !important;
+}
+
+@-webkit-keyframes spin {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+.spinning {
+	-webkit-animation-name: spin;
+    -webkit-animation-duration: 2000ms;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+	animation-name: spin;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }

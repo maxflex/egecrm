@@ -300,7 +300,6 @@
 			// if (is_array($data) && !hasValues($data)) {
 			// 	return false;
 			// }
-			
 			foreach ($data as $key => $value) {
 				if ((in_array($key, $this->mysql_vars) && !in_array($key, $this->_exclude_vars)) || in_array($key, $this->_additional_vars)) {
 					// Обновление обычных данных

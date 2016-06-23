@@ -183,18 +183,15 @@
 			}
 		?>
 	</a>
-    <a href="clients/errors" class="list-group-item">Ошибки</a>
     <a href="testing" class="list-group-item">Тестирование</a>
     <a href="reports" class="list-group-item">Отчеты
-	    <?php
-		    $red_report_count = Teacher::redReportCountAll();
-		?>
-		<span class="badge badge-danger pull-right"><?= $red_report_count ?></span>
-	    <span class="badge pull-right"><?= Report::count() ?></span>
+		<span id='red-report-count' class="badge badge-danger pull-right"><?= Teacher::redReportCountAll() ?></span>
+	    <span id='all-report-count' class="badge pull-right"><?= Report::count() ?></span>
     </a>
 	<a class="list-group-item active">Преподаватели</a>
     <a href="teachers" class="list-group-item">Профили</a>
 	<a href="teachers/salary" class="list-group-item">Дебет</a>
+	<a href="teachers/html" class="list-group-item">FAQ</a>
 
 
 

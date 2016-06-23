@@ -15,7 +15,7 @@
 		</div>
 		<div class="form-group inline-block">
 			<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
-		</div>
+		</div> 
 	</div>
 	<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
 		<h4>Номер карты</h4>
