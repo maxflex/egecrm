@@ -18,11 +18,15 @@
 		public function actionList()
 		{
 			$this->setRights([User::USER_TYPE]);
-			$this->setTabTitle("Платежи");	
-			
+			$this->setTabTitle("Платежи");
+
+			$this->addJs("bootstrap-select");
+			$this->addCss("bootstrap-select");
+
 			$ang_init_data = angInit([
-				"payment_types"		=> PaymentTypes::$all,
-				"payment_statuses"	=> Payment::$all,
+				'payment_types'		=> PaymentTypes::$all,
+				'payment_statuses'	=> Payment::$all,
+				'current_page'		=> $_GET['page'] ? $_GET['page'] : 1
 			]);
 			
 			$this->render("list", [
@@ -49,15 +53,46 @@
 		
 		public function actionAjaxGetPayments()
 		{
-			$Payments = Payment::findAll();
-			
-			foreach ($Payments as &$Payment) {
-				$Payment->Student = $Payment->getStudent();
+			extract($_POST);
+
+			$condition['confirmed'] = $search['confirmed'] != '' ? "confirmed = {$search['confirmed']}" : '1';
+			$condition['id_status'] = $search['payment_type'] ? "id_status = {$search['payment_type']}" : '1';
+
+			$query['limit'] = ($search['current_page'] - 1)*Payment::PER_PAGE.',30';
+			$query['condition'] = implode(' and ', $condition);;
+			$query['order'] = 'first_save_date desc';
+
+			/* платежи */
+			$payment_class = Payment::getEntityClass($search['mode']);
+			$Payments = $payment_class::findAll($query);
+			foreach ($Payments as $Payment) {
+				$Payment->Entity = $Payment->getEntity();
 			}
-			
-			$Payments = array_reverse($Payments);
-			
-			returnJsonAng($Payments);
+
+			/* каунтеры */
+			$counts['mode'] = [
+				'client'  => Payment::count(["condition" => implode(' and ', $condition)]),
+				'teacher' => TeacherPayment::count(["condition" => implode(' and ', $condition)]),
+			];
+
+			foreach (array_keys(Payment::$all)  as $type) {
+				$count_cond = $condition;
+				$count_cond['id_status'] = "id_status = {$type}";
+				$counts['payment_type'][$type] = $payment_class::count(["condition" => implode(' and ', $count_cond)]);
+			}
+			// $counts['payment_type']['all'] = array_sum($counts['payment_type']);
+
+			foreach ([0,1] as $confirmed) {
+				$count_cond = $condition;
+				$count_cond['confirmed'] = "confirmed = {$confirmed}";
+				$counts['confirmed'][$confirmed] = $payment_class::count(["condition" => implode(' and ', $count_cond)]);
+			}
+			/* /каунтеры */
+
+			returnJsonAng([
+				'payments'	=> $Payments,
+				'counts'	=> $counts
+			]);
 		}
 		
 		public function actionAjaxLkTeacher()

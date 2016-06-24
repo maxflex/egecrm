@@ -268,19 +268,22 @@
 		{
 			extract($_POST);
 
-			Payment::updateById($id, [
+			$payment_class = Payment::getEntityClass($type);
+			$payment_class::updateById($id, [
 				"confirmed" => $confirmed
 			]);
 		}
 
 		public function actionAjaxDeletePayment()
 		{
-			Payment::deleteById($_POST["id_payment"]);
+			$payment_class = Payment::getEntityClass($_POST['type']);
+			$payment_class::deleteById($_POST["id_payment"]);
 		}
 
 		public function actionAjaxPaymentEdit()
 		{
-			$Payment = new Payment($_POST);
+			$payment_class = Payment::getEntityClass($_POST['type']);
+			$Payment = new $payment_class($_POST);
 			$Payment->save();
 		}
 

@@ -22,7 +22,9 @@
 			self::CARD_ONLINE	=> "карта онлайн",
 			self::MUTUAL_DEBTS	=> "взаимозачет",
 		];
-		
+
+		const PER_PAGE = 30;
+
 		# удаленные записи коллекции
 		static $deleted = [
 			self::NOT_PAID_BILL,
@@ -82,7 +84,18 @@
 		}
 				
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-		
+		public static function getEntityClass($type)
+		{
+			return $type == 'teacher' ? 'TeacherPayment' : 'Payment';
+		}
+		public function getEntity()
+		{
+			$entity = $this->getStudent();
+			$entity->type = 'student';
+			$entity->profile_link = "student/{$entity->id}";
+			return $entity;
+		}
+
 		public function getStudent()
 		{
 			return Student::findById($this->id_student);
@@ -170,8 +183,16 @@
 			// Добавляем данные
 			$this->user_login = User::findById($this->id_user)->login;
 		}
-		
-				public function getStudent()
+
+		public function getEntity()
+		{
+			$entity = Teacher::findById($this->id_teacher);
+			$entity->type = 'teacher';
+			$entity->profile_link = "teachers/edit/{$entity->id}";
+			return $entity;
+		}
+
+		public function getStudent()
 		{
 			return Student::findById($this->id_student);
 		}

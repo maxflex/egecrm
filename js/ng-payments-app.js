@@ -1,316 +1,328 @@
-	angular.module("Payments", [])
-		.filter('reverse', function() {
-			return function(items) {
-				if (items) {
-					return items.slice().reverse();
-				}
-			}; 
-		})
-		.controller("LkTeacherCtrl", function($scope, $http) {
-			
-			$scope.formatDate = function(date) {
-				return moment(date).format("D MMMM YYYY")
-			}
-			
-			$scope.formatTime = function(time) {
-				return time.substr(0, 5)
-			}
-			
-			$scope.totalPaid = function() {
-				sum = 0;
-				$.each($scope.payments, function(i, payment){
-					sum += payment.sum
-				})
-				return sum
-			}
-			
-			$scope.totalEarned = function() {
-				sum = 0;
-				$.each($scope.Data, function(i, data){
-					sum += data.teacher_price
-				})
-				return sum
-			}
-			
-			$scope.toBePaid = function() {
-				return $scope.totalEarned() - $scope.totalPaid()
-			}
-			
-			angular.element(document).ready(function() {
-				bootbox.prompt({
-					title: "Для доступа к странице введите ваш пароль",
-					className: "modal-password-bigger",
-					callback: function(result) {
-						$.ajax({
-							url: "ajax/checkTeacherPass", 
-							data: {password: result}, 
-							dataType: "json",
-							method: "post",
-							success: function(response) {
-								if (response == true) {
-									$scope.password_correct = true;
-									$.post("payments/ajaxLkTeacher", {}, function(response) {
-										console.log(response)
-										$scope.payments = response.payments 
-										$scope.Data 	= response.Data
-										$scope.loaded	= true; // data loaded
-										$scope.$apply()
-									}, "json")
-								} else {
-									$scope.password_correct = false;
-								}
-								$scope.$apply();
-							},
-							async: false,
-						})
-							
-					},
-					buttons: {
-						confirm: {
-							label: "Подтвердить"
-						},
-						cancel: {
-							className: "display-none"
-						}		
-					}
-				})
-			})
-		})
-		.controller("ListCtrl", function($scope) {
-			$scope.filter = 6;
-			
-			$scope.paymentsFilter = function(payment) {
-				switch ($scope.filter) {
-					case 1: {
-						return payment.id_status == 5
-					}
-					case 2: {
-						return payment.id_status == 4
-					}
-					case 3: {
-						return payment.id_status == 2
-					} 
-					case 4: {
-						return payment.id_status == 1
-					}
-					case 5: {
-						return !payment.confirmed
-					}
-					default: {
-						return payment
-					}
-				}
-			}
-			
-			$scope.confirmPayment = function(payment) {
-				bootbox.prompt({
-					title: "Введите пароль",
-					className: "modal-password",
-					callback: function(result) {
-						if (result == "363") {
-							payment.confirmed = payment.confirmed ? 0 : 1
-							$.post("ajax/confirmPayment", {id: payment.id, confirmed: payment.confirmed})	
-							$scope.$apply()
-						} else if (result != null) {
-							$('.bootbox-form').addClass('has-error').children().first().focus()
-							$('.bootbox-input-text').on('keydown', function() {
-								$(this).parent().removeClass('has-error')	
-							})
-							return false
-						}
-					},
-					buttons: {
-						confirm: {
-							label: "Подтвердить"
-						},
-						cancel: {
-							className: "display-none"
-						}		
-					}
-				})
-			}
-			
-			// Окно редактирования платежа
-			$scope.editPayment = function(payment) {
-				if (!payment.confirmed) {
-					$scope.new_payment = angular.copy(payment)
-					$scope.$apply()
-					lightBoxShow('addpayment')
-					return
-				}
-				bootbox.prompt({
-					title: "Введите пароль",
-					className: "modal-password",
-					callback: function(result) {
-						if (result == "363") {
-							$scope.new_payment = angular.copy(payment)
-							$scope.$apply()
-							lightBoxShow('addpayment')		
-						} else if (result != null) {
-							$('.bootbox-form').addClass('has-error').children().first().focus()
-							$('.bootbox-input-text').on('keydown', function() {
-								$(this).parent().removeClass('has-error')	
-							})
-							return false
-						}
-					},
-					buttons: {
-						confirm: {
-							label: "Подтвердить"
-						},
-						cancel: {
-							className: "display-none"
-						}		
-					}
-				})
-			}
-
-			// Показать окно добавления платежа
-			$scope.addPaymentDialog = function() {
-				$scope.new_payment = {id_status : 0}
-				lightBoxShow('addpayment')	
-			}
-
-			// Добавить платеж
-			$scope.addPayment = function() {
-				// Получаем элементы (я знаю, что по-хорошему нужно получить их один раз вне функции
-				// а не каждый раз, когда функция вызывается, искать их заново. Но забей. Хочу их внутри когда
-				payment_date	= $("#payment-date")
-				payment_sum 	= $("#payment-sum")
-				payment_select	= $("#payment-select")
-				payment_type	= $("#paymenttypes-select")
-
-				// Установлен ли способ оплаты
-				if (!$scope.new_payment.id_status) {
-					payment_select.focus().parent().addClass("has-error")
-					return
-				} else {
-					payment_select.parent().removeClass("has-error")
-				}
-
-				// Установлен ли тип платежа?
-				if (!$scope.new_payment.id_type) {
-					payment_type.focus().parent().addClass("has-error")
-					return
-				} else {
-					payment_type.parent().removeClass("has-error")
-				}
-
-				// Установлена ли сумма платежа?
-				if (!$scope.new_payment.sum) {
-					payment_sum.focus().parent().addClass("has-error")
-					return
-				} else {
-					payment_sum.parent().removeClass("has-error")
-				}
-
-				// Установлена ли дата платежа?
-				if (!$scope.new_payment.date) {
-					payment_date.focus().parent().addClass("has-error")
-					return
-				} else {
-					payment_date.parent().removeClass("has-error")
-				}
-
-				// редактирование платежа, если есть ID
-				if ($scope.new_payment.id) {
-					ajaxStart()
-					$.post("ajax/paymentEdit", $scope.new_payment, function(response) {
-						angular.forEach($scope.payments, function(payment, i) {
-							if (payment.id == $scope.new_payment.id) {
-								$scope.payments[i] = $scope.new_payment
-								$scope.$apply()
-							}
-						})
-						ajaxEnd()
-						lightBoxHide()
-					})
-				} else {
-				// иначе сохранение плтежа
-					// Добавляем дополнительные данные в new_payment
-					$scope.new_payment.user_login		= $scope.user.login
-					$scope.new_payment.first_save_date	= moment().format('YYYY-MM-DD HH:mm:ss')
-					$scope.new_payment.id_student		= $scope.student.id
-					$scope.new_payment.id_user			= $scope.user.id
-
-					ajaxStart()
-					$.post("ajax/paymentAdd", $scope.new_payment, function(response) {
-						$scope.new_payment.id = response;
-
-						// Инициализация если не установлено
-						$scope.payments = initIfNotSet($scope.payments);
-
-						$scope.payments.push($scope.new_payment)
-
-						$scope.new_payment = {id_status : 0}
-
-						$scope.$apply()
-
-						ajaxEnd()
-						lightBoxHide()
-					})
-				}
-			}
-			
-			// Удалить платеж
-			$scope.deletePayment = function(index, payment) {
-				if (!payment.confirmed) {
-					bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
-						if (result === true) {
-							$.post("ajax/deletePayment", {"id_payment": payment.id})
-							$scope.payments.splice(index, 1)
-							$scope.$apply()
-						}
-					})
-				} else {
-					bootbox.prompt({
-						title: "Введите пароль",
-						className: "modal-password",
-						callback: function(result) {
-							if (result == "363") {
-								bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
-									if (result === true) {
-										$.post("ajax/deletePayment", {"id_payment": payment.id})
-										$scope.payments.splice(index, 1)
-										$scope.$apply()
-									}
-								})
-							} else if (result != null) {
-								$('.bootbox-form').addClass('has-error').children().first().focus()
-								$('.bootbox-input-text').on('keydown', function() {
-									$(this).parent().removeClass('has-error')	
-								})
-								return false
-							}
-						},
-						buttons: {
-							confirm: {
-								label: "Подтвердить"
-							},
-							cancel: {
-								className: "display-none"
-							}		
-						}
-					})
-				}
-				
-			}
-						
-			// форматировать дату
-			$scope.formatDate = function(date){
-		        var dateOut = new Date(date);
-		        return dateOut;
-		    };
-		    
-		    // неподтвержденные платежи по умолчанию
-		    $scope.filter = 5
-		    
-			angular.element(document).ready(function() {
-				set_scope("Payments")
-				
-				$.post("payments/AjaxGetPayments", {}, function(response) {
-					$scope.payments = response 
-					$scope.$apply()
-				}, "json");
-			})
-		})
+// Generated by CoffeeScript 1.10.0
+angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
+  return function(items) {
+    if (items) {
+      return items.slice().reverse();
+    }
+  };
+}).controller("LkTeacherCtrl", function($scope, $http) {
+  $scope.formatDate = function(date) {
+    return moment(date).format("D MMMM YYYY");
+  };
+  $scope.formatTime = function(time) {
+    return time.substr(0, 5);
+  };
+  $scope.totalPaid = function() {
+    var sum;
+    sum = 0;
+    $.each($scope.payments, function(i, payment) {
+      return sum += payment.sum;
+    });
+    return sum;
+  };
+  $scope.totalEarned = function() {
+    var sum;
+    sum = 0;
+    $.each($scope.Data, function(i, data) {
+      return sum += data.teacher_price;
+    });
+    return sum;
+  };
+  $scope.toBePaid = function() {
+    return $scope.totalEarned() - $scope.totalPaid();
+  };
+  return angular.element(document).ready(function() {
+    return bootbox.prompt({
+      title: "Для доступа к странице введите ваш пароль",
+      className: "modal-password-bigger",
+      callback: function(result) {
+        return $.ajax({
+          url: "ajax/checkTeacherPass",
+          data: {
+            password: result
+          },
+          dataType: "json",
+          method: "post",
+          success: function(response) {
+            if (response === true) {
+              $scope.password_correct = true;
+              $.post("payments/ajaxLkTeacher", {}, function(response) {
+                console.log(response);
+                $scope.payments = response.payments;
+                $scope.Data = response.Data;
+                $scope.loaded = true;
+                return $scope.$apply();
+              }, "json");
+            } else {
+              $scope.password_correct = false;
+            }
+            return $scope.$apply();
+          },
+          async: false
+        });
+      },
+      buttons: {
+        confirm: {
+          label: "Подтвердить"
+        },
+        cancel: {
+          className: "display-none"
+        }
+      }
+    });
+  });
+}).controller("ListCtrl", function($scope, $timeout) {
+  $scope.filter = function() {
+    if (!$scope.search) {
+      $scope.search = {
+        mode: 'clientclient',
+        payment_type: '',
+        confirmed: ''
+      };
+    }
+    $.cookie("payments", JSON.stringify($scope.search), {
+      expires: 365,
+      path: '/'
+    });
+    $scope.current_page = 1;
+    return $scope.getByPage();
+  };
+  $scope.pageChanged = function() {
+    console.log($scope.current_page);
+    if ($scope.current_page > 1) {
+      window.history.pushState({}, '', 'payments/?page=' + $scope.current_page);
+    }
+    return $scope.getByPage();
+  };
+  $scope.getByPage = function() {
+    frontendLoadingStart();
+    $scope.search = $.cookie("payments") ? JSON.parse($.cookie("payments")) : {};
+    $scope.search.current_page = $scope.current_page;
+    return $.post("payments/AjaxGetPayments", {
+      search: $scope.search
+    }, function(response) {
+      frontendLoadingEnd();
+      $scope.payments = response.payments;
+      $scope.counts = response.counts;
+      $scope.refreshCounts();
+      return $scope.$apply();
+    }, "json");
+  };
+  $scope.refreshCounts = function() {
+    return $timeout(function() {
+      $('.watch-select option').each(function(index, el) {
+        $(el).data('subtext', $(el).attr('data-subtext'));
+        return $(el).data('content', $(el).attr('data-content'));
+      });
+      return $('.watch-select').selectpicker('refresh', 100);
+    });
+  };
+  angular.element(document).ready(function() {
+    set_scope("Payments");
+    $scope.getByPage();
+    return $(".single-select").selectpicker();
+  });
+  $scope.paymentsFilter = function(payment) {
+    switch ($scope.filter) {
+      case 1:
+        return payment.id_status === 5;
+      case 2:
+        return payment.id_status === 4;
+      case 3:
+        return payment.id_status === 2;
+      case 4:
+        return payment.id_status === 1;
+      case 5:
+        return !payment.confirmed;
+      default:
+        return payment;
+    }
+  };
+  $scope.confirmPayment = function(payment) {
+    return bootbox.prompt({
+      title: "Введите пароль",
+      className: "modal-password",
+      callback: function(result) {
+        if (result === "363") {
+          payment.confirmed = payment.confirmed + 1 % 2;
+          $.post("ajax/confirmPayment", {
+            id: payment.id,
+            type: payment.Entity.type,
+            confirmed: payment.confirmed
+          });
+          return $scope.$apply();
+        } else if (result !== null) {
+          $('.bootbox-form').addClass('has-error').children().first().focus();
+          $('.bootbox-input-text').on('keydown', function() {
+            return $(this).parent().removeClass('has-error');
+          });
+          return false;
+        }
+      },
+      buttons: {
+        confirm: {
+          label: "Подтвердить"
+        },
+        cancel: {
+          className: "display-none"
+        }
+      }
+    });
+  };
+  $scope.editPayment = function(payment) {
+    if (!payment.confirmed) {
+      $scope.new_payment = angular.copy(payment);
+      $scope.$apply();
+      lightBoxShow('addpayment');
+      return;
+    }
+    return bootbox.prompt({
+      title: "Введите пароль",
+      className: "modal-password",
+      callback: function(result) {
+        if (result === "363") {
+          $scope.new_payment = angular.copy(payment);
+          $scope.$apply();
+          return lightBoxShow('addpayment');
+        } else if (result !== null) {
+          $('.bootbox-form').addClass('has-error').children().first().focus();
+          $('.bootbox-input-text').on('keydown', function() {
+            return $(this).parent().removeClass('has-error');
+          });
+          return false;
+        }
+      },
+      buttons: {
+        confirm: {
+          label: "Подтвердить"
+        },
+        cancel: {
+          className: "display-none"
+        }
+      }
+    });
+  };
+  $scope.addPaymentDialog = function() {
+    $scope.new_payment = {
+      id_status: 0
+    };
+    return lightBoxShow('addpayment');
+  };
+  $scope.addPayment = function() {
+    var payment_date, payment_select, payment_sum, payment_type;
+    payment_date = $("#payment-date");
+    payment_sum = $("#payment-sum");
+    payment_select = $("#payment-select");
+    payment_type = $("#paymenttypes-select");
+    if (!$scope.new_payment.id_status) {
+      payment_select.focus().parent().addClass("has-error");
+    } else {
+      payment_select.parent().removeClass("has-error");
+    }
+    if ($scope.new_payment === 'teacher' && !$scope.new_payment.id_type) {
+      payment_type.focus().parent().addClass("has-error");
+      return;
+    } else {
+      payment_type.parent().removeClass("has-error");
+    }
+    if (!$scope.new_payment.sum) {
+      payment_sum.focus().parent().addClass("has-error");
+      return;
+    } else {
+      payment_sum.parent().removeClass("has-error");
+    }
+    if (!$scope.new_payment.date) {
+      payment_date.focus().parent().addClass("has-error");
+      return;
+    } else {
+      payment_date.parent().removeClass("has-error");
+    }
+    if ($scope.new_payment.id) {
+      ajaxStart();
+      _.extend($scope.new_payment, {
+        type: $scope.new_payment.Entity.type
+      });
+      return $.post("ajax/paymentEdit", $scope.new_payment, function(response) {
+        angular.forEach($scope.payments, function(payment, i) {
+          if (payment.id === $scope.new_payment.id) {
+            $scope.payments[i] = $scope.new_payment;
+            return $scope.$apply();
+          }
+        });
+        ajaxEnd();
+        return lightBoxHide();
+      });
+    } else {
+      $scope.new_payment.user_login = $scope.user.login;
+      $scope.new_payment.first_save_date = moment().format('YYYY-MM-DD HH:mm:ss');
+      $scope.new_payment.id_student = $scope.student.id;
+      $scope.new_payment.id_user = $scope.user.id;
+      ajaxStart();
+      return $.post("ajax/paymentAdd", $scope.new_payment, {
+        type: $scope.new_payment.Entity.type
+      }, function(response) {
+        $scope.new_payment.id = response;
+        $scope.payments = initIfNotSet($scope.payments);
+        $scope.payments.push($scope.new_payment);
+        $scope.new_payment = {
+          id_status: 0
+        };
+        $scope.$apply();
+        ajaxEnd();
+        return lightBoxHide();
+      });
+    }
+  };
+  $scope.deletePayment = function(index, payment) {
+    if (!payment.confirmed) {
+      return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
+        if (result === true) {
+          $.post("ajax/deletePayment", {
+            id_payment: payment.id,
+            type: payment.Entity.type
+          });
+          $scope.payments.splice(index, 1);
+          return $scope.$apply();
+        }
+      });
+    } else {
+      return bootbox.prompt({
+        title: "Введите пароль",
+        className: "modal-password",
+        callback: function(result) {
+          if (result === "363") {
+            return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
+              if (result === true) {
+                $.post("ajax/deletePayment", {
+                  id_payment: payment.id,
+                  type: payment.Entity.type
+                });
+                $scope.payments.splice(index, 1);
+                return $scope.$apply();
+              }
+            });
+          } else if (result !== null) {
+            $('.bootbox-form').addClass('has-error').children().first().focus();
+            $('.bootbox-input-text').on('keydown', function() {
+              return $(this).parent().removeClass('has-error');
+            });
+            return false;
+          }
+        },
+        buttons: {
+          confirm: {
+            label: "Подтвердить"
+          },
+          cancel: {
+            className: "display-none"
+          }
+        }
+      });
+    }
+  };
+  return $scope.formatDate = function(date) {
+    var dateOut;
+    dateOut = new Date(date);
+    return dateOut;
+  };
+});
