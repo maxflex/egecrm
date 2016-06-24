@@ -14,13 +14,34 @@
 		{
 			$this->addJs("ng-teacher-review-app");
 		}
-
-		public function actionMain()
+		
+		private function _studentId()
 		{
-			$this->setTabTitle("Оценка преподавателей");
+			return User::fromSession()->type == Student::USER_TYPE ? User::fromSession()->id_entity : $_GET['id_student'];
+		}
+		
+		/**
+		 * Список для ученика
+		 */
+		public function actionList()
+		{
+			$id_student = self::_studentId();
+			
+			$this->_custom_panel = true;
+			$this->addJs("bootstrap-select");
+			$this->addCss("bootstrap-select");
+			
+			$ang_init_data = angInit([
+				'Subjects' 		=> Subjects::$all,
+				'three_letters' => Subjects::$three_letters,
+				'id_student'	=> $id_student,
+				'Teachers'		=> Teacher::getJournalTeachers(),
+				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
+			]);
 
-			$this->render("main", [
-				"ang_init_data" => static::_generateAngInit(User::fromSession()->id_entity),
+			$this->render("student_reviews", [
+				"ang_init_data" => $ang_init_data,
+				"Student"		=> Student::getLight($id_student),
 			]);
 		}
 
@@ -29,41 +50,64 @@
 		 */
 		public function actionAdmins()
 		{
-			$id_student = $_GET['id_student'];
-			$Student = Student::findById($id_student);
+			$id_student = self::_studentId();
+			$id_teacher = $_GET['id_teacher'];
+			$id_subject = $_GET['id_subject'];
+			$year 		= $_GET['year'];
+			
+			$this->_custom_panel = true; 
+			
+			$this->setTabTitle("Оценка преподавателей");
 
-			$this->setTabTitle($Student->name('fi') . " | Оценка преподавателей");
+			$this->render("edit", [
+				"ang_init_data" => static::_generateAngInit($id_student, $id_teacher, $id_subject, $year),
+			]);
+		}
 
-			$this->render("admin_main", [
-				"ang_init_data" => static::_generateAngInit($id_student),
+		/**
+		 * Основной список
+		 */
+		public function actionReviews()
+		{
+			$this->_custom_panel = true;
+			$this->addJs("bootstrap-select");
+			$this->addCss("bootstrap-select");
+			
+			$ang_init_data = angInit([
+				'Subjects' 		=> Subjects::$all,
+				'three_letters' => Subjects::$three_letters,
+				'id_student'	=> false,
+				'Teachers'		=> Teacher::getJournalTeachers(),
+				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
+			]);
+
+			$this->render("reviews", [
+				"ang_init_data" => $ang_init_data,
 			]);
 		}
 
 		/**
 		 * Сгенерировать ang_init_data
 		 */
-		 private function _generateAngInit($id_student)
+		 private function _generateAngInit($id_student, $id_teacher, $id_subject, $year)
 		 {
-			$VisitJournal = Student::getExistedTeachers($id_student);
+		 	$Student = Student::getLight($id_student);
+		 	$Teacher = Teacher::getLight($id_teacher);
+		 	$lesson_count = VisitJournal::count([
+								"condition" => "id_teacher={$id_teacher} AND id_entity=" . $id_student . "
+								AND type_entity='STUDENT' AND id_subject={$id_subject} AND year={$year}"
+ 							]);
 
- 			foreach ($VisitJournal as $VJ) {
- 				$Teacher = Teacher::findById($VJ->id_teacher);
- 				$Teacher->lessons_count = VisitJournal::count([
- 					"condition" => "id_teacher={$VJ->id_teacher} AND id_entity=" . $id_student . "
- 						AND type_entity='STUDENT' AND id_subject={$VJ->id_subject}"
- 				]);
- 				$Teacher->id_subject = $VJ->id_subject;
-
- 				$Teachers[] = $Teacher;
- 			}
-
- 			$RatingInfo = TeacherReview::getInfo($id_student);
+ 			$RatingInfo = TeacherReview::getInfo($id_student, $id_teacher, $id_subject, $year);
 
  			return angInit([
- 				"Teachers" 	=> $Teachers,
- 				"RatingInfo"=> $RatingInfo,
- 				"Subjects" 	=> Subjects::$dative,
- 				"id_student" => $id_student,
+	 			"Student"		=> $Student,
+ 				"Teacher" 		=> $Teacher,
+ 				"RatingInfo"	=> $RatingInfo ? $RatingInfo : (object)['published' => 0],
+ 				"subject_name" 	=> Subjects::$dative[$id_subject],
+ 				"id_subject"	=> $id_subject,
+ 				"year"			=> $year,
+ 				"lesson_count"	=> $lesson_count,
  			]);
 		 }
 
@@ -73,8 +117,6 @@
 
 			$RatingInfo = array_filter($RatingInfo);
 
-			preType($RatingInfo);
-
-			TeacherReview::addData($RatingInfo, $id_student);
+			echo TeacherReview::addData($RatingInfo, $id_student, $id_teacher, $id_subject, $year);
 		}
 	}

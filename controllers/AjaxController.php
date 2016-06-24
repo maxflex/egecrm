@@ -976,4 +976,14 @@
 			extract($_POST);
 			Settings::set('teachers_faq', $html);
 		}
+		
+		public function actionAjaxGetReviews()
+		{
+			extract($_POST);
+			
+			returnJsonAng(
+				TeacherReview::getData($page, $teachers, $id_student)
+			);
+		}
+
 	}

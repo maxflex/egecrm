@@ -1,13 +1,9 @@
 <style>
-	.bootstrap-select.btn-group .dropdown-menu li small {
-		right: 10px;
-/* 		position: inherit; */
-	}
 	.dropdown-menu > li > a {
 		padding: 3px 45px 3px 20px;
 	}
-	.table, .dropdown-menu.open, .dropdown-toggle {
-		-webkit-font-smoothing: antialiased;
+	.bootstrap-select.btn-group .dropdown-menu li small {
+		right: 10px;
 	}
 </style>
 <div ng-app="Reports" ng-controller="UserListCtrl" ng-init="<?= $ang_init_data ?>" >
@@ -19,7 +15,7 @@
 			<span class="glyphicon glyphicon-refresh opacity-pointer" ng-click='updateHelperTable()' ng-class="{
 		        'spinning': helper_updating
 		    }" style="margin: 0 0 0 5px"></span>
-	    </div>
+		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row flex-list" style="margin-bottom: 15px">
@@ -29,7 +25,8 @@
 					<option disabled>──────────────</option>
 					<option value="1" data-subtext="{{ counts.mode[1] || '' }}">созданные отчеты</option>
 					<option value="2" data-subtext="{{ counts.mode[2] || '' }}">требующие создания</option>
-					<option value="3" data-subtext="{{ counts.mode[3] || '' }}">не требующие создания</option>
+					<option value="3" data-subtext="{{ counts.mode[3] || '' }}">мало занятий</option>
+					<option value="4" data-subtext="{{ counts.mode[4] || '' }}">не требующие создания</option>
 				</select>
 	        </div>
 	        <div>

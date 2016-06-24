@@ -4,49 +4,71 @@
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "teacher_reviews";
-
+		
+		const PER_PAGE = 30;
+		const PLACE = 'REVIEW';
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
-
+		
+		public function __construct($array)
+		{
+			parent::__construct($array);
+			
+			$this->Comments = $this->isNewRecord ? [] : Comment::getByPlace(self::PLACE, $this->id);
+			if (! $this->Comments) {
+				$this->Comments = [];
+			}
+		}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
-
-		public static function addData($data, $id_student)
+		
+		public static function countByYear()
 		{
-			self::deleteAll([
-				"condition" => "id_student=" . $id_student,
-			]);
-
-			foreach ($data as $id_teacher => $id_subject_data) {
-				foreach ($id_subject_data as $id_subject => $rating) {
-					self::add([
-						"id_teacher"	=> $id_teacher,
-						"id_subject"	=> $id_subject,
-						"rating"		=> $rating['rating'],
-						"admin_rating"	=> $rating['admin_rating'],
-						"comment" 		=> $rating['comment'],
-						"admin_comment" => $rating['admin_comment'],
-						"published" 	=> $rating['published'],
-						"id_student"	=> $id_student,
-						"date"			=> now(),
-					]);
-				}
+			$new_search = new StdClass;
+			$new_search->mode = 0;
+			
+			$search = json_decode($_COOKIE['reviews']);
+			if ($search->year) {
+				$new_search->year = $search->year;				
+			}
+			
+			return static::_count($new_search);
+		}
+		
+		public static function addData($rating, $id_student, $id_teacher, $id_subject, $year)
+		{
+			$data = [
+				"id_student"			=> $id_student,
+				"id_teacher"			=> $id_teacher,
+				"id_subject"			=> $id_subject,
+				"year"					=> $year,
+				"rating"				=> $rating['rating'],
+				"admin_rating"			=> $rating['admin_rating'],
+				"admin_rating_final" 	=> $rating['admin_rating_final'],
+				"comment" 				=> $rating['comment'],
+				"admin_comment" 		=> $rating['admin_comment'],
+				"admin_comment_final" 	=> $rating['admin_comment_final'],
+				"published" 			=> $rating['published'],
+				"date"					=> now(),
+			];
+			
+			$Review = TeacherReview::getInfo($id_student, $id_teacher, $id_subject, $year);
+			
+			if ($Review) {
+				$Review->update($data, true);
+			} else {
+				// если добавили отзыв, то возвращаем ID, чтобы была возможность комментировать
+				return self::add($data)->id;
 			}
 		}
 
-		public static function getInfo($id_student)
+		public static function getInfo($id_student, $id_teacher, $id_subject, $year)
 		{
-			$RatingInfo = self::findAll([
-				"condition" => "id_student=" . $id_student,
+			return self::find([
+				"condition" => "id_student=" . $id_student . " AND id_subject={$id_subject} AND id_teacher={$id_teacher} AND year={$year}",
 			]);
-
-			foreach ($RatingInfo as $Rating) {
-				$return[$Rating->id_teacher][$Rating->id_subject] = $Rating;
-			}
-
-			return $return;
 		}
-
+		
 
 		/**
 		 * Получить оценку учителя
@@ -62,5 +84,126 @@
 			} else {
 				return 0;
 			}
+		}
+		
+		/*
+		 * Получить данные для основного модуля
+		 * $id_student – если просматриваем отзывы отдельного ученика
+		 */
+		public static function getData($page, $Teachers, $id_student)
+		{
+			if (!$page) {
+				$page = 1;
+			}
+			// С какой записи начинать отображение, по формуле
+			$start_from = ($page - 1) * TeacherReview::PER_PAGE;
+			
+			$search = $id_student ? (object)compact('id_student') : json_decode($_COOKIE['reviews']);
+			if (gettype($search) != "object") {
+				$search = new StdClass;
+			}
+
+			// получаем данные
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating, 
+				r.admin_rating, r.admin_rating_final, r.published, " . static::_countQuery('vj2'));
+			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . TeacherReview::PER_PAGE);
+			
+			while ($row = $result->fetch_object()) {
+				$data[] = $row;
+			}
+			
+			foreach ($data as &$d) {
+				$d->Student = Student::getLight($d->id_entity);
+				$d->Teacher = Teacher::getLight($d->id_teacher);
+			}
+			
+			// counts
+			$counts['all'] = static::_count($search);
+			
+			if (! $id_student) {
+				foreach(array_merge([""], Years::$all) as $year) {
+					$new_search = clone $search;
+					$new_search->year = $year;
+					$counts['year'][$year] = static::_count($new_search);
+				}
+				foreach(([''=>''] + Subjects::$all) as $id_subject => $name) {
+					$new_search = clone $search;
+					$new_search->id_subject = $id_subject;
+					$counts['subject'][$id_subject] = static::_count($new_search);
+				}
+				foreach(array_merge(['id' => ''], $Teachers) as $Teacher) {
+					$new_search = clone $search;
+					$new_search->id_teacher = $Teacher['id'];
+					$counts['teacher'][$Teacher['id']] = static::_count($new_search);
+				}
+				foreach(["", 1, 2, 3, 4, 5, 0] as $rating) {
+					$new_search = clone $search;
+					$new_search->rating = $rating;
+					$counts['rating'][$rating] = static::_count($new_search);
+				}
+				foreach(["", 1, 2, 3, 4, 5, 0] as $admin_rating) {
+					$new_search = clone $search;
+					$new_search->admin_rating = $admin_rating;
+					$counts['admin_rating'][$admin_rating] = static::_count($new_search);
+				}
+				foreach(["", 1, 2, 3, 4, 5, 0] as $admin_rating_final) {
+					$new_search = clone $search;
+					$new_search->admin_rating_final = $admin_rating_final;
+					$counts['admin_rating_final'][$admin_rating_final] = static::_count($new_search);
+				}
+				foreach(["", 0, 1, 2] as $published) {
+					$new_search = clone $search;
+					$new_search->published = $published;
+					$counts['published'][$published] = static::_count($new_search);
+				}
+				foreach(["", 0, 1] as $mode) {
+					$new_search = clone $search;
+					$new_search->mode = $mode;
+					$counts['mode'][$mode] = static::_count($new_search);
+				}
+			}
+			
+			return [
+				'data' 	=> $data,
+				'counts' => $counts,
+			];
+		}
+		
+		private static function _count($search) {
+			return dbConnection()
+					->query(static::_generateQuery($search, "COUNT(*) AS cnt FROM (SELECT vj.id", false, ") AS X"))
+					->fetch_object()
+					->cnt;
+		}
+		
+		private static function _connectTables($t, $addon) {
+			return " {$t} ON ({$t}.id_student = vj.id_entity AND {$t}.id_teacher = vj.id_teacher AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year {$addon})";
+		}
+		
+		private static function _countQuery($t) {
+			return "
+				(SELECT COUNT(*) FROM visit_journal {$t} 
+				WHERE {$t}.id_entity = vj.id_entity AND {$t}.id_teacher = vj.id_teacher 
+					AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year) AS lesson_count";
+		}
+		
+		private static function _generateQuery($search, $select, $order = true, $ending)
+		{
+			$main_query = "
+				FROM visit_journal vj
+				LEFT JOIN teacher_reviews" . static::_connectTables('r') . "
+				WHERE vj.type_entity='STUDENT' "
+				. ($search->year ? " AND vj.year={$search->year}" : "")
+				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
+				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
+				. ($search->id_student ? " AND vj.id_entity={$search->id_student}" : "")
+				. (!isBlank($search->mode) ? ($search->mode == 1 ? " AND r.id IS NOT NULL" : " AND r.id IS NULL") : "")
+				. (!isBlank($search->published) ? " AND r.published={$search->published}" : "")
+				. (!isBlank($search->rating) ? " AND r.rating={$search->rating}" : "")
+				. (!isBlank($search->admin_rating) ? " AND r.admin_rating={$search->admin_rating}" : "")
+				. (!isBlank($search->admin_rating_final) ? " AND r.admin_rating_final={$search->admin_rating_final}" : "")
+				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year"
+				. ($order ? " ORDER BY vj.lesson_date DESC" : "");
+			return "SELECT " . $select . $main_query . $ending;
 		}
 	}

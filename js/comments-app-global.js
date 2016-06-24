@@ -57,6 +57,10 @@
 							comments = scope.Testing.Comments
 							break
 						}
+						case "REVIEW": {
+							comments = scope.RatingInfo.Comments
+							break
+						}
 						case "TASK": {
 							var comments						
 							$.each(scope.Tasks, function(i, v) {

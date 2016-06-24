@@ -92,19 +92,21 @@
 		}
 
 		// 	количество красных меток "требуется создание отчета"
-		public static function redReportCountStatic($id_teacher)
+		public static function redReportCountStatic($id_teacher, $year = false)
 		{
 			return dbConnection()->query("
 				SELECT COUNT(*) AS cnt FROM reports_helper rh
 				LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
-				WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL
-			")->fetch_object()->cnt;
+				WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL " . ($year ? "AND rh.year={$year}" : "")
+			)->fetch_object()->cnt;
 		}
 
 		public static function redReportCountAll()
 		{
+			$search = json_decode($_COOKIE['reports']);
+			
 			foreach (self::getIds(['condition' => 'in_egecentr >= 1']) as $id_teacher) {
-				$red_count += Teacher::redReportCountStatic($id_teacher);
+				$red_count += Teacher::redReportCountStatic($id_teacher, $search->year);
 			}
 			return $red_count ? $red_count : null;
 		}
@@ -112,7 +114,7 @@
 		/*
 		 * Получить преподавателей для отчета
 		 */
-		public static function getReportTeachers()
+		public static function getJournalTeachers()
 		{
 			$result = dbConnection()->query("
 				SELECT id_entity 
@@ -179,7 +181,7 @@
 				$counts['year'][$year] = static::_count($new_search);
 			}
 			
-			foreach(["", 1, 2, 3] as $mode) {
+			foreach(["", 1, 2, 3, 4] as $mode) {
 				$new_search = clone $search;
 				$new_search->mode = $mode;
 				$counts['mode'][$mode] = static::_count($new_search);
@@ -197,7 +199,7 @@
 				$counts['email_sent'][$email_sent] = static::_count($new_search);
 			}
 			
-			foreach(array_merge([''=>''], Subjects::$all) as $id_subject => $name) {
+			foreach(([''=>''] + Subjects::$all) as $id_subject => $name) {
 				$new_search = clone $search;
 				$new_search->id_subject = $id_subject;
 				$counts['subject'][$id_subject] = static::_count($new_search);
@@ -232,6 +234,7 @@
 			$main_query = "
 				FROM visit_journal vj
 				LEFT JOIN reports" . static::_connectTables('r') . "
+				LEFT JOIN reports_force " . static::_connectTables('rf') . "
 				JOIN reports_helper" . static::_connectTables('rh', 'AND isnull(rh.id_report) = isnull(r.id)') . "
 				WHERE vj.type_entity='STUDENT' "
 				. (($search->mode == 1 || !isBlank($search->available_for_parents) || !isBlank($search->email_sent)) ? " AND r.id IS NOT NULL" : "")
@@ -240,7 +243,8 @@
 				. ($search->year ? " AND vj.year={$search->year}" : "") 
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
-				. (($search->mode > 1) ? " AND (r.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? ">=8" : "<8") . ")" : "")
+				. (($search->mode > 1 && $search->mode < 4) ? " AND (r.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? ">=8 AND rf.id IS NULL" : "<8") . ")" : "")
+				. (($search->mode == 4) ? " AND rf.id IS NOT NULL AND r.id IS NULL" : "")
 				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id "
 				. ($order ? " ORDER BY vj.lesson_date DESC" : "");
 			return "SELECT " . $select . $main_query . $ending;
