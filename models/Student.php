@@ -119,7 +119,7 @@
 			if ($VisitJournal) {
 				foreach ($VisitJournal as $VJ) {
 					$has_review = TeacherReview::count([
-						"condition" => "id_teacher={$VJ->id_teacher} AND id_student={$VJ->id_entity} AND id_subject={$VJ->id_subject}
+						"condition" => "id_teacher={$VJ->id_teacher} AND id_student={$VJ->id_entity} AND id_subject={$VJ->id_subject} AND year={$VJ->year}
 							AND rating > 0 AND comment!=''"
 					]);
 

@@ -29,7 +29,7 @@
 	& > div {
 		flex: 1;
 		margin-right: 10px;
-	  	width: calc(100%/7);
+// 	  	width: calc(100%/7);
 	}
 }
 
@@ -2926,4 +2926,14 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
     animation-duration: 2000ms;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
+}
+
+
+.table, .dropdown-menu.open, .dropdown-toggle {
+	-webkit-font-smoothing: antialiased;
+}
+
+.bootstrap-select.btn-group .btn .filter-option {
+	white-space: initial;
+	height: 20px;
 }

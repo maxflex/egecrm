@@ -4,12 +4,29 @@
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 		const PER_PAGE = 30;
 		
+		// кол-во занятий до того, как потребуется отчет 
+		// (с этой цифры включительно уже требуется)
+		const LESSON_COUNT = 8;
+		
 		public static $mysql_table	= "reports";
 		
 		public function getEmail()
 		{
 			$Student = Student::findById($this->id_student);
 			return $Student->Representative->email;
+		}
+		
+		public function countByYear()
+		{
+			$search = json_decode($_COOKIE['reports']);
+			
+			if ($search->year) {
+				$data = [
+					"condition" => "year={$search->year}"
+				];
+			}
+			
+			return Report::count($data);
 		}
 	}
 	

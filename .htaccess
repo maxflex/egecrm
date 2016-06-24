@@ -93,8 +93,10 @@ RewriteRule ^(teachers/)?payments/([a-zA-Z]+)[/]?$ index.php?controller=payments
 RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
 
 RewriteRule ^(teachers/|students/)?faq[/]?$ index.php?controller=faq&action=faq [QSA,L]
-RewriteRule ^students/reviews[/]?$ index.php?controller=TeacherReviews&action=main [QSA,L]
-RewriteRule ^reviews/([0-9]+)[/]?$ index.php?controller=TeacherReviews&action=admins&id_student=$1 [QSA,L]
+RewriteRule ^students/reviews[/]?$ index.php?controller=TeacherReviews&action=list [QSA,L]
+RewriteRule ^reviews/([0-9]+)[/]?$ index.php?controller=TeacherReviews&action=list&id_student=$1 [QSA,L]
+RewriteRule ^(students/)?reviews/([0-9]+)/([0-9]+)/([0-9]+)[/]?([0-9]*)[/]?$ index.php?controller=TeacherReviews&action=admins&id_teacher=$2&id_subject=$3&year=$4&id_student=$5 [QSA,L]
+RewriteRule ^reviews[?page=(0-9)]?[/]?$ index.php?controller=TeacherReviews&action=reviews&page=$1 [QSA,L]
 
 RewriteRule ^reviews/ajax/([a-zA-Z]+)[/]?$ index.php?controller=TeacherReviews&action=Ajax$1 [QSA,L]
 
