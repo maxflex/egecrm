@@ -88,7 +88,7 @@
 			if (count($teacher_ids)) {
 				$Teachers = Teacher::findAll(['condition' => 'id in ('.implode(',', array_unique($teacher_ids)).')']);
 				foreach ($Teachers as $Teacher) {
-					$Teacher->calcHoldCoeff($Group->id);
+					$Teacher->calcHoldCoeff(['group_id' => $Group->id]);
 				}
 			}
 

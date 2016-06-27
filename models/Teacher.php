@@ -448,22 +448,37 @@
 		 * 
 		 * @param bool $group_id		Если передан group_id, то коэффициент считается только для указанной группы.
 		 */
-		public function calcHoldCoeff($group_id = false)
+		public function calcHoldCoeff($params = [])
 		{
 			$this->loss = 0; // изначально потеря = 0;
 			$this->loss_data = []; // будем хранить данные о потерях, для проверки результатов и т. д.;
 			$this->total_lessons = 0; // будем хранить данные о потерях, для проверки результатов и т. д.;
 
-			//получаем все группы препода.
+            // опции подсчета: по группам, по классам
+            $_group_id = isset($params['group_id']) ? $params['group_id']: false;
+            $_grade = isset($params['grade']) ? $params['grade']: false;
+
+            //получаем все группы препода.
 			$condition[] = "id_entity = {$this->id}";
 			$condition[] = "type_entity = '".Teacher::USER_TYPE."'";
-			$condition[] = $group_id ? "id_group = {$group_id}" : '1';
-			$query = "select group_concat(distinct id_group) as group_ids from visit_journal where ".implode(" and ", $condition);
-			$raw_group_ids = dbConnection()->query($query)->fetch_object()->group_ids;
-			$group_ids = $raw_group_ids ? explode(',', $raw_group_ids) : [];
+			$condition[] = $_group_id ? "id_group = {$_group_id}" : '1';
+			$condition[] = $_grade ? "grade = {$_grade}" : '1';
 
-			foreach ($group_ids as $group_id) {
-				// получаем первое посещение препода в группе.
+			$query = "select distinct id_group as group_id, grade from visit_journal where ".implode(" and ", $condition);
+
+            $groups = [];
+            $result = dbConnection()->query($query);
+            if ($result) {
+                while ($group = $result->fetch_assoc()) {
+                    $groups[] = $group;
+                }
+            }
+
+            foreach ($groups as $group) {       //  foreach ($groups as list($group_id, $grade)) { не работал, =.=
+                $group_id = $group['group_id'];
+                $grade = $group['grade'];
+
+                // получаем первое посещение препода в группе.
 				$query = "select lesson_date as first_date from visit_journal where id_group = {$group_id} and type_entity = '".Teacher::USER_TYPE."' and id_entity = {$this->id} order by lesson_date limit 1";
 				$first_lesson = dbConnection()->query($query)->first_date;
 
@@ -495,7 +510,7 @@
 
 						if ($loss) {
 							$this->loss += $loss;
-							$this->loss_data[$group_id][$student->id] = ['loss' => $loss, 'first_common_lesson' => $first_common_lesson, 'total_lessons' => $total_lessons];
+							$this->loss_data[$grade][$group_id][$student->id] = ['loss' => $loss, 'first_common_lesson' => $first_common_lesson, 'total_lessons' => $total_lessons];
 						}
 					} else {
 						// если студент отвалился до урока препода, то не считаем период.
