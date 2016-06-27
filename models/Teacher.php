@@ -443,6 +443,13 @@
 			return $return;
 		}
 
+		public function lessonCount()
+		{
+			return VisitJournal::count([
+				'condition' => ''
+			]);
+		}
+
 		/**
 		 * Коэффициент удержания препода.
 		 * 
@@ -464,20 +471,17 @@
 			$condition[] = $_group_id ? "id_group = {$_group_id}" : '1';
 			$condition[] = $_grade ? "grade = {$_grade}" : '1';
 
-			$query = "select distinct id_group as group_id, grade from visit_journal where ".implode(" and ", $condition);
+			$query = "select distinct id_group, grade from visit_journal where ".implode(" and ", $condition);
 
             $groups = [];
             $result = dbConnection()->query($query);
             if ($result) {
-                while ($group = $result->fetch_assoc()) {
+                while ($group = $result->fetch_array(MYSQLI_NUM)) {
                     $groups[] = $group;
                 }
             }
 
-            foreach ($groups as $group) {       //  foreach ($groups as list($group_id, $grade)) { не работал, =.=
-                $group_id = $group['group_id'];
-                $grade = $group['grade'];
-
+            foreach ($groups as list($group_id, $grade)) {
                 // получаем первое посещение препода в группе.
 				$query = "select lesson_date as first_date from visit_journal where id_group = {$group_id} and type_entity = '".Teacher::USER_TYPE."' and id_entity = {$this->id} order by lesson_date limit 1";
 				$first_lesson = dbConnection()->query($query)->first_date;
