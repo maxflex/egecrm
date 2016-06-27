@@ -285,7 +285,7 @@
 						<a href="groups/edit/{{d.id_group}}">Группа №{{d.id_group}}</a>
 					</td>
 					<td>
-						{{formatDate(d.lesson_date)}}
+						{{formatDateMonthName(d.lesson_date)}}
 					</td>
 					<td>
 						{{formatTime(d.lesson_time)}}
@@ -310,23 +310,7 @@
 			    <a class="link-like link-reverse link-in-h" ng-click="addPaymentDialog()">добавить</a>
 		    </h4>
 		    <div class="form-group payment-line" ng-show="payment_collapsed">
-				<div ng-repeat="payment in payments | reverse" style="margin-bottom: 5px">
-					<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">
-					{{payment_statuses[payment.id_status]}}<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">{{payment.card_number ? " *" + payment.card_number.trim() : ""}}</span></span>
-
-					<span class="capitalize">{{payment_types[payment.id_type]}}</span>
-					Платеж на сумму {{payment.sum}} <ng-pluralize count="payment.sum" when="{
-						'one' : 'рубль',
-						'few' : 'рубля',
-						'many': 'рублей',
-					}"></ng-pluralize> от {{payment.date}}
-						<span class="save-coordinates">({{payment.user_login}} {{formatDate2(payment.first_save_date) | date:'yyyy.MM.dd в HH:mm'}})
-						</span>
-						<a class="link-like link-reverse small" ng-click="confirmPayment(payment)" ng-show="!payment.confirmed">подтвердить</a>
-						<span class="label pointer label-success" ng-show="payment.confirmed" ng-click="confirmPayment(payment)">подтвержден</span>
-						<a class="link-like link-reverse small" ng-click="editPayment(payment)">редактировать</a>
-						<a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
-				</div>
+                <?= globalPartial("payments_list") ?>
 		    </div>
 		</div>
 	</div>

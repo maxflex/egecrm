@@ -2937,3 +2937,12 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 	white-space: initial;
 	height: 20px;
 }
+.text-green {
+  color: $green;
+}
+.payments-table tr td:first-child {
+  padding-left: 0;
+}
+.payments-table tr:first-child td {
+  border-top: none;
+}

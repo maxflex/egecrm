@@ -80,13 +80,15 @@
 				$count_cond['id_status'] = "id_status = {$type}";
 				$counts['payment_type'][$type] = $payment_class::count(["condition" => implode(' and ', $count_cond)]);
 			}
-			// $counts['payment_type']['all'] = array_sum($counts['payment_type']);
+			 $counts['payment_type']['all'] = array_sum($counts['payment_type']);
 
 			foreach ([0,1] as $confirmed) {
 				$count_cond = $condition;
 				$count_cond['confirmed'] = "confirmed = {$confirmed}";
 				$counts['confirmed'][$confirmed] = $payment_class::count(["condition" => implode(' and ', $count_cond)]);
 			}
+			$counts['confirmed']['all'] = array_sum($counts['confirmed']);
+
 			/* /каунтеры */
 
 			returnJsonAng([

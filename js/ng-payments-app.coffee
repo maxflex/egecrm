@@ -66,27 +66,32 @@ angular.module "Payments", ["ui.bootstrap"]
             }
 
     .controller "ListCtrl", ($scope, $timeout) ->
-        $scope.filter = ->
-            $scope.search = mode : 'clientclient', payment_type : '', confirmed : '' if not $scope.search
-            $.cookie "payments", JSON.stringify($scope.search), { expires: 365, path: '/' }
-            $scope.current_page = 1
+        $scope.filter = (current_page)->
+            console.log 'filter' # инициализируем фильтры если еще не были установлены
+            $scope.search = mode : 'client', payment_type : '', confirmed : '' if not $scope.search
+            $scope.search.current_page = if current_page then current_page else 1
+
+            $.cookie 'payments', JSON.stringify($scope.search), { expires: 365, path: '/' }
+
             $scope.getByPage()
 
         $scope.pageChanged = ->
-            console.log $scope.current_page
-            window.history.pushState {}, '', 'payments/?page=' + $scope.current_page if $scope.current_page > 1
+            console.log 'page changed ' + $scope.search.current_page
+            $scope.search = mode : 'client', payment_type : '', confirmed : '' if not $scope.search
+            window.history.pushState {}, '', 'payments' + (if $scope.search.current_page > 1 then '/?page=' + $scope.search.current_page else '')
             $scope.getByPage()
 
         $scope.getByPage = ->
-            frontendLoadingStart()
+            console.log 'get by page'
+            frontendLoadingStart() and $scope.loading = true if not $scope.loading
 
-            $scope.search = if $.cookie("payments") then JSON.parse($.cookie("payments")) else {}
-            $scope.search.current_page = $scope.current_page
+#            $scope.search.current_page = current_page if current_page
 
             $.post "payments/AjaxGetPayments",
                 search: $scope.search
             , (response) ->
-                frontendLoadingEnd()
+                frontendLoadingEnd() and $scope.loading = false
+
                 $scope.payments = response.payments
                 $scope.counts = response.counts
                 $scope.refreshCounts()
@@ -94,6 +99,7 @@ angular.module "Payments", ["ui.bootstrap"]
             , "json"
 
         $scope.refreshCounts = ->
+            console.log 'refresh counts'
             $timeout ->
                 $('.watch-select option').each (index, el) ->
                     $(el).data 'subtext', $(el).attr 'data-subtext'
@@ -102,18 +108,11 @@ angular.module "Payments", ["ui.bootstrap"]
                 , 100
 
         angular.element(document).ready ->
+            console.log 'ready'
             set_scope "Payments"
-            $scope.getByPage()
+            $scope.search = JSON.parse $.cookie 'payments' if $.cookie 'payments'
+            $scope.filter $scope.current_page
             $(".single-select").selectpicker()
-
-        $scope.paymentsFilter = (payment) ->
-            switch $scope.filter
-                when 1 then payment.id_status == 5
-                when 2 then payment.id_status == 4
-                when 3 then payment.id_status == 2
-                when 4 then payment.id_status == 1
-                when 5 then not payment.confirmed
-                else payment
 
         # done
         $scope.confirmPayment = (payment) ->
@@ -122,7 +121,7 @@ angular.module "Payments", ["ui.bootstrap"]
                 className: "modal-password",
                 callback: (result) ->
                     if result == "363"
-                        payment.confirmed = payment.confirmed + 1 % 2
+                        payment.confirmed = (payment.confirmed + 1) % 2
                         $.post "ajax/confirmPayment",
                             id:        payment.id
                             type:      payment.Entity.type

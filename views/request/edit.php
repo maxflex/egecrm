@@ -880,24 +880,8 @@
 			    <a class="link-like link-reverse link-in-h" ng-click="addPaymentDialog()">добавить</a>
 		    </h4>
 		    <div class="form-group payment-line">
-				<div ng-repeat="payment in payments | reverse" style="margin-bottom: 5px">
-					<span class="label label-success" ng-class="{'label-danger' : payment.id_status == <?= Payment::NOT_PAID_BILL ?>}">
-					{{payment_statuses[payment.id_status]}}<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">{{payment.card_number ? " *" + payment.card_number.trim() : ""}}</span></span>
+                <?= globalPartial("payments_list", ["show_print" => true]) ?>
 
-					<span class="capitalize">{{payment_types[payment.id_type]}}</span>
-					на сумму {{payment.sum}} <ng-pluralize count="payment.sum" when="{
-						'one' : 'рубль',
-						'few' : 'рубля',
-						'many': 'рублей',
-					}"></ng-pluralize> от {{payment.date}}
-						<span class="save-coordinates">({{payment.user_login}} {{formatDate(payment.first_save_date) | date:'yyyy.MM.dd в HH:mm'}})
-						</span>
-						<a class="link-like link-reverse small" ng-click="confirmPayment(payment)" ng-show="!payment.confirmed">подтвердить</a>
-						<span class="label pointer label-success" ng-show="payment.confirmed" ng-click="confirmPayment(payment)">подтвержден</span>
-						<a class="link-like link-reverse small" ng-click="printBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета</a>
-						<a class="link-like link-reverse small" ng-click="editPayment(payment)">редактировать</a>
-						<a class="link-like link-reverse small" ng-click="deletePayment($index, payment)">удалить</a>
-				</div>
 				<div class="half-black small" ng-show="objectLength(remainder)">
 					<?php if (User::fromSession()->edit_payment) :?>
 						Остаточный платеж <input class="no-border-outline digits-only-minus" ng-model="remainder.remainder" ng-keydown="checkRemainderSave($event)"

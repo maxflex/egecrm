@@ -280,8 +280,13 @@
 			        cancel: className: 'display-none'
 			  return
 
-			$scope.formatDate = (date) ->
+			$scope.formatDateMonthName = (date) ->
 				moment(date).format "D MMMM YY"
+
+			$scope.formatDate = (date) ->
+                dateOut = new Date(date)
+                dateOut
+
 			$scope.formatTime = (time) ->
 				time.substr(0, 5)
 

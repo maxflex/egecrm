@@ -72,36 +72,43 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     });
   });
 }).controller("ListCtrl", function($scope, $timeout) {
-  $scope.filter = function() {
+  $scope.filter = function(current_page) {
+    console.log('filter');
     if (!$scope.search) {
       $scope.search = {
-        mode: 'clientclient',
+        mode: 'client',
         payment_type: '',
         confirmed: ''
       };
     }
-    $.cookie("payments", JSON.stringify($scope.search), {
+    $scope.search.current_page = current_page ? current_page : 1;
+    $.cookie('payments', JSON.stringify($scope.search), {
       expires: 365,
       path: '/'
     });
-    $scope.current_page = 1;
     return $scope.getByPage();
   };
   $scope.pageChanged = function() {
-    console.log($scope.current_page);
-    if ($scope.current_page > 1) {
-      window.history.pushState({}, '', 'payments/?page=' + $scope.current_page);
+    console.log('page changed ' + $scope.search.current_page);
+    if (!$scope.search) {
+      $scope.search = {
+        mode: 'client',
+        payment_type: '',
+        confirmed: ''
+      };
     }
+    window.history.pushState({}, '', 'payments' + ($scope.search.current_page > 1 ? '/?page=' + $scope.search.current_page : ''));
     return $scope.getByPage();
   };
   $scope.getByPage = function() {
-    frontendLoadingStart();
-    $scope.search = $.cookie("payments") ? JSON.parse($.cookie("payments")) : {};
-    $scope.search.current_page = $scope.current_page;
+    console.log('get by page');
+    if (!$scope.loading) {
+      frontendLoadingStart() && ($scope.loading = true);
+    }
     return $.post("payments/AjaxGetPayments", {
       search: $scope.search
     }, function(response) {
-      frontendLoadingEnd();
+      frontendLoadingEnd() && ($scope.loading = false);
       $scope.payments = response.payments;
       $scope.counts = response.counts;
       $scope.refreshCounts();
@@ -109,6 +116,7 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     }, "json");
   };
   $scope.refreshCounts = function() {
+    console.log('refresh counts');
     return $timeout(function() {
       $('.watch-select option').each(function(index, el) {
         $(el).data('subtext', $(el).attr('data-subtext'));
@@ -118,33 +126,21 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     });
   };
   angular.element(document).ready(function() {
+    console.log('ready');
     set_scope("Payments");
-    $scope.getByPage();
+    if ($.cookie('payments')) {
+      $scope.search = JSON.parse($.cookie('payments'));
+    }
+    $scope.filter($scope.current_page);
     return $(".single-select").selectpicker();
   });
-  $scope.paymentsFilter = function(payment) {
-    switch ($scope.filter) {
-      case 1:
-        return payment.id_status === 5;
-      case 2:
-        return payment.id_status === 4;
-      case 3:
-        return payment.id_status === 2;
-      case 4:
-        return payment.id_status === 1;
-      case 5:
-        return !payment.confirmed;
-      default:
-        return payment;
-    }
-  };
   $scope.confirmPayment = function(payment) {
     return bootbox.prompt({
       title: "Введите пароль",
       className: "modal-password",
       callback: function(result) {
         if (result === "363") {
-          payment.confirmed = payment.confirmed + 1 % 2;
+          payment.confirmed = (payment.confirmed + 1) % 2;
           $.post("ajax/confirmPayment", {
             id: payment.id,
             type: payment.Entity.type,

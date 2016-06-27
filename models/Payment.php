@@ -8,7 +8,7 @@
 		# Список статусов
 		const PAID_CARD		= 1;
 		const PAID_CASH		= 2;
-		const NOT_PAID_BILL	= 3;	
+//		const NOT_PAID_BILL	= 3;
 		const PAID_BILL		= 4;
 		const CARD_ONLINE	= 5;
 		const MUTUAL_DEBTS	= 6;
@@ -17,7 +17,7 @@
 		static $all  = [			
 			self::PAID_CARD		=> "карта",
 			self::PAID_CASH		=> "наличные",
-			self::NOT_PAID_BILL	=> "не оплаченный счет",
+//			self::NOT_PAID_BILL	=> "не оплаченный счет",
 			self::PAID_BILL		=> "счет",
 			self::CARD_ONLINE	=> "карта онлайн",
 			self::MUTUAL_DEBTS	=> "взаимозачет",
@@ -27,7 +27,7 @@
 
 		# удаленные записи коллекции
 		static $deleted = [
-			self::NOT_PAID_BILL,
+//			self::NOT_PAID_BILL,
 		];
 		
 		# Заголовок
