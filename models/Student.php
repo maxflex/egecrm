@@ -650,8 +650,10 @@
 		 */
 		public function getPayments()
 		{
+
 			return Payment::findAll([
-				"condition" => "deleted=0 AND id_student=" . $this->id
+				"condition" => "deleted=0 AND id_student=" . $this->id,
+				"order" => "first_save_date desc"
 			]);
 		}
 

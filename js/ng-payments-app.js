@@ -82,6 +82,7 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
       };
     }
     $scope.search.current_page = current_page ? current_page : 1;
+    window.history.pushState({}, '', 'payments' + ($scope.search.current_page > 1 ? '/?page=' + $scope.search.current_page : ''));
     $.cookie('payments', JSON.stringify($scope.search), {
       expires: 365,
       path: '/'

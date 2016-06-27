@@ -173,7 +173,7 @@
 				"Subjects"	=> Subjects::$three_letters,
 				"SubjectsFull" => Subjects::$all,
 				"payment_statuses"	=> Payment::$all,
-				"payments"			=> TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher"]),
+				"payments"			=> TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher", 'order'=>'first_save_date desc']),
 				"user"				=> User::fromSession(),
 				"time" 				=> Freetime::TIME,
 				"Grades"			=> Grades::$all,

@@ -71,6 +71,7 @@ angular.module "Payments", ["ui.bootstrap"]
             $scope.search = mode : 'client', payment_type : '', confirmed : '' if not $scope.search
             $scope.search.current_page = if current_page then current_page else 1
 
+            window.history.pushState {}, '', 'payments' + (if $scope.search.current_page > 1 then '/?page=' + $scope.search.current_page else '')
             $.cookie 'payments', JSON.stringify($scope.search), { expires: 365, path: '/' }
 
             $scope.getByPage()
@@ -78,7 +79,9 @@ angular.module "Payments", ["ui.bootstrap"]
         $scope.pageChanged = ->
             console.log 'page changed ' + $scope.search.current_page
             $scope.search = mode : 'client', payment_type : '', confirmed : '' if not $scope.search
+
             window.history.pushState {}, '', 'payments' + (if $scope.search.current_page > 1 then '/?page=' + $scope.search.current_page else '')
+
             $scope.getByPage()
 
         $scope.getByPage = ->
