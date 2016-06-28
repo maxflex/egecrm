@@ -505,6 +505,9 @@
 
 
                 while ($result && $student = $result->fetch_object()) {
+                    if (!isset($this->total_lessons_data[$grade][$group_id]))
+                        $this->total_lessons_data[$grade][$group_id] = 0;
+
 					// первое занятие ученика и препода
 					$query = "select lesson_date as first_common_lesson ".
 							 "from visit_journal ".
@@ -523,7 +526,7 @@
 											"condition" => "id_group = {$group_id} and date >= '{$first_common_lesson}' and date <= now() and cancelled = 0"
 										 ]);
 						$this->total_lessons += $total_lessons;
-						$this->total_lessons_data[$grade][$group_id] += isset($this->total_lessons_data[$grade][$group_id]) ? $total_lessons : 0;
+						$this->total_lessons_data[$grade][$group_id] += $total_lessons;
 
 						if ($loss) {
 							$this->loss += $loss;
@@ -538,7 +541,7 @@
                                 "condition" => "id_group = {$group_id} and date >= '{$first_common_lesson}' and date < now() and cancelled = 0"
                             ]);
                             $this->total_lessons += $total_lessons;
-                            $this->total_lessons_data[$grade][$group_id] += isset($this->total_lessons_data[$grade][$group_id]) ? $total_lessons : 0;
+                            $this->total_lessons_data[$grade][$group_id] += $total_lessons;
                         }
 					}
 				}
