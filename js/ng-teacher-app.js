@@ -26,6 +26,14 @@ angular.module("Teacher", ["ngMap"]).config([
     }
     return input;
   };
+}).filter('hideZero', function() {
+  return function(item) {
+    if (item > 0) {
+      return item;
+    } else {
+      return null;
+    }
+  };
 }).controller("FaqCtrl", function($scope) {
   $scope.save = function() {
     ajaxStart();
@@ -580,7 +588,7 @@ angular.module("Teacher", ["ngMap"]).config([
       return $('#state-select, #subjects-select').selectpicker('refresh', 100);
     });
   };
-  return angular.element(document).ready(function() {
+  angular.element(document).ready(function() {
     set_scope('Teacher');
     $("#subjects-select").selectpicker({
       noneSelectedText: "предметы",
@@ -589,4 +597,42 @@ angular.module("Teacher", ["ngMap"]).config([
     $("#state-select").selectpicker();
     return smsMode(4);
   });
+  $scope.totalHold = function(grade) {
+    var Teacher, denominator, k, len, numerator, ref;
+    numerator = 0;
+    denominator = 0;
+    ref = $scope.Teachers;
+    for (k = 0, len = ref.length; k < len; k++) {
+      Teacher = ref[k];
+      if (grade) {
+        if (Teacher.loss_by_grade[grade]) {
+          numerator += Teacher.total_lessons_by_grade[grade] - Teacher.loss_by_grade[grade];
+          denominator += Teacher.total_lessons_by_grade[grade];
+        }
+      } else {
+        numerator += Teacher.total_lessons - Teacher.loss;
+        denominator += Teacher.total_lessons;
+      }
+    }
+    if (!denominator) {
+      return 0;
+    }
+    return Math.round(100 * numerator / denominator);
+  };
+  return $scope.totalLessons = function(grade) {
+    var Teacher, k, len, ref, total_lessons;
+    total_lessons = 0;
+    ref = $scope.Teachers;
+    for (k = 0, len = ref.length; k < len; k++) {
+      Teacher = ref[k];
+      if (grade) {
+        if (Teacher.fact_lesson_cnt_by_grade[grade]) {
+          total_lessons += Teacher.fact_lesson_cnt_by_grade[grade];
+        }
+      } else {
+        total_lessons += Teacher.fact_lesson_total_cnt;
+      }
+    }
+    return total_lessons;
+  };
 });

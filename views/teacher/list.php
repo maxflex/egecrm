@@ -35,7 +35,7 @@
 				</div>
 				<table class="table table-hover border-reverse" id="teachers-list">
 					<tr ng-repeat="Teacher in Teachers | filter:teachersFilter">
-						<td width="400">
+						<td class="col-sm-4">
 							<a href="teachers/edit/{{Teacher.id}}">
 								<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
 									{{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
@@ -45,9 +45,38 @@
 								</span>
 							</a>
 						</td>
-						<td>
+						<td class="col-sm=2">
 							<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
 						</td>
+                        <td ng-repeat-start="grade in [9, 10, 11]" width="50px">
+                            <span ng-show="Teacher.hold_coeff_by_grade[grade]">{{ Teacher.hold_coeff_by_grade[grade] }}%</span>
+                        </td>
+                        <td ng-repeat-end class="col-sm-1">
+                            {{ Teacher.fact_lesson_cnt_by_grade[grade] | hideZero }}
+                        </td>
+                        <!-- сумма по всем группам -->
+                        <td width="50px">
+                            <span ng-show="Teacher.hold_coeff">{{ Teacher.hold_coeff }}%</span>
+                        </td>
+                        <td class="col-sm-1">
+                            {{ Teacher.fact_lesson_total_cnt | hideZero }}
+                        </td>
+                    </tr>
+
+                    <tr style="font-weight: bold">
+                        <td colspan="2"></td>
+                        <td ng-repeat-start="grade in [9, 10, 11]" width="50px">
+                                {{ totalHold(grade) }}%
+                        </td>
+                        <td ng-repeat-end class="col-sm-1">
+                            {{ totalLessons(grade) | hideZero }}
+                        </td>
+                        <td width="50px">
+                            {{ totalHold() }}%
+                        </td>
+                        <td class="col-sm-1">
+                            {{ totalLessons() | hideZero }}
+                        </td>
 					</tr>
 				</table>
 

@@ -458,23 +458,26 @@
 		public function calcHoldCoeff($params = [])
 		{
 			$this->loss = 0; // изначально потеря = 0;
+			$this->loss_by_grade = []; // потеря по классам;
 			$this->loss_data = []; // будем хранить данные о потерях, для проверки результатов и т. д.;
-			$this->total_lessons = 0; // будем хранить данные о потерях, для проверки результатов и т. д.;
+
+            $this->total_lessons = 0;        // количество занятий за которые препод ответственнен
+            $this->total_lessons_data = [];        // количество занятий за которые препод ответственнен
+            $this->total_lessons_by_grade = []; // количество занятий по классам за которые препод ответственнен
+
+            $this->fact_lesson_cnt = []; // данные фактического посещения студентов + препода по классам -> группам.
 
             // опции подсчета: по группам, по классам
             $_group_id = isset($params['group_id']) ? $params['group_id']: false;
-            $_grade = isset($params['grade']) ? $params['grade']: false;
 
             //получаем все группы препода.
 			$condition[] = "id_entity = {$this->id}";
 			$condition[] = "type_entity = '".Teacher::USER_TYPE."'";
 			$condition[] = $_group_id ? "id_group = {$_group_id}" : '1';
-			$condition[] = $_grade ? "grade = {$_grade}" : '1';
 
-			$query = "select distinct id_group, grade from visit_journal where ".implode(" and ", $condition);
-
-            $groups = [];
+            $query = "select distinct id_group, grade from visit_journal where ".implode(" and ", $condition);
             $result = dbConnection()->query($query);
+            $groups = [];
             if ($result) {
                 while ($group = $result->fetch_array(MYSQLI_NUM)) {
                     $groups[] = $group;
@@ -482,17 +485,26 @@
             }
 
             foreach ($groups as list($group_id, $grade)) {
-                // получаем первое посещение препода в группе.
-				$query = "select lesson_date as first_date from visit_journal where id_group = {$group_id} and type_entity = '".Teacher::USER_TYPE."' and id_entity = {$this->id} order by lesson_date limit 1";
-				$first_lesson = dbConnection()->query($query)->first_date;
+                if (!isset($this->loss_by_grade[$grade]))
+                    $this->loss_by_grade[$grade] = 0;
 
-				//получаем последнее посещение всех студентов группы.
-				$query = "select id_entity as id, lesson_date as last_lesson, id_teacher as last_teacher ".
-						 "from (select * from visit_journal where id_group = {$group_id} and type_entity = '".Student::USER_TYPE."' order by lesson_date desc) v ".
-						 "group by id_entity";
-				$result = dbConnection()->query($query);
+                // считать фактические посещения: все посещения где препод = this.id или id = this.id
+                if ($params['fact_lesson_cnt']) {
+                    $query = "select count(*) as lesson_count ".
+                             "from visit_journal ".
+                             "where id_group = {$group_id} and id_teacher = {$this->id} ";
 
-				while ($result && $student = $result->fetch_object()) {
+                    $this->fact_lesson_cnt[$grade][$group_id] = dbConnection()->query($query)->fetch_object()->lesson_count;;
+                }
+
+                //получаем последнее посещение всех студентов группы.
+                $query = "select id_entity as id, lesson_date as last_lesson, id_teacher as last_teacher ".
+                         "from (select * from visit_journal where id_group = {$group_id} and type_entity = '".Student::USER_TYPE."' order by lesson_date desc) v ".
+                         "group by id_entity";
+                $result = dbConnection()->query($query);
+
+
+                while ($result && $student = $result->fetch_object()) {
 					// первое занятие ученика и препода
 					$query = "select lesson_date as first_common_lesson ".
 							 "from visit_journal ".
@@ -511,23 +523,36 @@
 											"condition" => "id_group = {$group_id} and date >= '{$first_common_lesson}' and date <= now() and cancelled = 0"
 										 ]);
 						$this->total_lessons += $total_lessons;
+						$this->total_lessons_data[$grade][$group_id] += isset($this->total_lessons_data[$grade][$group_id]) ? $total_lessons : 0;
 
 						if ($loss) {
 							$this->loss += $loss;
+							$this->loss_by_grade[$grade] += $loss;
 							$this->loss_data[$grade][$group_id][$student->id] = ['loss' => $loss, 'first_common_lesson' => $first_common_lesson, 'total_lessons' => $total_lessons];
 						}
 					} else {
 						// если студент отвалился до урока препода, то не считаем период.
 						// иначе берем период от начала первого занятия до конца таблицы.
 						if (new DateTime($first_common_lesson) < new DateTime($student->last_lesson)) {
-							$this->total_lessons += GroupSchedule::count([
-								"condition" => "id_group = {$group_id} and date >= '{$first_common_lesson}' and date < now() and cancelled = 0"
-							]);
-						}
+                            $total_lessons = GroupSchedule::count([
+                                "condition" => "id_group = {$group_id} and date >= '{$first_common_lesson}' and date < now() and cancelled = 0"
+                            ]);
+                            $this->total_lessons += $total_lessons;
+                            $this->total_lessons_data[$grade][$group_id] += isset($this->total_lessons_data[$grade][$group_id]) ? $total_lessons : 0;
+                        }
 					}
 				}
-			}
+            }
 
-			$this->hold_coeff = $this->total_lessons ? round(100*($this->total_lessons - $this->loss)/$this->total_lessons) : 0;  // 213 - теоритическое максимальное количество уроков одного препода.
-		}
-	}
+            $this->hold_coeff = $this->total_lessons ? round(100*($this->total_lessons - $this->loss)/$this->total_lessons) : 0;
+
+            foreach ([9, 10, 11] as $grade) {
+                $this->fact_lesson_cnt_by_grade[$grade] = array_sum($this->fact_lesson_cnt[$grade]);
+
+                $total_lessons = $this->total_lessons_by_grade[$grade] = isset($this->total_lessons_data[$grade]) ? array_sum($this->total_lessons_data[$grade]) : 0;
+                $this->hold_coeff_by_grade[$grade] = $total_lessons ? round(100*($total_lessons - $this->loss_by_grade[$grade])/$total_lessons) : 0;
+            }
+            $this->fact_lesson_total_cnt = array_sum($this->fact_lesson_cnt_by_grade);
+        }
+
+    }

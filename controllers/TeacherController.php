@@ -129,7 +129,11 @@
 				"order" => "last_name ASC",
 			]);
 
-			$ang_init_data = angInit([
+            foreach ($Teachers as $Teacher) {
+                $Teacher->calcHoldCoeff(['fact_lesson_cnt' => true]);
+            }
+
+            $ang_init_data = angInit([
 				"Teachers" 		=> $Teachers,
 				"three_letters"	=> Subjects::$three_letters,
 				"subjects" 		=> Subjects::$short,

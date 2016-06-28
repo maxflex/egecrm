@@ -20,6 +20,10 @@
 				for i in [0...total] by 1
 					input.push i
 				input
+		.filter 'hideZero', ->
+			(item) ->
+				if item > 0 then item else null
+
 		.controller "FaqCtrl", ($scope) ->
 			$scope.save = ->
 				ajaxStart()
@@ -41,7 +45,7 @@
 		.controller "EditCtrl", ($scope, $timeout) ->
 			$scope.yearDifference = (year) ->
 	            moment().format("YYYY") - year
-	            
+
 			$scope.picture_version = 1;
 			bindFileUpload = ->
 				# загрузка файла договора
@@ -509,3 +513,28 @@
 				$("#state-select").selectpicker()
 				
 				smsMode 4
+
+			$scope.totalHold = (grade) ->
+				numerator = 0
+				denominator = 0
+				for Teacher in $scope.Teachers
+					if grade
+						if Teacher.loss_by_grade[grade]
+							numerator += Teacher.total_lessons_by_grade[grade] - Teacher.loss_by_grade[grade]
+							denominator += Teacher.total_lessons_by_grade[grade]
+					else
+						numerator += Teacher.total_lessons - Teacher.loss
+						denominator += Teacher.total_lessons
+
+				return 0 if not denominator
+				Math.round 100 * numerator / denominator
+
+			$scope.totalLessons = (grade) ->
+				total_lessons = 0
+				for Teacher in $scope.Teachers
+					if grade
+						if Teacher.fact_lesson_cnt_by_grade[grade]
+							total_lessons += Teacher.fact_lesson_cnt_by_grade[grade]
+					else
+						total_lessons += Teacher.fact_lesson_total_cnt
+				total_lessons

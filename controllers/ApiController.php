@@ -179,8 +179,8 @@
 			$Teacher->calcHoldCoeff();
 			returnJSON([
 				'coeff' => $Teacher->hold_coeff,
-				'loss' => $Teacher->loss,
-				'loss_data' => $Teacher->loss_data
+				//'loss' => $Teacher->loss,
+				//'loss_data' => $Teacher->loss_data
 			]);
 		}
 
