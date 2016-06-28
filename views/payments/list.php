@@ -43,7 +43,7 @@
     </style>
     <div class="col-sm-12">
 		<div class="row" style="margin-bottom: 15px">
-			<div class="col-sm-3">
+			<div class="col-sm-2">
 				<select class="watch-select single-select form-control" ng-model="search.mode" ng-change='filter()'>
 					<option value="client"  data-subtext="{{ counts.mode.client || '' }}">клиенты</option>
 					<option value="teacher" data-subtext="{{ counts.mode.teacher || '' }}">преподаватели</option>
