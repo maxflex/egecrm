@@ -206,7 +206,7 @@
 		{
 //			$Users = self::findAllReal();
 			$Users = self::findAll([
-				'condition'=>'type = '.User::USER_TYPE.' and banned = 0'
+				"condition"=>"type = '".User::USER_TYPE."' and banned = 0"
 			]);
 
 			foreach ($Users as $User) {
