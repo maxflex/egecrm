@@ -26,7 +26,7 @@
             <td class="col-sm-1">
                 <a class="link-like" ng-click="editPayment(payment)">редактировать</a>
             </td>
-            <td>
+            <td class="col-sm-1">
                 <a class="link-like" ng-click="deletePayment($index, payment)">удалить</a>
             </td>
             <td class="col-sm-2">
