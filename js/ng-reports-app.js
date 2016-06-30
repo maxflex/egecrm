@@ -75,7 +75,7 @@ angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
       teachers: $scope.Teachers
     }, function(response) {
       frontendLoadingEnd();
-      $scope.data = response.data;
+      $scope.Reports = response.data;
       $scope.counts = response.counts;
       $scope.$apply();
       return $scope.refreshCounts();

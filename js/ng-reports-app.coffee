@@ -66,7 +66,7 @@ angular.module "Reports", ["ui.bootstrap"]
 				teachers: $scope.Teachers
 			, (response) ->
 				frontendLoadingEnd()
-				$scope.data  = response.data
+				$scope.Reports  = response.data
 				$scope.counts = response.counts
 				$scope.$apply()
 				$scope.refreshCounts()

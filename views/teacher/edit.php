@@ -162,7 +162,7 @@
 			<div class="form-group">
 				<div class="input-group">
 			      <input placeholder="логин" disabled ng-model="Teacher.login" class="form-control">
-			      <span class="input-group-addon pointer" ng-click="toggleBanned()">
+			      <span class="input-group-addon">
 			      	<span class="glyphicon glyphicon-lock no-margin-right small" ng-class="{
 				      	'text-danger': Teacher.banned
 			      	}"></span>
@@ -202,119 +202,28 @@
 
 	<!-- /Публичная информация -->
 	<?php if ($Teacher->id) :?>
-	<div class="row" style="margin-bottom: 10px">
-		<div class="col-sm-12">
-		    <h4 style="margin-top: 0" class="row-header" ng-model="group_collapsed" ng-click="group_collapsed = Groups.length && !group_collapsed">{{(Groups && Groups.length > 0) ? 'ГРУППЫ' : 'НЕТ ГРУПП'}}</h4>
-		    <div ng-show="group_collapsed">
-                <?= globalPartial("groups_list") ?>
-            </div>
-		</div>
-	</div>
-
-	<div class="row" style="margin-bottom: 10px">
-		<div class="col-sm-12">
-		    <h4 style="margin-top: 0" class="row-header" ng-model="review_collapsed" ng-click="review_collapsed = Teacher.Reviews.length && !review_collapsed">
-                {{(Teacher.Reviews && Teacher.Reviews.length > 0) ? 'ОТЗЫВЫ' : 'НЕТ ОТЗЫВОВ'}}
-            </h4>
-
-			<div class="row"  ng-show="review_collapsed">
-				<div class="col-sm-12">
-					<div ng-repeat="Review in Teacher.Reviews" class="clear-sms" style="margin-left: 11px">
-						<div class="from-them">
-							<span>{{Review.comment}}</span>
-							<div style="text-align: right; margin-top: 5px" class="save-coordinates">
-								<a href="student/{{Review.Student.id}}" target="_blank">
-									{{Review.Student.last_name}} {{Review.Student.first_name}}</a>, {{coordinate_time(Review.date)}}<br>
-								Оценка: <b>{{Review.rating}}</b>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-
-
-	<!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
-	<div id="addpayment" class="lightbox-new lightbox-addpayment" style="width: 551px; left: calc(50% - 275px)">
-		<h4>{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
-		<div class="form-group payment-line">
-			<div class="form-group inline-block">
-				<?= Payment::buildSelector(false, false, ["ng-model" => "new_payment.id_status", "style" => "width: 180px"]) ?>
-		    </div>
-			<div class="form-group inline-block">
-				на сумму
-		    </div>
-			<div class="form-group inline-block">
-				<input type="text" class="form-control digits-only" id="payment-sum" ng-model="new_payment.sum"  ng-keydown="watchEnter($event)"> от
-			</div>
-			<div class="form-group inline-block">
-                <input class="form-control bs-date" id="payment-date" ng-model="new_payment.date" pattern="[0-9]{2}.[0-9]{2}.[0-9]{4}">
-			</div>
-		</div>
-        <script>
-            $("#payment-date").inputmask("99.99.9999");
-        </script>
-		<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
-			<h4>Номер карты</h4>
-			<div class="form-group inline-block">
-				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block; margin-left: 5px"> -
-				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> -
-				<input class="form-control" disabled placeholder="XXXX" style="width: 60px; display: inline-block"> -
-				<input class="form-control digits-only" id="payment-card" maxlength="4" ng-model="new_payment.card_number"
-					style="width: 60px; display: inline-block">
-			</div>
-		</div>
-		<center>
-			<button class="btn btn-primary" ng-click="addPayment()">{{new_payment.id ? "Редактировать" : "Добавить"}}</button>
-		</center>
-	</div>
-	<!-- /ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
-
-	<div class="row" style="position: relative">
-		<div class="col-sm-12">
-			<h4 class="row-header" style="margin-top: 0">
-				<span ng-show="Data.length" ng-model="data_collapsed" ng-click="data_collapsed = !data_collapsed">ЗАНЯТИЯ</span>
-				<span ng-show="!Data.length">НЕТ ЗАНЯТИЙ</span>
-			</h4>
-			<table class="table table-divlike" ng-show="data_collapsed">
-				<tr ng-repeat="d in Data">
-					<td>
-						<a href="groups/edit/{{d.id_group}}">Группа №{{d.id_group}}</a>
-					</td>
-					<td>
-						{{formatDateMonthName(d.lesson_date)}}
-					</td>
-					<td>
-						{{formatTime(d.lesson_time)}}
-					</td>
-					<td>
-						{{d.teacher_price | number}} рублей
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2"></td>
-					<td><b>к выплате</b></td>
-					<td><b>{{toBePaid() | number}} рублей</b></td>
-				</tr>
-			</table>
-
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-sm-12">
-			<h4 class="row-header" ng-model="payment_collapsed" ng-click="payment_collapsed = !payment_collapsed">ПЛАТЕЖИ
-			    <a class="link-like link-reverse link-in-h" ng-click="addPaymentDialog()">добавить</a>
-		    </h4>
-		    <div class="form-group payment-line" ng-show="payment_collapsed">
-                <?= globalPartial("payments_list") ?>
-		    </div>
-		</div>
-	</div>
-
+	<div class="top-links wide" style="margin-top: 20px">
+	    <span class="link-like" ng-click="setMenu(0)" ng-class="{'active': current_menu == 0}">
+	    	ГРУППЫ
+	    </span>
+	    <span class="link-like" ng-click="setMenu(1)" ng-class="{'active': current_menu == 1}">
+	    	ОТЗЫВЫ
+	    </span>
+	    <span class="link-like" ng-click="setMenu(2)" ng-class="{'active': current_menu == 2}">
+			ПРОВЕДЕННЫЕ ЗАНЯТИЯ
+	    </span>
+	    <span class="link-like" ng-click="setMenu(3)" ng-class="{'active': current_menu == 3}">
+	    	ПЛАТЕЖИ
+	    </span>
+	    <span class="link-like" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}">
+	    	ОТЧЕТЫ
+	    </span>
+    </div>
+    
+	<?= partial('groups') ?>
+	<?= partial('reviews') ?>
+	<?= partial('lessons') ?>
+	<?= partial('payments') ?>
 	<?= partial('reports') ?>
 
 

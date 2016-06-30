@@ -64,7 +64,7 @@ angular.module("TeacherReview", ["ui.bootstrap"]).filter('range', function() {
       id_student: $scope.id_student
     }, function(response) {
       frontendLoadingEnd();
-      $scope.data = response.data;
+      $scope.Reviews = response.data;
       $scope.counts = response.counts;
       $scope.$apply();
       return $scope.refreshCounts();

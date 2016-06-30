@@ -1037,6 +1037,12 @@ body {
 		cursor: default;
 		text-decoration: none;
 	}
+	&.wide {
+		& a, span.link-like {
+			margin-right: 25px;
+			text-transform: lowercase;
+		}
+	}
 }
 .link-current {
 	margin-right: 15px;
@@ -2884,13 +2890,14 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .table.border-reverse > tbody > tr > td {
 	border-top: none;
 	border-bottom: 1px solid #ddd;
+	display: table-cell;
 }
 
 .bootstrap-select.btn-group .dropdown-menu li {
 	& small {
 		position: absolute;
 		top: 4px;
-		right: 40px;
+		right: 10px;
 		font-size: 100%;
 		padding: 0;
 	}
@@ -2945,4 +2952,23 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 }
 .payments-table tr:first-child td {
   border-top: none;
+}
+.vertical-gray {
+	border-right: 1px solid #ddd;
+	text-align: center;
+	position: relative;
+	& > div {
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		cursor: default;
+		top: 0;
+		left: 0;
+	}
+}
+.vertical-gray-left {
+	border-left: 1px solid #ddd;
+}
+.dropdown-menu > li > a {
+	padding: 3px 45px 3px 20px;
 }

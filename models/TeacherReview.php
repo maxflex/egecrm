@@ -18,6 +18,13 @@
 			if (! $this->Comments) {
 				$this->Comments = [];
 			}
+			
+			if (! $this->isNewRecord) {
+				$this->lesson_count = VisitJournal::count([
+					'condition' => "id_entity = {$this->id_student} AND id_teacher = {$this->id_teacher} 
+										AND id_subject = {$this->id_subject} AND year = {$this->year}"
+				]);	
+			}
 		}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -49,6 +56,8 @@
 				"admin_comment" 		=> $rating['admin_comment'],
 				"admin_comment_final" 	=> $rating['admin_comment_final'],
 				"published" 			=> $rating['published'],
+				"code" 					=> $rating['code'],
+				"signature" 			=> $rating['signature'],
 				"date"					=> now(),
 			];
 			
@@ -105,7 +114,7 @@
 
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating, 
-				r.admin_rating, r.admin_rating_final, r.published, " . static::_countQuery('vj2'));
+				r.admin_rating, r.admin_rating_final, r.published, r.code, r.comment, r.admin_comment, r.admin_comment_final, " . static::_countQuery('vj2'));
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . TeacherReview::PER_PAGE);
 			
 			while ($row = $result->fetch_object()) {
@@ -161,6 +170,12 @@
 					$new_search->mode = $mode;
 					$counts['mode'][$mode] = static::_count($new_search);
 				}
+				$users = User::getCached(true);
+				foreach(array_merge([""], $users) as $user) {
+					$new_search = clone $search;
+					$new_search->id_user = $user['id'];
+					$counts['user'][$user['id']] = static::_count($new_search);
+				}
 			}
 			
 			return [
@@ -191,7 +206,8 @@
 		{
 			$main_query = "
 				FROM visit_journal vj
-				LEFT JOIN teacher_reviews" . static::_connectTables('r') . "
+				LEFT JOIN teacher_reviews" . static::_connectTables('r')
+				. (isset($search->id_user) ? " JOIN students s ON s.id = vj.id_entity " : "") . "
 				WHERE vj.type_entity='STUDENT' "
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
@@ -199,6 +215,7 @@
 				. ($search->id_student ? " AND vj.id_entity={$search->id_student}" : "")
 				. (!isBlank($search->mode) ? ($search->mode == 1 ? " AND r.id IS NOT NULL" : " AND r.id IS NULL") : "")
 				. (!isBlank($search->published) ? " AND r.published={$search->published}" : "")
+				. (!isBlank($search->id_user) ? " AND s.id_user_review={$search->id_user}" : "")
 				. (!isBlank($search->rating) ? " AND r.rating={$search->rating}" : "")
 				. (!isBlank($search->admin_rating) ? " AND r.admin_rating={$search->admin_rating}" : "")
 				. (!isBlank($search->admin_rating_final) ? " AND r.admin_rating_final={$search->admin_rating_final}" : "")

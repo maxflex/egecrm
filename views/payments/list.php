@@ -37,9 +37,6 @@
         .dropdown-menu > li > a {
             padding: 3px 45px 3px 10px;
         }
-        .bootstrap-select.btn-group .dropdown-menu li small {
-            right: 10px;
-        }
     </style>
     <div class="col-sm-12">
 		<div class="row" style="margin-bottom: 15px">
@@ -64,6 +61,14 @@
 					<option disabled>──────────────</option>
 					<option data-subtext="{{ counts.confirmed[1] || ''}}" value="1">подтвержденные</option>
 					<option data-subtext="{{ counts.confirmed[0] || '' }}" value="0">не подтвержденные</option>
+				</select>
+			</div> 
+			<div class="col-sm-2">
+				<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.type" ng-change='filter()'>
+					<option value="" data-subtext="{{ counts.type.all || ''}}" >все операции</option>
+					<option disabled>──────────────</option>
+					<option data-subtext="{{ counts.type[1] || ''}}" value="1">платеж</option>
+					<option data-subtext="{{ counts.type[2] || '' }}" value="2">возврат</option>
 				</select>
 			</div>
 		</div>

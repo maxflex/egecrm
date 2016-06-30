@@ -1,8 +1,11 @@
 <div class="form-group payment-line" style="margin-bottom: 40px;">
-    <table class="table table-hover payments-table">
+    <table class="table table-hover payments-table" style="font-size: 12px">
         <tr ng-repeat="payment in payments">
             <td class="col-sm-3" ng-if="payment.Entity && payment.Entity.id">
                 <span ng-show="payment.Entity.id"><a href="{{ payment.Entity.profile_link }}">{{ payment.Entity.last_name }} {{ payment.Entity.first_name }} {{ payment.Entity.middle_name }}</a></span>
+            </td>
+            <td>
+	            {{payment.id_type == 2 ? 'возврат' : 'платеж'}}
             </td>
             <td class="col-sm-1">
 						<span class="">{{payment_statuses[payment.id_status]}}

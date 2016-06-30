@@ -153,31 +153,20 @@
 				<a class='link-white' href='as/teacher/{$id_teacher}'>режим просмотра</a>
 			");
 			$Teacher = Teacher::findById($id_teacher);
-			$Teacher->Reviews = Teacher::getReviews($Teacher->id);
 
-			# Данные по занятиям/выплатам
-			$Data = VisitJournal::findAll([
-				"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'",
-				"order"		=> "lesson_date DESC, lesson_time DESC",
-			]);
-
-			$Groups = Teacher::getGroups($id_teacher, false);
 
 			$this->addJs("bootstrap-select");
 			$this->addCss("bootstrap-select");
 
 			$ang_init_data = angInit([
 				"Teacher" => $Teacher,
-				"Data"				=> $Data,
 				"teacher_phone_level"	=> $Teacher->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
-				"Groups"				=> $Groups,
-				"Reports"				=> $Teacher->getReports(),
 				"GroupLevels"			=> GroupLevels::$all,
 				"Subjects"	=> Subjects::$three_letters,
+				"three_letters" => Subjects::$three_letters,
 				"SubjectsFull" => Subjects::$all,
 				"payment_statuses"	=> Payment::$all,
-				"payments"			=> TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher", 'order'=>'first_save_date desc']),
 				"user"				=> User::fromSession(),
 				"time" 				=> Freetime::TIME,
 				"Grades"			=> Grades::$all,
@@ -187,5 +176,36 @@
 				"Teacher"		=> $Teacher,
 				"ang_init_data" => $ang_init_data
 			]);
+		}
+		
+		
+		
+		/******* AJAX ********/
+		
+		public function actionAjaxMenu()
+		{
+			extract($_POST);
+			switch ($menu) {
+				case 0: {
+					returnJsonAng(Teacher::getGroups($id_teacher, false));
+				}
+				case 1: {
+					returnJsonAng(Teacher::getReviews($id_teacher));
+				}
+				case 2: {
+					returnJsonAng(
+						VisitJournal::findAll([
+							"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'",
+							"order"		=> "lesson_date DESC, lesson_time DESC",
+						])
+					);
+				}
+				case 3: {
+					returnJsonAng(TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher", 'order'=>'first_save_date desc']));
+				}
+				case 4: {
+					returnJsonAng(Teacher::getReportsStatic($id_teacher));
+				}
+			}
 		}
 	}

@@ -15,20 +15,23 @@
 				<div class="row" style="margin-bottom: 20px">
 					<div class="col-sm-4">
 						<select id='state-select' class="form-control" ng-model='in_egecentr' ng-change='changeState()'>
-							<option value='1' data-subtext="{{ getCount(1, filter_subjects) }}">активен в системе ЕГЭ-Центра</option>
-							<option value='2' data-subtext="{{ getCount(2, filter_subjects) }}">ведет занятия в ЕГЭ-Центре</option>
-							<option value='3' data-subtext="{{ getCount(3, filter_subjects) }}">ранее работал в ЕГЭ-Центре</option>
+							<option value=""  data-subtext="{{ getCount(0, id_subject) }}">все</option>
+							<option disabled>──────────────</option>
+							<option value='1' data-subtext="{{ getCount(1, id_subject) }}">активен в системе ЕГЭ-Центра</option>
+							<option value='2' data-subtext="{{ getCount(2, id_subject) }}">ведет занятия в ЕГЭ-Центре</option>
+							<option value='3' data-subtext="{{ getCount(3, id_subject) }}">ранее работал в ЕГЭ-Центре</option>
 						</select>
 					</div>
 					<div class="col-sm-4">
-						<select class='form-control' id='subjects-select' ng-model='filter_subjects' multiple ng-change='changeSubjects()'>
+						<select class='form-control' id='subjects-select' ng-model='id_subject' ng-change='changeSubjects()'>
+							<option value=""  data-subtext="{{ getCount(0, id_subject) }}">все</option>
+							<option disabled>──────────────</option>
 							<option ng-repeat='(key, name) in three_letters' 
-								ng-selected="subjectSelected(key)"
 								value='{{key}}' 
 								data-subtext="{{ getCount(in_egecentr, key) }}">{{name}}</option>
 						</select>
 <!--
-						<select class='form-control' id='subjects-select' ng-model='filter_subjects' multiple ng-options='key as name for (key, name) in three_letters'>
+						<select class='form-control' id='subjects-select' ng-model='id_subject' multiple ng-options='key as name for (key, name) in three_letters'>
 						</select>
 -->
 					</div>

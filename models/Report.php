@@ -10,6 +10,16 @@
 		
 		public static $mysql_table	= "reports";
 		
+		public function __construct($array)
+		{
+			parent::__construct($array);
+			
+			if (! $this->isNewRecord) {
+				$this->force_noreport = ReportForce::check($this->id_student, $this->id_teacher, $this->id_subject, $this->year);
+				$this->lesson_count = ReportHelper::getLessonCount($this->id_student, $this->id_teacher, $this->id_subject, $this->year);
+			}
+		}
+		
 		public function getEmail()
 		{
 			$Student = Student::findById($this->id_student);
@@ -112,6 +122,11 @@
 			
 			return Settings::set('reports_updated', now());
 		}
+		
+		public static function getLessonCount($id_student, $id_teacher, $id_subject, $year)
+		{
+			return ReportHelper::find(ReportForce::condition($id_student, $id_teacher, $id_subject, $year))->lesson_count;
+		}
 	}
 	
 	
@@ -123,12 +138,12 @@
 		
 		public static function check($id_student, $id_teacher, $id_subject, $year)
 		{
-			return ReportForce::count(ReportForce::_condition($id_student, $id_teacher, $id_subject, $year)) > 0;
+			return ReportForce::count(ReportForce::condition($id_student, $id_teacher, $id_subject, $year)) > 0;
 		}
 		
 		public static function toggle($id_student, $id_teacher, $id_subject, $year)
 		{
-			$ReportForce = ReportForce::find(ReportForce::_condition($id_student, $id_teacher, $id_subject, $year));
+			$ReportForce = ReportForce::find(ReportForce::condition($id_student, $id_teacher, $id_subject, $year));
 			
 			if ($ReportForce) {
 				$ReportForce->delete();
@@ -137,7 +152,7 @@
 			}
 		}
 		
-		private static function _condition($id_student, $id_teacher, $id_subject, $year)
+		public static function condition($id_student, $id_teacher, $id_subject, $year)
 		{
 			return ['condition' => "id_student = {$id_student} AND id_teacher = {$id_teacher} AND id_subject = {$id_subject} AND year = {$year}"];
 		}

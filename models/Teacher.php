@@ -227,7 +227,7 @@
 		
 		private static function _connectTables($t, $addon) {
 			return " {$t} ON ({$t}.id_student = vj.id_entity AND {$t}.id_teacher = vj.id_teacher AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year {$addon})";
-		}
+		} 
 		
 		private static function _generateQuery($search, $select, $order = true, $ending)
 		{
@@ -400,8 +400,13 @@
 
 		public function getReports()
 		{
+			return static::getReportsStatic($this->id);
+		}
+		
+		public function getReportsStatic($id_teacher)
+		{
 			$Reports = Report::findAll([
-				"condition" => "id_teacher=" . $this->id
+				"condition" => "id_teacher=" . $id_teacher
 			]);
 
 			foreach ($Reports as &$Report) {

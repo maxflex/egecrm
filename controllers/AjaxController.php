@@ -988,5 +988,4 @@
 				TeacherReview::getData($page, $teachers, $id_student)
 			);
 		}
-
 	}
