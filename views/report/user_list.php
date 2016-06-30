@@ -76,42 +76,11 @@
 		</div>
 		<div style='position: relative'>
 			<div id="frontend-loading"></div>
-			<table class="table table-hover">
-				<tr ng-repeat="d in data">
-					<td style='width: 20%'>
-						<a ng-if='d.id' href="reports/edit/{{d.id}}">Отчёт №{{d.id}}</a>
-						<span class="link-like-nocolor {{d.force_noreport ? 'text-gray' : 'text-danger'}}" 
-							ng-show="d.lesson_count >= 8 && !d.id"
-							ng-click="forceNoreport(d)"
-						>
-							{{d.force_noreport ? 'отчет не требуется' : 'требуется создание отчета' }}
-						</span>
-					</td>
-					<td style='width: 33%'>
-						<a href="teachers/edit/{{d.Teacher.id}}">{{d.Teacher.last_name}} {{d.Teacher.first_name}} {{d.Teacher.middle_name}}</a>
-					</td>
-					<td style='width: 7%'>
-						{{three_letters[d.id_subject]}}
-					</td>
-					<td style='width: 30%'>
-						<a href="student/{{d.Student.id}}">
-							<span ng-show='d.Student.last_name'>{{d.Student.last_name}} {{d.Student.first_name}}</span>
-							<span ng-hide='d.Student.last_name'>имя не указано</span>
-						</a>
-					</td>
-					<td style='width: 10%'>
-						{{d.lesson_count}} <ng-pluralize count='d.lesson_count' when="{
-							'one': 'занятие',
-							'few': 'занятия',
-							'many': 'занятий',
-						}"></ng-pluralize>
-					</td>
-				</tr>
-			</table>
+			<?= globalPartial('reports') ?>
 		</div>
 		
 		<pagination
-			ng-show='(data && data.length) && (counts.all > <?= Report::PER_PAGE ?>)'
+			ng-show='(Reports && Reports.length) && (counts.all > <?= Report::PER_PAGE ?>)'
 			ng-model="current_page"
 			ng-change="pageChanged()"
 			total-items="counts.all"
@@ -124,10 +93,10 @@
 	    >
 	    </pagination>
 	
-		<div ng-show="data === undefined" style="padding: 100px" class="small half-black center">
+		<div ng-show="Reports === undefined" style="padding: 100px" class="small half-black center">
 			загрузка отчетов...
 		</div>
-		<div ng-show="data === null" style="padding: 100px" class="small half-black center">
+		<div ng-show="Reports === null" style="padding: 100px" class="small half-black center">
 			нет отчетов
 		</div>
 	</div>

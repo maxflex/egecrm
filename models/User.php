@@ -181,7 +181,7 @@
 		}
 
 		// Получить пользователей из кеша
-		public static function getCached()
+		public static function getCached($with_system = false)
 		{
 			if (LOCAL_DEVELOPMENT) {
 				$Users = self::findAll();
@@ -196,6 +196,13 @@
 
 				if (!$Users) {
 					self::updateCache();
+				}
+				
+				if ($with_system) {
+					array_unshift($Users, [
+						'id' 	=> 0,
+						'login' => 'system',
+					]);
 				}
 
 				return $Users;

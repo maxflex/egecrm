@@ -88,8 +88,14 @@
 				</div>
 				
 				<div class="row" style="margin-top: 10px" ng-show='RatingInfo.id'>
-					<div class="col-sm-12">
+					<div class="col-sm-7">
 						<?= Html::comments('RatingInfo', TeacherReview::PLACE) ?>			
+					</div>
+					<div class="col-sm-4">
+						<input placeholder="подпись" class="watch-change form-control" maxlength="150" ng-model="RatingInfo.signature">
+					</div>
+					<div class="col-sm-1">
+						<input placeholder="балл" class="form-control digits-only watch-change" maxlength="3" ng-model="RatingInfo.code">
 					</div>
 				</div>
 			<?php endif ?>

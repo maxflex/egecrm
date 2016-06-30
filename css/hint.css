@@ -63,13 +63,16 @@
     border: 6px solid transparent;
     z-index: 1000001; }
   .hint:after, [data-hint]:after {
-    content: attr(data-hint);
+	content: attr(data-hint);
     background: #383838;
     color: white;
     padding: 8px 10px;
     font-size: 12px;
     line-height: 12px;
-    white-space: nowrap; }
+    white-space: normal;
+    border-radius: 5px;
+    width: 300px;
+ }
 
 /**
  * source: hint-position.scss
@@ -118,10 +121,10 @@
 .hint--bottom:before {
   margin-top: -12px; }
 .hint--bottom:after {
-  margin-left: -18px; }
+  margin-left: -140px; }
 .hint--bottom:before, .hint--bottom:after {
   top: 100%;
-  left: 50%; }
+  left: 33%; }
 .hint--bottom:hover:after, .hint--bottom:hover:before, .hint--bottom:focus:after, .hint--bottom:focus:before {
   -webkit-transform: translateY(8px);
   -moz-transform: translateY(8px);

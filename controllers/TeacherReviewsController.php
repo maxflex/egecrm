@@ -77,6 +77,7 @@
 				'Subjects' 		=> Subjects::$all,
 				'three_letters' => Subjects::$three_letters,
 				'id_student'	=> false,
+				'users'			=> User::getCached(true),
 				'Teachers'		=> Teacher::getJournalTeachers(),
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 			]);

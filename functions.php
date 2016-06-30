@@ -166,8 +166,7 @@
 				$$key = $value;
 			}
 		}
-
-		include_once(BASE_ROOT."/views/_partials/_".$string.".php");
+		include(BASE_ROOT."/views/_partials/_".$string.".php");
 	}
 
 	/*

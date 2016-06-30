@@ -1,10 +1,4 @@
 <style>
-	.dropdown-menu > li > a {
-		padding: 3px 45px 3px 20px;
-	}
-	.bootstrap-select.btn-group .dropdown-menu li small {
-		right: 10px;
-	}
 	#year-fix .dropdown-menu:last-child {
 		left: -15px;
 	}
@@ -71,6 +65,16 @@
 					<option disabled>───────</option>
 					<option value="1"  data-subtext="{{ counts.mode[1] || '' }}">созданные</option>
 					<option value="0"  data-subtext="{{ counts.mode[0] || '' }}">требуется создать</option>
+				</select>
+	        </div>
+	        	<div>
+				<select class="watch-select single-select form-control" ng-model="search.id_user" ng-change='filter()'>
+					<option value=""  data-subtext="{{ counts.user[''] || '' }}">все пользователи</option>
+					<option disabled>───────</option>
+					<option 
+						ng-repeat="user in users"
+						value="{{ user.id }}" 
+						data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span><small class='text-muted'>{{ counts.user[user.id] || '' }}</small>"></option>
 				</select>
 	        </div>
 	        <div id='year-fix'>

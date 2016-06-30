@@ -50,7 +50,7 @@ angular.module "TeacherReview", ["ui.bootstrap"]
 				id_student: $scope.id_student
 			, (response) ->
 				frontendLoadingEnd()
-				$scope.data  = response.data
+				$scope.Reviews  = response.data
 				$scope.counts = response.counts
 				$scope.$apply()
 				$scope.refreshCounts()

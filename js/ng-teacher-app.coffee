@@ -42,7 +42,30 @@
 		.controller "SalaryCtrl", ($scope) ->
 			angular.element(document).ready ->
 				set_scope "Teacher"
-		.controller "EditCtrl", ($scope, $timeout) ->
+		.controller "EditCtrl", ($scope, $timeout, $http) ->
+			$scope.enum =
+				0: 'не опубликован'
+				1: 'опубликован'
+				2: 'отзыв не собирать'
+			
+			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports']
+			
+			$scope.setMenu = (menu) ->
+				$.each menus, (index, value) ->
+					_loadData(index, menu, value)
+				$scope.current_menu = menu
+			
+			_postData = (menu) ->
+				id_teacher: $scope.Teacher.id
+				menu: menu
+			
+			_loadData = (menu, selected_menu, ngModel) ->
+				if $scope[ngModel] is undefined and menu is selected_menu
+					$.post "teachers/ajax/menu", _postData(menu), (response) ->
+						$scope[ngModel] = response
+						$scope.$apply()
+					, "json"
+					
 			$scope.yearDifference = (year) ->
 	            moment().format("YYYY") - year
 
@@ -82,10 +105,10 @@
 
 			# солько нужно выплатить репетитору
 			$scope.toBePaid = ->
-				return if not $scope.Data.length
+				return if not $scope.Lessons.length
 
 				lessons_sum = 0
-				$.each $scope.Data, (index, value) ->
+				$.each $scope.Lessons, (index, value) ->
 					lessons_sum += parseInt(value.teacher_price)
 
 				payments_sum = 0
@@ -464,33 +487,31 @@
 				lightBoxShow 'email'
 
 		.controller "ListCtrl", ($scope, $timeout) ->
-			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr')
-			$scope.filter_subjects = JSON.parse(localStorage.getItem('teachers_subjects'))
+			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0
+			$scope.id_subject = localStorage.getItem('teachers_id_subject') or 0
 			
 			# The amount of hidden teachers
 			$scope.othersCount = ->
 				_.where($scope.Teachers, {had_lesson: 0}).length
 
 			$scope.smsDialog = smsDialogTeachers
-				
-			$scope.subjectSelected = (subject_id) ->
-				subject_id in $scope.filter_subjects
 			
 			$scope.changeState = ->
 				localStorage.setItem('teachers_in_egecentr', $scope.in_egecentr)
 				$scope.refreshCounts()
 			
 			$scope.changeSubjects = ->
-				localStorage.setItem('teachers_subjects', JSON.stringify($scope.filter_subjects))
+				localStorage.setItem('teachers_id_subject', $scope.id_subject)
 				$scope.refreshCounts()
 			
 			$scope.teachersFilter = (Teacher) ->
-				Teacher.in_egecentr is (parseInt($scope.in_egecentr) or 1) and (if ($scope.filter_subjects and $scope.filter_subjects.length) then _.intersection(Teacher.subjects, $scope.filter_subjects.map(Number)).length else true)
+				subjects = [$scope.id_subject]
+				(if not $scope.in_egecentr then true else Teacher.in_egecentr is (parseInt($scope.in_egecentr) or 1)) and (if not $scope.id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length)
 					
-			$scope.getCount = (state, subjects) ->
-				subjects = [subjects] if typeof(subjects) is "string"
+			$scope.getCount = (state, id_subject) ->
+				subjects = [id_subject]
 				_.filter($scope.Teachers, (Teacher) ->
-					Teacher.in_egecentr is (parseInt(state) or 1) and (if (subjects and subjects.length) then _.intersection(Teacher.subjects, subjects.map(Number)).length else true)
+					(if not state then true else Teacher.in_egecentr is (parseInt(state) or 1)) and (if not id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length)
 				).length
 			
 			$scope.refreshCounts = ->

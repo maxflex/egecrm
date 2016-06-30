@@ -54,7 +54,10 @@
 		public function actionAjaxGetPayments()
 		{
 			extract($_POST);
-
+			
+			ini_set('display_errors', 1);
+			error_reporting(E_ALL);
+			
 			$condition['confirmed'] = $search['confirmed'] != '' ? "confirmed = {$search['confirmed']}" : '1';
 			$condition['id_status'] = $search['payment_type'] ? "id_status = {$search['payment_type']}" : '1';
 
@@ -64,6 +67,7 @@
 
 			/* платежи */
 			$payment_class = Payment::getEntityClass($search['mode']);
+
 			$Payments = $payment_class::findAll($query);
 			foreach ($Payments as $Payment) {
 				$Payment->Entity = $Payment->getEntity();
@@ -88,8 +92,16 @@
 				$counts['confirmed'][$confirmed] = $payment_class::count(["condition" => implode(' and ', $count_cond)]);
 			}
 			$counts['confirmed']['all'] = array_sum($counts['confirmed']);
-
-			/* /каунтеры */
+			
+			
+			foreach([1, 2] as $type) {
+				$count_cond = $condition;
+				$count_cond['id_type'] = "id_type = {$type}";
+				$counts['type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
+			}
+			$counts['type']['all'] = Payment::count(["condition" => implode(' and ', $condition)]);
+			
+			/* каунтеры */ 
 
 			returnJsonAng([
 				'payments'	=> $Payments,
