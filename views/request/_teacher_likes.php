@@ -1,6 +1,5 @@
-<div class="row" ng-show="teacher_likes.length > 0">
+<div class="row" ng-show="current_menu == 5">
     <div class="col-sm-12">
-	     <h4 class="row-header">ПРЕПОДАВАТЕЛИ</h4>
 			 <div ng-repeat="like in teacher_likes" style="margin-bottom: 3px" ng-show='like.admin_rating > 0'>
                 <div style="width: 250px" class="inline-block">
                     <a href="teachers/edit/{{like.Teacher.id}}" style="display: inline-block">

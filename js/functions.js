@@ -14,12 +14,10 @@ $(window).on('focus', function() {
 });
 
 checkLogout = function() {
-  console.log('checking');
   if ($('[ng-app=Login]').length) {
 
   } else {
     return $.post("ajax/CheckLogout", {}, function(response) {
-      console.log('response', response);
       if (response === 1) {
         return location.reload();
       } else if (response === 2) {

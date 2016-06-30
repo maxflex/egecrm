@@ -312,8 +312,8 @@
 
 			// анимация загрузки RENDER ANGULAR
 			angular.element(document).ready(function() {
-				$scope.student.minimized = $scope.contracts.length > 0 ? false : true
-				$scope.show_request_panel = $scope.contracts.length > 0 ? false : true
+				//$scope.student.minimized = $scope.contracts.length > 0 ? false : true
+				//$scope.show_request_panel = $scope.contracts.length > 0 ? false : true
 				
 				console.log($scope.student.contracts) 
 				 
@@ -1024,19 +1024,6 @@
 				}
 			}
 
-			// Время
-			function datePair() {
-				$('.time').timepicker({
-				    'timeFormat'	: 'H:i',
-				    'scrollDefault'	: "15:30",
-				    'unknownFirst' 	: true		// параметр "неизвестно"
-				});
-
-				$('#timepair').datepair({
-					'defaultTimeDelta': 7200000 // 2 часа в миллисекундах
-				});
-			}
-
 			// Добавление по нажатию ENTER
 			$scope.watchEnter = function($event) {
 				// получаем ID элемента
@@ -1629,19 +1616,43 @@
 			        }
 			    })
 		    }
-			
-			
-		    $scope.toggleMinimizeStudent = function(minimized) {
-			    $scope.student.minimized = !$scope.student.minimized
-// 			    $.post("ajax/MinimizeStudent", {"minimized": ($scope.student.minimized ? 1 : 0), "id_student": $scope.student.id})
-		    }
 		    
-		    $scope.toggleMinimizeRequest = function() {
-			    $scope.show_request_panel = !$scope.show_request_panel
+		    $scope.setMenu = function(menu) {
+			    $scope.current_menu = menu
 		    }
-
 
 			$(document).ready(function() {
+				switch(window.location.hash) {
+					case '#contracts': {
+						$scope.setMenu(1)
+						break;
+					}
+					case '#groups': {
+						$scope.setMenu(2)
+						break;
+					}
+					case '#payments': {
+						$scope.setMenu(3)
+						break;
+					}
+					case '#visits': {
+						$scope.setMenu(4)
+						break;
+					}
+					case '#reviews': {
+						$scope.setMenu(5)
+						break;
+					}
+					case '#reports': {
+						$scope.setMenu(6)
+						break;
+					}
+					default: {
+						$scope.setMenu(0)
+					}
+				}
+				$("#request-subjects").selectpicker({noneSelectedText: "предметы", multipleSeparator: "+"})
+				
 				$("#request-edit").on('keyup change', 'input, select, textarea', function(){
 			        $scope.form_changed = true
 			        $scope.$apply()
@@ -1683,9 +1694,6 @@
 				$.each($scope.contracts, function(index, contract) {
 					$scope.bindFileUpload(contract)
 				})
-
-				// Биндим пару-время к свободному времени
-				datePair()
 
 				// Кнопка сохранения
 				$(".save-button").on("click", function() {
