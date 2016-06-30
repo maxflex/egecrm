@@ -246,6 +246,15 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
+        $scope.toggleUser = function() {
+            new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
+            $.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
+                $scope.responsible_user = _.findWhere($scope.users, {id : new_user_id});
+                $scope.$apply();
+            });
+        }
+
+
 			// значение "Платежи" по умолчанию (иначе подставляет пустое значение)
 			$scope.new_payment = {id_status : 0}
 			$scope.current_contract = {subjects : []}
