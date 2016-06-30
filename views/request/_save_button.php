@@ -1,5 +1,10 @@
 <div class="row" style="margin-top: 10px">
-	<div class="col-sm-12 center">
+	<div class="col-sm-4">
+		<div class="half-black pull-left" ng-show="mode=='request'" style="margin-left: 15px; margin-top: 7px">
+			создана {{users[<?= $Request->id_user_created ?>].login || "system"}} <?= date("y.m.d в H:i", strtotime($Request->date)) ?>
+		</div>
+	</div>
+	<div class="col-sm-4 center">
     	<button class="btn btn-primary save-button" ng-disabled="saving || !form_changed" ng-hide="<?= $Request->adding ?>" style="width: 100px">
     		<span ng-show="form_changed">Сохранить</span>
     		<span ng-show="!form_changed && !saving">Сохранено</span>
@@ -26,5 +31,10 @@
 		    	</button>
 	    	</div>
     	</div>
+	</div>
+	<div class="col-sm-4">
+		<div class="half-black pull-right" ng-show="mode=='request'" style="margin-right: 15px; margin-top: 7px">
+			ответственный: <span class="user-pick" style="color: {{users[<?= $Request->id_user ?>].color || 'black'}}">{{users[<?= $Request->id_user ?>].login || "system"}}
+		</div>
 	</div>
 </div>

@@ -11,7 +11,6 @@
 		checkLogout()
 	
 	checkLogout = ->
-		console.log 'checking'
 		# на странице логина, то просто обновляем страницу, вдруг с других вкладок
 		# уже перезалогинились
 		if $('[ng-app=Login]').length
@@ -19,7 +18,6 @@
 		else
 			$.post "ajax/CheckLogout", {}, 
 				(response) ->
-					console.log 'response', response
 					if response is 1
 						location.reload()
 					else if response is 2
