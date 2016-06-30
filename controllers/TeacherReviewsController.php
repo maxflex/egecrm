@@ -35,13 +35,15 @@
 				'Subjects' 		=> Subjects::$all,
 				'three_letters' => Subjects::$three_letters,
 				'id_student'	=> $id_student,
+				'user'			=> User::fromSession()->dbData(),
+				'users'			=> User::getCached(true),
 				'Teachers'		=> Teacher::getJournalTeachers(),
+				"Student"		=> Student::getLight($id_student),
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 			]);
 
 			$this->render("student_reviews", [
 				"ang_init_data" => $ang_init_data,
-				"Student"		=> Student::getLight($id_student),
 			]);
 		}
 

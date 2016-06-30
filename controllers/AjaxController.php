@@ -988,4 +988,10 @@
 				TeacherReview::getData($page, $teachers, $id_student)
 			);
 		}
+
+		public function actionAjaxUpdateStudentReviewUser()
+		{
+			extract($_POST);
+            Student::updateById($student_id, ['id_user_review' => $user_id]);
+		}
 	}

@@ -14,6 +14,18 @@ angular.module "TeacherReview", ["ui.bootstrap"]
         (item) ->
             if item > 0 then item else null
 	.controller "Reviews", ($scope, $timeout) ->
+		$scope.toggleUser = (user_id)->
+			user_id = if $scope.Student.id_user_review is $scope.user.id then 0 else $scope.user.id
+			$.post "ajax/updateStudentReviewUser", {'student_id' : $scope.Student.id, 'user_id' : user_id}, ->
+				user = _.findWhere $scope.users, {id : user_id}
+				user_data = {id_user_review: user.id, user_login: user.login, color: user.color}
+
+				_.extend $scope.Student, user_data
+				_.extend Review.Student, user_data for Review in $scope.Reviews
+
+
+				$scope.$apply()
+
 		$scope.enum = review_statuses
 		
 		$scope.formatDateTime = (date) ->
@@ -25,11 +37,11 @@ angular.module "TeacherReview", ["ui.bootstrap"]
 		$scope.refreshCounts = ->
 			$timeout ->
 				$('.watch-select option').each (index, el) ->
-	                $(el).data 'subtext', $(el).attr 'data-subtext'
-	                $(el).data 'content', $(el).attr 'data-content'
-	            $('.watch-select').selectpicker 'refresh'
-	        , 100
-	    
+					$(el).data 'subtext', $(el).attr 'data-subtext'
+					$(el).data 'content', $(el).attr 'data-content'
+			$('.watch-select').selectpicker 'refresh'
+			, 100
+
 		$scope.filter = ->
 			$.cookie("reviews", JSON.stringify($scope.search), { expires: 365, path: '/' });
 			$scope.current_page = 1
