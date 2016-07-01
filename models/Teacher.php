@@ -260,13 +260,10 @@
 			");
 
 			while ($row = $result->fetch_object()) {
-				$ids[] = $row->id_teacher;
+				$Teachers[] = Teacher::getLight($row->id_teacher);
 			}
 
-			return self::findAll([
-				"condition" => "id IN (" . implode(",", $ids) . ")",
-				"order"		=> "last_name ASC, first_name ASC, middle_name ASC",
-			]);
+			return $Teachers;
 		}
 
 		public static function getGroups($id_teacher = false, $only_ended = true)

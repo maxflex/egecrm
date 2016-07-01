@@ -42,6 +42,11 @@
 		# Заголовок
 		static $title = "класс";	
 		
+		public static function json()
+		{
+			return json_encode(static::$all);
+		}
+		
 		/**
 		 * Построить селектор с кружочками метро
 		 * $multiple - множественный выбор

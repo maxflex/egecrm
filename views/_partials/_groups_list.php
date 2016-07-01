@@ -6,17 +6,13 @@
 			* dateToStart()
 	*/
 ?>
-<table class="table table-divlike" style="position: relative">
+<table class="table table-hover border-reverse" style="position: relative">
 	<?php if ($loading) :?>
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
 	<?php endif ?>
 	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?>"
-		ng-class="{
-			'students-10': Group.students.length == 10,
-			'students-11': Group.students.length == 11,
-		}"
 		class="group-list" data-id="{{Group.id}}">
-		<td width="100">
+		<td width="120">
 			<a href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
 		</td>
 		<td>
@@ -50,13 +46,10 @@
 					'one': 'занятие',
 					'few': 'занятия',
 					'many': 'занятий'
-				}"></ng-pluralize></span>
-			</span>
-<!--
-			<span ng-show="!Group.first_schedule && Group.expected_launch_date" class="quater-black">
-				примерно {{dateToStart(Group.expected_launch_date)}}
-			</span>
--->
+				}"></ng-pluralize></span></span><span ng-show="Group.first_schedule && Group.schedule_count.paid > 0">, </span><span ng-show="Group.schedule_count.paid > 0">всего 
+                {{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}
+                </span>
+            </span>
 		</td>
 		<td>
 			<span ng-repeat="(day, day_data) in Group.day_and_time">
@@ -64,6 +57,7 @@
 				<span ng-repeat="dd in day_data">
 					в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ","}}
 			</span>
+			<span ng-show="!Group.schedule_count.paid">без расписания</span>
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
 		</td>
 		<td>
@@ -71,15 +65,6 @@
 				{{Group.Teacher.last_name}}
 				{{Group.Teacher.first_name[0]}}. {{Group.Teacher.middle_name[0]}}.
 			</span>
-		</td>
-		<td>
-            <span ng-show="Group.schedule_count.paid > 0">
-                {{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}
-                </span>
-                <ng-pluralize count="Group.schedule_count.paid" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize>
-            </span>
-            <span ng-show="!Group.schedule_count.paid" class="badge badge-gray">без расписания</span>
-			<!--<span ng-show="Group.schedule_count.paid > 0">{{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}</span></span>-->
 		</td>
 		<td>
 			<span ng-show="Group.days_before_exam !== false">
@@ -94,7 +79,7 @@
 			</span>
 		</td>
 		<td>
-			<span ng-show='Group.ended' class="badge badge-gray">группа заархивирована</span>
+			<span ng-show='Group.ended'>заархивирована</span>
 		</td>
 <!--
 		<td width="150">

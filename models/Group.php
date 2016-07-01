@@ -8,6 +8,7 @@
 		protected $_inline_data = ["students"];
 
 		const DURATION = [135];
+		const PER_PAGE = 1000;
  
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
@@ -23,12 +24,11 @@
 			$this->first_schedule 		= $this->getFirstSchedule();
 
 			if ($this->id_teacher) {
-				$this->Teacher	= Teacher::findById($this->id_teacher);
+				$this->Teacher	= Teacher::getLight($this->id_teacher);
 			}
 
 			if (!$this->isNewRecord) {
-				$this->past_lesson_count = VisitJournal::getLessonCount($this->id);
-				$this->agreed_students_count 	= $this->getAgreedStudentsCount();
+				$this->past_lesson_count 		= $this->getPastScheduleCountCached();;
 				$this->notified_students_count 	= $this->getNotifiedStudentsCount();
 				$this->schedule_count = $this->getScheduleCountCached();
 
@@ -61,25 +61,6 @@
 		}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
-
-
-		public function getAgreedStudentsCount()
-		{
-			if (!count($this->students)) {
-				return 0;
-			}
-
-// 			preType("id_group = {$this->id} AND type_entity='STUDENT' AND id_entity IN (" . implode(",", $this->students) . ") AND id_status=3");
-
-			$result = dbConnection()->query("SELECT COUNT(*) FROM group_agreement WHERE id_group = {$this->id} AND type_entity='STUDENT' AND id_entity IN (" . implode(",", $this->students) . ") AND id_status=3 GROUP BY id_group, id_entity");
-
-			return $result->num_rows;
-/*
-			return GroupAgreement::count([
-				"condition" => "id_group = {$this->id} AND type_entity='STUDENT' AND id_entity IN (" . implode(",", $this->students) . ") AND id_status=3"
-			]);
-*/
-		}
 
 		public function getNotifiedStudentsCount()
 		{
@@ -442,6 +423,21 @@
 			}
 			return $return;
 		}
+		
+		public function getPastScheduleCountCached()
+		{
+			if (LOCAL_DEVELOPMENT) {
+				return VisitJournal::getLessonCount($this->id);
+			}
+
+			$return = memcached()->get("GroupPastScheduleCount[{$this->id}]");
+
+			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+				memcached()->set("GroupPastScheduleCount[{$this->id}]", VisitJournal::getLessonCount($this->id), 5 * 24 * 3600);
+			}
+			return $return;
+		}
+
 
 
 		/**
@@ -513,6 +509,70 @@
 				WHERE g.id = {$this->id} AND (c.id_contract=0 OR c.id_contract IS NULL) AND cs.count>40 AND cs.id_subject={$this->id_subject}
 				LIMIT 1
 			")->num_rows;
+		}
+		
+		/*
+		 * Получить данные для основного модуля
+		 * $id_student – если просматриваем отзывы отдельного ученика
+		 */
+		public static function getData($page, $Teachers)
+		{
+			if (!$page) {
+				$page = 1;
+			}
+			
+			// С какой записи начинать отображение, по формуле
+			$start_from = ($page - 1) * Group::PER_PAGE;
+			
+			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
+
+			// получаем данные
+			$query = static::_generateQuery($search, "g.id");
+			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
+			
+			while ($row = $result->fetch_object()) {
+				$data[] = Group::findById($row->id);
+			}
+			
+/*
+			foreach ($data as &$d) {
+				$d->Student = Student::getLight($d->id_entity);
+				$d->Teacher = Teacher::getLight($d->id_teacher);
+			}
+*/
+			
+			// counts
+			
+			return [
+				'data' 	=> $data,
+				'counts' => $counts,
+			];
+		}
+		
+		private static function _generateQuery($search, $select, $order = true, $ending)
+		{
+			if (! empty($search->time)) {
+				$data 	= explode("-", $search->time);
+				$day 	= $data[0];
+				$time	= $data[1];
+				if ($day < 6) {
+					$time = $time - 2;
+				}
+				$time 	= Freetime::$weekdays_time[$day][$time];
+			}
+			
+			$main_query = "
+				FROM groups g
+				" . (! empty($search->time) ? " JOIN group_time gt ON (g.id = gt.id_group AND gt.day={$day} AND gt.time={$time})" : "") . "
+				WHERE true "
+				. (!isBlank($search->cabinet) ? " AND g.year={$search->cabinet}" : "")
+				. (!isBlank($search->year) ? " AND g.year={$search->year}" : "")
+				. (!isBlank($search->id_teacher) ? " AND g.id_teacher={$search->id_teacher}" : "")
+				. (!isBlank($search->id_subject) ? " AND g.id_subject={$search->id_subject}" : "")
+				. (!isBlank($search->id_branch) ? " AND g.id_branch={$search->id_branch}" : "")
+				. (!isBlank($search->grade) ? " AND g.grade={$search->grade}" : "");
+			return "SELECT " . $select . $main_query . $ending;
+
 		}
 
 		public function registeredInJournal($date)

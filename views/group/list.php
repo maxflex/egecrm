@@ -15,58 +15,74 @@
 					
 					<div class="row flex-list" style="margin-bottom: 15px">
 						<div>
-							<?= Grades::buildSelector(false, false, ["ng-model" => "search.grade"]) ?>
-						</div>
+							<select class="watch-select single-select form-control" ng-model="search.grade" ng-change='filter()'>
+								<option value=""  data-subtext="{{ counts.grade[''] || '' }}">все классы</option>
+								<option disabled>──────────────</option>
+								<option ng-repeat="(grade, label) in Grades | toArray" value="{{(grade + 1)}}" data-subtext="{{ counts.grade[grade] || '' }}">{{label}}</option>
+							</select>
+				        </div>
 						<div>
-			                <?= Branches::buildSvgSelector(false, [
-				                "id" => "group-branch-filter", 
+							 <?= Branches::buildSvgSelector($search->id_branch, [
+				                "id" => "group-branch-filter",
+				                "class" => "watch-select",
 				                "ng-model" => "search.id_branch", 
-				                "ng-change" => "changeBranch()"
+				                "ng-change" => "filter()"
 				            ]) ?>
 						</div>
-						<div>
-							<?= Subjects::buildMultiSelector(false, ["id" => "subjects-select", "ng-model" => "search.subjects"]) ?>
-<!-- 							<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?> -->
-						</div>
-						<div>
-							<select class="form-control" ng-model="search.id_teacher">
-								<option selected value="">преподаватель</option>
+				        <div>
+							<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.id_subject" ng-change='filter()'>
+								<option value="" data-subtext="{{ counts.subject[''] || '' }}">все предметы</option>
 								<option disabled>──────────────</option>
-								<option ng-repeat="Teacher in Teachers" value="{{Teacher.id}}">
-									{{Teacher.last_name}} {{Teacher.first_name[0]}}. {{Teacher.middle_name[0]}}.
-								</option>
+								<option 
+									data-subtext="{{ counts.subject[id_subject] || '' }}"
+									ng-repeat="(id_subject, name) in Subjects" 
+									value="{{id_subject}}">{{ name }}</option>
 							</select>
 						</div>
 						<div>
-							<select class="form-control" ng-model="search.cabinet" id="group-cabinet">
-								<option selected value="0">№ кабинета</option>
+							<select class="watch-select single-select form-control" ng-model="search.id_teacher"  ng-change='filter()'>
+								<option value="" data-subtext="{{ counts.teacher[''] || '' }}">все преподаватели</option>
 								<option disabled>──────────────</option>
-								<option ng-repeat="Cabinet in Cabinets" 
-									ng-value="Cabinet.id" ng-selected="Group.cabinet == Cabinet.id">{{Cabinet.number}}</option>
+								<option ng-repeat="Teacher in Teachers"
+									data-subtext="{{ counts.teacher[Teacher.id] || '' }}"
+									value="{{Teacher.id}}">{{ Teacher.last_name }} {{ Teacher.first_name }} {{ Teacher.middle_name }}</option>
+							</select>
+				        </div>
+				        <div>
+							<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.cabinet" ng-change='filter()'>
+								<option value="" data-subtext="{{ counts.cabinet[''] || '' }}">№ кабинета</option>
+								<option disabled>──────────────</option>
+								<option 
+									data-subtext="{{ counts.cabinet[id_subject] || '' }}"
+									ng-repeat="Cabinet in Cabinets" 
+									value="{{Cabinet.id}}">{{Cabinet.number}}</option>
 							</select>
 						</div>
 						<div>
-							<?= Freetime::buildMultiSelector(false, ["id" => "time-select", "ng-model" => "search.time"]) ?>
-<!-- 							<?= Subjects::buildSelector(false, false, ["ng-model" => "search.id_subject"]) ?> -->
+							<?= Freetime::buildMultiSelector($search->time, [
+								"id" => "time-select", 
+								"ng-model" 	=> "search.time",
+								"ng-change"	=> "filter()"
+							]) ?>
 						</div>
-						<div>
-							<select class="form-control" ng-model="search.year" ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in [2015, 2016]">
-								<option selected value="">все годы</option>
+				        <div id='year-fix'>
+							<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
+								<option value="" data-subtext="{{ counts.year[''] || '' }}">все годы</option>
+								<option disabled>────────</option>
+								<option ng-repeat="year in <?= Years::json() ?>" 
+									data-subtext="{{ counts.year[year] || '' }}"
+									value="{{year}}">{{ yearLabel(year) }}</option>
 							</select>
 						</div>
 					</div>
 					
-					
-					<div class="top-links">
-						<span style="margin-right: 7px">сортировать по:</span>
-						<span class="link-like" ng-click="orderByFirstLesson()" style="margin-right: 7px">хронология запуска</span>
-						<span class="link-like" ng-click="orderByStudentCount()" style="margin-right: 7px">численность групп</span>
-						<span class="link-like" ng-click="orderByDaysBeforeExam()" style="margin-right: 7px">запас дней</span>
-						<span class="link-like" ng-click="orderByCabinet()" style="margin-right: 7px">кабинет</span>
+					<div ng-show="Groups === undefined" style="padding: 100px" class="small half-black center">
+						загрузка групп...
 					</div>
-					
-					
-					<?= globalPartial("groups_list", ["filter" => true, "loading" => true]) ?>
+					<div ng-show="Groups === null" style="padding: 100px" class="small half-black center">
+						нет групп
+					</div>
+					<?= globalPartial("groups_list", ["filter" => false]) ?>
 					
 					<div ng-show="Groups.length == 0" class="center half-black small" style="margin-bottom: 30px">список групп пуст</div>
 				</div>

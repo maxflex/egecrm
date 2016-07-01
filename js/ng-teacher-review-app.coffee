@@ -112,7 +112,7 @@ angular.module "TeacherReview", ["ui.bootstrap"]
 		angular.element(document).ready ->
 			set_scope "TeacherReview"
 
-			$(".teacher-review-textarea").on 'keyup change', ->
+			$(".teacher-review-textarea, .watch-change").on 'keyup change', ->
 					$scope.form_changed = true
 					$scope.$apply()
 

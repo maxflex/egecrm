@@ -67,10 +67,9 @@
 		 * Построить селектор
 		 * $multiple - множественный выбор
 		 */
-		public static function buildMultiSelector($selected = false, $attrs)
+		public static function buildMultiSelector($selected = false, $attrs, $multiple = false)
 		{
-			$multiple = true;
-			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
+			echo "<select ".($multiple ? "multiple" : "")." class='form-control watch-select' ".Html::generateAttrs($attrs).">";
 			
 			// Заголовок
 			if (!$multiple) {
@@ -84,11 +83,13 @@
 					if (empty($time)) {
 						continue;
 					}
+					$value = "{$day}-{$time_index}";
 					// если это массив выбранных элементов (при $multiple = true)
-					$option_selected = in_array($time_id, $selected);
+					// $option_selected = in_array($time_id, $selected);
+					$option_selected = $selected == $value;
 					
 					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
-					echo "<option ".($option_selected ? "selected" : "")." value='{$day}-{$time_index}'>" . $time ."</option>";
+					echo "<option ".($option_selected ? "selected" : "")." value='{$value}'>" . $time ."</option>";
 				}
 				echo '</optgroup>';
 			}

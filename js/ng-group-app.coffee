@@ -1,4 +1,10 @@
 	angular.module "Group", ['ngAnimate']
+		.filter 'toArray', ->
+			(obj) ->
+				arr = []
+				$.each obj, (index, value) ->
+					arr.push(value)
+				return arr
 		.filter 'to_trusted', ['$sce', ($sce) ->
 					return (text) ->
 							return $sce.trustAsHtml(text)
@@ -956,7 +962,7 @@
 						else
 							redirect "groups/edit/#{response}"
 
-		.controller "ListCtrl", ($scope) ->
+		.controller "ListCtrl", ($scope, $timeout) ->
 			$scope.updateCache = ->
 				ajaxStart()
 				$.post "groups/ajax/UpdateCacheAll", {}, ->
@@ -1248,7 +1254,49 @@
 					$scope.$apply()
 					bindDraggable2()
 				, "json"
+			
+			$scope.yearLabel = (year) ->
+				year + '-' + (parseInt(year) + 1) + ' уч. г.'
+			
+			$scope.refreshCounts = ->
+				$timeout ->
+					$('.watch-select option').each (index, el) ->
+		                $(el).data 'subtext', $(el).attr 'data-subtext'
+		                $(el).data 'content', $(el).attr 'data-content'
+		            $('.watch-select').selectpicker 'refresh'
+		        , 100
+		    
+			$scope.filter = ->
+				$.cookie("groups", JSON.stringify($scope.search), { expires: 365, path: '/' });
+				$scope.current_page = 1
+				$scope.getByPage($scope.current_page)
+			
+			# Страница изменилась
+			$scope.pageChanged = ->
+				console.log $scope.currentPage
+				window.history.pushState {}, '', 'groups/?page=' + $scope.current_page if $scope.current_page > 1
+				# Получаем задачи, соответствующие странице и списку
+				$scope.getByPage($scope.current_page)
+			
+			$scope.getByPage = (page) ->
+				$scope.Groups = undefined
+				frontendLoadingStart()
+				$.post "groups/ajax/get",
+					page: page
+					teachers: $scope.Teachers
+				, (response) ->
+					frontendLoadingEnd()
+					$scope.Groups  = response.data
+					$scope.counts = response.counts
+					$scope.$apply()
+					$scope.refreshCounts()
+				, "json"
 
+			
+			$scope.getGrades = (Grades) ->
+				console.log 'grades', Grades
+				return Grades
+			
 			$(document).ready ->
 				try
 					if $("#subjects-select").length
@@ -1278,6 +1326,10 @@
 					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
 					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
 				]
+				$scope.search = if $.cookie("groups") then JSON.parse($.cookie("groups")) else {}
+				$scope.current_page = $scope.currentPage
+				$scope.pageChanged()
+				$(".single-select").selectpicker()
 				setTimeout ->
 					$scope.$apply()
 				, 25

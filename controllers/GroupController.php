@@ -238,17 +238,9 @@
 				$this->addCss("bootstrap-select");
 				$this->addJs("bootstrap-select, dnd");
 				
-				// @refactored
-				$Groups = Group::findAll();
-
-				// исключить некоторые данные для более быстрой front-end загрузки
-				foreach ($Groups as &$Group) {
-					unset($Group->Comments);
-				}
-
 				$Teachers = Teacher::getActiveGroups();
 				$ang_init_data = angInit([
-					"Groups" 		=> $Groups,
+					"Cabinets"		=> Cabinet::getByBranch(1),
 					"Branches"		=> Branches::$all,
 					"Teachers"		=> $Teachers,
 					"Subjects" 		=> Subjects::$three_letters,
@@ -259,11 +251,12 @@
 					"change_mode" 	=> $mode,
 					"GroupLevels"	=> GroupLevels::$all,
 					"time" 			=> Freetime::TIME,
+					'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 				]);
 
 				$this->render("list", [
-					"Groups" 		=> $Groups,
 					"mode"			=> $mode,
+					"search"		=> (isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[]),
 					"ang_init_data" => $ang_init_data
 				]);
 			}
@@ -753,6 +746,7 @@
 			// @refactored
 			foreach ($Groups as $Group) {
 				memcached()->set("GroupScheduleCount[{$Group->id}]", $Group->countSchedule(), 5 * 24 * 3600);
+				memcached()->set("GroupPastScheduleCount[{$Group->id}]", VisitJournal::getLessonCount($Group->id), 5 * 24 * 3600);
 			}
 		}
 
@@ -1134,5 +1128,14 @@
 			GroupSchedule::updateById($id, [
 				"is_free" => $is_free,
 			]);
+		}
+		
+		public function actionAjaxGet()
+		{
+			extract($_POST);
+			
+			returnJsonAng(
+				Group::getData($page, $teachers)
+			);
 		}
 	}
