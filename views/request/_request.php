@@ -101,7 +101,7 @@
         </div>
 		<div class="col-sm-3">
 			<div class="form-group">
-				<?= Subjects::buildMultiSelector($Request->subjects, ["id" => "request-subjects"], 'three_letters') ?>
+				<?= Subjects::buildMultiSelector($Request->subjects, ["id" => "request-subjects", "name" => "Request[subjects][]"], 'three_letters') ?>
 			</div>
 			<div class="form-group">
                 <?= Grades::buildSelector($Request->grade, "Request[grade]") ?>
