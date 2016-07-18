@@ -123,7 +123,7 @@ angular.module "Payments", ["ui.bootstrap"]
                 title: "Введите пароль",
                 className: "modal-password",
                 callback: (result) ->
-                    if result == "363"
+                    if hex_md5(result) is payments_hash
                         payment.confirmed = (payment.confirmed + 1) % 2
                         $.post "ajax/confirmPayment",
                             id:        payment.id
@@ -159,7 +159,7 @@ angular.module "Payments", ["ui.bootstrap"]
                 title: "Введите пароль"
                 className: "modal-password"
                 callback: (result) ->
-                    if result == "363"
+                    if hex_md5(result) is payments_hash
                         $scope.new_payment = angular.copy payment
                         $scope.$apply()
                         lightBoxShow 'addpayment'
@@ -269,7 +269,7 @@ angular.module "Payments", ["ui.bootstrap"]
                     title: "Введите пароль",
                     className: "modal-password",
                     callback: (result) ->
-                        if result == "363"
+                        if hex_md5(result) is payments_hash
                             bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
                                 if result is true
                                     $.post "ajax/deletePayment",

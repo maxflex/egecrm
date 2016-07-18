@@ -1,7 +1,7 @@
 <table class="table table-hover border-reverse" style='font-size: 12px'>
 	<tr ng-repeat="Review in Reviews">
 		<td style="width: 9%">
-			<a href="{{ <?= User::fromSession()->isStudent(true) ?> ? 'students/' : ''}}reviews/{{Review.id_teacher}}/{{Review.id_subject}}/{{Review.year}}{{<?= User::fromSession()->isStudent(true) ?> ? '' : '/' + Review.id_entity}}">
+			<a href="{{ <?= User::fromSession()->isStudent(true) ?> ? 'students/' : ''}}reviews/{{Review.id_teacher}}/{{Review.id_subject}}/{{Review.year}}{{<?= User::fromSession()->isStudent(true) ?> ? '' : '/' + (Review.id_entity || Review.id_student)}}">
 				{{Review.id ? 'отзыв ' + Review.id : 'создать'}}
 			</a>
 		</td>
@@ -30,11 +30,11 @@
 		</td>
 		<td style="width: 3%" class="vertical-gray">
 			<div ng-if="Review.admin_comment" class="hint--bottom" data-hint="{{Review.admin_comment}}"></div>
-			{{Review.admin_rating | hideZero}}
+			<span ng-show="Review.admin_rating > 0">{{ (Review.admin_rating == 6 ? 0 : Review.admin_rating)}}</span>
 		</td>
 		<td style="width: 3%" class="vertical-gray">
 			<div ng-if="Review.admin_comment_final" class="hint--bottom" data-hint="{{Review.admin_comment_final}}"></div>
-			{{Review.admin_rating_final | hideZero}}
+			<span ng-show="Review.admin_rating_final > 0">{{(Review.admin_rating_final == 6 ? 0 : Review.admin_rating_final)}}</span>
 		</td>
 		<td style="width: 4%" class="vertical-gray">
 			{{Review.code | hideZero}}
@@ -43,8 +43,7 @@
 			<span ng-show='Review.id'>
 				<span ng-class="{
 						'text-danger': Review.published == 0,
-						'text-success': Review.published == 1,
-						'text-gray': Review.published == 2
+						'text-success': Review.published == 1
 					}">{{ enum[Review.published] }}</span>
 			</span>
 		</td>

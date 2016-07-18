@@ -2805,6 +2805,9 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 	background: $orange !important;
 }
 
+.bg-gray {
+	background: $placeholder_gray !important;
+}
 
 /* make sidebar nav vertical */
 @media (min-width: 768px) {
@@ -2971,4 +2974,42 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 }
 .dropdown-menu > li > a {
 	padding: 3px 45px 3px 20px;
+}
+.fake-tr {
+	padding: 8px;
+    -webkit-font-smoothing: antialiased;
+    top: -14px;
+    position: relative;
+}
+.select-answer {
+	padding: 5px;
+	background: transparent;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	line-height: 10px;
+	text-align: center;
+	cursor: pointer;
+	&:hover {
+		background: #d6d4d4;
+	}
+	&.correct-answer {
+		background-color: $green;
+		color: white;		
+	}
+}
+.vertical-align-table {
+	& tr td {
+		vertical-align: middle !important;	
+	}
+}
+
+.call-popup {
+	height: 84px;
+	width: 400px;
+	& img {
+		height: 18px;
+		margin-right: 3px;
+	}
 }

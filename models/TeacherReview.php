@@ -20,6 +20,7 @@
 			}
 			
 			if (! $this->isNewRecord) {
+				$this->Student = Student::getLight($this->id_student);
 				$this->lesson_count = VisitJournal::count([
 					'condition' => "id_entity = {$this->id_student} AND id_teacher = {$this->id_teacher} 
 										AND id_subject = {$this->id_subject} AND year = {$this->year}"
@@ -115,7 +116,7 @@
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating, 
 				r.admin_rating, r.admin_rating_final, r.published, r.code, r.comment, r.admin_comment, r.admin_comment_final, " . static::_countQuery('vj2'));
-			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . TeacherReview::PER_PAGE);
+			$result = dbConnection()->query($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
 			
 			while ($row = $result->fetch_object()) {
 				$data[] = $row;
@@ -126,10 +127,10 @@
 				$d->Teacher = Teacher::getLight($d->id_teacher);
 			}
 			
-			// counts
-			$counts['all'] = static::_count($search);
-			
 			if (! $id_student) {
+				// counts
+				$counts['all'] = static::_count($search);
+				
 				foreach(array_merge([""], Years::$all) as $year) {
 					$new_search = clone $search;
 					$new_search->year = $year;
@@ -150,12 +151,12 @@
 					$new_search->rating = $rating;
 					$counts['rating'][$rating] = static::_count($new_search);
 				}
-				foreach(["", 1, 2, 3, 4, 5, 0] as $admin_rating) {
+				foreach(["", 6, 1, 2, 3, 4, 5, 0] as $admin_rating) {
 					$new_search = clone $search;
 					$new_search->admin_rating = $admin_rating;
 					$counts['admin_rating'][$admin_rating] = static::_count($new_search);
 				}
-				foreach(["", 1, 2, 3, 4, 5, 0] as $admin_rating_final) {
+				foreach(["", 6, 1, 2, 3, 4, 5, 0] as $admin_rating_final) {
 					$new_search = clone $search;
 					$new_search->admin_rating_final = $admin_rating_final;
 					$counts['admin_rating_final'][$admin_rating_final] = static::_count($new_search);

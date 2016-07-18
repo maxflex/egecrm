@@ -50,6 +50,17 @@
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		
 		/**
+		 * Найти все платежи студента (клиента).
+		 *
+		 */
+		public static function getByStudentId($id_student)
+		{
+			return Payment::findAll([
+				"condition" => "deleted=0 AND id_student=" . $id_student
+			]);
+		}
+		
+		/**
 		 * Построить селектор из всех записей.
 		 * $selcted - что выбрать по умолчанию
 		 * $name 	– имя селектора, по умолчанию имя класса
@@ -154,18 +165,6 @@
 				    return ceil($datediff / (60 * 60 * 24 * 365));
 			    }
 		    }
-		}
-	}
-	
-	class PaymentRemainder extends Model 
-	{
-		public static $mysql_table	= "payments_remainder";
-		
-		public static function getByStudentId($id_student)
-		{
-			return PaymentRemainder::find([
-				"condition" => "id_student=$id_student"
-			]);
 		}
 	}
 	

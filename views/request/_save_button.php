@@ -1,11 +1,11 @@
 <div class="row" style="margin-top: 10px">
 	<div class="col-sm-4">
 		<div class="half-black pull-left" ng-show="mode=='request'" style="margin-left: 15px; margin-top: 7px">
-			создана {{users[<?= $Request->id_user_created ? $Request->id_user_created : 0 ?>].login || "system"}} <?= date("y.m.d в H:i", strtotime($Request->date)) ?>
+			создана {{users[<?= $Request->id_user_created ? $Request->id_user_created : 0 ?>].login || "system"}} <?= date("d.m.y в H:i", strtotime($Request->date)) ?>
 		</div>
 	</div>
 	<div class="col-sm-4 center">
-    	<button class="btn btn-primary save-button" ng-disabled="saving || !form_changed" ng-hide="<?= $Request->adding ?>" style="width: 100px">
+    	<button class="btn btn-primary save-button" ng-click="save()" ng-disabled="saving || !form_changed" ng-hide="<?= $Request->adding ?> || (mode == 'student' && current_menu > 0)" style="width: 100px">
     		<span ng-show="form_changed">Сохранить</span>
     		<span ng-show="!form_changed && !saving">Сохранено</span>
     	</button>

@@ -1,8 +1,3 @@
-review_statuses =
-	0: 'не опубликован'
-	1: 'опубликован'
-	2: 'отзыв не собирать'
-	
 angular.module "TeacherReview", ["ui.bootstrap"]
 	.filter 'range', () ->
 		return (input, total) ->
@@ -14,18 +9,6 @@ angular.module "TeacherReview", ["ui.bootstrap"]
         (item) ->
             if item > 0 then item else null
 	.controller "Reviews", ($scope, $timeout) ->
-		$scope.toggleUser = (user_id)->
-			user_id = if $scope.Student.id_user_review is $scope.user.id then 0 else $scope.user.id
-			$.post "ajax/updateStudentReviewUser", {'student_id' : $scope.Student.id, 'user_id' : user_id}, ->
-				user = _.findWhere $scope.users, {id : user_id}
-				user_data = {id_user_review: user.id, user_login: user.login, color: user.color}
-
-				_.extend $scope.Student, user_data
-				_.extend Review.Student, user_data for Review in $scope.Reviews
-
-
-				$scope.$apply()
-
 		$scope.enum = review_statuses
 		
 		$scope.formatDateTime = (date) ->
@@ -39,7 +22,7 @@ angular.module "TeacherReview", ["ui.bootstrap"]
 				$('.watch-select option').each (index, el) ->
 					$(el).data 'subtext', $(el).attr 'data-subtext'
 					$(el).data 'content', $(el).attr 'data-content'
-			$('.watch-select').selectpicker 'refresh'
+				$('.watch-select').selectpicker 'refresh'
 			, 100
 
 		$scope.filter = ->
@@ -76,12 +59,24 @@ angular.module "TeacherReview", ["ui.bootstrap"]
 			$(".single-select").selectpicker()
 				
 	.controller "Main", ($scope) -> 
+		$scope.toggleReviewUser = ->
+			new_user_id = if $scope.id_user_review == $scope.user.id then 0 else $scope.user.id
+			$.post 'ajax/UpdateStudentReviewUser',
+			'id_student': $scope.Student.id
+			'id_user_new': new_user_id
+			, ->
+				$scope.id_user_review = new_user_id
+				$scope.$apply()
+		
+		$scope.findUser = (id) ->
+			_.findWhere $scope.users, id: id
+	
 		$scope.enum = review_statuses
 			
 		$scope.RatingInfo = []
 		
 		$scope.setRating = (field, rating) ->
-			if $scope.RatingInfo[field]
+			if $scope.RatingInfo[field] and $scope.RatingInfo[field] == rating
 				$scope.RatingInfo[field] = 0
 			else
 				$scope.RatingInfo[field] = rating

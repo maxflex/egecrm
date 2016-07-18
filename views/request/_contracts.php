@@ -1,4 +1,4 @@
-<div class="row" ng-show="current_menu == 1">
+<div class="row" ng-show="student !== undefined">
     <div class="col-sm-12">
 	    <div style="margin-bottom: 20px; display: block">
 			<a ng-click="addContractDialog()" class="link-like link-reverse">добавить</a>
@@ -106,24 +106,6 @@
 							</div>
 							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="deleteContract(contract)">
 								удалить
-							</div>
-						</div>
-						<div class="col-sm-4" style="font-size: 12px !important; white-space: nowrap">
-							<div>
-								<b>прикрепленные файлы</b>
-
-								<span class="btn-file link-like link-reverse small" ng-hide="contract.files.length >= 3">
-									<span>добавить файл</span>
-									<input name="contract_file" type="file" id="fileupload{{contract.id}}" data-url="upload/contract/">
-								</span>
-
-								<div ng-repeat="file in contract.files" class="loaded-file">
-									<span style="color: black">файл {{$index + 1}}</span> <span ng-show="file.size && file.coords">({{file.size}}, {{file.coords}})</span>
-									<a target="_blank" href="files/contracts/{{file.name}}" class="link-reverse small">скачать</a>
-									<span class="link-like link-reverse small" ng-click="deleteContractFile(contract, $index)">удалить</span>
-								</div>
-
-
 							</div>
 						</div>
 					</div>

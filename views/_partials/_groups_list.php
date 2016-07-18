@@ -61,9 +61,9 @@
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
 		</td>
 		<td>
-			<span ng-show="Group.Teacher">
-				{{Group.Teacher.last_name}}
-				{{Group.Teacher.first_name[0]}}. {{Group.Teacher.middle_name[0]}}.
+			<span ng-show="Group.id_teacher" ng-init="_Teacher = Group.Teacher || getTeacher(Group.id_teacher)">
+				{{_Teacher.last_name}}
+				{{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.
 			</span>
 		</td>
 		<td>
@@ -94,7 +94,3 @@
 -->
 	</tr>
 </table>
-<?php if ($filter) : ?>
-<div ng-show="Groups.length > 0 && (Groups | filter:groupsFilter).length == 0" class="center half-black small" style="margin-bottom: 30px">
-	не найдено групп</div>
-<?php endif ?>

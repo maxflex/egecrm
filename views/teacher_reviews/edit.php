@@ -9,7 +9,7 @@
 					}"></ng-pluralize> по {{subject_name}})
 			<?php if (User::fromSession()->isUser()) :?>
 			<div class="pull-right">
-				<a href="reviews/{{Student.id}}">все отзывы ученика</a>
+				<a href="student/{{Student.id}}#reviews">все отзывы ученика</a>
 			</div>
 			<?php endif ?>
 		</div>
@@ -43,6 +43,9 @@
 					</div>
 					<div class="col-sm-4">
 						<div class="pull-right">
+							<span class="teacher-rating" ng-click="setRating('admin_rating', 6)" ng-class="{
+								'bg-gray': RatingInfo.admin_rating == 6
+							}">0</span>
 							<span ng-repeat="n in []| range:5">
 								<span class="teacher-rating" ng-click="setRating('admin_rating', n)" ng-class="{
 									'active': RatingInfo.admin_rating == n,
@@ -65,12 +68,14 @@
 					<div class="col-sm-1">
 						<span style="top: 14px; position: relative; white-space: nowrap" class="link-like-nocolor" ng-class="{
 							'text-danger': RatingInfo.published == 0,
-							'text-success': RatingInfo.published == 1,
-							'text-gray': RatingInfo.published == 2
+							'text-success': RatingInfo.published == 1
 						}" ng-click="toggleEnum(RatingInfo, 'published', enum)">{{ enum[RatingInfo.published] }}</span>
 					</div>
 					<div class="col-sm-4">
 						<div class="pull-right">
+							<span class="teacher-rating" ng-click="setRating('admin_rating_final', 6)" ng-class="{
+								'bg-gray': RatingInfo.admin_rating_final == 6
+							}">0</span>
 							<span ng-repeat="n in []| range:5">
 								<span class="teacher-rating" ng-click="setRating('admin_rating_final', n)" ng-class="{
 									'active': RatingInfo.admin_rating_final == n,
@@ -88,8 +93,11 @@
 				</div>
 				
 				<div class="row" style="margin-top: 10px" ng-show='RatingInfo.id'>
-					<div class="col-sm-7">
+					<div class="col-sm-5">
 						<?= Html::comments('RatingInfo', TeacherReview::PLACE) ?>			
+					</div>
+					<div class="col-sm-2">
+						ответственный: <span class="user-pick" ng-click="toggleReviewUser()" style="color: {{findUser(id_user_review).color || 'black' }}">{{ findUser(id_user_review).login || "system"}}</span>
 					</div>
 					<div class="col-sm-4">
 						<input placeholder="подпись" class="watch-change form-control" maxlength="150" ng-model="RatingInfo.signature">

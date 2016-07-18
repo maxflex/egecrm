@@ -200,7 +200,6 @@
 		protected function getByMonths()
 		{
 			$date_end = date("d.m.Y", time());
-
 			for ($i = 1; $i <= Request::timeFromFirst('months'); $i++) {
 				$last_day_of_month = strtotime("last day of -$i months");
 				$date_start = date("d.m.Y", $last_day_of_month);

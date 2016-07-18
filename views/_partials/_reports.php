@@ -1,4 +1,4 @@
-<table class="table table-hover">
+<table class="table table-hover border-reverse">
 	<tr ng-repeat="Report in Reports">
 		<td style='width: 20%'>
 			<a ng-if='Report.id' href="reports/edit/{{Report.id}}">Отчёт №{{Report.id}}</a>

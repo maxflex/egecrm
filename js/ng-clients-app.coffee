@@ -1,70 +1,58 @@
-angular.module "Clients", []
+angular.module "Clients", ["ui.bootstrap"]
 	.filter 'to_trusted', ['$sce', ($sce) ->
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
-	.controller "ListCtrl", ($scope) ->
-		$scope.filter_cancelled = 0
+	.filter 'hideZero', ->
+        (item) ->
+            if item > 0 then item else null
+	.controller "ListCtrl", ($scope, $timeout) ->
+		$scope.yearLabel = (year) ->
+			'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год'
 		
-		$scope.remainderSum = ->
-			sum = 0
-			$.each $scope.Students, (index, Student) ->
-				if Student.Remainder.id
-					sum += Student.Remainder.remainder
-			sum
+		$scope.getNumber = (index) ->
+			(($scope.current_page - 1) * 30) + (index + 1)
 		
-		$scope.clientsFilter = (Student) ->
-			switch $scope.filter_cancelled
-				when 0 then _.findWhere(Student.Contract.subjects, {status: 3}) isnt undefined
-				when 1
-					count = 0
-					$.each Student.Contract.subjects, (index, subject) ->
-						if subject.status is 1
-							count++
-					count isnt Object.keys(Student.Contract.subjects).length and count > 0
-				when 2 
-					count = 0
-					$.each Student.Contract.subjects, (index, subject) ->
-						if subject.status is 1
-							count++
-					count is Object.keys(Student.Contract.subjects).length
-				when 3 then _.findWhere(Student.Contract.subjects, {status: 2}) isnt undefined
-				when 4 then true
+		$scope.refreshCounts = ->
+			$timeout ->
+				$('.watch-select option').each (index, el) ->
+					$(el).data 'subtext', $(el).attr 'data-subtext'
+					$(el).data 'content', $(el).attr 'data-content'
+				$('.watch-select').selectpicker 'refresh'
+			, 100
+
+		$scope.filter = ->
+			$.cookie("clients", JSON.stringify($scope.search), { expires: 365, path: '/' });
+			$scope.current_page = 1
+			$scope.getByPage($scope.current_page)
 		
-		$scope.order = 2
+		# Страница изменилась
+		$scope.pageChanged = ->
+			console.log $scope.currentPage
+			window.history.pushState {}, '', 'clients/?page=' + $scope.current_page if $scope.current_page > 1
+			# Получаем задачи, соответствующие странице и списку
+			$scope.getByPage($scope.current_page)
 		
-		$scope.setOrder = (order) ->
-			console.log order, $scope.asc
-			if $scope.order isnt order
-				$scope.order = order
-				$scope.asc = true
-			else
-				$scope.asc = !$scope.asc
-		
-		$scope.asc = true
-		$scope.orderStudents = ->
-			switch $scope.order
-				when 1 then 'last_name'
-				when 2 then 'Contract.id'
-				else 'date_formatted'
-		
-		$scope.getSubjectsCount = (Contract) ->
-			if Contract.subjects
-				Object.keys(Contract.subjects).length
-			else
-				0
-		
+		$scope.getByPage = (page) ->
+			frontendLoadingStart()
+			$.post "clients/ajax/GetStudents",
+				page: page
+			, (response) ->
+				frontendLoadingEnd()
+				$scope.Students  = response.data
+				$scope.counts = response.counts
+				$scope.$apply()
+				$scope.refreshCounts()
+			, "json"
+						 
+		angular.element(document).ready ->
+			smsMode 3
+			set_scope "Clients"
+			$scope.search = if $.cookie("clients") then JSON.parse($.cookie("clients")) else {}
+			$scope.current_page = $scope.currentPage
+			$scope.pageChanged()
+			$(".single-select").selectpicker()
+			
 		$scope.to_students = true
 		$scope.to_representatives = false
-		$scope.smsDialog3 = ->
-			$scope.sms_students = $scope.$eval "Students | filter:clientsFilter"
-			$scope.sms_students_ids = _.pluck($scope.sms_students, 'id')
-			smsDialog3()
-		
-		angular.element(document).ready ->
-			$.post "clients/ajax/GetStudents", {}, (response) ->
-				$scope.Students = response
-				$scope.$apply()
-			, "json"
-			set_scope "Clients"
-			smsMode 3
+		$scope.smsDialog3 = smsDialog3

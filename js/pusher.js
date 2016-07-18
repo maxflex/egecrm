@@ -3,10 +3,7 @@ var vueInit;
 
 $(document).ready(function() {
   var vm;
-  vm = vueInit();
-  return $(window).on("beforeunload", function() {
-    return vm.savePopupData();
-  });
+  return vm = vueInit();
 });
 
 vueInit = function() {
@@ -17,7 +14,6 @@ vueInit = function() {
     data: function() {
       return {
         show_element: false,
-        hide_element: false,
         connected: false,
         determined: false,
         timer: {
@@ -31,6 +27,12 @@ vueInit = function() {
     },
     template: '#phone-template',
     methods: {
+      time: function(seconds) {
+        return moment({}).seconds(seconds).format("mm:ss");
+      },
+      formatDateTime: function(date) {
+        return moment(date).format("DD.MM.YY в HH:mm");
+      },
       hangup: function() {
         $.post('mango/hangup', {
           call_id: this.mango.call_id
@@ -53,7 +55,7 @@ vueInit = function() {
       },
       setHideTimeout: function(seconds) {
         if (!seconds) {
-          seconds = 10;
+          seconds = 100;
         }
         if (this.timer.hide_timeout) {
           clearTimeout(this.timer.hide_timeout);
@@ -61,23 +63,11 @@ vueInit = function() {
         return this.timer.hide_timeout = setTimeout(this.endCall, seconds * 1000);
       },
       startCall: function() {
-        this.connected = true;
-        return this.timer.interval = setInterval((function(_this) {
-          return function() {
-            var now;
-            now = Math.floor(Date.now() / 1000);
-            _this.timer.diff = now - _this.mango.timestamp;
-            return console.log(now, _this.mango.timestamp, _this.timer.diff);
-          };
-        })(this), 1000);
+        return this.connected = true;
       },
       endCall: function() {
-        if (this.connected) {
-          clearInterval(this.timer.interval);
-        }
         clearTimeout(this.timer.hide_timeout);
         this.show_element = false;
-        this.hide_element = false;
         return this.connected = false;
       },
       saveState: function() {
@@ -91,26 +81,15 @@ vueInit = function() {
           });
         }
       },
-      savePopupData: function() {
-        if (this.show_element) {
-          return localStorage.setItem('popupData', JSON.stringify({
-            show_element: this.show_element,
-            number: this.mango.from.number,
-            determined: this.determined,
-            caller: this.caller,
-            timestamp: this.mango.timestamp,
-            mango: this.mango
-          }));
-        }
-      },
       initPusher: function() {
         var channel, pusher;
         pusher = new Pusher('a9e10be653547b7106c0', {
           encrypted: true
         });
         channel = pusher.subscribe("user_" + this.user_id);
-        channel.bind('incoming', (function(_this) {
+        return channel.bind('incoming', (function(_this) {
           return function(data) {
+            console.log('MANGO RECEIVED', data);
             _this.mango = data;
             switch (data.call_state) {
               case 'Appeared':
@@ -123,23 +102,6 @@ vueInit = function() {
             }
           };
         })(this));
-        return this.recoverPrevCall();
-      },
-      recoverPrevCall: function() {
-        var popupData, secondsToShow;
-        popupData = localStorage.getItem('popupData');
-        if (popupData) {
-          popupData = JSON.parse(popupData);
-          this.caller = popupData.caller;
-          this.determined = popupData.determined;
-          this.mango = popupData.mango;
-          secondsToShow = Math.floor(Date.now() / 1000) - popupData.timestamp;
-          this.show_element = secondsToShow < 20;
-          if (this.show_element) {
-            this.setHideTimeout(20 - secondsToShow);
-          }
-          return localStorage.removeItem('popupData');
-        }
       }
     },
     computed: {
@@ -155,11 +117,6 @@ vueInit = function() {
     }
   });
   return new Vue({
-    el: '.phone-app',
-    methods: {
-      savePopupData: function() {
-        return this.$children[0].savePopupData();
-      }
-    }
+    el: '.phone-app'
   });
 };

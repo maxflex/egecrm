@@ -8,19 +8,12 @@
 		
 		// какие поля не сравнивать при сравнении объектов
 		// в функции self::changed()
-		private static $dont_compare = ["id", "id_student", "id_contract", "id_user", "date_changed", "files"];	
-		
-		public $_serialized = ["files"];
-		
-		// путь хранения электронных версий договоров
-		const CONTRACTS_DIR = "files/contracts/";
+		private static $dont_compare = ["id", "id_student", "id_contract", "id_user", "date_changed"];	
 		
 		// условие, которое не берет в расчет версии договора
 		const ZERO_OR_NULL_CONDITION 		= " AND (id_contract=0 OR id_contract IS NULL)";
 		const ZERO_OR_NULL_CONDITION_JOIN 	= " AND (c.id_contract=0 OR c.id_contract IS NULL)";
 		
-		// Временная директория электронных версий договоров
-		//const CONTRACTS_TMP_DIR = "files/contracts/tmp/";
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
@@ -175,7 +168,10 @@
 			if ($changed) {
 				// Обновляем старый договор
 				//$OriginalContract = self::updateById($Contract["id"], $Contract);
+				// избавляемся от путальницы с сохранением user_id + time
 				$OriginalContract = new Contract($Contract);
+				$OriginalContract->date_changed = now();
+				$OriginalContract->id_user	   = User::fromSession()->id;
 				$OriginalContract->save();
 				
 				// Добавляем предметы договора
@@ -196,33 +192,7 @@
 			# Находим оригинальный доГАВАр
 			$OriginalContract = Contract::findById($Contract["id"]);
 			
-			//preType([$Contract["subjects"], $OriginalContract->subjects]);
-			
-			# ФАЙЛЫ
-			
-			// проверяем изменилось ли количество файлов
-/*
-			$original_contract_files_count = $OriginalContract->files ? count($OriginalContract->files) : 0;
-			
-			if ($original_contract_files_count != count((array)$Contract["files"])) {
-				return true;
-			}
-			
-			// проверяем изменились ли загруженные файлы
-			foreach ($OriginalContract->files as $id => $file) {
-				if (serialize($file) != $Contract["files"][$id]) {
-					h1("FILES NOT EQUAL");
-					preType(erialize($file));
-					preType($Contract["files"][$id]);
-					return true;
-				} else {
-					h1("FILES ARE EQUAL!");
-					preType(erialize($file));
-					preType($Contract["files"][$id]);
-				}
-			}
-*/
-			
+
 			// ансет всех FALSE
 			foreach($Contract["subjects"] as $id => $subject) {
 				if ($subject === false) {
@@ -292,9 +262,6 @@
 				
 				$ContractCopy->save();
 				
-				// Клонируем файлы. Обязательно после сохранения, когда уже есть ID
-				// self::cloneFiles($OriginalContract, $ContractCopy);
-				
 				// Добавляем предметы нового договора
 				ContractSubject::addData($OriginalContract->subjects, $ContractCopy->id);
 				return true;	
@@ -302,47 +269,7 @@
 				return false;
 			}	
 		}
-		
-		/**
-		 * Скопировать файлы.
-		 * 
-		 * Скопировать из $OriginalContract в $NewContract
-		 */
-		public static function cloneFiles($OriginalContract, &$NewContract)
-		{
-			h1("HERE CLONE FILES");
-			preType($OriginalContract);
-			preType($NewContract);
-			foreach ($OriginalContract->files as $id => $file) {
-				// Имя файла
-				$file_name = $file["name"];
-				
-				// Путь к файлу
-				$original_file_path = self::CONTRACTS_DIR . $file_name;
-				
-				// Имя нового файла 
-				// Имя = [ID Договора]_[Порядковый номер электронной версии договора].[Расширение файла]
-				$new_file_name 		= $NewContract->id . "_" . ($id + 1) . "." . pathinfo($file_name, PATHINFO_EXTENSION);
-				
-				// Путь к новому файлу
-				$new_file_path		= self::CONTRACTS_DIR . $new_file_name;
-				
-				// Генерируем файлы для нового догавара
-				$return[] = ["name" => $new_file_name];
-				
-				// Копируем файл
-				copy($original_file_path, $new_file_path);
-			}
-			
-			preType($return);
-			
-			// если есть что сохранять
-			if (count($return)) {
-				$NewContract->files = $return;
-				$NewContract->save("files");
-			}
-		}
-				
+						
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
 		public function beforeSave()
@@ -352,7 +279,6 @@
 			if (!$this->sum) {
 				$this->sum = NULL;
 			}
-			
 /*
 			if (!$this->id_contract) {
 				$this->id_contract = NULL;
@@ -365,8 +291,7 @@
 				}
 			}
 */
-			
-			if (!$this->id_contract) {
+			if ($this->isNewRecord && !$this->id_contract) {
 				// дата изменения и пользователь МЕНЯЮТСЯ ТОЛЬКО В СЛУЧАЕ ЕСЛИ ЭТО НЕ ПОДВЕРСИЯ
 				$this->date_changed = now();
 				// договор всегда создается новый, поэтому нет условия if ($this->isNewRecord) { ... }
@@ -470,62 +395,5 @@
 		public function isCancelled()
 		{
 			return $this->activeSubjectsCount() <= 0;
-		}
-		
-		/**
-		 * Загружаем электронную версию договора.
-		 * 
-		 */
-		public function uploadFile()
-		{
-			foreach ($this->files as $id => $file) {
-				// декодируйем ДЖЕЙ(тире)СОН
-				// $file = json_decode($file, true);
-				unset($file['$$hashKey']);
-				
-				// если файл уже загружен
-				if (strpos($file["name"], "tmp") === false) {
-					// Регенерируем имя
-					//$FileInfo = new SplFileInfo($file_name);
-					
-					// имя [ID Договора]_[Порядковый номер электронной версии договора].[Расширение файла]
-					$file["name"] = $this->id . "_" . ($id + 1) . "." . pathinfo($file["name"], PATHINFO_EXTENSION);
-					$return[] = $file;
-					continue;
-				}
-				
-				// Путь к файлу
-				$file_path = self::CONTRACTS_DIR . $file["name"];
-				
-				// Если временный файл есть, переносим его
-				if (file_exists($file_path)) {
-					$handle = new upload($file_path);
-					if ($handle->uploaded) {
-						// Разрешаем перезапись файла
-						$handle->file_overwrite = true;
-						
-						// Переименовываем файл в ID контракта и ID файла
-						$handle->file_new_name_body = $this->id . "_" . ($id + 1);
-						
-						// Грузим
-						$handle->process(self::CONTRACTS_DIR);
-						
-						if ($handle->processed) {
-							// Сохраняем имя файла
-							$file["name"] = $handle->file_dst_name;
-							$return[] = $file;
-						} else {
-							return false;
-						}
-					} else {
-						return false;
-					}	
-				}	
-			}
-			$this->files = $return;
-			
-			$this->save("files");
-			
-			return true;
 		}
 	}

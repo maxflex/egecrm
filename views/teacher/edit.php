@@ -7,21 +7,6 @@
 			</div>
 		</div>
 		<div class="col-sm-3" style="width: 20%">
-			<div class="form-group">
-				<input class="form-control" ng-model="Teacher.last_name" placeholder="фамилия" disabled>
-			</div>
-			<div class="form-group">
-				<input class="form-control" ng-model="Teacher.first_name" placeholder="имя" disabled>
-			</div>
-			<div class="form-group">
-				<input class="form-control" ng-model="Teacher.middle_name" placeholder="отчество" disabled>
-			</div>
-			<div class="form-group">
-				<select class="form-control" ng-model="Teacher.gender" placeholder="пол" disabled>
-					<option value='male'>мужской</option>
-					<option value='female'>женский</option>
-				</select>
-			</div>
 			<div class="form-group" style="position: relative">
 				<input class="form-control" ng-model="Teacher.birth_year" placeholder="год рождения" disabled>
 				<span class="inside-input">– {{ yearDifference(Teacher.birth_year) }} <ng-pluralize count="yearDifference(Teacher.birth_year)" when="{

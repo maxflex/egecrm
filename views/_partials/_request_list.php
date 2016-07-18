@@ -1,6 +1,4 @@
-<div ng-repeat="request in requests | filter:{adding : 0}" class="request-main-list" data-id="{{request.id}}" ng-class="{
-	'manual-request-red': request.contract_time && request.contract_time > 0 && request.contract_time <= 3600
-}">
+<div ng-repeat="request in requests | filter:{adding : 0}" class="request-main-list" data-id="{{request.id}}">
 	<div class="row">
 		<div class="col-sm-10">
 			<div>

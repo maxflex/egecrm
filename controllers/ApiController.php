@@ -142,7 +142,7 @@
         {
             extract($_POST);
             if ($id = intval($id) && $Teacher = Teacher::findById($id)) {
-                returnJSON(Teacher::forApi([$Teacher])[0]);
+                returnJSON(Teacher::forApi($Teacher));
             }
         }
 

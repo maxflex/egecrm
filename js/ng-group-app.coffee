@@ -983,6 +983,9 @@
 
 			$scope.getMonthByNumber = (n) ->
 				moment().month(n - 1).format("MMMM")
+			
+			$scope.getTeacher = (id) ->
+				_.find($scope.Teachers, {id: parseInt(id)})
 
 			$scope.changeBranch = ->
 				$("#group-cabinet").attr "disabled", "disabled"
@@ -1283,15 +1286,20 @@
 				frontendLoadingStart()
 				$.post "groups/ajax/get",
 					page: page
-					teachers: $scope.Teachers
 				, (response) ->
 					frontendLoadingEnd()
 					$scope.Groups  = response.data
+					$scope.teacher_ids = response.teacher_ids
 					$scope.counts = response.counts
 					$scope.$apply()
+					bindDraggable2() if $scope.students_picker
 					$scope.refreshCounts()
 				, "json"
-
+			
+			$scope.teachersFilter2 = (Teacher) ->
+				return true if $scope.teacher_ids is undefined
+				return true if (Teacher.id in $scope.teacher_ids or Teacher.id is parseInt($scope.search.id_teacher)) 
+				return false
 			
 			$scope.getGrades = (Grades) ->
 				console.log 'grades', Grades

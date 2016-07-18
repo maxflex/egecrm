@@ -109,6 +109,9 @@
  				"RatingInfo"	=> $RatingInfo ? $RatingInfo : (object)['published' => 0],
  				"subject_name" 	=> Subjects::$dative[$id_subject],
  				"id_subject"	=> $id_subject,
+ 				"user"			=> User::fromSession()->dbData(),
+				"users"			=> User::getCached(true), // с system
+ 				'id_user_review' => dbConnection()->query("SELECT id_user_review FROM students WHERE id = {$id_student}")->fetch_object()->id_user_review,
  				"year"			=> $year,
  				"lesson_count"	=> $lesson_count,
  			]);

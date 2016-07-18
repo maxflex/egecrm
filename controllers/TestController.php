@@ -927,6 +927,33 @@
 
 			echo implode(", ", $student_ids);
 		}
+		
+		public function actionPlusYear()
+		{
+			$Students = Student::getWithContract();
+
+			$student_ids = [];
+			foreach ($Students as $Student) {
+				// кол-во цепей
+				$count = Contract::count([
+					"condition" => "id_student={$Student->id} ".Contract::ZERO_OR_NULL_CONDITION
+				]);
+				
+				// если одна цепь
+				if ($count == 1) {
+					// находим договор 2015-2016 учебного года
+					$Contract = Contract::find([
+						"condition" => "id_student={$Student->id} AND year=2015 ".Contract::ZERO_OR_NULL_CONDITION
+					]);
+					// есил договор нашелся
+					if ($Contract && ($Student->grade < 12)) {
+						$Student->grade++;
+						$Student->save('grade');
+					}
+				}
+			}
+			// echo implode(", ", $student_ids);
+		}
 
 		public function actionSameNumber()
 		{

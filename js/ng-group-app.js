@@ -1213,6 +1213,11 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   $scope.getMonthByNumber = function(n) {
     return moment().month(n - 1).format("MMMM");
   };
+  $scope.getTeacher = function(id) {
+    return _.find($scope.Teachers, {
+      id: parseInt(id)
+    });
+  };
   $scope.changeBranch = function() {
     $("#group-cabinet").attr("disabled", "disabled");
     ajaxStart();
@@ -1552,15 +1557,28 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     $scope.Groups = void 0;
     frontendLoadingStart();
     return $.post("groups/ajax/get", {
-      page: page,
-      teachers: $scope.Teachers
+      page: page
     }, function(response) {
       frontendLoadingEnd();
       $scope.Groups = response.data;
+      $scope.teacher_ids = response.teacher_ids;
       $scope.counts = response.counts;
       $scope.$apply();
+      if ($scope.students_picker) {
+        bindDraggable2();
+      }
       return $scope.refreshCounts();
     }, "json");
+  };
+  $scope.teachersFilter2 = function(Teacher) {
+    var ref;
+    if ($scope.teacher_ids === void 0) {
+      return true;
+    }
+    if ((ref = Teacher.id, indexOf.call($scope.teacher_ids, ref) >= 0) || Teacher.id === parseInt($scope.search.id_teacher)) {
+      return true;
+    }
+    return false;
   };
   $scope.getGrades = function(Grades) {
     console.log('grades', Grades);

@@ -84,7 +84,7 @@ RewriteRule ^stats/visits/subjects[/]?$ index.php?controller=stats&action=TotalV
 
 
 # Клиенты
-RewriteRule ^clients[/]?$ index.php?controller=clients [QSA,L]
+RewriteRule ^clients[?page=(0-9)]?[/]?$ index.php?controller=clients&page=$1 [QSA,L]
 RewriteRule ^clients/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=$1 [QSA,L]
 RewriteRule ^clients/ajax/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=Ajax$1 [QSA,L]
 
@@ -94,7 +94,6 @@ RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id
 
 RewriteRule ^(teachers/|students/)?faq[/]?$ index.php?controller=faq&action=faq [QSA,L]
 RewriteRule ^students/reviews[/]?$ index.php?controller=TeacherReviews&action=list [QSA,L]
-RewriteRule ^reviews/([0-9]+)[/]?$ index.php?controller=TeacherReviews&action=list&id_student=$1 [QSA,L]
 RewriteRule ^(students/)?reviews/([0-9]+)/([0-9]+)/([0-9]+)[/]?([0-9]*)[/]?$ index.php?controller=TeacherReviews&action=admins&id_teacher=$2&id_subject=$3&year=$4&id_student=$5 [QSA,L]
 RewriteRule ^reviews[?page=(0-9)]?[/]?$ index.php?controller=TeacherReviews&action=reviews&page=$1 [QSA,L]
 
@@ -125,6 +124,14 @@ RewriteRule ^testing[/]?$ index.php?controller=testing [QSA,L]
 RewriteRule ^students/testing[/]?$ index.php?controller=testing&action=students [QSA,L]
 RewriteRule ^testing/edit/([0-9]+)[/]?$ index.php?controller=testing&action=edit&id=$1 [QSA,L]
 RewriteRule ^testing/([a-zA-Z]+)[/]?$ index.php?controller=testing&action=$1 [QSA,L]
+
+# Внутренние тестирования
+RewriteRule students/tests[/]?$ index.php?controller=tests&action=StudentList [QSA,L]
+RewriteRule ^students/tests/start/([0-9]+)[/]?$ index.php?controller=tests&action=start&id=$1 [QSA,L]
+RewriteRule tests[/]?$ index.php?controller=tests [QSA,L]
+RewriteRule tests/create[/]?$ index.php?controller=tests&action=create [QSA,L]
+RewriteRule ^tests/edit/([0-9]+)[/]?$ index.php?controller=tests&action=edit&id=$1 [QSA,L]
+RewriteRule ^tests/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=$1 [QSA,L]
 
 # as
 RewriteRule ^as/(teacher|student)/([0-9]+)[/]?$ index.php?controller=as&type=$1&id=$2 [QSA,L]

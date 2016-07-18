@@ -60,6 +60,7 @@
 	<script type="text/javascript" src="js/underscore.js"></script>
 
 	<script type="text/javascript" src="js/engine.js?ver=<?= settings()->version ?>"></script>
+	<script type="text/javascript" src="js/md5.js?"></script>
 	<script type="text/javascript" src="js/functions.js?ver=<?= settings()->version ?>"></script>
 
     <script type="text/javascript" src="//js.pusher.com/3.0/pusher.min.js"></script>

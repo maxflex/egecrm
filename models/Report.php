@@ -17,6 +17,7 @@
 			if (! $this->isNewRecord) {
 				$this->force_noreport = ReportForce::check($this->id_student, $this->id_teacher, $this->id_subject, $this->year);
 				$this->lesson_count = ReportHelper::getLessonCount($this->id_student, $this->id_teacher, $this->id_subject, $this->year);
+				$this->Student = Student::getLight($this->id_student);
 			}
 		}
 		

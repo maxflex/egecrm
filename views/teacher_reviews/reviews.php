@@ -16,7 +16,6 @@
 					<option disabled>──────────────</option>
 					<option value="1"  data-subtext="{{ counts.published[1] || '' }}">опубликованные</option>
 					<option value="0"  data-subtext="{{ counts.published[0] || '' }}">не опубликованные</option>
-					<option value="2"  data-subtext="{{ counts.published[2] || '' }}">не требующие сбора</option>
 				</select>
 	        </div>
 			<div>
@@ -49,6 +48,7 @@
 				<select class="watch-select single-select form-control" ng-model="search.admin_rating" ng-change='filter()'>
 					<option value=""  data-subtext="{{ counts.admin_rating[''] || '' }}">предварительная оценка</option>
 					<option disabled>──────────────</option>
+					<option value=""  data-subtext="{{ counts.admin_rating[6] || '' }}">отзыв не собирать</option>
 					<option ng-repeat="admin_rating in [1, 2, 3, 4, 5, 0]" value="{{admin_rating}}" data-subtext="{{ counts.admin_rating[admin_rating] || '' }}">{{admin_rating || 'пусто'}}</option>
 				</select>
 	        </div>
@@ -56,6 +56,7 @@
 				<select class="watch-select single-select form-control" ng-model="search.admin_rating_final" ng-change='filter()'>
 					<option value=""  data-subtext="{{ counts.admin_rating_final[''] || '' }}">оценка по окончании курса</option>
 					<option disabled>──────────────</option>
+					<option value=""  data-subtext="{{ counts.admin_rating_final[6] || '' }}">отзыв не собирать</option>
 					<option ng-repeat="admin_rating_final in [1, 2, 3, 4, 5, 0]" value="{{admin_rating_final}}" data-subtext="{{ counts.admin_rating_final[admin_rating_final] || '' }}">{{admin_rating_final || 'пусто'}}</option>
 				</select>
 	        </div>

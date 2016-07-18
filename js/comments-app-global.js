@@ -87,6 +87,8 @@
 					
 					comments = initIfNotSet(comments)
 					
+					console.log(comments)
+					
 					comments.push({
 						'id': 			response.id,
 						'User': 		response.User,

@@ -31,7 +31,7 @@
 				$Tasks = Task::findAll([
 					"condition" => "type=$type AND id_status=" . $list,
 					"order"		=> "id DESC",
-					"limit"		=> 50,
+					"limit"		=> 200,
 				]);
 			} else {
 				$Tasks = Task::findAll([

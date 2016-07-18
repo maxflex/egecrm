@@ -566,7 +566,7 @@
 				    return ceil($datediff / (60 * 60 * 24 * 7));
 			    }
 			    case 'months': {
-				    return ceil($datediff / (60 * 60 * 24 * 30));
+				    return ceil($datediff / (60 * 60 * 24 * 30)) + 1;
 			    }
 			    case 'years': {
 				    return ceil($datediff / (60 * 60 * 24 * 365));

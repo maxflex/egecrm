@@ -238,7 +238,8 @@
 				$this->addCss("bootstrap-select");
 				$this->addJs("bootstrap-select, dnd");
 				
-				$Teachers = Teacher::getActiveGroups();
+				$Teachers = Teacher::getLightArray(Group::getTeacherIds());
+				
 				$ang_init_data = angInit([
 					"Cabinets"		=> Cabinet::getByBranch(1),
 					"Branches"		=> Branches::$all,
@@ -423,7 +424,7 @@
 			$Students = [];
 			foreach ($Group->students as $id_student) {
 				$Student = Student::findById($id_student);
-				$Student->Contract 	= $Student->getLastContract();
+				$Student->Contract 	= $Student->getLastContract($Group->year);
 
 				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject);
 				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet);
@@ -1133,7 +1134,7 @@
 		public function actionAjaxGet()
 		{
 			extract($_POST);
-			
+
 			returnJsonAng(
 				Group::getData($page, $teachers)
 			);

@@ -2304,6 +2304,9 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .bg-orange {
   background: #fbaa33 !important; }
 
+.bg-gray {
+  background: #999999 !important; }
+
 /* make sidebar nav vertical */
 @media (min-width: 768px) {
   .sidebar-nav .navbar .navbar-collapse {
@@ -2443,3 +2446,35 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .dropdown-menu > li > a {
   padding: 3px 45px 3px 20px; }
+
+.fake-tr {
+  padding: 8px;
+  -webkit-font-smoothing: antialiased;
+  top: -14px;
+  position: relative; }
+
+.select-answer {
+  padding: 5px;
+  background: transparent;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  line-height: 10px;
+  text-align: center;
+  cursor: pointer; }
+  .select-answer:hover {
+    background: #d6d4d4; }
+  .select-answer.correct-answer {
+    background-color: #5cb85c;
+    color: white; }
+
+.vertical-align-table tr td {
+  vertical-align: middle !important; }
+
+.call-popup {
+  height: 84px;
+  width: 400px; }
+  .call-popup img {
+    height: 18px;
+    margin-right: 3px; }

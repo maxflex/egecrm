@@ -55,11 +55,7 @@ angular.module("Teacher", ["ngMap"]).config([
   });
 }).controller("EditCtrl", function($scope, $timeout, $http) {
   var _loadData, _postData, bindFileUpload, menus;
-  $scope["enum"] = {
-    0: 'не опубликован',
-    1: 'опубликован',
-    2: 'отзыв не собирать'
-  };
+  $scope["enum"] = review_statuses;
   menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports'];
   $scope.setMenu = function(menu) {
     $.each(menus, function(index, value) {

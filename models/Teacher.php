@@ -39,6 +39,8 @@
 				$this->has_photo = $this->photoExists();
 
 				$this->banned = User::findTeacher($this->id)->banned;
+				
+				$this->comment_extended = nl2br($this->comment_extended);
 			}
 
 			foreach ($this->branches as $id_branch) {
@@ -123,11 +125,12 @@
 				GROUP BY id_entity
 			");
 			
+			
 			while ($row = $result->fetch_object()) {
-				$return[] = static::getLight($row->id_entity);
+				$tutor_ids[] = $row->id_entity;
 			}
 			
-			return $return;
+			return static::getLightArray($tutor_ids);
 		}
 		
 		/*
@@ -141,6 +144,24 @@
 				WHERE id = " . $id . " 
 				ORDER BY last_name, first_name, middle_name ASC")
 			->fetch_object(); 
+		}
+		
+				/*
+		 * Получить легкую версию (имя + id)
+		 */
+		public static function getLightArray($teacher_ids)
+		{
+			$result = dbEgerep()->query("
+				SELECT id, first_name, last_name, middle_name 
+				FROM " . static::$mysql_table . " 
+				WHERE id IN (" . implode(',', $teacher_ids) . ") 
+				ORDER BY last_name, first_name, middle_name ASC");
+				
+			$Teachers = [];
+			while($row = $result->fetch_object()) {
+				$Teachers[] = $row;		
+			}
+			return $Teachers;
 		}
 		
 		/*
@@ -289,15 +310,22 @@
 		public static function getReviews($id_teacher)
 		{
 			$Reviews = TeacherReview::findAll([
-				"condition" => "rating > 0 AND id_teacher = $id_teacher",
-				"order"		=> "date DESC"
+				"condition" => "id_teacher = $id_teacher",
+				"order"		=> "id ASC"
 			]);
 
 			foreach ($Reviews as &$Review) {
-				$Review->Student = Student::findById($Review->id_student);
+				$Review->Student = Student::getLight($Review->id_student);
 			}
 
 			return $Reviews;
+		}
+		
+		public function getPublishedReviews()
+		{
+			return TeacherReview::findAll([
+				'condition' => "id_teacher={$this->id} AND published=1"
+			]);
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
@@ -312,6 +340,14 @@
 			}
 
 			return parent::findAll($params);
+		}
+		
+		public static function getByStatus($in_egecentr)
+		{
+			return Teacher::findAll([
+				"condition" => "in_egecentr = {$in_egecentr}",
+				"order"		=> "last_name, first_name, middle_name ASC"
+			]);
 		}
 		
 		public function beforeSave()
@@ -425,6 +461,12 @@
 		 */
 		public static function forApi($Teachers)
 		{
+			if (! is_array($Teachers)) {
+				$Teachers = [$Teachers];
+				$single = true;
+			} else {
+				$single = false;
+			}
 			foreach ($Teachers as $Teacher) { 
 				$object = [];
 				foreach (Teacher::$api_fields as $field) {
@@ -433,16 +475,24 @@
 				$object['photo_url'] = $Teacher->has_photo ? static::EXTERNAL_PHOTO_PATH . $Teacher->id . '.' . $Teacher->photo_extension : static::EXTERNAL_PHOTO_PATH . 'no-profile-img.gif'; 
 				$object['full_name'] = $Teacher->getFullName();
 				$object['grades_interval'] = $object['public_grades'][0] . (count($object['public_grades']) > 1 ? '-' . end($object['public_grades']) : '');
-				
 				$subject_string = [];
 				foreach ($Teacher->subjects as $index => $id_subject) {
 					$subject_string[] = Subjects::$dative[$id_subject];
 				} 
 				$object['subjects_dative'] = implode(', ', $subject_string);
 				
+				if ($single) {
+					$object['reviews'] = $Teacher->getPublishedReviews();
+				}
+				
 				$return[] = $object;
 			}
-			return $return;
+			
+			if ($single) {
+				return $return[0];
+			} else {
+				return $return;
+			}
 		}
 
 		public function lessonCount()

@@ -1,7 +1,7 @@
 $(document).ready ->
 	vm = vueInit()
-	$(window).on "beforeunload", () ->
-		vm.savePopupData()
+# 	$(window).on "beforeunload", () ->
+# 		vm.savePopupData()
 
 # Init Vue
 vueInit = ->
@@ -11,7 +11,6 @@ vueInit = ->
 		props: ['user_id']
 		data: ->
 			show_element: false 		# show <phone>
-			hide_element: false			# hide <phone>
 			connected: false 			# call in progress
 			determined: false			# caller determined?
 			timer:
@@ -22,6 +21,10 @@ vueInit = ->
 			caller: false 				# caller info
 		template: '#phone-template'
 		methods:
+			time: (seconds) ->
+				moment({}).seconds(seconds).format("mm:ss")
+			formatDateTime: (date) ->
+				moment(date).format "DD.MM.YY в HH:mm" 
 			hangup: ->
 				$.post 'mango/hangup',
 					call_id: this.mango.call_id
@@ -38,21 +41,14 @@ vueInit = ->
 					this.setHideTimeout()
 				, 'json'
 			setHideTimeout: (seconds) ->
-				seconds = 10 if not seconds
+				seconds = 100 if not seconds
 				clearTimeout this.timer.hide_timeout if this.timer.hide_timeout
 				this.timer.hide_timeout = setTimeout this.endCall, seconds*1000
 			startCall: ->
 				this.connected = true
-				this.timer.interval = setInterval =>
-					now = Math.floor(Date.now() / 1000)
-					this.timer.diff = now - this.mango.timestamp
-					console.log now, this.mango.timestamp, this.timer.diff
-				, 1000
 			endCall: ->
-				clearInterval(this.timer.interval) if this.connected
 				clearTimeout this.timer.hide_timeout
 				this.show_element = false
-				this.hide_element = false
 				this.connected = false
 			saveState: ->
 				answered_user = this.mango.to.extension #необязательно. потом уберу.
@@ -62,22 +58,23 @@ vueInit = ->
 						phone: this.mango.from.number
 						user_id: this.user_id
 
-			savePopupData: ->
-				if this.show_element
-					localStorage.setItem 'popupData',
-						JSON.stringify
-							show_element: this.show_element,
-							number: this.mango.from.number,
-							determined: this.determined,
-							caller: this.caller,
-							timestamp: this.mango.timestamp
-							mango: this.mango
+# 			savePopupData: ->
+# 				if this.show_element
+# 					localStorage.setItem 'popupData',
+# 						JSON.stringify
+# 							show_element: this.show_element,
+# 							number: this.mango.from.number,
+# 							determined: this.determined,
+# 							caller: this.caller,
+# 							timestamp: this.mango.timestamp
+# 							mango: this.mango
 
 			initPusher: ->
 				pusher = new Pusher 'a9e10be653547b7106c0',
 					encrypted: true
 				channel = pusher.subscribe "user_#{this.user_id}"
 				channel.bind 'incoming', (data) =>
+					console.log 'MANGO RECEIVED', data
 					this.mango = data
 					switch data.call_state
 						when 'Appeared'
@@ -87,21 +84,21 @@ vueInit = ->
 							this.startCall()
 						when 'Disconnected'
 							this.endCall()
-				this.recoverPrevCall();
-
-			recoverPrevCall: ->
-				popupData = localStorage.getItem 'popupData'
-				if popupData
-					popupData = JSON.parse popupData
-					this.caller = popupData.caller
-					this.determined = popupData.determined
-					this.mango = popupData.mango
-					secondsToShow = Math.floor(Date.now() / 1000) - popupData.timestamp
-					this.show_element = secondsToShow < 20
-					if this.show_element
-						this.setHideTimeout(20 - secondsToShow)
-
-					localStorage.removeItem 'popupData'
+# 				this.recoverPrevCall();
+# 
+# 			recoverPrevCall: ->
+# 				popupData = localStorage.getItem 'popupData'
+# 				if popupData
+# 					popupData = JSON.parse popupData
+# 					this.caller = popupData.caller
+# 					this.determined = popupData.determined
+# 					this.mango = popupData.mango
+# 					secondsToShow = Math.floor(Date.now() / 1000) - popupData.timestamp
+# 					this.show_element = secondsToShow < 20
+# 					if this.show_element
+# 						this.setHideTimeout(20 - secondsToShow)
+# 
+# 					localStorage.removeItem 'popupData'
 		computed:
 			call_length: ->
 				moment(parseInt(this.timer.diff) * 1000).format 'mm:ss'
@@ -114,7 +111,7 @@ vueInit = ->
 
 	new Vue
 		el: '.phone-app'
-		methods:
-			savePopupData: ->
-#				this.$broadcast 'savePopupData'
-				this.$children[0].savePopupData()
+# 		methods:
+# 			savePopupData: ->
+# #				this.$broadcast 'savePopupData'
+# 				this.$children[0].savePopupData()

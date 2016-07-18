@@ -50,10 +50,7 @@
 		public function actionGetCaller()
 		{
 			extract($_POST);
-            $answeredUserName = false;
-            if ($answeredUser  = $this->getAnsweredUser($phone)) {
-                $answeredUserName = $answeredUser->login;
-            }
+            $last_call_data = $this->getLastCallData($phone);
 
             // Ищем учителя с таким номером
             $Teacher = Teacher::find([
@@ -62,7 +59,7 @@
             if ($Teacher) {
                 returnJsonAng([
                     'user'	=> $answeredUserName,
-                    'name'	=> $Teacher->getFullName(),
+                    'name'	=> static::nameOrEmpty($Teacher->getFullName()),
                     'type'	=> 'teacher',
                     'id'	=> $Teacher->id,
                 ]);
@@ -80,7 +77,7 @@
                 $data = $represetative->fetch_object();
                 returnJsonAng([
                     'user'	=> $answeredUserName,
-                    'name'	=> getName($data->first_name, $data->last_name, $data->middle_name),
+                    'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
                     'type'	=> 'representative',
                     'id'	=> $data->id,
                 ]);
@@ -94,8 +91,8 @@
 			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
 			if ($Student) {
                 returnJsonAng([
-                    'user'	=> $answeredUserName,
-					'name'	=> $Student->name(),
+                    'last_call_data' => $last_call_data,
+					'name'	=> static::nameOrEmpty($Student->name()),
 					'type'	=> 'student',
 					'id'	=> $Student->id
                 ]);
@@ -110,7 +107,7 @@
 			if ($Request) {
 				returnJsonAng([
                     'user'	=> $answeredUserName,
-					'name'	=> $Request->name,
+					'name'	=> static::nameOrEmpty($Request->name),
 					'type'	=> 'request',
 					'id'	=> $Request->id
                 ]);
@@ -122,8 +119,8 @@
                 'type' => false
             ]);
 		}
-
-        private function getAnsweredUser($phone) {
+		
+		private function getAnsweredUser($phone) {
             $result = dbConnection()->query(
                 "SELECT user_id FROM last_call_data ".
                 "WHERE phone = '{$phone}' LIMIT 1"
@@ -134,6 +131,36 @@
                 return User::findById($data['user_id']);
             }
             return false;
+        }
+		
+        private function getLastCallData($phone) {
+			$stats = MangoNew::getStats($phone);
+			
+			foreach(array_reverse($stats) as $s) {
+				// если это входящий звонок и разговора не было, не анализировать
+				if ($s['to_extension'] && $s['answer'] == 0) {
+					continue;
+				}
+				if ($s['from_extension']) {
+					$s['user'] = User::findById($s['from_extension']);
+					return $s;
+				} 
+				if ($s['to_extension']) {
+					$s['user'] = User::findById($s['to_extension']);
+					return $s;
+				}
+			}
+			
+            return false;
+        }
+        
+        private static function nameOrEmpty($name)
+        {
+	        if (empty(trim($name))) {
+		        return 'имя неизвестно';
+	        } else {
+		        return $name;
+	        }
         }
 
         public function actionSaveCallState() {

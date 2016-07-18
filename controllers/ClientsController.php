@@ -18,22 +18,20 @@
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 			
+			$this->addJs("bootstrap-select");
+			$this->addCss("bootstrap-select");
 			
-			$without_contract = LOCAL_DEVELOPMENT ? Student::countWithoutContract() : memcached()->get("TotalStudentsWithNoContract");
-			
-/*
 			$ang_init_data = angInit([
-				"Students" 			=> $Students,
+				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 			]);
-*/
 			
 			$this->render("list", [
 				"sort"		=> $_GET['sort'],
-//				"ang_init_data" => $ang_init_data,
-				"without_contract" => $without_contract,
+				"ang_init_data" => $ang_init_data,
 			]);
 		}
 		
+/*
 		public function actionAjaxGetStudents()
 		{
 			$Students = Student::getWithContract();
@@ -63,12 +61,20 @@
 				
 				$Student->User = User::find(["condition" => "id_entity=" . $Student->id]);
 				
-				$Student->Remainder = PaymentRemainder::getByStudentId($Student->id);
-				
 				$date_formatted = new DateTime($Student->Contract->date);
 				$Student->date_formatted = $date_formatted->format("Y-m-d");
  			}
  			
  			returnJsonAng($Students);
+		}
+*/
+		
+		public function actionAjaxGetStudents()
+		{
+			extract($_POST);
+			
+			returnJsonAng(
+				Student::getData($page)
+			);
 		}
 	}

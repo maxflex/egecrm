@@ -22,48 +22,6 @@
 			ExamDay::addData($exam_days);
 		}
 
-		public function actionAjaxDeleteRemainder()
-		{
-			PaymentRemainder::deleteById($_POST['id']);
-		}
-
-		public function actionAjaxUpdateRemainder()
-		{
-			extract($_POST);
-
-			PaymentRemainder::updateById($id, [
-				"remainder" => $remainder
-			]);
-		}
-
-		public function actionAjaxAddRemainder()
-		{
-			extract($_POST);
-
-			$Student	= Student::findById($id_student);
-			$Contract 	= $Student->getContracts()[0];
-			$Payments 	= $Student->getPayments();
-
-			// сумма последней версии текущего договора минус сумма платежей и плюс сумма возвратов
-			$remainder = $Contract->sum;
-
-			foreach ($Payments as $Payment) {
-				if ($Payment->id_type == PaymentTypes::PAYMENT) {
-					$remainder -= $Payment->sum;
-				} else
-				if ($Payment->id_type == PaymentTypes::RETURNN) {
-					$remainder += $Payment->sum;
-				}
-			}
-
-			$PaymentRemainder = PaymentRemainder::add([
-				"id_student"	=> $Student->id,
-				"remainder"		=> $remainder,
-			]);
-
-			returnJsonAng($PaymentRemainder);
-		}
-
 		public function actionAjaxContinueSession()
 		{
 			# ничего не надо, пустая функция для обновления сессии
@@ -200,7 +158,7 @@
 
 			returnJsonAng($return);
 		}
-		
+
 		public function actionAjaxTest()
 		{
 			$Request = new Request([
@@ -489,8 +447,6 @@
 				}
 			}
 
-			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
-
 			returnJSON(count($sent_to));
 		}
 
@@ -597,13 +553,11 @@
 		{
 			extract($_POST);
 
-
-			$student_ids = implode(",", $student_ids);
+			$student_ids = implode(",", Student::getData(-1)['data']);
 
 			$Students = Student::findAll([
 				"condition" => "id IN ($student_ids)"
 			]);
-
 
 			if ($to_students == "true") {
 				foreach ($Students as $Student) {
@@ -972,18 +926,18 @@
 
 			returnJsonAng($Students);
 		}
-		
-		
+
+
 		public function actionAjaxSaveTeacherFaq()
 		{
 			extract($_POST);
 			Settings::set('teachers_faq', $html);
 		}
-		
+
 		public function actionAjaxGetReviews()
 		{
 			extract($_POST);
-			
+
 			returnJsonAng(
 				TeacherReview::getData($page, $teachers, $id_student)
 			);
@@ -992,6 +946,6 @@
 		public function actionAjaxUpdateStudentReviewUser()
 		{
 			extract($_POST);
-            Student::updateById($student_id, ['id_user_review' => $user_id]);
+            Student::updateById($id_student, ['id_user_review' => $id_user_new]);
 		}
 	}

@@ -40,11 +40,10 @@
 							</select>
 						</div>
 						<div>
-							<select class="watch-select single-select form-control" ng-model="search.id_teacher"  ng-change='filter()'>
-								<option value="" data-subtext="{{ counts.teacher[''] || '' }}">все преподаватели</option>
+							<select id='testy-select' class="watch-select single-select form-control" ng-model="search.id_teacher" ng-change='filter()'>
+								<option value="">все преподаватели</option>
 								<option disabled>──────────────</option>
-								<option ng-repeat="Teacher in Teachers"
-									data-subtext="{{ counts.teacher[Teacher.id] || '' }}"
+								<option ng-repeat="Teacher in Teachers | filter:teachersFilter2"
 									value="{{Teacher.id}}">{{ Teacher.last_name }} {{ Teacher.first_name }} {{ Teacher.middle_name }}</option>
 							</select>
 				        </div>

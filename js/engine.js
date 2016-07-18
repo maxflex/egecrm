@@ -2,7 +2,11 @@
 	var ang_scope;
 	var email_uploaded_files = [];
 	var email_uploaded_file_id = 1;
-
+	
+	var review_statuses = ['не опубликован', 'опубликован']
+	var test_statuses 	= ['заключительный', 'промежуточный']
+	var payments_hash	= 'cbcb58ac2e496207586df2854b17995f';
+	
 	// Основной скрипт
 	$(document).ready(function() {
 		// ангуляровский scope по умолчанию
@@ -297,7 +301,6 @@
 				"place": "CLIENTS",
 				"to_students": ang_scope.to_students,
 				"to_representatives": ang_scope.to_representatives,
-				"student_ids": ang_scope.sms_students_ids,
 			};
 			console.log(data);
 			$.post("ajax/sendGroupSmsClients", data, function(response) {

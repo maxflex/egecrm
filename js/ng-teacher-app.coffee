@@ -43,10 +43,7 @@
 			angular.element(document).ready ->
 				set_scope "Teacher"
 		.controller "EditCtrl", ($scope, $timeout, $http) ->
-			$scope.enum =
-				0: 'не опубликован'
-				1: 'опубликован'
-				2: 'отзыв не собирать'
+			$scope.enum = review_statuses
 			
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports']
 			

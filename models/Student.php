@@ -14,6 +14,7 @@
 		// тип маркера
 		const MARKER_OWNER 	= "STUDENT";
 		const USER_TYPE		= "STUDENT";
+		const PER_PAGE		= 30;
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
@@ -24,6 +25,8 @@
 			// Добавляем связи
 			$this->Representative	= Representative::findById($this->id_representative);
 			$this->Passport			= Passport::findById($this->id_passport);
+			
+			$this->profile_link = "student/{$this->id}";
 		}
 
 		public function afterSave()
@@ -459,11 +462,31 @@
 				"condition"	=> "place='". Comment::PLACE_STUDENT ."' AND id_place=". $this->id
 			]);
 		}
+		
+		public static function getCommentsStatic($id_student)
+		{
+			return Comment::findAll([
+				"condition"	=> "place='". Comment::PLACE_STUDENT ."' AND id_place=". $id_student
+			]);
+		}
 
 		public function getReports()
 		{
 			$Reports = Report::findAll([
 				"condition" => "id_student=" . $this->id
+			]);
+
+			foreach ($Reports as &$Report) {
+				$Report->Teacher = Teacher::findById($Report->id_teacher);
+			}
+
+			return $Reports;
+		}
+		
+		public function getReportsStatic($id_student)
+		{
+			$Reports = Report::findAll([
+				"condition" => "id_student=" . $id_student
 			]);
 
 			foreach ($Reports as &$Report) {
@@ -480,16 +503,24 @@
 		public function getContracts()
 		{
 			return Contract::findAll([
-				"condition"	=> "deleted=0 AND id_student=" . $this->id
+				"condition"	=> "id_student=" . $this->id
 			]);
 		}
 
-		public static function getGroupsStatic($id_student)
+		public static function getGroupsStatic($id_student, $with_schedule = false)
 		{
 			// @refactored
-			return Group::findAll([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0 "
+			$Groups = Group::findAll([
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
 			]);
+
+			if ($with_schedule) {
+				foreach ($Groups as &$Group) {
+					$Group->Schedule = $Group->getSchedule(true);
+				}
+			}
+
+			return $Groups;
 		}
 
 		public function getGroups($with_schedule = false)
@@ -540,10 +571,10 @@
 		 * Получить постудний договор студента.
 		 *
 		 */
-		public function getLastContract()
+		public function getLastContract($year = false)
 		{
 			return Contract::find([
-				"condition"	=> "id_student=" . $this->id .  Contract::ZERO_OR_NULL_CONDITION,
+				"condition"	=> "id_student=" . $this->id .  Contract::ZERO_OR_NULL_CONDITION . ($year ? " AND year={$year}" : ""),
 				"order"		=> "id DESC",
 				"limit"		=> "1",
 			]);
@@ -650,10 +681,8 @@
 		 */
 		public function getPayments()
 		{
-
 			return Payment::findAll([
-				"condition" => "deleted=0 AND id_student=" . $this->id,
-				"order" => "first_save_date desc"
+				"condition" => "deleted=0 AND id_student=" . $this->id
 			]);
 		}
 
@@ -809,16 +838,19 @@
 			}
 
 			return $TeacherLikes;
+		}
+		
+		public static function getTeacherLikesStatic($id_student)
+		{
+			$TeacherLikes = TeacherReview::findAll([
+				"condition" => "id_student=$id_student"
+			]);
 
-			// $TeacherLikes = GroupTeacherLike::findAll([
-			// 	"condition" => "id_student={$this->id} AND id_status > 0"
-			// ]);
-			//
-			// foreach ($TeacherLikes as &$Like) {
-			// 	$Like->Teacher = Teacher::findById($Like->id_teacher);
-			// }
-			//
-			// return $TeacherLikes;
+			foreach ($TeacherLikes as &$Like) {
+				$Like->Teacher = Teacher::findById($Like->id_teacher);
+			}
+
+			return $TeacherLikes;
 		}
 
 		public static function getPhoneErrors()
@@ -879,6 +911,13 @@
 			]);
 
 			return $visits;
+		}
+		
+		public static function getVisitsStatic($id_student)
+		{
+			return VisitJournal::findAll([
+				"condition" => "id_entity={$id_student} AND type_entity='STUDENT'"
+			]);
 		}
 
 		public function getVisitsAndSchedule()
@@ -1054,12 +1093,96 @@
 		public static function getLight($id)
 		{
 			return dbConnection()->query("
-				SELECT id, first_name, last_name, middle_name 
-				FROM " . static::$mysql_table . " 
-				WHERE id = " . $id . " 
-				ORDER BY last_name, first_name, middle_name ASC")
+				SELECT s.id, s.first_name, s.last_name, s.middle_name, s.id_user_review, u.login as user_login, u.color
+				FROM " . static::$mysql_table . " s
+				LEFT JOIN users u ON u.id = s.id_user_review
+				WHERE s.id = " . $id . " 
+				ORDER BY s.last_name, s.first_name, s.middle_name ASC")
 			->fetch_object(); 
 		}
 		
+		
+		
+		/*
+		 * Получить данные для основного модуля
+		 * $page==-1 – получить без лимита
+		 */
+		public static function getData($page)
+		{
+			if (!$page) {
+				$page = 1;
+			}
+			// С какой записи начинать отображение, по формуле
+			$start_from = ($page - 1) * Student::PER_PAGE;
+			
+			$search = isset($_COOKIE['clients']) ? json_decode($_COOKIE['clients']) : (object)[];
+			
+
+			// получаем данные
+			$query = static::_generateQuery($search, ($page == -1 ? "s.id" : "s.id, s.first_name, s.last_name, s.middle_name "));
+			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
+			
+			while ($row = $result->fetch_object()) {
+				$data[] = ($page == -1 ? $row->id : $row);
+			}
+			
+			if ($page > 0) {
+				// counts
+				$counts['all'] = static::_count($search);
+				
+				foreach(array_merge([""], Years::$all) as $year) {
+					$new_search = clone $search;
+					$new_search->year = $year;
+					$counts['year'][$year] = static::_count($new_search);
+				}
+				foreach(["", 0, 1] as $green) {
+					$new_search = clone $search;
+					$new_search->green = $green;
+					$counts['green'][$green] = static::_count($new_search);
+				}
+				foreach(["", 0, 1] as $yellow) {
+					$new_search = clone $search;
+					$new_search->yellow = $yellow;
+					$counts['yellow'][$yellow] = static::_count($new_search);
+				}
+				foreach(["", 0, 1] as $red) {
+					$new_search = clone $search;
+					$new_search->red = $red;
+					$counts['red'][$red] = static::_count($new_search);
+				}
+			}
+			
+			return [
+				'data' 	=> $data,
+				'counts' => $counts,
+			];
+		}
+		
+		private static function _count($search) {
+			return dbConnection()
+					->query(static::_generateQuery($search, "COUNT(*) AS cnt"))
+					->fetch_object()
+					->cnt;
+		}
+		
+		
+		private static function _generateQuery($search, $select)
+		{
+			$main_query = "
+				FROM students s " .
+				(! isBlank($search->year) ? " JOIN contracts yc ON (yc.id_student = s.id AND yc.year = {$search->year}) " : "") . "
+				JOIN (
+					SELECT id, id_student FROM contracts
+					WHERE 1 " . Contract::ZERO_OR_NULL_CONDITION . "
+					GROUP BY id_student
+					ORDER BY year DESC
+				) c ON c.id_student = s.id WHERE true " 
+				. (!isBlank($search->green) ? " AND " . ($search->green ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 3)" : "")
+				. (!isBlank($search->yellow) ? " AND " . ($search->yellow ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 2)" : "")
+				. (!isBlank($search->red) ? " AND " . ($search->red ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 1)" : "")
+				. " ORDER BY s.last_name, s.first_name, s.middle_name
+			";
+			return "SELECT " . $select . $main_query;
+		}
 
 	}

@@ -16,14 +16,6 @@
 		{{ Student.last_name + ' ' + Student.first_name }} | Оценка преподавателей
 	</div>
 	<div class="panel-body">
-		
 		<?= partial('module') ?>
-        <div style="margin-top: 15px" class="pull-right">
-            ответственный:
-            <span id="request-user-display"
-                  ng-click="toggleUser()"
-                  class="user-pick ng-binding"
-                  style="color: {{ Student.color }}">{{ Student.user_login || 'system' }}</span>
-        </div>
 	</div>
 </div>

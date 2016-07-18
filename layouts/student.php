@@ -47,6 +47,15 @@
 			}
 		?>
     </a>
+    <a href="students/tests" class="list-group-item">Тесты
+	    <?php
+			$test_count = TestStudent::countNeeded();
+			
+			if ($test_count) {
+				echo '<span class="badge pull-right">' . $test_count . '</span>';
+			}
+		?>
+    </a>
     <a href="students/faq" class="list-group-item">Необходимая информация</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>

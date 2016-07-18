@@ -23,7 +23,7 @@ class Email extends Model
 		}
 	}
 	
-	public static function send($email, $subject, $message, $files, $place = NULL, $id_place = NULL, $additional = NULL)
+	public static function send($email, $subject, $message, $files)
 	{
 		foreach ($files as $file) {
 			unset($file['email_uploaded_file_id']);	
@@ -34,9 +34,6 @@ class Email extends Model
 			'subject' 	=> $subject,
 			'message' 	=> nl2br($message),
 			'files'		=> $files,
-			'place'		=> $place,
-			'id_place' 	=> $id_place,
-			'additional'=> $additional,
 		]);
 		
 		$mail = self::initMailer();
@@ -69,7 +66,7 @@ class Email extends Model
 		$mail->Host = 'smtp.yandex.ru'; 					  // Specify main and backup SMTP servers
 		$mail->SMTPAuth = true;                               // Enable SMTP authentication
 		$mail->Username = 'info@ege-centr.ru';                // SMTP username
-		$mail->Password = 'kochubey1981';                        // SMTP password
+		$mail->Password = 'qQ5ZOvaw';                     // SMTP password
 		$mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
 		$mail->Port = 465;                                    // TCP port to connect to
 		

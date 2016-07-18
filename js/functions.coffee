@@ -8,7 +8,7 @@
 		, 60000
 	
 	$(window).on 'focus', ->
-		checkLogout()
+		checkLogout() 
 	
 	checkLogout = ->
 		# на странице логина, то просто обновляем страницу, вдруг с других вкладок

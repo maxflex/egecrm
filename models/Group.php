@@ -393,6 +393,24 @@
 				'paid' => $paid,
 			];
 		}
+		
+		public function countScheduleStatic($id)
+		{
+			// @REFACTORED
+			$paid = GroupSchedule::count([
+				"condition" => "is_free=0 AND cancelled=0 AND id_group=".$id,
+			]);
+
+			// @REFACTORED
+			$free = GroupSchedule::count([
+				"condition" => "is_free=1 AND cancelled=0 AND id_group=".$id,
+			]);
+
+			return [
+				'free' => $free,
+				'paid' => $paid,
+			];
+		}
 
 /*
 
@@ -437,6 +455,36 @@
 			}
 			return $return;
 		}
+		
+		public static function getScheduleCountCachedStatic($id_group)
+		{
+			if (LOCAL_DEVELOPMENT) {
+				return 0;
+			}
+
+
+			$return = memcached()->get("GroupScheduleCount[{$id_group}]");
+
+			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+				$return = Group::countScheduleStatic($id_group);
+				memcached()->set("GroupScheduleCount[{$id_group}]", $return, 5 * 24 * 3600);
+			}
+			return $return;
+		}
+		
+		public static function getPastScheduleCountCachedStatic($id_group)
+		{
+			if (LOCAL_DEVELOPMENT) {
+				return VisitJournal::getLessonCount($id_group);
+			}
+
+			$return = memcached()->get("GroupPastScheduleCount[{$id_group}]");
+
+			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+				memcached()->set("GroupPastScheduleCount[{$id_group}]", VisitJournal::getLessonCount($id_group), 5 * 24 * 3600);
+			}
+			return $return;
+		}
 
 
 
@@ -456,6 +504,20 @@
 			} else {
 				return $GroupFirstSchedule;
 			}
+		}
+		
+		/**
+		 * Получить дату первого занятия из расписания.
+		 */
+		public function getFirstScheduleStatic($id_group)
+		{
+			// @refactored
+			$GroupFirstSchedule =  GroupSchedule::find([
+				"condition" => "id_group={$id_group} AND cancelled = 0",
+				"order"		=> "date ASC"
+			]);
+
+			return $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date . " " . $GroupFirstSchedule->time) . "000" : false;
 		}
 
 		/**
@@ -515,7 +577,7 @@
 		 * Получить данные для основного модуля
 		 * $id_student – если просматриваем отзывы отдельного ученика
 		 */
-		public static function getData($page, $Teachers)
+		public static function getData($page)
 		{
 			if (!$page) {
 				$page = 1;
@@ -527,11 +589,31 @@
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "g.id");
+			$query = static::_generateQuery($search, "g.id, g.id_branch, g.id_subject, g.grade, g.students, g.id_teacher, g.cabinet, g.ended");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
 			
 			while ($row = $result->fetch_object()) {
-				$data[] = Group::findById($row->id);
+				$Group = $row;
+				
+				if ($Group->id_branch) {
+					$Group->branch = Branches::getShortColoredById($Group->id_branch,
+						($Group->cabinet ? "-".Cabinet::findById($Group->cabinet)->number : "")
+					);
+				}
+				
+				if ($Group->id_teacher) {
+					$Group->Teacher = Teacher::getLight($Group->id_teacher);
+				}
+				
+				$Group->students = empty($Group->students) ? [] : explode(',', $Group->students);
+				
+				$Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id); 
+				$Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
+				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
+				$Group->day_and_time 		= Group::getDayAndTimeStatic($Group->id);
+				
+				$data[] = $Group;
+			//	$data[] = Group::findById($row->id);
 			}
 			
 /*
@@ -543,13 +625,20 @@
 			
 			// counts
 			
+			$query = dbConnection()->query(static::_generateQuery($search, "g.id_teacher", " GROUP BY g.id_teacher"));
+			$teacher_ids = [];
+			while ($row = $query->fetch_object()) {
+				$teacher_ids[] = $row->id_teacher;
+			}
+			
 			return [
-				'data' 	=> $data,
-				'counts' => $counts,
+				'teacher_ids'	=> $teacher_ids,
+				'data' 			=> $data,
+				'counts' 		=> $counts,
 			];
 		}
 		
-		private static function _generateQuery($search, $select, $order = true, $ending)
+		private static function _generateQuery($search, $select, $ending = '')
 		{
 			if (! empty($search->time)) {
 				$data 	= explode("-", $search->time);
@@ -567,7 +656,7 @@
 				WHERE true "
 				. (!isBlank($search->cabinet) ? " AND g.year={$search->cabinet}" : "")
 				. (!isBlank($search->year) ? " AND g.year={$search->year}" : "")
-				. (!isBlank($search->id_teacher) ? " AND g.id_teacher={$search->id_teacher}" : "")
+				. ((! isBlank($search->id_teacher) && empty($ending)) ? " AND g.id_teacher={$search->id_teacher}" : "")
 				. (!isBlank($search->id_subject) ? " AND g.id_subject={$search->id_subject}" : "")
 				. (!isBlank($search->id_branch) ? " AND g.id_branch={$search->id_branch}" : "")
 				. (!isBlank($search->grade) ? " AND g.grade={$search->grade}" : "");
@@ -600,6 +689,27 @@
 		{
 			$GroupTime = GroupTime::findAll([
 				"condition"	=> "id_group=" . $this->id
+			]);
+
+			if (!$GroupTime) {
+				return [];
+			}
+
+			foreach ($GroupTime as $GroupTimeData) {
+				$index = Freetime::getIndexByTime($GroupTimeData->time);
+				$return[$GroupTimeData->day][$index] = $GroupTimeData->time;
+			}
+
+			return $return;
+		}
+		/**
+		 * Получить свободное время ученика.
+		 *
+		 */
+		public function getDayAndTimeStatic($id_group)
+		{
+			$GroupTime = GroupTime::findAll([
+				"condition"	=> "id_group=" . $id_group
 			]);
 
 			if (!$GroupTime) {
