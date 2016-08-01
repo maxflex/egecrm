@@ -1,17 +1,17 @@
 <div class="panel panel-primary <?= ($mode != 'request' ? 'ng-hide' : '') ?>" ng-show="mode == 'request'">
 		<div class="panel-heading">
-	
+
 			<?php if ($Request->adding) :?>
 			Добавление заявки
 			<?php else :?>
 			Редактирование заявки №<?= $Request->id ?>
 			<?php endif ?>
-	
-	
+
+
 			<div class="pull-right">
 				<?php if (!$Request->adding) :?>
 					<span class="link-reverse pointer" style="margin-left: 10px" onclick="lightBoxShow('glue')">перенести в другой профиль</span>
-	
+
 					<?php if ($Request->getDuplicates()): ?>
 						<span class="link-reverse pointer" style="margin-left: 10px" onclick='deleteRequest(<?= $Request->id ?>)'>удалить заявку</span>
 					<?php endif ?>
@@ -19,10 +19,10 @@
 			</div>
 		</div>
 		<div class="panel-body">
-	
+
 	<!-- 	<img src="img/svg/loading-bars.svg" alt="Загрузка страницы..." id="svg-loading"> -->
-		
-	
+
+
 	<!-- Скрытые поля -->
 	<input type="hidden" name="id_request" value="<?= $Request->id ?>">
 
@@ -34,16 +34,16 @@
 	<input type="hidden" id="payments_json" name="payments_json">
 
 	<input type="hidden" ng-value="markerData() | json"  name="marker_data">
-	
+
 	<input type="hidden" name="save_request" value="{{request_comments === undefined ? 0 : 1}}">
 	<input type="hidden" name="save_student" value="{{student === undefined ? 0 : 1}}">
-	
+
 	<!-- Конец /скрытые поля -->
-	
+
 	<?= globalPartial('loading', ['model' => 'request_comments']) ?>
-	
+
 	<div class="ng-hide" ng-hide="request_comments === undefined">
-	
+
 		<!-- ВКЛАДКИ ЗАЯВОК -->
 		<div class="row" style="margin-bottom: 20px" ng-hide="<?= ($Request->adding && !$_GET["id_student"]) ?>">
 			<div class="col-sm-12">
@@ -60,13 +60,13 @@
 			</div>
 		</div>
 		<!-- /ВКЛАДКИ ЗАЯВОК -->
-	
+
 		<!-- ДАННЫЕ ПО ЗАЯВКЕ С САЙТА И УВЕДОМЛЕНИЯ -->
 	    <div class="row">
 	        <div class="col-sm-9">
 	            <div class="row">
 	                <div class="col-sm-4">
-	                    
+
 	                </div>
 	            </div>
 	            <div class="row" style="margin-bottom: 30px">
@@ -113,13 +113,13 @@
 				<div class="form-group">
 	                <?= Grades::buildSelector($Request->grade, "Request[grade]") ?>
 	            </div>
-	
+
 	            <div class="form-group">
 	                <input placeholder="имя" class="form-control" name="Request[name]" value="<?= $Request->name ?>">
 	            </div>
-	
+
 	            <div class="form-group">
-	
+
 					<div class="form-group">
 			            <div class="input-group"
 				            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone') || (!isMobilePhone('request-phone') && request_phone_level >= 2) }">
@@ -140,7 +140,7 @@
 					            </div>
 						</div>
 					</div>
-	
+
 					<div class="form-group" ng-show="request_phone_level >= 2">
 			            <div class="input-group"
 				            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone-2')  || (!isMobilePhone('request-phone') && request_phone_level >= 3) }">
@@ -161,8 +161,8 @@
 				            </div>
 						</div>
 					</div>
-	
-	
+
+
 					<div class="form-group" ng-show="request_phone_level >= 3">
 						<div class="input-group"
 							ng-class="{'input-group-with-hidden-span' : !phoneCorrect('request-phone-3')  || !isMobilePhone('request-phone-3') }">
@@ -180,11 +180,11 @@
 					            </div>
 						</div>
 		            </div>
-	
-	
-	
+
+
+
 	            </div>
-	
+
 	            <div class="form-group">
 	<!--                         <?= Branches::buildSvgSelector($Request->id_branch, ["id" => "request-branch", "name" => "Request[id_branch]"]) ?> -->
 					<?= Branches::buildMultiSelector($Request->branches, [
@@ -196,11 +196,11 @@
 	                <?= RequestStatuses::buildSelector($Request->id_status, "Request[id_status]") ?>
 				</div>
 	        </div>
-	        
+
 	        <?= partial("save_button", ["Request" => $Request]) ?>
 	    </div>
 	    <!-- /ДАННЫЕ ПО ЗАЯВКЕ С САЙТА И УВЕДОМЛЕНИЯ -->
-	
+
 	</div>
 
 	<!-- ЗАКАРЫВАЕМ СТАРЫЙ PANEL-BODY И ОТКРЫВАЕМ НОВЫЙ -->
