@@ -91,7 +91,7 @@
 				
 			$scope.addProblem = ->
 				$scope.form_changed = true
-				$scope.Test.Problems.push($scope.NewProblem)
+				$scope.Test.Problems.push angular.copy $scope.NewProblem
 		
 			$scope.editingAnswer = (parent_index, index) ->
 				$scope.editing_answer and $scope.editing_answer[0] is parent_index and $scope.editing_answer[1] is index
@@ -104,6 +104,10 @@
 			
 			$scope.setCorrect = (Problem, index) ->
 				if typeof $scope.a is "object"
+
+					# соханение контента тоже
+					Problem.answers[index] = $scope.a.getData()
+
 					$scope.a.destroy()
 					delete $scope.a
 				$scope.form_changed = true
@@ -135,6 +139,10 @@
 			$scope.editAnswer = (Problem, parent_index, index) ->
 				console.log(parent_index, index)
 				answer = Problem.answers[index]
+
+				# если какой то ответ редактировался и не сохранено то его сохраняем сначала.
+				Problem.answers[$scope.editing_answer[1]] = $scope.a.getData() if $scope.a
+
 				$scope.editing_answer = [parent_index, index]
 				$scope.old_html = answer
 				if typeof $scope.a is "object"

@@ -42,6 +42,13 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
+
+			$this->problem = htmlspecialchars_decode($this->problem);
+			if (!empty($this->answers)) {
+				foreach ($this->answers as &$answer) {
+					$answer = htmlspecialchars_decode($answer);
+				}
+			}
 		}
 		
 		public function findByTest($id_test) {
@@ -56,6 +63,15 @@
 				'problem' => 'текст задания...',
 				'answers' => ['текст ответа...'],
 			];
+		}
+
+		public function beforeSave() {
+			$this->problem = htmlspecialchars($this->problem);
+			if (count($this->answers)) {
+				foreach($this->answers as &$answer) {
+					$answer = htmlspecialchars($answer);
+				}
+			}
 		}
 	}
 	
