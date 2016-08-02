@@ -487,6 +487,9 @@
 			$(".digits-only-minus").inputmask("Regex", {regex: "[-]?[0-9]*"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
 
+			// $(".bs-date input, input.bs-date").inputmask("Regex", {regex: "[0-9]{2}[.][0-9]{2}[.][0-9]{4}"});
+			$('.bs-date input, input.bs-date').inputmask('99.99.9999');
+
 
 			$.mask.definitions['H'] = "[0-2]";
 		    $.mask.definitions['h'] = "[0-9]";
