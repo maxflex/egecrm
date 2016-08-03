@@ -294,7 +294,7 @@
 			      title: 'Введите пароль'
 			      className: 'modal-password'
 			      callback: (result) ->
-			        if hex_md5 result === payments_hash
+			        if hex_md5 result == payments_hash
 			          bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
 			            if result == true
 			              $.post 'ajax/deletePayment', 'id_payment': payment.id
