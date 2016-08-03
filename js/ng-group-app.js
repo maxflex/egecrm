@@ -577,6 +577,11 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     var current_index;
     return current_index = $.inArray(time, $scope.weekdays[day - 1].schedule);
   };
+  $scope.changeYear = function() {
+    return $scope.updateGroup({
+      year: $scope.Group.year
+    });
+  };
   $scope.changeCabinet = function() {
     if (!$scope.Group.id) {
       return;

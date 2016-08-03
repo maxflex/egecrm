@@ -475,9 +475,9 @@
 			$scope.isOrangeBrick = (day, time) ->
 				current_index = $.inArray(time, $scope.weekdays[day - 1].schedule)
             
-            $scope.changeYear = ->
-                $scope.updateGroup
-                    year: $scope.Group.year
+			$scope.changeYear = ->
+				$scope.updateGroup
+					year: $scope.Group.year
 
             
 			$scope.changeCabinet = ->
