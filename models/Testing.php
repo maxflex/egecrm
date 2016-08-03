@@ -85,8 +85,7 @@ class Testing extends Model
 		}
 	}
 	
-	public static function add($data)
-	{
+	public static function add($data = false) {
 		$NewTesting = parent::add($data);
 		
 		Testing::_updateStudents($NewTesting->id, $data);

@@ -65,7 +65,7 @@
 
 				// Последние 4 цифры номер карты
 				$Payments = Payment::findAll([
-					"condition" => "id_status=" . Payment::PAID_CARD . " AND id_student=" . $Student->id . " AND card_number!=''"
+					"condition" => "id_status=" . Payment::PAID_CARD . " AND entity_id=" . $Student->id . " AND entity_type='".Student::USER_TYPE."' AND card_number!=''"
 				]);
 				foreach ($Payments as $Payment) {
 					$text .= $Payment->card_number;

@@ -326,7 +326,7 @@
 
 			# Платежи
 			Payment::deleteAll([
-				"condition" => "id_student=$id_student"
+				"condition" => "entity_id=$id_student and entity_type='".Student::USER_TYPE."'"
 			]);
 
 			if ($Student->id_passport) {
@@ -682,7 +682,7 @@
 		public function getPayments()
 		{
 			return Payment::findAll([
-				"condition" => "deleted=0 AND id_student=" . $this->id
+				"condition" => "entity_id=" . $this->id." and entity_type = '".Student::USER_TYPE."'"
 			]);
 		}
 
@@ -1056,7 +1056,7 @@
 
 			// Последние 4 цифры номер карты
 			$Payments = Payment::findAll([
-				"condition" => "id_status=" . Payment::PAID_CARD . " AND id_student=" . $this->id . " AND card_number!=''"
+				"condition" => "id_status=" . Payment::PAID_CARD . " AND entity_id=" . $this->id . " AND entity_type='".Student::USER_TYPE."' AND card_number!=''"
 			]);
 			foreach ($Payments as $Payment) {
 				$text .= $Payment->card_number;

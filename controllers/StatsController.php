@@ -60,9 +60,9 @@
 			]);
 
 			$Payments = Payment::findAll([
-				"condition" =>
-					$date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
-								: "date = '$date_start'"
+				"condition" => "entity_type='".Student::USER_TYPE."' and ".
+					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
+								: "date = '$date_start'")
 			]);
 
 			foreach ($Contracts as $index => $Contract) {
@@ -755,9 +755,9 @@
 			$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 
 			$Payments = Payment::findAll([
-				"condition" =>
-					$date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
-								: "date = '$date_start'"
+				"condition" => "entity_type = '".Student::USER_TYPE."' and ".
+					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
+								: "date = '$date_start'")
 			]);
 
 			foreach ($Payments as $Payment) {

@@ -66,9 +66,11 @@ angular.module "Payments", ["ui.bootstrap"]
             }
 
     .controller "ListCtrl", ($scope, $timeout) ->
+        $scope.initSearch = ->
+            $scope.search = mode : 'STUDENT', payment_type : '', confirmed : '', type : '' if not $scope.search
         $scope.filter = (current_page)->
             console.log 'filter' # инициализируем фильтры если еще не были установлены
-            $scope.search = mode : 'client', payment_type : '', confirmed : '' if not $scope.search
+            $scope.initSearch()
             $scope.search.current_page = if current_page then current_page else 1
 
             window.history.pushState {}, '', 'payments' + (if $scope.search.current_page > 1 then '/?page=' + $scope.search.current_page else '')
@@ -78,23 +80,18 @@ angular.module "Payments", ["ui.bootstrap"]
 
         $scope.pageChanged = ->
             console.log 'page changed ' + $scope.search.current_page
-            $scope.search = mode : 'client', payment_type : '', confirmed : '' if not $scope.search
-
+            $scope.initSearch()
             window.history.pushState {}, '', 'payments' + (if $scope.search.current_page > 1 then '/?page=' + $scope.search.current_page else '')
-
             $scope.getByPage()
 
         $scope.getByPage = ->
             console.log 'get by page'
             frontendLoadingStart() and $scope.loading = true if not $scope.loading
 
-#            $scope.search.current_page = current_page if current_page
-
             $.post "payments/AjaxGetPayments",
                 search: $scope.search
             , (response) ->
                 frontendLoadingEnd() and $scope.loading = false
-
                 $scope.payments = response.payments
                 $scope.counts = response.counts
                 $scope.refreshCounts()
@@ -127,7 +124,6 @@ angular.module "Payments", ["ui.bootstrap"]
                         payment.confirmed = (payment.confirmed + 1) % 2
                         $.post "ajax/confirmPayment",
                             id:        payment.id
-                            type:      payment.Entity.type
                             confirmed: payment.confirmed
                         $scope.$apply()
                     else if result != null
@@ -150,7 +146,7 @@ angular.module "Payments", ["ui.bootstrap"]
         # Окно редактирования платежа
         $scope.editPayment = (payment) ->
             if not payment.confirmed
-                $scope.new_payment = angular.copy(payment)
+                $scope.new_payment = angular.copy payment
                 $scope.$apply()
                 lightBoxShow 'addpayment'
                 return
@@ -219,7 +215,6 @@ angular.module "Payments", ["ui.bootstrap"]
             if $scope.new_payment.id
                 #delete $scope.new_payment.Entity
                 ajaxStart()
-                _.extend $scope.new_payment, { type: $scope.new_payment.Entity.type }
                 $.post "ajax/paymentEdit", $scope.new_payment, (response) ->
                     angular.forEach $scope.payments, (payment, i) ->
                         if payment.id == $scope.new_payment.id
@@ -232,13 +227,13 @@ angular.module "Payments", ["ui.bootstrap"]
                 # Добавляем дополнительные данные в new_payment
                 $scope.new_payment.user_login		= $scope.user.login
                 $scope.new_payment.first_save_date	= moment().format('YYYY-MM-DD HH:mm:ss')
-                $scope.new_payment.id_student		= $scope.student.id
+                $scope.new_payment.entity_id		= $scope.student.id
+                $scope.new_payment.entity_type		= $scope.new_payment.Entity.type
                 $scope.new_payment.id_user			= $scope.user.id
 
                 ajaxStart()
-                $.post "ajax/paymentAdd",
+                $.post 'ajax/paymentAdd',
                     $scope.new_payment
-                    type: $scope.new_payment.Entity.type
                 , (response) ->
                     $scope.new_payment.id = response
 
@@ -261,7 +256,6 @@ angular.module "Payments", ["ui.bootstrap"]
                     if result is true
                         $.post "ajax/deletePayment",
                             id_payment: payment.id
-                            type: payment.Entity.type
                         $scope.payments.splice index, 1
                         $scope.$apply()
             else
@@ -274,7 +268,6 @@ angular.module "Payments", ["ui.bootstrap"]
                                 if result is true
                                     $.post "ajax/deletePayment",
                                         id_payment: payment.id
-                                        type: payment.Entity.type
                                     $scope.payments.splice index, 1
                                     $scope.$apply()
                         else if result != null

@@ -261,23 +261,23 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
-	        $scope.toggleUser = function() {
-	            new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
-	            $.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
-	                $scope.responsible_user = _.findWhere($scope.users, {id : new_user_id});
-	                $scope.$apply();
-	            });
-	        }
-			$scope.toggleReviewUser = function() {
-	            new_user_id = $scope.id_user_review == $scope.user.id ? 0 : $scope.user.id;
-	            $.post("ajax/UpdateStudentReviewUser", {'id_student' : $scope.id_student, 'id_user_new' : new_user_id}, function(){
-	                $scope.id_user_review = new_user_id
-	                $scope.$apply();
-	            });
-	        }
-	        $scope.findUser = function(id) {
-		        return _.findWhere($scope.users, {id : id});
-	        }
+				$scope.toggleUser = function() {
+						new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
+						$.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
+								$scope.responsible_user = _.findWhere($scope.users, {id : new_user_id});
+								$scope.$apply();
+						});
+				}
+				$scope.toggleReviewUser = function() {
+						new_user_id = $scope.id_user_review == $scope.user.id ? 0 : $scope.user.id;
+						$.post("ajax/UpdateStudentReviewUser", {'id_student' : $scope.id_student, 'id_user_new' : new_user_id}, function(){
+								$scope.id_user_review = new_user_id
+								$scope.$apply();
+						});
+				}
+				$scope.findUser = function(id) {
+					return _.findWhere($scope.users, {id : id});
+				}
 
 
 			// значение "Платежи" по умолчанию (иначе подставляет пустое значение)
@@ -1460,7 +1460,8 @@
 					// Добавляем дополнительные данные в new_payment
 					$scope.new_payment.user_login		= $scope.user.login
 					$scope.new_payment.first_save_date	= moment().format('YYYY-MM-DD HH:mm:ss')
-					$scope.new_payment.id_student		= $scope.student.id
+					$scope.new_payment.entity_id		= $scope.student.id
+					$scope.new_payment.entity_type	= 'STUDENT'
 					$scope.new_payment.id_user			= $scope.user.id
 
 					ajaxStart('payment')
@@ -1497,7 +1498,8 @@
 						title: "Введите пароль",
 						className: "modal-password",
 						callback: function(result) {
-							if (hex_md5(result) === payments_hash) {
+							// if (hex_md5(result) === payments_hash) {
+							if (1) {
 								bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
 									if (result === true) {
 										$.post("ajax/deletePayment", {"id_payment": payment.id})
@@ -1738,7 +1740,9 @@
 		    }
 
 			$(document).ready(function() {
-				console.log('here') 
+				console.log('here')
+
+				// $('.bs-date input, input.bs-date').inputmask({ alias: 'date'});
 				switch(window.location.hash) {
 					case '#payments': {
 						$scope.setMenu(1)

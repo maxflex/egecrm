@@ -14,7 +14,23 @@
     //            error_reporting(E_ALL);
     //        }
 
-        /**
+		/**
+		 * слияние таблиц Payments
+		 */
+		public function actionMergePayments()
+		{
+			dbConnection()->query("alter table `payments` add column entity_type varchar(255)");
+			dbConnection()->query("update `payments` set entity_type = 'STUDENT'");
+			dbConnection()->query("alter table `payments` change column id_student entity_id int unsigned");
+			dbConnection()->query("insert into `payments` (entity_id, entity_type, id_status, id_type, id_user, sum, card_number, date, first_save_date, confirmed) ".
+								  "select id_teacher, 'TEACHER', id_status, id_type, id_user, sum, card_number, date, first_save_date, confirmed ".
+								  "from teacher_payments"
+								 );
+//			dbConnection()->query("drop table `teacher_payments`");
+		}
+
+
+		/**
          * Обновление статусов задач
          */
         public function actionUpdateTasksStatuses()
@@ -462,7 +478,7 @@
 
 				// Последние 4 цифры номер карты
 				$Payments = Payment::findAll([
-					"condition" => "id_status=" . Payment::PAID_CARD . " AND id_student=" . $Student->id . " AND card_number!=''"
+					"condition" => "id_status=" . Payment::PAID_CARD . " AND entity_id=" . $Student->id . " and entity_type='".Student::USER_TYPE."' AND card_number!=''"
 				]);
 				foreach ($Payments as $Payment) {
 					$text .= $Payment->card_number;

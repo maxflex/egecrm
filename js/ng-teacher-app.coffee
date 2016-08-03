@@ -134,9 +134,9 @@
 			    title: 'Введите пароль'
 			    className: 'modal-password'
 			    callback: (result) ->
-			      if result == '363'
+			      if hex_md5 result == payments_hash
 			        payment.confirmed = if payment.confirmed then 0 else 1
-			        $.post 'ajax/confirmTeacherPayment',
+			        $.post 'ajax/confirmPayment',
 			          id: payment.id
 			          confirmed: payment.confirmed
 			        $scope.$apply()
@@ -155,7 +155,7 @@
 			# Окно редактирования платежа
 			$scope.editPayment = (payment) ->
 			  if !payment.confirmed
-			    $scope.new_payment = angular.copy(payment)
+			    $scope.new_payment = angular.copy payment
 			    $scope.$apply()
 			    lightBoxShow 'addpayment'
 			    return
@@ -163,8 +163,8 @@
 			    title: 'Введите пароль'
 			    className: 'modal-password'
 			    callback: (result) ->
-			      if result == '363'
-			        $scope.new_payment = angular.copy(payment)
+			      if hex_md5 result == payments_hash
+			        $scope.new_payment = angular.copy payment
 			        $scope.$apply()
 			        lightBoxShow 'addpayment'
 			      else if result != null
@@ -220,12 +220,18 @@
 			  payment_sum = $('#payment-sum')
 			  payment_select = $('#payment-select')
 			  payment_type = $('#paymenttypes-select')
+			  payment_card = $('#payment-card')
 			  # Установлен ли способ оплаты
 			  if !$scope.new_payment.id_status
 			    payment_select.focus().parent().addClass 'has-error'
 			    return
 			  else
-			    payment_select.parent().removeClass 'has-error'
+			    if parseInt($scope.new_payment.id_status) is 1 and !$scope.new_payment.card_number # если это карта
+			      payment_card.focus().addClass 'has-error'
+			      return
+			    else
+			      payment_select.parent().removeClass 'has-error'
+			      payment_card.removeClass 'has-error'
 			  # Установлена ли сумма платежа?
 			  if !$scope.new_payment.sum
 			    payment_sum.focus().parent().addClass 'has-error'
@@ -240,8 +246,9 @@
 			    payment_date.parent().removeClass 'has-error'
 			  # редактирование платежа, если есть ID
 			  if $scope.new_payment.id
+			    $scope.new_payment.entity_type = 'TEACHER'
 			    ajaxStart()
-			    $.post 'ajax/TeacherPaymentEdit', $scope.new_payment, (response) ->
+			    $.post 'ajax/PaymentEdit', $scope.new_payment, (response) ->
 			      angular.forEach $scope.payments, (payment, i) ->
 			        if payment.id == $scope.new_payment.id
 			          $scope.payments[i] = $scope.new_payment
@@ -255,10 +262,12 @@
 			    # Добавляем дополнительные данные в new_payment
 			    $scope.new_payment.user_login = $scope.user.login
 			    $scope.new_payment.first_save_date = moment().format('YYYY-MM-DD HH:mm:ss')
-			    $scope.new_payment.id_teacher = $scope.Teacher.id
+			    $scope.new_payment.entity_id = $scope.Teacher.id
+			    $scope.new_payment.entity_type = 'TEACHER'
+			    $scope.new_payment.id_type = 1 # тип платеж
 			    $scope.new_payment.id_user = $scope.user.id
 			    ajaxStart()
-			    $.post 'ajax/TeacherPaymentAdd', $scope.new_payment, (response) ->
+			    $.post 'ajax/PaymentAdd', $scope.new_payment, (response) ->
 			      $scope.new_payment.id = response
 			      # Инициализация если не установлено
 			      $scope.payments = initIfNotSet($scope.payments)
@@ -276,7 +285,7 @@
 			    bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
 			      if result == true
 			        console.log index
-			        $.post 'ajax/deleteTeacherPayment', 'id_payment': payment.id
+			        $.post 'ajax/deletePayment', 'id_payment': payment.id
 			        $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
 			        $scope.$apply()
 			      return
@@ -285,7 +294,7 @@
 			      title: 'Введите пароль'
 			      className: 'modal-password'
 			      callback: (result) ->
-			        if result == '363'
+			        if hex_md5 result === payments_hash
 			          bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
 			            if result == true
 			              $.post 'ajax/deletePayment', 'id_payment': payment.id

@@ -225,54 +225,24 @@
 		public function actionAjaxConfirmPayment()
 		{
 			extract($_POST);
-
-			$payment_class = Payment::getEntityClass($type);
-			$payment_class::updateById($id, [
+			Payment::updateById($id, [
 				"confirmed" => $confirmed
 			]);
 		}
 
 		public function actionAjaxDeletePayment()
 		{
-			$payment_class = Payment::getEntityClass($_POST['type']);
-			$payment_class::deleteById($_POST["id_payment"]);
+			Payment::deleteById($_POST["id_payment"]);
 		}
 
 		public function actionAjaxPaymentEdit()
 		{
-			$payment_class = Payment::getEntityClass($_POST['type']);
-			$Payment = new $payment_class($_POST);
-			$Payment->save();
+			extract($_POST);
+			Payment::updateById($id, $_POST);
 		}
-
-
-
 
 		# TEACHER PAYMENTS
-		public function actionAjaxTeacherPaymentAdd()
-		{
-			echo TeacherPayment::add($_POST)->id;
-		}
-
-		public function actionAjaxConfirmTeacherPayment()
-		{
-			extract($_POST);
-
-			TeacherPayment::updateById($id, [
-				"confirmed" => $confirmed
-			]);
-		}
-
-		public function actionAjaxDeleteTeacherPayment()
-		{
-			TeacherPayment::deleteById($_POST["id_payment"]);
-		}
-
-		public function actionAjaxTeacherPaymentEdit()
-		{
-			$Payment = new TeacherPayment($_POST);
-			$Payment->save();
-		}
+			# теперь все через обычний пэймент
 		# / TEACHER PAYMENTS
 
 
@@ -356,7 +326,7 @@
 			]);
 
 			Payment::deleteAll([
-				"condition" => "id_student=$id_student"
+				"condition" => "entity_id=$id_student and entity_type='".Student::USER_TYPE."'"
 			]);
 
 			Contract::deleteAll([

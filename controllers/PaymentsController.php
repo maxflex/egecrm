@@ -54,53 +54,49 @@
 		public function actionAjaxGetPayments()
 		{
 			extract($_POST);
-			
-			ini_set('display_errors', 1);
-			error_reporting(E_ALL);
-			
+
 			$condition['confirmed'] = $search['confirmed'] != '' ? "confirmed = {$search['confirmed']}" : '1';
 			$condition['id_status'] = $search['payment_type'] ? "id_status = {$search['payment_type']}" : '1';
+			$condition['id_type'] = $search['type'] ? "id_type = {$search['type']}" : '1';
+			$condition['entity_type'] = $search['mode'] ? "entity_type = '{$search['mode']}'" : '1';
 
 			$query['limit'] = ($search['current_page'] - 1)*Payment::PER_PAGE.',30';
 			$query['condition'] = implode(' and ', $condition);;
 			$query['order'] = 'first_save_date desc';
 
 			/* платежи */
-			$payment_class = Payment::getEntityClass($search['mode']);
-
-			$Payments = $payment_class::findAll($query);
+			$Payments = Payment::findAll($query);
 			foreach ($Payments as $Payment) {
 				$Payment->Entity = $Payment->getEntity();
 			}
 
 			/* каунтеры */
-			$counts['mode'] = [
-				'client'  => Payment::count(["condition" => implode(' and ', $condition)]),
-				'teacher' => TeacherPayment::count(["condition" => implode(' and ', $condition)]),
-			];
+			foreach ([Student::USER_TYPE, Teacher::USER_TYPE] as $entity_type) {
+				$count_cond = $condition;
+				$count_cond['entity_type'] = "entity_type = '".$entity_type."'";
+				$counts['mode'][$entity_type] = Payment::count(['condition' => implode(' and ', $count_cond)]);
+			}
 
-			foreach (array_keys(Payment::$all)  as $type) {
+			foreach (array_keys(Payment::$all) as $type) {
 				$count_cond = $condition;
 				$count_cond['id_status'] = "id_status = {$type}";
-				$counts['payment_type'][$type] = $payment_class::count(["condition" => implode(' and ', $count_cond)]);
+				$counts['payment_type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
 			}
-			 $counts['payment_type']['all'] = array_sum($counts['payment_type']);
+			$counts['payment_type']['all'] = array_sum($counts['payment_type']);
 
 			foreach ([0,1] as $confirmed) {
 				$count_cond = $condition;
 				$count_cond['confirmed'] = "confirmed = {$confirmed}";
-				$counts['confirmed'][$confirmed] = $payment_class::count(["condition" => implode(' and ', $count_cond)]);
+				$counts['confirmed'][$confirmed] = Payment::count(["condition" => implode(' and ', $count_cond)]);
 			}
 			$counts['confirmed']['all'] = array_sum($counts['confirmed']);
-			
-			
+
 			foreach([1, 2] as $type) {
 				$count_cond = $condition;
 				$count_cond['id_type'] = "id_type = {$type}";
 				$counts['type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
 			}
-			$counts['type']['all'] = Payment::count(["condition" => implode(' and ', $condition)]);
-			
+			$counts['type']['all'] = array_sum($counts['type']);
 			/* каунтеры */ 
 
 			returnJsonAng([
@@ -113,7 +109,7 @@
 		{
 			# Данные по занятиям/выплатам
 			$Data = VisitJournal::findAll([
-						"condition" => "id_entity=". User::fromSession()->id_entity ." AND type_entity='TEACHER'",
+						"condition" => "id_entity=". User::fromSession()->id_entity ." AND type_entity='".Teacher::USER_TYPE."'",
 						"order"		=> "lesson_date DESC, lesson_time DESC",
 					]);
 			# Добавляем группы к инфе					
@@ -123,11 +119,11 @@
 			
 			returnJsonAng([
 				# Платежи
-				"payments" 	=> 	TeacherPayment::findAll([
-									"condition" => "id_teacher=" . User::fromSession()->id_entity
+				'payments' 	=> 	Payment::findAll([
+									'condition' => "entity_id=" . User::fromSession()->id_entity." and entity_type='".Teacher::USER_TYPE."'"
 								]),
 				# Данные по занятиям/выплатам
-				"Data"		=> 	$Data,
+				'Data'		=> 	$Data,
 			]);
 		}
 	}

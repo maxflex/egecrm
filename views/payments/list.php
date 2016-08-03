@@ -7,7 +7,7 @@
 		<div class="form-group inline-block">
 			<?= Payment::buildSelector(false, false, ["ng-model" => "new_payment.id_status", "style" => "width: 180px"]) ?>
 	    </div>
-		<div class="form-group inline-block" ng-show="new_payment.Entity.type == 'student'">
+		<div class="form-group inline-block" ng-show="new_payment.Entity.type == 'STUDENT'">
 			<?= PaymentTypes::buildSelector(false, false, ["ng-model" => "new_payment.id_type"]) ?>
 	    </div>
 		<div class="form-group inline-block">
@@ -42,8 +42,8 @@
 		<div class="row" style="margin-bottom: 15px">
 			<div class="col-sm-2">
 				<select class="watch-select single-select form-control" ng-model="search.mode" ng-change='filter()'>
-					<option value="client"  data-subtext="{{ counts.mode.client || '' }}">клиенты</option>
-					<option value="teacher" data-subtext="{{ counts.mode.teacher || '' }}">преподаватели</option>
+					<option value="STUDENT"  data-subtext="{{ counts.mode.STUDENT || '' }}">клиенты</option>
+					<option value="TEACHER" data-subtext="{{ counts.mode.TEACHER || '' }}">преподаватели</option>
 				</select>
 			</div>
 			<div class="col-sm-2">
@@ -79,10 +79,10 @@
         </div>
 
         <pagination
-			ng-show='(payments && payments.length) && (counts.mode[search.mode?search.mode:"client"] > <?= Payment::PER_PAGE ?>)'
+			ng-show='(payments && payments.length) && (counts.mode[search.mode?search.mode:"STUDENT"] > <?= Payment::PER_PAGE ?>)'
 			ng-model="search.current_page"
 			ng-change="pageChanged()"
-			total-items="counts.mode[search.mode ? search.mode : 'client']"
+			total-items="counts.mode[search.mode ? search.mode : 'STUDENT']"
 			max-size="10"
 			items-per-page="<?= Payment::PER_PAGE ?>"
 			first-text="«"

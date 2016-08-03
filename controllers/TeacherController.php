@@ -48,8 +48,8 @@
 			foreach ($teacher_ids as $id_teacher) {
 				$Teacher = Teacher::findById($id_teacher);
 
-				$Payments = TeacherPayment::findAll([
-					"condition" => "id_teacher=$id_teacher"
+				$Payments = Payment::findAll([
+					"condition" => "entity_id=$id_teacher and entity_type = '".Teacher::USER_TYPE."'"
 				]);
 
 				$payment_sum = 0;
@@ -203,7 +203,7 @@
 					);
 				}
 				case 3: {
-					returnJsonAng(TeacherPayment::findAll(["condition" => "id_teacher=$id_teacher", 'order'=>'first_save_date desc']));
+					returnJsonAng(Payment::findAll(["condition" => "entity_id=$id_teacher and entity_type='".Teacher::USER_TYPE."'", 'order'=>'first_save_date desc']));
 				}
 				case 4: {
 					returnJsonAng(Teacher::getReportsStatic($id_teacher));

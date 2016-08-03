@@ -2,13 +2,11 @@
 	class Payment extends Model
 	{
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
-		
 		public static $mysql_table	= "payments";
 		
 		# Список статусов
 		const PAID_CARD		= 1;
 		const PAID_CASH		= 2;
-//		const NOT_PAID_BILL	= 3;
 		const PAID_BILL		= 4;
 		const CARD_ONLINE	= 5;
 		const MUTUAL_DEBTS	= 6;
@@ -17,7 +15,6 @@
 		static $all  = [			
 			self::PAID_CARD		=> "карта",
 			self::PAID_CASH		=> "наличные",
-//			self::NOT_PAID_BILL	=> "не оплаченный счет",
 			self::PAID_BILL		=> "счет",
 			self::CARD_ONLINE	=> "карта онлайн",
 			self::MUTUAL_DEBTS	=> "взаимозачет",
@@ -34,7 +31,7 @@
 		static $title = "способ оплаты";
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
-		
+
 		public function __construct($array) {
 			parent::__construct($array);
 			
@@ -56,7 +53,7 @@
 		public static function getByStudentId($id_student)
 		{
 			return Payment::findAll([
-				"condition" => "deleted=0 AND id_student=" . $id_student
+				"condition" => "entity_id=" . $id_student." and entity_type='".Student::USER_TYPE."' "
 			]);
 		}
 		
@@ -90,46 +87,42 @@
 		public static function countUnconfirmed()
 		{
 			return self::count([
-				"condition" => "confirmed=0"
+				"condition" => "confirmed = 0 and entity_type = '".Student::USER_TYPE."' "
 			]);
 		}
 				
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-		public static function getEntityClass($type)
-		{
-			return $type == 'teacher' ? 'TeacherPayment' : 'Payment';
-		}
+
 		public function getEntity()
 		{
-			$entity = $this->getStudent();
-			$entity->type = 'student';
-			$entity->profile_link = "student/{$entity->id}";
+			if ($this->entity_type == Teacher::USER_TYPE) {
+				$entity = Teacher::getLight($this->entity_id);
+				$entity->profile_link = "teachers/edit/{$this->entity_id}";
+			} else {
+				$entity = Student::getLight($this->entity_id);
+				$entity->profile_link = "student/{$this->entity_id}";
+			}
 			return $entity;
 		}
 
-		public function getStudent()
-		{
-			return Student::findById($this->id_student);
-		}
-		
-		
 		/**
 		 * Добавить платежи
 		 * 
 		 */
-		public static function addData($payments_array, $id_student) 
+		public static function addData($payments_array, $entity_id, $entity_type = 'STUDENT')
 		{	
 			// Сохраняем данные
 			foreach ($payments_array as $id => $one_payment) {
 				// если у платежа есть ID, то обновляем его
 				if ($one_payment["id"]) {
 					$Payment = Payment::findById($one_payment["id"]);
-					$Payment->update($one_payment);	
+					$Payment->update($one_payment);
 				} else {
 					// иначе добавляем новый платеж
 					$Payment = new self($one_payment);
-					$Payment->id_student	= $id_student;
-					$Payment->id_user		= User::fromSession()->id;
+					$Payment->entity_id 	  = $entity_id;
+					$Payment->entity_type 	  = $entity_type;
+					$Payment->id_user		  = User::fromSession()->id;
 					$Payment->first_save_date = now();
 					$Payment->save();
 				}
@@ -151,70 +144,18 @@
 		    
 		    $datediff = $today - $first_payment_date;
 
-		    switch ($mode) {
-			    case 'days': {
-				    return ceil($datediff / (60 * 60 * 24));
-			    }
-			    case 'weeks': {
-				    return floor($datediff / (60 * 60 * 24 * 7));
-			    }
-			    case 'months': {
-				    return ceil($datediff / (60 * 60 * 24 * 30));
-			    }
-			    case 'years': {
-				    return ceil($datediff / (60 * 60 * 24 * 365));
-			    }
-		    }
-		}
-	}
-	
-	class TeacherPayment extends Model 
-	{
-		public static $mysql_table	= "teacher_payments";
-		
-		public function __construct($array) {
-			parent::__construct($array);
-			
-			if ($this->card_number) {
-				$this->card_number .= ' ';
-			}
-			
-			// Добавляем данные
-			$this->user_login = User::findById($this->id_user)->login;
-		}
-
-		public function getEntity()
-		{
-			$entity = Teacher::findById($this->id_teacher);
-			$entity->type = 'teacher';
-			$entity->profile_link = "teachers/edit/{$entity->id}";
-			return $entity;
-		}
-
-		public function getStudent()
-		{
-			return Student::findById($this->id_student);
-		}
-		
-		/**
-		 * Добавить платежи
-		 * 
-		 */
-		public static function addData($payments_array, $id_teacher) 
-		{	
-			// Сохраняем данные
-			foreach ($payments_array as $id => $one_payment) {
-				// если у платежа есть ID, то обновляем его
-				if ($one_payment["id"]) {
-					$Payment = Payment::findById($one_payment["id"]);
-					$Payment->update($one_payment);	
-				} else {
-					// иначе добавляем новый платеж
-					$Payment = new self($one_payment);
-					$Payment->id_teacher	= $id_teacher;
-					$Payment->id_user		= User::fromSession()->id;
-					$Payment->first_save_date = now();
-					$Payment->save();
+			switch ($mode) {
+				case 'days': {
+					return ceil($datediff / (60 * 60 * 24));
+				}
+				case 'weeks': {
+					return floor($datediff / (60 * 60 * 24 * 7));
+				}
+				case 'months': {
+					return ceil($datediff / (60 * 60 * 24 * 30));
+				}
+				case 'years': {
+					return ceil($datediff / (60 * 60 * 24 * 365));
 				}
 			}
 		}
