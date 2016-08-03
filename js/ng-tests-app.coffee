@@ -78,9 +78,16 @@
 					Test: $scope.Test
 				, (response) ->
 					ajaxEnd()
+
+					new_problems = _.filter $scope.Test.Problems, (problem) -> !problem.id
+					if new_problems.length is response.length
+						for i of response
+							new_problems[i]['id'] = response[i]
+
 					$scope.saving = false
 					$scope.form_changed = false
 					$scope.$apply()
+				, "json"
 			
 			$scope.deleteTest = ->
 				bootbox.confirm "Вы уверены, что хотите удалить тест №#{$scope.Test.id}?", (result) ->
