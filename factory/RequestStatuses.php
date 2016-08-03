@@ -7,7 +7,6 @@
 		# Список
 		const NEWR			= 0;
 		const AWAITING		= 3;
-		const NBT 			= 9;
 		const FINISHED		= 2;
 		const DENY			= 5;
 		const SPAM			= 4;
@@ -18,7 +17,6 @@
 		# Все
 		static $all = [
 			self::NEWR			=> "невыполненные",
-			self::NBT 			=> "поздние курсы",
 			self::AWAITING		=> "ожидаются",
 			self::FINISHED		=> "выполненные",
 			self::DENY			=> "отказ",

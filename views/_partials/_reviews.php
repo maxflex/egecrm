@@ -37,7 +37,7 @@
 			<span ng-show="Review.admin_rating_final > 0">{{(Review.admin_rating_final == 6 ? 0 : Review.admin_rating_final)}}</span>
 		</td>
 		<td style="width: 4%" class="vertical-gray">
-			{{Review.code | hideZero}}
+			{{Review.score | hideZero}}
 		</td>
 		<td style="width: 10%">
 			<span ng-show='Review.id'>

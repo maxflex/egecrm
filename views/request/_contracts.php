@@ -61,7 +61,7 @@
 								<span style="display: inline-block; width: 200px" ng-class="{
 									'text-warning'	: subject.status == 2,
 									'text-danger'	: subject.status == 1,
-								}">{{subject.name}}</span>
+								}">{{SubjectsFull[subject.id_subject]}}</span>
 								<span ng-show="!subject.count2">{{subject.count}}
 									<ng-pluralize count="subject.count" when="{
 												'one' 	: 'занятие',
@@ -95,6 +95,10 @@
 							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContract(contract.id)">
 								печать договора
 								<?= partial("contract_print", ["Request" => $Request]) ?>
+							</div>
+							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContractLicenced(contract.id)">
+								лицензированный договор
+								<?= partial("contract_licenced_print", ["Request" => $Request]) ?>
 							</div>
 							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContractAdditional(contract)">
 								печать доп. соглашения
@@ -163,7 +167,7 @@
 								<span style="display: inline-block; width: 200px" ng-class="{
 									'text-warning'	: subject.status == 2,
 									'text-danger'	: subject.status == 1,
-								}">{{subject.name}}</span>
+								}">{{SubjectsFull[subject.id_subject]}}</span>
 								<span ng-show="!subject.count2">{{subject.count}}
 									<ng-pluralize count="subject.count" when="{
 												'one' 	: 'занятие',

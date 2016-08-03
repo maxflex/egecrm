@@ -93,9 +93,9 @@
 				<div class="col-sm-12">
 					<span class="input-label">учебный год</span>
 						<select class="form-control"  ng-model="current_contract.year">
-							<option ng-repeat="year in [2015,2016]" value="{{year}}">{{ year + '-' + (year + 1) + ' уч. г.' }}</option>
+							<option ng-repeat="year in <?= Years::json() ?>" 
+								value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
 						</select>
-						<!-- <select ng-model="current_contract.year" ng-options="+(year) as year + '-' + (year + 1) + ' уч. г.' for year in [2014, 2015, 2016]"> -->
 					 </select>
 				</div>
 			</div>

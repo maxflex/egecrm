@@ -1,12 +1,12 @@
     <div class="print-bill-body printable" id="bill-print">
 	     <style type="text/css">
     .print-bill-body { width: 210mm; margin-left: auto; margin-right: auto; border: none;}
-        table.invoice_bank_rekv { border-collapse: collapse; border: 1px solid; }
-        table.invoice_bank_rekv > tbody > tr > td, table.invoice_bank_rekv > tr > td { border: 1px solid; }
-        table.invoice_items { border: 1px solid; border-collapse: collapse;}
-        table.invoice_items td, table.invoice_items th { border: 1px solid;}
-        table tr td {font-size: 12px}
-        table tr th {font-size: 12px}
+        .printable table.invoice_bank_rekv { border-collapse: collapse; border: 1px solid; }
+        .printable table.invoice_bank_rekv > tbody > tr > td, table.invoice_bank_rekv > tr > td { border: 1px solid; }
+        .printable table.invoice_items { border: 1px solid; border-collapse: collapse;}
+        .printable table.invoice_items td, table.invoice_items th { border: 1px solid;}
+        .printable table tr td {font-size: 12px}
+        .printable table tr th {font-size: 12px}
         .m_title {display:inline-block}
 		.m_title:first-letter {text-transform: uppercase}
     </style>

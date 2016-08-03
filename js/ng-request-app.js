@@ -540,6 +540,14 @@
 				$scope.editBeforePrint(html)
 			}
 			
+            $scope.printContractLicenced = function(id_contract) {
+				$scope.print_mode = 'contract-licenced'
+				$scope.id_contract_print = id_contract
+				$scope.id_user_print = 0
+				html = $("#contract-licenced-print-" + $scope.id_contract_print).html()
+				$scope.editBeforePrint(html)
+			}
+			
 			$scope.printContractAdditional = function(contract) {
 				$scope.print_mode = 'agreement'
 				$scope.contract_additional = contract
@@ -1650,7 +1658,7 @@
 		    $scope.setMenu = function(menu) {
 			    if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				    $.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-						['Subjects', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
+						['Subjects', 'SubjectsFull', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
 							'branches_brick', 'time', 'representative_phone_level', 'representative'].forEach(function(field) {
 							$scope[field] = response[field]
 						})
@@ -1822,6 +1830,17 @@
 					if (not_filled !== null) {
 						$(this).addClass("has-error").focus()
 						notifyError("Номер телефона указан неполностью")
+						has_errors = true
+						return false
+					} else {
+						$(this).removeClass("has-error")
+					}
+				})
+				
+				
+				$(".email").filter(function() {
+					if ($(this).val() != '' && !validateEmail($(this).val())) {
+						$(this).addClass("has-error").focus()
 						has_errors = true
 						return false
 					} else {

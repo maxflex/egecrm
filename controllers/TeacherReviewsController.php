@@ -46,7 +46,28 @@
 				"ang_init_data" => $ang_init_data,
 			]);
 		}
+        
+        /**
+		 * Для админов
+		 */
+		public function actionView()
+		{
+    		$Review = TeacherReview::findById($_GET['id']);
+    		
+            $id_student = $Review->id_student;
+			$id_teacher = $Review->id_teacher;
+			$id_subject = $Review->id_subject;
+			$year 		= $Review->year;
+			
+			$this->_custom_panel = true; 
+			
+			$this->setTabTitle("Оценка преподавателей");
 
+			$this->render("edit", [
+				"ang_init_data" => static::_generateAngInit($id_student, $id_teacher, $id_subject, $year),
+			]);
+		}
+        
 		/**
 		 * Для админов
 		 */

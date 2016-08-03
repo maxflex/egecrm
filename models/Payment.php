@@ -56,7 +56,7 @@
 		public static function getByStudentId($id_student)
 		{
 			return Payment::findAll([
-				"condition" => "deleted=0 AND id_student=" . $id_student
+				"condition" => "id_student=" . $id_student
 			]);
 		}
 		

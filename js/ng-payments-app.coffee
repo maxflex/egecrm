@@ -75,7 +75,7 @@ angular.module "Payments", ["ui.bootstrap"]
             $.cookie 'payments', JSON.stringify($scope.search), { expires: 365, path: '/' }
 
             $scope.getByPage()
-
+        
         $scope.pageChanged = ->
             console.log 'page changed ' + $scope.search.current_page
             $scope.search = mode : 'client', payment_type : '', confirmed : '' if not $scope.search
@@ -291,6 +291,12 @@ angular.module "Payments", ["ui.bootstrap"]
                         }
                     }
                 }
+                
+#         $scope.printBill = (payment) ->
+#             $scope.print_mode = 'bill'
+#             $scope.PrintPayment = payment 
+#             $scope.$apply()
+#             printDiv $scope.print_mode + "-print"
 
         # форматировать дату
         $scope.formatDate = (date) ->

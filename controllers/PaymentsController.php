@@ -55,8 +55,10 @@
 		{
 			extract($_POST);
 			
+/*
 			ini_set('display_errors', 1);
 			error_reporting(E_ALL);
+*/
 			
 			$condition['confirmed'] = $search['confirmed'] != '' ? "confirmed = {$search['confirmed']}" : '1';
 			$condition['id_status'] = $search['payment_type'] ? "id_status = {$search['payment_type']}" : '1';

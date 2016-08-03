@@ -4,21 +4,21 @@
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "visit_journal";
-		
+
 		public static $statuses = ["не указано", "был", "не был"];
-		
+
 		public static function addData($id_group, $date, $data)
 		{
 			$Schedule = GroupSchedule::find([
 				"condition" => "id_group=$id_group AND date='$date'"
 			]);
-			
+
 			$Group = Group::findById($id_group);
-			
+
 			foreach ($Group->students as $id_student)
 			{
 				$Student = Student::findById($id_student);
-				
+
 				// если админ, не отправлять смски
 				if (!isAdmin()) {
 					// если отсутствовал на занятии
@@ -32,10 +32,10 @@
 						foreach (Student::$_phone_fields as $phone_field) {
 							$representative_number = $Student->Representative->{$phone_field};
 							if (!empty($representative_number)) {
-								SMS::send($representative_number, $message, ["additional" => 3]);
+								SMS::send($representative_number, $message);
 							}
 						}
-					} else 
+					} else
 					// если отсутствовал на занятии
 					if ($data[$id_student]['late'] >= 15) {
 						$message = Template::get(6, [
@@ -48,12 +48,12 @@
 						foreach (Student::$_phone_fields as $phone_field) {
 							$representative_number = $Student->Representative->{$phone_field};
 							if (!empty($representative_number)) {
-								SMS::send($representative_number, $message, ["additional" => 3]);
+								SMS::send($representative_number, $message);
 							}
 						}
 					}
 				}
-				
+
 				self::add([
 					"id_entity" 			=> $id_student,
 					"type_entity"			=> Student::USER_TYPE,
@@ -75,7 +75,7 @@
 					"year"					=> static::_academicYear($date),
 				]);
 			}
-			
+
 			self::add([
 				"id_entity" 			=> $Group->id_teacher,
 				"type_entity"			=> Teacher::USER_TYPE,
@@ -135,18 +135,18 @@
 		{
 			return dbConnection()->query("SELECT id as c FROM visit_journal WHERE true AND id_group=$id_group GROUP BY lesson_date")->num_rows;
 		}
-		
+
 		public static function lessonPresent($id_group)
 		{
 			return self::find([
 				"condition" => "id_group=$id_group"
 			]);
 		}
-		
-				
+
+
 		/**
 		 * Коливество дней/недель/месяцев/лет с момента первого занятия
-		 * 
+		 *
 		 * @param string $mode (default: 'days')
 		 * $mode = days | weeks | months | years
 		 */
@@ -154,11 +154,11 @@
 		{
 			$today = time(); // or your date as well
 		    $first_lesson_date = self::find(["order" => "lesson_date ASC"])->lesson_date;
-			
+
 		    $first_lesson_date = strtotime($first_lesson_date);
-		    
+
 		    $datediff = $today - $first_lesson_date;
-			
+
 		    switch ($mode) {
 			    case 'days': {
 				    return ceil($datediff / (60 * 60 * 24));
@@ -174,11 +174,11 @@
 			    }
 		    }
 		}
-		
-		
+
+
 		/**
 		 * Получить ID преподавателей, которые сейчас ведут группы.
-		 * 
+		 *
 		 */
 		public function getTeacherIds()
 		{
@@ -187,13 +187,13 @@
 				WHERE id_teacher > 0
 				GROUP BY id_teacher
 			");
-			
+
 			$teacher_ids = [];
-			
+
 			while ($row = $result->fetch_object()) {
 				$teacher_ids[] = $row->id_teacher;
 			}
-			
+
 			return $teacher_ids;
 		}
 
@@ -223,13 +223,13 @@
             }
             return $group_ids;
         }
-        
-        
+
+
 		private static function _academicYear($date)
 		{
 			$year = date("Y", strtotime($date));
 			$day_month = date("m-d", strtotime($date));
-			
+
 			if ($day_month >= '01-01' && $day_month <= '07-15') {
 				$year--;
 			}

@@ -59,14 +59,14 @@ class SMS extends Model
 		return SMS::count(["condition" => self::applySearchFilters($search)]);
 	}
 	
-	public static function sendToNumbers($numbers, $message, $additional = []) {
+	public static function sendToNumbers($numbers, $message) {
 		foreach ($numbers as $number) {
-			self::send($number, $message, $additional);
+			self::send($number, $message);
 		}	
 	}
 	
 	
-	public static function send($to, $message, $additional = [])
+	public static function send($to, $message)
 	{
 		$to = explode(",", $to);
 		foreach ($to as $number) {
@@ -81,14 +81,14 @@ class SMS extends Model
 				"text"		=>	$message,
 				"from"      =>  "EGE-Centr",
 			);		
-			$result = self::exec("http://sms.ru/sms/send", $params, $additional);
+			$result = self::exec("http://sms.ru/sms/send", $params);
 		}
 		
 		
 		return $result;
 	}
 	
-	protected static function exec($url, $params, $additional = [])
+	protected static function exec($url, $params)
 	{
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
@@ -110,7 +110,7 @@ class SMS extends Model
 		];
 		
 		// создаем объект для истории
-		return SMS::add($info + $additional);		
+		return SMS::add($info);
 	}
 	
 	public function beforeSave()
@@ -131,9 +131,6 @@ class SMS extends Model
 			$this->user_login = "system";
 		}
 		$this->coordinates = $this->user_login. " ". dateFormat($this->date);
-		if ($this->additional) {
-			$this->coordinates .= " (массовая)";
-		}
 		
 		$this->coordinates .= '
 		<svg class="sms-status ' . ($this->id_status == 103 ? 'delivered' : ($this->id_status == 102 ? 'inway' : 'not-delivered') ) .'">

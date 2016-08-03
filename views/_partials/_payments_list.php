@@ -1,3 +1,5 @@
+<?= $student_page ? globalPartial("bill_print") : '' ?>
+
 <div class="form-group payment-line" style="margin-bottom: 40px;">
     <table class="table table-hover payments-table" style="font-size: 12px !important">
         <tr ng-repeat="payment in payments" <?= ($student_page ? 'ng-init="payment.Entity = student"' : '') ?>>
@@ -29,8 +31,11 @@
             <td class="col-sm-1">
                 <a class="link-like" ng-click="editPayment(payment)">редактировать</a>
             </td>
-            <td>
+            <td style="white-space: nowrap">
                 <a class="link-like" ng-click="deletePayment($index, payment)">удалить</a>
+                <?php if ($student_page) :?>
+                <a style='margin-left: 10px' class="link-like" ng-click="printBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета</a>
+                <?php endif ?>
             </td>
             <td class="col-sm-2">
                 {{payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}
