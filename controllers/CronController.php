@@ -191,7 +191,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-					SMS::send($message['number'], $message['message'], ["additional" => 3]);
+					SMS::send($message['number'], $message['message']);
 					$sent_to[] = $message['number'];
 
 					// debug
@@ -280,7 +280,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-					SMS::send($message['number'], $message['message'], ["additional" => 3]);
+					SMS::send($message['number'], $message['message']);
 //					$sent_to[] = $message['number'];
 
 					// debug
@@ -489,7 +489,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-					SMS::send($message['number'], $message['message'], ["additional" => 3]);
+					SMS::send($message['number'], $message['message']);
 					$sent_to[] = $message['number'];
 
 					// debug

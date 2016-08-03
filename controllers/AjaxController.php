@@ -348,16 +348,6 @@
 			Student::deleteById($id_student);
 		}
 
-		public function actionAjaxMinimizeStudent()
-		{
-			extract($_POST);
-
-			$Student = Student::findById($id_student);
-			$Student->minimized = $minimized;
-			$Student->save("minimized");
-		}
-
-
 		/**
 		 * Эта функция вынесена в отдельную функцию в isDuplicate (functions.php).
 		 *
@@ -407,7 +397,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
+					SMS::send($message['number'], $message['message']);
 					$sent_to[] = $message['number'];
 
 					// debug
@@ -496,7 +486,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
+					SMS::send($message['number'], $message['message']);
 					$sent_to[] = $message['number'];
 
 					// debug
@@ -505,18 +495,8 @@
 					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
 				}
 			}
-
 			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
-
-//			SMS::sendToNumbers($numbers, $message, $_POST + ["additional" => $additional]);
-
 			returnJSON(count($sent_to));
-/*
-			$SMS = SMS::send($number, $message);
-			$SMS->getCoordinates();
-
-			returnJSON($SMS);
-*/
 		}
 
 		public function actionAjaxSendGroupSmsClients()
@@ -576,7 +556,7 @@
 			$sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
-					SMS::send($message['number'], $message['message'], $_POST + ["additional" => 3]);
+					SMS::send($message['number'], $message['message']);
 					$sent_to[] = $message['number'];
 
 					// debug
@@ -620,7 +600,6 @@
 							$email[] = $Student->email;
 						}
 					}
-					$additional = 1;
 				}
 
 				if ($to_representatives == "true") {
@@ -631,15 +610,10 @@
 							}
 						}
 					}
-					// 0 if nothing selected
-					// 1 if only to students
-					// 2 if only to representatives
-					// 3 if to both
-					$additional += 2;
 				}
 			}
 
-			$Email = Email::send($email, $subject, $message, $files, $place, $id_place, $additional);
+			$Email = Email::send($email, $subject, $message, $files);
 			$Email->getCoordinates();
 
 			returnJSON($Email);
@@ -775,18 +749,6 @@
 			}
 
 			returnJsonAng($Students);
-		}
-
-		public function actionAjaxSmsCheckOk()
-		{
-			extract($_POST);
-			dbConnection()->query("UPDATE sms SET force_ok = 1 WHERE id=$id");
-		}
-
-		public function actionAjaxSmsCheckDelete()
-		{
-			extract($_POST);
-			dbConnection()->query("UPDATE sms SET force_ok = 0 WHERE id=$id");
 		}
 
 		public function actionAjaxLoadStatsSchedule()

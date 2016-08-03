@@ -30,7 +30,7 @@
 		            </div>
 		            <div class="form-group">
 			            <div class="input-group" ng-class="{'input-group-with-hidden-span': !emailFull(student.email)}">
-			                <input type="text"  placeholder="e-mail" class="form-control" name="Student[email]" ng-model="student.email">
+			                <input type="text"  placeholder="e-mail" class="form-control email" name="Student[email]" ng-model="student.email">
 			                <div class="input-group-btn">
 				                <button class="btn btn-default" ng-show="emailFull(student.email)" ng-click="emailDialog(student.email)">
 				                	<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
@@ -129,7 +129,7 @@
 		            </div>
 		            <div class="form-group">
 			            <div class="input-group" ng-class="{'input-group-with-hidden-span': !emailFull(representative.email)}">
-			                <input type="text" placeholder="e-mail" class="form-control" name="Representative[email]" ng-model="representative.email">
+			                <input type="text" placeholder="e-mail" class="form-control email" name="Representative[email]" ng-model="representative.email">
 								<div class="input-group-btn">
 					                <button class="btn btn-default" ng-show="emailFull(representative.email)" ng-click="emailDialog(representative.email)">
 					                	<span class="glyphicon glyphicon-envelope no-margin-right small"></span>

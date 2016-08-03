@@ -182,7 +182,7 @@
 					date: Schedule.date
 					id_group: $scope.Group.id
 					cabinet: Schedule.cabinet
-
+            
 			$scope.changeBranch = (Schedule) ->
 				$.post "groups/ajax/changeScheduleBranch",
 					date: Schedule.date
@@ -474,7 +474,12 @@
 
 			$scope.isOrangeBrick = (day, time) ->
 				current_index = $.inArray(time, $scope.weekdays[day - 1].schedule)
+            
+			$scope.changeYear = ->
+				$scope.updateGroup
+					year: $scope.Group.year
 
+            
 			$scope.changeCabinet = ->
 				return if not $scope.Group.id
 				$scope.reloadSmsNotificationStatuses()

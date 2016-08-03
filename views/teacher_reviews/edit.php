@@ -103,7 +103,7 @@
 						<input placeholder="подпись" class="watch-change form-control" maxlength="150" ng-model="RatingInfo.signature">
 					</div>
 					<div class="col-sm-1">
-						<input placeholder="балл" class="form-control digits-only watch-change" maxlength="3" ng-model="RatingInfo.code">
+						<input placeholder="балл" class="form-control digits-only watch-change" maxlength="3" ng-model="RatingInfo.score">
 					</div>
 				</div>
 			<?php endif ?>

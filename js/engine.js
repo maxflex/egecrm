@@ -6,6 +6,7 @@
 	var review_statuses = ['не опубликован', 'опубликован']
 	var test_statuses 	= ['заключительный', 'промежуточный']
 	var payments_hash	= 'cbcb58ac2e496207586df2854b17995f';
+// 	var payments_hash = '202cb962ac59075b964b07152d234b70';
 	
 	// Основной скрипт
 	$(document).ready(function() {
@@ -278,7 +279,6 @@
 			console.log("here");
 			data = {
 				"message": message.val().trim(),
-				"place": "GROUP",
 				"id_place": ang_scope.Group.id,
 				"to_students": ang_scope.to_students,
 				"to_representatives": ang_scope.to_representatives,
@@ -298,7 +298,6 @@
 			console.log("here");
 			data = {
 				"message": message.val().trim(),
-				"place": "CLIENTS",
 				"to_students": ang_scope.to_students,
 				"to_representatives": ang_scope.to_representatives,
 			};
@@ -440,7 +439,12 @@
 	function delayedCall(function_name) {
 		setTimeout(function_name(), 100)
 	}
-
+	
+	function validateEmail(email) {
+	    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    return re.test(email);
+	}
+	
 	/**
 	 * Переназначает маски для всех элементов, включая новые
 	 *
@@ -486,11 +490,7 @@
 			$(".digits-only-float").inputmask("Regex", {regex: "[0-9]*[.]?[0-9]+"});
 			$(".digits-only-minus").inputmask("Regex", {regex: "[-]?[0-9]*"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
-
-			// $(".bs-date input, input.bs-date").inputmask("Regex", {regex: "[0-9]{2}[.][0-9]{2}[.][0-9]{4}"});
-			$('.bs-date input, input.bs-date').inputmask('99.99.9999');
-
-
+			$('.bs-date input, .bs-date-top input, input.bs-date, input.bs-date-top').mask("99.99.9999", {clearIfNotMatch: true});
 			$.mask.definitions['H'] = "[0-2]";
 		    $.mask.definitions['h'] = "[0-9]";
 		    $.mask.definitions['M'] = "[0-5]";
