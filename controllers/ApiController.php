@@ -195,7 +195,7 @@
                                ]);
 			$result = dbConnection()->query("select avg(admin_rating_final) as cnt from teacher_reviews where id_teacher = {$tutor_id}");
 			$ec_review_avg = $result->fetch_assoc();
-			$ec_review_avg = $ec_review_avg['cnt'];
+			$ec_review_avg = floatval($ec_review_avg['cnt']);
 
 			returnJSON([
 				'ec_lesson_count' => $ec_lesson_count,
