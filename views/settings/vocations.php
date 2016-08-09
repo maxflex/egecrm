@@ -18,7 +18,7 @@
 			<div class="col-sm-5">
 				<div class="row calendar-row" ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]">
 					<div class="col-sm-4 month-name text-primary">
-						{{monthName(month)}} {{month == 1 ? "2016" : ""}}
+						{{monthName(month)}} {{month == 1 ? current_year + 1 : ""}}
 					</div>
 					<div class="col-sm-8">
 						<div class="calendar-month" month="{{month}}">
