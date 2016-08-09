@@ -16,10 +16,17 @@ angular.module "Settings", ["ui.bootstrap"]
 		$scope.saveExamDays = ->
 			ajaxStart()
 			$scope.adding = true
-			$.post "ajax/saveExamDays", {exam_days: $scope.exam_days}, (response) ->
+			$.post "ajax/saveExamDays", {exam_days: $scope.exam_days, year: $scope.current_year}, (response) ->
 				$scope.adding = false
 				$scope.$apply()
 				ajaxEnd()
+		
+		$scope.yearLabel = (year) ->
+			year + '-' + (parseInt(year) + 1) + ' уч. г.'
+		
+		$scope.setYear = (year) ->
+			$.cookie("current_year", year, { expires: 365, path: '/' })
+			redirect "settings/vocations?year=#{year}"
 		
 		$scope.getLine1 = (Schedule) ->
 			moment(Schedule.date).format "D MMMM YYYY г."

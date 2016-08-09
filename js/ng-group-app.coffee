@@ -232,8 +232,11 @@
 			$scope.getInitParams = (el) ->
 				month = parseInt $(el).attr "month"
 				# year = if month >= 8 then parseInt moment().format "YYYY" else moment().add(1, "years").format "YYYY"
-				year = if month >= 8 then parseInt moment().subtract(1, "years").format "YYYY" else moment().format "YYYY"
+				# year = if month >= 8 then parseInt moment().subtract(1, "years").format "YYYY" else moment().format "YYYY"
+				year = $scope.Group.year
+				year++ if month <=8
 				current_date = new Date "#{year}-#{month}-01"
+				console.log(current_date)
 				language: 'ru'
 				startDate: current_date
 				endDate: moment(current_date).endOf("month").toDate()

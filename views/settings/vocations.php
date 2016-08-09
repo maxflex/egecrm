@@ -7,7 +7,13 @@
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
-				
+		<div class="row mb">
+			<div class="col-sm-12">
+				<div class="top-links">
+					<span ng-repeat="year in <?= Years::json() ?>" class="link-like" ng-click="setYear(year)" ng-class="{'active': year == current_year}">{{ yearLabel(year) }}</span>
+			    </div>
+			</div>
+		</div>
 		<div class="row calendar">
 			<div class="col-sm-5">
 				<div class="row calendar-row" ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]">

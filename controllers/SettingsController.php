@@ -19,18 +19,21 @@
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 			
-			$id_group = $_GET['id'];		
+			$id_group 	= $_GET['id'];
+			$year		= Years::getCurrent();
 			
 			$Group = new Group([
-				"id" => 0,
+				"id" 	=> 0,
+				"year"	=> $year,
 			]);
 			
 			$Group->Schedule = $Group->getSchedule();
 			
 			$ang_init_data = angInit([
-				"Group" 	=> $Group,
-				"Subjects"	=> Subjects::$three_letters,
-				"exam_days" => ExamDay::getData(),
+				"Group" 		=> $Group,
+				"Subjects"		=> Subjects::$three_letters,
+				"current_year"	=> $year,
+				"exam_days" 	=> ExamDay::getData($year),
 			]);
 			
 			$this->render("vocations", [

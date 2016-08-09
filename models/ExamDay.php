@@ -15,9 +15,11 @@
 		}
 		
 		
-		public static function addData($data)
+		public static function addData($data, $year)
 		{
-			self::deleteAll();
+			self::deleteAll([
+				"condition" => "YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = " . ($year + 1),
+			]);
 			
 			foreach($data as $grade => $d) {
 				foreach($d as $id_subject => $d2) {
@@ -35,9 +37,11 @@
 			}
 		}
 		
-		public static function getData()
+		public static function getData($year)
 		{
-			$data = self::findAll();
+			$data = self::findAll([
+				"condition" => "YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = " . ($year + 1),
+			]);
 			
 			foreach($data as $d) {
 				$return[$d->grade][$d->id_subject][$d->letter] = $d->date;
@@ -49,7 +53,7 @@
 		public static function getExamDates($Group)
 		{
 			$data = self::findAll([
-				"condition" => "grade={$Group->grade}"
+				"condition" => "grade={$Group->grade} AND YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = " . ($Group->year + 1)
 			]);
 			
 			$return = [

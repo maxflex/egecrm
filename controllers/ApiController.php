@@ -183,25 +183,12 @@
 				//'loss_data' => $Teacher->loss_data
 			]);
 		}
-
+		
+		
 		public function actionTeacherStatistics()
 		{
 			extract($_POST);
-			$ec_lesson_count = VisitJournal::count([
-								    "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'"
-							   ]);
-			$ec_review_count = TeacherReview::count([
-                                    "condition" => "id_teacher = {$tutor_id}"
-                               ]);
-			$result = dbConnection()->query("select avg(admin_rating_final) as cnt from teacher_reviews where id_teacher = {$tutor_id}");
-			$ec_review_avg = $result->fetch_assoc();
-			$ec_review_avg = floatval($ec_review_avg['cnt']);
-
-			returnJSON([
-				'ec_lesson_count' => $ec_lesson_count,
-				'ec_review_count' => $ec_review_count,
-				'ec_review_avg' => $ec_review_avg,
-			]);
+			returnJSON(Teacher::stats($tutor_id));
 		}
 
 		############################################################################################

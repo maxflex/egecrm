@@ -203,6 +203,9 @@
 	    <span class="link-like" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}">
 	    	ОТЧЕТЫ
 	    </span>
+	    <span class="link-like" ng-click="setMenu(5)" ng-class="{'active': current_menu == 5}">
+	    	СТАТИСТИКА
+	    </span>
     </div>
     
 	<?= partial('groups') ?>
@@ -210,6 +213,7 @@
 	<?= partial('lessons') ?>
 	<?= partial('payments') ?>
 	<?= partial('reports') ?>
+	<?= partial('stats') ?>
 
 
 

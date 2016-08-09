@@ -20,12 +20,23 @@ angular.module("Settings", ["ui.bootstrap"]).filter('to_trusted', [
     ajaxStart();
     $scope.adding = true;
     return $.post("ajax/saveExamDays", {
-      exam_days: $scope.exam_days
+      exam_days: $scope.exam_days,
+      year: $scope.current_year
     }, function(response) {
       $scope.adding = false;
       $scope.$apply();
       return ajaxEnd();
     });
+  };
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
+  $scope.setYear = function(year) {
+    $.cookie("current_year", year, {
+      expires: 365,
+      path: '/'
+    });
+    return redirect("settings/vocations?year=" + year);
   };
   $scope.getLine1 = function(Schedule) {
     return moment(Schedule.date).format("D MMMM YYYY г.");

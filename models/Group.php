@@ -287,7 +287,8 @@
 		public function getSchedule($withoutCancelled=false)
 		{
 			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id.($withoutCancelled ? ' AND cancelled = 0 ' : ''),
+				"condition" => "date >= '{$this->year}-09-01' AND date <= '" . ($this->year + 1) . "-08-31' 
+									AND id_group=".$this->id.($withoutCancelled ? ' AND cancelled = 0 ' : ''),
 				"order"		=> "date ASC, time ASC",
 			]);
 

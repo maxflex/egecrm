@@ -129,10 +129,6 @@
 				"order" => "last_name ASC",
 			]);
 
-            foreach ($Teachers as $Teacher) {
-                $Teacher->calcHoldCoeff(['fact_lesson_cnt' => true]);
-            }
-
             $ang_init_data = angInit([
 				"Teachers" 		=> $Teachers,
 				"three_letters"	=> Subjects::$three_letters,
@@ -207,6 +203,40 @@
 				}
 				case 4: {
 					returnJsonAng(Teacher::getReportsStatic($id_teacher));
+				}
+				case 5: {
+					$Teacher = Teacher::findById($id_teacher);
+					$Stats = Teacher::stats($id_teacher);
+					
+					$Stats['clients_count'] = dbEgerep()->query("SELECT COUNT(*) AS cnt FROM attachments WHERE tutor_id=" . $id_teacher)->fetch_object()->cnt;
+					$Stats['er_review_count'] = dbEgerep()->query("
+						SELECT COUNT(*) AS cnt FROM reviews r
+						JOIN attachments a ON a.id = r.attachment_id
+						WHERE a.tutor_id={$id_teacher} AND r.score < 11 AND r.score > 0
+					")->fetch_object()->cnt;
+					
+					$review_score_sum = dbEgerep()->query("
+						SELECT SUM(r.score) AS sm FROM reviews r
+						JOIN attachments a ON a.id = r.attachment_id
+						WHERE a.tutor_id={$id_teacher} AND r.score < 11 AND r.score > 0
+					")->fetch_object()->sm;
+					
+			        switch($Teacher->js) {
+			            case 10: {
+			                $js = 8;
+			                break;
+			            }
+			            case 8: {
+			                $js = 10;
+			                break;
+			            }
+			            default: {
+			                $js = $Teacher->js;
+			            }
+			        }
+			
+			        $Stats['er_review_avg'] = (4* (($Teacher->lk + $Teacher->tb + $js) / 3) + $review_score_sum)/(4 + $Stats['er_review_count']);
+					returnJsonAng($Stats);
 				}
 			}
 		}

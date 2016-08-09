@@ -45,7 +45,7 @@
 		.controller "EditCtrl", ($scope, $timeout, $http) ->
 			$scope.enum = review_statuses
 			
-			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports']
+			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats']
 			
 			$scope.setMenu = (menu) ->
 				$.each menus, (index, value) ->

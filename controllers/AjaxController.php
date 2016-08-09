@@ -19,7 +19,7 @@
 		{
 			extract($_POST);
 
-			ExamDay::addData($exam_days);
+			ExamDay::addData($exam_days, $year);
 		}
 
 		public function actionAjaxContinueSession()

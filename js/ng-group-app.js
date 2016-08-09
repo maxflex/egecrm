@@ -284,8 +284,12 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   $scope.getInitParams = function(el) {
     var current_date, month, year;
     month = parseInt($(el).attr("month"));
-    year = month >= 8 ? parseInt(moment().subtract(1, "years").format("YYYY")) : moment().format("YYYY");
+    year = $scope.Group.year;
+    if (month <= 8) {
+      year++;
+    }
     current_date = new Date(year + "-" + month + "-01");
+    console.log(current_date);
     return {
       language: 'ru',
       startDate: current_date,

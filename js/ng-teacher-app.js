@@ -56,7 +56,7 @@ angular.module("Teacher", ["ngMap"]).config([
 }).controller("EditCtrl", function($scope, $timeout, $http) {
   var _loadData, _postData, bindFileUpload, menus;
   $scope["enum"] = review_statuses;
-  menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports'];
+  menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats'];
   $scope.setMenu = function(menu) {
     $.each(menus, function(index, value) {
       return _loadData(index, menu, value);
@@ -153,9 +153,9 @@ angular.module("Teacher", ["ngMap"]).config([
       title: 'Введите пароль',
       className: 'modal-password',
       callback: function(result) {
-        if (result === '363') {
+        if (hex_md5(result === payments_hash)) {
           payment.confirmed = payment.confirmed ? 0 : 1;
-          $.post('ajax/confirmTeacherPayment', {
+          $.post('ajax/confirmPayment', {
             id: payment.id,
             confirmed: payment.confirmed
           });
@@ -189,7 +189,7 @@ angular.module("Teacher", ["ngMap"]).config([
       title: 'Введите пароль',
       className: 'modal-password',
       callback: function(result) {
-        if (result === '363') {
+        if (hex_md5(result === payments_hash)) {
           $scope.new_payment = angular.copy(payment);
           $scope.$apply();
           lightBoxShow('addpayment');
@@ -252,16 +252,23 @@ angular.module("Teacher", ["ngMap"]).config([
     });
   };
   $scope.addPayment = function() {
-    var payment_date, payment_select, payment_sum, payment_type;
+    var payment_card, payment_date, payment_select, payment_sum, payment_type;
     payment_date = $('#payment-date');
     payment_sum = $('#payment-sum');
     payment_select = $('#payment-select');
     payment_type = $('#paymenttypes-select');
+    payment_card = $('#payment-card');
     if (!$scope.new_payment.id_status) {
       payment_select.focus().parent().addClass('has-error');
       return;
     } else {
-      payment_select.parent().removeClass('has-error');
+      if (parseInt($scope.new_payment.id_status) === 1 && !$scope.new_payment.card_number) {
+        payment_card.focus().addClass('has-error');
+        return;
+      } else {
+        payment_select.parent().removeClass('has-error');
+        payment_card.removeClass('has-error');
+      }
     }
     if (!$scope.new_payment.sum) {
       payment_sum.focus().parent().addClass('has-error');
@@ -276,8 +283,9 @@ angular.module("Teacher", ["ngMap"]).config([
       payment_date.parent().removeClass('has-error');
     }
     if ($scope.new_payment.id) {
+      $scope.new_payment.entity_type = 'TEACHER';
       ajaxStart();
-      $.post('ajax/TeacherPaymentEdit', $scope.new_payment, function(response) {
+      $.post('ajax/PaymentEdit', $scope.new_payment, function(response) {
         angular.forEach($scope.payments, function(payment, i) {
           if (payment.id === $scope.new_payment.id) {
             $scope.payments[i] = $scope.new_payment;
@@ -290,10 +298,12 @@ angular.module("Teacher", ["ngMap"]).config([
     } else {
       $scope.new_payment.user_login = $scope.user.login;
       $scope.new_payment.first_save_date = moment().format('YYYY-MM-DD HH:mm:ss');
-      $scope.new_payment.id_teacher = $scope.Teacher.id;
+      $scope.new_payment.entity_id = $scope.Teacher.id;
+      $scope.new_payment.entity_type = 'TEACHER';
+      $scope.new_payment.id_type = 1;
       $scope.new_payment.id_user = $scope.user.id;
       ajaxStart();
-      $.post('ajax/TeacherPaymentAdd', $scope.new_payment, function(response) {
+      $.post('ajax/PaymentAdd', $scope.new_payment, function(response) {
         $scope.new_payment.id = response;
         $scope.payments = initIfNotSet($scope.payments);
         $scope.payments.push($scope.new_payment);
@@ -311,7 +321,7 @@ angular.module("Teacher", ["ngMap"]).config([
       bootbox.confirm('Вы уверены, что хотите удалить платеж?', function(result) {
         if (result === true) {
           console.log(index);
-          $.post('ajax/deleteTeacherPayment', {
+          $.post('ajax/deletePayment', {
             'id_payment': payment.id
           });
           $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
@@ -325,7 +335,7 @@ angular.module("Teacher", ["ngMap"]).config([
         title: 'Введите пароль',
         className: 'modal-password',
         callback: function(result) {
-          if (result === '363') {
+          if (hex_md5(result === payments_hash)) {
             bootbox.confirm('Вы уверены, что хотите удалить платеж?', function(result) {
               if (result === true) {
                 $.post('ajax/deletePayment', {
