@@ -5,19 +5,19 @@
 		<table class="table table-hover" style="margin: 0">
 			<tr ng-repeat="Test in Tests">
 				<td width="220">
-					{{Test.name}}
+					{{Test.Test.name}}
 				</td>
 				<td width="150">
 					{{ getTestStatus(Test) }}
 				</td>
 				<td>
-					<span ng-show="Test.inProgress">в процессе, осталось {{ timeLeft(Test) }}</span>
+					<span ng-show="Test.inProgress">в процессе, осталось {{ timeLeft(Test, Test.Test) }}</span>
 					<span ng-show="Test.isFinished">тест пройден {{ formatTestDate(Test) }}</span>
 				</td>
 				<td>
 					<div ng-show='testDisplay(Test)'>
 						<span ng-repeat="Problem in Test.Test.Problems">
-							<span class="circle-default {{ getStudentAnswer(Problem, Test) }}" title="{{ getTestHint(Problem, Test) }}"></span>
+							<span class="circle-default {{ getStudentAnswer(Problem, Test) !== undefined ? 'circle-dark-gray' : 'circle-gray' }}" title="{{ getTestHint(Problem, Test) }}"></span>
 						</span>
 					</div>
 				</td>

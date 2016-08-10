@@ -12,13 +12,13 @@
 		            </label>
 			    </td>
 			    <td width="220">
-				    <a href="tests/edit/{{Test.id}}" target="_blank">{{Test.name}}</a>
+				    {{Test.name}}
 			    </td>
 			    <td width="120">
 			    	<span ng-show="Test.checked" class="link-like-nocolor text-gray" ng-click="toggleTestStatus(_StudentTest || Test)">{{ getTestStatus(_StudentTest || Test) }}</span>
 			    </td>
 				<td>
-					<span ng-show="_StudentTest.inProgress">в процессе, осталось {{ timeLeft(_StudentTest) }}</span>
+					<span ng-show="_StudentTest.inProgress">в процессе, осталось {{ timeLeft(_StudentTest, Test) }}</span>
 					<span ng-show="_StudentTest.isFinished">тест пройден {{ formatTestDate(_StudentTest) }}</span>
 				</td>
 				<td>

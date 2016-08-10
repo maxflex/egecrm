@@ -262,10 +262,17 @@
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
 				
-				$scope.timeLeft = function(StudentTest) {
-					if (StudentTest) {
-						timestamp_end = moment(StudentTest.date_start).add(30, 'minutes').unix()
-						return moment({}).seconds(timestamp_end - moment().unix()).format("mm:ss")
+				$scope.timeLeft = function(StudentTest, Test) {
+					if (StudentTest && StudentTest.inProgress) {
+						timestamp_end = moment(StudentTest.date_start).add(Test.minutes, 'minutes').unix()
+						seconds = timestamp_end - moment().unix()
+						if (seconds > 0) {
+							return moment({}).seconds(seconds).format("mm:ss")
+						} else {
+							// Test = _.find($scope.StudentTests, {id: StudentTest.id})
+							// Test.isFinished = true
+							// $scope.Tests = angular.copy($scope.Tests)
+						}
 					}
 				}
 				
@@ -306,7 +313,7 @@
 				}
 				
 				$scope.getStudentAnswer = function(Problem, StudentTest) {
-					if (StudentTest && StudentTest.answers && StudentTest.answers[Problem.id]) {
+					if (StudentTest && StudentTest.answers && StudentTest.answers[Problem.id] !== undefined) {
 						if (StudentTest.answers[Problem.id] == Problem.correct_answer) {
 							return ""
 						} else {
@@ -1808,6 +1815,11 @@
 						})
 						$scope.$apply()
 					}, "json")
+					$scope.tests_interval = setInterval(function() {
+						$scope.$apply()
+					}, 1000)
+			    } else {
+				    clearInterval($scope.tests_interval)
 			    }
 			    $scope.current_menu = menu
 		    }

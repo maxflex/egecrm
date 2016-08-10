@@ -13,6 +13,13 @@
     //            ini_set("display_errors", 1);
     //            error_reporting(E_ALL);
     //        }
+    
+    
+		public function actionTest()
+		{
+			$t = TestStudent::findById(30);
+			var_dump($t);
+		}
 
 		/**
 		 * слияние таблиц Payments

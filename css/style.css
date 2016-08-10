@@ -1014,6 +1014,8 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   background: #5cb85c;
   top: .5px;
   position: relative; }
+  .day-explain.circle-dark-gray, .circle-default.circle-dark-gray {
+    background: rgba(10, 10, 10, 0.63) !important; }
   .day-explain.circle-future, .circle-default.circle-future {
     background: #999999;
     cursor: pointer; }

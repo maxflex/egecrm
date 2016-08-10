@@ -2,7 +2,7 @@
 	<div class="panel-heading">
 		{{ Test.name }}
 		<div class="pull-right">
-			время на выполнение: 30:00
+			время на выполнение: {{Test.minutes}}:00
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">

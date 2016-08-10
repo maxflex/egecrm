@@ -8,6 +8,9 @@
 	</div>
 	<div class="panel-body" style="position: relative">
 		<div ng-show="notFinished()">
+			<div style="text-align: center">
+				<span style="margin: 0 5px 15px 0" ng-repeat="Problem in Test.Problems" class="pointer circle-default {{ server_answers[Problem.id] !== undefined ? 'circle-dark-gray' : 'circle-gray' }}" ng-click="setProblem($index)"></span>
+			</div>
 			<div class="row" style="margin-bottom: 15px">
 				<div class="col-sm-12" style="margin-bottom: 30px">
 					<div ng-bind-html="Problem.problem | unsafe"></div>
@@ -24,11 +27,9 @@
 			</div>
 			
 			<div class="row">
-				<div class="col-sm-4">
-					<span style="top: 7px; position: relative" class="link-like-nocolor link-reverse text-gray" 
-						ng-click="prevProblem()" ng-show='current_problem > 0'>предыдущее задание</span>
-				</div>
-				<div class="col-sm-4 center">
+				<div class="col-sm-12 center">
+					<button class="btn btn-default" style="width: 200px"
+						ng-click="prevProblem()" ng-show='current_problem > 0'>предыдущее задание</button>
 					<button class="btn {{ ((1 * current_problem) + 1) < Test.Problems.length ? 'btn-primary' : 'btn-success' }}" ng-click="nextProblem()" ng-disabled="finishing" style="width: 200px">
 						<span ng-show='((1 * current_problem) + 1) < Test.Problems.length'>следующее задание</span>
 						<span ng-show='((1 * current_problem) + 1) >= Test.Problems.length'>завершить тест</span>

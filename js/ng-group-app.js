@@ -1659,4 +1659,8 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     }, 25);
     return frontendLoadingEnd();
   });
+}).controller("StudentListCtrl", function($scope) {
+  return console.log('init');
+}).controller("TeacherListCtrl", function($scope) {
+  return console.log('init');
 });

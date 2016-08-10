@@ -84,17 +84,18 @@
 	{
 		public static $mysql_table	= "test_students";
 		
-		protected $_serialized = ['answers'];
+		protected $_json = ['answers'];
 				
 		public function __construct($array)
 		{
 			parent::__construct($array);
 			
 			if (! $this->isNewRecord) {
+				$this->Test = Test::findById($this->id_test);
 				$this->isFinished = $this->finished();
 				$this->inProgress = $this->inProgress();
 				$this->final_score = $this->finalScoreString();
-				$this->name = Test::findById($this->id_test)->name;
+			//	$this->name = Test::findById($this->id_test)->name;
 			}
 		}
 		
@@ -141,9 +142,7 @@
 		public function finish()
 		{
 			$score = 0;
-			$answers = TestStudent::getAnswers($this->id_test);
-			
-			foreach($answers as $id_problem => $answer) {
+			foreach($this->answers as $id_problem => $answer) {
 				$Problem = TestProblem::findById($id_problem);
 				if ($Problem->correct_answer == $answer) {
 					$score += $Problem->score;
@@ -167,6 +166,6 @@
 		
 		private function _finished() {
 			// если неактивен в течение 2х часов, то завершен
-			return ($this->date_finish != EMPTY_DATETIME || (time() - strtotime($this->date_start)) > (1800));
+			return ($this->date_finish != EMPTY_DATETIME || (time() - strtotime($this->date_start)) > (60 * $this->Test->minutes));
 		}
 	}

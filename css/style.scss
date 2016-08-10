@@ -1154,6 +1154,9 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 //     top: 2px;
 	top: .5px;
     position: relative;
+    &.circle-dark-gray {
+	    background: rgba(10, 10, 10, 0.63) !important;
+    }
     &.circle-future {
 	    background: #999999;
 	//    opacity: .5;

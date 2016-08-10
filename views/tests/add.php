@@ -12,6 +12,16 @@
 			<div class="col-sm-4">
 				<input class="form-control" placeholder="название теста" ng-model="Test.name">
 			</div>
+			<div class="col-sm-3">
+				<div class="form-group" style="position: relative">
+					<input class="form-control digits-only" ng-model="Test.minutes">
+					<span style="left: 42px" class="inside-input" ng-show="Test.minutes">– <ng-pluralize count="Test.minutes" when="{
+	                    'one': 'минута',
+	                    'few': 'минуты',
+	                    'many': 'минут',
+	                }"></ng-pluralize> на выполнение</span>
+				</div>
+			</div>
 		</div>
 		<div class="row" style="margin-bottom: 15px">
 			<div class="col-sm-12">

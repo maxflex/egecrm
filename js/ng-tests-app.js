@@ -15,13 +15,14 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
   $timeout(function() {
     if ($scope.final_score === void 0) {
       $scope.interval = $interval(function() {
-        return $scope.time--;
+        $scope.time--;
+        console.log($scope.time);
+        if ($scope.time <= 0) {
+          return finishTest();
+        }
       }, 1000);
     }
-    $scope.current_problem = localStorage.getItem("current_problem_" + $scope.Test.id);
-    if ($scope.current_problem === null) {
-      return $scope.current_problem = 0;
-    }
+    return $scope.current_problem = 0;
   });
   $scope.counter = function() {
     return moment({}).seconds($scope.time).format("mm:ss");
@@ -38,10 +39,16 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
     saveAnswers();
     return $scope.current_problem--;
   };
+  $scope.setProblem = function(index) {
+    return $scope.current_problem = index;
+  };
   saveAnswers = function() {
     return $.post("tests/ajaxSaveAnswers", {
       id: $scope.Test.id,
       answers: $scope.answers
+    }, function(response) {
+      $scope.server_answers = angular.copy($scope.answers);
+      return $scope.$apply();
     });
   };
   finishTest = function() {
@@ -60,7 +67,6 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
   };
   $scope.$watch('current_problem', function(newVal) {
     if (newVal !== void 0) {
-      localStorage.setItem("current_problem_" + $scope.Test.id, newVal);
       return $scope.Problem = $scope.Test.Problems[newVal];
     }
   });
@@ -74,29 +80,42 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
   $scope.getTestStatus = function(Test) {
     return test_statuses[Test.intermediate];
   };
-  $scope.timeLeft = function(StudentTest) {
-    var timestamp_end;
-    timestamp_end = moment(StudentTest.date_start).add(30, 'minutes').unix();
-    return moment({}).seconds(timestamp_end - moment().unix()).format("mm:ss");
+  $scope.timeLeft = function(StudentTest, Test) {
+    var seconds, timestamp_end;
+    timestamp_end = moment(StudentTest.date_start).add(Test.minutes, 'minutes').unix();
+    seconds = timestamp_end - moment().unix();
+    return moment({}).seconds(seconds).format("mm:ss");
   };
+  setInterval(function() {
+    return $scope.$apply();
+  }, 1000);
   $scope.testDisplay = function(StudentTest) {
     return StudentTest.isFinished || StudentTest.inProgress;
   };
   $scope.getStudentAnswer = function(Problem, StudentTest) {
-    if (StudentTest.answers && StudentTest.answers[Problem.id]) {
+    if (StudentTest.answers && StudentTest.answers[Problem.id] !== void 0) {
       if (StudentTest.answers[Problem.id] === Problem.correct_answer) {
-        return "";
+        return true;
       } else {
-        return "circle-red";
+        return false;
       }
     }
-    return "circle-gray";
+    return void 0;
+  };
+  $scope.getTestHint = function(Problem, StudentTest) {
+    var answer;
+    answer = $scope.getStudentAnswer(Problem, StudentTest);
+    if (answer !== void 0) {
+      return 'ответ установлен';
+    } else {
+      return 'ответ не установлен';
+    }
   };
   $scope.getCurrentScore = function(Test, StudentTest) {
     var count;
     count = 0;
     $.each(Test.Problems, function(index, Problem) {
-      if (!$scope.getStudentAnswer(Problem, StudentTest)) {
+      if ($scope.getStudentAnswer(Problem, StudentTest)) {
         return count += Problem.score;
       }
     });

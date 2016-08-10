@@ -16,6 +16,8 @@
 
 		// Если есть сериализованные данные в БД, то указать здесь для авто сериализации/ансериализации
 		protected $_serialized = array();
+		// Если есть JSON данные в БД, то указать здесь для авто decode/encode
+		protected $_json = array();
 
 		// Числа через запятую, для хранения чекбоксов и других значений ( строка "1, 2, 5" => array (1, 2, 5))
 		protected $_inline_data = array();
@@ -62,6 +64,18 @@
 					// Поэтому если тип $this->{$serialized_field} уже массив, то ничего разселиализовывать не нужно
 					if (!is_array($this->{$serialized_field})) {
 						$this->{$serialized_field} = unserialize($this->{$serialized_field});
+					}
+				}
+			}
+			
+			// Если есть json
+			if (count($this->_json)) {
+				foreach ($this->_json as $json_field) {
+					// При создании нового объекта может передаваться уже нормальный unserialized массив,
+					// если создавать объект класса вручную через new ClassName(array(social => array(...))
+					// Поэтому если тип $this->{$serialized_field} уже массив, то ничего разселиализовывать не нужно
+					if (!is_array($this->{$json_field})) {
+						$this->{$json_field} = json_decode($this->{$json_field});
 					}
 				}
 			}
@@ -362,6 +376,8 @@
 				 		// Если текущее поле в формате serialize
 				 		if (in_array($field, $this->_serialized)) {
 					 		$values[]	= "'".serialize($this->{$field})."'";		// Сериализуем значение обратно
+					 	} else if (in_array($field, $this->_json)) {
+						 	$values[]	= "'".json_encode($this->{$field})."'";		// Сериализуем значение обратно
 				 		} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
 					 		$values[]	= "'".implode(",", $this->{$field})."'";		// inline-данные назад в строку
 					 	} else {
@@ -397,6 +413,8 @@
 					// Если текущее поле в формате serialize
 				 	if (in_array($single_field, $this->_serialized)) {
 				 		$query[] = $single_field." = '".serialize($this->{$single_field})."'";	// Сериализуем значение
+				 	} else if (in_array($single_field, $this->_json)) {
+					 	$query[] = $single_field." = '".json_encode($this->{$single_field})."'";	// Сериализуем значение
 				 	} else if (in_array($single_field, $this->_inline_data) && is_array($this->{$single_field})) {
 				 		$query[] = $single_field." = '".implode(",", $this->{$single_field})."'";	// Превращаем в строку
 				 	} else {
@@ -413,6 +431,8 @@
 				 		// Если текущее поле в формате serialize
 					 	if (in_array($field, $this->_serialized)) {
 					 		$query[] = $field." = '".serialize($this->{$field})."'";	// Сериализуем значение
+					 	} else if (in_array($field, $this->_json)) {
+						 	$query[] = $field." = '".json_encode($this->{$field})."'";	// Сериализуем значение
 					 	} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
 					 		$query[] = $field." = '".implode(",", $this->{$field})."'";	// Превращаем в строку
 					 	} else {
