@@ -131,6 +131,7 @@ RewriteRule students/tests[/]?$ index.php?controller=tests&action=StudentList [Q
 RewriteRule ^students/tests/intro/([0-9]+)[/]?$ index.php?controller=tests&action=intro&id=$1 [QSA,L]
 RewriteRule ^students/tests/start/([0-9]+)[/]?$ index.php?controller=tests&action=start&id=$1 [QSA,L]
 RewriteRule tests[/]?$ index.php?controller=tests [QSA,L]
+RewriteRule tests/students[/]?[?page=(0-9)]?$ index.php?controller=tests&action=studentTests&page=$1 [QSA,L]
 RewriteRule tests/create[/]?$ index.php?controller=tests&action=create [QSA,L]
 RewriteRule ^tests/edit/([0-9]+)[/]?$ index.php?controller=tests&action=edit&id=$1 [QSA,L]
 RewriteRule ^tests/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=$1 [QSA,L]
