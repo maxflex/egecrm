@@ -1350,3 +1350,7 @@
 					$scope.$apply()
 				, 25
 				frontendLoadingEnd()
+		.controller "StudentListCtrl", ($scope) ->
+			console.log 'init'
+		.controller "TeacherListCtrl", ($scope) ->
+			console.log 'init'

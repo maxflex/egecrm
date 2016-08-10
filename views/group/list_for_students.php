@@ -1,4 +1,4 @@
-<div ng-app="Group" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
+<div ng-app="Group" ng-controller="StudentListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
 			
