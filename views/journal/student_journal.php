@@ -21,7 +21,7 @@
 <div class="row" ng-show="Journal.length > 0">
     <div class="col-sm-12">
 		<div ng-repeat="id_group in getJournalGroups()" class="visit-div">
-			 <div class="visit-div-group">
+			<div class="visit-div-group">
 				<a ng-show="inActiveGroup(id_group)" href="students/groups/edit/{{id_group}}/schedule">Группа №{{id_group}}</a>
 				<span ng-show="!inActiveGroup(id_group)">Группа №{{id_group}}</span>
 			</div>
@@ -34,7 +34,7 @@
 					'circle-orange'	: Visit.presence == 1 && Visit.late > 0
 				}"></span>
 			 </div>
-			 <div ng-repeat="Visit in getGroup(id_group).Schedule" class="visit-div-circle default">
+			 <div ng-repeat="Visit in getGroup(id_group).Schedule" ng-if="!Visit.was_lesson" class="visit-div-circle default">
 				 <span class="circle-default circle-future default" title="{{formatVisitDate(Visit.date)}}"></span>
 			 </div>
 		 </div>
