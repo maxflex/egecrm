@@ -13,7 +13,12 @@
 				$this->Problems[] = TestProblem::getEmpty();
 			} else {
 				$this->Problems = TestProblem::findByTest($this->id);
-				$this->name = !empty($this->name) ? $this->name : 'Тест №' . $this->id; 
+				$this->name = !empty($this->name) ? $this->name : 'Тест №' . $this->id;
+				$this->max_score = Test::getMaxScore($this->id);
+			}
+			
+			if (! $this->intro) {
+				$this->intro = 'вступительное описание';
 			}
 		}
 		
@@ -79,6 +84,7 @@
 	{
 		public static $mysql_table	= "test_students";
 		
+		protected $_serialized = ['answers'];
 				
 		public function __construct($array)
 		{
@@ -88,7 +94,7 @@
 				$this->isFinished = $this->finished();
 				$this->inProgress = $this->inProgress();
 				$this->final_score = $this->finalScoreString();
-				$this->name = Test::findById($this->id_test)->name; 
+				$this->name = Test::findById($this->id_test)->name;
 			}
 		}
 		
@@ -127,11 +133,6 @@
 			$this->save('date_start');
 		}
 		
-		static function getAnswers($id)
-		{
-			return (object)json_decode($_COOKIE["answers{$id}"]);
-		}
-		
 		function finalScoreString()
 		{
 			return $this->score . "/" . Test::getMaxScore($this->id_test);
@@ -166,6 +167,6 @@
 		
 		private function _finished() {
 			// если неактивен в течение 2х часов, то завершен
-			return ($this->date_finish != EMPTY_DATETIME || (time() - strtotime($this->date_start)) > (2 * 3600));
+			return ($this->date_finish != EMPTY_DATETIME || (time() - strtotime($this->date_start)) > (1800));
 		}
 	}

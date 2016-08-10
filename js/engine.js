@@ -4,7 +4,7 @@
 	var email_uploaded_file_id = 1;
 	
 	var review_statuses = ['не опубликован', 'опубликован']
-	var test_statuses 	= ['заключительный', 'промежуточный']
+	var test_statuses 	= ['вступительный', 'промежуточный']
 	var payments_hash	= 'cbcb58ac2e496207586df2854b17995f';
 // 	var payments_hash = '202cb962ac59075b964b07152d234b70';
 	

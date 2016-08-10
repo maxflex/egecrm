@@ -261,6 +261,71 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
+				
+				$scope.timeLeft = function(StudentTest) {
+					if (StudentTest) {
+						timestamp_end = moment(StudentTest.date_start).add(30, 'minutes').unix()
+						return moment({}).seconds(timestamp_end - moment().unix()).format("mm:ss")
+					}
+				}
+				
+				$scope.formatTestDate = function(StudentTest) {
+					if (StudentTest) {
+						return moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')	
+					}
+				}
+				
+				$scope.getTestHint = function(Problem, StudentTest) {
+					answer = $scope.getStudentAnswer(Problem, StudentTest)
+					switch(answer) {
+						case 'circle-red': {
+							return 'ответ неверный'
+						}
+						case 'circle-gray': {
+							return 'ответ не указан'
+						}
+						default: {
+							return 'ответ верный, ' + Problem.score + ' баллов'
+						}
+					}
+				}
+				
+				$scope.deleteTest = function(StudentTest) {
+					$.post("tests/ajaxDeleteStudentTest", {id: StudentTest.id}, function() {
+						$scope.StudentTests = _.reject($scope.StudentTests, function(e) {
+							return e.id == StudentTest.id
+						})
+						$scope.Tests = angular.copy($scope.Tests)
+						$scope.$apply()
+					})
+
+				}
+				
+				$scope.testDisplay = function(StudentTest) {
+					return (StudentTest && (StudentTest.isFinished || StudentTest.inProgress))
+				}
+				
+				$scope.getStudentAnswer = function(Problem, StudentTest) {
+					if (StudentTest && StudentTest.answers && StudentTest.answers[Problem.id]) {
+						if (StudentTest.answers[Problem.id] == Problem.correct_answer) {
+							return ""
+						} else {
+							return "circle-red"
+						}
+					}
+					return "circle-gray";
+				}
+				
+				$scope.getCurrentScore = function(Test, StudentTest) {
+					count = 0
+					$.each(Test.Problems, function(index, Problem) {
+						if (! $scope.getStudentAnswer(Problem, StudentTest)) {
+							count += Problem.score
+						}
+					})
+					return count
+				}
+				
 				$scope.toggleUser = function() {
 						new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
 						$.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){

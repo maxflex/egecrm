@@ -3,7 +3,7 @@
 		<span ng-show='current_problem >= 0 && notFinished()'>Вопрос {{ (current_problem * 1) + 1}} из {{ Test.Problems.length }}</span>
 		<span class="ng-hide" ng-show='!notFinished()'>Тест завершен</span>
 		<div class="pull-right">
-			время выполнения: {{ counter() }}
+			осталось времени: {{ counter() }}
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
@@ -29,9 +29,9 @@
 						ng-click="prevProblem()" ng-show='current_problem > 0'>предыдущее задание</span>
 				</div>
 				<div class="col-sm-4 center">
-					<button class="btn {{ (current_problem + 1) < Test.Problems.length ? 'btn-primary' : 'btn-success' }}" ng-click="nextProblem()" ng-disabled="finishing" style="width: 200px">
-						<span ng-show='(current_problem + 1) < Test.Problems.length'>следующее задание</span>
-						<span ng-show='(current_problem + 1) >= Test.Problems.length'>завершить тест</span>
+					<button class="btn {{ ((1 * current_problem) + 1) < Test.Problems.length ? 'btn-primary' : 'btn-success' }}" ng-click="nextProblem()" ng-disabled="finishing" style="width: 200px">
+						<span ng-show='((1 * current_problem) + 1) < Test.Problems.length'>следующее задание</span>
+						<span ng-show='((1 * current_problem) + 1) >= Test.Problems.length'>завершить тест</span>
 					</button>
 				</div>
 			</div>

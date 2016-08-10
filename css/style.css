@@ -1063,7 +1063,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     background-color: orange !important; }
   .day-explain.exam-day-subject, .circle-default.exam-day-subject {
     background-color: #9954bb !important; }
-  .day-explain.cancelled, .day-explain.circle-cancelled, .circle-default.cancelled, .circle-default.circle-cancelled {
+  .day-explain.cancelled, .day-explain.circle-cancelled, .day-explain.circle-gray, .circle-default.cancelled, .circle-default.circle-cancelled, .circle-default.circle-gray {
     background-color: rgba(0, 0, 0, 0.25) !important; }
 
 #calendar-app thead tr:nth-child(1) {

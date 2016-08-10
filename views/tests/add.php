@@ -13,6 +13,11 @@
 				<input class="form-control" placeholder="название теста" ng-model="Test.name">
 			</div>
 		</div>
+		<div class="row" style="margin-bottom: 15px">
+			<div class="col-sm-12">
+				<div ng-bind-html="Test.intro | unsafe" ng-click="editIntro()" name="test-intro"></div>
+			</div>
+		</div>
 		<div class="row" ng-repeat="Problem in Test.Problems track by $index" style="margin-bottom: 15px">
 			<div class="col-sm-12">
 				<div class="task">

@@ -11,7 +11,7 @@
 			$timeout ->
 				if $scope.final_score is undefined
 					$scope.interval = $interval ->
-						$scope.time++
+						$scope.time--
 					, 1000
 				$scope.current_problem = localStorage.getItem("current_problem_#{$scope.Test.id}")
 				if $scope.current_problem is null
@@ -32,7 +32,8 @@
 				$scope.current_problem--
 			
 			saveAnswers = ->
-				$.cookie("answers#{$scope.Test.id}", JSON.stringify($scope.answers), { expires: 3, path: '/' });
+				$.post "tests/ajaxSaveAnswers", {id: $scope.Test.id, answers: $scope.answers}
+# 				$.cookie("answers#{$scope.Test.id}", JSON.stringify($scope.answers), { expires: 3, path: '/' });
 			
 			finishTest = ->
 				$.post "tests/ajaxFinishTest", {id: $scope.Test.id}, (final_score) ->
@@ -58,6 +59,31 @@
 			
 			$scope.getTestStatus = (Test) ->
 				test_statuses[Test.intermediate]
+			
+			$scope.timeLeft = (StudentTest) ->
+				timestamp_end = moment(StudentTest.date_start).add(30, 'minutes').unix()
+				moment({}).seconds(timestamp_end - moment().unix()).format("mm:ss")
+			
+			$scope.testDisplay = (StudentTest) ->
+				StudentTest.isFinished || StudentTest.inProgress
+			
+			$scope.getStudentAnswer = (Problem, StudentTest) ->
+				if StudentTest.answers and StudentTest.answers[Problem.id]
+					if StudentTest.answers[Problem.id] == Problem.correct_answer
+						return ""
+					else
+						return "circle-red"
+				return "circle-gray"
+			
+			$scope.getCurrentScore = (Test, StudentTest) ->
+				count = 0
+				$.each Test.Problems, (index, Problem) ->
+					if not $scope.getStudentAnswer(Problem, StudentTest)
+						count += Problem.score
+				return count
+			
+			$scope.formatTestDate = (StudentTest) ->
+				moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')	
 			
 			angular.element(document).ready ->
 				set_scope "Tests"
@@ -183,7 +209,40 @@
 				$scope.a.on 'instanceReady', (event) ->
 					$scope.a.focus().select
 					$scope.a.execCommand 'selectAll'
-					
+			
+			$scope.editIntro = ->
+				$scope.old_html = $scope.Test.intro
+				if typeof $scope.t is "object"
+					$scope.t.destroy()
+
+				$scope.t = CKEDITOR.replace "test-intro",
+					language: 'ru'
+					height: 250
+					title: "testy"
+					extraPlugins: 'pastebase64,panel,button,panelbutton,colorbutton'
+						
+				$scope.t.setData $scope.Test.intro
+				
+				$scope.t.on 'contentDom', ->
+					$scope.t.document.on 'keydown', (event) ->
+						event = event.data.$
+						if (event.which == 13 && (event.ctrlKey||event.metaKey)|| (event.which == 19))
+							console.log 'hererere'
+							$scope.Test.intro = $scope.t.getData()
+							$scope.t.destroy()
+							delete $scope.t
+							$scope.form_changed = true
+							$scope.$apply()
+							# $scope.saveTask(Task)
+						if event.which is 27
+							$scope.Test.intro += " "
+							$scope.t.destroy()
+							delete $scope.t
+							$scope.$apply()
+				$scope.t.on 'instanceReady', (event) ->
+					$scope.t.focus().select
+					$scope.t.execCommand 'selectAll'
+			
 			$scope.editProblem = (Problem, index) ->
 				$scope.editing_problem = Problem
 				$scope.old_html = Problem.problem

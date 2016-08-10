@@ -15,7 +15,7 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
   $timeout(function() {
     if ($scope.final_score === void 0) {
       $scope.interval = $interval(function() {
-        return $scope.time++;
+        return $scope.time--;
       }, 1000);
     }
     $scope.current_problem = localStorage.getItem("current_problem_" + $scope.Test.id);
@@ -39,9 +39,9 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
     return $scope.current_problem--;
   };
   saveAnswers = function() {
-    return $.cookie("answers" + $scope.Test.id, JSON.stringify($scope.answers), {
-      expires: 3,
-      path: '/'
+    return $.post("tests/ajaxSaveAnswers", {
+      id: $scope.Test.id,
+      answers: $scope.answers
     });
   };
   finishTest = function() {
@@ -73,6 +73,37 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
   };
   $scope.getTestStatus = function(Test) {
     return test_statuses[Test.intermediate];
+  };
+  $scope.timeLeft = function(StudentTest) {
+    var timestamp_end;
+    timestamp_end = moment(StudentTest.date_start).add(30, 'minutes').unix();
+    return moment({}).seconds(timestamp_end - moment().unix()).format("mm:ss");
+  };
+  $scope.testDisplay = function(StudentTest) {
+    return StudentTest.isFinished || StudentTest.inProgress;
+  };
+  $scope.getStudentAnswer = function(Problem, StudentTest) {
+    if (StudentTest.answers && StudentTest.answers[Problem.id]) {
+      if (StudentTest.answers[Problem.id] === Problem.correct_answer) {
+        return "";
+      } else {
+        return "circle-red";
+      }
+    }
+    return "circle-gray";
+  };
+  $scope.getCurrentScore = function(Test, StudentTest) {
+    var count;
+    count = 0;
+    $.each(Test.Problems, function(index, Problem) {
+      if (!$scope.getStudentAnswer(Problem, StudentTest)) {
+        return count += Problem.score;
+      }
+    });
+    return count;
+  };
+  $scope.formatTestDate = function(StudentTest) {
+    return moment(StudentTest.date_start).format('DD.MM.YY в HH:mm');
   };
   return angular.element(document).ready(function() {
     return set_scope("Tests");
@@ -216,6 +247,42 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
     return $scope.a.on('instanceReady', function(event) {
       $scope.a.focus().select;
       return $scope.a.execCommand('selectAll');
+    });
+  };
+  $scope.editIntro = function() {
+    $scope.old_html = $scope.Test.intro;
+    if (typeof $scope.t === "object") {
+      $scope.t.destroy();
+    }
+    $scope.t = CKEDITOR.replace("test-intro", {
+      language: 'ru',
+      height: 250,
+      title: "testy",
+      extraPlugins: 'pastebase64,panel,button,panelbutton,colorbutton'
+    });
+    $scope.t.setData($scope.Test.intro);
+    $scope.t.on('contentDom', function() {
+      return $scope.t.document.on('keydown', function(event) {
+        event = event.data.$;
+        if (event.which === 13 && (event.ctrlKey || event.metaKey) || (event.which === 19)) {
+          console.log('hererere');
+          $scope.Test.intro = $scope.t.getData();
+          $scope.t.destroy();
+          delete $scope.t;
+          $scope.form_changed = true;
+          $scope.$apply();
+        }
+        if (event.which === 27) {
+          $scope.Test.intro += " ";
+          $scope.t.destroy();
+          delete $scope.t;
+          return $scope.$apply();
+        }
+      });
+    });
+    return $scope.t.on('instanceReady', function(event) {
+      $scope.t.focus().select;
+      return $scope.t.execCommand('selectAll');
     });
   };
   $scope.editProblem = function(Problem, index) {
