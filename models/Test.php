@@ -1,4 +1,5 @@
 <?php
+	const EMPTY_DATETIME = '0000-00-00 00:00:00';
 	class Test extends Model
 	{
 		const PER_PAGE		= 30;
@@ -180,7 +181,9 @@
 		
 		public static function countFinished()
 		{
-			return self::count(["condition" => self::finishedCondition()]);
+			$result = self::dbConnection()->query("select count(*) as cnt from test_students ts join tests t on ts.id_test = t.id and ".self::$not_empty_date_condition.' and '.self::$finished_condition);
+			$result = $result->fetch_assoc();
+			return $result['cnt'];
 		}
 
 		private static function finishedCondition()
@@ -190,12 +193,14 @@
 
 		public static function countInProcess()
 		{
-			return self::count(["condition" => self::inProcessCondition()]);
+			$result = self::dbConnection()->query("select count(*) as cnt from test_students ts join tests t on ts.id_test = t.id and ".self::$not_empty_date_condition.' and (not '.self::$finished_condition.')');
+			$result = $result->fetch_assoc();
+			return $result['cnt'];
 		}
 
 		private static function inProcessCondition()
 		{
-			return self::$not_empty_date_condition.' and not '.self::$finished_condition;
+			return self::$not_empty_date_condition.' and (not '.self::$finished_condition.')';
 		}
 
 		public static function countNotStarted()
@@ -205,7 +210,7 @@
 
 		static $empty_date_condition = "date_start = '0000-00-00 00:00:00'";
 		static $not_empty_date_condition = "date_start <> '0000-00-00 00:00:00'";
-		static $finished_condition = "(date_finish <> '0000-00-00 00:00:00' or (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(date_start) > (2 * 3600)))";
+		static $finished_condition = "(ts.date_finish <> '0000-00-00 00:00:00' or (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(ts.date_start) > (60 * t.minutes)))";
 
 		public static function filter($filter) {
 			$condition = '1';

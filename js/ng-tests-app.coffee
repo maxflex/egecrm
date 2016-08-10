@@ -150,10 +150,10 @@
 			$scope.getStudentAnswer = (Problem, StudentTest) ->
 				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
 					if StudentTest.answers[Problem.id] == Problem.correct_answer
-						return true
+						return ''
 					else
-						return false
-				return undefined
+						return 'circle-red'
+				return 'circle-gray'
 			
 			$scope.getTestHint = (Problem, StudentTest) ->
 				answer = $scope.getStudentAnswer(Problem, StudentTest)
@@ -165,8 +165,8 @@
 			$scope.getCurrentScore = (Test, StudentTest) ->
 				count = 0
 				$.each Test.Problems, (index, Problem) ->
-					if $scope.getStudentAnswer(Problem, StudentTest)
-						count += Problem.score
+					if not $scope.getStudentAnswer(Problem, StudentTest)
+						count += Problem.score 
 				return count
 			
 			$scope.formatTestDate = (StudentTest) ->
