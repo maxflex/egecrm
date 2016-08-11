@@ -1,4 +1,4 @@
-	angular.module "Tests", ['ngSanitize']
+	angular.module "Tests", ['ngSanitize', 'ui.bootstrap']
 		.filter 'unsafe', ($sce) -> 
 			$sce.trustAsHtml
 		.filter 'range', () ->
@@ -57,7 +57,76 @@
 			
 			angular.element(document).ready ->
 				set_scope "Tests"
-		.controller "ListCtrl", ($scope) ->
+		.controller "ListCtrl", ($scope, $timeout) ->
+			$scope.getTestStatus = (Test) ->
+				test_statuses[Test.intermediate || 0]
+
+			$scope.getStudentTest = (id_testing) ->
+				_.find($scope.Tests, {id: parseInt(id_testing) })
+
+			$scope.toggleTestStatus = (StudentTest) ->
+				$.post "tests/ajaxToggleStatus",
+					id_test:    StudentTest.id_test
+					id_student: StudentTest.id_student
+				, (new_status) ->
+					StudentTest.intermediate = parseInt(new_status)
+					$scope.$apply()
+
+			$scope.getTestStatus = (StudentTest) ->
+				test_statuses[StudentTest.intermediate || 0]
+
+			$scope.timeLeft = (StudentTest) ->
+				timestamp_end = moment(StudentTest.date_start).add(30, 'minutes').unix()
+				moment({}).seconds(timestamp_end - moment().unix()).format("mm:ss")
+
+			$scope.formatTestDate = (StudentTest) ->
+				moment(StudentTest.date_start).format('DD.MM.YY в HH:mm') if StudentTest
+
+			$scope.testDisplay = (StudentTest) ->
+				StudentTest && (StudentTest.isFinished || StudentTest.inProgress)
+
+			$scope.getStudentAnswer = (Problem, StudentTest) ->
+				if StudentTest && StudentTest.answers && StudentTest.answers[Problem.id]
+					if StudentTest.answers[Problem.id] == Problem.correct_answer
+						return ""
+					else
+						return "circle-red"
+				return "circle-gray"
+
+			$scope.getTestHint = (Problem, StudentTest) ->
+					answer = $scope.getStudentAnswer(Problem, StudentTest)
+					switch answer
+						when 'circle-red' then 'ответ неверный'
+						when 'circle-gray' then 'ответ не указан'
+						else 'ответ верный, ' + Problem.score + ' баллов'
+
+			$scope.deleteTest = (StudentTest) ->
+				$.post "tests/ajaxDeleteStudentTest",
+					id: StudentTest.id
+				, ->
+					$scope.StudentTests = _.reject $scope.StudentTests, (e) ->
+						e.id == StudentTest.id
+					$scope.Tests = angular.copy($scope.Tests)
+					$scope.$apply()
+
+			$scope.pageChanged = ->
+				console.log $scope.current_page
+				page = if $scope.current_page > 1 then '?page=' + $scope.current_page  else ''
+				window.history.pushState {}, '', 'tests/students' + page
+				$scope.loadTests()
+
+			$scope.loadTests = ->
+				frontendLoadingStart()
+				$.post 'tests/ajaxLoadStudentTests',
+					page: $scope.current_page
+					filter: $scope.current_filter
+				, (response) ->
+					$.cookie 'test_filter', $scope.current_filter, { expires: 365, path: '/' }
+					$scope.StudentTests = response
+					$scope.$apply()
+					frontendLoadingEnd()
+				, "json"
+
 			$scope.formatDate = (date) ->
 				moment(date).format 'DD MMMM'
 			
@@ -79,8 +148,17 @@
 				StudentTest.isFinished || StudentTest.inProgress
 			
 			$scope.getStudentAnswer = (Problem, StudentTest) ->
+<<<<<<< HEAD
 				return true if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
 				return undefined
+=======
+				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
+					if StudentTest.answers[Problem.id] == Problem.correct_answer
+						return ''
+					else
+						return 'circle-red'
+				return 'circle-gray'
+>>>>>>> origin/master
 			
 			$scope.getTestHint = (Problem, StudentTest) ->
 				answer = $scope.getStudentAnswer(Problem, StudentTest)
@@ -92,15 +170,31 @@
 			$scope.getCurrentScore = (Test, StudentTest) ->
 				count = 0
 				$.each Test.Problems, (index, Problem) ->
+<<<<<<< HEAD
 					if $scope.getStudentAnswer(Problem, StudentTest)
 						count += Problem.score
 				return Math.round(count * 100 / Test.max_score)
+=======
+					if not $scope.getStudentAnswer(Problem, StudentTest)
+						count += Problem.score 
+				return count
+>>>>>>> origin/master
 			
 			$scope.formatTestDate = (StudentTest) ->
 				moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')	
 			
 			angular.element(document).ready ->
 				set_scope "Tests"
+				$scope.StudentTests = []
+				$scope.current_filter = if $.cookie 'test_filter' then $.cookie 'test_filter' else ''
+				$scope.loadTests() if $scope.current_tab is 'students'
+				$timeout ->
+					$('.watch-select option').each (index, el) ->
+						$(el).data 'subtext', $(el).attr 'data-subtext'
+						$(el).data 'content', $(el).attr 'data-content'
+					$('.watch-select').selectpicker 'refresh'
+				, 100
+
 		.controller "AddCtrl", ($scope, $timeout) ->
 			$scope.addTest = (Test) ->
 				$scope.adding = true

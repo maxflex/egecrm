@@ -1,6 +1,9 @@
 <?php
+	const EMPTY_DATETIME = '0000-00-00 00:00:00';
 	class Test extends Model
 	{
+		const PER_PAGE		= 30;
+
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "tests";
@@ -82,6 +85,8 @@
 	
 	class TestStudent extends Model
 	{
+		const PER_PAGE		= 30;
+
 		public static $mysql_table	= "test_students";
 		
 		protected $_json = ['answers'];
@@ -92,6 +97,7 @@
 			
 			if (! $this->isNewRecord) {
 				$this->Test = Test::findById($this->id_test);
+				$this->notStarted = $this->notStarted();
 				$this->isFinished = $this->finished();
 				$this->inProgress = $this->inProgress();
 				$this->final_score = $this->finalScoreString();
@@ -167,5 +173,60 @@
 		private function _finished() {
 			// если неактивен в течение 2х часов, то завершен
 			return ($this->date_finish != EMPTY_DATETIME || (time() - strtotime($this->date_start)) > (60 * $this->Test->minutes));
+		}
+
+		private function notStarted() {
+			return $this->date_finish == EMPTY_DATETIME;
+		}
+		
+		public static function countFinished()
+		{
+			$result = self::dbConnection()->query("select count(*) as cnt from test_students ts join tests t on ts.id_test = t.id and ".self::$not_empty_date_condition.' and '.self::$finished_condition);
+			$result = $result->fetch_assoc();
+			return $result['cnt'];
+		}
+
+		private static function finishedCondition()
+		{
+			return self::$not_empty_date_condition .' and '.self::$finished_condition;
+		}
+
+		public static function countInProcess()
+		{
+			$result = self::dbConnection()->query("select count(*) as cnt from test_students ts join tests t on ts.id_test = t.id and ".self::$not_empty_date_condition.' and (not '.self::$finished_condition.')');
+			$result = $result->fetch_assoc();
+			return $result['cnt'];
+		}
+
+		private static function inProcessCondition()
+		{
+			return self::$not_empty_date_condition.' and (not '.self::$finished_condition.')';
+		}
+
+		public static function countNotStarted()
+		{
+			return self::count(['condition' => self::$empty_date_condition]);
+		}
+
+		static $empty_date_condition = "date_start = '0000-00-00 00:00:00'";
+		static $not_empty_date_condition = "date_start <> '0000-00-00 00:00:00'";
+		static $finished_condition = "(ts.date_finish <> '0000-00-00 00:00:00' or (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(ts.date_start) > (60 * t.minutes)))";
+
+		public static function filter($filter) {
+			$condition = '1';
+			switch ($filter) {
+				case 'in_process':
+					$condition = self::inProcessCondition();
+					break;
+				case 'finished':
+					$condition = self::finishedCondition();
+					break;
+				case 'not_started':
+					$condition = self::$empty_date_condition;
+					break;
+				default:
+					$condition = '1';
+			}
+			return $condition;
 		}
 	}

@@ -5,12 +5,15 @@
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
-		<table class="table table-divlike">
-			<tr ng-repeat="Test in Tests">
-				<td>
-					<a href="tests/edit/{{Test.id}}">{{Test.name}}</a>
-				</td>
-			</tr>
-		</table>
+		<div class="row mb">
+			<div class="col-sm-12">
+				<div class="top-links">
+					<a class="link-like" href="tests" ng-class="{'active': current_tab == 'tests'}">список тестов</a>
+					<a class="link-like" href="tests/students" ng-class="{'active': current_tab == 'students'}">список тестов по ученикам</a>
+				</div>
+			</div>
+		</div>
+		<?= partial('tests_list') ?>
+		<?= partial('student_tests_list') ?>
 	</div>
 </div>
