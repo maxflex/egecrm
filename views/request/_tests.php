@@ -29,7 +29,7 @@
 					</div>
 				</td>
 				<td>
-					<span ng-show='testDisplay(_StudentTest)'>набрано {{ getCurrentScore(Test, _StudentTest) }} из {{ Test.max_score }} баллов</span>
+					<span ng-show='testDisplay(_StudentTest)'>набрано {{ getCurrentScore(Test, _StudentTest) }} из 100 баллов</span>
 				</td>
 				<td>
 					<span ng-show='testDisplay(_StudentTest)' class="link-like link-reverse pull-right" ng-click="deleteTest(_StudentTest)">сбросить тест</span>

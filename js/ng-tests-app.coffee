@@ -70,7 +70,7 @@
 				moment({}).seconds(seconds).format("mm:ss")
 			
 			
-			
+			 
 			setInterval ->
 				$scope.$apply()
 			, 1000
@@ -79,11 +79,7 @@
 				StudentTest.isFinished || StudentTest.inProgress
 			
 			$scope.getStudentAnswer = (Problem, StudentTest) ->
-				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
-					if StudentTest.answers[Problem.id] == Problem.correct_answer
-						return true
-					else
-						return false
+				return true if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
 				return undefined
 			
 			$scope.getTestHint = (Problem, StudentTest) ->
@@ -98,7 +94,7 @@
 				$.each Test.Problems, (index, Problem) ->
 					if $scope.getStudentAnswer(Problem, StudentTest)
 						count += Problem.score
-				return count
+				return Math.round(count * 100 / Test.max_score)
 			
 			$scope.formatTestDate = (StudentTest) ->
 				moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')	

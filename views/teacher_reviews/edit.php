@@ -1,7 +1,10 @@
 <div ng-app="TeacherReview" ng-controller="Main" ng-init="<?= $ang_init_data ?>">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			Отзыв ученика {{Student.last_name}} {{Student.first_name}} {{Student.middle_name}} по преподавателю {{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
+			Отзыв
+			<?php if (User::fromSession()->isUser()) :?>
+			 ученика {{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}
+			 <?php endif ?> по преподавателю {{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
 			(проведено {{lesson_count}} <ng-pluralize count="lesson_count" when="{
 						'one': 'занятие',
 						'few': 'занятия',
@@ -16,10 +19,16 @@
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-8">
+					<?php if (User::fromSession()->isUser()) :?>
 					<b style="top: 14px; position: relative">Оценка и отзыв ученика (заполняется учеником из его личного кабинета)</b>
+					<?php else :?>
+					<span style="top: 14px; position: relative">Напишите что понравилось/не понравилось (текст отзыва доступен только для администрации)</span>
+					<?php endif ?>
+					
 				</div>
 				<div class="col-sm-4">
 					<div class="pull-right">
+						<span>оценка преподавателя:</span>
 						<span ng-repeat="n in []| range:5">
 							<span class="teacher-rating" ng-click="setRating('rating', n)" ng-class="{
 								'active': RatingInfo.rating == n,

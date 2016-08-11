@@ -94,11 +94,7 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
   };
   $scope.getStudentAnswer = function(Problem, StudentTest) {
     if (StudentTest.answers && StudentTest.answers[Problem.id] !== void 0) {
-      if (StudentTest.answers[Problem.id] === Problem.correct_answer) {
-        return true;
-      } else {
-        return false;
-      }
+      return true;
     }
     return void 0;
   };
@@ -119,7 +115,7 @@ angular.module("Tests", ['ngSanitize']).filter('unsafe', function($sce) {
         return count += Problem.score;
       }
     });
-    return count;
+    return Math.round(count * 100 / Test.max_score);
   };
   $scope.formatTestDate = function(StudentTest) {
     return moment(StudentTest.date_start).format('DD.MM.YY в HH:mm');

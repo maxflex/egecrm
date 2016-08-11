@@ -16,13 +16,13 @@
 				</td>
 				<td>
 					<div ng-show='testDisplay(Test)'>
-						<span ng-repeat="Problem in Test.Test.Problems">
-							<span class="circle-default {{ getStudentAnswer(Problem, Test) !== undefined ? 'circle-dark-gray' : 'circle-gray' }}" title="{{ getTestHint(Problem, Test) }}"></span>
+						<span ng-repeat="Problem in Test.Test.Problems">  
+							<span class="circle-default {{ getStudentAnswer(Problem, Test) ? 'circle-dark-gray' : 'circle-gray' }}" title="{{ getTestHint(Problem, Test) }}"></span>
 						</span>
 					</div>
 				</td>
 				<td>
-					<span ng-show='testDisplay(Test)'>набрано {{ getCurrentScore(Test.Test, Test) }} из {{ Test.Test.max_score }} баллов</span>
+					<span ng-show='testDisplay(Test)'>набрано {{ getCurrentScore(Test.Test, Test) }} из 100 баллов</span>
 				</td>
 				<td>
 					<a class="pull-right" ng-show="!Test.isFinished && !Test.inProgress" href="students/tests/intro/{{Test.id_test}}">пройти тест</a>

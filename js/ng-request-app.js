@@ -330,7 +330,7 @@
 							count += Problem.score
 						}
 					})
-					return count
+					return Math.round(count * 100 / Test.max_score)
 				}
 				
 				$scope.toggleUser = function() {

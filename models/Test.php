@@ -136,7 +136,7 @@
 		
 		function finalScoreString()
 		{
-			return $this->score . "/" . Test::getMaxScore($this->id_test);
+			return round($this->score * 100 / Test::getMaxScore($this->id_test)) . "/100";
 		}
 		
 		public function finish()

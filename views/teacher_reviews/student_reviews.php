@@ -16,36 +16,26 @@
 			{{ Student.last_name + ' ' + Student.first_name }} | Оценка преподавателей
 		</div>
 		<div class="panel-body">
-			<table class="table table-hover border-reverse" style='font-size: 12px'>
+			<div class="row">
+				<div class="col-sm-12">
+					<span class="glyphicon glyphicon-hand-right pull-left" style="height: 50px; vertical-align: middle; top: 1px; margin-right: 14px; font-size: 28px"></span>
+					<div style="line-height: 14px">ваш отзыв очень важен для ЕГЭ-Центра. С помощью отзывов в ЕГЭ-Центре остаются работать лучшие преподаватели. Пишите как есть, не стесняйтесь – отзывы доступны только администрации.</div>
+				</div>
+			</div>
+			<table class="table table-hover border-reverse">
 		<tr ng-repeat="Review in Reviews">
-			<td style="width: 9%">
-				<a href="students/reviews/{{Review.id_teacher}}/{{Review.id_subject}}/{{Review.year}}">
-					{{Review.id ? 'отзыв ' + Review.id : 'создать'}}
-				</a>
-			</td>
-			<td style="width: 25%" ng-init="_Teacher = (Review.Teacher || Teacher)">
-				<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
-			</td>
-			<td style="width: 5%">
-				{{three_letters[Review.id_subject]}}
-			</td>
-			<td style="width: 15%">
-				<a href="student/{{Review.Student.id}}">
-					<span ng-show='Review.Student.last_name'>{{Review.Student.last_name}} {{Review.Student.first_name}}</span>
-					<span ng-hide='Review.Student.last_name'>имя не указано</span>
-				</a>
-			</td>
-			<td style="width: 10%">
+			<td style="width: 77%">
 				{{Review.lesson_count}} <ng-pluralize count='Review.lesson_count' when="{
 					'one': 'занятие',
 					'few': 'занятия',
 					'many': 'занятий',
-				}"></ng-pluralize>
+				}"></ng-pluralize> в {{Review.year}}–{{Review.year+1}} учебном году с преподавателем {{Review.Teacher.last_name}} {{Review.Teacher.first_name}} {{Review.Teacher.middle_name}} ({{Subjects[Review.id_subject]}})
 			</td>
-			<td style="width: 3%">
-				<div ng-if="Review.comment" class="hint--bottom" data-hint="{{Review.comment}}"></div>
-				<span class="hint--bottom" data-hint="Thank you!">{{Review.rating | hideZero}}</span>
-			</td>	
+			<td style="width: 23%">
+				<a href="students/reviews/{{Review.id_teacher}}/{{Review.id_subject}}/{{Review.year}}">
+					{{Review.id ? 'редактировать отзыв' : 'создать отзыв'}}
+				</a>
+			</td>
 		</tr>
 	</table>
 	</div>
