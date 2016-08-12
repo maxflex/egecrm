@@ -21,11 +21,13 @@
 	            moment({}).seconds($scope.time).format("mm:ss")
 			
 			$scope.nextProblem = ->
-				saveAnswers()
-				if ($scope.Test.Problems.length - $scope.current_problem) is 1
-					finishTest()
-				else
-					$scope.current_problem++
+				last_question = ($scope.Test.Problems.length - $scope.current_problem) is 1
+				saveAnswers(last_question)
+				$scope.current_problem++ if not last_question
+			
+			$scope.answered = ->
+				problem_id = $scope.Test.Problems[$scope.current_problem].id
+				$scope.answers[problem_id] isnt undefined
 
 			$scope.prevProblem = ->
 				saveAnswers()
@@ -34,16 +36,18 @@
 			$scope.setProblem = (index) ->
 				$scope.current_problem = index
 			
-			saveAnswers = ->
+			saveAnswers = (last_question) ->
 				$.post "tests/ajaxSaveAnswers", {id: $scope.Test.id, answers: $scope.answers}, (response) ->
 					$scope.server_answers = angular.copy($scope.answers)
 					$scope.$apply()
+					finishTest() if last_question
 # 				$.cookie("answers#{$scope.Test.id}", JSON.stringify($scope.answers), { expires: 3, path: '/' });
 			
 			finishTest = ->
 				$.post "tests/ajaxFinishTest", {id: $scope.Test.id}, (final_score) ->
 					$interval.cancel($scope.interval)
 					$scope.final_score = final_score
+					$scope.$apply()
 
 			$scope.back = ->
 				redirect "students/tests"
@@ -92,6 +96,14 @@
 					else
 						return "circle-red"
 				return "circle-gray"
+			
+			$scope.getStudentAnswerClass = (Problem, StudentTest) ->
+				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
+						if StudentTest.answers[Problem.id] == Problem.correct_answer
+							return ''
+						else
+							return 'circle-red'
+					return 'circle-gray'
 
 			$scope.getTestHint = (Problem, StudentTest) ->
 					answer = $scope.getStudentAnswer(Problem, StudentTest)
@@ -148,17 +160,12 @@
 				StudentTest.isFinished || StudentTest.inProgress
 			
 			$scope.getStudentAnswer = (Problem, StudentTest) ->
-<<<<<<< HEAD
-				return true if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
-				return undefined
-=======
-				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
+				if StudentTest.answers && (StudentTest.answers[Problem.id] isnt undefined)
 					if StudentTest.answers[Problem.id] == Problem.correct_answer
-						return ''
+						return true
 					else
-						return 'circle-red'
-				return 'circle-gray'
->>>>>>> origin/master
+						return false
+				return undefined
 			
 			$scope.getTestHint = (Problem, StudentTest) ->
 				answer = $scope.getStudentAnswer(Problem, StudentTest)
@@ -170,15 +177,9 @@
 			$scope.getCurrentScore = (Test, StudentTest) ->
 				count = 0
 				$.each Test.Problems, (index, Problem) ->
-<<<<<<< HEAD
 					if $scope.getStudentAnswer(Problem, StudentTest)
-						count += Problem.score
+						count += parseInt(Problem.score)
 				return Math.round(count * 100 / Test.max_score)
-=======
-					if not $scope.getStudentAnswer(Problem, StudentTest)
-						count += Problem.score 
-				return count
->>>>>>> origin/master
 			
 			$scope.formatTestDate = (StudentTest) ->
 				moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')	

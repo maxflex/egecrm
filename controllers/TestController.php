@@ -250,7 +250,7 @@
                 echo 'No group schedule updated';
             }
         }
-
+ 
         public function actionTeacherLikes()
 		{
 			$Students = Student::getWithContract();

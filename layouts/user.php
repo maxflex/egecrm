@@ -51,6 +51,7 @@
 				<span onclick="smsTemplate(2)">нет связи с клиентом</span>
 				<span onclick="smsTemplate(3)">нет связи с ожидающими и не решившими</span>
 				<span onclick="loginPasswordTemplate()">логин/пароль</span>
+				<span onclick="newTestTemplate()">новый тест</span>
 
 				<div class="sms-group-controls" style="float: right; display: none">
 					<span style="margin-right: 7px; color: black; border-bottom: none">
@@ -133,7 +134,7 @@
 		</div><!-- /input-group -->
 		</form>
 	<div class="list-group">
-    <a class="list-group-item active">Меню</a>
+    <a class="list-group-item active">Основное</a>
     <a href="requests" class="list-group-item">Заявки
 	    <?php
 			// Количество новых заявок
@@ -145,18 +146,8 @@
 			}
 		?>
 	</a>
-	<a href="stats" class="list-group-item">Итоги</a>
     <a href="clients" class="list-group-item">Клиенты <span class="badge pull-right"><?= Student::countWithActiveContract() ?></span></a>
-    <a href="sms" class="list-group-item">SMS</a>
-    <a href="payments" class="list-group-item">Платежи
-	    <?php
-		    $unconfirmed_payment_count = Payment::countUnconfirmed();
-
-		    if ($unconfirmed_payment_count) {
-				echo '<span class="badge pull-right">'. $unconfirmed_payment_count .'</span>';
-		    }
-		?>
-    </a>
+    <a href="sms" class="list-group-item">История SMS</a>
 	<!-- @refactored -->
     <a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count(['condition' => 'ended=0']) ?></span></a>
 	<a href="stats/visits/total" class="list-group-item">Посещаемость
@@ -205,11 +196,19 @@
 			}
 		?>
     </a>
-	<a class="list-group-item active">Преподаватели</a>
     <a href="teachers" class="list-group-item">Профили</a>
-	<a href="teachers/salary" class="list-group-item">Дебет</a>
-	<a href="teachers/html" class="list-group-item">FAQ</a>
+	<a class="list-group-item active">Финансы</a>
+	<a href="payments" class="list-group-item">Платежи
+	    <?php
+		    $unconfirmed_payment_count = Payment::countUnconfirmed();
 
+		    if ($unconfirmed_payment_count) {
+				echo '<span class="badge pull-right">'. $unconfirmed_payment_count .'</span>';
+		    }
+		?>
+    </a>
+    <a href="stats" class="list-group-item">Итоги</a>
+	<a href="teachers/salary" class="list-group-item">Оплата преподавателей</a>
 
 
     <a class="list-group-item active">Настройки</a>
@@ -228,45 +227,12 @@
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
     <a href="templates" class="list-group-item">Шаблоны</a>
+    <a href="teachers/html" class="list-group-item">FAQ</a>
     <?php if (User::fromSession()->show_users) : ?>
         <a href="users" class="list-group-item">Пользователи</a>
     <?php endif ?>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
-<!--
-    <div class="sidebar-nav">
-      <div class="navbar navbar-default" role="navigation">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <span class="visible-xs navbar-brand">ЕГЭ Центр</span>
-        </div>
-        <div class="navbar-collapse collapse sidebar-navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Заявки <span class="badge pull-right">23</span></a></a></li>
-            <li><a href="#">Преподователи</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Ученики <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#"><span class="glyphicon glyphicon-plus"></span> Добавить</a></li>
-                <li class="divider"></li>
-                <li><a href="#">Горячие</a></li>
-                <li><a href="#">С договором</a></li>
-                <li><a href="#">Новые</a></li>
-                <li><a href="#">Отказы</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Группы</a></li>
-            <li><a href="#">Школы</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
--->
 	</div>
   </div>
   <div class="col-sm-9 content-col" style="padding: 0; width: 80.6%;">

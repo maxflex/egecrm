@@ -2,7 +2,7 @@
 	<div class="panel-heading">Тесты
 	</div>
 	<div class="panel-body" style="position: relative">
-		<table class="table table-hover" style="margin: 0">
+		<table class="table table-hover" style="margin: 0" ng-class="{'no-border': Tests.length == 1}">
 			<tr ng-repeat="Test in Tests">
 				<td width="220">
 					{{Test.Test.name}}
@@ -17,7 +17,7 @@
 				<td>
 					<div ng-show='testDisplay(Test)'>
 						<span ng-repeat="Problem in Test.Test.Problems">  
-							<span class="circle-default {{ getStudentAnswer(Problem, Test) ? 'circle-dark-gray' : 'circle-gray' }}" title="{{ getTestHint(Problem, Test) }}"></span>
+							<span class="circle-default {{ getStudentAnswer(Problem, Test) !== undefined ? 'circle-dark-gray' : 'circle-gray' }}" title="{{ getTestHint(Problem, Test) }}"></span>
 						</span>
 					</div>
 				</td>
@@ -26,7 +26,7 @@
 				</td>
 				<td>
 					<a class="pull-right" ng-show="!Test.isFinished && !Test.inProgress" href="students/tests/intro/{{Test.id_test}}">пройти тест</a>
-					<a class="pull-right" ng-show="Test.inProgress" href="students/tests/start/{{Test.id_test}}">продолжить выполнение</a>
+					<a class="pull-right" ng-show="Test.inProgress" href="students/tests/start/{{Test.id_test}}">продолжить</a>
 				</td>
 			</tr>
 		</table>

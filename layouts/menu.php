@@ -123,7 +123,7 @@
 	<a href="notifications" class="list-group-item">Напоминания</a>
 	<a href="stats" class="list-group-item">Итоги</a>
     <a href="clients" class="list-group-item">Клиенты</a>
-    <a href="sms" class="list-group-item">SMS</a>
+    <a href="sms" class="list-group-item">История SMS</a>
     <a href="payments" class="list-group-item">Платежи</a>
     <a href="teachers" class="list-group-item">Преподаватели</a>
     <a href="groups" class="list-group-item">Группы</a>

@@ -25,6 +25,16 @@
 			}
 		}
 		
+		function getLightAll()
+		{
+			$result = dbConnection()->query('SELECT id, name FROM tests');
+			while($row = $result->fetch_object()) {
+				$row->name = !empty($row->name) ? $row->name : 'Тест №' . $row->id;
+				$tests[] = $row;
+			}
+			return $tests;
+		}
+		
 		static function getMaxScore($id_test)
 		{
 			return dbConnection()->query("SELECT SUM(score) AS s FROM test_problems WHERE id_test = {$id_test}")->fetch_object()->s;
@@ -204,7 +214,7 @@
 		}
 
 		public static function countNotStarted()
-		{
+		{ 
 			return self::count(['condition' => self::$empty_date_condition]);
 		}
 

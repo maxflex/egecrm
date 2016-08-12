@@ -327,7 +327,7 @@
 					count = 0
 					$.each(Test.Problems, function(index, Problem) {
 						if (! $scope.getStudentAnswer(Problem, StudentTest)) {
-							count += Problem.score
+							count += parseInt(Problem.score)
 						}
 					})
 					return Math.round(count * 100 / Test.max_score)

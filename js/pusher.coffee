@@ -1,7 +1,5 @@
 $(document).ready ->
 	vm = vueInit()
-# 	$(window).on "beforeunload", () ->
-# 		vm.savePopupData()
 
 # Init Vue
 vueInit = ->
@@ -58,17 +56,6 @@ vueInit = ->
 						phone: this.mango.from.number
 						user_id: this.user_id
 
-# 			savePopupData: ->
-# 				if this.show_element
-# 					localStorage.setItem 'popupData',
-# 						JSON.stringify
-# 							show_element: this.show_element,
-# 							number: this.mango.from.number,
-# 							determined: this.determined,
-# 							caller: this.caller,
-# 							timestamp: this.mango.timestamp
-# 							mango: this.mango
-
 			initPusher: ->
 				pusher = new Pusher 'a9e10be653547b7106c0',
 					encrypted: true
@@ -84,34 +71,13 @@ vueInit = ->
 							this.startCall()
 						when 'Disconnected'
 							this.endCall()
-# 				this.recoverPrevCall();
-# 
-# 			recoverPrevCall: ->
-# 				popupData = localStorage.getItem 'popupData'
-# 				if popupData
-# 					popupData = JSON.parse popupData
-# 					this.caller = popupData.caller
-# 					this.determined = popupData.determined
-# 					this.mango = popupData.mango
-# 					secondsToShow = Math.floor(Date.now() / 1000) - popupData.timestamp
-# 					this.show_element = secondsToShow < 20
-# 					if this.show_element
-# 						this.setHideTimeout(20 - secondsToShow)
-# 
-# 					localStorage.removeItem 'popupData'
 		computed:
 			call_length: ->
 				moment(parseInt(this.timer.diff) * 1000).format 'mm:ss'
 			number: ->
 				"+#{this.mango.from.number}"
-#				"+#{n[0]} (#{n.slice(1, 4)}) #{n.slice(4, 7)}-#{n.slice(7, 9)}-#{n.slice(9, 11)}"
 		ready: ->
 			this.initPusher()
 
-
 	new Vue
 		el: '.phone-app'
-# 		methods:
-# 			savePopupData: ->
-# #				this.$broadcast 'savePopupData'
-# 				this.$children[0].savePopupData()

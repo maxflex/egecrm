@@ -114,28 +114,45 @@
 	}
 
 	function loginPasswordTemplate() {
-
+		login = '{entity_login}'
+		password = '{entity_password}'
+		
 		// учитель/ученик?
 		if ($('[ng-app="Request"]').length) {
 			if ($('[ng-controller="EditCtrl"]').length) {
 				login = ang_scope.student.login
 				password = ang_scope.student.password
-			} else {
-				login = false
-				password = false
 			}
-		} else
-		if ($('[ng-app="Group"],[ng-app="Clients"],[ng-app="Teacher"]').length && ang_scope.entity_login && ang_scope.entity_password) {
-			login = '{entity_login}'
-			password = '{entity_password}'
-		}
-		else {
-			login = ang_scope.Teacher.login
-			password = ang_scope.Teacher.password
 		}
 
 		$.post("templates/ajax/get", {
 				number: 4,
+				params: {
+					entity_login: login,
+					entity_password: password,
+					number: $("#sms-number").text()
+				}
+			}, function(template) {
+				$("#sms-message").val(template).keyup()
+		});
+		//text = "Ваш логин: " + ang_scope.Teacher.login + "\nВаш пароль: " + ang_scope.Teacher.password
+		//$("#sms-message").val(text).keyup()
+	}
+	
+	function newTestTemplate() {
+		login = '{entity_login}'
+		password = '{entity_password}'
+		
+		// учитель/ученик?
+		if ($('[ng-app="Request"]').length) {
+			if ($('[ng-controller="EditCtrl"]').length) {
+				login = ang_scope.student.login
+				password = ang_scope.student.password
+			}
+		}
+
+		$.post("templates/ajax/get", {
+				number: 13,
 				params: {
 					entity_login: login,
 					entity_password: password,
@@ -200,7 +217,7 @@
 	}
 
 	function smsDialog3() {
-		$("#sms-number").text("Групповое сообщение клиентам");
+		$("#sms-number").text("Групповое сообщение клиентам (" + ang_scope.counts.all + ")");
 		lightBoxShow('sms')
 	}
 
@@ -244,7 +261,7 @@
 		lightBoxShow('sms')
 	}
 
-	function sendSms() {
+	function sendSms(count) {
 		mode = $("#sms-mode").val();
 
 		message = $("#sms-message");

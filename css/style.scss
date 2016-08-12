@@ -3016,3 +3016,29 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 		margin-right: 3px;
 	}
 }
+.number-circle {
+    border-radius: 50%;
+    behavior: url(PIE.htc);
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border: 2px solid #666;
+    color: #666;
+    text-align: center;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 22px;
+    padding-right: 1px;
+    cursor: pointer;
+    &:hover {
+	    background-color: rgba(102, 102, 102, 0.1);
+    }
+    &.active {
+	    background-color: #666;
+	    color: white;
+    }
+}
+
+.table.no-border > tbody > tr > td {
+	border:none !important;
+}
