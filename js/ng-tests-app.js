@@ -73,7 +73,7 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
   return angular.element(document).ready(function() {
     return set_scope("Tests");
   });
-}).controller("ListCtrl", function($scope, $timeout) {
+}).controller("StudentTestsCtrl", function($scope, $timeout) {
   $scope.getTestStatus = function(Test) {
     return test_statuses[Test.intermediate || 0];
   };
@@ -182,15 +182,11 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
   };
   $scope.getStudentAnswer = function(Problem, StudentTest) {
     if (StudentTest.answers && StudentTest.answers[Problem.id] !== void 0) {
-<<<<<<< HEAD
-      return true;
-=======
       if (StudentTest.answers[Problem.id] === Problem.correct_answer) {
         return '';
       } else {
         return 'circle-red';
       }
->>>>>>> origin/master
     }
     return 'circle-gray';
   };
@@ -230,6 +226,11 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
       });
       return $('.watch-select').selectpicker('refresh');
     }, 100);
+  });
+}).controller("ListCtrl", function($scope) {
+  console.log('inited');
+  return angular.element(document).ready(function() {
+    return set_scope('Tests');
   });
 }).controller("AddCtrl", function($scope, $timeout) {
   $scope.addTest = function(Test) {
@@ -453,6 +454,15 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
     });
     $timeout(function() {
       return $scope.$broadcast('angucomplete-alt:clearInput');
+    });
+    if ($("#subjects-select").length) {
+      $("#subjects-select").selectpicker({
+        noneSelectedText: "предметы"
+      });
+    }
+    $("#grades-select").selectpicker({
+      noneSelectedText: "класс",
+      multipleSeparator: ", "
     });
     return set_scope('Tests');
   });

@@ -57,7 +57,7 @@
 			
 			angular.element(document).ready ->
 				set_scope "Tests"
-		.controller "ListCtrl", ($scope, $timeout) ->
+		.controller "StudentTestsCtrl", ($scope, $timeout) ->
 			$scope.getTestStatus = (Test) ->
 				test_statuses[Test.intermediate || 0]
 
@@ -137,9 +137,7 @@
 				timestamp_end = moment(StudentTest.date_start).add(Test.minutes, 'minutes').unix()
 				seconds = timestamp_end - moment().unix()
 				moment({}).seconds(seconds).format("mm:ss")
-			
-			
-			 
+
 			setInterval ->
 				$scope.$apply()
 			, 1000
@@ -148,17 +146,12 @@
 				StudentTest.isFinished || StudentTest.inProgress
 			
 			$scope.getStudentAnswer = (Problem, StudentTest) ->
-<<<<<<< HEAD
-				return true if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
-				return undefined
-=======
 				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
 					if StudentTest.answers[Problem.id] == Problem.correct_answer
 						return ''
 					else
 						return 'circle-red'
 				return 'circle-gray'
->>>>>>> origin/master
 			
 			$scope.getTestHint = (Problem, StudentTest) ->
 				answer = $scope.getStudentAnswer(Problem, StudentTest)
@@ -170,16 +163,10 @@
 			$scope.getCurrentScore = (Test, StudentTest) ->
 				count = 0
 				$.each Test.Problems, (index, Problem) ->
-<<<<<<< HEAD
-					if $scope.getStudentAnswer(Problem, StudentTest)
-						count += Problem.score
-				return Math.round(count * 100 / Test.max_score)
-=======
-					if not $scope.getStudentAnswer(Problem, StudentTest)
+					if not $scope.getStudentAnswer Problem, StudentTest
 						count += Problem.score 
-				return count
->>>>>>> origin/master
-			
+				return Math.round count * 100 / Test.max_score
+
 			$scope.formatTestDate = (StudentTest) ->
 				moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')	
 			
@@ -194,6 +181,11 @@
 						$(el).data 'content', $(el).attr 'data-content'
 					$('.watch-select').selectpicker 'refresh'
 				, 100
+
+		.controller "ListCtrl", ($scope) ->
+			console.log 'inited'
+			angular.element(document).ready ->
+				set_scope 'Tests'
 
 		.controller "AddCtrl", ($scope, $timeout) ->
 			$scope.addTest = (Test) ->
@@ -392,4 +384,13 @@
 					$scope.$apply()
 				$timeout ->
 					$scope.$broadcast('angucomplete-alt:clearInput')
+
+				if $("#subjects-select").length
+					$("#subjects-select").selectpicker
+						noneSelectedText: "предметы"
+
+				$("#grades-select").selectpicker
+					noneSelectedText: "класс"
+					multipleSeparator: ", "
+
 				set_scope 'Tests'
