@@ -22,6 +22,15 @@
 	                }"></ng-pluralize> на выполнение</span>
 				</div>
 			</div>
+
+			<div class="col-sm-2">
+				<?= Grades::buildSelector(false, "Test[grade]", ["ng-model" => "Test.grade"]) ?>
+			</div>
+			<div class="col-sm-2">
+				<?= Subjects::buildSelector(false, false, ["ng-model" => "Test.id_subject"]) ?>
+			</div>
+
+
 		</div>
 		<div class="row" style="margin-bottom: 15px">
 			<div class="col-sm-12">
