@@ -45,6 +45,14 @@
 					<option value="0"  data-subtext="{{ counts.red[0] || '' }}">красных процессов нет</option>
 				</select>
 	        </div>
+			<div>
+				<select class="watch-select single-select form-control" ng-model="search.photo" ng-change='filter()'>
+					<option value=""  data-subtext="{{ counts.photo[''] || '' }}">все</option>
+					<option disabled>───────</option>
+					<option value="1"  data-subtext="{{ counts.photo[1] || '' }}">с фото</option>
+					<option value="0"  data-subtext="{{ counts.photo[0] || '' }}">без фото</option>
+				</select>
+	        </div>
 		</div>
 		
 		<div style="position: relative">

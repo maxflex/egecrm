@@ -103,6 +103,8 @@ RewriteRule ^reviews/ajax/([a-zA-Z]+)[/]?$ index.php?controller=TeacherReviews&a
 RewriteRule ^templates[/]?$ index.php?controller=templates&action=list[QSA,L]
 RewriteRule ^templates/ajax/([a-zA-Z]+)[/]?$ index.php?controller=templates&action=Ajax$1 [QSA,L]
 
+RewriteRule ^students/photo[/]?$ index.php?controller=studentsProfile&action=photo [QSA,L]
+RewriteRule ^students/ajax/([a-zA-Z]+)[/]?$ index.php?controller=studentsProfile&action=Ajax$1 [QSA,L]
 
 # SMS
 RewriteRule ^sms[/]?$ index.php?controller=sms [QSA,L]

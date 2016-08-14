@@ -56,6 +56,7 @@
 			}
 		?>
     </a>
+    <a href="students/photo" class="list-group-item">Фото <?= User::fromSession()->photo_extension ? '' : '<span class="badge badge-danger pull-right add-photo-badge">добавить</span>'; ?></a>
     <a href="students/faq" class="list-group-item">Необходимая информация</a>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>
