@@ -36,7 +36,7 @@
 	<input type="hidden" ng-value="markerData() | json"  name="marker_data">
 
 	<input type="hidden" name="save_request" value="{{request_comments === undefined ? 0 : 1}}">
-	<input type="hidden" name="save_student" value="{{id_student === undefined ? 0 : 1}}">
+	<input type="hidden" name="save_student" value="{{student === undefined ? 0 : 1}}">
 
 	<!-- Конец /скрытые поля -->
 
