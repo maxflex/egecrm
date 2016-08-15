@@ -30,13 +30,15 @@
 			$this->Passport			= Passport::findById($this->id_passport);
 
 			$this->profile_link = "student/{$this->id}";
-            $this->photo_extension = self::dbConnection()->query('select photo_extension from users where id_entity = '.$this->id)->fetch_object()->photo_extension;
-            $this->has_photo_original = $this->hasPhotoOriginal();
-            $this->photo_original_size = $this->photoOriginalSize();
-            $this->has_photo_cropped = $this->hasPhotoCropped();
-            $this->photo_cropped_size = $this->photoCroppedSize();
-            $this->photo_url = $this->photoUrl();
 
+            if ($this->id) {
+                $this->photo_extension = self::dbConnection()->query('select photo_extension from users where id_entity = ' . $this->id)->fetch_object()->photo_extension;
+                $this->has_photo_original = $this->hasPhotoOriginal();
+                $this->photo_original_size = $this->photoOriginalSize();
+                $this->has_photo_cropped = $this->hasPhotoCropped();
+                $this->photo_cropped_size = $this->photoCroppedSize();
+                $this->photo_url = $this->photoUrl();
+            }
         }
 
         public function photoPath($addon = '')
@@ -1196,6 +1198,7 @@
 				foreach(["", 0, 1] as $yellow) {
 					$new_search = clone $search;
 					$new_search->yellow = $yellow;
+
 					$counts['yellow'][$yellow] = static::_count($new_search);
 				}
 				foreach(["", 0, 1] as $red) {
