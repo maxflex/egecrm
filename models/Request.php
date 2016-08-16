@@ -238,6 +238,13 @@
 		public function beforeSave() {
 			if ($this->isNewRecord || $this->adding) {
 				$this->date = now();
+				Socket::trigger('requests', 'incoming');
+			} else {
+				if (intval($this->id_status) === 0 && intval(static::_getStatus($this->id)) !== 0) {
+					Socket::trigger('requests', 'incoming');
+				} else {
+					Socket::trigger('requests', 'incoming', ['delete' => true]);
+				}
 			}
 			
 			if (empty(trim($this->date))) {
@@ -248,6 +255,11 @@
 			foreach (static::$_phone_fields as $phone_field) {
 				$this->{$phone_field} = cleanNumber($this->{$phone_field});
 			}
+		}
+		
+		private static function _getStatus($id_request)
+		{
+			return dbConnection()->query('SELECT id_status FROM requests WHERE id = ' . $id_request)->fetch_object()->id_status;
 		}
 		
 		public function hasContract()

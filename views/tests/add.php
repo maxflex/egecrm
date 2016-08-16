@@ -9,7 +9,7 @@
 	</div>
 	<div class="panel-body" style="position: relative">
 		<div class="row" style="margin-bottom: 15px">
-			<div class="col-sm-4">
+			<div class="col-sm-3">
 				<input class="form-control" placeholder="название теста" ng-model="Test.name">
 			</div>
 			<div class="col-sm-3">
@@ -23,10 +23,10 @@
 				</div>
 			</div>
 
-			<div class="col-sm-2">
+			<div class="col-sm-3">
 				<?= Grades::buildSelector(false, "Test[grade]", ["ng-model" => "Test.grade"]) ?>
 			</div>
-			<div class="col-sm-2">
+			<div class="col-sm-3">
 				<?= Subjects::buildSelector(false, false, ["ng-model" => "Test.id_subject"]) ?>
 			</div>
 
