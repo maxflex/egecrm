@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="js/bower/angular-bootstrap-colorpicker/css/colorpicker.min.css">
 <script type="text/javascript" src="js/bower/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js"></script>
 <script type="text/javascript" src="js/bower/cropper/dist/cropper.js"></script>
+<script src="//cdn.jsdelivr.net/jquery.color-animation/1/mainfile"></script>
 <link rel="stylesheet" href="js/bower/cropper/dist/cropper.min.css">
 
 <?php if (in_array(User::fromSession()->id, [-1])) :?>
@@ -142,9 +143,10 @@
 
 			// Если есть новые заявки
 			if ($new_request_count) {
-				echo '<span class="badge pull-right">'. $new_request_count .'</span>';
+				echo '<span class="badge pull-right" id="request-count">'. $new_request_count .'</span>';
 			}
 		?>
+		<span id='request-counter' class='pull-right' style="margin-right: 3px; opacity: 0; font-size: 13px; font-weight: bold">+1</span>
 	</a>
     <a href="clients" class="list-group-item">Клиенты <span class="badge pull-right"><?= Student::countWithActiveContract() ?></span></a>
     <a href="sms" class="list-group-item">История SMS</a>
