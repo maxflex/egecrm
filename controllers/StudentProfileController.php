@@ -17,7 +17,6 @@ class StudentsProfileController extends Controller
 
     public function actionPhoto()
     {
-        $this->setTabTitle("Фото ученика");
         $id_student = User::fromSession()->id_entity;
 
         if ($Student = Student::findById($id_student)) {
@@ -27,6 +26,7 @@ class StudentsProfileController extends Controller
             }
         }
 
+        $this->setTabTitle($Student->last_name . ' ' . $Student->first_name. ' | Фото ученика');
         $ang_init_data = angInit([
             "Student" => $StudentProfile,
         ]);
@@ -52,7 +52,8 @@ class StudentsProfileController extends Controller
             $User = User::find(['condition' => 'id_entity = '.$student_id]);
             $User->photo_extension = '';
             $User->save('photo_extension');
-            $User->toSession();
+            $_SESSION['user']['photo_extension'] = '';
+//            $User->toSession();
         }
     }
 }
