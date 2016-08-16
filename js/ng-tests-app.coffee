@@ -129,6 +129,7 @@
 
 			$scope.loadTests = ->
 				frontendLoadingStart()
+				delete $scope.StudentTests
 				$.post 'tests/ajaxLoadStudentTests',
 					page: $scope.current_page
 					filter: $scope.current_filter
@@ -183,7 +184,7 @@
 			
 			angular.element(document).ready ->
 				set_scope "Tests"
-				$scope.StudentTests = []
+				delete $scope.StudentTests
 				$scope.current_filter = if $.cookie 'test_filter' then $.cookie 'test_filter' else ''
 				$scope.loadTests() if $scope.current_tab is 'students'
 				$timeout ->

@@ -16,7 +16,10 @@
 		const USER_TYPE		= "STUDENT";
 		const PER_PAGE		= 30;
 
-		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
+        const UPLOAD_DIR = 'img/students/';
+        const NO_PHOTO   = 'no-profile-img.gif';
+
+        /*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
 		public function __construct($array)
 		{
@@ -25,9 +28,61 @@
 			// Добавляем связи
 			$this->Representative	= Representative::findById($this->id_representative);
 			$this->Passport			= Passport::findById($this->id_passport);
-			
+
 			$this->profile_link = "student/{$this->id}";
-		}
+
+            if ($this->id) {
+                $this->photo_extension = self::dbConnection()->query('select photo_extension from users where id_entity = ' . $this->id)->fetch_object()->photo_extension;
+                $this->has_photo_original = $this->hasPhotoOriginal();
+                $this->photo_original_size = $this->photoOriginalSize();
+                $this->has_photo_cropped = $this->hasPhotoCropped();
+                $this->photo_cropped_size = $this->photoCroppedSize();
+                $this->photo_url = $this->photoUrl();
+            }
+        }
+
+        public function photoPath($addon = '')
+        {
+            return static::UPLOAD_DIR . $this->id . $addon . '.' . $this->photo_extension;
+        }
+
+        public function photoUrl()
+        {
+            if ($this->hasPhotoCropped()) {
+                $photo = $this->id . '.' . $this->photo_extension;
+            } else {
+                $photo = static::NO_PHOTO;
+            }
+            return static::UPLOAD_DIR . $photo;
+        }
+
+        public function hasPhotoOriginal()
+        {
+            return file_exists($this->photoPath('_original'));
+        }
+
+        public function hasPhotoCropped()
+        {
+            return file_exists($this->photoPath());
+        }
+
+        public function photoCroppedSize()
+        {
+            if ($this->hasPhotoCropped()) {
+                return filesize($this->photoPath());
+            } else {
+                return 0;
+            }
+        }
+
+        public function photoOriginalSize()
+        {
+            if ($this->hasPhotoOriginal()) {
+                return filesize($this->photoPath('_original'));
+            } else {
+                return 0;
+            }
+        }
 
 		public function afterSave()
 		{
@@ -1098,7 +1153,7 @@
 				LEFT JOIN users u ON u.id = s.id_user_review
 				WHERE s.id = " . $id . " 
 				ORDER BY s.last_name, s.first_name, s.middle_name ASC")
-			->fetch_object(); 
+			->fetch_object();
 		}
 		
 		
@@ -1143,12 +1198,18 @@
 				foreach(["", 0, 1] as $yellow) {
 					$new_search = clone $search;
 					$new_search->yellow = $yellow;
+
 					$counts['yellow'][$yellow] = static::_count($new_search);
 				}
 				foreach(["", 0, 1] as $red) {
 					$new_search = clone $search;
 					$new_search->red = $red;
 					$counts['red'][$red] = static::_count($new_search);
+				}
+				foreach(["", 0, 1] as $photo) {
+					$new_search = clone $search;
+					$new_search->photo = $photo;
+					$counts['photo'][$photo] = static::_count($new_search);
 				}
 			}
 			
@@ -1170,7 +1231,8 @@
 		{
 			$main_query = "
 				FROM students s " .
-				(! isBlank($search->year) ? " JOIN contracts yc ON (yc.id_student = s.id AND yc.year = {$search->year}) " : "") . "
+				(! isBlank($search->year) ? " JOIN contracts yc ON (yc.id_student = s.id AND yc.year = {$search->year}) " : "") .
+				(! isBlank($search->photo) ? " JOIN users u ON (u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension ".($search->photo ? "<>" : "=")." '' )" : "") . "
 				JOIN (
 					SELECT id, id_student FROM contracts
 					WHERE 1 " . Contract::ZERO_OR_NULL_CONDITION . "
