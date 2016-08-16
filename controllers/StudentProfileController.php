@@ -52,8 +52,7 @@ class StudentsProfileController extends Controller
             $User = User::find(['condition' => 'id_entity = '.$student_id]);
             $User->photo_extension = '';
             $User->save('photo_extension');
-            $_SESSION['user']->photo_extension = '';
-//            $User->toSession();
+            $User->toSession();
         }
     }
 }
