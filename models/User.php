@@ -419,6 +419,34 @@
 			$cookie_time = time() + 3600 * 24 * 30 * 3; 						// час - сутки - месяц * 3 = КУКА на 3 месяца
 			setcookie("egecrm_token", $this->token . $this->id, $cookie_time);	// КУКА ТОКЕНА (первые 16 символов - токен, последние - id_user)
 		}
-
+		
+		/*
+		 * Режим просмотра
+		 */
+		public function enterViewMode($id, $type)
+		{
+			$_SESSION["view_mode_user_id"] 	= User::fromSession()->id;
+			$_SESSION["view_mode_url"] 		= $_SERVER['HTTP_REFERER'];
+			$_SESSION["user"] = User::find([
+				"condition" => "type='$type' AND id_entity=$id"
+			]);
+		}
+		
+		/*
+		 * Выйти из режима просмотра
+		 */
+		public function quitViewMode()
+		{
+			$_SESSION["user"] = User::findById($_SESSION["view_mode_user_id"]);
+			unset($_SESSION["view_mode_user_id"]);
+		}
+		
+		/*
+		 * Находимся в режиме просмотра?
+		 */
+		public static function inViewMode()
+		{
+			return isset($_SESSION["view_mode_user_id"]);
+		}
 
 	}

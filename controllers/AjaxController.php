@@ -30,7 +30,7 @@
 		public function actionAjaxCheckLogout()
 		{
 			// если в режиме просмотра, не делаем логаут
-			if (isset(User::fromSession()->AsUser)) {
+			if (User::inViewMode()) {
 				returnJsonAng(0);
 			}
 

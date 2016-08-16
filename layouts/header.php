@@ -72,7 +72,7 @@
 	<script src="js/ladda.js"></script>
 
 	<?php if ((User::fromSession()->type == Teacher::USER_TYPE || User::fromSession()->type == Student::USER_TYPE)
-			&& !LOCAL_DEVELOPMENT && !User::fromSession()->AsUser) :?>
+			&& !LOCAL_DEVELOPMENT && !User::inViewMode()) :?>
 	<script type="text/javascript" src="js/ga.js"></script>
 	<?php endif ?>
 

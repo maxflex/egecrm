@@ -1,8 +1,8 @@
-<?php if (User::fromSession()->AsUser) :?>
+<?php if (User::inViewMode()) :?>
 <div class="view-as">
 	<span style="position: absolute; left: 10px">Режим просмотра ученика</span>
 	<span class='center'>
-		<?= User::fromSession()->AsUser->last_name." ".User::fromSession()->AsUser->first_name." ".User::fromSession()->AsUser->middle_name ?>
+		<?= User::fromSession()->last_name." ".User::fromSession()->first_name." ".User::fromSession()->middle_name ?>
 	</span>
 	<a href="as/cancel" class="link-white" style="position: absolute; right: 10px">Выйти из режима просмотра</a>
 </div>
@@ -15,7 +15,7 @@
     <a href="students/groups" class="list-group-item">Мои группы
 	    <?php
 			$groups_count = Student::countGroupsStatic(User::fromSession()->id_entity);
-			
+
 			if ($groups_count) {
 				echo '<span class="badge pull-right">'. $groups_count .'</span>';
 			}
@@ -23,15 +23,15 @@
     </a>
     <?php
 		$Student = Student::findById(User::fromSession()->id_entity);
-		
+
 		if ($Student->grade == 11 || $Student->grade == 9) {
 			echo '<a href="students/testing" class="list-group-item">Запись на пробный ЕГЭ</a>';
 		}
 	?>
 	<a href="students/reports" class="list-group-item">Отчеты
-		<?php  
+		<?php
 			$report_count = Student::getReportCount(User::fromSession()->id_entity);
-			
+
 			if ($report_count) {
 				echo '<span class="badge pull-right">' . $report_count . '</span>';
 			}
@@ -41,7 +41,7 @@
     <a href="students/reviews" class="list-group-item">Оставить отзыв
 	    <?php
 			$reviews_count = Student::reviewsNeeded();
-			
+
 			if ($reviews_count) {
 				echo '<span class="badge badge-danger pull-right">' . $reviews_count . '</span>';
 			}
@@ -50,7 +50,7 @@
     <a href="students/tests" class="list-group-item">Тесты
 	    <?php
 			$test_count = TestStudent::countNeeded();
-			
+
 			if ($test_count) {
 				echo '<span class="badge pull-right">' . $test_count . '</span>';
 			}
@@ -64,7 +64,7 @@
 	</div>
   </div>
   <div class="col-sm-9" style="padding: 0; width: 80.6%;">
-    
+
   	<?php if (!$this->_custom_panel) { ?>
 		<div class="panel panel-primary">
 		<div class="panel-heading">
