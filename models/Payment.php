@@ -162,7 +162,7 @@
 
 		public function afterSave()
         {
-            if ($this->id_status == self::PAID_CASH && !$this->document_number) {
+            if (($this->id_status == self::PAID_CASH) && ($this->id_type == 2) && !$this->document_number) {
                 $this->document_number = self::dbConnection()->query('select max(document_number) + 1 as last_doc_num from payments')->fetch_object()->last_doc_num;
                 $this->update(['document_number' => $this->document_number]);
             }

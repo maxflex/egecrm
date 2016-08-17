@@ -36,7 +36,7 @@
                                         </table>
                                     </td>
                                     <td width="35%">
-                                        <table width="100%"  style="border-collapse:collapse;">
+                                        <table width="100%"  style="border-collapse:collapse;text-align: center;">
                                             <tr>
                                                 <td rowspan="4" width="50%">Форма по ОКУД <br>по ОКПО</td>
                                                 <td width="50%" style="border:2px solid black;">Коды</td>
@@ -56,7 +56,7 @@
                                 <tr>
                                     <td width="50%"><h3>ПРИХОДНЫЙ КАССОВЫЙ ОРДЕР</h3></td>
                                     <td width="50%">
-                                        <table width="100%" style="border-collapse:collapse;">
+                                        <table width="100%" style="border-collapse:collapse;text-align: center;">
                                             <tr><td width="50%" style="border: 2px solid black;">Номер документа</td><td style="border: 2px solid black;">Дата составления</td></tr>
                                             <tr><td style="border: 3px solid black;">{{PrintPayment.document_number}}</td><td style="border: 3px solid black;">{{PrintPayment.date}}</td></tr>
                                         </table>
@@ -67,16 +67,16 @@
                     </tr>
                     <tr>
                         <td>
-                            <table style="border-collapse: collapse;">
+                            <table style="border-collapse: collapse;text-align: center;">
                                 <tr>
                                     <td rowspan="2" style="border:2px solid black;">Дебет</td>
-                                    <td colspan="4" style="border:2px solid black;" width="50%">Кредит</td>
-                                    <td rowspan="2" style="border:2px solid black;">Сумма, руб. коп.</td>
+                                    <td colspan="4" style="border:2px solid black;text-align: center;" width="50%">Кредит</td>
+                                    <td rowspan="2" style="border:2px solid black;width:25%;">Сумма, руб. коп.</td>
                                     <td rowspan="2" style="border:2px solid black;">Код целевого назначения</td>
                                     <td rowspan="2" style="border:2px solid black;padding:20px;"></td>
                                 </tr>
                                 <tr>
-                                    <td style="border:2px solid black;padding:20px;"></td>
+                                    <td style="border:2px solid black;padding:10px;"></td>
                                     <td style="border:2px solid black;">код структурного подразделения</td>
                                     <td style="border:2px solid black;">корреспондирующий счет, субсчет</td>
                                     <td style="border:2px solid black;">код аналитического учета</td>
@@ -87,9 +87,9 @@
                                     <td style="border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;"></td>
                                     <td style="border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;">62.01, 62.02</td>
                                     <td style="border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;"></td>
-                                    <td style="border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;">{{PrintPayment.sum | number}}, 00</td>
+                                    <td style="border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;width:25%;">{{PrintPayment.sum | number}}, 00</td>
                                     <td style="border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;"></td>
-                                    <td style="padding:20px;border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;border-right:3px solid black;"></td>
+                                    <td style="padding:10px;border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;border-right:3px solid black;"></td>
                                 </tr>
                             </table>
                         </td>
@@ -100,7 +100,7 @@
 
                     <tr><td style="padding:10px;"></td></tr>
 
-                    <tr><td>Основание: <br>Договор на оказание платных образовательных услуг <br>№{{ contracts[0].id }} от {{contracts[0].date}}г.</td></tr>
+                    <tr><td>Основание: <br>Договор на оказание платных образовательных услуг <br>№{{ contracts[0].id }} от {{contracts[0].History ? contracts[0].History[0].date : contracts[0].date}}г.</td></tr>
 
                     <tr><td style="padding:10px;"></td></tr>
 
@@ -164,7 +164,7 @@
                     <tr><td colspan="2">Принято от <br>{{representative.last_name}} {{representative.first_name}} {{representative.middle_name}}</td></tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
-                    <tr><td colspan="2">Основание <br>Договор на оказание платных образовательных услуг № {{contracts[0].id}} от {{contracts[0].date}}г.</td></tr>
+                    <tr><td colspan="2">Основание <br>Договор на оказание платных образовательных услуг № {{contracts[0].id}} от {{contracts[0].History ? contracts[0].History[0].date : contracts[0].date}}г.</td></tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
 
