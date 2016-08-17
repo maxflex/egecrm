@@ -1,6 +1,9 @@
 <style>
 	#year-fix .dropdown-menu:last-child {
-		left: -15px;
+		left: -20px;
+	}
+	.row.flex-list > div {
+		width: 10%;
 	}
 </style>
 <div ng-app="TeacherReview" ng-controller="Reviews" ng-init="<?= $ang_init_data ?>" >

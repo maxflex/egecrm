@@ -71,7 +71,7 @@
 				]) ?>
 			</div>
 			<div class="form-group">
-                <?= Grades::buildSelector(false, false, ["ng-model" => "Group.grade"]) ?>
+                <?= Grades::buildSelector(false, false, ["ng-model" => "Group.grade", "ng-change" => "reloadTests()"]) ?>
             </div>
 			<div class="form-group">
 				<select class="form-control" ng-model="Group.id_teacher" ng-change="changeTeacher()">
@@ -138,6 +138,17 @@
 									<!-- <span class="text-success"	ng-show="Student.teacher_like_status == 1">нравится</span>
 									<span class="text-warning" 	ng-show="Student.teacher_like_status == 2">средне</span> -->
 									<!-- <span class="text-danger" ng-if="Student.teacher_like_status == 3">не нравится</span> -->
+								</span>
+							</td>
+							<td>
+								<span ng-show="Student.Test">
+									<span ng-show="Student.Test.notStarted">к тесту не приступал</span>
+									<span ng-show="Student.Test.inProgress">тест в процессе</span>
+									<span ng-show="Student.Test.isFinished">{{ Student.Test.final_score }} <ng-pluralize count="Student.Test.final_score" when="{
+										'one': 'балл',
+										'few': 'балла',
+										'many': 'баллов'
+									}"></ng-pluralize></span>
 								</span>
 							</td>
 							<td>

@@ -1,3 +1,5 @@
+	testy = false
+	
 	angular.module "Group", ['ngAnimate']
 		.filter 'toArray', ->
 			(obj) ->
@@ -693,6 +695,17 @@
 						$scope.getStudent(id_student).sms_notified = id_status
 					$scope.$apply()
 				, "json"
+			
+			$scope.reloadTests = ->
+				$.post "groups/ajax/ReloadTests",
+					students: $scope.Group.students
+					id_subject: $scope.Group.id_subject
+					grade: $scope.Group.grade
+				, (response) ->
+					$.each response, (id_student, Test)->
+						$scope.getStudent(id_student).Test = Test
+					$scope.$apply()
+				, "json"
 
 			$scope.smsNotify = (Student, event) ->
 				$(event.target)
@@ -846,7 +859,7 @@
 						$("#group-cabinet").selectpicker 'refresh'
 				, "json"
 
-
+ 
 
 			$scope.addGroupsPanel = ->
 				$scope.loadGroups() if not $scope.Groups
@@ -859,7 +872,7 @@
 				return if not $scope.Group.id
 
 				$scope.reloadSmsNotificationStatuses()
-
+				$scope.reloadTests()
 				$scope.updateGroup
 					id_subject: $scope.Group.id_subject
 
@@ -945,6 +958,7 @@
 					$scope.$apply()
 
 				$("#group-cabinet").selectpicker()
+				set_scope "Group"
 
 			# save without notice
 			justSave = ->
