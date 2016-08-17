@@ -129,7 +129,6 @@
 
 			$scope.loadTests = ->
 				frontendLoadingStart()
-				delete $scope.StudentTests
 				$.post 'tests/ajaxLoadStudentTests',
 					page: $scope.current_page
 					filter: $scope.current_filter

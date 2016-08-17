@@ -168,7 +168,6 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
   };
   $scope.loadTests = function() {
     frontendLoadingStart();
-    delete $scope.StudentTests;
     return $.post('tests/ajaxLoadStudentTests', {
       page: $scope.current_page,
       filter: $scope.current_filter
