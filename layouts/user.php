@@ -198,7 +198,7 @@
 			}
 		?>
     </a>
-    <a href="teachers" class="list-group-item">Профили</a>
+    <a href="teachers" class="list-group-item">Преподаватели</a>
 	<a class="list-group-item active">Финансы</a>
 	<a href="payments" class="list-group-item">Платежи
 	    <?php

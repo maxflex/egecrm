@@ -144,6 +144,18 @@
 			return $TestStudents ? $TestStudents : [];
 		}
 		
+		public static function getForGroup($id_student, $id_subject, $grade) {
+			$result = dbConnection()->query("
+				SELECT ts.id FROM test_students ts
+				JOIN tests t ON t.id = ts.id_test
+				WHERE ts.id_student = {$id_student} AND t.id_subject={$id_subject} AND t.grade={$grade}
+			");
+			if ($result->num_rows) {
+				return TestStudent::findById($result->fetch_object()->id);
+			}
+			return false;
+		}
+		
 		public function start()
 		{
 			$this->date_start = now();
@@ -152,7 +164,7 @@
 		
 		function finalScoreString()
 		{
-			return round($this->score * 100 / Test::getMaxScore($this->id_test)) . "/100";
+			return round($this->score * 100 / Test::getMaxScore($this->id_test));
 		}
 		
 		public function finish()

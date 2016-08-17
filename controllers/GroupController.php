@@ -428,7 +428,12 @@
 
 				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject);
 				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet);
-
+			
+				if ($Group->grade && $Group->id_subject) {
+					// тест ученика
+					$Student->Test = TestStudent::getForGroup($id_student, $Group->id_subject, $Group->grade);
+				}
+				
 				foreach ($Student->branches as $id_branch) {
 					if (!$id_branch) {
 						continue;
@@ -1071,6 +1076,17 @@
 
 			foreach ($students as $id_student) {
 				$return['sms_notification_statuses'][$id_student] = GroupSms::getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet);
+			}
+
+			returnJsonAng($return);
+		}
+		
+		public function actionAjaxReloadTests()
+		{
+			extract($_POST);
+
+			foreach ($students as $id_student) {
+				$return[$id_student] = TestStudent::getForGroup($id_student, $id_subject, $grade);
 			}
 
 			returnJsonAng($return);
