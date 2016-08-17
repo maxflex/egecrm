@@ -38,7 +38,7 @@
                         <select class="watch-select single-select form-control" ng-model="search.subject" ng-change='filter()'>
                             <option value=''  data-subtext="{{ counts.subject.all || '' }}">предмет</option>
                             <option disabled>───────</option>
-                            <option value='{{id_subject}}' data-subtext='{{ counts.subject[id_subject] || "" }}' ng-repeat='(id_subject, label) in Subjects | toArray'>{{label}}</option>
+                            <option value='{{id_subject}}' data-subtext='{{ counts.subject[id_subject] || "" }}' ng-repeat='(id_subject, label) in Subjects'>{{label}}</option>
                         </select>
                     </div>
                 </div>

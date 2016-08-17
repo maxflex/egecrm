@@ -13,7 +13,7 @@ class TestStates extends Factory {
     static $all = [
         self::NOT_STARTED	=> "не приступали",
         self::IN_PROGRESS	=> "в процессе",
-        self::FINISHED		=> "проденные",
+        self::FINISHED		=> "пройденные",
     ];
 
     public static function json()
