@@ -7,6 +7,12 @@
 				for i in [1...total + 1] by 1
 					input.push i
 				input
+		.filter 'toArray', ->
+			(obj) ->
+				arr = []
+				$.each obj, (index, value) ->
+					arr.push value
+				return arr
 		.controller "StartCtrl", ($scope, $timeout, $interval) ->
 			$timeout ->
 				if $scope.final_score is undefined

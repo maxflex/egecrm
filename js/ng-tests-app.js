@@ -10,6 +10,15 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
     }
     return input;
   };
+}).filter('toArray', function() {
+  return function(obj) {
+    var arr;
+    arr = [];
+    $.each(obj, function(index, value) {
+      return arr.push(value);
+    });
+    return arr;
+  };
 }).controller("StartCtrl", function($scope, $timeout, $interval) {
   var finishTest, saveAnswers;
   $timeout(function() {
