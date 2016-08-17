@@ -1,6 +1,6 @@
 	var test;
 	var test2;
-	
+
 	angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		.filter('hideZero', function() {
 		  return function(item) {
@@ -261,7 +261,13 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
-				
+
+				$scope.week_count = function (programm) {
+					c = _.max(programm, function(v){ return v.count; }).count;
+					c += _.max(programm, function(v){ return v.count2; }).count2;
+					return c;
+				}
+
 				$scope.timeLeft = function(StudentTest, Test) {
 					if (StudentTest && StudentTest.inProgress) {
 						timestamp_end = moment(StudentTest.date_start).add(Test.minutes, 'minutes').unix()
@@ -691,6 +697,14 @@
 			$scope.printBill = function(payment) {
 				$scope.print_mode = 'bill'
 				$scope.PrintPayment = payment 
+				$scope.$apply()
+				printDiv($scope.print_mode + "-print")
+			}
+
+			$scope.printPKO = function(payment) {
+				$scope.print_mode = 'pko'
+				$scope.PrintPayment = payment
+				$scope.Representative = $scope.representative
 				$scope.$apply()
 				printDiv($scope.print_mode + "-print")
 			}
@@ -1546,7 +1560,8 @@
 
 					ajaxStart('payment')
 					$.post("ajax/paymentAdd", $scope.new_payment, function(response) {
-						$scope.new_payment.id = response;
+						$scope.new_payment.id = response.id;
+						$scope.new_payment.document_number = response.document_number;
 
 						// Инициализация если не установлено
 						$scope.payments = initIfNotSet($scope.payments);
@@ -1559,7 +1574,7 @@
 
 						ajaxEnd('payment')
 						lightBoxHide()
-					})
+					}, 'json')
 				}
 			}
 			
