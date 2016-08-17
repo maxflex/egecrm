@@ -36,6 +36,9 @@
 					    <span class="link-like" ng-click="setMenu(6)" ng-class="{'active': current_menu == 6}">
 					    	тесты
 					    </span>
+						<span class="link-like" ng-click="setMenu(7)" ng-class="{'active': current_menu == 7}">
+					    	фото ученика
+					    </span>
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -54,6 +57,7 @@
     <?= partial("reports") ?>
     <?= partial("comments") ?>
     <?= partial("tests") ?>
+    <?= partial("photo") ?>
 
     <?= partial("save_button", ["Request" => $Request]) ?>
 	<?= partial("bill_print") ?>

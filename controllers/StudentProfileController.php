@@ -43,7 +43,7 @@ class StudentsProfileController extends Controller
 
     public function actionAjaxDeletePhoto() {
         extract($_POST);
-        if ($student_id == User::fromSession()->id_entity) {
+        if ($student_id == User::fromSession()->id_entity || User::isUser()) {
             $Student = Student::findById($student_id);
 
             unlink($Student->photoPath());
@@ -52,7 +52,10 @@ class StudentsProfileController extends Controller
             $User = User::find(['condition' => 'id_entity = '.$student_id]);
             $User->photo_extension = '';
             $User->save('photo_extension');
-            $User->toSession();
+
+            if (!User::isUser()) {
+                $User->toSession();
+            }
         }
     }
 }

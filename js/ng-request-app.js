@@ -1769,6 +1769,10 @@
 						$scope.$apply()
 						
 						$timeout(function() {
+							// photo edit
+							bindCropper();
+							bindPhotoUpload();
+
 							// ios-like triple switch
 							$('.triple-switch').slider({
 								tooltip: 'hide',
@@ -1868,6 +1872,10 @@
 						$scope.setMenu(6)
 						break;
 					}
+					case '#phtoto': {
+						$scope.setMenu(7)
+						break;
+					}
 					default: {
 						$scope.setMenu(0)
 					}
@@ -1879,9 +1887,9 @@
 			        $scope.$apply()
 			    })
 			    
-			    // код подразделения
-			    $("#code-podr").mask("999-999");
-			    
+				// код подразделения
+				$("#code-podr").mask("999-999");
+
 				// генерируем массив цифр посещаемости
 				$scope.visit_data_counts = {}
 				$.each($scope.getStudentGroups(), function (index, id_group) {
@@ -1900,8 +1908,8 @@
 					}
 				})
 			    
-			    // promo-code-loading
-			    $(".map-save-button, .bs-datetime").on("click", function() {
+			  // promo-code-loading
+				$(".map-save-button, .bs-datetime").on("click", function() {
 				    $scope.form_changed = true
 			        $scope.$apply()
 			    })
@@ -1975,4 +1983,126 @@
 						}
 					})
 			}
+
+			// photo functions
+				$scope.picture_version = 1;
+				$scope.dialog = function(id) {
+					$("#" + id).modal('show');
+				};
+				$scope.closeDialog = function(id) {
+					$("#" + id).modal('hide');
+				};
+				$scope.deletePhoto = function() {
+					return bootbox.confirm('Удалить фото?', function(result) {
+						if (result === true) {
+							ajaxStart();
+							return $.post("students/ajax/deletePhoto", {
+								student_id: $scope.student.id
+							}, function() {
+								ajaxEnd();
+								$scope.student.has_photo_cropped = false;
+								$scope.student.has_photo_original = false;
+								$scope.student.photo_cropped_size = 0;
+								$scope.student.photo_original_size = 0;
+								return $scope.$apply();
+							});
+						}
+					});
+				};
+				$scope.formatBytes = function(bytes) {
+					if (bytes < 1024) {
+						return bytes + ' Bytes';
+					} else if (bytes < 1048576) {
+						return (bytes / 1024).toFixed(1) + ' KB';
+					} else if (bytes < 1073741824) {
+						return (bytes / 1048576).toFixed(1) + ' MB';
+					} else {
+						return (bytes / 1073741824).toFixed(1) + ' GB';
+					}
+				};
+				$scope.saveCropped = function() {
+				return $('#photo-edit').cropper('getCroppedCanvas').toBlob(function(blob) {
+					var formData;
+					formData = new FormData;
+					formData.append('croppedImage', blob);
+					formData.append('student_id', $scope.student.id);
+					ajaxStart();
+					return $.ajax('upload/croppedStudent', {
+						method: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						dataType: 'json',
+						success: function(response) {
+							ajaxEnd();
+							$scope.student.has_photo_cropped = true;
+							$scope.student.photo_cropped_size = response;
+							$scope.picture_version++;
+							$scope.$apply();
+							return $scope.closeDialog('change-photo');
+						}
+					});
+				});
+			};
+				bindCropper = function() {
+					$('#photo-edit').cropper('destroy');
+					return $('#photo-edit').cropper({
+						aspectRatio: 4 / 5,
+						minContainerHeight: 700,
+						minContainerWidth: 700,
+						minCropBoxWidth: 240,
+						minCropBoxHeight: 300,
+						preview: '.img-preview',
+						viewMode: 1,
+						crop: function(e) {
+							var width;
+							width = $('#photo-edit').cropper('getCropBoxData').width;
+							if (width >= 240) {
+								return $('.cropper-line, .cropper-point').css('background-color', '#158E51');
+							} else {
+								return $('.cropper-line, .cropper-point').css('background-color', '#D9534F');
+							}
+						}
+					});
+				};
+				bindPhotoUpload = function() {
+					$('#photoupload').fileupload({
+						formData: {
+							student_id: $scope.student.id,
+							maxFileSize: 10000000
+						},
+						send: function() {
+							return NProgress.configure({
+								showSpinner: true
+							});
+						},
+						progress: function(e, data) {
+							return NProgress.set(data.loaded / data.total);
+						},
+						always: function() {
+							NProgress.configure({
+								showSpinner: false
+							});
+							return ajaxEnd();
+						},
+						done: function(i, response) {
+							response.result = JSON.parse(response.result);
+							$scope.student.photo_extension = response.result.extension;
+							$scope.student.photo_original_size = response.result.size;
+							$scope.student.photo_cropped_size = 0;
+							$scope.student.has_photo_original = true;
+							$scope.student.has_photo_cropped = false;
+							$scope.picture_version++;
+							$scope.$apply();
+							return bindCropper();
+						}
+					});
+				};
+				$scope.showPhotoEditor = function() {
+					$scope.dialog('change-photo');
+					return $timeout(function() {
+						return $('#photo-edit').cropper('resize');
+					}, 100);
+				};
+			// photo functions
 		})
