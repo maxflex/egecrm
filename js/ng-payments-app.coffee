@@ -235,7 +235,8 @@ angular.module "Payments", ["ui.bootstrap"]
                 $.post 'ajax/paymentAdd',
                     $scope.new_payment
                 , (response) ->
-                    $scope.new_payment.id = response
+                    $scope.new_payment.id = response.id
+                    $scope.new_payment.document_number = response.document_number
 
                     # Инициализация если не установлено
                     $scope.payments = initIfNotSet $scope.payments
@@ -248,6 +249,7 @@ angular.module "Payments", ["ui.bootstrap"]
 
                     ajaxEnd()
                     lightBoxHide()
+                , 'json'
 
         # Удалить платеж
         $scope.deletePayment = (index, payment) ->

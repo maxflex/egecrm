@@ -219,7 +219,7 @@
 
 		public function actionAjaxPaymentAdd()
 		{
-			echo Payment::add($_POST)->id;
+			returnJson(Payment::add($_POST)->dbData());
 		}
 
 		public function actionAjaxConfirmPayment()

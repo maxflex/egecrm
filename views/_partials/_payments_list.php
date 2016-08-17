@@ -1,4 +1,5 @@
 <?= $student_page ? globalPartial("bill_print") : '' ?>
+<?= $student_page ? globalPartial("pko_print") : '' ?>
 
 <div class="form-group payment-line" style="margin-bottom: 40px;">
     <table class="table table-hover payments-table" style="font-size: 12px !important">
@@ -36,6 +37,8 @@
                 <?php if ($student_page) :?>
                 <a style='margin-left: 10px' class="link-like" ng-click="printBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета</a>
                 <?php endif ?>
+
+                <a style='margin-left: 10px' class="link-like" ng-click="printPKO(payment)" ng-show="payment.id_status == <?= Payment::PAID_CASH ?>">печать пко</a>
             </td>
             <td class="col-sm-2">
                 {{payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}

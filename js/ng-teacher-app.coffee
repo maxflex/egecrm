@@ -268,7 +268,8 @@
 			    $scope.new_payment.id_user = $scope.user.id
 			    ajaxStart()
 			    $.post 'ajax/PaymentAdd', $scope.new_payment, (response) ->
-			      $scope.new_payment.id = response
+			      $scope.new_payment.id              = response.id
+			      $scope.new_payment.document_number = response.document_number
 			      # Инициализация если не установлено
 			      $scope.payments = initIfNotSet($scope.payments)
 			      $scope.payments.push $scope.new_payment
@@ -277,6 +278,7 @@
 			      ajaxEnd()
 			      lightBoxHide()
 			      return
+			    , 'json'
 			  return
 
 			# Удалить платеж
