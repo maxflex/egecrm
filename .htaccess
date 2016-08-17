@@ -137,6 +137,7 @@ RewriteRule tests/students[/]?[?page=(0-9)]?$ index.php?controller=tests&action=
 RewriteRule tests/create[/]?$ index.php?controller=tests&action=create [QSA,L]
 RewriteRule ^tests/edit/([0-9]+)[/]?$ index.php?controller=tests&action=edit&id=$1 [QSA,L]
 RewriteRule ^tests/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=$1 [QSA,L]
+RewriteRule ^tests/ajax/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=Ajax$1 [QSA,L]
 
 # as
 RewriteRule ^as/(teacher|student)/([0-9]+)[/]?$ index.php?controller=as&type=$1&id=$2 [QSA,L]

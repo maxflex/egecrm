@@ -125,7 +125,12 @@
 		
 		# Заголовок
 		static $title = "предмет";
-		
+
+        public static function json()
+        {
+            return json_encode(static::$all);
+        }
+
 		/**
 		 * Создает col-sm-6 селектор (предметы в два стобца по col-sm-3).
 		 * $selected_array - массив отмеченых предметов

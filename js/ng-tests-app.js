@@ -159,29 +159,47 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
       return $scope.$apply();
     });
   };
+  $scope.refreshCounts = function() {
+    return $timeout(function() {
+      $('.watch-select option').each(function(index, el) {
+        $(el).data('subtext', $(el).attr('data-subtext'));
+        return $(el).data('content', $(el).attr('data-content'));
+      });
+      return $('.watch-select').selectpicker('refresh');
+    }, 100);
+  };
+  $scope.filter = function() {
+    $.cookie("tests", JSON.stringify($scope.search), {
+      expires: 365,
+      path: '/'
+    });
+    $scope.current_page = 1;
+    return $scope.getByPage($scope.current_page);
+  };
   $scope.pageChanged = function() {
     var page;
     console.log($scope.current_page);
     page = $scope.current_page > 1 ? '?page=' + $scope.current_page : '';
     window.history.pushState({}, '', 'tests/students' + page);
-    return $scope.loadTests();
+    return $scope.getByPage($scope.current_page);
   };
-  $scope.loadTests = function() {
-    frontendLoadingStart();
+  $scope.getByPage = function(page) {
     delete $scope.StudentTests;
-    return $.post('tests/ajaxLoadStudentTests', {
-      page: $scope.current_page,
-      filter: $scope.current_filter
+    return $.post("tests/ajax/GetStudentTests", {
+      page: page
     }, function(response) {
-      $.cookie('test_filter', $scope.current_filter, {
-        expires: 365,
-        path: '/'
-      });
-      $scope.StudentTests = response;
+      $scope.StudentTests = response.data;
+      $scope.counts = response.counts;
       $scope.$apply();
-      return frontendLoadingEnd();
+      return $scope.refreshCounts();
     }, "json");
   };
+  angular.element(document).ready(function() {
+    set_scope("Tests");
+    $scope.search = $.cookie("tests") ? JSON.parse($.cookie("tests")) : {};
+    $scope.pageChanged();
+    return $(".single-select").selectpicker();
+  });
   $scope.formatDate = function(date) {
     return moment(date).format('DD MMMM');
   };
@@ -229,24 +247,9 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
     });
     return Math.round(count * 100 / Test.max_score);
   };
-  $scope.formatTestDate = function(StudentTest) {
+  return $scope.formatTestDate = function(StudentTest) {
     return moment(StudentTest.date_start).format('DD.MM.YY в HH:mm');
   };
-  return angular.element(document).ready(function() {
-    set_scope("Tests");
-    delete $scope.StudentTests;
-    $scope.current_filter = $.cookie('test_filter') ? $.cookie('test_filter') : '';
-    if ($scope.current_tab === 'students') {
-      $scope.loadTests();
-    }
-    return $timeout(function() {
-      $('.watch-select option').each(function(index, el) {
-        $(el).data('subtext', $(el).attr('data-subtext'));
-        return $(el).data('content', $(el).attr('data-content'));
-      });
-      return $('.watch-select').selectpicker('refresh');
-    }, 100);
-  });
 }).controller("ListCtrl", function($scope) {
   console.log('inited');
   return angular.element(document).ready(function() {

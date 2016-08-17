@@ -14,18 +14,31 @@
             </div>
             <div class="col-sm-12">
                 <div class="row flex-list" style="margin-bottom: 15px">
-                    <div style="max-width:250px;">
-                        <select class="watch-select single-select form-control" ng-model="current_filter" ng-change='loadTests()'>
-                            <option value=''  data-subtext="{{ counts.students.all || '' }}">все тесты</option>
+                    <div>
+                        <select class="watch-select single-select form-control" ng-model="search.state" ng-change='filter()'>
+                            <option value=''  data-subtext="{{ counts.state.all || '' }}">все тесты</option>
                             <option disabled>───────</option>
-                            <option value='not_started'  data-subtext="{{ counts.students.not_started || '' }}">не приступали</option>
-                            <option value='in_process'  data-subtext="{{ counts.students.in_process || '' }}">в процессе</option>
-                            <option value='finished'  data-subtext="{{ counts.students.finished || '' }}">пройденные</option>
+                            <option value='{{id_state}}'  data-subtext='{{ counts.state[id_state] || "" }}' ng-repeat='(id_state, label) in <?= TestStates::json() ?>'>{{label}}</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select class="watch-select single-select form-control" ng-model="search.grade" ng-change='filter()'>
+                            <option value=''  data-subtext="{{ counts.grade.all || '' }}">класс</option>
+                            <option disabled>───────</option>
+                            <option value='{{id_grade}}' data-subtext='{{ counts.grade[id_grade] || "" }}' ng-repeat='(id_grade, label) in  <?= Grades::json() ?>'>{{label}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select class="watch-select single-select form-control" ng-model="search.subject" ng-change='filter()'>
+                            <option value=''  data-subtext="{{ counts.subject.all || '' }}">предмет</option>
+                            <option disabled>───────</option>
+                            <option value='{{id_subject}}' data-subtext='{{ counts.subject[id_subject] || "" }}' ng-repeat='(id_subject, label) in  <?= Subjects::json() ?>'>{{label}}</option>
                         </select>
                     </div>
                 </div>
-
                 <?= globalPartial('loading', ['model' => 'StudentTests', 'message' => 'нет тестов']) ?>
+
                 <table class="table table-hover vertical-align-table border-reverse small">
                     <tr ng-repeat="StudentTest in StudentTests">
                         <td>
@@ -58,10 +71,10 @@
                 </table>
 
                 <pagination
-                    ng-show="(StudentTests && StudentTests.length) && (counts['students'][current_filter || 'all'] > <?= TestStudent::PER_PAGE ?>)"
+                    ng-show="(StudentTests && StudentTests.length) && (counts.state[search.state] > <?= TestStudent::PER_PAGE ?>)"
                     ng-model="current_page"
                     ng-change="pageChanged()"
-                    total-items="counts['students'][current_filter || 'all']"
+                    total-items="counts.state[search.state]"
                     max-size="10"
                     items-per-page="<?= TestStudent::PER_PAGE ?>"
                     first-text="«"

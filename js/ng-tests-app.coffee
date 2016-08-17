@@ -121,24 +121,41 @@
 					$scope.Tests = angular.copy($scope.Tests)
 					$scope.$apply()
 
+			$scope.refreshCounts = ->
+				$timeout ->
+					$('.watch-select option').each (index, el) ->
+						$(el).data 'subtext', $(el).attr 'data-subtext'
+						$(el).data 'content', $(el).attr 'data-content'
+					$('.watch-select').selectpicker 'refresh'
+				, 100
+
+			$scope.filter = ->
+				$.cookie("tests", JSON.stringify($scope.search), { expires: 365, path: '/' });
+				$scope.current_page = 1
+				$scope.getByPage $scope.current_page
+
 			$scope.pageChanged = ->
 				console.log $scope.current_page
 				page = if $scope.current_page > 1 then '?page=' + $scope.current_page  else ''
 				window.history.pushState {}, '', 'tests/students' + page
-				$scope.loadTests()
+				$scope.getByPage($scope.current_page)
 
-			$scope.loadTests = ->
-				frontendLoadingStart()
+			$scope.getByPage = (page) ->
 				delete $scope.StudentTests
-				$.post 'tests/ajaxLoadStudentTests',
-					page: $scope.current_page
-					filter: $scope.current_filter
+				$.post "tests/ajax/GetStudentTests",
+					page: page
 				, (response) ->
-					$.cookie 'test_filter', $scope.current_filter, { expires: 365, path: '/' }
-					$scope.StudentTests = response
+					$scope.StudentTests  = response.data
+					$scope.counts = response.counts
 					$scope.$apply()
-					frontendLoadingEnd()
+					$scope.refreshCounts()
 				, "json"
+
+			angular.element(document).ready ->
+				set_scope "Tests"
+				$scope.search = if $.cookie("tests") then JSON.parse($.cookie("tests")) else {}
+				$scope.pageChanged()
+				$(".single-select").selectpicker()
 
 			$scope.formatDate = (date) ->
 				moment(date).format 'DD MMMM'
@@ -180,19 +197,7 @@
 						count += parseInt(Problem.score)
 				return Math.round(count * 100 / Test.max_score)
 			$scope.formatTestDate = (StudentTest) ->
-				moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')	
-			
-			angular.element(document).ready ->
-				set_scope "Tests"
-				delete $scope.StudentTests
-				$scope.current_filter = if $.cookie 'test_filter' then $.cookie 'test_filter' else ''
-				$scope.loadTests() if $scope.current_tab is 'students'
-				$timeout ->
-					$('.watch-select option').each (index, el) ->
-						$(el).data 'subtext', $(el).attr 'data-subtext'
-						$(el).data 'content', $(el).attr 'data-content'
-					$('.watch-select').selectpicker 'refresh'
-				, 100
+				moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')
 
 		.controller "ListCtrl", ($scope) ->
 			console.log 'inited'

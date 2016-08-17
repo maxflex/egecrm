@@ -188,55 +188,83 @@
 		private function notStarted() {
 			return $this->date_finish == EMPTY_DATETIME;
 		}
-		
-		public static function countFinished()
-		{
-			$result = self::dbConnection()->query("select count(*) as cnt from test_students ts join tests t on ts.id_test = t.id and ".self::$not_empty_date_condition.' and '.self::$finished_condition);
-			$result = $result->fetch_assoc();
-			return $result['cnt'];
-		}
 
-		private static function finishedCondition()
-		{
-			return self::$not_empty_date_condition .' and '.self::$finished_condition;
-		}
+        public static function getData($page)
+        {
+            if (!$page) {
+                $page = 1;
+            }
+            // С какой записи начинать отображение, по формуле
+            $start_from = ($page - 1) * TestStudent::PER_PAGE;
+            $search = isset($_COOKIE['tests']) ? json_decode($_COOKIE['tests']) : (object)[];
 
-		public static function countInProcess()
-		{
-			$result = self::dbConnection()->query("select count(*) as cnt from test_students ts join tests t on ts.id_test = t.id and ".self::$not_empty_date_condition.' and (not '.self::$finished_condition.')');
-			$result = $result->fetch_assoc();
-			return $result['cnt'];
-		}
+            // получаем данные
+            $query = static::_generateQuery($search, 'ts.*');
+            $result = dbConnection()->query($query . ($page == -1 ? '' : " LIMIT {$start_from}, " . TestStudent::PER_PAGE));
 
-		private static function inProcessCondition()
-		{
-			return self::$not_empty_date_condition.' and (not '.self::$finished_condition.')';
-		}
+            $data = false;
+            if ($result->num_rows) {
+                while ($row = $result->fetch_array()) {
+                    if ($page == -1) {
+                        $data[] = $row['id'];
+                    } else {
+                        $Test = new TestStudent($row);
+                        $Test->Student = Student::getLight($Test->id_student);
+                        $data[] = $Test;
+                    }
+                }
+            }
 
-		public static function countNotStarted()
-		{ 
-			return self::count(['condition' => self::$empty_date_condition]);
-		}
+            if ($page > 0) {
+                foreach(array_merge([''], array_keys(TestStates::$all)) as $state) {
+                    $new_search = clone $search;
+                    $new_search->state = $state;
+                    $counts['state'][$state ? $state : 'all'] = static::_count($new_search);
+                }
 
-		static $empty_date_condition = "date_start = '0000-00-00 00:00:00'";
-		static $not_empty_date_condition = "date_start <> '0000-00-00 00:00:00'";
-		static $finished_condition = "(ts.date_finish <> '0000-00-00 00:00:00' or (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(ts.date_start) > (60 * t.minutes)))";
+                foreach(array_merge([''], array_keys(Grades::$all)) as $grade) {
+                    $new_search = clone $search;
+                    $new_search->grade = $grade;
+                    $counts['grade'][$grade ? $grade : 'all'] = static::_count($new_search);
+                }
 
-		public static function filter($filter) {
-			$condition = '1';
-			switch ($filter) {
-				case 'in_process':
-					$condition = self::inProcessCondition();
-					break;
-				case 'finished':
-					$condition = self::finishedCondition();
-					break;
-				case 'not_started':
-					$condition = self::$empty_date_condition;
-					break;
-				default:
-					$condition = '1';
-			}
-			return $condition;
-		}
+                foreach(array_merge([''], array_keys(Subjects::$all)) as $subject) {
+                    $new_search = clone $search;
+                    $new_search->subject = $subject;
+                    $counts['subject'][$subject ? $subject : 'all'] = static::_count($new_search);
+                }
+            }
+
+            return [
+                'data' 	=> $data,
+                'counts' => $counts,
+            ];
+        }
+
+        private static function _count($search) {
+//            header('_'.microtime(true).':'.static::_generateQuery($search, "COUNT(*) AS cnt"));
+            return dbConnection()
+                ->query(static::_generateQuery($search, "COUNT(*) AS cnt"))
+                ->fetch_object()
+                ->cnt;
+        }
+
+        static $empty_date_condition = "date_start = '".EMPTY_DATETIME."'";
+        static $not_empty_date_condition = "date_start <> '".EMPTY_DATETIME."'";
+        static $finished_condition = "(ts.date_finish <> '".EMPTY_DATETIME."' or (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(ts.date_start) > (60 * t.minutes)))";
+
+        private static function _generateQuery($search, $select)
+        {
+            $main_query =
+				' FROM test_students ts ' .
+                ' JOIN tests t ON ts.id_test = t.id ' .
+                ' WHERE true ' .
+                ($search->state && $search->state == 'not_started' ? ' and '.self::$empty_date_condition : '') .
+                ($search->state && $search->state == 'in_progress' ? ' and '.self::$not_empty_date_condition.' and (not '.self::$finished_condition.')' : '') .
+                ($search->state && $search->state == 'finished' ? ' and '.self::$not_empty_date_condition .' and '.self::$finished_condition : '') .
+                (!isBlank($search->subject) ? " AND t.id_subject = " . $search->subject : "") .
+                (!isBlank($search->grade) ? " AND t.grade = " . $search->grade : "")
+            ;
+            return "SELECT " . $select . $main_query;
+        }
 	}
