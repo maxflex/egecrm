@@ -193,10 +193,11 @@ angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', functio
     return $scope.getByPage($scope.current_page);
   };
   $scope.getByPage = function(page) {
-    delete $scope.StudentTests;
+    frontendLoadingStart();
     return $.post("tests/ajax/GetStudentTests", {
       page: page
     }, function(response) {
+      frontendLoadingEnd();
       $scope.StudentTests = response.data;
       $scope.counts = response.counts;
       $scope.$apply();

@@ -102,7 +102,7 @@
 					else
 						return "circle-red"
 				return "circle-gray"
-			
+
 			$scope.getStudentAnswerClass = (Problem, StudentTest) ->
 				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
 						if StudentTest.answers[Problem.id] == Problem.correct_answer
@@ -147,10 +147,11 @@
 				$scope.getByPage($scope.current_page)
 
 			$scope.getByPage = (page) ->
-				delete $scope.StudentTests
+				frontendLoadingStart()
 				$.post "tests/ajax/GetStudentTests",
 					page: page
 				, (response) ->
+					frontendLoadingEnd()
 					$scope.StudentTests  = response.data
 					$scope.counts = response.counts
 					$scope.$apply()
