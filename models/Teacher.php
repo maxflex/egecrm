@@ -475,6 +475,7 @@
 				$object['photo_url'] = $Teacher->has_photo ? static::EXTERNAL_PHOTO_PATH . $Teacher->id . '.' . $Teacher->photo_extension : static::EXTERNAL_PHOTO_PATH . 'no-profile-img.gif'; 
 				$object['full_name'] = $Teacher->getFullName();
 				$object['grades_interval'] = $object['public_grades'][0] . (count($object['public_grades']) > 1 ? '-' . end($object['public_grades']) : '');
+				$object['public_seniority'] = date('Y') - $Teacher->start_career_year;
 				$subject_string = [];
 				foreach ($Teacher->subjects as $index => $id_subject) {
 					$subject_string[] = Subjects::$dative[$id_subject];
