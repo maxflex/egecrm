@@ -3,7 +3,7 @@
 	{
 	
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
-		
+		const BAR_YEAR = 2016;
 		
 		// ID => TIME
 		const TIME = [
@@ -137,7 +137,7 @@
 			return dbConnection()->query("
 				SELECT g.id FROM groups g
 					LEFT JOIN group_time gt ON gt.id_group = g.id
-				WHERE g.id != $id_group AND g.ended = 0 AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND CONCAT(',', CONCAT(g.students, ',')) LIKE '%,{$id_student},%'
+				WHERE g.id != $id_group AND g.ended = 0 AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND CONCAT(',', CONCAT(g.students, ',')) LIKE '%,{$id_student},%' AND g.year = ".self::BAR_YEAR."
 			")->num_rows;
 		}
 		
@@ -158,14 +158,14 @@
 					}
 					
 					# зуб соответствует времени группы из расписания?
-					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended) {
+					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended && $Group->year == self::BAR_YEAR) {
 						# в данное время есть другие группы?
 						
 						// есть ли в данное время другие группы
 						$has_other_groups_at_this_time = false;
 						
 						foreach ($StudentGroups as $StudentGroup) {
-							if ($StudentGroup->id != $Group->id && isset($StudentGroup->day_and_time[$day][$correct_time_index])) {
+							if ($StudentGroup->id != $Group->id && isset($StudentGroup->day_and_time[$day][$correct_time_index]) && $StudentGroup->year == self::BAR_YEAR) {
 								$has_other_groups_at_this_time = true;
 								break;
 							}
@@ -210,7 +210,7 @@
 						$other_groups_at_this_time_count = 0;
 						
 						foreach ($StudentGroups as $StudentGroup) {
-							if ($StudentGroup->id != $Group->id && isset($StudentGroup->day_and_time[$day][$correct_time_index])) {
+							if ($StudentGroup->id != $Group->id && isset($StudentGroup->day_and_time[$day][$correct_time_index]) && $StudentGroup->year == self::BAR_YEAR) {
 								$other_groups_at_this_time_count++;
 							}
 						}
@@ -271,7 +271,7 @@
 			return dbConnection()->query("
 				SELECT g.id FROM groups g
 					LEFT JOIN group_time gt ON gt.id_group = g.id
-				WHERE g.id != $id_group AND g.ended = 0 AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND g.id_teacher = $id_teacher
+				WHERE g.id != $id_group AND g.ended = 0 AND g.id_branch != $id_branch AND gt.day = '$day' AND gt.time = '$time' AND g.id_teacher = $id_teacher AND g.year = ".self::BAR_YEAR."
 			")->num_rows;
 		}
 		
@@ -292,14 +292,14 @@
 					}
 					
 					# зуб соответствует времени группы из расписания?
-					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended) {
+					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended && $Group->year == self::BAR_YEAR) {
 						# в данное время есть другие группы?
 						
 						// есть ли в данное время другие группы
 						$has_other_groups_at_this_time = false;
 						
 						foreach ($TeacherGroups as $TeacherGroup) {
-							if ($TeacherGroup->id != $Group->id && isset($TeacherGroup->day_and_time[$day][$correct_time_index])) {
+							if ($TeacherGroup->id != $Group->id && isset($TeacherGroup->day_and_time[$day][$correct_time_index]) && $TeacherGroup->year == self::BAR_YEAR) {
 								$has_other_groups_at_this_time = true;
 								break;
 							}
@@ -342,9 +342,9 @@
 						
 						// подсчитываем кол-во групп в зубе, отличных от текущей группы
 						$other_groups_at_this_time_count = 0;
-						
+
 						foreach ($TeacherGroups as $TeacherGroup) {
-							if ($TeacherGroup->id != $Group->id && isset($TeacherGroup->day_and_time[$day][$correct_time_index])) {
+							if ($TeacherGroup->id != $Group->id && isset($TeacherGroup->day_and_time[$day][$correct_time_index]) && $TeacherGroup->year == self::BAR_YEAR) {
 								$other_groups_at_this_time_count++;
 							}
 						}
@@ -412,7 +412,7 @@
 					$result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
-						WHERE g.cabinet = $cabinet AND g.ended = 0 AND g.id != $id_group AND gt.day=$day AND gt.time=$time_id
+						WHERE g.cabinet = $cabinet AND g.ended = 0 AND g.id != $id_group AND gt.day=$day AND gt.time=$time_id AND g.year = ".self::BAR_YEAR."
 					");
 					
 					// если в это время не было групп
@@ -423,7 +423,7 @@
 					}
 					
 					# зуб соответствует времени в расписании группы?
-					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended) {
+					if (isset($Group->day_and_time[$day][$correct_time_index]) && !$Group->ended && $Group->year == self::BAR_YEAR) {
 						# в это время в текущем кабинете есть хотя бы еще 1 другая группа?
 						if ($other_groups_at_this_time_count >= 1) {
 							$bar[$day][$time_id] = 'blink red';
