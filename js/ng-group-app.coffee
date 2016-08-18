@@ -520,9 +520,7 @@
 				return if $scope.Group.id_teacher is "0"
 				ajaxStart()
 				$.post "groups/ajax/GetTeacherBar",
-					id_group: $scope.Group.id
 					id_teacher: $scope.Group.id_teacher
-					id_branch: $scope.Group.id_branch
 				, (bar) ->
 					ajaxEnd()
 					$scope.getTeacher($scope.Group.id_teacher).bar = bar
@@ -532,7 +530,7 @@
 
 			$scope.updateCabinetBar = (ajax_animation = true) ->
 				ajaxStart() if ajax_animation
-				$.post "groups/ajax/GetCabinetBar", {id_group: $scope.Group.id, cabinet: $scope.Group.cabinet}, (bar) ->
+				$.post "groups/ajax/GetCabinetBar", {cabinet: $scope.Group.cabinet}, (bar) ->
 					ajaxEnd() if ajax_animation
 					$scope.cabinet_bar = bar
 					$scope.$apply()
@@ -542,8 +540,6 @@
 			$scope.updateStudentBars = ->
 				$.post "groups/ajax/GetStudentBars",
 					student_ids: $scope.Group.students
-					id_group: $scope.Group.id
-					id_branch: $scope.Group.id_branch
 				, (response) ->
 					console.log response, 'students'
 					$.each response, (id_student, bar) ->

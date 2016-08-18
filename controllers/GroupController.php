@@ -471,7 +471,7 @@
 				"duration"		=> Group::DURATION,
 				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
 				"branches_brick"		=> Branches::getShortColored(),
-				"cabinet_bar"			=> Freetime::getCabinetBar($Group->id, $Group->cabinet),
+				"cabinet_bar"			=> Freetime::getCabinetBar($Group->cabinet),
 				"time" => Freetime::TIME,
 			]);
 
@@ -634,7 +634,7 @@
 			extract($_POST);
 
 			returnJsonAng(
-				Freetime::getCabinetBar($id_group, $cabinet)
+				Freetime::getCabinetBar($cabinet)
 			);
 		}
 
@@ -642,10 +642,8 @@
 		{
 			extract($_POST);
 
-			$id_group = $id_group ? $id_group : 0;
-
 			returnJsonAng(
-				Freetime::getTeacherBar($id_group, $id_branch, $id_teacher)
+				Freetime::getTeacherBar($id_teacher)
 			);
 		}
 
@@ -653,10 +651,8 @@
 		{
 			extract($_POST);
 
-			$id_group = $id_group ? $id_group : 0;
-
 			foreach ($student_ids as $id_student) {
-				$return[$id_student] = Freetime::getStudentBar($id_group, $id_branch, $id_student);
+				$return[$id_student] = Freetime::getStudentBar($id_student);
 			}
 
 			returnJsonAng($return);
@@ -1061,7 +1057,7 @@
 				$return['teacher_like_statuses'][$id_student] = TeacherReview::getStatus($id_student, $id_teacher, $id_subject);
 			}
 
-			$return['bar'] = Freetime::getTeacherBar($id_group, $id_branch, $id_teacher);
+			$return['bar'] = Freetime::getTeacherBar($id_teacher);
 
 			Group::updateById($id_group, [
 				"id_teacher" => $id_teacher,

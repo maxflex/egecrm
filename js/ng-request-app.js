@@ -1019,7 +1019,7 @@
 				
 				return Math.round(contract.sum * percentage)
 			}
-			
+
 			// Рекомендуемая цена договора
 			$scope.recommendedPrice = function(contract) {
 				count = $scope.subjectCount(contract)
@@ -1479,7 +1479,8 @@
 					title: "Введите пароль",
 					className: "modal-password",
 					callback: function(result) {
-						if (hex_md5(result) === payments_hash) {
+					  if (result === null) {}
+						else if (hex_md5(result) === payments_hash) {
 							payment.confirmed = payment.confirmed ? 0 : 1
 							$.post("ajax/confirmPayment", {id: payment.id, confirmed: payment.confirmed})
 							$scope.$apply()
@@ -1514,7 +1515,8 @@
 					title: "Введите пароль",
 					className: "modal-password",
 					callback: function(result) {
-						if (hex_md5(result) === payments_hash) {
+            if (result === null) {}
+						else if (hex_md5(result) === payments_hash) {
 							$scope.new_payment = angular.copy(payment)
 							$scope.$apply()
 							lightBoxShow('addpayment')		
@@ -1641,8 +1643,8 @@
 						title: "Введите пароль",
 						className: "modal-password",
 						callback: function(result) {
-							// if (hex_md5(result) === payments_hash) {
-							if (1) {
+              if (result === null) {}
+							else if (hex_md5(result) === payments_hash) {
 								bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
 									if (result === true) {
 										$.post("ajax/deletePayment", {"id_payment": payment.id})

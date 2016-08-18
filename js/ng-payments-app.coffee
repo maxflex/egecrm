@@ -120,7 +120,8 @@ angular.module "Payments", ["ui.bootstrap"]
                 title: "Введите пароль",
                 className: "modal-password",
                 callback: (result) ->
-                    if hex_md5(result) is payments_hash
+                    if result is null
+                    else if hex_md5(result) is payments_hash
                         payment.confirmed = (payment.confirmed + 1) % 2
                         $.post "ajax/confirmPayment",
                             id:        payment.id
@@ -139,8 +140,9 @@ angular.module "Payments", ["ui.bootstrap"]
                     },
                     cancel: {
                         className: "display-none"
-                    }
+                    },
                 }
+                onEscape: true
             }
 
         # Окно редактирования платежа
@@ -155,7 +157,8 @@ angular.module "Payments", ["ui.bootstrap"]
                 title: "Введите пароль"
                 className: "modal-password"
                 callback: (result) ->
-                    if hex_md5(result) is payments_hash
+                    if result is null
+                    else if hex_md5(result) is payments_hash
                         $scope.new_payment = angular.copy payment
                         $scope.$apply()
                         lightBoxShow 'addpayment'
@@ -265,7 +268,8 @@ angular.module "Payments", ["ui.bootstrap"]
                     title: "Введите пароль",
                     className: "modal-password",
                     callback: (result) ->
-                        if hex_md5(result) is payments_hash
+                        if result is null
+                        else if hex_md5(result) is payments_hash
                             bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
                                 if result is true
                                     $.post "ajax/deletePayment",
@@ -286,7 +290,14 @@ angular.module "Payments", ["ui.bootstrap"]
                         }
                     }
                 }
-                
+
+        $scope.printPKO = (payment) ->
+            $scope.print_mode = 'pko'
+            $scope.PrintPayment = payment
+            $scope.Representative = $scope.representative
+            $scope.$apply()
+            printDiv $scope.print_mode + "-print"
+
 #         $scope.printBill = (payment) ->
 #             $scope.print_mode = 'bill'
 #             $scope.PrintPayment = payment 

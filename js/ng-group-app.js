@@ -493,12 +493,11 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   $scope.search_groups = {
     grade: "",
     id_branch: "",
-    id_subject: "",
-    year: ""
+    id_subject: ""
   };
   $scope.groupsFilter = function(Group) {
     console.log($scope.search_groups.id_teacher, Group, Group.id_teacher);
-    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && (parseInt($scope.search_groups.id_branch) === Group.id_branch || !$scope.search_groups.id_branch) && (parseInt($scope.search_groups.year) === Group.year || !$scope.search_groups.year) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
+    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && (parseInt($scope.search_groups.id_branch) === Group.id_branch || !$scope.search_groups.id_branch) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
   };
   bindDraggable = function() {
     $(".student-line").draggable({
@@ -631,9 +630,7 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     }
     ajaxStart();
     return $.post("groups/ajax/GetTeacherBar", {
-      id_group: $scope.Group.id,
-      id_teacher: $scope.Group.id_teacher,
-      id_branch: $scope.Group.id_branch
+      id_teacher: $scope.Group.id_teacher
     }, function(bar) {
       ajaxEnd();
       $scope.getTeacher($scope.Group.id_teacher).bar = bar;
@@ -649,7 +646,6 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
       ajaxStart();
     }
     return $.post("groups/ajax/GetCabinetBar", {
-      id_group: $scope.Group.id,
       cabinet: $scope.Group.cabinet
     }, function(bar) {
       if (ajax_animation) {
@@ -662,9 +658,7 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   };
   $scope.updateStudentBars = function() {
     return $.post("groups/ajax/GetStudentBars", {
-      student_ids: $scope.Group.students,
-      id_group: $scope.Group.id,
-      id_branch: $scope.Group.id_branch
+      student_ids: $scope.Group.students
     }, function(response) {
       console.log(response, 'students');
       $.each(response, function(id_student, bar) {
@@ -1064,9 +1058,6 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     $scope.add_groups_panel = !$scope.add_groups_panel;
     if (!$scope.search_groups.grade && $scope.Group.grade) {
       $scope.search_groups.grade = $scope.Group.grade;
-    }
-    if (!$scope.search_groups.year && $scope.Group.year) {
-      $scope.search_groups.year = $scope.Group.year;
     }
     if (!$scope.search_groups.id_subject && $scope.Group.id_subject) {
       return $scope.search_groups.id_subject = $scope.Group.id_subject;
