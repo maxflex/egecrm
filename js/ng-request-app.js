@@ -1795,7 +1795,7 @@
 		    $scope.setMenu = function(menu) {
 			    if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				    $.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-						['FreetimeBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
+						['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
 							'branches_brick', 'time', 'representative_phone_level', 'representative'].forEach(function(field) {
 							$scope[field] = response[field]
 						})

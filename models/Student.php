@@ -137,6 +137,37 @@
 		{
 			return Freetime::getStudentBar($id_group, $id_branch, $this->id);
 		}
+		
+		public static function getMergedGroupsBar($Groups, $id_student)
+		{
+			$final_bar = Freetime::emptyBar();
+			
+			if (count($Groups)) {
+				foreach($Groups as $Group) {
+					$bars[] = Freetime::getStudentBar($Group->id, $Group->id_branch, $id_student);
+				}
+				foreach($bars as $bar) {
+					foreach($bar as $day => $data) {
+						foreach($data as $time_id => $color) {
+							if (static::_barWeight($color) > static::_barWeight($final_bar[$day][$time_id])) {
+								$final_bar[$day][$time_id] = $color;	
+							}
+						}
+					}
+				}
+			}
+			
+			return $final_bar;
+		}
+		
+		private static function _barWeight($color)
+		{
+			switch($color) {
+				case 'red': 		return 1;
+				case 'blink red': 	return 2;
+				default:			return 0;
+			}
+		}
 
 		/**
 		 * Получить студентов с договорами.

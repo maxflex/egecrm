@@ -493,11 +493,12 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   $scope.search_groups = {
     grade: "",
     id_branch: "",
-    id_subject: ""
+    id_subject: "",
+    year: ""
   };
   $scope.groupsFilter = function(Group) {
     console.log($scope.search_groups.id_teacher, Group, Group.id_teacher);
-    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && (parseInt($scope.search_groups.id_branch) === Group.id_branch || !$scope.search_groups.id_branch) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
+    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && (parseInt($scope.search_groups.id_branch) === Group.id_branch || !$scope.search_groups.id_branch) && (parseInt($scope.search_groups.year) === Group.year || !$scope.search_groups.year) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
   };
   bindDraggable = function() {
     $(".student-line").draggable({
@@ -1063,6 +1064,9 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     $scope.add_groups_panel = !$scope.add_groups_panel;
     if (!$scope.search_groups.grade && $scope.Group.grade) {
       $scope.search_groups.grade = $scope.Group.grade;
+    }
+    if (!$scope.search_groups.year && $scope.Group.year) {
+      $scope.search_groups.year = $scope.Group.year;
     }
     if (!$scope.search_groups.id_subject && $scope.Group.id_subject) {
       return $scope.search_groups.id_subject = $scope.Group.id_subject;

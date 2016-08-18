@@ -159,6 +159,16 @@
 			return dbConnection()->query("SELECT id FROM students_freetime WHERE id_student={$id_student} AND day={$day} AND time_id={$time_id}")->num_rows;
 		}
 		
+		public static function emptyBar()
+		{
+			foreach (self::$weekdays_time as $day => $time_data) {
+				foreach ($time_data as $time_index => $time_id) {
+					$bar[$day][$time_id] = 'gray';
+				}
+			}
+			return $bar;
+		}
+		
 		public static function getStudentBar($id_group, $id_branch, $id_student)
 		{
 			$Group = Group::findById($id_group);

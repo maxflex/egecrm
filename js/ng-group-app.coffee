@@ -1,5 +1,5 @@
 	testy = false
-	
+
 	angular.module "Group", ['ngAnimate']
 		.filter 'toArray', ->
 			(obj) ->
@@ -132,7 +132,7 @@
 
 			$scope.getLine1 = (Schedule) ->
 				moment(Schedule.date).format "D MMMM YYYY г."
-			
+
 			$scope.countNotCancelled = (Schedule) ->
 				_.where(Schedule, { cancelled: 0 }).length
 
@@ -184,7 +184,7 @@
 					date: Schedule.date
 					id_group: $scope.Group.id
 					cabinet: Schedule.cabinet
-            
+
 			$scope.changeBranch = (Schedule) ->
 				$.post "groups/ajax/changeScheduleBranch",
 					date: Schedule.date
@@ -378,11 +378,13 @@
 				grade: ""
 				id_branch: ""
 				id_subject: ""
+				year: ""
 
 			$scope.groupsFilter = (Group) ->
 				console.log $scope.search_groups.id_teacher, Group, Group.id_teacher
 				return (Group.grade is parseInt($scope.search_groups.grade) or not $scope.search_groups.grade) and
 					(parseInt($scope.search_groups.id_branch) is Group.id_branch or not $scope.search_groups.id_branch) and
+					(parseInt($scope.search_groups.year) is Group.year or not $scope.search_groups.year) and
 					(parseInt($scope.search_groups.id_subject) is Group.id_subject or not $scope.search_groups.id_subject)
 
 			bindDraggable = ->
@@ -479,12 +481,12 @@
 
 			$scope.isOrangeBrick = (day, time) ->
 				current_index = $.inArray(time, $scope.weekdays[day - 1].schedule)
-            
+
 			$scope.changeYear = ->
 				$scope.updateGroup
 					year: $scope.Group.year
 
-            
+
 			$scope.changeCabinet = ->
 				return if not $scope.Group.id
 				$scope.reloadSmsNotificationStatuses()
@@ -695,7 +697,7 @@
 						$scope.getStudent(id_student).sms_notified = id_status
 					$scope.$apply()
 				, "json"
-			
+
 			$scope.reloadTests = ->
 				$.post "groups/ajax/ReloadTests",
 					students: $scope.Group.students
@@ -859,12 +861,13 @@
 						$("#group-cabinet").selectpicker 'refresh'
 				, "json"
 
- 
+
 
 			$scope.addGroupsPanel = ->
 				$scope.loadGroups() if not $scope.Groups
 				$scope.add_groups_panel = not $scope.add_groups_panel
 				$scope.search_groups.grade = $scope.Group.grade if not $scope.search_groups.grade and $scope.Group.grade
+				$scope.search_groups.year = $scope.Group.year if not $scope.search_groups.year and $scope.Group.year
 				$scope.search_groups.id_subject = $scope.Group.id_subject if not $scope.search_groups.id_subject and $scope.Group.id_subject
 
 
@@ -1005,7 +1008,7 @@
 
 			$scope.getMonthByNumber = (n) ->
 				moment().month(n - 1).format("MMMM")
-			
+
 			$scope.getTeacher = (id) ->
 				_.find($scope.Teachers, {id: parseInt(id)})
 
@@ -1279,10 +1282,10 @@
 					$scope.$apply()
 					bindDraggable2()
 				, "json"
-			
+
 			$scope.yearLabel = (year) ->
 				year + '-' + (parseInt(year) + 1) + ' уч. г.'
-			
+
 			$scope.refreshCounts = ->
 				$timeout ->
 					$('.watch-select option').each (index, el) ->
@@ -1290,19 +1293,19 @@
 		                $(el).data 'content', $(el).attr 'data-content'
 		            $('.watch-select').selectpicker 'refresh'
 		        , 100
-		    
+
 			$scope.filter = ->
 				$.cookie("groups", JSON.stringify($scope.search), { expires: 365, path: '/' });
 				$scope.current_page = 1
 				$scope.getByPage($scope.current_page)
-			
+
 			# Страница изменилась
 			$scope.pageChanged = ->
 				console.log $scope.currentPage
 				window.history.pushState {}, '', 'groups/?page=' + $scope.current_page if $scope.current_page > 1
 				# Получаем задачи, соответствующие странице и списку
 				$scope.getByPage($scope.current_page)
-			
+
 			$scope.getByPage = (page) ->
 				$scope.Groups = undefined
 				frontendLoadingStart()
@@ -1317,16 +1320,16 @@
 					bindDraggable2() if $scope.students_picker
 					$scope.refreshCounts()
 				, "json"
-			
+
 			$scope.teachersFilter2 = (Teacher) ->
 				return true if $scope.teacher_ids is undefined
-				return true if (Teacher.id in $scope.teacher_ids or Teacher.id is parseInt($scope.search.id_teacher)) 
+				return true if (Teacher.id in $scope.teacher_ids or Teacher.id is parseInt($scope.search.id_teacher))
 				return false
-			
+
 			$scope.getGrades = (Grades) ->
 				console.log 'grades', Grades
 				return Grades
-			
+
 			$(document).ready ->
 				try
 					if $("#subjects-select").length
