@@ -238,12 +238,8 @@
 		public function actionAjaxPaymentEdit()
 		{
 			extract($_POST);
-			Payment::updateById($id, $_POST);
+			returnJson(Payment::updateById($id, $_POST)->dbData());
 		}
-
-		# TEACHER PAYMENTS
-			# теперь все через обычний пэймент
-		# / TEACHER PAYMENTS
 
 
 
