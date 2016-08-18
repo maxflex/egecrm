@@ -56,9 +56,9 @@
 			return dbEgerep();
 		}
 
-		public function getBar($id_group, $id_branch)
+		public function getBar()
 		{
-			return Freetime::getTeacherBar($id_group, $id_branch, $this->id);
+			return Freetime::getTeacherBar($this->id);
 		}
 
 		// 	количество красных меток "требуется создание отчета"

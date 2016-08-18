@@ -133,9 +133,9 @@
 			return implode(" ", $name_ordered);
 		}
 
-		public function getBar($id_group, $id_branch)
+		public function getBar()
 		{
-			return Freetime::getStudentBar($id_group, $id_branch, $this->id);
+			return Freetime::getStudentBar($this->id);
 		}
 
 		/**

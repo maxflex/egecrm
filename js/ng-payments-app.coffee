@@ -290,7 +290,14 @@ angular.module "Payments", ["ui.bootstrap"]
                         }
                     }
                 }
-                
+
+        $scope.printPKO = (payment) ->
+            $scope.print_mode = 'pko'
+            $scope.PrintPayment = payment
+            $scope.Representative = $scope.representative
+            $scope.$apply()
+            printDiv $scope.print_mode + "-print"
+
 #         $scope.printBill = (payment) ->
 #             $scope.print_mode = 'bill'
 #             $scope.PrintPayment = payment 
