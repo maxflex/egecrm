@@ -709,7 +709,7 @@ body {
   width: 5px;
   margin-right: 1px;
   display: inline-block; }
-  .bar.gray {
+  .bar.gray, .bar.empty {
     background-color: rgba(176, 176, 176, 0.2); }
   .bar.green {
     background-color: #5cb85c; }

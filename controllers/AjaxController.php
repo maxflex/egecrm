@@ -880,4 +880,16 @@
 			extract($_POST);
             Student::updateById($id_student, ['id_user_review' => $id_user_new]);
 		}
+		
+		public function actionAjaxAddStudentFreetime()
+		{
+			extract($_POST);
+			dbConnection()->query("INSERT INTO students_freetime (id_student, day, time_id) VALUES ({$id_student}, {$day}, {$time_id})");
+		}
+		
+		public function actionAjaxDeleteStudentFreetime()
+		{
+			extract($_POST);
+			dbConnection()->query("DELETE FROM students_freetime WHERE id_student={$id_student} AND day={$day} AND time_id={$time_id}");
+		}
 	}

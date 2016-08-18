@@ -209,7 +209,7 @@
 		/*
 		 * Загрузка записи по ID
 		 */
-		public static function findById($id)
+		public static function findById($id, $flag = null)
 		{
 			// Получаем все данные из таблицы
 			$result = static::dbConnection()->query("SELECT * FROM ".static::$mysql_table." WHERE id=".$id);
@@ -224,7 +224,7 @@
 				$class_name = get_called_class();
 
 				// Возвращаем объект
-				return new $class_name($array);
+				return new $class_name($array, $flag);
 			}
 			else
 			{
