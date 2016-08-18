@@ -134,7 +134,8 @@
 			    title: 'Введите пароль'
 			    className: 'modal-password'
 			    callback: (result) ->
-			      if hex_md5 result == payments_hash
+			      if result is null
+			      else if hex_md5 result == payments_hash
 			        payment.confirmed = if payment.confirmed then 0 else 1
 			        $.post 'ajax/confirmPayment',
 			          id: payment.id
@@ -163,7 +164,8 @@
 			    title: 'Введите пароль'
 			    className: 'modal-password'
 			    callback: (result) ->
-			      if hex_md5 result == payments_hash
+			      if result is null
+			      else if hex_md5 result == payments_hash
 			        $scope.new_payment = angular.copy payment
 			        $scope.$apply()
 			        lightBoxShow 'addpayment'
@@ -296,7 +298,8 @@
 			      title: 'Введите пароль'
 			      className: 'modal-password'
 			      callback: (result) ->
-			        if hex_md5 result == payments_hash
+			        if result is null
+			        else if hex_md5 result == payments_hash
 			          bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
 			            if result == true
 			              $.post 'ajax/deletePayment', 'id_payment': payment.id
