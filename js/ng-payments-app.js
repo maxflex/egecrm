@@ -138,7 +138,9 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
       title: "Введите пароль",
       className: "modal-password",
       callback: function(result) {
-        if (hex_md5(result) === payments_hash) {
+        if (result === null) {
+
+        } else if (hex_md5(result) === payments_hash) {
           payment.confirmed = (payment.confirmed + 1) % 2;
           $.post("ajax/confirmPayment", {
             id: payment.id,
@@ -160,7 +162,8 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
         cancel: {
           className: "display-none"
         }
-      }
+      },
+      onEscape: true
     });
   };
   $scope.editPayment = function(payment) {
@@ -174,7 +177,9 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
       title: "Введите пароль",
       className: "modal-password",
       callback: function(result) {
-        if (hex_md5(result) === payments_hash) {
+        if (result === null) {
+
+        } else if (hex_md5(result) === payments_hash) {
           $scope.new_payment = angular.copy(payment);
           $scope.$apply();
           return lightBoxShow('addpayment');
@@ -280,7 +285,9 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
         title: "Введите пароль",
         className: "modal-password",
         callback: function(result) {
-          if (hex_md5(result) === payments_hash) {
+          if (result === null) {
+
+          } else if (hex_md5(result) === payments_hash) {
             return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
               if (result === true) {
                 $.post("ajax/deletePayment", {
@@ -308,6 +315,13 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
         }
       });
     }
+  };
+  $scope.printPKO = function(payment) {
+    $scope.print_mode = 'pko';
+    $scope.PrintPayment = payment;
+    $scope.Representative = $scope.representative;
+    $scope.$apply();
+    return printDiv($scope.print_mode + "-print");
   };
   return $scope.formatDate = function(date) {
     var dateOut;
