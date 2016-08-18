@@ -15,6 +15,7 @@
 		const SOCIETY	= 8;
 		const HISTORY	= 9;
 		const ENGLISH	= 10;
+		const GEOGRAPHY	= 11;
 		
 		# Все предметы
 		static $all = [
@@ -28,6 +29,7 @@
 			self::CHEMISTRY	=> "химия",
 			self::BIOLOGY	=> "биология",
 			self::COMPUTER	=> "информатика",
+			self::GEOGRAPHY	=> "география",
 		];
 		
 		# Все предметы
@@ -42,6 +44,7 @@
 			self::CHEMISTRY	=> "Химия",
 			self::BIOLOGY	=> "Биология",
 			self::COMPUTER	=> "Информатика",
+			self::GEOGRAPHY	=> "География",
 		];
 		
 		static $dative = [
@@ -55,6 +58,7 @@
 			self::CHEMISTRY	=> "химии",
 			self::BIOLOGY	=> "биологии",
 			self::COMPUTER	=> "информатике",
+			self::GEOGRAPHY	=> "геограйии",
 		];
 		
 		static $short = [
@@ -68,6 +72,7 @@
 			self::CHEMISTRY	=> "Х",
 			self::BIOLOGY	=> "Б",
 			self::COMPUTER	=> "Ин",
+			self::GEOGRAPHY	=> "Г",
 		];
 		
 		static $three_letters = [
@@ -81,6 +86,7 @@
 			self::CHEMISTRY	=> "ХИМ",
 			self::BIOLOGY	=> "БИО",
 			self::COMPUTER	=> "ИНФ",	
+			self::GEOGRAPHY	=> "ГЕО",
 		];
 		
 		static $short_eng = [
@@ -93,7 +99,8 @@
 			self::SOCIETY	=> "soc",
 			self::CHEMISTRY	=> "chem",
 			self::BIOLOGY	=> "bio",
-			self::COMPUTER	=> "inf",	
+			self::COMPUTER	=> "inf",
+			self::GEOGRAPHY	=> "geo",
 		];
 		
 		# Время тестирования
@@ -107,7 +114,8 @@
 			self::SOCIETY	=> 180,
 			self::CHEMISTRY	=> 120,
 			self::BIOLOGY	=> 180,
-			self::COMPUTER	=> 180,		
+			self::COMPUTER	=> 180,
+			self::GEOGRAPHY	=> 180,
 		];
 		
 		static $minutes_11 = [
@@ -120,7 +128,8 @@
 			self::SOCIETY	=> 235,
 			self::CHEMISTRY	=> 210,
 			self::BIOLOGY	=> 180,
-			self::COMPUTER	=> 235,		
+			self::COMPUTER	=> 235,
+			self::GEOGRAPHY	=> 180,
 		];
 		
 		# Заголовок

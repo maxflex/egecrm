@@ -1024,10 +1024,58 @@
 			$scope.recommendedPrice = function(contract) {
 				count = $scope.subjectCount(contract)
 				if (contract.grade == 11) {
-					return Math.round(count * 1500)
+					recommended_price = 0
+					
+					if (count > 96) {
+						mod = count % 96
+						recommended_price += (mod * 1400)
+						count -= mod
+					}
+					
+					if (count > 64) {
+						mod = count % 64
+						recommended_price += (mod * 1500)
+						count -= mod
+					}
+					
+					recommended_price += count * 1600
+					
+					return recommended_price
 				} else {
-					return Math.round(count * 1350)
+					recommended_price = 0
+					
+					if (count > 96) {
+						mod = count % 96
+						recommended_price += (mod * 1250)
+						count -= mod
+					}
+					
+					if (count > 64) {
+						mod = count % 64
+						recommended_price += (mod * 1350)
+						count -= mod
+					}
+					
+					recommended_price += count * 1450
+					
+					return recommended_price
 				}
+			}
+			
+			$scope.toggleStudentFreetime = function(day, time_id) {
+				time_id++
+				if (day >= 6) {
+					time_id += 2	
+				}
+				mode = $scope.FreetimeBar[day][time_id] === 'green' ? 'Delete' : 'Add'
+				$.post("ajax/" + mode + "StudentFreetime", {
+					'id_student': $scope.student.id,
+					'day': day,
+					'time_id': time_id,
+				}, function() {
+					$scope.FreetimeBar[day][time_id] = mode == 'Add' ? 'green' : 'empty'
+					$scope.$apply()	
+				})
 			}
 			
 			// Склонять имя в дательном падеже
@@ -1749,7 +1797,7 @@
 		    $scope.setMenu = function(menu) {
 			    if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				    $.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-						['Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
+						['FreetimeBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
 							'branches_brick', 'time', 'representative_phone_level', 'representative'].forEach(function(field) {
 							$scope[field] = response[field]
 						})

@@ -25,6 +25,14 @@
 			}
 		}
 		
+		function getLight($id)
+		{
+			$test = dbConnection()->query('SELECT id, name FROM tests WHERE id = ' . $id)->fetch_object();
+			$test->name = !empty($test->name) ? $test->name : 'Тест №' . $test->id;
+			$test->max_score = Test::getMaxScore($test->id);
+			return $test;
+		}
+		
 		function getLightAll()
 		{
 			$result = dbConnection()->query('SELECT id, name FROM tests');
@@ -101,12 +109,12 @@
 		
 		protected $_json = ['answers'];
 				
-		public function __construct($array)
+		public function __construct($array, $light_test = false)
 		{
-			parent::__construct($array);
+			parent::__construct($array, $light_test);
 			
 			if (! $this->isNewRecord) {
-				$this->Test = Test::findById($this->id_test);
+				$this->Test = $light_test ? Test::getLight($this->id_test) : Test::findById($this->id_test);
 				$this->notStarted = $this->notStarted();
 				$this->isFinished = $this->finished();
 				$this->inProgress = $this->inProgress();
@@ -151,7 +159,7 @@
 				WHERE ts.id_student = {$id_student} AND t.id_subject={$id_subject} AND t.grade={$grade}
 			");
 			if ($result->num_rows) {
-				return TestStudent::findById($result->fetch_object()->id);
+				return TestStudent::findById($result->fetch_object()->id, true);
 			}
 			return false;
 		}
@@ -224,7 +232,7 @@
                         $Test->Student = Student::getLight($Test->id_student);
                         $data[] = $Test;
                     }
-                }
+                } 
             }
 
             if ($page > 0) {

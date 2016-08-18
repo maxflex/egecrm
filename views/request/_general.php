@@ -266,9 +266,10 @@
 		            <div>
 			            <span style="width: 75px; display: inline-block">Пароль:</span><i><?= $Request->Student->password ?></i>
 		            </div>
-		            <div style="margin-bottom: 117px">
+		            <div style="margin-bottom: 20px">
 			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
 		            </div>
+		            
 		            <div class="form-group">
 			            <?= Branches::buildSvgSelector($Request->Student->branches, [
 				            "name" => "Student[branches][]",
@@ -280,6 +281,18 @@
 		            <div class="form-group" style="white-space: nowrap">
 			            <span class="link-like" ng-click="showMap()"><span class="glyphicon glyphicon-map-marker"></span>Метки</span>
 			            <span class="text-primary">({{markers.length}})</span>
+		            </div>
+		            
+		            <h4 style="margin-top: 78px" class="row-header">График</h4>
+		            <div class="row">
+			            <div class="col-sm-4">
+				            свободно
+			            </div>
+			            <div class="col-sm-8" style="text-align: right">
+				            <span ng-repeat="(day, data) in FreetimeBar" class="group-freetime-block">
+								<span ng-click="toggleStudentFreetime(day, $index)" ng-repeat="bar in data" class="pointer bar {{bar}}"></span>
+							</span>
+			            </div>
 		            </div>
 			    </div>
 		    </div>

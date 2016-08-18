@@ -19,7 +19,7 @@
 			<span ng-show="Group.id_branch" ng-bind-html="Group.branch | to_trusted" ng-class="{'mr3' : !$last}" class="center-label"></span>
 		</td>
 		<td width="150">
-			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + GroupLevels[Group.level] : ''}}{{Group.is_special ? " (спец.)" : ""}}
+			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + <?= GroupLevels::json() ?>[Group.level] : ''}}{{Group.is_special ? " (спец.)" : ""}}
 		</td>
 		<td>
 			{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{

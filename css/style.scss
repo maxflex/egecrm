@@ -806,7 +806,7 @@ body {
 		width: 5px;
 		margin-right: 1px;
 		display: inline-block;
-		&.gray {
+		&.gray, &.empty {
 			background-color: rgba(176, 176, 176, 0.2);
 		}
 		&.green {
