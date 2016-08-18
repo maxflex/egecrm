@@ -316,6 +316,13 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
       });
     }
   };
+  $scope.printPKO = function(payment) {
+    $scope.print_mode = 'pko';
+    $scope.PrintPayment = payment;
+    $scope.Representative = $scope.representative;
+    $scope.$apply();
+    return printDiv($scope.print_mode + "-print");
+  };
   return $scope.formatDate = function(date) {
     var dateOut;
     dateOut = new Date(date);

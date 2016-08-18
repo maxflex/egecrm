@@ -137,7 +137,7 @@
 		{
 			return Freetime::getStudentBar($this->id);
 		}
-
+		
 		/**
 		 * Получить студентов с договорами.
 		 *

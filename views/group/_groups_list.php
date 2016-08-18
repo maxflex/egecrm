@@ -11,6 +11,12 @@
 				<div class="col-sm-3">
 					<?= Subjects::buildSelector(false, false, ["ng-model" => "search_groups.id_subject"]) ?>
 				</div>
+				<div class="col-sm-3"> 
+					<select class="form-control" 
+						ng-model="search_groups.year" 
+						ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in <?= Years::json() ?>">
+					</select>
+				</div>
 			</div>
 		</div>
 		<div ng-show="!Groups" class="center half-black small" style="margin-top: 35px">загрузка групп...</div>

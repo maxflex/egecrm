@@ -164,7 +164,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="4"></td>
+							<td colspan="5"></td>
 							<td width="150">
 							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
@@ -175,7 +175,7 @@
 							<td width="250">
 								{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}
 							</td>
-							<td colspan="3">
+							<td colspan="4">
 								<span style="margin-right: 5px">
 									<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">ЕЦ</a>
 								</span>

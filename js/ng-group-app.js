@@ -630,9 +630,7 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     }
     ajaxStart();
     return $.post("groups/ajax/GetTeacherBar", {
-      id_group: $scope.Group.id,
-      id_teacher: $scope.Group.id_teacher,
-      id_branch: $scope.Group.id_branch
+      id_teacher: $scope.Group.id_teacher
     }, function(bar) {
       ajaxEnd();
       $scope.getTeacher($scope.Group.id_teacher).bar = bar;
@@ -648,7 +646,6 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
       ajaxStart();
     }
     return $.post("groups/ajax/GetCabinetBar", {
-      id_group: $scope.Group.id,
       cabinet: $scope.Group.cabinet
     }, function(bar) {
       if (ajax_animation) {
@@ -661,9 +658,7 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   };
   $scope.updateStudentBars = function() {
     return $.post("groups/ajax/GetStudentBars", {
-      student_ids: $scope.Group.students,
-      id_group: $scope.Group.id,
-      id_branch: $scope.Group.id_branch
+      student_ids: $scope.Group.students
     }, function(response) {
       console.log(response, 'students');
       $.each(response, function(id_student, bar) {
