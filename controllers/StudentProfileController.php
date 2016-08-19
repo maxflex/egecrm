@@ -20,8 +20,13 @@ class StudentsProfileController extends Controller
         $id_student = User::fromSession()->id_entity;
 
         if ($Student = Student::findById($id_student)) {
-            $StudentProfile = $Student->dbData(['id', 'first_name', 'last_name', 'middle_name', 'has_photo_cropped']);
-            foreach (['has_photo_original', 'photo_original_size', 'photo_cropped_size', 'photo_url', 'photo_extension'] as $key) {
+            $StudentProfile = [];
+
+            foreach ([
+                'id', 'first_name', 'last_name', 'middle_name',
+                'has_photo_cropped', 'has_photo_original',
+                'photo_original_size', 'photo_cropped_size', 'photo_url', 'photo_extension'
+                     ] as $key) {
                 $StudentProfile[$key] = $Student->$key;
             }
         }
