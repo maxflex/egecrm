@@ -263,9 +263,9 @@
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
 
 				$scope.week_count = function (programm) {
-					c = _.max(programm, function(v){ return v.count; }).count;
-					c += _.max(programm, function(v){ return v.count2; }).count2;
-					return c;
+					c = parseInt(_.max(programm, function(v){ return v.count; }).count)
+					c += parseInt(_.max(programm, function(v){ return v.count2; }).count2)
+					return c
 				}
 
 				$scope.timeLeft = function(StudentTest, Test) {
@@ -1408,7 +1408,7 @@
 
 			// Показать окно добавления платежа
 			$scope.addContractDialog = function() {
-				$scope.current_contract = {subjects : []}
+				$scope.current_contract = {subjects : [], year: $scope.academic_year}
 				$scope.current_contract.date = moment().format("DD.MM.YYYY")
 				
 				$('.triple-switch').slider('setValue', 0)	

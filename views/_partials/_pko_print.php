@@ -5,6 +5,10 @@
         .printable .bold-border-bottom {border-bottom: 3px solid black;}
         .printable .padding {padding: 5px;}
         .printable h3 {margin: 5px;}
+        .printable {font-family: 'Helvetica' !important}
+        table {font-size: 10px; font-family: 'Helvetica' !important}
+        .m_title {display:inline-block}
+		.m_title:first-letter {text-transform: uppercase}
     </style>
 
     <table width="100%" cellpadding="2" cellspacing="2" class="invoice_bank_rekv">
@@ -15,14 +19,14 @@
             </td>
             <td width="35%" style="padding:5px;border-left: 1px dotted black;" align="center">
                 <table width="100%">
-                    <tr><td style="border-bottom: 2px solid black" align="center"><b>ООО "ЕГЭ-Центр"</b></td></tr>
+                    <tr><td style="border-bottom: 1px solid black" align="center"><b>ООО "ЕГЭ-Центр"</b></td></tr>
                     <tr style="font-size:8px;text-align: center;"><td>организация</td></tr>
                 </table>
             </td>
         </tr>
         <tr>
             <td width="65%" style="padding:5px;">
-                <table width="100%" style="vertical-align: top;">
+                <table width="100%" style="vertical-align: top">
                     <tr>
                         <td>
                             <table style="width:100%;border-collapse:collapse;vertical-align: middle;">
@@ -69,9 +73,13 @@
                         <td>
                             <table style="border-collapse: collapse;text-align: center;">
                                 <tr>
-                                    <td rowspan="2" style="border:2px solid black;">Дебет</td>
+                                    <td rowspan="2" style="border:2px solid black;">
+	                                   <div style="width: 50px">Дебет</div>
+	                                </td>
                                     <td colspan="4" style="border:2px solid black;text-align: center;" width="50%">Кредит</td>
-                                    <td rowspan="2" style="border:2px solid black;width:25%;">Сумма, руб. коп.</td>
+                                    <td rowspan="2" style="border:2px solid black">
+	                                    <div style="width: 80px">Сумма, руб. коп.</div>
+	                                </td>
                                     <td rowspan="2" style="border:2px solid black;">Код целевого назначения</td>
                                     <td rowspan="2" style="border:2px solid black;padding:20px;"></td>
                                 </tr>
@@ -95,7 +103,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Принято от: {{representative.last_name }} {{representative.first_name }} {{representative.middle_name }}</td>
+                        <td>
+	                        Принято от: {{representative.last_name }} {{representative.first_name }} {{representative.middle_name }}
+	                    </td>
                     </tr>
 
                     <tr><td style="padding:10px;"></td></tr>
@@ -105,11 +115,11 @@
                     <tr><td style="padding:10px;"></td></tr>
 
                     <tr>
-                        <td colspan="2">{{numToText(PrintPayment.sum)}} <ng-pluralize count="PrintPayment.sum" when="{
+                        <td colspan="2"><span class="m_title">{{numToText(PrintPayment.sum)}} <ng-pluralize count="PrintPayment.sum" when="{
                             'one'	: 'рубль',
                             'few'	: 'рубля',
                             'many'	: 'рублей',
-                        }"></ng-pluralize> 00 копеек</td>
+                        }"></ng-pluralize> 00 копеек</span></td>
                     </tr>
 
                     <tr style="padding:10px;"><td></td></tr>
@@ -126,9 +136,9 @@
                             <table width="100%">
                                 <tr>
                                     <td><b>Главный бухгалтер</b></td>
-                                    <td style="border-bottom: 2px solid black"></td>
+                                    <td style="border-bottom: 1px solid black"></td>
                                     <td cellpadding="10"></td>
-                                    <td style="border-bottom: 2px solid black">Капралов К. А.</td>
+                                    <td style="border-bottom: 1px solid black">Капралов К. А.</td>
                                 </tr>
                                 <tr style="font-size:8px;text-align: center;">
                                     <td></td>
@@ -138,9 +148,9 @@
                                 </tr>
                                 <tr>
                                     <td><b>Получил кассир</b></td>
-                                    <td style="border-bottom: 2px solid black"></td>
+                                    <td style="border-bottom: 1px solid black"></td>
                                     <td cellpadding="10"></td>
-                                    <td style="border-bottom: 2px solid black">Капралов К. А.</td>
+                                    <td style="border-bottom: 1px solid black">Капралов К. А.</td>
                                 </tr>
                                 <tr style="font-size:8px;text-align: center;">
                                     <td></td>
@@ -157,35 +167,47 @@
             <td width="35%" style="vertical-align: top;border-left: 1px dotted black;">
                 <table>
                     <tr><td colspan="2" align="center"><h3><b>Квитанция</b></h3></td></tr>
-                    <tr><td colspan="2" align="center" style="border-bottom: 2px solid black;">к приходному кассовому ордеру №{{PrintPayment.document_number}}</td></tr>
-                    <tr><td align="right" width="40%">от </td><td align="left" style="border-bottom: 2px solid black"><b>{{formatContractDate(PrintPayment.date)}}</b></td></tr>
+                    <tr><td colspan="2" align="center" style="border-bottom: 1px solid black;">к приходному кассовому ордеру №{{PrintPayment.document_number}}</td></tr>
+                    <tr><td align="right" width="40%">от </td><td align="left" style="border-bottom: 1px solid black"><b>{{formatContractDate(PrintPayment.date)}}</b></td></tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
-                    <tr><td colspan="2">Принято от <br>{{representative.last_name}} {{representative.first_name}} {{representative.middle_name}}</td></tr>
+                    <tr><td colspan="2">
+	                    <div style="height: 39px !important">
+	                   		Принято от <br>{{representative.last_name}} {{representative.first_name}} {{representative.middle_name}}
+	                    </div>
+	                </td></tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
-                    <tr><td colspan="2">Основание <br>Договор на оказание платных образовательных услуг № {{contracts[0].id}} от {{contracts[0].History ? contracts[0].History[0].date : contracts[0].date}}г.</td></tr>
+                    <tr><td colspan="2">
+	                    <div style="height: 72px !important">
+	                    Основание <br>Договор на оказание платных образовательных услуг № {{contracts[0].id}} от {{contracts[0].History ? contracts[0].History[0].date : contracts[0].date}}г.
+	                    </div>
+	                 </td></tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
 
-                    <tr><td>Сумма</td><td  style="border-bottom: 2px solid black;"><b>{{PrintPayment.sum | number}} руб. 00 коп.</b></td></tr>
+                    <tr><td>Сумма</td><td  style="border-bottom: 1px solid black;"><b>{{PrintPayment.sum | number}} руб. 00 коп.</b></td></tr>
                     <tr style="font-size:8px;text-align: center;"><td></td><td ali>цифрами</td></tr>
                     <tr>
-                        <td colspan="2">{{numToText(PrintPayment.sum)}} <ng-pluralize count="PrintPayment.sum" when="{
+                        <td colspan="2"><span class="m_title">{{numToText(PrintPayment.sum)}} <ng-pluralize count="PrintPayment.sum" when="{
                             'one'	: 'рубль',
                             'few'	: 'рубля',
                             'many'	: 'рублей',
-                        }"></ng-pluralize> 00 копеек</td>
+                        }"></ng-pluralize> 00 копеек</span></td>
                     </tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
-                    <tr><td colspan="2">в том числе <br>НДС (Без НДС) 0-00руб.</td></tr>
+                    <tr><td colspan="2">
+	                    <div style="height: 30px !important">
+	                    в том числе <br>НДС (Без НДС) 0-00руб.
+	                    </div>
+	                </td></tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr>
                         <td width="30%"></td>
-                        <td style="border-bottom: 2px solid black;"><b>{{formatContractDate(PrintPayment.date)}}</b></td>
+                        <td style="border-bottom: 1px solid black;"><b>{{formatContractDate(PrintPayment.date)}}</b></td>
                     </tr>
                     <tr>
                         <td colspan="2"><b>М.П. (штампа)<br>Главный бухгалтер</b></td>
@@ -194,9 +216,9 @@
                         <td colspan="2">
                             <table width="100%">
                                 <tr>
-                                    <td style="border-bottom: 2px solid black;"></td>
+                                    <td style="border-bottom: 1px solid black;"></td>
                                     <td width="20%"></td>
-                                    <td style="border-bottom: 2px solid black;">Капралов К. А.</td>
+                                    <td style="border-bottom: 1px solid black;">Капралов К. А.</td>
                                 </tr>
                                 <tr style="font-size:8px;text-align: center;">
                                     <td>подпись</td>
@@ -211,9 +233,9 @@
                         <td colspan="2">
                             <table width="100%">
                                 <tr>
-                                    <td style="border-bottom: 2px solid black;"></td>
+                                    <td style="border-bottom: 1px solid black;"></td>
                                     <td width="20%"></td>
-                                    <td style="border-bottom: 2px solid black;">Капралов К. А.</td>
+                                    <td style="border-bottom: 1px solid black;">Капралов К. А.</td>
                                 </tr>
                                 <tr style="font-size:8px;text-align: center;">
                                     <td>подпись</td>

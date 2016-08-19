@@ -84,6 +84,43 @@
 		
 		# удаленные станции
 		static $deleted = [];
+		
+		/**
+		 * Построить селектор с кружочками метро
+		 * $multiple - множественный выбор
+		 */
+		public static function buildSvgSelectorCabinets($selected = false, $cabinet = false, $attrs, $multiple = false)
+		{	
+			
+			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
+			
+			// Заголовок
+			if (!$multiple) {
+				echo "<option selected style='cursor: default; outline: none' value=''>". static::$title ."</option>";
+				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
+			}
+			
+			// Получаем филиалы
+			$branches = self::getBranches();
+			
+			foreach ($branches as $branch) {
+				$Cabinets = Cabinet::getBranchId($branch['id']);
+				foreach($Cabinets as $Cabinet) {
+					// если это массив выбранных элементов (при $multiple = true)
+					if (is_array($selected)) {
+						$option_selected = in_array($branch["id"], $selected);
+					} else {
+						$option_selected = ($selected == $branch["id"] && $cabinet == $Cabinet->id);
+					}
+					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
+					if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
+						echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}-{$Cabinet->id}' data-content='{$branch['svg']}{$branch['name']}-{$Cabinet->number}'></option>";	
+					}	
+				}
+			}
+			echo "</select>";
+			echo "<script>$('#{$attrs['id']}').selectpicker()</script>";
+		}
 				
 		/**
 		 * Построить селектор с кружочками метро

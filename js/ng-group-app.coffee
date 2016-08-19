@@ -832,30 +832,22 @@
 				return busy
 
 			$scope.changeBranch = ->
-				$("#group-cabinet").attr "disabled", "disabled"
-				ajaxStart()
-				$.post "groups/ajax/getCabinet", {id_branch: $scope.Group.id_branch, id_group: $scope.Group.id}, (cabinets) ->
-					ajaxEnd()
-					$scope.Cabinets = cabinets
-					if cabinets isnt undefined and cabinets.length
-						$scope.Group.cabinet = cabinets[0].id
-
-					if cabinets.length isnt 1
-						$("#group-cabinet").removeAttr "disabled"
-
-					$scope.$apply()
-					$scope.reloadSmsNotificationStatuses()
-					$scope.updateGroup
-						id_branch: $scope.Group.id_branch
-						cabinet: $scope.Group.cabinet
-
-					$scope.updateTeacherBar()
-					$scope.updateCabinetBar(false)
-					$scope.updateStudentBars()
-
-					clearSelect 50, ->
-						$("#group-cabinet").selectpicker 'refresh'
-				, "json"
+				if $scope.id_branch_cabinet
+					arr = $scope.id_branch_cabinet.split('-')
+					console.log('split', arr)
+					$scope.Group.id_branch = arr[0]
+					$scope.Group.cabinet = arr[1]
+				else
+					$scope.Group.id_branch = ''
+					$scope.Group.cabinet = ''
+					
+				$scope.reloadSmsNotificationStatuses()
+				$scope.updateGroup
+					id_branch: $scope.Group.id_branch
+					cabinet: $scope.Group.cabinet
+				$scope.updateTeacherBar() 
+				$scope.updateCabinetBar(false)
+				$scope.updateStudentBars()
 
 
 

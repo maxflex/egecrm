@@ -48,27 +48,18 @@
 		<div class="top-group-menu-thin">
 			<div>
 	            <?=
-	                Branches::buildSvgSelector($Group->id_branch, [
+	                Branches::buildSvgSelectorCabinets($Group->id_branch, $Group->cabinet, [
 		                "id"		=> "group-branch",
-		                "ng-model"	=> "Group.id_branch",
+		                "ng-model"	=> "id_branch_cabinet",
 		                "ng-change"	=> "changeBranch()",
 	                ])
 	            ?>
 			</div>
-			<div class="form-group">
-				<select class="form-control" ng-model="Group.cabinet"
-					ng-change="changeCabinet()" id="group-cabinet" ng-disabled="(Cabinets.length == 1 && Group.cabinet)">
-					<option selected value="0">№ кабинета</option>
-					<option disabled>──────────────</option>
-					<option ng-repeat="Cabinet in Cabinets" ng-value="Cabinet.id" ng-class="{'quater-black': cabinetTimeBusy(Cabinet)}"
-						ng-selected="Group.cabinet == Cabinet.id">{{Cabinet.number}}</option>
-				</select>
-            </div>
             <div class="form-group">
 				<?= Subjects::buildSelector(false, false, [
 					"ng-model" => "Group.id_subject",
 					"ng-change" => "subjectChange()",
-				]) ?>
+				], true) ?>
 			</div>
 			<div class="form-group">
                 <?= Grades::buildSelector(false, false, ["ng-model" => "Group.grade", "ng-change" => "reloadTests()"]) ?>
@@ -90,10 +81,6 @@
 	           <?= GroupLevels::buildSelector(false, false, [
 		        	"ng-model" 		=> "Group.level",
 		        ]) ?>
-            </div>
-            <div class="form-group">
-	           <select class="form-control" ng-model="Group.duration" ng-options="min as min + ' мин.' for min in duration">
-	           </select>
             </div>
 			<div class="form-group">
 				<select class="form-control"
@@ -233,3 +220,9 @@
 	<?= partial("day_and_time") ?>
 </div>
 </div>
+
+<style>
+	.bootstrap-select.btn-group .btn .filter-option {
+		white-space: nowrap !important;
+	}
+</style>

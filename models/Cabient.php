@@ -87,6 +87,13 @@
 			]);
 		}
 		
+		public static function getBranchId($id_branch)
+		{
+			return self::findAll([
+				"condition" => "id_branch=$id_branch"
+			]);
+		}
+		
 		// @refactored используется в TestController
 		public static function getCabinetGroups($id_branch)
 		{

@@ -427,7 +427,7 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     $(".table-condensed").first().children("thead").css("display", "table-caption");
     return $(".table-condensed").eq(15).children("tbody").children("tr").first().remove();
   });
-}).controller("EditCtrl", function($scope) {
+}).controller("EditCtrl", function($scope, $timeout) {
   var bindDraggable, bindGroupsDroppable, initDayAndTime, initFreetime, justSave, rebindBlinking;
   $scope.allStudentStatuses = function() {
     var student_statuses_count;
@@ -1024,33 +1024,24 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     return busy;
   };
   $scope.changeBranch = function() {
-    $("#group-cabinet").attr("disabled", "disabled");
-    ajaxStart();
-    return $.post("groups/ajax/getCabinet", {
+    var arr;
+    if ($scope.id_branch_cabinet) {
+      arr = $scope.id_branch_cabinet.split('-');
+      console.log('split', arr);
+      $scope.Group.id_branch = arr[0];
+      $scope.Group.cabinet = arr[1];
+    } else {
+      $scope.Group.id_branch = '';
+      $scope.Group.cabinet = '';
+    }
+    $scope.reloadSmsNotificationStatuses();
+    $scope.updateGroup({
       id_branch: $scope.Group.id_branch,
-      id_group: $scope.Group.id
-    }, function(cabinets) {
-      ajaxEnd();
-      $scope.Cabinets = cabinets;
-      if (cabinets !== void 0 && cabinets.length) {
-        $scope.Group.cabinet = cabinets[0].id;
-      }
-      if (cabinets.length !== 1) {
-        $("#group-cabinet").removeAttr("disabled");
-      }
-      $scope.$apply();
-      $scope.reloadSmsNotificationStatuses();
-      $scope.updateGroup({
-        id_branch: $scope.Group.id_branch,
-        cabinet: $scope.Group.cabinet
-      });
-      $scope.updateTeacherBar();
-      $scope.updateCabinetBar(false);
-      $scope.updateStudentBars();
-      return clearSelect(50, function() {
-        return $("#group-cabinet").selectpicker('refresh');
-      });
-    }, "json");
+      cabinet: $scope.Group.cabinet
+    });
+    $scope.updateTeacherBar();
+    $scope.updateCabinetBar(false);
+    return $scope.updateStudentBars();
   };
   $scope.addGroupsPanel = function() {
     if (!$scope.Groups) {
@@ -1063,9 +1054,15 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     if (!$scope.search_groups.year && $scope.Group.year) {
       $scope.search_groups.year = $scope.Group.year;
     }
-    if (!$scope.search_groups.id_subject && $scope.Group.id_subject) {
-      return $scope.search_groups.id_subject = $scope.Group.id_subject;
+    if (!$scope.search_groups.id_branch && $scope.Group.id_branch) {
+      $scope.search_groups.id_branch = $scope.Group.id_branch;
     }
+    if (!$scope.search_groups.id_subject && $scope.Group.id_subject) {
+      $scope.search_groups.id_subject = $scope.Group.id_subject;
+    }
+    return $timeout(function() {
+      return $('#groups-branch-filter').selectpicker('refresh');
+    });
   };
   $scope.subjectChange = function() {
     if (!$scope.Group.id) {

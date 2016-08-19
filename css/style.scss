@@ -22,6 +22,11 @@
 	$half_black			: rgba(0, 0, 0, .5);
 	$quater_black 		: rgba(0, 0, 0, .25);
 
+@font-face {
+    font-family: "Helvetica";
+    src: url('../fonts/Helvetica/HelveticaRegular.eot');
+}
+
 .row.flex-list {
 	display: flex;
 	margin-left: 0;
@@ -493,7 +498,7 @@ body {
 }
 
 .top-group-menu-thin > div {
-	width: 8.5%;
+	width: 11.5%;
 	display: inline-block;
 	margin-right: 5px;
 }

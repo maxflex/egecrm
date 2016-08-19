@@ -1,6 +1,6 @@
 $(document).ready ->
 	vm = vueInit()
-	requestsLiveUpdate()
+	# requestsLiveUpdate()
 
 requestsLiveUpdate = ->
 	pusher = new Pusher 'a9e10be653547b7106c0',

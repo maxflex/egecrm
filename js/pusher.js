@@ -3,8 +3,7 @@ var requestsLiveUpdate, vueInit;
 
 $(document).ready(function() {
   var vm;
-  vm = vueInit();
-  return requestsLiveUpdate();
+  return vm = vueInit();
 });
 
 requestsLiveUpdate = function() {

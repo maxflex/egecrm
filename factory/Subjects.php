@@ -139,7 +139,34 @@
         {
             return json_encode(static::$all);
         }
-
+		
+		/**
+		 * Построить селектор из всех записей.
+		 * $selcted - что выбрать по умолчанию
+		 * $name 	– имя селектора, по умолчанию имя класса
+		 * $attrs	– остальные атрибуты
+		 * 
+		 */
+		public static function buildSelector($selcted = false, $name = false, $attrs = false, $three_letters = false)
+		{
+			$options = $three_letters ? static::$three_letters : static::$all;
+			
+			$class_name = strtolower(get_called_class());
+			echo "<select class='form-control' id='".$class_name."-select' name='".($name ? $name : $class_name)."' ".Html::generateAttrs($attrs).">";
+			if (static::$title) {
+				echo "<option selected value=''>". static::$title ."</option>";
+				echo "<option disabled value=''>──────────────</option>";
+			}
+			foreach ($options as $id => $value) {
+				// удаленные записи коллекции отображать только в том случае, если они уже были выбраны
+				// (т.е. были использованы ранее, до удаления)
+				if (!in_array($id, static::$deleted) || ($id == $selcted)) {
+					echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";					
+				}
+			}
+			echo "</select>";
+		}
+		
 		/**
 		 * Создает col-sm-6 селектор (предметы в два стобца по col-sm-3).
 		 * $selected_array - массив отмеченых предметов

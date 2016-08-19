@@ -33,7 +33,7 @@
 
             if ($this->id) {
                 $this->photo_extension = self::dbConnection()->query('select photo_extension from users where id_entity = ' . $this->id)->fetch_object()->photo_extension;
-                $this->has_photo_original = $this->hasPhotoOriginal();
+                // $this->has_photo_original = $this->hasPhotoOriginal();
                 $this->photo_original_size = $this->photoOriginalSize();
                 $this->has_photo_cropped = $this->hasPhotoCropped();
                 $this->photo_cropped_size = $this->photoCroppedSize();
