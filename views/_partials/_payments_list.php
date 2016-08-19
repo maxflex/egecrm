@@ -19,7 +19,13 @@
 							</span>
 						</span>
             </td>
-            <td>{{ payment.document_number ? 'ПКО ' + payment.document_number :  '' }}</td>
+            <td>
+                <?php if ($student_page) :?>
+                    <a style='margin-left: 10px' class="link-like" ng-click="printPKO(payment)" ng-show="payment.id_status == <?= Payment::PAID_CASH ?>">{{ payment.document_number ? 'ПКО ' + payment.document_number :  '' }}</a>
+                <?php else :?>
+                    {{ payment.document_number ? 'ПКО ' + payment.document_number :  '' }}
+                <?php endif ?>
+            </td>
             <td class="col-sm-1">
                 {{payment.sum | number}}
             </td>
@@ -39,7 +45,6 @@
                 <a class="link-like" ng-click="deletePayment($index, payment)">удалить</a>
                 <?php if ($student_page) :?>
                     <a style='margin-left: 10px' class="link-like" ng-click="printBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета</a>
-                    <a style='margin-left: 10px' class="link-like" ng-click="printPKO(payment)" ng-show="payment.id_status == <?= Payment::PAID_CASH ?>">печать пко</a>
                 <?php endif ?>
             </td>
             <td class="col-sm-2">

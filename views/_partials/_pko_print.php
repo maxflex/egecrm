@@ -90,7 +90,7 @@
                                     <td style="border:2px solid black;">код аналитического учета</td>
                                 </tr>
                                 <tr style="border: 3px solid black;">
-                                    <td style="border-left:3px solid black;border-top:3px solid black;border-right:2px solid black;border-bottom:3px solid black;">50.02</td>
+                                    <td style="border-left:3px solid black;border-top:3px solid black;border-right:2px solid black;border-bottom:3px solid black;">50.01</td>
                                     <td style="padding:10px;border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;"></td>
                                     <td style="border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;"></td>
                                     <td style="border:2px solid black;border-bottom:3px solid black;border-top:3px solid black;">62.01, 62.02</td>

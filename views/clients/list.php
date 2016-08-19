@@ -46,11 +46,12 @@
 				</select>
 	        </div>
 			<div>
-				<select class="watch-select single-select form-control" ng-model="search.photo" ng-change='filter()'>
-					<option value=""  data-subtext="{{ counts.photo[''] || '' }}">все</option>
+				<select class="watch-select single-select form-control" ng-model="search.error" ng-change='filter()'>
+					<option value=""  data-subtext="{{ counts.error[''] || '' }}">все</option>
 					<option disabled>───────</option>
-					<option value="1"  data-subtext="{{ counts.photo[1] || '' }}">с фото</option>
-					<option value="0"  data-subtext="{{ counts.photo[0] || '' }}">без фото</option>
+					<option value="0"  data-subtext="{{ counts.error[0] || '' }}">без фото</option>
+					<option value="1"  data-subtext="{{ counts.error[1] || '' }}">фото не обрезано</option>
+					<option value="2"  data-subtext="{{ counts.error[2] || '' }}">свободный график не указан</option>
 				</select>
 	        </div>
 		</div>

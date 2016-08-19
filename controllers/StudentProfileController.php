@@ -20,8 +20,13 @@ class StudentsProfileController extends Controller
         $id_student = User::fromSession()->id_entity;
 
         if ($Student = Student::findById($id_student)) {
-            $StudentProfile = $Student->dbData(['id', 'first_name', 'last_name', 'middle_name']);
-            foreach (['has_photo_original', 'photo_original_size', 'has_photo_cropped', 'photo_cropped_size', 'photo_url', 'photo_extension'] as $key) {
+            $StudentProfile = [];
+
+            foreach ([
+                'id', 'first_name', 'last_name', 'middle_name',
+                'has_photo_cropped', 'has_photo_original',
+                'photo_original_size', 'photo_cropped_size', 'photo_url', 'photo_extension'
+                     ] as $key) {
                 $StudentProfile[$key] = $Student->$key;
             }
         }
@@ -50,8 +55,7 @@ class StudentsProfileController extends Controller
             unlink($Student->photoPath('_original'));
 
             $User = User::find(['condition' => 'id_entity = '.$student_id]);
-            $User->photo_extension = '';
-            $User->save('photo_extension');
+            $User->update(['photo_extension'=>'','has_photo_cropped'=>0]);
 
             if (!User::isUser()) {
                 $User->toSession();
