@@ -1,44 +1,31 @@
-<div class="lightbox-new lightbox-freetime">
-	<h4 style="text-transform: uppercase; margin-bottom: 25px">СВОБОДНОЕ ВРЕМЯ
-		<input type="text" class="form-control pull-right bs-date" name="Teacher[schedule_date]" ng-model="Teacher.schedule_date"
-			placeholder="актуальность расписания" style="font-weight: normal; width: 200px">
-	</h4>
-	<div ng-repeat="id_branch in Teacher.branches">
-		<span ng-bind-html="branches_brick[id_branch] | to_trusted" style="display:inline-block; margin-bottom: 10px; position: relative; left: -3px"></span>
-		<span style="margin: 0 10px">
-			<input type="checkbox" ng-click="selectAllWorking(id_branch)"> будни
-		</span>
-		<span>
-			<input type="checkbox" ng-click="selectAllWeek(id_branch)"> вся неделя
-		</span>
-		<table class="table table-divlike">
-			<thead>
-				<tr>
-					<td ng-repeat="weekday in weekdays">{{weekday.short}}</td>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="n in [] | range:4">
-					<td ng-repeat="weekday in weekdays">
-						<input type="checkbox" ng-model="freetime[id_branch][$index + 1][n]"
-							name="Teacher[freetime][{{id_branch}}][{{$index + 1}}][{{n}}]"
-							onclick="console.log('click')"
-							ng-click="freetimeClick(id_branch, $index, n)"
-							ng-show="weekday.schedule[n] != ''" 
-							ng-value="weekday.schedule[n]"
-							ng-checked="inFreetime(id_branch, $index + 1, weekday.schedule[n])"
-						> 
-						{{weekday.schedule[n]}}
-					</td>
-					<td width="100">
-						<input type="checkbox" ng-click="selectAllIndex(id_branch, n)"> выбрать все
-					</td>
-				</tr>
-				
-			</tbody>
-		</table>
+<div class="row" ng-show="current_menu == 6">
+	<div class="col-sm-12">
+		<?= globalPartial('loading', ['model' => 'Bars']) ?>
+		<div ng-if="Bars !== undefined">
+			<div class="row" style="width: 315px">
+	            <div class="col-sm-4">
+		            свободно:
+	            </div>
+	            <div class="col-sm-8" style="text-align: right">
+		            <span ng-repeat="(day, data) in Bars.Freetime" class="group-freetime-block">
+						<span ng-click="toggleFreetime(day, $index)" ng-repeat="bar in data" class="pointer bar {{bar}}"></span>
+					</span>
+	            </div>
+	        </div>
+			<div class="row" style="margin-top: 10px; width: 315px">
+	            <div class="col-sm-4" style="white-space: nowrap">
+		            занято в группах:
+	            </div>
+	            <div class="col-sm-8" style="text-align: right">
+		            <span ng-repeat="(day, data) in Bars.Group" class="group-freetime-block">
+						<span ng-repeat="bar in data" class="bar {{bar}}"></span>
+					</span>
+	            </div>
+	        </div>
+		</div>
 	</div>
-	<div class="center" style="margin-top: 10px">
-		<button class="btn btn-primary" ng-click="saveFreetime()">Сохранить</button>
+	
+	<div class="col-sm-12" style="margin-top: 13px">
+		<?= Html::comments('Bars', Comment::PLACE_TEACHER) ?>
 	</div>
 </div>

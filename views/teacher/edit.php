@@ -1,5 +1,4 @@
 <form id="teacher-edit" ng-app="Teacher" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>" autocomplete='off'>
-	<?= partial("freetime") ?>
 	<div class="row">
 		<div class="col-sm-3" style="width: 13%">
 			<div class='tutor-img-new'>
@@ -206,6 +205,9 @@
 	    <span class="link-like" ng-click="setMenu(5)" ng-class="{'active': current_menu == 5}">
 	    	СТАТИСТИКА
 	    </span>
+	    <span class="link-like" ng-click="setMenu(6)" ng-class="{'active': current_menu == 6}">
+	    	ГРАФИК
+	    </span>
     </div>
     
 	<?= partial('groups') ?>
@@ -214,6 +216,7 @@
 	<?= partial('payments') ?>
 	<?= partial('reports') ?>
 	<?= partial('stats') ?>
+	<?= partial("freetime") ?>
 
 
 

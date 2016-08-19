@@ -1068,8 +1068,9 @@
 					time_id += 2	
 				}
 				mode = $scope.FreetimeBar[day][time_id] === 'green' ? 'Delete' : 'Add'
-				$.post("ajax/" + mode + "StudentFreetime", {
-					'id_student': $scope.student.id,
+				$.post("ajax/" + mode + "Freetime", {
+					'id_entity': $scope.student.id,
+					'type_entity': 'student',
 					'day': day,
 					'time_id': time_id,
 				}, function() {

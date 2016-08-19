@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		const PER_PAGE 	= 30;
+		const PER_PAGE 	= 500;
 
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";

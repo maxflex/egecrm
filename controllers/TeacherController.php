@@ -238,6 +238,15 @@
 			        $Stats['er_review_avg'] = (4* (($Teacher->lk + $Teacher->tb + $js) / 3) + $review_score_sum)/(4 + $Stats['er_review_count']);
 					returnJsonAng($Stats);
 				}
+				case 6: {
+					$Comments = Comment::getByPlace(Comment::PLACE_TEACHER, $id_teacher);
+					$Bars = [
+						'Group' 	=> Freetime::getTeacherBar($id_teacher),
+						'Freetime'	=> Freetime::getFreetimeBar($id_teacher, EntityFreetime::TEACHER),
+						'Comments'	=> $Comments ? $Comments : [],
+					];
+					returnJsonAng($Bars);
+				}
 			}
 		}
 	}

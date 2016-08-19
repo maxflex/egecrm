@@ -56,7 +56,7 @@ angular.module("Teacher", ["ngMap"]).config([
 }).controller("EditCtrl", function($scope, $timeout, $http) {
   var _loadData, _postData, bindFileUpload, menus;
   $scope["enum"] = review_statuses;
-  menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats'];
+  menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars'];
   $scope.setMenu = function(menu) {
     $.each(menus, function(index, value) {
       return _loadData(index, menu, value);
@@ -79,6 +79,23 @@ angular.module("Teacher", ["ngMap"]).config([
   };
   $scope.yearDifference = function(year) {
     return moment().format("YYYY") - year;
+  };
+  $scope.toggleFreetime = function(day, time_id) {
+    var mode;
+    time_id++;
+    if (day >= 6) {
+      time_id += 2;
+    }
+    mode = $scope.Bars.Freetime[day][time_id] === 'green' ? 'Delete' : 'Add';
+    $.post('ajax/' + mode + 'Freetime', {
+      'id_entity': $scope.Teacher.id,
+      'type_entity': 'teacher',
+      'day': day,
+      'time_id': time_id
+    }, function() {
+      $scope.Bars.Freetime[day][time_id] = mode === 'Add' ? 'green' : 'empty';
+      $scope.$apply();
+    });
   };
   $scope.picture_version = 1;
   bindFileUpload = function() {
@@ -132,16 +149,6 @@ angular.module("Teacher", ["ngMap"]).config([
       return payments_sum += parseInt(value.sum);
     });
     return lessons_sum - payments_sum;
-  };
-  $scope.sipNumber = function(number) {
-    number = number.toString();
-    return "sip:" + number.replace(/[^0-9]/g, '');
-  };
-  $scope.callSip = function(element) {
-    var number;
-    number = $("#" + element).val();
-    number = $scope.sipNumber(number);
-    return location.href = number;
   };
   $scope.formatDate2 = function(date) {
     var dateOut;

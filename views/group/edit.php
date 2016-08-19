@@ -142,8 +142,8 @@
 							</td>
 							<td>
 								<span ng-show="Student.Test">
-									<span ng-show="Student.Test.notStarted">к тесту не приступал</span>
-									<span ng-show="Student.Test.inProgress">тест в процессе</span>
+									<span ng-show="Student.Test.notStarted" class="quater-black">к тесту не приступал</span>
+									<span ng-show="Student.Test.inProgress" class="quater-black">тест в процессе</span>
 									<span ng-show="Student.Test.isFinished">{{ Student.Test.final_score }} <ng-pluralize count="Student.Test.final_score" when="{
 										'one': 'балл',
 										'few': 'балла',

@@ -130,22 +130,14 @@
 			return array_search($id_time, self::$weekdays_time);	
 		}
 
-		public static function getStudentFreetimeBar($id_student)
+		public static function getFreetimeBar($id_entity, $type_entity)
 		{
 			foreach (self::$weekdays_time as $day => $time_data) {
 				foreach ($time_data as $time_index => $time_id) {
-					$bar[$day][$time_id] = static::_studentHasFreetime($id_student, $day, $time_id) ? 'green' : 'empty';
+					$bar[$day][$time_id] = EntityFreetime::hasFreetime($id_entity, $type_entity, $day, $time_id) ? 'green' : 'empty';
 				}
 			}
 			return $bar;
-		}
-
-		/*
-		 * В этот день свободно
-		 */
-		private static function _studentHasFreetime($id_student, $day, $time_id)
-		{
-			return dbConnection()->query("SELECT id FROM students_freetime WHERE id_student={$id_student} AND day={$day} AND time_id={$time_id}")->num_rows;
 		}
 		
 		public static function emptyBar()
