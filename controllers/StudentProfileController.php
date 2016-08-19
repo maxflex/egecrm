@@ -50,7 +50,7 @@ class StudentsProfileController extends Controller
             unlink($Student->photoPath('_original'));
 
             $User = User::find(['condition' => 'id_entity = '.$student_id]);
-            $User->update(['photo_extension'=>'','photo_cropped'=>0]);
+            $User->update(['photo_extension'=>'','has_photo_cropped'=>0]);
 
             if (!User::isUser()) {
                 $User->toSession();

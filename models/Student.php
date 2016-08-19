@@ -33,9 +33,9 @@
 
             if ($this->id) {
 
-                $user_data = self::dbConnection()->query('select photo_extension, photo_cropped from users where id_entity = ' . $this->id)->fetch_object();
+                $user_data = self::dbConnection()->query('select photo_extension, has_photo_cropped from users where id_entity = ' . $this->id)->fetch_object();
                 $this->photo_extension = $user_data->photo_extension;
-                $this->has_photo_cropped = $user_data->photo_extension;
+                $this->has_photo_cropped = $user_data->has_photo_cropped;
 
                 $this->has_photo_original = $this->hasPhotoOriginal();
                 $this->photo_original_size = $this->photoOriginalSize();
@@ -1237,7 +1237,7 @@
 				FROM students s " .
 				(! isBlank($search->year) ? " JOIN contracts yc ON (yc.id_student = s.id AND yc.year = {$search->year}) " : "") .
 				( ! isBlank($search->error) && $search->error == 0 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND photo_extension = '' " : "") .
-				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND photo_cropped = 0 " : "") . "
+				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND has_photo_cropped = 0 " : "") . "
 				JOIN (
 					SELECT id, id_student FROM contracts
 					WHERE 1 " . Contract::ZERO_OR_NULL_CONDITION . "
