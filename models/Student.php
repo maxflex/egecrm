@@ -1236,8 +1236,8 @@
 			$main_query = "
 				FROM students s " .
 				(! isBlank($search->year) ? " JOIN contracts yc ON (yc.id_student = s.id AND yc.year = {$search->year}) " : "") .
-				( ! isBlank($search->error) && $search->error == 0 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND photo_extension = '' " : "") .
-				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND has_photo_cropped = 0 " : "") . "
+				( ! isBlank($search->error) && $search->error == 0 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension = '' " : "") .
+				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension <> '' AND u.has_photo_cropped = 0 " : "") . "
 				JOIN (
 					SELECT id, id_student FROM contracts
 					WHERE 1 " . Contract::ZERO_OR_NULL_CONDITION . "
