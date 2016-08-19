@@ -381,7 +381,7 @@
 				year: ""
 
 			$scope.groupsFilter = (Group) ->
-				console.log $scope.search_groups.id_teacher, Group, Group.id_teacher
+				return false if Group.id is $scope.Group.id
 				return (Group.grade is parseInt($scope.search_groups.grade) or not $scope.search_groups.grade) and
 					(parseInt($scope.search_groups.id_branch) is Group.id_branch or not $scope.search_groups.id_branch) and
 					(parseInt($scope.search_groups.year) is Group.year or not $scope.search_groups.year) and

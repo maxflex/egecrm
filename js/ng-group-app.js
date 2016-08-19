@@ -497,7 +497,9 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     year: ""
   };
   $scope.groupsFilter = function(Group) {
-    console.log($scope.search_groups.id_teacher, Group, Group.id_teacher);
+    if (Group.id === $scope.Group.id) {
+      return false;
+    }
     return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && (parseInt($scope.search_groups.id_branch) === Group.id_branch || !$scope.search_groups.id_branch) && (parseInt($scope.search_groups.year) === Group.year || !$scope.search_groups.year) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
   };
   bindDraggable = function() {
