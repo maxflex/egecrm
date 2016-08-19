@@ -36,24 +36,19 @@
 							<span ng-repeat="subject in Student.Contract.subjects"><span class="text-danger bold" ng-show="subject.count > 40">{{subject.short}}</span><span ng-show="subject.count <= 40">{{subject.short}}</span>{{$last ? "" : "+"}}</span>
 						</td>
 						<td>
-							<span ng-repeat="(id_branch, short) in Student.branch_short track by $index" 
+							<span ng-repeat="(id_branch, short) in Student.branch_short track by $index"
 								ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}"></span>
-						</td>
-						<td>
-							<div ng-repeat="subject in Student.Contract.subjects" ng-show="subject.score != ''">
-								<b ng-show="subject.id_subject == search.id_subject">{{subject.score}}</b>
-							</div>
 						</td>
 						<td>
 							<span ng-hide="Student.in_other_group">
 								<span class="small pull-right quater-black" id="student-adding-{{Student.id}}" style="cursor: default; display: none">
 									добавить
 								</span>
-								<span class="small pull-right quater-black" style="cursor: default" 
+								<span class="small pull-right quater-black" style="cursor: default"
 									ng-show="Student.Contract.cancelled == 1 && !studentAdded(Student.id)">
 									расторгнут
 								</span>
-								<span class="link-like small pull-right" ng-click="addStudent(Student, $event)" 
+								<span class="link-like small pull-right" ng-click="addStudent(Student, $event)"
 									ng-hide="studentAdded(Student.id) || Student.Contract.cancelled == 1">добавить</span>
 								<span class="link-like small pull-right red" ng-click="removeStudent(Student.id)" ng-show="studentAdded(Student.id)">удалить</span>
 							</span>

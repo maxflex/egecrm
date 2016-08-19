@@ -25,7 +25,7 @@
                 <table width="100%" style="vertical-align: top;">
                     <tr>
                         <td>
-                            <table style="border-collapse:collapse;">
+                            <table style="width:100%;border-collapse:collapse;vertical-align: middle;">
                                 <tr>
                                     <td width="65%">
                                         <table width="100%">
@@ -36,14 +36,14 @@
                                         </table>
                                     </td>
                                     <td width="35%">
-                                        <table width="100%"  style="border-collapse:collapse;text-align: center;">
-                                            <tr>
-                                                <td rowspan="4" width="50%">Форма по ОКУД <br>по ОКПО</td>
-                                                <td width="50%" style="border:2px solid black;">Коды</td>
+                                        <table style="width:100%;border-collapse:collapse;text-align: center;">
+                                            <tr align="right">
+                                                <td rowspan="4" width="60%" style="vertical-align:middle">Форма по ОКУД <br>по ОКПО</td>
+                                                <td width="40%" style="text-align:center;border:2px solid black;">Коды</td>
                                             </tr>
                                             <tr><td style="border-left: 3px solid black;border-right: 3px solid black;border-top:3px solid black;">0310001</td></tr>
                                             <tr><td style="border-left: 3px solid black;border-right: 3px solid black; border-top:2px solid black;">02008879</td></tr>
-                                            <tr><td style="border-left: 3px solid black;border-right: 3px solid black;border-bottom: 3px solid black; border-top:2px solid black;">02008879</td></tr>
+                                            <tr><td style="padding:9px;border-left: 3px solid black;border-right: 3px solid black;border-bottom: 3px solid black; border-top:2px solid black;"></td></tr>
                                         </table>
                                     </td>
                                 </tr>
@@ -171,7 +171,7 @@
                     <tr><td>Сумма</td><td  style="border-bottom: 2px solid black;"><b>{{PrintPayment.sum | number}} руб. 00 коп.</b></td></tr>
                     <tr style="font-size:8px;text-align: center;"><td></td><td ali>цифрами</td></tr>
                     <tr>
-                        <td colspan="2">{{ucfirst(numToText(PrintPayment.sum))}} <ng-pluralize count="PrintPayment.sum" when="{
+                        <td colspan="2">{{numToText(PrintPayment.sum)}} <ng-pluralize count="PrintPayment.sum" when="{
                             'one'	: 'рубль',
                             'few'	: 'рубля',
                             'many'	: 'рублей',

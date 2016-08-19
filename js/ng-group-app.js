@@ -427,7 +427,7 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     $(".table-condensed").first().children("thead").css("display", "table-caption");
     return $(".table-condensed").eq(15).children("tbody").children("tr").first().remove();
   });
-}).controller("EditCtrl", function($scope, $timeout) {
+}).controller("EditCtrl", function($scope) {
   var bindDraggable, bindGroupsDroppable, initDayAndTime, initFreetime, justSave, rebindBlinking;
   $scope.allStudentStatuses = function() {
     var student_statuses_count;
@@ -1063,15 +1063,9 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     if (!$scope.search_groups.year && $scope.Group.year) {
       $scope.search_groups.year = $scope.Group.year;
     }
-    if (!$scope.search_groups.id_branch && $scope.Group.id_branch) {
-      $scope.search_groups.id_branch = $scope.Group.id_branch;
-    }
     if (!$scope.search_groups.id_subject && $scope.Group.id_subject) {
-      $scope.search_groups.id_subject = $scope.Group.id_subject;
+      return $scope.search_groups.id_subject = $scope.Group.id_subject;
     }
-    return $timeout(function() {
-      return $('#groups-branch-filter').selectpicker('refresh');
-    });
   };
   $scope.subjectChange = function() {
     if (!$scope.Group.id) {

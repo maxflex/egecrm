@@ -137,7 +137,7 @@
 		{
 			return Freetime::getStudentBar($this->id);
 		}
-		
+
 		/**
 		 * Получить студентов с договорами.
 		 *
@@ -239,7 +239,7 @@
 		{
 			$result = dbConnection()->query("
 				SELECT 	s.id, s.branches, s.first_name, s.last_name, s.middle_name,
-						cs.id_subject, cs.score, cs.status, cs.count,
+						cs.id_subject, cs.status, cs.count,
 						c.id as id_contract, c.grade, c.date
 				FROM students s
 					LEFT JOIN contracts c on c.id_student = s.id
@@ -517,7 +517,7 @@
 				"condition"	=> "place='". Comment::PLACE_STUDENT ."' AND id_place=". $this->id
 			]);
 		}
-		
+
 		public static function getCommentsStatic($id_student)
 		{
 			return Comment::findAll([
@@ -537,7 +537,7 @@
 
 			return $Reports;
 		}
-		
+
 		public function getReportsStatic($id_student)
 		{
 			$Reports = Report::findAll([
@@ -593,7 +593,7 @@
 
 			return $Groups;
 		}
-		
+
 		// Подсчитывает кол-во групп (кружочек в ЛК ученика)
 		public function countGroupsStatic($id_student)
 		{
@@ -602,8 +602,8 @@
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0"
 			]);
 		}
-		
-		
+
+
 		public function countGroups()
 		{
 			return Group::count([
@@ -634,8 +634,8 @@
 				"limit"		=> "1",
 			]);
 		}
-		
-		
+
+
 		/**
 		 * Получить постудний договор студента текущего учебного года.
 		 *
@@ -894,7 +894,7 @@
 
 			return $TeacherLikes;
 		}
-		
+
 		public static function getTeacherLikesStatic($id_student)
 		{
 			$TeacherLikes = TeacherReview::findAll([
@@ -967,7 +967,7 @@
 
 			return $visits;
 		}
-		
+
 		public static function getVisitsStatic($id_student)
 		{
 			return VisitJournal::findAll([
@@ -1051,9 +1051,9 @@
 				Marker::add($marker + ["id_owner" => $id_student, "owner" => self::MARKER_OWNER]);
 			}
 		}
-		
+
 		/*
-		 * Планируются ли еще занятия у ученика? 
+		 * Планируются ли еще занятия у ученика?
 		 * (серые точки в профиле)
 		 *
 		 */
@@ -1063,16 +1063,16 @@
 			$group_ids = Group::getIds([
 				'condition' => "FIND_IN_SET({$this->id}, students)",
 			]);
-			
+
 			foreach ($group_ids as $group_id) {
 				if (Group::countFutureScheduleStatic($group_id)) {
 					return true;
 				}
 			}
-			
+
 			return false;
 		}
-		
+
 		/**
 		 * Обновить данные по поиску.
 		 *
@@ -1140,24 +1140,24 @@
 			}
 			return $text;
 		}
-		
-				
+
+
 		/*
 		 * Получить легкую версию (имя + id)
-		 */ 
+		 */
 		public static function getLight($id)
 		{
 			return dbConnection()->query("
 				SELECT s.id, s.first_name, s.last_name, s.middle_name, s.id_user_review, u.login as user_login, u.color
 				FROM " . static::$mysql_table . " s
 				LEFT JOIN users u ON u.id = s.id_user_review
-				WHERE s.id = " . $id . " 
+				WHERE s.id = " . $id . "
 				ORDER BY s.last_name, s.first_name, s.middle_name ASC")
 			->fetch_object();
 		}
-		
-		
-		
+
+
+
 		/*
 		 * Получить данные для основного модуля
 		 * $page==-1 – получить без лимита
@@ -1169,22 +1169,22 @@
 			}
 			// С какой записи начинать отображение, по формуле
 			$start_from = ($page - 1) * Student::PER_PAGE;
-			
+
 			$search = isset($_COOKIE['clients']) ? json_decode($_COOKIE['clients']) : (object)[];
-			
+
 
 			// получаем данные
 			$query = static::_generateQuery($search, ($page == -1 ? "s.id" : "s.id, s.first_name, s.last_name, s.middle_name "));
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
-			
+
 			while ($row = $result->fetch_object()) {
 				$data[] = ($page == -1 ? $row->id : $row);
 			}
-			
+
 			if ($page > 0) {
 				// counts
 				$counts['all'] = static::_count($search);
-				
+
 				foreach(array_merge([""], Years::$all) as $year) {
 					$new_search = clone $search;
 					$new_search->year = $year;
@@ -1212,21 +1212,21 @@
 					$counts['photo'][$photo] = static::_count($new_search);
 				}
 			}
-			
+
 			return [
 				'data' 	=> $data,
 				'counts' => $counts,
 			];
 		}
-		
+
 		private static function _count($search) {
 			return dbConnection()
 					->query(static::_generateQuery($search, "COUNT(*) AS cnt"))
 					->fetch_object()
 					->cnt;
 		}
-		
-		
+
+
 		private static function _generateQuery($search, $select)
 		{
 			$main_query = "
@@ -1238,7 +1238,7 @@
 					WHERE 1 " . Contract::ZERO_OR_NULL_CONDITION . "
 					GROUP BY id_student
 					ORDER BY year DESC
-				) c ON c.id_student = s.id WHERE true " 
+				) c ON c.id_student = s.id WHERE true "
 				. (!isBlank($search->green) ? " AND " . ($search->green ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 3)" : "")
 				. (!isBlank($search->yellow) ? " AND " . ($search->yellow ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 2)" : "")
 				. (!isBlank($search->red) ? " AND " . ($search->red ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 1)" : "")

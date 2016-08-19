@@ -2,7 +2,7 @@
 <div class="lightbox-new lightbox-addcontract">
 	<h4 style="margin-bottom: 20px">ПАРАМЕТРЫ ДОГОВОРА</h4>
 	<div class="row">
-		<div class="col-sm-6">
+		<div class="col-sm-5">
 			<div class="contract-subject-list subject-line transition-control no-transition" ng-repeat="(id_subject, subject_name) in Subjects">
 				    <input class="triple-switch" id="checkbox-subject-{{id_subject}}"
 				    	ng-model="current_contract.subjects[id_subject].status"
@@ -13,7 +13,7 @@
 				    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(id_subject)}">{{subject_name}}</span>
 				<div class="pull-right" style="top: -5px; position: relative">
 
-					<span class="dogavar-label zero" ng-show="subjectChecked(id_subject)">
+					<span class="dogavar-label first" ng-show="subjectChecked(id_subject)">
 						<ng-pluralize ng-show="current_contract.subjects[id_subject].count" count="current_contract.subjects[id_subject].count" when="{
 							'one' 	: 'урок',
 							'few'	: 'урока',
@@ -21,25 +21,13 @@
 						}"></ng-pluralize>
 					</span>
 
-					<span class="dogavar-label first" ng-show="subjectChecked(id_subject)">
+					<span class="dogavar-label second" ng-show="subjectChecked(id_subject)">
 						<ng-pluralize ng-show="current_contract.subjects[id_subject].count2" count="current_contract.subjects[id_subject].count2" when="{
 							'one' 	: 'урок',
 							'few'	: 'урока',
 							'many'	: 'уроков',
 						}"></ng-pluralize>
 					</span>
-
-					<span class="dogavar-label second" ng-show="subjectChecked(id_subject)">
-						<ng-pluralize ng-show="current_contract.subjects[id_subject].score" count="current_contract.subjects[id_subject].score" when="{
-							'one' 	: 'балл',
-							'few'	: 'балла',
-							'many'	: 'баллов',
-						}"></ng-pluralize>
-					</span>
-
-					<input type="text" class="form-control contract-score" style="margin-left: 5px" placeholder="балл"
-						ng-show="subjectChecked(id_subject)"
-						ng-model="current_contract.subjects[id_subject].score">
 
 					<input type="text" class="form-control contract-lessons" style="margin-left: 5px" placeholder="2й семестр"
 						ng-show="subjectChecked(id_subject)"
@@ -52,7 +40,7 @@
 			</div>
 		</div>
 
-		<div class="col-sm-6">
+		<div class="col-sm-7">
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label" style="max-width: 180px; top: -9px; position: absolute">общая сумма оказанных и планируемых услуг</span>

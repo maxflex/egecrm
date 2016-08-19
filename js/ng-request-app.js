@@ -1351,7 +1351,6 @@
 						subject.name 	= $scope.SubjectsFull[id_subject]
 						subject.count 	= ''
 						subject.count2 	= ''
-						subject.score 	= ''
 					}
 				} else {
 					delete subjects[id_subject]
@@ -1591,6 +1590,8 @@
 				if ($scope.new_payment.id) {
 					ajaxStart('payment')
 					$.post("ajax/paymentEdit", $scope.new_payment, function(response) {
+						$scope.new_payment.document_number = response.document_number;
+
 						angular.forEach($scope.payments, function(payment, i) {
 							if (payment.id == $scope.new_payment.id) {
 								$scope.payments[i] = $scope.new_payment
@@ -1599,7 +1600,8 @@
 						})
 						ajaxEnd('payment')
 						lightBoxHide()
-					})
+					}, 'json')
+
 				} else {
 				// иначе сохранение плтежа
 					// Добавляем дополнительные данные в new_payment

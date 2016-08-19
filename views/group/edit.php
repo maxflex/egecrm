@@ -96,8 +96,8 @@
 	           </select>
             </div>
 			<div class="form-group">
-				<select class="form-control" 
-					ng-model="Group.year" 
+				<select class="form-control"
+					ng-model="Group.year"
 					ng-change="changeYear()"
 					ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in <?= Years::json() ?>">
 				</select>
@@ -125,14 +125,11 @@
 									{{Student.last_name}}
 								</a>
 							</td>
-							<td width="50">
-								{{Student.Contract.subjects[Group.id_subject].score}}
-							</td>
 							<td>
 								<span ng-show='Student.already_had_lesson'>
 									<span class="review-small" ng-class="{
 										'bg-red': Student.teacher_like_status <= 3,
-										'bg-orange': Student.teacher_like_status == 4 
+										'bg-orange': Student.teacher_like_status == 4
 									}" ng-if='Student.teacher_like_status'>{{ Student.teacher_like_status }}</span>
 									<span class="review-small gray" ng-if="!Student.teacher_like_status">?</span>
 									<!-- <span class="text-success"	ng-show="Student.teacher_like_status == 1">нравится</span>
@@ -164,7 +161,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="5"></td>
+							<td colspan="4"></td>
 							<td width="150">
 							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
@@ -175,7 +172,7 @@
 							<td width="250">
 								{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}
 							</td>
-							<td colspan="4">
+							<td colspan="3">
 								<span style="margin-right: 5px">
 									<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">ЕЦ</a>
 								</span>
