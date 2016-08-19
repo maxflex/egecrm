@@ -1,18 +1,22 @@
 <div class="print-bill-body printable" id="pko-print">
     <style type="text/css">
-        .printable .bold-border {border: 2px solid black;}
-        .printable .bold-border-top {border-top: 3px solid black;}
-        .printable .bold-border-bottom {border-bottom: 3px solid black;}
-        .printable .padding {padding: 5px;}
-        .printable h3 {margin: 5px;}
-        .printable {font-family: 'Helvetica' !important}
-        table {font-size: 10px; font-family: 'Helvetica' !important}
-        .m_title {display:inline-block}
-		.m_title:first-letter {text-transform: uppercase}
+        @media only print
+        {
+            .printable .bold-border {border: 2px solid black;}
+            .printable .bold-border-top {border-top: 3px solid black;}
+            .printable .bold-border-bottom {border-bottom: 3px solid black;}
+            .printable .padding {padding: 5px;}
+            .printable h3 {margin: 5px;}
+            .printable {font-family: 'Helvetica' !important}
+            table {font-size: 10px; font-family: 'Helvetica' !important}
+            .m_title {display:inline-block}
+            .m_title:first-letter {text-transform: uppercase}
+        }
+
     </style>
 
     <table width="100%" cellpadding="2" cellspacing="2" class="invoice_bank_rekv">
-        <tr> 
+        <tr>
             <td width="55%" align="right"  style="font-size:8px;padding:5px">
                 Унифицированная форма КО-1 <br>
                 Утверждена постановлением Госкомстата России от 18.08.98 №88
@@ -164,7 +168,7 @@
                     </tr>
                 </table>
             </td>
-            <td width="45%" style="vertical-align: top;border-left: 2px dotted black;">
+            <td width="45%" style="padding:5px;vertical-align: top;border-left: 2px dotted black;">
                 <table>
                     <tr><td colspan="2" align="center"><h3><b>Квитанция</b></h3></td></tr>
                     <tr><td colspan="2" align="center" style="border-bottom: 1px solid black;">к приходному кассовому ордеру №{{PrintPayment.document_number}}</td></tr>
