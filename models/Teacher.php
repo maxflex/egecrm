@@ -20,7 +20,8 @@
 		const USER_TYPE = "TEACHER";
 		const UPLOAD_DIR = "img/teachers/";
 		const EXTERNAL_PHOTO_PATH = 'http://static.a-perspektiva.ru/img/tutors/';
-
+		const PLACE = 'teacher';
+		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
 		public function __construct($array)

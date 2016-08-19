@@ -332,7 +332,7 @@
 				# hack
 				$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()
 
-		.controller "EditCtrl", ($scope) ->
+		.controller "EditCtrl", ($scope, $timeout) ->
 
 			$scope.allStudentStatuses = ->
 				student_statuses_count = _.filter $scope.Group.student_statuses, (s, id_student) ->
@@ -864,7 +864,10 @@
 				$scope.add_groups_panel = not $scope.add_groups_panel
 				$scope.search_groups.grade = $scope.Group.grade if not $scope.search_groups.grade and $scope.Group.grade
 				$scope.search_groups.year = $scope.Group.year if not $scope.search_groups.year and $scope.Group.year
+				$scope.search_groups.id_branch = $scope.Group.id_branch if not $scope.search_groups.id_branch and $scope.Group.id_branch 
 				$scope.search_groups.id_subject = $scope.Group.id_subject if not $scope.search_groups.id_subject and $scope.Group.id_subject
+				$timeout ->
+					$('#groups-branch-filter').selectpicker('refresh')
 
 
 			$scope.subjectChange = ->

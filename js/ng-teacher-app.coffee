@@ -45,7 +45,7 @@
 		.controller "EditCtrl", ($scope, $timeout, $http) ->
 			$scope.enum = review_statuses
 			
-			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats']
+			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars']
 			
 			$scope.setMenu = (menu) ->
 				$.each menus, (index, value) ->
@@ -65,7 +65,23 @@
 					
 			$scope.yearDifference = (year) ->
 	            moment().format("YYYY") - year
-
+				
+			$scope.toggleFreetime = (day, time_id) ->
+			  time_id++
+			  if day >= 6
+			    time_id += 2
+			  mode = if $scope.Bars.Freetime[day][time_id] == 'green' then 'Delete' else 'Add'
+			  $.post 'ajax/' + mode + 'Freetime', {
+			    'id_entity': $scope.Teacher.id
+			    'type_entity': 'teacher'
+			    'day': day
+			    'time_id': time_id
+			  }, ->
+			    $scope.Bars.Freetime[day][time_id] = if mode == 'Add' then 'green' else 'empty'
+			    $scope.$apply()
+			    return
+			  return
+			
 			$scope.picture_version = 1;
 			bindFileUpload = ->
 				# загрузка файла договора
@@ -114,14 +130,14 @@
 
 				lessons_sum - payments_sum
 
-			$scope.sipNumber = (number) ->
-				number = number.toString()
-				return "sip:" + number.replace(/[^0-9]/g, '')
-
-			$scope.callSip = (element) ->
-				number = $("#" + element).val()
-				number = $scope.sipNumber(number)
-				location.href = number
+# 			$scope.sipNumber = (number) ->
+# 				number = number.toString()
+# 				return "sip:" + number.replace(/[^0-9]/g, '')
+# 
+# 			$scope.callSip = (element) ->
+# 				number = $("#" + element).val()
+# 				number = $scope.sipNumber(number)
+# 				location.href = number
 
 			# форматировать дату
 			$scope.formatDate2 = (date) ->

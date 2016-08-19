@@ -206,7 +206,7 @@
 		}
 
 		private function notStarted() {
-			return $this->date_finish == EMPTY_DATETIME;
+			return $this->date_start == EMPTY_DATETIME;
 		}
 
         public static function getData($page)

@@ -10,6 +10,7 @@
 		const PLACE_STUDENT = 'STUDENT';
 		const PLACE_REQUEST = 'REQUEST';
 		const PLACE_GROUP 	= 'GROUP';
+		const PLACE_TEACHER = 'TEACHER';
 
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/

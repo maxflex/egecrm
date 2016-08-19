@@ -32,10 +32,19 @@
 			t = $(this)
 			// ENTER
 			if (event.keyCode == 13) {
+				switch(t.data('place')) {
+					case "TEACHER": {
+						id_place = ang_scope.Teacher.id
+						break;
+					}
+					default: {
+						id_place = $("#comment-add-" + $(this).attr("request")).attr("id_place")
+					}
+				}
 				$.post("ajax/AddComment", {
 					comment	: $(this).val(), 
 					place	: $("#comment-add-" + $(this).attr("request")).attr("place"), 	// место добавления комментариев хранится в аттрибуте PLACE на кнопке добавления
-					id_place: $("#comment-add-" + $(this).attr("request")).attr("id_place"), // ID указанного места (может быть ID заявки, например) 
+					id_place: id_place, // ID указанного места (может быть ID заявки, например) 
 				}, function(response) {
 					// Добавляем новый комментарий к уже существующим
 					// scope = angular.element("[ng-app='Request']").scope()
@@ -47,6 +56,10 @@
 						}
 						case "REQUEST_EDIT_STUDENT": {
 							comments = scope.student_comments
+							break
+						}
+						case "TEACHER": {
+							comments = scope.Bars.Comments
 							break
 						}
 						case "GROUP_EDIT": {
