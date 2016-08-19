@@ -12,12 +12,12 @@
     </style>
 
     <table width="100%" cellpadding="2" cellspacing="2" class="invoice_bank_rekv">
-        <tr>
-            <td width="65%" align="right"  style="font-size:8px;padding:5px">
+        <tr> 
+            <td width="55%" align="right"  style="font-size:8px;padding:5px">
                 Унифицированная форма КО-1 <br>
                 Утверждена постановлением Госкомстата России от 18.08.98 №88
             </td>
-            <td width="35%" style="padding:5px;border-left: 1px dotted black;" align="center">
+            <td width="45%" style="padding:5px;border-left: 2px dotted black;" align="center">
                 <table width="100%">
                     <tr><td style="border-bottom: 1px solid black" align="center"><b>ООО "ЕГЭ-Центр"</b></td></tr>
                     <tr style="font-size:8px;text-align: center;"><td>организация</td></tr>
@@ -25,7 +25,7 @@
             </td>
         </tr>
         <tr>
-            <td width="65%" style="padding:5px;">
+            <td width="55%" style="padding:5px;">
                 <table width="100%" style="vertical-align: top">
                     <tr>
                         <td>
@@ -74,14 +74,14 @@
                             <table style="border-collapse: collapse;text-align: center;">
                                 <tr>
                                     <td rowspan="2" style="border:2px solid black;">
-	                                   <div style="width: 50px">Дебет</div>
+	                                   <div style="width: 35px">Дебет</div>
 	                                </td>
                                     <td colspan="4" style="border:2px solid black;text-align: center;" width="50%">Кредит</td>
                                     <td rowspan="2" style="border:2px solid black">
-	                                    <div style="width: 80px">Сумма, руб. коп.</div>
+	                                    <div style="width: 70px">Сумма, руб. коп.</div>
 	                                </td>
                                     <td rowspan="2" style="border:2px solid black;">Код целевого назначения</td>
-                                    <td rowspan="2" style="border:2px solid black;padding:20px;"></td>
+                                    <td rowspan="2" style="border:2px solid black;padding:0px;"></td>
                                 </tr>
                                 <tr>
                                     <td style="border:2px solid black;padding:10px;"></td>
@@ -164,7 +164,7 @@
                     </tr>
                 </table>
             </td>
-            <td width="35%" style="vertical-align: top;border-left: 1px dotted black;">
+            <td width="45%" style="vertical-align: top;border-left: 2px dotted black;">
                 <table>
                     <tr><td colspan="2" align="center"><h3><b>Квитанция</b></h3></td></tr>
                     <tr><td colspan="2" align="center" style="border-bottom: 1px solid black;">к приходному кассовому ордеру №{{PrintPayment.document_number}}</td></tr>

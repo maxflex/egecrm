@@ -34,15 +34,15 @@
 	</span>
 	 Форма обучения – очная. </p>
 <p>1.4. Место оказания Услуг по Договору: г. Москва, ул. Мясницкая, дом 40, стр. 1, 3 этаж.</p>
-<p>1.5. Вид образования: дополнительное образование детей и взрослых, продолжительность обучения: {{ week_count(contract.subjects) }} <ng-pluralize count="week_count(contract.subjects)" when="{'one' 	: 'неделя', 'few'	: 'недели', 'many'	: 'недель'}"></ng-pluralize>. </p>
+<p>1.5. Вид образования: дополнительное образование детей и взрослых, продолжительность обучения: 32 учебных недели. </p>
 
 <h4>2. Права и обязанности Сторон.</h4>
 
 <p><b>2.1. Исполнитель обязуется:</b></p>
 	<p>2.1.1. Предоставить Заказчику и Обучающемуся доступ к личному кабинету. Указанные данные известны только сторонам договора. Данные для доступа в личный кабинет:
 		<div style="width: 200px; margin: 15px auto 0; border: 1px dotted black; padding: 10px; border-radius: 5px">
-			<span style='display: inline-block; width: 60px'>логин:</span> <b><?= $Request->Student->login ?></b><br> 
-			<span style='display: inline-block; width: 60px'>пароль:</span> <b><?= $Request->Student->password ?></b>
+			<span style='display: inline-block; width: 60px'>логин:</span> <b>{{ student.login }}</b><br> 
+			<span style='display: inline-block; width: 60px'>пароль:</span> <b>{{ student.password }}</b>
 		</div>
 	</p>
 
