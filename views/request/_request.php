@@ -50,7 +50,7 @@
 				<span class="tab-link" ng-repeat="request_duplicate in request_duplicates" ng-class="{'active' : request_duplicate == <?= $Request->id ?>}">
 					<a href="requests/edit/{{request_duplicate}}">Заявка №{{request_duplicate}}</a>
 				</span>
-				<span class="tab-link" ng-class="{'active' : <?= ($Request->adding && $Request->id_student) ?>}">
+				<span class="tab-link" ng-class="{'active' : <?= ($Request->adding && $Request->id_student) ? 'true' : 'false' ?>}">
 					<a href="requests/add?id_student=<?= $Request->id_student ?>">добавить заявку</a>
 				</span>
 				<div class="top-links pull-right">

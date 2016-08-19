@@ -67,11 +67,16 @@
 
 			foreach ($Contracts as $index => $Contract) {
 				if ($Contract->isOriginal()) {
-					$stats['contract_new']++;
-					// сумма заключенных дагаваров
-					$stats['contract_sum_new'] += $Contract->sum;
-					$stats['subjects_new'] += count($Contract->subjects);
-
+					if ($Contract->external) {
+						$stats['contract_new']['external']++;
+						$stats['subjects_new']['external'] += count($Contract->subjects);
+						// сумма заключенных дагаваров
+						$stats['contract_sum_new']['external'] += $Contract->sum;
+					} else {
+						$stats['contract_new']['basic']++;	
+						$stats['subjects_new']['basic'] += count($Contract->subjects);
+						$stats['contract_sum_new']['basic'] += $Contract->sum;
+					}
 					continue; # если договор оригинальный, у него не может быть предыдущих версий
 				}
 
@@ -100,23 +105,6 @@
 					if ($Contract->activeSubjectsCount() - $PreviousContract->activeSubjectsCount() > 0) {
 						$stats['subjects_plus'] += $Contract->activeSubjectsCount() - $PreviousContract->activeSubjectsCount();
 					}
-
-/*
-
-					// если был НЕ расторжен и стал расторжен
-					if ($Contract->isCancelled() &&  !$PreviousContract->isCancelled()) {
-						// сумма расторгнутых
-						$stats['contract_sum_changed'] -= $Contract->sum;
-					}
-
-
-					// если расторжен и стал НЕ расторжен
-					if (!$Contract->isCancelled() && $PreviousContract->isCancelled()) {
-						// сумма реанимированых
-						$stats['contract_sum_changed'] += $Contract->sum;
-					}
-
-*/
 				}
 			}
 

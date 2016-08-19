@@ -80,13 +80,13 @@
 					<?= $stat['requests'] ?>
 				</td>
 				<td>
-					<?= $stat['contract_new'] ?>
+					<?= $stat['contract_new']['basic'] ?> <?= $stat['contract_new']['external'] ? "<span class='text-primary'>+ {$stat['contract_new']['external']}</span>" : "" ?>
 				</td>
 				<td>
-					<?= $stat['subjects_new'] ?>
+					<?= $stat['subjects_new']['basic'] ?> <?= $stat['subjects_new']['external'] ? "<span class='text-primary'>+ {$stat['subjects_new']['external']}</span>" : "" ?>
 				</td>
 				<td>
-					<?= $stat['contract_sum_new'] ?>
+					<?= $stat['contract_sum_new']['basic'] ?> <?= $stat['contract_sum_new']['external'] ? "<span class='text-primary'>+ {$stat['contract_sum_new']['external']}</span>" : "" ?>
 				</td>
 				<td>
 					<?= $stat['subjects_minus'] ?>

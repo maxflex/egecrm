@@ -1821,15 +1821,14 @@
 						
 						$scope.$apply()
 						
+						console.log('BEFORE ITMEOUT BIND SWITCH')
 						$timeout(function() {
-							// photo edit
-							bindCropper();
-							bindPhotoUpload();
-
 							// ios-like triple switch
 							$('.triple-switch').slider({
 								tooltip: 'hide',
 							});
+							
+							console.log('BIND SWITCH')
 							rebindMasks()
 							
 							// Добавляем существующие метки
@@ -1839,6 +1838,9 @@
 							google.maps.event.addListener($scope.gmap, 'click', function(event) {
 								$scope.gmapAddMarker(event)
 							})
+							// photo edit
+							bindCropper();
+							bindPhotoUpload();
 						}, 100)
 					}, "json")
 			    }
