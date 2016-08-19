@@ -27,13 +27,12 @@
 
             $this->has_photo_original = $this->hasPhotoOriginal();
             $this->photo_original_size = $this->photoOriginalSize();
-            $this->has_photo_cropped = $this->hasPhotoCropped();
             $this->photo_cropped_size = $this->photoCroppedSize();
             $this->photo_url = $this->photoUrl();
             
             // цвет черный, если пользователя забанили
             if ($this->banned) {
-	        	$this->color = 'black';    
+	        	$this->color = 'black';
             }
         }
         

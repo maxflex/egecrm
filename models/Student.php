@@ -32,10 +32,13 @@
 			$this->profile_link = "student/{$this->id}";
 
             if ($this->id) {
-                $this->photo_extension = self::dbConnection()->query('select photo_extension from users where id_entity = ' . $this->id)->fetch_object()->photo_extension;
+
+                $user_data = self::dbConnection()->query('select photo_extension, photo_cropped from users where id_entity = ' . $this->id)->fetch_object();
+                $this->photo_extension = $user_data->photo_extension;
+                $this->has_photo_cropped = $user_data->photo_extension;
+
                 $this->has_photo_original = $this->hasPhotoOriginal();
                 $this->photo_original_size = $this->photoOriginalSize();
-                $this->has_photo_cropped = $this->hasPhotoCropped();
                 $this->photo_cropped_size = $this->photoCroppedSize();
                 $this->photo_url = $this->photoUrl();
             }
@@ -1206,10 +1209,11 @@
 					$new_search->red = $red;
 					$counts['red'][$red] = static::_count($new_search);
 				}
-				foreach(["", 0, 1] as $photo) {
+
+				foreach(array_merge([''], range(0,2)) as $error) {
 					$new_search = clone $search;
-					$new_search->photo = $photo;
-					$counts['photo'][$photo] = static::_count($new_search);
+					$new_search->error = $error;
+					$counts['error'][$error] = static::_count($new_search);
 				}
 			}
 			
@@ -1232,7 +1236,8 @@
 			$main_query = "
 				FROM students s " .
 				(! isBlank($search->year) ? " JOIN contracts yc ON (yc.id_student = s.id AND yc.year = {$search->year}) " : "") .
-				(! isBlank($search->photo) ? " JOIN users u ON (u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension ".($search->photo ? "<>" : "=")." '' )" : "") . "
+				( ! isBlank($search->error) && $search->error == 0 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND photo_extension = '' " : "") .
+				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND photo_cropped = 0 " : "") . "
 				JOIN (
 					SELECT id, id_student FROM contracts
 					WHERE 1 " . Contract::ZERO_OR_NULL_CONDITION . "
@@ -1242,6 +1247,7 @@
 				. (!isBlank($search->green) ? " AND " . ($search->green ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 3)" : "")
 				. (!isBlank($search->yellow) ? " AND " . ($search->yellow ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 2)" : "")
 				. (!isBlank($search->red) ? " AND " . ($search->red ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 1)" : "")
+				. (!isBlank($search->error) && $search->error == 2 ? " AND NOT EXISTS (SELECT 1 FROM freetime f WHERE f.id_entity = s.id AND f.type_entity = '".Student::USER_TYPE."')" : "")
 				. " ORDER BY s.last_name, s.first_name, s.middle_name
 			";
 			return "SELECT " . $select . $main_query;
