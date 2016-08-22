@@ -44,7 +44,42 @@
 			Контроллер списка заявок
 
 		*/
-		.controller("ListCtrl", function($scope, $log) {
+		.controller("ListCtrl", function($scope, $timeout, $log) {
+					system_user = {
+						color: '#999999',
+						login: 'system',
+						id: 0,
+						banned: 0
+					};
+					$scope.getUsersWithSystem = function(only_active) {
+						if (only_active == null) {
+							only_active = true;
+						}
+						users = _.toArray(_.filter($scope.users, function(u) { return u.type == 'USER'; }))
+						users.unshift(system_user);
+						if (only_active) {
+							return _.where(users, {
+								banned: 0
+							});
+						} else {
+							return users;
+						}
+					};
+					$scope.getBannedUsers = function() {
+						return _.where(_.filter($scope.users, function(u) { return u.type == 'USER'; }), {
+							banned: 1
+						});
+					}
+
+					$scope.getUser = function(user_id) {
+						return _.findWhere($scope.users, {
+								id: parseInt(user_id)
+							}) || system_user;
+					};
+
+
+
+
 			// хэндл псевдо-истории
 			window.addEventListener("popstate", function(e) {
 				// анфокус
@@ -125,14 +160,33 @@
 					return 'label-yellow'
 				}
 			}
-			
+
+			$scope.filter = function() {
+				$timeout(function(){
+					setRequestListUser(parseInt($scope.id_user_list))
+				}, 100)
+				console.log('filter ended')
+			}
+
+			$scope.refreshCounts = function() {
+				return $timeout(function() {
+					$('.watch-select option').each(function(index, el) {
+						$(el).data('subtext', $(el).attr('data-subtext'));
+						return $(el).data('content', $(el).attr('data-content'));
+					});
+					return $('.watch-select').selectpicker('refresh');
+				}, 100);
+			};
+
 			$(document).ready(function() {
+				$scope.id_user_list = $.cookie("id_user_list") ? $.cookie("id_user_list") : '';
+				$scope.$apply()
 				// draggable only from main requests list (not relevant)
 				if ($scope.request_statuses_count) {
 					bindDraggable()
 				} else {
 					// relevant page
-					$("#group-branch-filter").selectpicker('render')
+					$("#user-filter").selectpicker('render')
 				}
 			})
 			
@@ -223,8 +277,10 @@
 				}, function(response) {
 					ajaxEnd()
 					frontendLoadingEnd()
-					$scope.requests = response
+					$scope.requests = response.requests
+					$scope.counts = response.counts
 					$scope.$apply()
+					$scope.refreshCounts()
 					bindUserColorControl()
 					bindDraggable()
 					initComments()

@@ -108,18 +108,48 @@
 		 * Получить количество заявок из каждого списка.
 		 *
 		 */
-		public static function getAllStatusesCount()
+		public static function getAllStatusesCount($search)
 		{
-			foreach (RequestStatuses::$all as $id => $status) {
-				if ($id == RequestStatuses::ALL) {
-					$result[$id] = self::count(["condition" => "adding=0"]);
-				} else {
-					$result[$id] = self::count(["condition" => "adding=0 AND id_status=".$id]);
-				}
-			}
+		    $return = [];
 
-			return $result;
+            foreach (RequestStatuses::$all as $id => $status) {
+                $condition = ' adding = 0 '. (!isBlank($search->id_user) ? ' and ifnull(id_user, 0) = '.$search->id_user : '');
+                if ($id != RequestStatuses::ALL) {
+                    $condition .= ' and id_status = '.$id;
+                }
+                $result[$id] = self::count(["condition" => $condition]);
+            }
+
+            return $result;
 		}
+
+		/**
+		 * Получить количество заявок из каждого списка.
+		 *
+		 */
+		public static function getUserCounts($search)
+        {
+            $return = [];
+
+            $query = "select ifnull(r.id_user, 0) as id_user, count(r.id) as cnt ".
+                     "from requests r ".
+                     "where r.adding = 0 ". (!isBlank($search->id_status) && $search->id_status != RequestStatuses::ALL ? " and r.id_status = {$search->id_status} " : "") .
+                     "group by r.id_user ";
+
+            header('_q:'.$query);
+
+            $result = self::dbConnection()->query($query);
+            if ($result) {
+                while ($row = $result->fetch_object()) {
+                    if ($return[$row->id_user])
+                        $return[$row->id_user] += $row->cnt;
+                    else
+                        $return[$row->id_user] += $row->cnt;
+                }
+            }
+
+            return $return;
+        }
 
 
 
@@ -199,7 +229,7 @@
 			$Requests = self::findAll([
 				"condition"	=> "adding=0"
 					. ($id_status == RequestStatuses::ALL ? "" : " AND id_status=".$id_status)
-					. (empty($_COOKIE["id_user_list"]) ? "" : " AND id_user=".$_COOKIE["id_user_list"]) ,
+					. (isBlank($_COOKIE["id_user_list"]) ? "" : " AND IFNULL(id_user,0) = ".$_COOKIE["id_user_list"]) ,
 				"order"		=> "date DESC",
 				"group"		=> ($id_status == RequestStatuses::NEWR ? "id_student" : ""), // если список "неразобранные", то отображать дубликаты
 				"limit" 	=> $start_from. ", " .self::PER_PAGE

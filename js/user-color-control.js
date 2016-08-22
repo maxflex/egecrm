@@ -25,9 +25,14 @@
 	
 	
 	function setRequestListUser(elem) {
-		id_user = $(elem).val();
+		if (Number.isInteger(elem))
+			id_user = elem
+		else
+			id_user = $(elem).val();
+
+		if (id_user == undefined) id_user = '';
+
 		console.log("here", id_user);
-		
 		$.cookie("id_user_list", id_user, { expires: 365, path: '/' });
 		
 		$("li.active").first().children().first().click();

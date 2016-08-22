@@ -90,7 +90,7 @@
 			</div>
 		</div>
 		<div class="col-sm-6">
-			ответственный: <span id="request-user-display-{{request.id}}" ng-click="pickUser(request, <?= User::fromSession()->id ?>)" class="user-pick" style="color: {{request.id_user ? users[request.id_user].color : 'rgba(0, 0, 0, 0.5)'}}">{{request.id_user ? users[request.id_user].login : 'system'}}</span>
+			ответственный: <span id="request-user-display-{{request.id}}" ng-click="pickUser(request, <?= User::fromSession()->id ?>)" class="user-pick" style="color: {{request.id_user ? getUser(request.id_user).color : 'rgba(0, 0, 0, 0.5)'}}">{{request.id_user ? getUser(request.id_user).login : 'system'}}</span>
 <!--
 			<select class="user-list small" onchange="changeUserColor(this)" data-rid="{{request.id}}" style="display: none; background-color: {{users[request.id_user].color}}" id="request-user-select-{{request.id}}" ng-model="request.id_user">
 				<option selected="" value="">пользователь</option>
