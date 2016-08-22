@@ -3055,3 +3055,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 	display: inline-block;
   }
 }
+#user-list-fix .dropdown-menu:last-child {
+  right: 0;
+  left: -50px;
+}

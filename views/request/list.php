@@ -15,7 +15,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="col-sm-2">
+		<div class="col-sm-2" id="user-list-fix">
 			<select class="form-control watch-select" ng-model='id_user_list' ng-change="filter()" id='user-filter'>
 				<option value=''>пользователь</option>
 				<option disabled>──────────────</option>

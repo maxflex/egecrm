@@ -2507,3 +2507,14 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .table.no-border > tbody > tr > td {
   border: none !important; }
+
+.request-list-nav li {
+  margin-right: 20px; }
+  .request-list-nav li a {
+    margin-right: 0px;
+    display: inline-block; }
+#user-list-fix .dropdown-menu:last-child {
+  right: 0;
+  left: -50px;
+}
+/*# sourceMappingURL=style.css.map */
