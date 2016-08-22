@@ -25,7 +25,7 @@
 					value="{{ user.id }}"
 					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }} {{ $var }}</span><small class='text-muted'>{{ counts.users[user.id] || '' }}</small>"
 				></option>
-				<option>──────────────</option>
+				<option disabled ng-show="bannedUsersToShow().length">──────────────</option>
 				<option
 					ng-show='counts.users[user.id]'
 					ng-repeat="user in getBannedUsers()"

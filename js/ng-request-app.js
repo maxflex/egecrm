@@ -71,6 +71,13 @@
 						});
 					}
 
+					$scope.bannedUsersToShow = function() {
+					  ids = Object.keys($scope.counts.users).map(function(v){return +(v)})
+						return _.filter($scope.users, function(u) {
+							return u.type == 'USER' && u.banned == 1 && ids.indexOf(u.id) != -1;
+						});
+          }
+
 					$scope.getUser = function(user_id) {
 						return _.findWhere($scope.users, {
 								id: parseInt(user_id)
