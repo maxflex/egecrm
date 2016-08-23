@@ -723,6 +723,33 @@ body {
     background: #fbaa33 !important; }
   .bar.red {
     background: #c40000 !important; }
+  .bar.red-green {
+    background: #00b700 !important;
+    background: -moz-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00b700), color-stop(50%, #00b700), color-stop(51%, #c40000), color-stop(100%, #c40000)) !important;
+    background: -webkit-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
+    background: -o-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
+    background: -ms-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
+    background: linear-gradient(to bottom, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#c40000',GradientType=0 ); }
+  .bar.green-gray {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#b1b1b1+0,b1b1b1+50,5cb85c+51,5cb85c+100 */
+    background: #b1b1b1;
+    /* Old browsers */
+    background: -moz-linear-gradient(top, #b1b1b1 0%, #b1b1b1 50%, #5cb85c 51%, #5cb85c 100%);
+    /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #b1b1b1), color-stop(50%, #b1b1b1), color-stop(51%, #5cb85c), color-stop(100%, #5cb85c));
+    /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #b1b1b1 0%, #b1b1b1 50%, #5cb85c 51%, #5cb85c 100%);
+    /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #b1b1b1 0%, #b1b1b1 50%, #5cb85c 51%, #5cb85c 100%);
+    /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #b1b1b1 0%, #b1b1b1 50%, #5cb85c 51%, #5cb85c 100%);
+    /* IE10+ */
+    background: linear-gradient(to bottom, #b1b1b1 0%, #b1b1b1 50%, #5cb85c 51%, #5cb85c 100%);
+    /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b1b1b1', endColorstr='#5cb85c',GradientType=0 );
+    /* IE6-9 */ }
 
 /* @group Blink */
 .double-blink {
@@ -2513,8 +2540,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
   .request-list-nav li a {
     margin-right: 0px;
     display: inline-block; }
+
 #user-list-fix .dropdown-menu:last-child {
   right: 0;
-  left: -50px;
-}
-/*# sourceMappingURL=style.css.map */
+  left: -50px; }

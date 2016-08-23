@@ -150,18 +150,15 @@
 			return $bar;
 		}
 		
-		public static function getStudentBar($id_student)
+		public static function getStudentBar($id_student, $with_freetime = false)
 		{
-		    $bar = [];
+			if ($with_freetime) {
+				$bar = Freetime::getFreetimeBar($id_student, 'student');
+			} else {
+				$bar = [];	
+			}
 			foreach (self::$weekdays_time as $day => $time_data) {
 				foreach ($time_data as $time_index => $time_id) {
-//					// подгоняем правильный $time_index
-//					if ($day <= 5) {
-//						$correct_time_index = $time_index + 2;
-//					} else {
-//						$correct_time_index = $time_index;
-//					}
-
                     $result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
@@ -177,31 +174,38 @@
 
                     if ($groups_at_this_time_count >= 1) {
                         if ($groups_at_this_time_count > 1) {
-                            $bar[$day][$time_id] = 'blink red';
+                            if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+		                        $bar[$day][$time_id] = 'blink red-green';
+	                        } else {
+		                    	$bar[$day][$time_id] = 'blink red';   
+	                        }
                         } else {
-                            $bar[$day][$time_id] = 'red';
+                            if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+		                        $bar[$day][$time_id] = 'red-green';
+	                        } else {
+		                    	$bar[$day][$time_id] = 'red';   
+	                        }
                         }
                     } else {
-                        $bar[$day][$time_id] = 'gray';
+                        if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+						} else {
+							$bar[$day][$time_id] = 'gray';
+						}
                     }
                 }
             }
             return $bar;
         }
 
-		public static function getTeacherBar($id_teacher)
+		public static function getTeacherBar($id_teacher, $with_freetime = false)
 		{
-		    $bar = [];
-
+		    if ($with_freetime) {
+				$bar = Freetime::getFreetimeBar($id_student, 'teacher');
+			} else {
+				$bar = [];	
+			}
 			foreach (self::$weekdays_time as $day => $time_data) {
 				foreach ($time_data as $time_index => $time_id) {
-//					// подгоняем правильный $time_index
-//					if ($day <= 5) {
-//						$correct_time_index = $time_index + 2;
-//					} else {
-//						$correct_time_index = $time_index;
-//					}
-
                     $result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
@@ -217,12 +221,23 @@
 
                     if ($groups_at_this_time_count >= 1) {
                         if ($groups_at_this_time_count > 1) {
-                            $bar[$day][$time_id] = 'blink red';
+	                        if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+		                        $bar[$day][$time_id] = 'blink red-green';
+	                        } else {
+		                    	$bar[$day][$time_id] = 'blink red';   
+	                        }
                         } else {
-                            $bar[$day][$time_id] = 'red';
+                            if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+		                        $bar[$day][$time_id] = 'red-green';
+	                        } else {
+		                    	$bar[$day][$time_id] = 'red';   
+	                        }
                         }
                     } else {
-                        $bar[$day][$time_id] = 'gray';
+						if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+						} else {
+							$bar[$day][$time_id] = 'gray';
+						}
                     }
                 }
             }
