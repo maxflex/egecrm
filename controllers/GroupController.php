@@ -642,9 +642,9 @@
 		{
 			extract($_POST);
 
-			returnJsonAng(
-				Freetime::getTeacherBar($id_teacher, true)
-			);
+            returnJsonAng(
+                $id_teacher ? Freetime::getTeacherBar($id_teacher, true) : []
+            );
 		}
 
 		public function actionAjaxGetStudentBars()
@@ -1052,6 +1052,8 @@
 		public function actionAjaxChangeTeacher()
 		{
 			extract($_POST);
+            if (!$id_teacher)
+                $id_teacher = 0;
 
 			foreach ($students as $id_student) {
 				$return['teacher_like_statuses'][$id_student] = TeacherReview::getStatus($id_student, $id_teacher, $id_subject);
