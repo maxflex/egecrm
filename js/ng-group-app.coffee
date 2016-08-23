@@ -1326,6 +1326,7 @@
 					if $("#subjects-select").length
 						$("#subjects-select").selectpicker
 							noneSelectedText: "предметы"
+							multipleSeparator: '+'
 
 					if $("#time-select").length
 						$("#time-select").selectpicker

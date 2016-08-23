@@ -30,7 +30,7 @@
 				            ]) ?>
 						</div>
 				        <div>
-							<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.id_subject" ng-change='filter()'>
+							<select id='subjects-select' multiple class="watch-select form-control single-select" ng-model="search.id_subject" ng-change='filter()'>
 								<option value="" data-subtext="{{ counts.subject[''] || '' }}">все предметы</option>
 								<option disabled>──────────────</option>
 								<option
