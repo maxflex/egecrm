@@ -130,14 +130,14 @@
 
 				lessons_sum - payments_sum
 
-# 			$scope.sipNumber = (number) ->
-# 				number = number.toString()
-# 				return "sip:" + number.replace(/[^0-9]/g, '')
-# 
-# 			$scope.callSip = (element) ->
-# 				number = $("#" + element).val()
-# 				number = $scope.sipNumber(number)
-# 				location.href = number
+			$scope.sipNumber = (number) ->
+				number = number.toString()
+				return "sip:" + number.replace(/[^0-9]/g, '')
+
+			$scope.callSip = (element) ->
+				number = $("#" + element).val()
+				number = $scope.sipNumber(number)
+				location.href = number
 
 			# форматировать дату
 			$scope.formatDate2 = (date) ->

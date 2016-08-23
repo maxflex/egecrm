@@ -429,6 +429,9 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   });
 }).controller("EditCtrl", function($scope, $timeout) {
   var bindDraggable, bindGroupsDroppable, initDayAndTime, initFreetime, justSave, rebindBlinking;
+  $timeout(function() {
+    return ajaxEnd();
+  });
   $scope.allStudentStatuses = function() {
     var student_statuses_count;
     student_statuses_count = _.filter($scope.Group.student_statuses, function(s, id_student) {

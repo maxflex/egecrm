@@ -643,7 +643,7 @@
 			extract($_POST);
 
 			returnJsonAng(
-				Freetime::getTeacherBar($id_teacher)
+				Freetime::getTeacherBar($id_teacher, true)
 			);
 		}
 
@@ -652,7 +652,7 @@
 			extract($_POST);
 
 			foreach ($student_ids as $id_student) {
-				$return[$id_student] = Freetime::getStudentBar($id_student);
+				$return[$id_student] = Freetime::getStudentBar($id_student, true);
 			}
 
 			returnJsonAng($return);
@@ -1057,7 +1057,7 @@
 				$return['teacher_like_statuses'][$id_student] = TeacherReview::getStatus($id_student, $id_teacher, $id_subject);
 			}
 
-			$return['bar'] = Freetime::getTeacherBar($id_teacher);
+			$return['bar'] = Freetime::getTeacherBar($id_teacher, true);
 
 			Group::updateById($id_group, [
 				"id_teacher" => $id_teacher,

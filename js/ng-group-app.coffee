@@ -333,7 +333,9 @@
 				$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()
 
 		.controller "EditCtrl", ($scope, $timeout) ->
-
+			$timeout ->
+				ajaxEnd()
+				
 			$scope.allStudentStatuses = ->
 				student_statuses_count = _.filter $scope.Group.student_statuses, (s, id_student) ->
 											s isnt undefined and s.id_status and _.where($scope.TmpStudents, {id: parseInt(id_student)}).length
