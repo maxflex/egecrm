@@ -4,9 +4,9 @@
 		Расписание группы №<?= $Group->id ?>
 		<span ng-hide="<?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>" class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
 		<div class="pull-right">
-			<span class="link-reverse pointer" ng-click="setTimeFromGroup(Group)" ng-show="Group.Schedule.length && Group.start" 
+			<span class="link-reverse pointer" ng-click="setParamsFromGroup(Group)" ng-show="Group.Schedule.length && Group.start"
 				ng-hide="<?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>">
-				установить время занятия из настроек группы
+				установить время занятий, филиал и кабинет из настроек группы
 			</span>
 		</div>
 	</div>

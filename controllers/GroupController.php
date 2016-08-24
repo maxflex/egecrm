@@ -579,13 +579,12 @@
 				}
 
 				// если дня нет в расписании группы
-				if (!in_array($d, array_keys($Group->day_and_time))) {
-					continue;
-				}
+				if (in_array($d, array_keys($Group->day_and_time))) {
+                    if (!$Schedule->time || $Schedule->time == '00:00') {
+                        $Schedule->time = end($Group->day_and_time[$d]);
+                    }
+                }
 
-				if (!$Schedule->time || $Schedule->time == '00:00') {
-					$Schedule->time = end($Group->day_and_time[$d]);
-				}
 
 				if ($Group->id_branch && !$Schedule->id_branch) {
 					$Schedule->id_branch = $Group->id_branch;
