@@ -367,7 +367,8 @@
 						if id_student in Group.students
 							notifySuccess "Ученик уже в группе"
 						else
-							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}
+							old_id_group = if $scope.Group and ($scope.Group.id isnt id_group) then $scope.Group.id else false
+							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student, old_id_group: old_id_group}
 							Group.students.push id_student
 							$scope.removeStudent id_student
 							$scope.$apply()
@@ -782,7 +783,8 @@
 				$.each $scope.Group.students, (index, data) ->
 					if data is id_student
 						$scope.Group.students.splice index, 1
-						justSave()
+						$timeout ->
+							justSave()
 						$scope.form_changed = true
 						$scope.$apply()
 				$.each $scope.TmpStudents, (index, data) ->
