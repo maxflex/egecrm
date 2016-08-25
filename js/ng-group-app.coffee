@@ -463,6 +463,7 @@
 			$scope.saveDayAndTime = ->
 				lightBoxHide()
 				$(".save-button").mousedown()
+				$scope.day_and_time_object = $scope.dayAndTimeObject()
 
 			initDayAndTime = (day) ->
 				$scope.Group.day_and_time = initIfNotSet $scope.Group.day_and_time
@@ -491,10 +492,10 @@
 				current_index = $.inArray(time, $scope.weekdays[day - 1].schedule)
 
 			$scope.changeYear = ->
+				$scope.changeTeacher()
 				$scope.updateGroup
 					year: $scope.Group.year
-
-
+			
 			$scope.changeCabinet = ->
 				return if not $scope.Group.id
 				$scope.reloadSmsNotificationStatuses()
@@ -502,7 +503,25 @@
 					cabinet: $scope.Group.cabinet
 
 				$scope.updateCabinetBar()
-
+			
+			$scope.dayAndTimeObject = ->
+				day_and_time = {}
+				$.each $scope.Group.day_and_time, (day, value) ->
+					return if value is undefined
+					$.each value, (index, time) ->
+						if time
+							day_and_time[day] = {} if day_and_time[day] is undefined
+							day_and_time[day][index] = time
+				day_and_time
+			
+			$timeout ->
+				$scope.day_and_time_object = $scope.dayAndTimeObject()
+			
+			$scope.hasDayAndTime = ->
+				return false if not $scope.day_and_time_object
+				Object.keys($scope.day_and_time_object).length > 0
+			
+			
 			$scope.changeTeacher = ->
 				return if not $scope.Group.id
 				console.log 'changin teacher'
@@ -512,6 +531,7 @@
 					id_branch: $scope.Group.id_branch
 					day_and_time: $scope.Group.day_and_time
 					id_teacher: $scope.Group.id_teacher
+					year: $scope.Group.year
 					students: $scope.Group.students
 				, (response) ->
 					console.log 'teacher changed', response

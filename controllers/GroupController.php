@@ -407,8 +407,6 @@
 			if (!$Group) {
 				$this->addJs("dnd");
 				$Group = Group::findById($_GET['id']);
-
-				$Group->day_and_time_2 = $Group->day_and_time;
 			}
 
 			$Teachers = Teacher::findAll();
@@ -426,7 +424,7 @@
 				$Student = Student::findById($id_student);
 				$Student->Contract 	= $Student->getLastContract($Group->year);
 
-				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject);
+				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject, $Group->year);
 				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet);
 			
 				if ($Group->grade && $Group->id_subject) {
@@ -1061,7 +1059,7 @@
                 $id_teacher = 0;
 
 			foreach ($students as $id_student) {
-				$return['teacher_like_statuses'][$id_student] = TeacherReview::getStatus($id_student, $id_teacher, $id_subject);
+				$return['teacher_like_statuses'][$id_student] = TeacherReview::getStatus($id_student, $id_teacher, $id_subject, $year);
 			}
 
 			$return['bar'] = Freetime::getTeacherBar($id_teacher, true);
