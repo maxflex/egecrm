@@ -83,10 +83,10 @@
 		/**
 		 * Получить оценку учителя
 		 */
-		public static function getStatus($id_student, $id_teacher, $id_subject)
+		public static function getStatus($id_student, $id_teacher, $id_subject, $year)
 		{
 			$StudentTeacherLike = static::find([
-				"condition" => "id_teacher={$id_teacher} AND id_student={$id_student} AND id_subject={$id_subject}"
+				"condition" => "id_teacher={$id_teacher} AND id_student={$id_student} AND id_subject={$id_subject} AND year='{$year}'"
 			]);
 
 			if ($StudentTeacherLike) {

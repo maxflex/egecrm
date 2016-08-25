@@ -57,7 +57,7 @@
 				<span ng-repeat="dd in day_data">
 					в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ","}}
 			</span>
-			<span ng-show="!Group.schedule_count.paid">без расписания</span>
+			<span ng-show="Group.day_and_time.length !== undefined">без расписания</span>
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
 		</td>
 		<td>

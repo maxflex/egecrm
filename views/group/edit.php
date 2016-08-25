@@ -9,26 +9,14 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<?= $Group->id ? "Группа {$Group->id} " . ($Group->is_special ? "(спецгруппа)" : "") : "Добавление группы" ?>
-		<?php if ($Group->id) :?>
-			<span ng-show="Group.schedule_count.paid > 0 && !Group.past_lesson_count" style="margin-bottom: 20px">({{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span> (<span ng-repeat="(day, day_data) in Group.day_and_time_2">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : " и "}}</span>), первое занятие {{Group.first_schedule | date:"d MMMM yyyy"}})</span>
-
-
-			<span ng-show="Group.past_lesson_count" style="margin-bottom: 20px">
-				({{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span>
-				<ng-pluralize count="Group.schedule_count.paid" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize>,
-				<span ng-repeat="(day, day_data) in Group.day_and_time_2">{{weekdays[day - 1].short}}<span ng-repeat="dd in day_data"> в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : " и "}}</span>, прошло {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
-					'one': 'занятие',
-					'few': 'занятия',
-					'many': 'занятий'
-				}"></ng-pluralize>)</span>
-
-			<span ng-show="!Group.schedule_count && !Group.past_lesson_count" style="margin-bottom: 20px">(расписание не установлено)</span>
-		<?php endif ?>
 		<div class="pull-right">
 			 <?php if ($Group->id): ?>
 				<a style="margin-right: 12px" class="link-reverse" href="groups/journal/<?= $Group->id ?>">посещаемость</a>
 	            <a style="margin-right: 12px" class="link-reverse" href="groups/edit/<?= $Group->id ?>/schedule">расписание</a>
-	            <span style="margin-right: 12px" class="link-like link-reverse link-white" ng-click="dayAndTime()">день и время</span>
+	            <span style="margin-right: 12px" ng-click="dayAndTime()">
+	            	<span class="link-like link-reverse link-white" ng-show='hasDayAndTime()'><span ng-repeat="(day, day_data) in day_and_time_object">{{weekdays[day - 1].short}} в <span ng-repeat="dd in day_data">{{dd}}{{$last ? "" : ", "}}</span>{{$last ? "" : " и "}}</span></span>
+	            	<span class="link-like link-reverse link-white" ng-show='!hasDayAndTime()'>установить день и время</span>
+	            </span>
 	        <?php endif ?>
 			<span class="link-like link-reverse link-white" ng-click="addGroupsPanel()" style="margin-right: 12px">
 					похожие группы</span>
@@ -116,12 +104,10 @@
 								<span ng-show='Student.already_had_lesson'>
 									<span class="review-small" ng-class="{
 										'bg-red': Student.teacher_like_status <= 3,
-										'bg-orange': Student.teacher_like_status == 4
-									}" ng-if='Student.teacher_like_status'>{{ Student.teacher_like_status }}</span>
+										'bg-orange': Student.teacher_like_status == 4,
+										'gray': Student.teacher_like_status == 6
+									}" ng-if='Student.teacher_like_status'>{{ Student.teacher_like_status == '6' ? '0' : Student.teacher_like_status }}</span>
 									<span class="review-small gray" ng-if="!Student.teacher_like_status">?</span>
-									<!-- <span class="text-success"	ng-show="Student.teacher_like_status == 1">нравится</span>
-									<span class="text-warning" 	ng-show="Student.teacher_like_status == 2">средне</span> -->
-									<!-- <span class="text-danger" ng-if="Student.teacher_like_status == 3">не нравится</span> -->
 								</span>
 							</td>
 							<td>
@@ -134,6 +120,7 @@
 										'many': 'баллов'
 									}"></ng-pluralize></span>
 								</span>
+								<span ng-show="!Student.Test" class="text-gray">тест не найден</span>
 							</td>
 							<td>
 								<span ng-hide="Student.already_had_lesson >= 2">
@@ -147,27 +134,20 @@
 								</span>
 							</td>
 						</tr>
-						<tr>
-							<td colspan="4"></td>
+						<tr ng-show="Group.id_teacher">
+							<td width="250" colspan="4">
+								Преподаватель: <a href="teachers/edit/{{Group.id_teacher}}" target="_blank">{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}</a>
+							</td>
 							<td width="150">
-							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
+							   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
 								</span>
 							</td>
 						</tr>
-						<tr ng-show="Group.id_teacher">
-							<td width="250">
-								{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}
-							</td>
-							<td colspan="3">
-								<span style="margin-right: 5px">
-									<a href="teachers/edit/{{Group.id_teacher}}" target="_blank">ЕЦ</a>
-								</span>
-								<a href="https://crm.a-perspektiva.ru/repetitors/edit/?id={{getTeacher(Group.id_teacher).id_a_pers}}"
-									target="_blank">ЕР</a>
-							</td>
+						<tr>
+							<td colspan="4">Загрузка кабинета</td>
 							<td width="150">
-							   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">
+							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
 								</span>
 							</td>

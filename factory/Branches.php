@@ -304,7 +304,7 @@
 		{
 			$name = self::$short[$id_branch];
 			
-			return "<span class='label label-metro-short' style='background: ". self::metroSvg($id_branch, false, true) . "'>" 
+			return "<span style='color: ". self::metroSvg($id_branch, false, true) . "'>" 
 				. $name . ($additional ? $additional : "") . "</span>";
 		}
 		
