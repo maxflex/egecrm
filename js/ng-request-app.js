@@ -764,6 +764,13 @@
 				printDiv($scope.print_mode + "-print")
 			}
 
+      $scope.printLlcBill = function(payment) {
+				$scope.print_mode = 'llc-bill'
+				$scope.PrintPayment = payment
+				$scope.$apply()
+				printDiv($scope.print_mode + "-print")
+			}
+
 			$scope.printPKO = function(payment) {
 				$scope.print_mode = 'pko'
 				$scope.PrintPayment = payment
