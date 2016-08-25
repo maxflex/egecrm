@@ -1208,7 +1208,7 @@
 					$counts['red'][$red] = static::_count($new_search);
 				}
 
-				foreach(array_merge([''], range(0,2)) as $error) {
+				foreach(array_merge([''], range(0,3)) as $error) {
 					$new_search = clone $search;
 					$new_search->error = $error;
 					$counts['error'][$error] = static::_count($new_search);
@@ -1237,7 +1237,7 @@
 				( ! isBlank($search->error) && $search->error == 0 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension = '' " : "") .
 				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension <> '' AND u.has_photo_cropped = 0 " : "") . "
 				JOIN (
-					SELECT id, id_student FROM contracts
+					SELECT id, id_student, external FROM contracts
 					WHERE 1 " . Contract::ZERO_OR_NULL_CONDITION . "
 					GROUP BY id_student
 					ORDER BY year DESC
@@ -1246,6 +1246,7 @@
 				. (!isBlank($search->yellow) ? " AND " . ($search->yellow ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 2)" : "")
 				. (!isBlank($search->red) ? " AND " . ($search->red ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 1)" : "")
 				. (!isBlank($search->error) && $search->error == 2 ? " AND NOT EXISTS (SELECT 1 FROM freetime f WHERE f.id_entity = s.id AND f.type_entity = '".Student::USER_TYPE."')" : "")
+				. (!isBlank($search->error) && $search->error == 3 ? " AND c.external = 1 " : "")
 				. " ORDER BY s.last_name, s.first_name, s.middle_name
 			";
 			return "SELECT " . $select . $main_query;

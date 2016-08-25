@@ -32,7 +32,8 @@
 			t = $(this)
 			// ENTER
 			if (event.keyCode == 13) {
-				switch(t.data('place')) {
+        event.preventDefault()
+        switch(t.data('place')) {
 					case "TEACHER": {
 						id_place = ang_scope.Teacher.id
 						break;

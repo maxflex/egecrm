@@ -145,7 +145,8 @@
 				Schedule.title = title
 				$scope.$apply()
 
-			$scope.setTimeFromGroup = (Group) ->
+			# установка времени филиала и кабинета из настроек группы
+			$scope.setParamsFromGroup = (Group) ->
 				$.each $scope.Group.Schedule, (i, v) ->
 					if not v.time
 						d = moment(v.date).format("d")
@@ -156,11 +157,15 @@
 						if Group.day_and_time[d] isnt undefined
 							key = Object.keys(Group.day_and_time[d])[0]
 							v.time = Group.day_and_time[d][key]
-							# устанавливаем филиалы и кабинеты для дат где не указаны филиал/кабинеты
-							if Group.id_branch && not v.id_branch
-									v.id_branch = Group.id_branch
-									$scope.changeBranch(v)
-									v.cabinet = Group.cabinet if Group.cabinet
+
+					# устанавливаем филиалы и кабинеты для дат где не указаны филиал/кабинеты
+					if Group.id_branch and not v.id_branch
+						v.id_branch = Group.id_branch
+						$scope.changeBranch(v)
+
+					if Group.id_branch is v.id_branch and Group.cabinet and not v.cabinet
+						v.cabinet = Group.cabinet if Group.cabinet
+
 				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
 				, (response) ->
 					if response
@@ -362,7 +367,8 @@
 						if id_student in Group.students
 							notifySuccess "Ученик уже в группе"
 						else
-							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}
+							old_id_group = if $scope.Group and ($scope.Group.id isnt id_group) then $scope.Group.id else false
+							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student, old_id_group: old_id_group}
 							Group.students.push id_student
 							$scope.removeStudent id_student
 							$scope.$apply()
@@ -777,7 +783,8 @@
 				$.each $scope.Group.students, (index, data) ->
 					if data is id_student
 						$scope.Group.students.splice index, 1
-						justSave()
+						$timeout ->
+							justSave()
 						$scope.form_changed = true
 						$scope.$apply()
 				$.each $scope.TmpStudents, (index, data) ->

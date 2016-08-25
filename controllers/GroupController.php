@@ -579,13 +579,12 @@
 				}
 
 				// если дня нет в расписании группы
-				if (!in_array($d, array_keys($Group->day_and_time))) {
-					continue;
-				}
+				if (in_array($d, array_keys($Group->day_and_time))) {
+                    if (!$Schedule->time || $Schedule->time == '00:00') {
+                        $Schedule->time = end($Group->day_and_time[$d]);
+                    }
+                }
 
-				if (!$Schedule->time || $Schedule->time == '00:00') {
-					$Schedule->time = end($Group->day_and_time[$d]);
-				}
 
 				if ($Group->id_branch && !$Schedule->id_branch) {
 					$Schedule->id_branch = $Group->id_branch;
@@ -627,6 +626,12 @@
 			$Group->students[] = $id_student;
 
 			$Group->save("students");
+
+//            if ($old_id_group) {
+//                $OldGroup = Group::findById($old_id_group);
+//                $OldGroup->students = array_diff($OldGroup->students, array($id_student));;
+//                $OldGroup->save("students");
+//            }
 		}
 
 		public function actionAjaxGetCabinetBar()
@@ -642,9 +647,9 @@
 		{
 			extract($_POST);
 
-			returnJsonAng(
-				Freetime::getTeacherBar($id_teacher, true)
-			);
+            returnJsonAng(
+                $id_teacher ? Freetime::getTeacherBar($id_teacher, true) : []
+            );
 		}
 
 		public function actionAjaxGetStudentBars()
@@ -1052,6 +1057,8 @@
 		public function actionAjaxChangeTeacher()
 		{
 			extract($_POST);
+            if (!$id_teacher)
+                $id_teacher = 0;
 
 			foreach ($students as $id_student) {
 				$return['teacher_like_statuses'][$id_student] = TeacherReview::getStatus($id_student, $id_teacher, $id_subject);

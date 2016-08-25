@@ -1,5 +1,6 @@
 <?= $student_page ? globalPartial("bill_print") : '' ?>
 <?= $student_page ? globalPartial("pko_print") : '' ?>
+<?= $student_page ? globalPartial("llc_bill_print") : '' ?>
 
 <div class="form-group payment-line" style="margin-bottom: 40px;">
     <table class="table table-hover payments-table" style="font-size: 12px !important">
@@ -45,6 +46,7 @@
                 <a class="link-like" ng-click="deletePayment($index, payment)">удалить</a>
                 <?php if ($student_page) :?>
                     <a style='margin-left: 10px' class="link-like" ng-click="printBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета</a>
+                    <a style='margin-left: 10px' class="link-like" ng-click="printLlcBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета ООО</a>
                 <?php endif ?>
             </td>
             <td class="col-sm-2">

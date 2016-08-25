@@ -200,7 +200,7 @@
 		public static function getTeacherBar($id_teacher, $with_freetime = false)
 		{
 		    if ($with_freetime) {
-				$bar = Freetime::getFreetimeBar($id_student, 'teacher');
+				$bar = Freetime::getFreetimeBar($id_teacher, 'teacher');
 			} else {
 				$bar = [];	
 			}

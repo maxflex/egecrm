@@ -52,6 +52,7 @@
 					<option value="0"  data-subtext="{{ counts.error[0] || '' }}">без фото</option>
 					<option value="1"  data-subtext="{{ counts.error[1] || '' }}">фото не обрезано</option>
 					<option value="2"  data-subtext="{{ counts.error[2] || '' }}">свободный график не указан</option>
+					<option value="3"  data-subtext="{{ counts.error[3] || '' }}">экстернат</option>
 				</select>
 	        </div>
 		</div>
