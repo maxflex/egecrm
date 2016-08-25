@@ -13,9 +13,12 @@
 				</div>
 				<div class="col-sm-3"> 
 					<select class="form-control" 
-						ng-model="search_groups.year" 
-						ng-options="year as year + '-' + (year + 1) + ' уч. г.' for year in <?= Years::json() ?>">
-					</select>
+						ng-model="search_groups.year">
+						<option value="">все</option>
+						<option disabled>──────────────</option>
+						<option ng-repeat="year in <?= Years::json() ?>" 
+								value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
+					</select> 
 				</div>
 			</div>
 		</div>

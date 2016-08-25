@@ -1616,7 +1616,8 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     try {
       if ($("#subjects-select").length) {
         $("#subjects-select").selectpicker({
-          noneSelectedText: "предметы"
+          noneSelectedText: "предметы",
+          multipleSeparator: '+'
         });
       }
       if ($("#time-select").length) {

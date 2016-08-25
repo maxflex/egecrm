@@ -3081,3 +3081,10 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
   right: 0;
   left: -50px;
 }
+
+.group-list > td {
+	padding: 4px 8px !important;
+	&:first-child {
+		padding-left: 0px !important;
+	}
+}

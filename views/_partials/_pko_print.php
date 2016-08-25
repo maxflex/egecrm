@@ -114,7 +114,7 @@
 
                     <tr><td style="padding:10px;"></td></tr>
 
-                    <tr><td>Основание: <br>Договор на оказание платных образовательных услуг <br>№{{ contracts[0].id }} от {{contracts[0].History ? contracts[0].History[0].date : contracts[0].date}}г.</td></tr>
+                    <tr><td>Основание: <br>Договор на оказание платных образовательных услуг <br>№{{ contracts[contracts.length - 1].id }} от {{contracts[contracts.length - 1].History ? contracts[contracts.length - 1].History[0].date : contracts[contracts.length - 1].date}}г.</td></tr>
 
                     <tr><td style="padding:10px;"></td></tr>
 
@@ -184,7 +184,7 @@
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr><td colspan="2">
 	                    <div style="height: 72px !important">
-	                    Основание <br>Договор на оказание платных образовательных услуг № {{contracts[0].id}} от {{contracts[0].History ? contracts[0].History[0].date : contracts[0].date}}г.
+	                    Основание <br>Договор на оказание платных образовательных услуг № {{contracts[contracts.length - 1].id}} от {{contracts[contracts.length - 1].History ? contracts[contracts.length - 1].History[0].date : contracts[contracts.length - 1].date}}г.
 	                    </div>
 	                 </td></tr>
 

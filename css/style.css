@@ -2544,3 +2544,8 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 #user-list-fix .dropdown-menu:last-child {
   right: 0;
   left: -50px; }
+
+.group-list > td {
+  padding: 4px 8px !important; }
+  .group-list > td:first-child {
+    padding-left: 0px !important; }
