@@ -41,8 +41,7 @@
 -->
 		<td>
 			<span ng-show="Group.first_schedule">
-				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span>
-				<span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
+				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
 					'one': 'занятие',
 					'few': 'занятия',
 					'many': 'занятий'
