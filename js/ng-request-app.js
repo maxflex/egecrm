@@ -803,11 +803,13 @@
 					marker_data = [] // инициалицазия
 					// генерируем данные
 					$.each($scope.markers, function(index, marker) {
-						marker_data.push({
-							"lat" 	: marker.position.lat(),
-							"lng" 	: marker.position.lng(),
-							"type"	: marker.type
-						});
+						if (marker.position) {
+							marker_data.push({
+								"lat" 	: marker.position.lat(),
+								"lng" 	: marker.position.lng(),
+								"type"	: marker.type
+							});
+						}
 					})
 
 					return marker_data
@@ -1572,7 +1574,18 @@
 					}
 				})
 			}
-			
+
+			$scope.getDocumentNumber = function(payment) {
+				if (payment.document_number) {
+					payment.document_number = 0;
+				} else {
+					$.post("payments/AjaxNewDocumentNumber", {},function(result){
+						payment.document_number = result.document_number;
+						$scope.$apply();
+					}, 'json');
+				}
+			}
+
 			// Окно редактирования платежа
 			$scope.editPayment = function(payment) {
 				if (!payment.confirmed) {

@@ -126,4 +126,9 @@
 				'Data'		=> 	$Data,
 			]);
 		}
+
+		public function actionAjaxNewDocumentNumber()
+        {
+            returnJson(['document_number' => dbConnection()->query('select max(document_number) + 1 as doc_num from payments')->fetch_object()->doc_num]);
+        }
 	}

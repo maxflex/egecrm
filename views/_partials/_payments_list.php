@@ -22,7 +22,7 @@
             </td>
             <td>
                 <?php if ($student_page) :?>
-                    <a style='margin-left: 10px' class="link-like" ng-click="printPKO(payment)" ng-show="payment.id_status == <?= Payment::PAID_CASH ?>">{{ payment.document_number ? 'ПКО ' + payment.document_number :  '' }}</a>
+                    <a style='margin-left: 10px' class="link-like" ng-click="printPKO(payment)" ng-show="payment.document_number > 0 && payment.id_status == <?= Payment::PAID_CASH ?>">{{ 'ПКО ' + payment.document_number }}</a>
                 <?php else :?>
                     {{ payment.document_number ? 'ПКО ' + payment.document_number :  '' }}
                 <?php endif ?>
