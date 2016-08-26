@@ -11,6 +11,9 @@
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
 	<?php endif ?>
 	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?>"
+		ng-class="{
+			'half-opacity': Group.day_and_time.length !== undefined
+		}"
 		class="group-list" data-id="{{Group.id}}">
 		<td width="120">
 			<a href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
