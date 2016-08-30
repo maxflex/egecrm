@@ -50,19 +50,23 @@
 		public function actionGetCaller()
 		{
 			extract($_POST);
-            $last_call_data = $this->getLastCallData($phone);
-
+			
+			if ($memcached_return = memcached()->get("Caller[$phone]")) {
+				returnJsonAng($memcached_return);
+			}
+			
             // Ищем учителя с таким номером
-            $Teacher = Teacher::find([
-                "condition"	=> "phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."'"
-            ]);
-            if ($Teacher) {
-                returnJsonAng([
-                    'user'	=> $answeredUserName,
-                    'name'	=> static::nameOrEmpty($Teacher->getFullName()),
+            $teacher = dbConnection()->query("
+            	select id, first_name, last_name, middle_name from teachers
+            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+            ");
+            if ($teacher->num_rows) {
+	            $data = $teacher->fetch_object();
+				return [
+                    'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
                     'type'	=> 'teacher',
-                    'id'	=> $Teacher->id,
-                ]);
+                    'id'	=> $data->id,
+                ];
             }
 
             # Ищем представителя с таким же номером телефона
@@ -71,53 +75,66 @@
 				LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
 				WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
             );
-
             // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
             if ($represetative->num_rows) {
                 $data = $represetative->fetch_object();
-                returnJsonAng([
-                    'user'	=> $answeredUserName,
+				$return = [
                     'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
                     'type'	=> 'representative',
                     'id'	=> $data->id,
-                ]);
+                ];
             }
 
             # Ищем ученика с таким же номером телефона
-			$Student = Student::find([
-				"condition"	=> "phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."'"
-			]);
-
+            $student = dbConnection()->query("
+            	select id, first_name, last_name, middle_name from students
+            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+            ");
 			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-			if ($Student) {
-                returnJsonAng([
-                    'last_call_data' => $last_call_data,
-					'name'	=> static::nameOrEmpty($Student->name()),
+			if ($student->num_rows) {
+				$data = $student->fetch_object();
+				$return = [
+					'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
 					'type'	=> 'student',
-					'id'	=> $Student->id
-                ]);
+					'id'	=> $data->id
+                ];
 			}
 
 			# Ищем заявку с таким же номером телефона
-			$Request = Request::find([
-				"condition"	=> "phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."'"
-			]);
-
+			$request = dbConnection()->query("
+            	select id, name from requests
+            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+            ");
 			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-			if ($Request) {
-				returnJsonAng([
-                    'user'	=> $answeredUserName,
-					'name'	=> static::nameOrEmpty($Request->name),
+			if ($request->num_rows) {
+				$data = $request->fetch_object();
+				$return = [
+					'name'	=> static::nameOrEmpty($data->name),
 					'type'	=> 'request',
-					'id'	=> $Request->id
-                ]);
+					'id'	=> $data->id
+                ];
 			}
-
+			
 			// возвращается, если номера нет в базе
-			returnJsonAng([
-                'user' => $answeredUserName,
-                'type' => false
-            ]);
+			if (! isset($return)) {
+				$return = ['type' => false];
+			}
+			
+			memcached()->set("Caller[$phone]", $return, time() + 15);
+			returnJsonAng($return);				
+		}
+		
+		public function actionGetLastCallData()
+		{
+			extract($_POST);
+			
+			$return = memcached()->get("LastCallData[$phone]");
+			if (! $return) {
+				$return = $this->getLastCallData($phone);
+				memcached()->set("LastCallData[$phone]", $return, time() + 15);
+			}
+			
+			returnJsonAng($return);
 		}
 		
 		private function getAnsweredUser($phone) {
@@ -142,11 +159,11 @@
 					continue;
 				}
 				if ($s['from_extension']) {
-					$s['user'] = User::findById($s['from_extension']);
+					$s['user'] = User::findById($s['from_extension'], true);
 					return $s;
 				} 
 				if ($s['to_extension']) {
-					$s['user'] = User::findById($s['to_extension']);
+					$s['user'] = User::findById($s['to_extension'], true);
 					return $s;
 				}
 			}

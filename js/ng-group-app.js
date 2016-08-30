@@ -427,7 +427,7 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     return $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide();
   });
 }).controller("EditCtrl", function($scope, $timeout) {
-  var bindDraggable, bindGroupsDroppable, initDayAndTime, initFreetime, justSave, rebindBlinking;
+  var bindDraggable, bindGroupsDroppable, checkFreeCabinets, initDayAndTime, initFreetime, justSave, rebindBlinking;
   $timeout(function() {
     return ajaxEnd();
   });
@@ -558,7 +558,21 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   $scope.saveDayAndTime = function() {
     lightBoxHide();
     $(".save-button").mousedown();
-    return $scope.day_and_time_object = $scope.dayAndTimeObject();
+    $scope.day_and_time_object = $scope.dayAndTimeObject();
+    return checkFreeCabinets();
+  };
+  checkFreeCabinets = function() {
+    return $.post('groups/ajax/checkFreeCabinets', {
+      id_group: $scope.Group.id,
+      day_and_time: $scope.day_and_time_object,
+      year: $scope.Group.year
+    }, function(response) {
+      $scope.free_cabinets = response;
+      $scope.$apply();
+      return $timeout(function() {
+        return $('#group-branch').selectpicker('refresh');
+      });
+    }, 'json');
   };
   initDayAndTime = function(day) {
     $scope.Group.day_and_time = initIfNotSet($scope.Group.day_and_time);
@@ -627,7 +641,8 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     return day_and_time;
   };
   $timeout(function() {
-    return $scope.day_and_time_object = $scope.dayAndTimeObject();
+    $scope.day_and_time_object = $scope.dayAndTimeObject();
+    return $('#group-branch').selectpicker('refresh');
   });
   $scope.hasDayAndTime = function() {
     if (!$scope.day_and_time_object) {
@@ -1575,11 +1590,33 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
     });
   };
   $scope.students_picker = false;
+  $scope.search2 = {
+    grades: "",
+    branches: "",
+    id_subject: "",
+    year: ""
+  };
   $scope.loadStudentPicker = function() {
     $scope.students_picker = true;
+    if (!$scope.search2.grades && $scope.search.grade) {
+      $scope.search2.grades = $scope.search.grade;
+    }
+    if (!$scope.search2.year && $scope.search.year) {
+      $scope.search2.year = $scope.search.year;
+    }
+    if (!$scope.search2.branches && $scope.search.id_branch) {
+      $scope.search2.branches = $scope.search.id_branch;
+    }
+    if (!$scope.search2.id_subject && $scope.search.id_subject.length) {
+      $scope.search2.id_subject = $scope.search.id_subject[0];
+    }
     $("html, body").animate({
       scrollTop: $(document).height()
     }, 1000);
+    $timeout(function() {
+      $('#group-branch-filter2').selectpicker('refresh');
+      return $('#grades-select2').selectpicker('refresh');
+    });
     return $.post("ajax/StudentsWithNoGroup", {}, function(response) {
       $scope.StudentsWithNoGroup = response;
       $scope.$apply();

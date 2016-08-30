@@ -148,7 +148,11 @@
 		?>
 		<span id='request-counter' class='pull-right' style="margin-right: 3px; opacity: 0; font-size: 13px; font-weight: bold">+1</span>
 	</a>
-    <a href="clients" class="list-group-item">Клиенты <span class="badge pull-right"><?= Student::countWithActiveContract() ?></span></a>
+    <a href="clients" class="list-group-item">Клиенты 
+	    <?php if (User::fromSession()->id != 1) :?>
+	    <span class="badge pull-right"><?= Student::countWithActiveContract() ?></span>
+	    <?php endif ?>
+	</a>
     <a href="sms" class="list-group-item">История SMS</a>
 	<!-- @refactored -->
     <a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count(['condition' => 'ended=0']) ?></span></a>
@@ -204,7 +208,7 @@
 	    <?php
 		    $unconfirmed_payment_count = Payment::countUnconfirmed();
 
-		    if ($unconfirmed_payment_count) {
+		    if ($unconfirmed_payment_count && User::fromSession()->id != 1) {
 				echo '<span class="badge pull-right">'. $unconfirmed_payment_count .'</span>';
 		    }
 		?>

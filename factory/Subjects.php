@@ -155,7 +155,7 @@
 			echo "<select class='form-control' id='".$class_name."-select' name='".($name ? $name : $class_name)."' ".Html::generateAttrs($attrs).">";
 			if (static::$title) {
 				echo "<option selected value=''>". static::$title ."</option>";
-				echo "<option disabled value=''>──────────────</option>";
+				echo "<option disabled>──────────────</option>";
 			}
 			foreach ($options as $id => $value) {
 				// удаленные записи коллекции отображать только в том случае, если они уже были выбраны

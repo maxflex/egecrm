@@ -462,6 +462,19 @@
 				lightBoxHide()
 				$(".save-button").mousedown()
 				$scope.day_and_time_object = $scope.dayAndTimeObject()
+				checkFreeCabinets()
+			
+			checkFreeCabinets = ->
+				$.post 'groups/ajax/checkFreeCabinets',
+					id_group: $scope.Group.id
+					day_and_time: $scope.day_and_time_object
+					year: $scope.Group.year
+				, (response) ->
+					$scope.free_cabinets = response
+					$scope.$apply()
+					$timeout ->
+						$('#group-branch').selectpicker('refresh')
+				, 'json'
 
 			initDayAndTime = (day) ->
 				$scope.Group.day_and_time = initIfNotSet $scope.Group.day_and_time
@@ -514,6 +527,7 @@
 			
 			$timeout ->
 				$scope.day_and_time_object = $scope.dayAndTimeObject()
+				$('#group-branch').selectpicker('refresh')
 			
 			$scope.hasDayAndTime = ->
 				return false if not $scope.day_and_time_object
@@ -1291,9 +1305,22 @@
 						bindDraggable2()
 
 			$scope.students_picker = false
+			$scope.search2 =
+				grades: ""
+				branches: ""
+				id_subject: ""
+				year: ""
+				
 			$scope.loadStudentPicker = ->
 				$scope.students_picker = true
+				$scope.search2.grades = $scope.search.grade if not $scope.search2.grades and $scope.search.grade
+				$scope.search2.year = $scope.search.year if not $scope.search2.year and $scope.search.year
+				$scope.search2.branches = $scope.search.id_branch if not $scope.search2.branches and $scope.search.id_branch 
+				$scope.search2.id_subject = $scope.search.id_subject[0] if not $scope.search2.id_subject and $scope.search.id_subject.length
 				$("html, body").animate { scrollTop: $(document).height() }, 1000
+				$timeout ->
+					$('#group-branch-filter2').selectpicker('refresh')
+					$('#grades-select2').selectpicker('refresh')
 
 				$.post "ajax/StudentsWithNoGroup", {}, (response) ->
 					$scope.StudentsWithNoGroup = response

@@ -37,6 +37,7 @@ vueInit = ->
 				diff: 0
 			mango: {}
 			caller: false 				# caller info
+			last_call_data: false
 		template: '#phone-template'
 		methods:
 			time: (seconds) ->
@@ -51,12 +52,20 @@ vueInit = ->
 				this.show_element = true
 				this.determined = false
 				this.caller = false
+				this.last_call_data = false
 				$.post 'mango/getCaller',
 					phone: this.mango.from.number
-				, (request) =>
-					this.caller = request
+				, (response) =>
+					this.caller = response
 					this.determined = true
 					this.setHideTimeout()
+				, 'json'
+				# асинхронно посылаем запрос на получение данных о последнем разговоре,
+				# чтоб не тормозило основное определение звонящего
+				$.post 'mango/getLastCallData',
+					phone: this.mango.from.number
+				, (response) =>
+					this.last_call_data = response
 				, 'json'
 			setHideTimeout: (seconds) ->
 				seconds = 100 if not seconds
