@@ -42,6 +42,26 @@
 			]);
 		}
 
+		public function actionCabinet()
+        {
+            $this->setTabTitle("Загрузка кабинетов");
+            $Cabinets = [];
+            foreach (Branches::$all as $id_branch => $title) {
+                foreach (Cabinet::getByBranch($id_branch) as $Cabinet) {
+                    $Cabinet->bar = Freetime::getCabinetBar($Cabinet->id);
+                    $Cabinets[$id_branch][] = $Cabinet;
+                }
+            }
+
+            $ang_init_data = angInit([
+                "Branches" => Branches::getBranches(),
+                "Cabinets" => $Cabinets
+            ]);
+
+            $this->render('cabinet', [
+                "ang_init_data" => $ang_init_data,
+            ]);
+        }
 		
 		public function actionAjaxAddCabinet()
 		{

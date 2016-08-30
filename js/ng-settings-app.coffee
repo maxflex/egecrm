@@ -1,6 +1,6 @@
 testy = 1
 
-angular.module "Settings", ["ui.bootstrap"]
+angular.module "Settings", ["ui.bootstrap", 'ngSanitize']
 	.filter 'to_trusted', ['$sce', ($sce) ->
         return (text) ->
             return $sce.trustAsHtml(text)
@@ -126,3 +126,6 @@ angular.module "Settings", ["ui.bootstrap"]
 			$(".table-condensed").first().children("thead").css "display", "table-caption"
 			# hack
 			$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()
+	.controller "CabinetsCtrl", ($scope) ->
+		angular.element(document).ready ->
+			set_scope 'Settings'
