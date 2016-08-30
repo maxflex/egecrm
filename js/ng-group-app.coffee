@@ -334,8 +334,8 @@
 					, 500
 
 				$(".table-condensed").first().children("thead").css "display", "table-caption"
-				# hack
-				$(".table-condensed").eq(15).children("tbody").children("tr").first().remove()
+				# hack пустые строки
+				$('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide()
 
 		.controller "EditCtrl", ($scope, $timeout) ->
 			$timeout ->
