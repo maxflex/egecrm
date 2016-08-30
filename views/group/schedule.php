@@ -2,10 +2,6 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Расписание группы №<?= $Group->id ?>
-		
-		
-		<span ng-show="Group.schedule_count.paid > 0 && !Group.past_lesson_count" style="margin-bottom: 20px">({{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span> <ng-pluralize count="Group.schedule_count.paid" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize>, первое занятие {{Group.first_schedule | date:"d MMMM yyyy"}})</span>
-
 
 			<span ng-show="Group.past_lesson_count" style="margin-bottom: 20px">
 				({{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span>

@@ -148,22 +148,22 @@
 			# установка времени филиала и кабинета из настроек группы
 			$scope.setParamsFromGroup = (Group) ->
 				$.each $scope.Group.Schedule, (i, v) ->
-					if not v.time
-						d = moment(v.date).format("d")
-						d = parseInt d
-						d = 7 if d is 0
-						# если в этот день установлено расписание и время в группе. иначе не устанавливать
-						# console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
-						if Group.day_and_time[d] isnt undefined
-							key = Object.keys(Group.day_and_time[d])[0]
-							v.time = Group.day_and_time[d][key]
+					# if not v.time
+					d = moment(v.date).format("d")
+					d = parseInt d
+					d = 7 if d is 0
+					# если в этот день установлено расписание и время в группе. иначе не устанавливать
+					# console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
+					if Group.day_and_time[d] isnt undefined
+						key = Object.keys(Group.day_and_time[d])[0]
+						v.time = Group.day_and_time[d][key]
 
 					# устанавливаем филиалы и кабинеты для дат где не указаны филиал/кабинеты
-					if Group.id_branch and not v.id_branch
+					if Group.id_branch # and not v.id_branch
 						v.id_branch = Group.id_branch
 						$scope.changeBranch(v)
 
-					if Group.id_branch is v.id_branch and Group.cabinet and not v.cabinet
+					if Group.id_branch and Group.cabinet
 						v.cabinet = Group.cabinet if Group.cabinet
 
 				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
@@ -173,8 +173,6 @@
 							if response[v.date]
 								$scope.studentsToLayeredScheduleTitle(v, response[v.date])
 				, "json"
-
-				$scope.$apply()
 
 			$scope.lessonCount = ->
 				Object.keys($scope.Group.day_and_time).length

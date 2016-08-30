@@ -578,17 +578,17 @@
 
 				// если дня нет в расписании группы
 				if (in_array($d, array_keys($Group->day_and_time))) {
-                    if (!$Schedule->time || $Schedule->time == '00:00') {
+//                    if (!$Schedule->time || $Schedule->time == '00:00') {
                         $Schedule->time = end($Group->day_and_time[$d]);
-                    }
+//                    }
                 }
 
 
-				if ($Group->id_branch && !$Schedule->id_branch) {
+				if ($Group->id_branch) {
 					$Schedule->id_branch = $Group->id_branch;
 				}
 
-				if ($Group->cabinet && !$Schedule->cabinet && $Group->id_branch == $Schedule->id_branch) {
+				if ($Group->cabinet && $Group->id_branch) {
 					$Schedule->cabinet = $Group->cabinet;
 				}
 				$Schedule->save();

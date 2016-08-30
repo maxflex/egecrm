@@ -193,28 +193,26 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
   $scope.setParamsFromGroup = function(Group) {
     $.each($scope.Group.Schedule, function(i, v) {
       var d, key;
-      if (!v.time) {
-        d = moment(v.date).format("d");
-        d = parseInt(d);
-        if (d === 0) {
-          d = 7;
-        }
-        if (Group.day_and_time[d] !== void 0) {
-          key = Object.keys(Group.day_and_time[d])[0];
-          v.time = Group.day_and_time[d][key];
-        }
+      d = moment(v.date).format("d");
+      d = parseInt(d);
+      if (d === 0) {
+        d = 7;
       }
-      if (Group.id_branch && !v.id_branch) {
+      if (Group.day_and_time[d] !== void 0) {
+        key = Object.keys(Group.day_and_time[d])[0];
+        v.time = Group.day_and_time[d][key];
+      }
+      if (Group.id_branch) {
         v.id_branch = Group.id_branch;
         $scope.changeBranch(v);
       }
-      if (Group.id_branch === v.id_branch && Group.cabinet && !v.cabinet) {
+      if (Group.id_branch && Group.cabinet) {
         if (Group.cabinet) {
           return v.cabinet = Group.cabinet;
         }
       }
     });
-    $.post("groups/ajax/TimeFromGroup", {
+    return $.post("groups/ajax/TimeFromGroup", {
       id_group: Group.id
     }, function(response) {
       if (response) {
@@ -225,7 +223,6 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
         });
       }
     }, "json");
-    return $scope.$apply();
   };
   $scope.lessonCount = function() {
     return Object.keys($scope.Group.day_and_time).length;
