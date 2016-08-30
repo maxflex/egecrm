@@ -1574,7 +1574,8 @@
 					}
 				})
 			}
-
+			
+			// @todo: удалить вместе с AJAX
 			$scope.getDocumentNumber = function(payment) {
 				if (payment.document_number) {
 					payment.document_number = 0;
@@ -1584,6 +1585,16 @@
 						$scope.$apply();
 					}, 'json');
 				}
+			}
+			
+			$scope.dontAssignPko = function(payment) {
+				if (payment.dont_assign_pko) {
+					payment.dont_assign_pko = false
+				} else {
+					payment.dont_assign_pko = true
+				}
+				 // payment.dont_assign_pko = payment.dont_assign_pko 
+				// payment.dont_assign_pko = payment.dont_assign_pko ? true : false
 			}
 
 			// Окно редактирования платежа

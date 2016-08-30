@@ -134,7 +134,7 @@
 		 * Получаем все записи
 		 * $params - дополнительные параметры (condition - дополнительное условие, order - параметры сортировки)
 		 */
-		public static function findAll($params = array())
+		public static function findAll($params = array(), $flag = null)
 		{
 			// Получаем все данные из таблицы + доп условие, если есть
 			$result = static::dbConnection()->query("
@@ -164,7 +164,7 @@
 
 				// Создаем массив объектов
 				while ($array = $result->fetch_assoc()) {
-					$return[] = new $class_name($array);
+					$return[] = new $class_name($array, $flag);
 				}
 
 				// Возвращаем массив объектов
@@ -179,7 +179,7 @@
 		 * Получаем одну запись
 		 * $params - дополнительные параметры (condition - дополнительное условие, order - параметры сортировки)
 		 */
-		public static function find($params = array())
+		public static function find($params = array(), $flag = null)
 		{
 			// Получаем все данные из таблицы + доп условие, если есть
 			$result = static::dbConnection()->query("
@@ -198,7 +198,7 @@
 				$class_name = get_called_class();
 
 				// Возвращаем объект
-				return new $class_name($array);
+				return new $class_name($array, $flag);
 			}
 			else
 			{

@@ -16,9 +16,17 @@
 	<div class="lightbox-new lightbox-addpayment">
 		<h4 style="display: inline-block">{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
 		<span class="small" ng-show="new_payment.id_status == <?= Payment::PAID_CASH ?> && new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">
-			номер ПКО:
-			<span ng-show="new_payment.document_number">{{ new_payment.document_number }}</span>
-			<span class="link-like" ng-click="getDocumentNumber(new_payment)">{{ new_payment.document_number ? 'не присваивать' : 'присвоить' }}</span>
+			<span ng-show="new_payment.id">
+				<span ng-show="new_payment.document_number">присвоен номер ПКО: {{ new_payment.document_number }}</span>
+				<span ng-show="!new_payment.document_number">номер ПКО не присвоен</span>
+			</span>
+			
+			<span ng-show="!new_payment.id">
+				номер ПКО: 
+				<span class="link-like" ng-class="{
+					'red': new_payment.dont_assign_pko
+				}" ng-click="dontAssignPko(new_payment)">{{ new_payment.dont_assign_pko ? 'номер не присваевать' : 'будет присвоен номер' }}</span>
+			</span>
 		</span>
 
 		<div class="form-group payment-line">

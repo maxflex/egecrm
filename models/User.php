@@ -21,19 +21,21 @@
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
-		public function __construct($array = [])
+		public function __construct($array = [], $flag = null)
         {
             parent::__construct($array);
 
-            $this->has_photo_original = $this->hasPhotoOriginal();
-            $this->photo_original_size = $this->photoOriginalSize();
-            $this->photo_cropped_size = $this->photoCroppedSize();
-            $this->photo_url = $this->photoUrl();
-            
-            // цвет черный, если пользователя забанили
-            if ($this->banned) {
-	        	$this->color = 'black';
-            }
+			if ($flag === null) {
+				$this->has_photo_original = $this->hasPhotoOriginal();
+	            $this->photo_original_size = $this->photoOriginalSize();
+	            $this->photo_cropped_size = $this->photoCroppedSize();
+	            $this->photo_url = $this->photoUrl();
+	            
+	            // цвет черный, если пользователя забанили
+	            if ($this->banned) {
+		        	$this->color = 'black';
+	            }	
+			}
         }
         
         public function photoPath($addon = '')

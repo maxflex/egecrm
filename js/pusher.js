@@ -61,7 +61,8 @@ vueInit = function() {
           diff: 0
         },
         mango: {},
-        caller: false
+        caller: false,
+        last_call_data: false
       };
     },
     template: '#phone-template',
@@ -82,13 +83,21 @@ vueInit = function() {
         this.show_element = true;
         this.determined = false;
         this.caller = false;
-        return $.post('mango/getCaller', {
+        this.last_call_data = false;
+        $.post('mango/getCaller', {
           phone: this.mango.from.number
         }, (function(_this) {
-          return function(request) {
-            _this.caller = request;
+          return function(response) {
+            _this.caller = response;
             _this.determined = true;
             return _this.setHideTimeout();
+          };
+        })(this), 'json');
+        return $.post('mango/getLastCallData', {
+          phone: this.mango.from.number
+        }, (function(_this) {
+          return function(response) {
+            return _this.last_call_data = response;
           };
         })(this), 'json');
       },

@@ -13,9 +13,9 @@
                     <span v-if="caller.type == 'request'">по заявке <a target='_blank' href='requests/edit/{{caller.id}}'>{{ caller.name }}</a></span>
                     <span v-if="!caller.type">неизвестный номер</span>
                     <br/>
-                    <span v-if="caller.last_call_data">
-                    	<img src="img/calls/{{caller.last_call_data.from_extension ? 'outgoing' : 'incoming'}}.png">
-                    	{{ caller.last_call_data.user.login }} {{ formatDateTime(caller.last_call_data.date_start) }}, разговор {{ time(caller.last_call_data.seconds) }}
+                    <span v-if="last_call_data">
+                    	<img src="img/calls/{{last_call_data.from_extension ? 'outgoing' : 'incoming'}}.png">
+                    	{{ last_call_data.user.login }} {{ formatDateTime(last_call_data.date_start) }}, разговор {{ time(last_call_data.seconds) }}
                     </span>
                 </span>
                 <span v-else>

@@ -20,6 +20,9 @@
 			$list = $_GET["list"];
 			$type = $_GET["type"];
 			
+			// dev only
+			$search = $_GET["search"];
+			
 			if ($type == 0 && User::fromSession()->type == User::SEO_TYPE) {
 				$this->renderRestricted();
 			}
@@ -28,14 +31,21 @@
 			$this->_custom_panel = true;
 			
 			if ($list) {
+				$condition = "type=$type AND id_status=" . $list;
+				if (isset($search)) {
+					$condition .= " AND html LIKE '%{$search}%'";
+				} 
 				$Tasks = Task::findAll([
-					"condition" => "type=$type AND id_status=" . $list,
+					"condition" => $condition,
 					"order"		=> "id DESC",
-					"limit"		=> 200,
 				]);
 			} else {
+				$condition =  "type=$type AND id_status!=" . TaskStatuses::CLOSED;
+				if (isset($search)) {
+					$condition .= " AND html LIKE '%{$search}%'";
+				}
 				$Tasks = Task::findAll([
-					"condition" => "type=$type AND id_status!=" . TaskStatuses::CLOSED,
+					"condition" => $condition,
 					"order"		=> "id DESC",
 				]);
 			}
