@@ -533,32 +533,21 @@
 		return date("d.m.Y", strtotime($date));
 	}
 
-/*
-	function cacheFunction($memcached_key, $memcached_hours, $function)
-	{
-		if (LOCAL_DEVELOPMENT) {
-			$function();
-		} else {
-			$cache = memcached()->get($memcached_key);
-
-			if ($cache) {
-
-			}
-		}
-	}
-*/
-
 	// если не указан id_request, то ищет по всей базе
 	// иначе ищет учитывая связанные заявки студента
-	function isDuplicate($phone, $id_request)
+	function isDuplicate($phone, $id_request, $id_student = false)
 	{
-		// Находим оригинальную заявку
-		$OriginalRequest = Request::findById($id_request);
+		if ($id_student) {
+			$OriginalRequest = (object)['id_student' => $id_student];
+		} else {
+			// Находим оригинальную заявку
+			$OriginalRequest = Request::findById($id_request);
+		}
 
 		$phone = cleanNumber($phone);
 
 		# Ищем заявку с таким же номером телефона
-		$Request = Request::find([
+		$Request = Request::count([
 			"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."')"
 				. ($id_request ? " AND id_student!=".$OriginalRequest->id_student : "")
 		]);
@@ -569,13 +558,13 @@
 		}
 
 		# Ищем ученика с таким же номером телефона
-		$Student = Student::find([
+		$student_count = Student::count([
 			"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."')"
 				. ($id_request ? " AND id!=".$OriginalRequest->id_student : "")
 		]);
 
 		// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-		if ($Student) {
+		if ($student_count) {
 			return true;
 		}
 

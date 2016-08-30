@@ -164,6 +164,7 @@
 
 				// Создаем массив объектов
 				while ($array = $result->fetch_assoc()) {
+					$array['light'] = $params['light'];
 					$return[] = new $class_name($array);
 				}
 
@@ -197,6 +198,7 @@
 				// Получаем название класса
 				$class_name = get_called_class();
 
+				$array['light'] = $params["light"];
 				// Возвращаем объект
 				return new $class_name($array);
 			}

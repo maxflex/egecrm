@@ -41,13 +41,12 @@
 					$this->{$phone_field . "_formatted"} = formatNumber($this->{$phone_field});
 				}
 			}
-			
-			// Включаем связи
-			$this->Student 			= Student::findById($this->id_student);
-			$this->Comments			= Comment::findAll([
-				"condition" => "place='". Comment::PLACE_REQUEST ."' AND id_place=" . $this->id,
-			]);
-		}
+            // Включаем связи
+            $this->Student  = $this->light ? Student::getLight($this->id_student) : Student::findById($this->id_student);
+            $this->Comments = Comment::findAll([
+                "condition" => "place='". Comment::PLACE_REQUEST ."' AND id_place=" . $this->id,
+            ]);
+        }
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
@@ -232,7 +231,8 @@
 					. (isBlank($_COOKIE["id_user_list"]) ? "" : " AND IFNULL(id_user,0) = ".$_COOKIE["id_user_list"]) ,
 				"order"		=> "date DESC",
 				"group"		=> ($id_status == RequestStatuses::NEWR ? "id_student" : ""), // если список "неразобранные", то отображать дубликаты
-				"limit" 	=> $start_from. ", " .self::PER_PAGE
+				"limit" 	=> $start_from. ", " .self::PER_PAGE,
+                "light"     => true
 			]);
 
 			// Добавляем дубликаты
@@ -255,11 +255,11 @@
 				// дубликаты для подсветки
 				foreach (static::$_phone_fields as $phone_field) {
 					if (!empty($Request->{$phone_field})) {
-						$Request->{$phone_field . "_duplicate"} = isDuplicate($Request->{$phone_field}, $Request->id);
+						$Request->{$phone_field . "_duplicate"} = isDuplicate($Request->{$phone_field}, $Request->id, $Request->id_student);
 					}
 				}
 			}
-			
+
 			return $Requests;
 		}
 

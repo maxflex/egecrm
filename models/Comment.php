@@ -3,7 +3,7 @@
 	{
 	
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
-
+        public static $cached_users = [];
 		public static $mysql_table	= "comments";
 		
 		# Места, где отображаются комментарии
@@ -20,9 +20,12 @@
 			parent::__construct($array);
 			
 			$this->coordinates = $this->getCoordinates();
-			
-			if ($this->id_user) {
-				$this->User = User::findById($this->id_user);
+
+            if ($this->id_user) {
+                if (!isset(self::$cached_users[$this->id_user])) {
+                    self::$cached_users[$this->id_user] = User::findById($this->id_user);
+                }
+                $this->User = self::$cached_users[$this->id_user];
 			}
 		}
 		
