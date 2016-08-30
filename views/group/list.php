@@ -100,6 +100,15 @@
 							<div class="col-sm-3">
 								<?= Subjects::buildSelector(false, false, ["ng-model" => "search2.id_subject"]) ?>
 							</div>
+							<div class="col-sm-3"> 
+								<select class="form-control" 
+									ng-model="search2.year">
+									<option value="">все</option>
+									<option disabled>──────────────</option>
+									<option ng-repeat="year in <?= Years::json() ?>" 
+											value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
+								</select> 
+							</div>
 						</div>
 
 						<div class="center half-black small" style="margin: 50px 0 40px" ng-show="StudentsWithNoGroup === undefined">

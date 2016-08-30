@@ -408,7 +408,8 @@
 				$this->addJs("dnd");
 				$Group = Group::findById($_GET['id']);
 			}
-
+			
+/*
 			$Teachers = Teacher::findAll();
 
 			if ($Group->id_teacher) {
@@ -418,6 +419,7 @@
 					}
 				}
 			}
+*/
 
 			$Students = [];
 			foreach ($Group->students as $id_student) {
@@ -471,6 +473,7 @@
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_bar"			=> Freetime::getCabinetBar($Group->cabinet),
 				"time" => Freetime::TIME,
+				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time)
 			]);
 
 			$this->render("edit", [
@@ -1154,6 +1157,15 @@
 
 			returnJsonAng(
 				Group::getData($page, $teachers)
+			);
+		}
+		
+		public function actionAjaxCheckFreeCabinets()
+		{
+			extract($_POST);
+
+			returnJsonAng(
+				Freetime::checkFreeCabinets($id_group, $year, $day_and_time)
 			);
 		}
 	}

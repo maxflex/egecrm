@@ -114,8 +114,12 @@
 					}
 					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
 					if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
-						echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}-{$Cabinet->id}' data-content='{$branch['svg']}{$branch['name']}-{$Cabinet->number}'></option>";	
-					}	
+						echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}-{$Cabinet->id}'
+							ng-selected='" . ( $option_selected ? 'true' : 'false' ). "'
+							ng-class=\"{'half-opacity': free_cabinets[" . $branch["id"] . "][{$Cabinet->id}]}\"
+							data-content='{$branch['svg']}{$branch['name']}-{$Cabinet->number}'></option>";	
+					}
+					// 
 				}
 			}
 			echo "</select>";

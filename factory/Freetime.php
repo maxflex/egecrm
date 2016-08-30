@@ -279,4 +279,42 @@
 
             return $bar;
         }
+        
+		public static function checkFreeCabinets($id_group, $year, $day_and_time)
+		{
+			foreach($day_and_time as $day => $data) {
+				foreach($data as $time) {
+					$time_id = Freetime::getId($time);
+					$conditions[] = "(gt.day=$day AND gt.time=$time_id)";
+/*
+					$query = dbConnection()->query("
+						SELECT id FROM group_time gt
+						JOIN groups g ON g.id = gt.id_group
+						WHERE g.id=$id_group AND g.year=$year AND gt.day=$day AND gt.time=$time_id
+						LIMIT 1
+					");
+					$return[$day][$time] = $query->num_rows ? true : false;
+*/
+				}
+			}
+			// Получаем филиалы
+			$branches = Branches::getBranches();
+			
+			foreach ($branches as $branch) {
+				$id_branch = $branch['id'];
+				$Cabinets = Cabinet::getBranchId($id_branch);
+				foreach($Cabinets as $Cabinet) {
+					$query = dbConnection()->query("
+						SELECT g.id FROM group_time gt
+						JOIN groups g ON g.id = gt.id_group
+						WHERE g.id!=$id_group AND g.year=$year AND g.id_branch=$id_branch AND g.cabinet = {$Cabinet->id}
+							AND (" . implode(" OR ", $conditions) . ")
+						LIMIT 1
+					");
+					$return[$id_branch][$Cabinet->id] = $query->num_rows ? true : false;
+				}
+			}
+			
+			return $return;
+		}
     }
