@@ -62,66 +62,66 @@
             ");
             if ($teacher->num_rows) {
 	            $data = $teacher->fetch_object();
-				return [
+				$return = [
                     'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
                     'type'	=> 'teacher',
                     'id'	=> $data->id,
                 ];
-            }
-
-            # Ищем представителя с таким же номером телефона
-            $represetative = dbConnection()->query("
+            } else {
+                # Ищем представителя с таким же номером телефона
+                $represetative = dbConnection()->query("
 				SELECT s.id, r.first_name, r.last_name, r.middle_name FROM ".Representative::$mysql_table." r
 				LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
 				WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
-            );
-            // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-            if ($represetative->num_rows) {
-                $data = $represetative->fetch_object();
-				$return = [
-                    'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
-                    'type'	=> 'representative',
-                    'id'	=> $data->id,
-                ];
+                );
+                // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+                if ($represetative->num_rows) {
+                    $data = $represetative->fetch_object();
+                    $return = [
+                        'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                        'type'	=> 'representative',
+                        'id'	=> $data->id,
+                    ];
+                } else {
+                    # Ищем ученика с таким же номером телефона
+                    $student = dbConnection()->query("
+                        select id, first_name, last_name, middle_name from students
+                        WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+                    ");
+                    // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+                    if ($student->num_rows) {
+                        $data = $student->fetch_object();
+                        $return = [
+                            'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                            'type'	=> 'student',
+                            'id'	=> $data->id
+                        ];
+                    } else {
+                        # Ищем заявку с таким же номером телефона
+                        $request = dbConnection()->query("
+                            select id, name from requests
+                            WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+                        ");
+                        // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+                        if ($request->num_rows) {
+                            $data = $request->fetch_object();
+                            $return = [
+                                'name'	=> static::nameOrEmpty($data->name),
+                                'type'	=> 'request',
+                                'id'	=> $data->id
+                            ];
+                        }
+                    }
+                }
             }
 
-            # Ищем ученика с таким же номером телефона
-            $student = dbConnection()->query("
-            	select id, first_name, last_name, middle_name from students
-            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
-            ");
-			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-			if ($student->num_rows) {
-				$data = $student->fetch_object();
-				$return = [
-					'name'	=> static::nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
-					'type'	=> 'student',
-					'id'	=> $data->id
-                ];
-			}
-
-			# Ищем заявку с таким же номером телефона
-			$request = dbConnection()->query("
-            	select id, name from requests
-            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
-            ");
-			// Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-			if ($request->num_rows) {
-				$data = $request->fetch_object();
-				$return = [
-					'name'	=> static::nameOrEmpty($data->name),
-					'type'	=> 'request',
-					'id'	=> $data->id
-                ];
-			}
-			
-			// возвращается, если номера нет в базе
+            // возвращается, если номера нет в базе
 			if (! isset($return)) {
 				$return = ['type' => false];
 			}
 			
 			memcached()->set("Caller[$phone]", $return, time() + 15);
-			returnJsonAng($return);				
+			returnJsonAng($return);
 		}
 		
 		public function actionGetLastCallData()
