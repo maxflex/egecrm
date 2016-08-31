@@ -642,18 +642,25 @@
 		private static function _generateQuery($search, $select, $ending = '')
 		{
 			if (! empty($search->time)) {
-				$data 	= explode("-", $search->time);
-				$day 	= $data[0];
-				$time	= $data[1];
-				if ($day < 6) {
-					$time = $time - 2;
-				}
-				$time 	= Freetime::$weekdays_time[$day][$time];
+			    $time_cond = [];
+			    foreach ($search->time as $search_time) {
+                    $data 	= explode("-", $search_time);
+                    $day 	= $data[0];
+                    $time	= $data[1];
+                    if ($day < 6) {
+                        $time = $time - 2;
+                    }
+                    $time 	= Freetime::$weekdays_time[$day][$time];
+                    $time_cond[] = " (gt.day={$day} AND gt.time = {$time}) ";
+                }
+                if (count($time_cond)) {
+                    $time_cond = ' ('.implode(' OR ', $time_cond).') ';
+                }
 			}
 			
 			$main_query = "
 				FROM groups g
-				" . (! empty($search->time) ? " JOIN group_time gt ON (g.id = gt.id_group AND gt.day={$day} AND gt.time={$time})" : "") . "
+				" . (! empty($search->time) ? " JOIN group_time gt ON (g.id = gt.id_group AND {$time_cond})" : "") . "
 				WHERE true "
 				. (!isBlank($search->cabinet) ? " AND g.cabinet={$search->cabinet}" : "")
 				. (!isBlank($search->year) ? " AND g.year={$search->year}" : "")

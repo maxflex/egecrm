@@ -60,7 +60,7 @@
 								"id" => "time-select",
 								"ng-model" 	=> "search.time",
 								"ng-change"	=> "filter()"
-							]) ?>
+							], true) ?>
 						</div>
 				        <div id='year-fix'>
 							<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
