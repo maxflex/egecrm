@@ -409,7 +409,6 @@
 				$Group = Group::findById($_GET['id']);
 			}
 			
-/*
 			$Teachers = Teacher::findAll();
 
 			if ($Group->id_teacher) {
@@ -419,7 +418,6 @@
 					}
 				}
 			}
-*/
 
 			$Students = [];
 			foreach ($Group->students as $id_student) {
