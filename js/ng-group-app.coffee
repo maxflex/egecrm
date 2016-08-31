@@ -368,7 +368,7 @@
 							old_id_group = if $scope.Group and ($scope.Group.id isnt id_group) then $scope.Group.id else false
 							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student, old_id_group: old_id_group}
 							Group.students.push id_student
-							$scope.removeStudent id_student
+							$scope.removeStudent id_student, true
 							$scope.$apply()
 
 			$scope.dateToStart = (date) ->
@@ -811,12 +811,12 @@
 							$("#student-adding-#{Student.id}").html "в другой группе"
 					, "json"
 
-			$scope.removeStudent = (id_student) ->
+			$scope.removeStudent = (id_student, remove_without_saving) ->
 				$.each $scope.Group.students, (index, data) ->
 					if data is id_student
 						$scope.Group.students.splice index, 1
 						$timeout ->
-							justSave()
+							justSave() if not remove_without_saving
 						$scope.form_changed = true
 						$scope.$apply()
 				$.each $scope.TmpStudents, (index, data) ->

@@ -480,7 +480,7 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
             old_id_group: old_id_group
           });
           Group.students.push(id_student);
-          $scope.removeStudent(id_student);
+          $scope.removeStudent(id_student, true);
           return $scope.$apply();
         }
       }
@@ -974,12 +974,14 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
       }, "json");
     }
   };
-  $scope.removeStudent = function(id_student) {
+  $scope.removeStudent = function(id_student, remove_without_saving) {
     $.each($scope.Group.students, function(index, data) {
       if (data === id_student) {
         $scope.Group.students.splice(index, 1);
         $timeout(function() {
-          return justSave();
+          if (!remove_without_saving) {
+            return justSave();
+          }
         });
         $scope.form_changed = true;
         return $scope.$apply();

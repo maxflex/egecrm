@@ -628,11 +628,11 @@
 
 			$Group->save("students");
 
-//            if ($old_id_group) {
-//                $OldGroup = Group::findById($old_id_group);
-//                $OldGroup->students = array_diff($OldGroup->students, array($id_student));;
-//                $OldGroup->save("students");
-//            }
+            if ($old_id_group) {
+                $OldGroup = Group::findById($old_id_group);
+                $OldGroup->students = array_diff($OldGroup->students, array($id_student));;
+                $OldGroup->save("students");
+            }
 		}
 
 		public function actionAjaxGetCabinetBar()
