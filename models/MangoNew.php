@@ -96,6 +96,19 @@ class MangoNew {
     }
 
 
+    public static function getAnswered($number)
+    {
+        $number = cleanNumber($number);
+
+        $trial = 1; // первая попытка
+        while ($trial <= static::TRIALS) {
+            if ($memcached_return = memcached()->get("Answered[$number]")) {
+                return $memcached_return;
+            }
+            sleep(1);
+        }
+        return false;
+    }
 
 	public static function call()
 	{

@@ -137,19 +137,10 @@
 			returnJsonAng($return);
 		}
 		
-		private function getAnsweredUser($phone) {
-            $result = dbConnection()->query(
-                "SELECT user_id FROM last_call_data ".
-                "WHERE phone = '{$phone}' LIMIT 1"
-            );
-
-            if ($result && $result->num_rows) {
-                $data = $result->fetch_assoc();
-                return User::findById($data['user_id']);
-            }
-            return false;
+		public function actionGetAnsweredUser($phone) {
+            return MangoNew::getAnswered($phone);
         }
-		
+
         private function getLastCallData($phone) {
 			$stats = MangoNew::getStats($phone);
 			
@@ -188,6 +179,7 @@
                 "VALUES ('{$phone}', {$user_id}) ".
                 "ON DUPLICATE KEY UPDATE user_id = {$user_id}"
             );
+            memcached()->set("Answered[$phone]", $user_id, time() + 15);
         }
 
         public static function isTestNumber($number) {

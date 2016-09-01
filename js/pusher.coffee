@@ -77,6 +77,18 @@ vueInit = ->
 				clearTimeout this.timer.hide_timeout
 				this.show_element = false
 				this.connected = false
+
+				$.post 'mango/getAnsweredUser',
+					phone: this.mango.from.number
+				, (response) =>
+					this.answered_user_id = response
+					setTimeout ->
+						clearTimeout this.timer.hide_timeout
+						this.show_element = false
+						this.connected = false
+					, 2000
+				, 'json'
+
 			saveState: ->
 				answered_user = this.mango.to.extension #необязательно. потом уберу.
 				if answered_user == this.user_id
