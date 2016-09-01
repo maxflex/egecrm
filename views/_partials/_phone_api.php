@@ -17,6 +17,9 @@
                     	<img src="img/calls/{{last_call_data.from_extension ? 'outgoing' : 'incoming'}}.png">
                     	{{ last_call_data.user.login }} {{ formatDateTime(last_call_data.date_start) }}, разговор {{ time(last_call_data.seconds) }}
                     </span>
+                    <span v-if="answered_user">
+                    	Ответила {{ answered_user }}
+                    </span>
                 </span>
                 <span v-else>
                     <span class="text-gray">определение...</span>

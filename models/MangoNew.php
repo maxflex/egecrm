@@ -105,6 +105,7 @@ class MangoNew {
             if ($memcached_return = memcached()->get("Answered[$number]")) {
                 return $memcached_return;
             }
+            $trial++;
             sleep(1);
         }
         return false;

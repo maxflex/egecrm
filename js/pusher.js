@@ -62,7 +62,8 @@ vueInit = function() {
         },
         mango: {},
         caller: false,
-        last_call_data: false
+        last_call_data: false,
+        answered_user: false
       };
     },
     template: '#phone-template',
@@ -114,18 +115,17 @@ vueInit = function() {
         return this.connected = true;
       },
       endCall: function() {
-        clearTimeout(this.timer.hide_timeout);
-        this.show_element = false;
-        this.connected = false;
         return $.post('mango/getAnsweredUser', {
           phone: this.mango.from.number
         }, (function(_this) {
           return function(response) {
-            _this.answered_user_id = response;
+            _this.answered_user = response;
+            _this.last_call_data = false;
             return setTimeout(function() {
               clearTimeout(this.timer.hide_timeout);
               this.show_element = false;
-              return this.connected = false;
+              this.connected = false;
+              return this.answered_user = false;
             }, 2000);
           };
         })(this), 'json');

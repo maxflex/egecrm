@@ -137,8 +137,9 @@
 			returnJsonAng($return);
 		}
 		
-		public function actionGetAnsweredUser($phone) {
-            return MangoNew::getAnswered($phone);
+		public function actionGetAnsweredUser() {
+		    extract($_POST);
+            returnJsonAng(MangoNew::getAnswered($phone));
         }
 
         private function getLastCallData($phone) {
@@ -179,7 +180,7 @@
                 "VALUES ('{$phone}', {$user_id}) ".
                 "ON DUPLICATE KEY UPDATE user_id = {$user_id}"
             );
-            memcached()->set("Answered[$phone]", $user_id, time() + 15);
+            memcached()->set("Answered[$phone]", User::fromSession()->login, time() + 30);
         }
 
         public static function isTestNumber($number) {
