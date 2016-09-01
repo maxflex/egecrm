@@ -122,10 +122,10 @@ vueInit = function() {
             _this.answered_user = response;
             _this.last_call_data = false;
             return setTimeout(function() {
-              clearTimeout(this.timer.hide_timeout);
               this.show_element = false;
               this.connected = false;
-              return this.answered_user = false;
+              this.answered_user = false;
+              return clearTimeout(this.timer.hide_timeout);
             }, 2000);
           };
         })(this), 'json');
