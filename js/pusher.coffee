@@ -80,11 +80,12 @@ vueInit = ->
 				, (response) =>
 					this.answered_user = response
 					this.last_call_data = false
+					vue = this
 					setTimeout ->
-						this.show_element = false
-						this.connected = false
-						this.answered_user = false
-						clearTimeout this.timer.hide_timeout
+						vue.show_element = false
+						vue.connected = false
+						vue.answered_user = false
+						clearTimeout vue.timer.hide_timeout
 					, 2000
 				, 'json'
 

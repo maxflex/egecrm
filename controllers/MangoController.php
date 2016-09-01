@@ -131,14 +131,42 @@
 			$return = memcached()->get("LastCallData[$phone]");
 			if (! $return) {
 				$return = $this->getLastCallData($phone);
-				memcached()->set("LastCallData[$phone]", $return, time() + 15);
-			}
-			
-			returnJsonAng($return);
+                $return['user']['busy'] = $this->getUserState($return['user']['id']);
+                memcached()->set("LastCallData[$phone]", $return, time() + 15);
+            }
+
+            returnJsonAng($return);
 		}
+
+		private function getUserState($user_id)
+        {
+            $busy_users = memcached()->get("BusyUsers");
+            return $busy_users && in_array($user_id, $busy_users);
+        }
+
+        private function setUserBusy($user_id)
+        {
+            if ($busy_users = memcached()->get("BusyUsers")) {
+                $busy_users[] = $user_id;
+            } else {
+                $busy_users = [$user_id];
+            }
+            memcached()->set("BusyUsers", $busy_users);
+        }
+
+        private function setUserFree($user_id)
+        {
+            if ($busy_users = memcached()->get("BusyUsers")) {
+                if (($key = array_search($user_id, $busy_users)) !== false) {
+                    unset($busy_users[$key]);
+                    memcached()->set("BusyUsers", $busy_users);
+                }
+            }
+        }
 		
 		public function actionGetAnsweredUser() {
 		    extract($_POST);
+            $this->setUserFree(User::fromSession()->id); // сделали юзера свободным
             returnJsonAng(MangoNew::getAnswered($phone));
         }
 
@@ -181,6 +209,7 @@
                 "ON DUPLICATE KEY UPDATE user_id = {$user_id}"
             );
             memcached()->set("Answered[$phone]", User::fromSession()->login, time() + 30);
+            $this->setUserBusy($user_id);
         }
 
         public static function isTestNumber($number) {

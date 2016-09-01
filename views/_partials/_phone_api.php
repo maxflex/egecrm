@@ -14,8 +14,8 @@
                     <span v-if="!caller.type">неизвестный номер</span>
                     <br/>
                     <span v-if="last_call_data">
-                    	<img src="img/calls/{{last_call_data.from_extension ? 'outgoing' : 'incoming'}}.png">
-                    	{{ last_call_data.user.login }} {{ formatDateTime(last_call_data.date_start) }}, разговор {{ time(last_call_data.seconds) }}
+                    	<span class="circle-default circle-red" ng-class="{'circle-red': last_call_data.user.busy,'circle-green': !last_call_data.user.busy}"></span>`
+                        {{ last_call_data.user.login }} {{ formatDateTime(last_call_data.date_start) }}, разговор {{ time(last_call_data.seconds) }}
                     </span>
                     <span v-if="answered_user">
                     	Ответила {{ answered_user }}

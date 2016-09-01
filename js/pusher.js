@@ -119,13 +119,15 @@ vueInit = function() {
           phone: this.mango.from.number
         }, (function(_this) {
           return function(response) {
+            var vue;
             _this.answered_user = response;
             _this.last_call_data = false;
+            vue = _this;
             return setTimeout(function() {
-              this.show_element = false;
-              this.connected = false;
-              this.answered_user = false;
-              return clearTimeout(this.timer.hide_timeout);
+              vue.show_element = false;
+              vue.connected = false;
+              vue.answered_user = false;
+              return clearTimeout(vue.timer.hide_timeout);
             }, 2000);
           };
         })(this), 'json');
