@@ -131,7 +131,10 @@
 			$return = memcached()->get("LastCallData[$phone]");
 			if (! $return) {
 				$return = $this->getLastCallData($phone);
-                $return['user']['busy'] = $this->getUserState($return['user']['id']);
+                if ($return && $return['user']) {
+                    $return['user']['busy'] = $this->getUserState($return['user']['id']);
+                }
+//                $return['user']['busy'] = $this->getUserState($return['user']['id']);
                 memcached()->set("LastCallData[$phone]", $return, time() + 15);
             }
 
