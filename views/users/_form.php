@@ -121,6 +121,16 @@
             <input type="hidden" ng-model="User.type" value="User.type"/>
         </div>
     </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            <input class="form-control"
+                   type="number"
+                   placeholder="зарплата"
+                   ng-model="User.salary"
+                   ng-if="<?= User::isDev() || User::isRoot(); ?>">
+        </div>
+
+    </div>
 </div>
 <!--/user data-->
 <!--access settings -->
@@ -153,6 +163,13 @@
                 <span class="switch"></span>
             </label>
             просмотр итогов
+        </div>
+        <div class="row">
+            <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
+                <input type="checkbox" ng-model="User.show_contract" ng-true-value="1">
+                <span class="switch"></span>
+            </label>
+            показать договор
         </div>
         <br/>
         <div class="row">
@@ -216,3 +233,10 @@
     </div>
 </div>
 <!--/access settings -->
+<style>
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>

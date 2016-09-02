@@ -51,6 +51,7 @@ angular.module "Users", ['colorpicker.module']
 				$scope.$apply()
 
 		angular.element(document).ready ->
+			set_scope 'Users'
 			$scope.clone_user()
 			bindCropper()
 			bindFileUpload()
@@ -207,3 +208,5 @@ angular.module "Users", ['colorpicker.module']
 				ajaxEnd()
 				redirect "users/edit/#{response}"
 
+	.controller "ContractCtrl", ($scope) ->
+		set_scope "Users"

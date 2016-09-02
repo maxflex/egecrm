@@ -24,7 +24,7 @@
 		public function __construct($array = [], $flag = null)
         {
             parent::__construct($array);
-
+            $this->salary = $this->salary ? $this->salary : '';
 			if ($flag === null) {
 				$this->has_photo_original = $this->hasPhotoOriginal();
 	            $this->photo_original_size = $this->photoOriginalSize();
@@ -362,6 +362,10 @@
 
 		public static function isDev() {
             return User::fromSession()->is_dev == 1;
+		}
+
+		public static function isRoot() {
+            return User::fromSession()->id == 1;
 		}
 
 		public static function allowedToSeeTasks() {

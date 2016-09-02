@@ -230,6 +230,9 @@
 			}
 		?>
 	<?php endif ?>
+	<?php if (User::fromSession()->show_contract) :?>
+	    <a href="users/contract" class="list-group-item">Договор</a>
+	<?php endif ?>
 	<a href="settings/cabinet" class="list-group-item">Загрузка кабинетов</a>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>

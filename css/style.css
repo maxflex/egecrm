@@ -1,6 +1,7 @@
 @font-face {
   font-family: "Helvetica";
   src: url("../fonts/Helvetica/HelveticaRegular.eot"); }
+
 .row.flex-list {
   display: flex;
   margin-left: 0;
@@ -2517,3 +2518,6 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
     padding-left: 0px !important; }
 
 /*# sourceMappingURL=style.css.map */
+.mb {
+  margin-bottom:15px;
+}
