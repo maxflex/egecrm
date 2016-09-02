@@ -8,7 +8,7 @@
                 Договор от {{ contract_date }}
             </div>
             <div class="col-sm-12">
-                {{ contract_html }}
+                <div class="contract-content" ng-bind-html="contract_html"></div>
             </div>
         </div>
     </div>

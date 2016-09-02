@@ -2521,3 +2521,6 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .mb {
   margin-bottom:15px;
 }
+.contract-content {
+    text-indent: 20px;
+}

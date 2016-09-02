@@ -1,4 +1,8 @@
-angular.module "Users", ['colorpicker.module']
+angular.module "Users", ['colorpicker.module', 'ngSanitize']
+	.filter 'to_trusted', ['$sce', ($sce) ->
+		return (text) ->
+			return $sce.trustAsHtml(text)
+	]
 	.controller "ListCtrl", ($scope) ->
 		$scope.is_banned = (user) ->
 			return user.banned || user.banned_egerep
