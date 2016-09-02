@@ -115,6 +115,7 @@ vueInit = function() {
         return this.connected = true;
       },
       endCall: function() {
+        clearTimeout(this.timer.hide_timeout);
         return $.post('mango/getAnsweredUser', {
           phone: this.mango.from.number
         }, (function(_this) {
@@ -126,8 +127,7 @@ vueInit = function() {
             return setTimeout(function() {
               vue.show_element = false;
               vue.connected = false;
-              vue.answered_user = false;
-              return clearTimeout(vue.timer.hide_timeout);
+              return vue.answered_user = false;
             }, 2000);
           };
         })(this), 'json');

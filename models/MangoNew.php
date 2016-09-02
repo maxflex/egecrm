@@ -100,14 +100,28 @@ class MangoNew {
     {
         $number = cleanNumber($number);
 
+        if ($memcached_return = memcached()->get("Answered[$number]")) {
+            return $memcached_return;
+        }
+
         $trial = 1; // первая попытка
-        while ($trial <= static::TRIALS) {
-            if ($memcached_return = memcached()->get("Answered[$number]")) {
-                return $memcached_return;
+        while ($trial <= 3) {
+            $result = dbConnection()->query(
+                "SELECT user_id FROM last_call_data ".
+                "WHERE phone = '{$phone}' LIMIT 1"
+            );
+
+            if ($result && $result->num_rows) {
+                $data = $result->fetch_assoc();
+                $user_login = User::findById($data['user_id'], true)->login;
+
+                memcached()->set("Answered[$number]", $user_login, time() + 15);
+                return $user_login;
             }
             $trial++;
             sleep(1);
         }
+
         return false;
     }
 

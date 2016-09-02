@@ -75,6 +75,7 @@ vueInit = ->
 			startCall: ->
 				this.connected = true
 			endCall: ->
+				clearTimeout this.timer.hide_timeout
 				$.post 'mango/getAnsweredUser',
 					phone: this.mango.from.number
 				, (response) =>
@@ -85,7 +86,6 @@ vueInit = ->
 						vue.show_element = false
 						vue.connected = false
 						vue.answered_user = false
-						clearTimeout vue.timer.hide_timeout
 					, 2000
 				, 'json'
 

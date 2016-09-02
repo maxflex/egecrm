@@ -132,9 +132,8 @@
 			if (! $return) {
 				$return = $this->getLastCallData($phone);
                 if ($return && $return['user']) {
-                    $return['user']['busy'] = $this->getUserState($return['user']['id']);
+                    $return['user']->busy = $this->getUserState($return['user']->id);
                 }
-//                $return['user']['busy'] = $this->getUserState($return['user']['id']);
                 memcached()->set("LastCallData[$phone]", $return, time() + 15);
             }
 
@@ -150,7 +149,7 @@
         private function setUserBusy($user_id)
         {
             if ($busy_users = memcached()->get("BusyUsers")) {
-                $busy_users[] = $user_id;
+                $busy_users = array_merge($busy_users, [$user_id]);
             } else {
                 $busy_users = [$user_id];
             }
@@ -160,7 +159,7 @@
         private function setUserFree($user_id)
         {
             if ($busy_users = memcached()->get("BusyUsers")) {
-                if (($key = array_search($user_id, $busy_users)) !== false) {
+                while (($key = array_search($user_id, $busy_users)) !== false) {
                     unset($busy_users[$key]);
                     memcached()->set("BusyUsers", $busy_users);
                 }
