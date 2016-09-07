@@ -150,7 +150,7 @@
 			return $bar;
 		}
 		
-		public static function getStudentBar($id_student, $with_freetime = false)
+		public static function getStudentBar($id_student, $with_freetime = false, $id_group = false)
 		{
 			if ($with_freetime) {
 				$bar = Freetime::getFreetimeBar($id_student, 'student');
@@ -160,44 +160,17 @@
 			foreach (self::$weekdays_time as $day => $time_data) {
 				foreach ($time_data as $time_index => $time_id) {
                     $result = dbConnection()->query("
-						SELECT COUNT(*) AS cnt FROM group_time gt
+						SELECT COUNT(*) AS cnt, g.id as id_group FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
 						WHERE FIND_IN_SET({$id_student}, g.students) AND g.ended = 0 AND gt.day=$day AND gt.time=$time_id AND g.year = ".self::BAR_YEAR."
-					");
-
-                    // если нет группы
-                    if ($result === false) {
-                        $groups_at_this_time_count = false;
-                    } else {
-                        $groups_at_this_time_count = $result->fetch_object()->cnt;
-                    }
-
-                    if ($groups_at_this_time_count >= 1) {
-                        if ($groups_at_this_time_count > 1) {
-                            if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
-		                        $bar[$day][$time_id] = 'blink red-green';
-	                        } else {
-		                    	$bar[$day][$time_id] = 'blink red';   
-	                        }
-                        } else {
-                            if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
-		                        $bar[$day][$time_id] = 'red-green';
-	                        } else {
-		                    	$bar[$day][$time_id] = 'red';   
-	                        }
-                        }
-                    } else {
-                        if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
-						} else {
-							$bar[$day][$time_id] = 'gray';
-						}
-                    }
+					")->fetch_object();
+                    static::_brushBar($result, $with_freetime, $bar, $day, $time_id, $id_group);
                 }
             }
             return $bar;
         }
 
-		public static function getTeacherBar($id_teacher, $with_freetime = false)
+		public static function getTeacherBar($id_teacher, $with_freetime = false, $id_group = false)
 		{
 		    if ($with_freetime) {
 				$bar = Freetime::getFreetimeBar($id_teacher, 'teacher');
@@ -207,47 +180,59 @@
 			foreach (self::$weekdays_time as $day => $time_data) {
 				foreach ($time_data as $time_index => $time_id) {
                     $result = dbConnection()->query("
-						SELECT COUNT(*) AS cnt FROM group_time gt
+						SELECT COUNT(*) AS cnt, g.id as id_group FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
 						WHERE g.id_teacher = {$id_teacher} AND g.ended = 0 AND gt.day=$day AND gt.time=$time_id AND g.year = ".self::BAR_YEAR."
-					");
-
-                    // если нет группы
-                    if ($result === false) {
-                        $groups_at_this_time_count = false;
-                    } else {
-                        $groups_at_this_time_count = $result->fetch_object()->cnt;
-                    }
-
-                    if ($groups_at_this_time_count >= 1) {
-                        if ($groups_at_this_time_count > 1) {
-	                        if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
-		                        $bar[$day][$time_id] = 'blink red-green';
-	                        } else {
-		                    	$bar[$day][$time_id] = 'blink red';   
-	                        }
-                        } else {
-                            if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
-		                        $bar[$day][$time_id] = 'red-green';
-	                        } else {
-		                    	$bar[$day][$time_id] = 'red';   
-	                        }
-                        }
-                    } else {
-						if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
-						} else {
-							$bar[$day][$time_id] = 'gray';
-						}
-                    }
+					")->fetch_object();
+					static::_brushBar($result, $with_freetime, $bar, $day, $time_id, $id_group);
                 }
             }
             return $bar;
         }
+        
+        private static function _brushBar($result, $with_freetime, &$bar, $day, $time_id, $id_group)
+        {
+	        if ($result->cnt >= 1) {
+                if ($result->cnt > 1) {
+                    if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+                        $bar[$day][$time_id] = 'blink red-green';
+                        if ($id_group && $id_group != $result->id_group) {
+	                    	$bar[$day][$time_id] = 'blink quater-red-green';
+                    	}
+                    } else {
+                    	$bar[$day][$time_id] = 'blink red';
+                    	if ($id_group && $id_group != $result->id_group) {
+	                    	$bar[$day][$time_id] .= ' half-opacity';
+                    	}
+                    }
+                } else {
+                    if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+                        $bar[$day][$time_id] = 'red-green';
+                        if ($id_group && $id_group != $result->id_group) {
+	                    	$bar[$day][$time_id] = 'quater-red-green';
+                    	}
+                    } else {
+                    	$bar[$day][$time_id] = 'red';
+                    	if ($id_group && $id_group != $result->id_group) {
+	                    	$bar[$day][$time_id] .= ' half-opacity';
+                    	}
+                    }
+                }
+            } else {
+				if ($with_freetime && $bar[$day][$time_id] !== 'empty') {
+					if ($id_group && $id_group != $result->id_group) {
+                    	$bar[$day][$time_id] .= ' half-opacity';
+                	}
+				} else {
+					$bar[$day][$time_id] = 'gray';
+				}
+            }
+        }
 
-		public static function getCabinetBar($cabinet)
+		public static function getCabinetBar($cabinet, $Group = null)
 		{
 		    $bar = [];
-
+		    
 			foreach (self::$weekdays_time as $day => $time_data) {
 				foreach ($time_data as $time_index => $time_id) {
 
@@ -255,8 +240,8 @@
 					$result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
-						WHERE g.cabinet = $cabinet AND g.ended = 0 AND gt.day=$day AND gt.time=$time_id AND g.year = ".self::BAR_YEAR."
-					");
+						WHERE g.cabinet = $cabinet AND g.ended = 0 AND gt.day=$day AND gt.time=$time_id AND g.year = " . self::BAR_YEAR . " " . ($Group ? " AND g.id!={$Group->id}" : "")
+					);
 
                     // если нет группы
                     if ($result === false) {
@@ -267,17 +252,38 @@
 
                     if ($groups_at_this_time_count >= 1) {
                         if ($groups_at_this_time_count > 1) {
-                            $bar[$day][$time_id] = 'blink red';
+                            if (static::_cabinetFree($Group, $day, $time_id)) {
+			                    $bar[$day][$time_id] = 'blink red';
+		                    } else {
+			                    $bar[$day][$time_id] = 'half-opacity blink red';
+		                    }
                         } else {
-                            $bar[$day][$time_id] = 'red';
+                            if (static::_cabinetFree($Group, $day, $time_id)) {
+			                    $bar[$day][$time_id] = 'red';
+		                    } else {
+			                    $bar[$day][$time_id] = 'half-opacity red';
+		                    }
                         }
                     } else {
-                        $bar[$day][$time_id] = 'gray';
+	                    if (static::_cabinetFree($Group, $day, $time_id)) {
+		                    $bar[$day][$time_id] = 'red';
+	                    } else {
+		                    $bar[$day][$time_id] = 'gray';
+	                    }
                     }
                 }
             }
-
             return $bar;
+        }
+        
+        private static function _cabinetFree($Group, $day, $time_id)
+        {
+	        if ($Group && isset($Group->day_and_time[$day])) {
+		    	if (in_array(self::TIME[$time_id], $Group->day_and_time[$day])) {
+			    	return true;
+		    	}
+	        }
+	        return false;
         }
         
 		public static function checkFreeCabinets($id_group, $year, $day_and_time)
@@ -286,15 +292,6 @@
 				foreach($data as $time) {
 					$time_id = Freetime::getId($time);
 					$conditions[] = "(gt.day=$day AND gt.time=$time_id)";
-/*
-					$query = dbConnection()->query("
-						SELECT id FROM group_time gt
-						JOIN groups g ON g.id = gt.id_group
-						WHERE g.id=$id_group AND g.year=$year AND gt.day=$day AND gt.time=$time_id
-						LIMIT 1
-					");
-					$return[$day][$time] = $query->num_rows ? true : false;
-*/
 				}
 			}
 			// Получаем филиалы

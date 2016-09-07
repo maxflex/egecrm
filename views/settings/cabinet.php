@@ -1,3 +1,8 @@
+<style>
+	.quater-opacity.red {
+		opacity: 1 !important;
+	}
+</style>
 <div ng-app="Settings" ng-controller="CabinetsCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row" style="position: relative">
         <div class="col-sm-12">

@@ -13,12 +13,10 @@
 		public function beforeAction()
 		{
 			$this->addJs("ng-group-app");
-
 /*
 			ini_set("display_errors", 1);
 			error_reporting(E_ALL);
 */
-
 		}
 
 		public function actionJournal()
@@ -194,7 +192,7 @@
 
 		public function actionList()
 		{
-			
+
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity);
@@ -237,9 +235,9 @@
 
 				$this->addCss("bootstrap-select");
 				$this->addJs("bootstrap-select, dnd");
-				
+
 				$Teachers = Teacher::getLightArray(Group::getTeacherIds());
-				
+
 				$ang_init_data = angInit([
 					"Cabinets"		=> Cabinet::getByBranch(1),
 					"Branches"		=> Branches::$all,
@@ -282,10 +280,10 @@
 
 				$id_group = $_GET['id'];
 				$Group = Group::findById($id_group);
-				
+
 				// @refactored
 				$Group->Schedule = $Group->getSchedule();
-				
+
 				foreach ($Group->Schedule as &$Schedule) {
 					if ($Schedule->cabinet) {
 						$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
@@ -325,7 +323,7 @@
 					if ($Group->id_teacher != User::fromSession()->id_entity) {
 						$this->renderRestricted();
 					}
-					
+
 					// @refactored
 					$Group->Schedule = $Group->getSchedule();
 					foreach ($Group->Schedule as &$Schedule) {
@@ -409,12 +407,14 @@
 				$Group = Group::findById($_GET['id']);
 			}
 			
-			$Teachers = Teacher::findAll();
-
-			if ($Group->id_teacher) {
-				foreach ($Teachers as &$Teacher) {
-					if ($Teacher->id == $Group->id_teacher) {
-						$Teacher->bar 		= $Teacher->getBar($Group->id, $Group->id_branch);
+			if (! LOCAL_DEVELOPMENT) {
+				$Teachers = Teacher::findAll();
+	
+				if ($Group->id_teacher) {
+					foreach ($Teachers as &$Teacher) {
+						if ($Teacher->id == $Group->id_teacher) {
+							$Teacher->bar 		= $Teacher->getBar($Group->id, $Group->id_branch);
+						}
 					}
 				}
 			}
@@ -425,13 +425,13 @@
 				$Student->Contract 	= $Student->getLastContract($Group->year);
 
 				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject, $Group->year);
-				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet);
-			
+				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet, $Group->year);
+
 				if ($Group->grade && $Group->id_subject) {
 					// тест ученика
 					$Student->Test = TestStudent::getForGroup($id_student, $Group->id_subject, $Group->grade);
 				}
-				
+
 				foreach ($Student->branches as $id_branch) {
 					if (!$id_branch) {
 						continue;
@@ -461,7 +461,7 @@
 			$ang_init_data = angInit([
 				"Group" 	=> $Group,
 				"Teachers"	=> $Teachers,
-				"TmpStudents" => $Students,
+				"TmpStudents" => $Students, 
 //				"Students"	=> $Students,
 				"Subjects"	=> Subjects::$three_letters,
 				"GroupLevels" => GroupLevels::$all,
@@ -469,7 +469,7 @@
 				"duration"		=> Group::DURATION,
 				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
 				"branches_brick"		=> Branches::getShortColored(),
-				"cabinet_bar"			=> Freetime::getCabinetBar($Group->cabinet),
+				"cabinet_bar"			=> Freetime::getCabinetBar($Group->cabinet, $Group),
 				"time" => Freetime::TIME,
 				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time)
 			]);
@@ -638,7 +638,7 @@
 			extract($_POST);
 
 			returnJsonAng(
-				Freetime::getCabinetBar($cabinet)
+				Freetime::getCabinetBar($cabinet, Group::findById($id_group))
 			);
 		}
 
@@ -647,7 +647,7 @@
 			extract($_POST);
 
             returnJsonAng(
-                $id_teacher ? Freetime::getTeacherBar($id_teacher, true) : []
+                $id_teacher ? Freetime::getTeacherBar($id_teacher, true, $id_group) : []
             );
 		}
 
@@ -656,12 +656,12 @@
 			extract($_POST);
 
 			foreach ($student_ids as $id_student) {
-				$return[$id_student] = Freetime::getStudentBar($id_student, true);
+				$return[$id_student] = Freetime::getStudentBar($id_student, true, $id_group);
 			}
 
 			returnJsonAng($return);
 		}
-		
+
 		// Похожие гуппы (вверху из редактирования группы)
 		public function actionAjaxGetGroups()
 		{
@@ -748,7 +748,7 @@
 		public function actionAjaxUpdateCacheAll()
 		{
 			$Groups = Group::findAll();
-			
+
 			// @refactored
 			foreach ($Groups as $Group) {
 				memcached()->set("GroupScheduleCount[{$Group->id}]", $Group->countSchedule(), 5 * 24 * 3600);
@@ -930,7 +930,7 @@
 				$objPHPExcel->getActiveSheet()->getStyle($col.$row)->getFont()
 								->setName('Apple SD Gothic Neo')
 								->setSize(18);
-								
+
 				// Cabinet groups
 				// @refactored
 				$Groups = Group::findAll([
@@ -1063,7 +1063,7 @@
 				$return['teacher_like_statuses'][$id_student] = TeacherReview::getStatus($id_student, $id_teacher, $id_subject, $year);
 			}
 
-			$return['bar'] = Freetime::getTeacherBar($id_teacher, true);
+			$return['bar'] = Freetime::getTeacherBar($id_teacher, true, $id_group);
 
 			Group::updateById($id_group, [
 				"id_teacher" => $id_teacher,
@@ -1077,12 +1077,12 @@
 			extract($_POST);
 
 			foreach ($students as $id_student) {
-				$return['sms_notification_statuses'][$id_student] = GroupSms::getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet);
+				$return['sms_notification_statuses'][$id_student] = GroupSms::getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet, $year);
 			}
 
 			returnJsonAng($return);
 		}
-		
+
 		public function actionAjaxReloadTests()
 		{
 			extract($_POST);
@@ -1148,7 +1148,7 @@
 				"is_free" => $is_free,
 			]);
 		}
-		
+
 		public function actionAjaxGet()
 		{
 			extract($_POST);
@@ -1157,7 +1157,7 @@
 				Group::getData($page, $teachers)
 			);
 		}
-		
+
 		public function actionAjaxCheckFreeCabinets()
 		{
 			extract($_POST);

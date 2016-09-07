@@ -47,15 +47,15 @@
 
 		public static function notify($data)
 		{
-			$data['notified'] = 1;
 			self::add($data);
 		}
 
-		public static function getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet)
+		public static function getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet, $year)
 		{
 			// preType([$id_student, $id_branch, $id_subject, $first_schedule, $cabinet]);
 			return self::count([
 				"condition" => "id_student={$id_student}
+								 AND year={$year}
 								 AND id_branch={$id_branch}
 								 AND id_subject={$id_subject}
 								 AND first_schedule='{$first_schedule}' 

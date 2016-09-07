@@ -489,13 +489,6 @@
 			}
 		}
 
-		public function notifiedInGroupStatic($id_student, $id_group)
-		{
-			return GroupStudentStatuses::count([
-				"condition" => "id_student=" . $id_student . " AND id_group=" . $id_group . " AND notified=1"
-			]) > 0 ? true : false;
-		}
-
 		/**
 		 * Сколько номеров установлено.
 		 *

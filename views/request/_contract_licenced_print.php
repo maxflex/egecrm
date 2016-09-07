@@ -93,8 +93,8 @@
 			'few'	: 'рубля',
 			'many'	: 'рублей',
 		}"></ng-pluralize>.</p>
-<p ng-show="contract.grade == 11">3.2. Стоимость занятий с 1 по 64 составляет 1600 (одна тысяча шестьсот) рублей за одно занятие, стоимость занятий с 65 по 96 составляет 1500 (одна тысяча пятьсот) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет 1400 (одна тысяча четыреста) рублей.</p>
-<p ng-show="contract.grade == 9 || contract.grade == 10">3.2. Стоимость занятий с 1 по 64 составляет 1450 (одна тысяча четыреста пятьдесят) рублей за одно занятие, стоимость занятий с 65 по 96 составляет 1350 (одна тысяча триста пятьдесят) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет 1250 (одна тысяча двести пятьдесят) рублей.</p>
+<p ng-show="contract.grade == 11">3.2. Стоимость занятий с 1 по 64 составляет {{ getSubjectPrice(contract, 1600) }} ({{numToText(getSubjectPrice(contract, 1600))}}) рублей за одно занятие, стоимость занятий с 65 по 96 составляет {{ getSubjectPrice(contract, 1500) }} ({{numToText(getSubjectPrice(contract, 1500))}}) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет {{ getSubjectPrice(contract, 1400) }} ({{numToText(getSubjectPrice(contract, 1400))}}) рублей.</p>
+<p ng-show="contract.grade == 9 || contract.grade == 10">3.2. Стоимость занятий с 1 по 64 составляет {{ getSubjectPrice(contract, 1450) }} ({{numToText(getSubjectPrice(contract, 1450))}}) рублей за одно занятие, стоимость занятий с 65 по 96 составляет {{ getSubjectPrice(contract, 1350) }} ({{numToText(getSubjectPrice(contract, 1350))}}) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет {{ getSubjectPrice(contract, 1250) }} ({{numToText(getSubjectPrice(contract, 1250))}}) рублей.</p>
 <p>3.3. В случае изменения Договора в связи с уменьшением или увеличением количества необходимых Заказчику занятий цена Договора пересчитывается в соответствии со стоимостью занятий по их порядковому номеру.</p>
 <p>3.4. Оплата Услуг по настоящему Договору  производится Заказчиком следующим образом:</p>
 <ul>
@@ -270,30 +270,28 @@
 Настоящий акт составлен в двух экземплярах, по одному для каждой Стороны.
 
 	<div style='margin: 50px 0 0 0'>
-			<div style="display: inline-block; float: left; width: 50%">
-				Генеральный директор  ООО «ЕГЭ-Центр»<br>
-					Капралов К. А.
-			</div>
-			<div style="display: inline-block; width: 50%">
-				{{ representative.last_name }} {{ representative.first_name[0] }}. {{ representative.middle_name[0] }}
-			</div>
+		<div style="display: inline-block; float: left; width: 50%">
+			Генеральный директор  ООО «ЕГЭ-Центр»<br>
+				Капралов К. А.
 		</div>
+		<div style="display: inline-block; width: 50%">
+			{{ representative.last_name }} {{ representative.first_name[0] }}. {{ representative.middle_name[0] }}
+		</div>
+	</div>
 		
-		<div style='margin: 50px 0 0'>
-			<div style="display: inline-block; width: 50%">
-				<div style='margin-top: 30px'>
-					____________________<i style='text-decoration: underline'></i>
-				</div>
-			</div>
-			<div style="display: inline-block; width: 50%">
-				<div style='margin-top: 30px'>
-					____________________<i style='text-decoration: underline'></i>
-				</div>
+	<div style='margin: 50px 0 0'>
+		<div style="display: inline-block; width: 50%">
+			<div style='margin-top: 30px'>
+				____________________<i style='text-decoration: underline'></i>
 			</div>
 		</div>
+		<div style="display: inline-block; width: 50%">
+			<div style='margin-top: 30px'>
+				____________________<i style='text-decoration: underline'></i>
+			</div>
+		</div>
+	</div>
 
 </div>
-
-
 
 </div>

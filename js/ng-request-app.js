@@ -697,6 +697,14 @@
 				$scope.editBeforePrint(html)
 			}
 			
+			$scope.printContractAdditionalOoo = function(contract) {
+				$scope.print_mode = 'agreement-ooo'
+				$scope.contract_additional = contract
+				$scope.id_contract_print = contract.id
+				html = $("#agreement-ooo-print-" + $scope.id_contract_print).html()
+				$scope.editBeforePrint(html)
+			}
+			
 			$scope.printAct = function(contract) {
 				$scope.print_mode = 'act'
 				$scope.contract_act = contract
@@ -1132,6 +1140,11 @@
 					
 					return recommended_price
 				}
+			}
+			
+			$scope.getSubjectPrice = function(contract, price) {
+				coeff = contract.sum / $scope.recommendedPrice(contract)
+				return Math.round(price * coeff)
 			}
 			
 			$scope.toggleStudentFreetime = function(day, time_id) {

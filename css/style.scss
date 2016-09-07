@@ -497,10 +497,20 @@ body {
 	margin-right: 5px;
 }
 
-.top-group-menu-thin > div {
-	width: 10.8%;
-	display: inline-block;
-	margin-right: 5px;
+.top-group-menu-thin {
+	position: relative;
+	& > div {
+		width: 10.8%;
+		display: inline-block;
+		margin-right: 5px;	
+	}
+}
+
+.div-blocker {
+	position: absolute;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 99;
 }
 
 .student-dragout {
@@ -835,6 +845,16 @@ body {
 		    background: -ms-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
 		    background: linear-gradient(to bottom, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
 		    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#c40000',GradientType=0 );
+		}
+		&.quater-red-green {
+			background: #6bd56b !important;
+		    background: -moz-linear-gradient(top, #6bd56b 0%, #6bd56b 50%, #e28080 51%, #e28080 100%) !important;
+		    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #6bd56b), color-stop(50%, #6bd56b), color-stop(51%, #e28080), color-stop(100%, #e28080)) !important;
+		    background: -webkit-linear-gradient(top, #6bd56b 0%, #6bd56b 50%, #e28080 51%, #e28080 100%) !important;
+		    background: -o-linear-gradient(top, #6bd56b 0%, #6bd56b 50%, #e28080 51%, #e28080 100%) !important;
+		    background: -ms-linear-gradient(top, #6bd56b 0%, #6bd56b 50%, #e28080 51%, #e28080 100%) !important;
+		    background: linear-gradient(to bottom, #6bd56b 0%, #6bd56b 50%, #e28080 51%, #e28080 100%) !important;
+		    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6bd56b', endColorstr='#e28080',GradientType=0 );
 		}
 		&.green-gray {
 			/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#b1b1b1+0,b1b1b1+50,5cb85c+51,5cb85c+100 */
@@ -3084,10 +3104,12 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .group-list > td {
 	padding: 4px 8px !important;
-	&:first-child {
-		padding-left: 0px !important;
-	}
 }
+
+.table tr td:first-child {
+	padding-left: 0px !important;
+}
+
 .mb {
   margin-bottom:15px;
 }

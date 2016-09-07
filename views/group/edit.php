@@ -33,8 +33,10 @@
 	</div>
 	<div class="panel-body" style="position: relative">
 		<form id="group-edit" autocomplete='off'>
-
 		<div class="top-group-menu-thin">
+			<?php if (User::fromSession()->id != 77) :?>
+			<div class='div-blocker'></div>
+			<?php endif ?>
 			<div>
 	            <?=
 	                Branches::buildSvgSelectorCabinets($Group->id_branch, $Group->cabinet, [
@@ -124,7 +126,7 @@
 								<span ng-show="!Student.Test" class="text-gray">тест не найден</span>
 							</td>
 							<td>
-								<span ng-hide="Student.already_had_lesson >= 2">
+								<span ng-hide="!enoughSmsParams() || Student.already_had_lesson >= 2">
 									<span class="half-black pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified">отправить смс</span>
 									<span class="text-success default" ng-show="Student.sms_notified">смс отправлено</span>
 								</span>

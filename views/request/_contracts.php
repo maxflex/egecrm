@@ -78,32 +78,32 @@
 								</span>
 							</div>
 						</div>
-						<div class="col-sm-3" style="padding: 0; font-size: 12px; width: 18.5%">
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="editContract(contract)">
+						<div class="col-sm-5" style="padding: 0">
+							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="editContract(contract)">
 								создать новую версию
 							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="editContractWithoutVersionControl(contract)">
+							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="editContractWithoutVersionControl(contract)">
 								изменить без проводки
 							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContract(contract.id)">
-								печать договора
-								<?= partial("contract_print", ["Request" => $Request]) ?>
+							<div class="form-group" style="margin-bottom: 3px" >
+								печать <span class='link-like link-reverse' ng-click="printContract(contract.id)">договора ИП</span>
+								или <span class='link-like link-reverse' ng-click="printContractLicenced(contract.id)">договора ООО</span>
 							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContractLicenced(contract.id)">
-								лицензированный договор
-								<?= partial("contract_licenced_print", ["Request" => $Request]) ?>
+							<div class="form-group" style="margin-bottom: 3px">
+								печать <span class='link-like link-reverse' ng-click="printContractAdditional(contract)">доп.соглашения ИП</span>
+								или <span class='link-like link-reverse' ng-click="printContractAdditionalOoo(contract)">доп.соглашения ООО</span>
 							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContractAdditional(contract)">
-								печать доп. соглашения
-								<?= partial("additional_agreement_print") ?>
+							<div class="form-group" style="margin-bottom: 3px">
+								печать <span class='link-like link-reverse' ng-click="printAct(contract)">акта сдачи-приемки ИП</span>
 							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printAct(contract)">
-								печать акта сдачи-приемки
-								<?= partial("act") ?>
-							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="deleteContract(contract)">
+							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="deleteContract(contract)">
 								удалить
 							</div>
+							<?= partial("contract_print", ["Request" => $Request]) ?>
+							<?= partial("contract_licenced_print", ["Request" => $Request]) ?>
+							<?= partial("additional_agreement_print") ?>
+							<?= partial("additional_agreement_ooo_print") ?>
+							<?= partial("act") ?>
 						</div>
 					</div>
 					<div class="row" style="margin-top: 25px">
@@ -178,13 +178,13 @@
 							</div>
 						</div>
 						<div class="col-sm-2"  style="padding: 0; font-size: 12px">
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="editHistoryContract(contract_history)">
+							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="editHistoryContract(contract_history)">
 								изменить без проводки
 							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="printContract(contract.id)">
+							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="printContract(contract.id)">
 								печать договора
 							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 5px" ng-click="deleteContractHistory(contract, contract_history, $index)">
+							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="deleteContractHistory(contract, contract_history, $index)">
 								удалить
 							</div>
 						</div>

@@ -338,7 +338,7 @@
 		.controller "EditCtrl", ($scope, $timeout) ->
 			$timeout ->
 				ajaxEnd()
-				
+
 			$scope.allStudentStatuses = ->
 				student_statuses_count = _.filter $scope.Group.student_statuses, (s, id_student) ->
 											s isnt undefined and s.id_status and _.where($scope.TmpStudents, {id: parseInt(id_student)}).length
@@ -463,7 +463,7 @@
 				$(".save-button").mousedown()
 				$scope.day_and_time_object = $scope.dayAndTimeObject()
 				checkFreeCabinets()
-			
+
 			checkFreeCabinets = ->
 				$.post 'groups/ajax/checkFreeCabinets',
 					id_group: $scope.Group.id
@@ -504,9 +504,13 @@
 
 			$scope.changeYear = ->
 				$scope.changeTeacher()
+				$scope.reloadSmsNotificationStatuses()
 				$scope.updateGroup
 					year: $scope.Group.year
 			
+			$scope.enoughSmsParams = ->
+				($scope.Group.year > 0 and $scope.Group.id_subject > 0 and $scope.Group.id_branch > 0 and $scope.Group.cabinet > 0 and $scope.Group.first_schedule and $scope.Group.id_subject > 0)
+
 			$scope.changeCabinet = ->
 				return if not $scope.Group.id
 				$scope.reloadSmsNotificationStatuses()
@@ -514,7 +518,7 @@
 					cabinet: $scope.Group.cabinet
 
 				$scope.updateCabinetBar()
-			
+
 			$scope.dayAndTimeObject = ->
 				day_and_time = {}
 				$.each $scope.Group.day_and_time, (day, value) ->
@@ -524,16 +528,16 @@
 							day_and_time[day] = {} if day_and_time[day] is undefined
 							day_and_time[day][index] = time
 				day_and_time
-			
+
 			$timeout ->
 				$scope.day_and_time_object = $scope.dayAndTimeObject()
 				$('#group-branch').selectpicker('refresh')
-			
+
 			$scope.hasDayAndTime = ->
 				return false if not $scope.day_and_time_object
 				Object.keys($scope.day_and_time_object).length > 0
-			
-			
+
+
 			$scope.changeTeacher = ->
 				return if not $scope.Group.id
 				console.log 'changin teacher'
@@ -561,6 +565,7 @@
 				ajaxStart()
 				$.post "groups/ajax/GetTeacherBar",
 					id_teacher: $scope.Group.id_teacher
+					id_group: $scope.Group.id
 				, (bar) ->
 					ajaxEnd()
 					$scope.getTeacher($scope.Group.id_teacher).bar = bar
@@ -570,7 +575,7 @@
 
 			$scope.updateCabinetBar = (ajax_animation = true) ->
 				ajaxStart() if ajax_animation
-				$.post "groups/ajax/GetCabinetBar", {cabinet: $scope.Group.cabinet}, (bar) ->
+				$.post "groups/ajax/GetCabinetBar", {cabinet: $scope.Group.cabinet, id_group: $scope.Group.id}, (bar) ->
 					ajaxEnd() if ajax_animation
 					$scope.cabinet_bar = bar
 					$scope.$apply()
@@ -580,6 +585,7 @@
 			$scope.updateStudentBars = ->
 				$.post "groups/ajax/GetStudentBars",
 					student_ids: $scope.Group.students
+					id_group: $scope.Group.id
 				, (response) ->
 					console.log response, 'students'
 					$.each response, (id_student, bar) ->
@@ -728,6 +734,7 @@
 					id_subject: $scope.Group.id_subject
 					cabinet: $scope.Group.cabinet
 					first_schedule: $scope.Group.first_schedule
+					year: $scope.Group.year
 				, (response) ->
 					$.each response.sms_notification_statuses, (id_student, id_status)->
 						$scope.getStudent(id_student).sms_notified = id_status
@@ -758,18 +765,11 @@
 					cabinet: $scope.Group.cabinet
 					first_schedule: $scope.Group.first_schedule
 					id_group: $scope.Group.id
+					year: $scope.Group.year
 				, (response) ->
 					Student.sms_notified = true
 					$scope.$apply()
 
-
-			$scope.smsNotify__DEPRICATED__ = (id_student) ->
-				$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0, review_status: 0} if $scope.Group.student_statuses[id_student] is undefined
-				return false if $scope.Group.student_statuses[id_student].notified
-				$scope.Group.student_statuses[id_student].notified = 1
-				$scope.getStudent(id_student).notified = 1
-				$.post "groups/ajax/smsNotify", {id_student: id_student, id_group: $scope.Group.id}
-				justSave()
 
 			$scope.bindGroupStudentStatusChange = ->
 				$("select[class^='student-status-select']")
@@ -881,12 +881,12 @@
 				else
 					$scope.Group.id_branch = ''
 					$scope.Group.cabinet = ''
-					
+
 				$scope.reloadSmsNotificationStatuses()
 				$scope.updateGroup
 					id_branch: $scope.Group.id_branch
 					cabinet: $scope.Group.cabinet
-				$scope.updateTeacherBar() 
+				$scope.updateTeacherBar()
 				$scope.updateCabinetBar(false)
 				$scope.updateStudentBars()
 
@@ -897,7 +897,7 @@
 				$scope.add_groups_panel = not $scope.add_groups_panel
 				$scope.search_groups.grade = $scope.Group.grade if not $scope.search_groups.grade and $scope.Group.grade
 				$scope.search_groups.year = $scope.Group.year if not $scope.search_groups.year and $scope.Group.year
-				$scope.search_groups.id_branch = $scope.Group.id_branch if not $scope.search_groups.id_branch and $scope.Group.id_branch 
+				$scope.search_groups.id_branch = $scope.Group.id_branch if not $scope.search_groups.id_branch and $scope.Group.id_branch
 				$scope.search_groups.id_subject = $scope.Group.id_subject if not $scope.search_groups.id_subject and $scope.Group.id_subject
 				$timeout ->
 					$('#groups-branch-filter').selectpicker('refresh')
@@ -1310,12 +1310,12 @@
 				branches: ""
 				id_subject: ""
 				year: ""
-				
+
 			$scope.loadStudentPicker = ->
 				$scope.students_picker = true
 				$scope.search2.grades = $scope.search.grade if not $scope.search2.grades and $scope.search.grade
 				$scope.search2.year = $scope.search.year if not $scope.search2.year and $scope.search.year
-				$scope.search2.branches = $scope.search.id_branch if not $scope.search2.branches and $scope.search.id_branch 
+				$scope.search2.branches = $scope.search.id_branch if not $scope.search2.branches and $scope.search.id_branch
 				$scope.search2.id_subject = $scope.search.id_subject[0] if not $scope.search2.id_subject and $scope.search.id_subject.length
 				$("html, body").animate { scrollTop: $(document).height() }, 1000
 				$timeout ->

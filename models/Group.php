@@ -29,7 +29,6 @@
 
 			if (!$this->isNewRecord) {
 				$this->past_lesson_count 		= $this->getPastScheduleCountCached();;
-				$this->notified_students_count 	= $this->getNotifiedStudentsCount();
 				$this->schedule_count = $this->getScheduleCountCached();
 
                                                         // + group is not ended and has schedule
@@ -68,7 +67,7 @@
 				return 0;
 			}
 			return GroupSms::count([
-				"condition" => "id_branch = {$this->id_branch} AND id_student IN (" . implode(",", $this->students) . ") AND notified=1
+				"condition" => "id_branch = {$this->id_branch} AND id_student IN (" . implode(",", $this->students) . ") AND year={$this->year}
 								 AND id_subject = {$this->id_subject} AND first_schedule = '{$this->first_schedule}' AND cabinet={$this->cabinet}"
 			]);
 		}
