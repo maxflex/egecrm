@@ -2,6 +2,7 @@
 	<style>
 	p {
 		text-align: justify !important;
+		text-indent: 2cm;
 	}
     </style>
 	<h4 style="margin-bottom: 0">Дополнительное соглашение №{{contract.id_additional}}</h4>

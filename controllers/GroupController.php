@@ -425,7 +425,7 @@
 				$Student->Contract 	= $Student->getLastContract($Group->year);
 
 				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject, $Group->year);
-				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet, $Group->year);
+				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group->id_branch, $Group->id_subject, $Group->first_schedule, $Group->cabinet);
 
 				if ($Group->grade && $Group->id_subject) {
 					// тест ученика
@@ -1077,7 +1077,7 @@
 			extract($_POST);
 
 			foreach ($students as $id_student) {
-				$return['sms_notification_statuses'][$id_student] = GroupSms::getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet, $year);
+				$return['sms_notification_statuses'][$id_student] = GroupSms::getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet);
 			}
 
 			returnJsonAng($return);

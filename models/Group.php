@@ -67,7 +67,7 @@
 				return 0;
 			}
 			return GroupSms::count([
-				"condition" => "id_branch = {$this->id_branch} AND id_student IN (" . implode(",", $this->students) . ") AND year={$this->year}
+				"condition" => "id_branch = {$this->id_branch} AND id_student IN (" . implode(",", $this->students) . ") 
 								 AND id_subject = {$this->id_subject} AND first_schedule = '{$this->first_schedule}' AND cabinet={$this->cabinet}"
 			]);
 		}

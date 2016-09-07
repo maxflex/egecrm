@@ -734,7 +734,6 @@
 					id_subject: $scope.Group.id_subject
 					cabinet: $scope.Group.cabinet
 					first_schedule: $scope.Group.first_schedule
-					year: $scope.Group.year
 				, (response) ->
 					$.each response.sms_notification_statuses, (id_student, id_status)->
 						$scope.getStudent(id_student).sms_notified = id_status
@@ -765,7 +764,6 @@
 					cabinet: $scope.Group.cabinet
 					first_schedule: $scope.Group.first_schedule
 					id_group: $scope.Group.id
-					year: $scope.Group.year
 				, (response) ->
 					Student.sms_notified = true
 					$scope.$apply()
