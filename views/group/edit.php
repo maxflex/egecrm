@@ -127,8 +127,8 @@
 							</td>
 							<td>
 								<span ng-hide="!enoughSmsParams() || Student.already_had_lesson >= 2">
-									<span class="half-black pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified">отправить смс</span>
-									<span class="text-success default" ng-show="Student.sms_notified">смс отправлено</span>
+									<span class="half-black pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified">отправить SMS</span>
+									<span class="text-success default" ng-show="Student.sms_notified">SMS отправлена</span>
 								</span>
 							</td>
 							<td width="150">
