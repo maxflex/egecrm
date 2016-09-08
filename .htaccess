@@ -140,6 +140,9 @@ RewriteRule ^tests/edit/([0-9]+)[/]?$ index.php?controller=tests&action=edit&id=
 RewriteRule ^tests/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=$1 [QSA,L]
 RewriteRule ^tests/ajax/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=Ajax$1 [QSA,L]
 
+# Пропущенные
+RewriteRule ^calls/missed[/]?$ index.php?controller=calls&action=missed [QSA,L]
+
 # as
 RewriteRule ^as/(teacher|student)/([0-9]+)[/]?$ index.php?controller=as&type=$1&id=$2 [QSA,L]
 RewriteRule ^as/cancel[/]?$ index.php?controller=as&action=cancel [QSA,L]

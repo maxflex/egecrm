@@ -164,19 +164,6 @@
 				if ($journal_errors > 0) {
 					echo '<span class="badge badge-danger pull-right" >'. $journal_errors .'</span>';
 				}
-				
-/*
-				$journal_errors = memcached()->get("JournalErrors");
-
-				$journal_errors_count = 0;
-				foreach ($journal_errors as $date => $values) {
-					$journal_errors_count += count($values);
-				}
-
-				if ($journal_errors_count > 0) {
-					echo '<span class="badge badge-danger pull-right" >'. $journal_errors_count .'</span>';
-				}
-*/
 			}
 		?>
 	</a>
@@ -203,6 +190,15 @@
 		?>
     </a>
     <a href="teachers" class="list-group-item">Преподаватели</a>
+    <a href="calls/missed" class="list-group-item">Пропущенные вызовы
+	    <?php
+		    $missed_count = Call::missedCount();
+
+		    if ($missed_count) {
+				echo '<span class="badge badge-danger pull-right">'. $missed_count .'</span>';
+		    }
+		?>
+    </a>
 	<a class="list-group-item active">Финансы</a>
 	<a href="payments" class="list-group-item">Платежи
 	    <?php
