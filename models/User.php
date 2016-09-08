@@ -85,10 +85,10 @@
 
 		public static function getLogin($id_user)
 		{
-			$User = User::findById($id_user);
+			$result = dbConnection()->query("SELECT login FROM users WHERE id={$id_user}");
 
-			if ($User) {
-				return $User->login;
+			if ($result->num_rows) {
+				return $result->fetch_object()->login;
 			} else {
 				return 'system';
 			}
@@ -453,5 +453,29 @@
 		{
 			return isset($_SESSION["view_mode_user_id"]);
 		}
+		
+		/**
+		 * Пользователь начал разговаривать (занят)
+		 */
+		public static function setCallBusy($id_user)
+		{
+			memcached()->set("users:{$id_user}:busy", true, minutes(100));
+		}
 
+		/**
+		 * Пользователь закончил разговаривать
+		 */		
+		public static function setCallFree($id_user)
+		{
+			memcached()->delete("users:{$id_user}:busy");
+		}
+		
+		/*
+		 * Пользователь сейчас разговаривает
+		 */
+		public static function isCallBusy($id_user)
+		{
+			return (memcached()->get("users:{$id_user}:busy") ? true : false);
+		}
+				
 	}

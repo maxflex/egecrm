@@ -734,4 +734,12 @@
 		}
 		return $year;
 	}
+	
+	/*
+	 * указать кол-во минут для кэша
+	 */
+	function minutes($seconds)
+	{
+		return ($seconds * 60);
+	}
 ?>

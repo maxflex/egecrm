@@ -60,8 +60,9 @@ function selfFilter (handler) {
 
 export default {
 
-  acceptStatement: true,
   priority: ON,
+  acceptStatement: true,
+  keyCodes,
 
   bind () {
     // deal with iframes
@@ -93,7 +94,8 @@ export default {
       process.env.NODE_ENV !== 'production' && warn(
         'v-on:' + this.arg + '="' +
         this.expression + '" expects a function value, ' +
-        'got ' + handler
+        'got ' + handler,
+        this.vm
       )
       return
     }
@@ -111,7 +113,10 @@ export default {
     // key filter
     var keys = Object.keys(this.modifiers)
       .filter(function (key) {
-        return key !== 'stop' && key !== 'prevent'
+        return key !== 'stop' &&
+          key !== 'prevent' &&
+          key !== 'self' &&
+          key !== 'capture'
       })
     if (keys.length) {
       handler = keyFilter(handler, keys)

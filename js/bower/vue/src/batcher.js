@@ -11,23 +11,23 @@ import {
 // before user watchers so that when user watchers are
 // triggered, the DOM would have already been in updated
 // state.
+
 var queue = []
 var userQueue = []
 var has = {}
 var circular = {}
 var waiting = false
-var internalQueueDepleted = false
 
 /**
  * Reset the batcher's state.
  */
 
 function resetBatcherState () {
-  queue = []
-  userQueue = []
+  queue.length = 0
+  userQueue.length = 0
   has = {}
   circular = {}
-  waiting = internalQueueDepleted = false
+  waiting = false
 }
 
 /**
@@ -36,11 +36,15 @@ function resetBatcherState () {
 
 function flushBatcherQueue () {
   runBatcherQueue(queue)
-  internalQueueDepleted = true
   runBatcherQueue(userQueue)
+  // user watchers triggered more watchers,
+  // keep flushing until it depletes
+  if (queue.length) {
+    return flushBatcherQueue()
+  }
   // dev tool hook
   /* istanbul ignore if */
-  if (devtools) {
+  if (devtools && config.devtools) {
     devtools.emit('flush')
   }
   resetBatcherState()
@@ -55,7 +59,7 @@ function flushBatcherQueue () {
 function runBatcherQueue (queue) {
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
-  for (var i = 0; i < queue.length; i++) {
+  for (let i = 0; i < queue.length; i++) {
     var watcher = queue[i]
     var id = watcher.id
     has[id] = null
@@ -64,14 +68,16 @@ function runBatcherQueue (queue) {
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1
       if (circular[id] > config._maxUpdateCount) {
-        queue.splice(has[id], 1)
         warn(
           'You may have an infinite update loop for watcher ' +
-          'with expression: ' + watcher.expression
+          'with expression "' + watcher.expression + '"',
+          watcher.vm
         )
+        break
       }
     }
   }
+  queue.length = 0
 }
 
 /**
@@ -86,16 +92,12 @@ function runBatcherQueue (queue) {
  */
 
 export function pushWatcher (watcher) {
-  var id = watcher.id
+  const id = watcher.id
   if (has[id] == null) {
-    // if an internal watcher is pushed, but the internal
-    // queue is already depleted, we run it immediately.
-    if (internalQueueDepleted && !watcher.user) {
-      watcher.run()
-      return
-    }
     // push watcher into appropriate queue
-    var q = watcher.user ? userQueue : queue
+    const q = watcher.user
+      ? userQueue
+      : queue
     has[id] = q.length
     q.push(watcher)
     // queue the flush

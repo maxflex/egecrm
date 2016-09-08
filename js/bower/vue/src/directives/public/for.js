@@ -1,5 +1,7 @@
 import FragmentFactory from '../../fragment/factory'
 import { FOR } from '../priorities'
+import { withoutConversion } from '../../observer/index'
+import { getPath } from '../../parsers/path'
 import {
   isObject,
   warn,
@@ -22,6 +24,7 @@ let uid = 0
 const vFor = {
 
   priority: FOR,
+  terminal: true,
 
   params: [
     'track-by',
@@ -30,9 +33,9 @@ const vFor = {
     'leave-stagger'
   ],
 
-  bind: function () {
-    // support "item in items" syntax
-    var inMatch = this.expression.match(/(.*) in (.*)/)
+  bind () {
+    // support "item in/of items" syntax
+    var inMatch = this.expression.match(/(.*) (?:in|of) (.*)/)
     if (inMatch) {
       var itMatch = inMatch[1].match(/\((.*),(.*)\)/)
       if (itMatch) {
@@ -46,7 +49,9 @@ const vFor = {
 
     if (!this.alias) {
       process.env.NODE_ENV !== 'production' && warn(
-        'Alias is required in v-for.'
+        'Invalid v-for expression "' + this.descriptor.raw + '": ' +
+        'alias is required.',
+        this.vm
       )
       return
     }
@@ -78,7 +83,7 @@ const vFor = {
     this.factory = new FragmentFactory(this.vm, this.el)
   },
 
-  update: function (data) {
+  update (data) {
     this.diff(data)
     this.updateRef()
     this.updateModel()
@@ -98,7 +103,7 @@ const vFor = {
    * @param {Array} data
    */
 
-  diff: function (data) {
+  diff (data) {
     // check if the Array was converted from an Object
     var item = data[0]
     var convertedFromObject = this.fromObject =
@@ -142,7 +147,9 @@ const vFor = {
         // update data for track-by, object repeat &
         // primitive values.
         if (trackByKey || convertedFromObject || primitive) {
-          frag.scope[alias] = value
+          withoutConversion(() => {
+            frag.scope[alias] = value
+          })
         }
       } else { // new isntance
         frag = this.create(value, alias, i, key)
@@ -176,7 +183,9 @@ const vFor = {
       }
     }
     this.vm._vForRemoving = false
-    this.vm._watchers = this.vm._watchers.filter(w => w.active)
+    if (removalIndex) {
+      this.vm._watchers = this.vm._watchers.filter(w => w.active)
+    }
 
     // Final pass, move/insert new fragments into the
     // right place.
@@ -222,7 +231,7 @@ const vFor = {
    * @return {Fragment}
    */
 
-  create: function (value, alias, index, key) {
+  create (value, alias, index, key) {
     var host = this._host
     // create iteration scope
     var parentScope = this._scope || this.vm
@@ -235,7 +244,11 @@ const vFor = {
     // for two-way binding on alias
     scope.$forContext = this
     // define scope properties
-    defineReactive(scope, alias, value)
+    // important: define the scope alias without forced conversion
+    // so that frozen data structures remain non-reactive.
+    withoutConversion(() => {
+      defineReactive(scope, alias, value)
+    })
     defineReactive(scope, '$index', index)
     if (key) {
       defineReactive(scope, '$key', key)
@@ -256,7 +269,7 @@ const vFor = {
    * Update the v-ref on owner vm.
    */
 
-  updateRef: function () {
+  updateRef () {
     var ref = this.descriptor.ref
     if (!ref) return
     var hash = (this._scope || this.vm).$refs
@@ -277,7 +290,7 @@ const vFor = {
    * parent <select>.
    */
 
-  updateModel: function () {
+  updateModel () {
     if (this.isOption) {
       var parent = this.start.parentNode
       var model = parent && parent.__v_model
@@ -296,7 +309,7 @@ const vFor = {
    * @param {Boolean} inDocument
    */
 
-  insert: function (frag, index, prevEl, inDocument) {
+  insert (frag, index, prevEl, inDocument) {
     if (frag.staggerCb) {
       frag.staggerCb.cancel()
       frag.staggerCb = null
@@ -309,7 +322,7 @@ const vFor = {
       var anchor = frag.staggerAnchor
       if (!anchor) {
         anchor = frag.staggerAnchor = createAnchor('stagger-anchor')
-        anchor.__vfrag__ = frag
+        anchor.__v_frag = frag
       }
       after(anchor, prevEl)
       var op = frag.staggerCb = cancellable(function () {
@@ -319,7 +332,15 @@ const vFor = {
       })
       setTimeout(op, staggerAmount)
     } else {
-      frag.before(prevEl.nextSibling)
+      var target = prevEl.nextSibling
+      /* istanbul ignore if */
+      if (!target) {
+        // reset end anchor position in case the position was messed up
+        // by an external drag-n-drop library.
+        after(this.end, prevEl)
+        target = this.end
+      }
+      frag.before(target)
     }
   },
 
@@ -332,7 +353,7 @@ const vFor = {
    * @param {Boolean} inDocument
    */
 
-  remove: function (frag, index, total, inDocument) {
+  remove (frag, index, total, inDocument) {
     if (frag.staggerCb) {
       frag.staggerCb.cancel()
       frag.staggerCb = null
@@ -363,7 +384,7 @@ const vFor = {
    * @param {Node} prevEl
    */
 
-  move: function (frag, prevEl) {
+  move (frag, prevEl) {
     // fix a common issue with Sortable:
     // if prevEl doesn't have nextSibling, this means it's
     // been dragged after the end anchor. Just re-position
@@ -384,17 +405,13 @@ const vFor = {
    * @param {String} [key]
    */
 
-  cacheFrag: function (value, frag, index, key) {
+  cacheFrag (value, frag, index, key) {
     var trackByKey = this.params.trackBy
     var cache = this.cache
     var primitive = !isObject(value)
     var id
     if (key || trackByKey || primitive) {
-      id = trackByKey
-        ? trackByKey === '$index'
-          ? index
-          : value[trackByKey]
-        : (key || value)
+      id = getTrackByKey(index, key, value, trackByKey)
       if (!cache[id]) {
         cache[id] = frag
       } else if (trackByKey !== '$index') {
@@ -410,8 +427,13 @@ const vFor = {
           process.env.NODE_ENV !== 'production' &&
           this.warnDuplicate(value)
         }
-      } else {
+      } else if (Object.isExtensible(value)) {
         def(value, id, frag)
+      } else if (process.env.NODE_ENV !== 'production') {
+        warn(
+          'Frozen v-for objects cannot be automatically tracked, make sure to ' +
+          'provide a track-by key.'
+        )
       }
     }
     frag.raw = value
@@ -426,16 +448,12 @@ const vFor = {
    * @return {Fragment}
    */
 
-  getCachedFrag: function (value, index, key) {
+  getCachedFrag (value, index, key) {
     var trackByKey = this.params.trackBy
     var primitive = !isObject(value)
     var frag
     if (key || trackByKey || primitive) {
-      var id = trackByKey
-        ? trackByKey === '$index'
-          ? index
-          : value[trackByKey]
-        : (key || value)
+      var id = getTrackByKey(index, key, value, trackByKey)
       frag = this.cache[id]
     } else {
       frag = value[this.id]
@@ -453,7 +471,7 @@ const vFor = {
    * @param {Fragment} frag
    */
 
-  deleteCachedFrag: function (frag) {
+  deleteCachedFrag (frag) {
     var value = frag.raw
     var trackByKey = this.params.trackBy
     var scope = frag.scope
@@ -463,11 +481,7 @@ const vFor = {
     var key = hasOwn(scope, '$key') && scope.$key
     var primitive = !isObject(value)
     if (trackByKey || key || primitive) {
-      var id = trackByKey
-        ? trackByKey === '$index'
-          ? index
-          : value[trackByKey]
-        : (key || value)
+      var id = getTrackByKey(index, key, value, trackByKey)
       this.cache[id] = null
     } else {
       value[this.id] = null
@@ -484,7 +498,7 @@ const vFor = {
    * @param {String} type
    */
 
-  getStagger: function (frag, index, total, type) {
+  getStagger (frag, index, total, type) {
     type = type + 'Stagger'
     var trans = frag.node.__v_trans
     var hooks = trans && trans.hooks
@@ -499,7 +513,7 @@ const vFor = {
    * filters. This is passed to and called by the watcher.
    */
 
-  _preProcess: function (value) {
+  _preProcess (value) {
     // regardless of type, store the un-filtered raw value.
     this.rawValue = value
     return value
@@ -510,11 +524,11 @@ const vFor = {
    * the filters. This is passed to and called by the watcher.
    *
    * It is necessary for this to be called during the
-   * wathcer's dependency collection phase because we want
+   * watcher's dependency collection phase because we want
    * the v-for to update when the source Object is mutated.
    */
 
-  _postProcess: function (value) {
+  _postProcess (value) {
     if (isArray(value)) {
       return value
     } else if (isPlainObject(value)) {
@@ -539,7 +553,7 @@ const vFor = {
     }
   },
 
-  unbind: function () {
+  unbind () {
     if (this.descriptor.ref) {
       (this._scope || this.vm).$refs[this.descriptor.ref] = null
     }
@@ -575,7 +589,7 @@ function findPrevFrag (frag, anchor, id) {
   var el = frag.node.previousSibling
   /* istanbul ignore if */
   if (!el) return
-  frag = el.__vfrag__
+  frag = el.__v_frag
   while (
     (!frag || frag.forId !== id || !frag.inserted) &&
     el !== anchor
@@ -583,7 +597,7 @@ function findPrevFrag (frag, anchor, id) {
     el = el.previousSibling
     /* istanbul ignore if */
     if (!el) return
-    frag = el.__vfrag__
+    frag = el.__v_frag
   }
   return frag
 }
@@ -622,12 +636,32 @@ function range (n) {
   return ret
 }
 
+/**
+ * Get the track by key for an item.
+ *
+ * @param {Number} index
+ * @param {String} key
+ * @param {*} value
+ * @param {String} [trackByKey]
+ */
+
+function getTrackByKey (index, key, value, trackByKey) {
+  return trackByKey
+    ? trackByKey === '$index'
+      ? index
+      : trackByKey.charAt(0).match(/\w/)
+        ? getPath(value, trackByKey)
+        : value[trackByKey]
+    : (key || value)
+}
+
 if (process.env.NODE_ENV !== 'production') {
   vFor.warnDuplicate = function (value) {
     warn(
       'Duplicate value found in v-for="' + this.descriptor.raw + '": ' +
       JSON.stringify(value) + '. Use track-by="$index" if ' +
-      'you are expecting duplicate values.'
+      'you are expecting duplicate values.',
+      this.vm
     )
   }
 }

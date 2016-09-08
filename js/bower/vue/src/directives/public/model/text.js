@@ -1,3 +1,5 @@
+/* global jQuery */
+
 import {
   isIE9,
   isAndroid,
@@ -94,12 +96,12 @@ export default {
     this.hasjQuery = typeof jQuery === 'function'
     if (this.hasjQuery) {
       const method = jQuery.fn.on ? 'on' : 'bind'
-      jQuery(el)[method]('change', this.listener)
+      jQuery(el)[method]('change', this.rawListener)
       if (!lazy) {
         jQuery(el)[method]('input', this.listener)
       }
     } else {
-      this.on('change', this.listener)
+      this.on('change', this.rawListener)
       if (!lazy) {
         this.on('input', this.listener)
       }
@@ -127,7 +129,10 @@ export default {
   },
 
   update (value) {
-    this.el.value = _toString(value)
+    // #3029 only update when the value changes. This prevent
+    // browsers from overwriting values like selectionStart
+    value = _toString(value)
+    if (value !== this.el.value) this.el.value = value
   },
 
   unbind () {

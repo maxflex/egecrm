@@ -1,5 +1,10 @@
-import { inBrowser, trimNode, isTemplate } from '../util/index'
 import Cache from '../cache'
+import {
+  inBrowser,
+  trimNode,
+  isTemplate,
+  isFragment
+} from '../util/index'
 
 const templateCache = new Cache(1000)
 const idSelectorCache = new Cache(1000)
@@ -66,12 +71,12 @@ map.rect = [
  */
 
 function isRealTemplate (node) {
-  return isTemplate(node) &&
-    node.content instanceof DocumentFragment
+  return isTemplate(node) && isFragment(node.content)
 }
 
-const tagRE = /<([\w:]+)/
+const tagRE = /<([\w:-]+)/
 const entityRE = /&#?\w+?;/
+const commentRE = /<!--/
 
 /**
  * Convert a string template to a DocumentFragment.
@@ -96,14 +101,14 @@ function stringToFragment (templateString, raw) {
   var frag = document.createDocumentFragment()
   var tagMatch = templateString.match(tagRE)
   var entityMatch = entityRE.test(templateString)
+  var commentMatch = commentRE.test(templateString)
 
-  if (!tagMatch && !entityMatch) {
+  if (!tagMatch && !entityMatch && !commentMatch) {
     // text only, return a single text node.
     frag.appendChild(
       document.createTextNode(templateString)
     )
   } else {
-
     var tag = tagMatch && tagMatch[1]
     var wrap = map[tag] || map.efault
     var depth = wrap[0]
@@ -139,10 +144,13 @@ function stringToFragment (templateString, raw) {
 
 function nodeToFragment (node) {
   // if its a template tag and the browser supports it,
-  // its content is already a document fragment.
+  // its content is already a document fragment. However, iOS Safari has
+  // bug when using directly cloned template content with touch
+  // events and can cause crashes when the nodes are removed from DOM, so we
+  // have to treat template elements as string templates. (#2805)
+  /* istanbul ignore if */
   if (isRealTemplate(node)) {
-    trimNode(node.content)
-    return node.content
+    return stringToFragment(node.innerHTML)
   }
   // script template
   if (node.tagName === 'SCRIPT') {
@@ -197,6 +205,7 @@ var hasTextareaCloneBug = (function () {
  */
 
 export function cloneNode (node) {
+  /* istanbul ignore if */
   if (!node.querySelectorAll) {
     return node.cloneNode()
   }
@@ -262,7 +271,7 @@ export function parseTemplate (template, shouldClone, raw) {
 
   // if the template is already a document fragment,
   // do nothing
-  if (template instanceof DocumentFragment) {
+  if (isFragment(template)) {
     trimNode(template)
     return shouldClone
       ? cloneNode(template)

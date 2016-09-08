@@ -2520,7 +2520,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
   vertical-align: middle !important; }
 
 .call-popup {
-  height: 84px;
+  height: 100px;
   width: 400px; }
   .call-popup img {
     height: 18px;

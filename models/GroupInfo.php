@@ -57,7 +57,7 @@
 				"condition" => "id_student={$id_student}
 								 AND id_branch={$id_branch}
 								 AND id_subject={$id_subject}
-								 AND first_schedule='{$first_schedule}' 
+								 AND first_schedule='{$first_schedule}'
 								 AND cabinet={$cabinet}"
 			]);
 		}

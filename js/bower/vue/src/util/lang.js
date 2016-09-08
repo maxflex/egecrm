@@ -50,6 +50,10 @@ export function del (obj, key) {
   delete obj[key]
   var ob = obj.__ob__
   if (!ob) {
+    if (obj._isVue) {
+      delete obj._data[key]
+      obj._digest()
+    }
     return
   }
   ob.dep.notify()
@@ -299,7 +303,7 @@ export function isPlainObject (obj) {
 export const isArray = Array.isArray
 
 /**
- * Define a non-enumerable property
+ * Define a property.
  *
  * @param {Object} obj
  * @param {String} key
