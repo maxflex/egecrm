@@ -93,10 +93,10 @@
 	/*
 	 * Получает текущее время
 	 */
-	function now()
-	{
-		return date("Y-m-d H:i:s");
-	}
+	function now($no_time = false)
+    {
+        return date('Y-m-d' . ($no_time ? '' : ' H:i:s'));
+    }
 
 	/*
 	 * Обрезает пробелы и извлекает теги

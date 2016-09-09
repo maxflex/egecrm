@@ -1545,9 +1545,9 @@ h4.row-header {
   overflow: hidden; }
 
 .lightbox-contract-stats {
-  width: 600px;
-  left: calc(50% - 300px);
-  top: 25%; }
+  width: 90%;
+  left: 5%;
+  top: 4%; }
 
 .vertical-header thead th {
   text-align: center;
@@ -2572,14 +2572,12 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
   text-indent: 20px; }
 
 .contract-table td {
-  padding:5px;
-  width:17%;
+  padding: 5px;
+  width: 17%;
   border: 1px solid black;
-  border-collapse: collapse;
-}
-.contract-table td:first-child {
- width:35%;
-}
+  border-collapse: collapse; }
+  .contract-table td:first-child {
+    width: 35%; }
+
 .contract-table .head td {
-  background:#63b2de;
-}
+  background: #63b2de; }

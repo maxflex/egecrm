@@ -83,6 +83,40 @@
 		public function actionAjaxGroupCreateHelper()
 		{
 			extract($_POST);
+			$days = 45; // отображать статистику за последние n дней
+			$date = new DateTime('today');
+			
+	        $end_date   = clone $date;
+	        $start_date = clone $date->sub(new DateInterval("P{$days}D"));
+			
+			if ($subjects) {
+				$subject_ids = implode(",", $subjects);
+			}
+			
+	        $return = [];
+	        while ($start_date < $end_date) {
+		        $start = $start_date->modify('+1 day')->format('Y-m-d'); // переход на новую неделю
+	            $end   = $start_date->format('Y-m-d');
+	            $return_date = $end;
+				$query = "
+	            	SELECT COUNT(*) AS cnt FROM contracts c
+	            	LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+	            	WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}'" 
+	            	  . Contract::ZERO_OR_NULL_CONDITION_JOIN . " AND cs.status=3 AND c.external=0
+	            	" . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
+	            	" . ($grade ? " AND c.grade = {$grade} " : "") . "
+	            	" . ($year ? " AND c.year = {$year} " : "") . "
+	            ";
+	            $return[date('d.m.y', strtotime($return_date))] = dbConnection()->query($query)->fetch_object()->cnt;
+
+	        }
+			
+			returnJsonAng($return);
+
+
+			/**** old version *****/
+
+
 
 			if ($subjects) {
 				$subjects_ids = implode(",", $subjects);
@@ -113,6 +147,7 @@
 						" . ($subjects ? " AND cs.id_subject IN ($subjects_ids) " : "") . "
 						" . ($id_branch ? " AND CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
 						" . ($grade ? " AND c.grade = {$grade} " : "") . "
+						" . ($year ? " AND c.year = {$year} " : "") . "
 					GROUP BY c.id
 				");
 

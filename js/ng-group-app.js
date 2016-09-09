@@ -4,7 +4,7 @@ var testy,
 
 testy = false;
 
-angular.module("Group", ['ngAnimate']).filter('toArray', function() {
+angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() {
   return function(obj) {
     var arr;
     arr = [];
@@ -1262,16 +1262,43 @@ angular.module("Group", ['ngAnimate']).filter('toArray', function() {
       return redirect("groups");
     });
   };
+  angular.merge = function(s1, s2) {
+    return $.extend(true, s1, s2);
+  };
+  $scope.series = ["договоров"];
+  $scope.datasetOverride = [
+    {
+      type: 'bar',
+      backgroundColor: 'rgba(51,122,183,.75)',
+      borderColor: 'rgba(51,122,183,.75)',
+      borderWidth: 0
+    }
+  ];
+  $scope.options = {
+    scaleOverride: true,
+    scaleIntegersOnly: true,
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            min: 0,
+            stepSize: 1
+          }
+        }
+      ]
+    }
+  };
   $scope.createHelper = function() {
     lightBoxShow('contract-stats');
     $scope.create_helper_data = null;
     return $.post("ajax/GroupCreateHelper", {
-      id_branch: $scope.search.id_branch,
-      subjects: $scope.search.subjects,
+      year: $scope.search.year,
+      subjects: $scope.search.id_subject,
       grade: $scope.search.grade
     }, function(response) {
-      console.log(response);
       $scope.create_helper_data = response;
+      $scope.labels = _.keys(response);
+      $scope.data = [_.values(response)];
       return $scope.$apply();
     }, "json");
   };

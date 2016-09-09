@@ -1,6 +1,6 @@
 	testy = false
 
-	angular.module "Group", ['ngAnimate']
+	angular.module "Group", ['ngAnimate', 'chart.js']
 		.filter 'toArray', ->
 			(obj) ->
 				arr = []
@@ -1022,17 +1022,41 @@
 				ajaxStart()
 				$.post "groups/ajax/UpdateCacheAll", {}, ->
 					redirect "groups"
-
+			
+			# from newer version of angular
+			angular.merge = (s1,s2) ->
+				$.extend(true, s1, s2)
+				
+			$scope.series = ["договоров"]
+			$scope.datasetOverride = [
+		        type: 'bar'
+		        backgroundColor: 'rgba(51,122,183,.75)'
+		        borderColor: 'rgba(51,122,183,.75)'
+		        borderWidth: 0
+			]
+			$scope.options =
+				scaleOverride: true
+				scaleIntegersOnly: true
+				scales:
+					yAxes:
+						[
+							ticks:
+								min: 0
+								stepSize: 1
+						]
+			# #337ab7
 			$scope.createHelper = ->
 				lightBoxShow 'contract-stats'
 				$scope.create_helper_data = null
 				$.post "ajax/GroupCreateHelper",
-					id_branch: $scope.search.id_branch
-					subjects: $scope.search.subjects
-					grade: $scope.search.grade
+					year: $scope.search.year
+					subjects: $scope.search.id_subject
+					grade: $scope.search.grade					
 				, (response) ->
-					console.log response
 					$scope.create_helper_data = response
+					# chart data
+					$scope.labels = _.keys(response)
+					$scope.data = [_.values(response)]
 					$scope.$apply()
 				, "json"
 

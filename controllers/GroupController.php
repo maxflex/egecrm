@@ -13,6 +13,8 @@
 		public function beforeAction()
 		{
 			$this->addJs("ng-group-app");
+			$this->addJs("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.js", true);
+			$this->addJs("https://cdn.jsdelivr.net/angular.chartjs/1.0.2/angular-chart.js", true);
 /*
 			ini_set("display_errors", 1);
 			error_reporting(E_ALL);
