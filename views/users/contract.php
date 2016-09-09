@@ -13,3 +13,20 @@
         </div>
     </div>
 </div>
+<style>
+    .contract-content {
+        text-indent: 20px; }
+
+    .contract-table td {
+        padding:5px;
+        width:17%;
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    .contract-table td:first-child {
+        width:35%;
+    }
+    .contract-table .head td {
+        background:#63b2de;
+    }
+</style>

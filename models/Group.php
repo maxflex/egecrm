@@ -664,7 +664,7 @@
 				. (!isBlank($search->cabinet) ? " AND g.cabinet={$search->cabinet}" : "")
 				. (!isBlank($search->year) ? " AND g.year={$search->year}" : "")
 				. ((! isBlank($search->id_teacher) && empty($ending)) ? " AND g.id_teacher={$search->id_teacher}" : "")
-				. (!isBlank($search->id_subject) ? " AND g.id_subject IN (". (is_array($search->id_subject) ? implode(",", $search->id_subject) : $search->id_subject) .") " : "")
+				. (!isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
 				. (!isBlank($search->id_branch) ? " AND g.id_branch={$search->id_branch}" : "")
 				. (!isBlank($search->grade) ? " AND g.grade={$search->grade}" : "");
 			return "SELECT " . $select . $main_query . $ending;
