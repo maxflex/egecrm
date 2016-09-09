@@ -30,7 +30,7 @@
 				            ]) ?>
 						</div>
 				        <div>
-							<select id='subjects-select' multiple class="watch-select form-control single-select" ng-model="search.subjects" ng-change='filter()'>
+							<select id='subjects-select' multiple class="watch-select form-control single-select" ng-model="search.id_subject" ng-change='filter()'>
 								<option
 									data-subtext="{{ counts.subject[id_subject] || '' }}"
 									ng-repeat="(id_subject, name) in Subjects"
