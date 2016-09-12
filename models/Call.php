@@ -97,7 +97,7 @@
             // Ищем учителя с таким номером
             $teacher = dbEgerep()->query("
             	select id, first_name, last_name, middle_name from teachers
-            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'  OR phone4='{$phone}'
             ");
             if ($teacher->num_rows) {
 	            $data = $teacher->fetch_object();
@@ -161,6 +161,8 @@
 			
 			return $return;
 		}
+		
+		
 		
 		/**
 		 * Уведомить всех пользователей об ответе на звонок

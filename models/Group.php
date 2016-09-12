@@ -587,7 +587,7 @@
 			$start_from = ($page - 1) * Group::PER_PAGE;
 			
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
-
+			
 			// получаем данные
 			$query = static::_generateQuery($search, "g.id, g.id_branch, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.cabinet, g.ended, g.ready_to_start");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
@@ -660,7 +660,7 @@
                     $time_cond = ' ('.implode(' OR ', $time_cond).') ';
                 }
 			}
-
+			
 			$main_query = "
 				FROM groups g
 				" . (! empty($search->time) ? " JOIN group_time gt ON (g.id = gt.id_group AND {$time_cond})" : "") . "
@@ -670,8 +670,7 @@
 				. ((! isBlank($search->id_teacher) && empty($ending)) ? " AND g.id_teacher={$search->id_teacher}" : "")
 				. (!isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
 				. (!isBlank($search->id_branch) ? " AND g.id_branch={$search->id_branch}" : "")
-				. (!isBlank($search->grade) ? " AND g.grade={$search->grade}" : "")
-				. (!isBlank($search->level) ? $search->level == GroupLevels::EXTERNAL ? " AND g.level=".GroupLevels::EXTERNAL : " AND g.level <> ".GroupLevels::EXTERNAL : "");
+				. (!isBlank($search->grade) ? " AND g.grade={$search->grade}" : "");
 			return "SELECT " . $select . $main_query . $ending;
 
 		}
