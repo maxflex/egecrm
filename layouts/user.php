@@ -231,7 +231,6 @@
 	<?php endif ?>
 	<a href="settings/cabinet" class="list-group-item">Загрузка кабинетов</a>
     <a href="settings/vocations" class="list-group-item">Календарь</a>
-    <a href="test/clientsmap" class="list-group-item">Карта клиентов</a>
     <a href="templates" class="list-group-item">Шаблоны</a>
     <a href="teachers/html" class="list-group-item">FAQ</a>
     <?php if (User::fromSession()->show_users) : ?>

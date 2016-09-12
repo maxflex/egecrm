@@ -1767,24 +1767,6 @@
 			memcached()->delete("Users");
 		}
 
-		public function actionClientsMap()
-		{
-			$this->setTabTitle("Карта клиентов");
-
-			$this->addJs("//maps.google.ru/maps/api/js?libraries=places", true);
-			$this->addJs("maps.controller, ng-test-app");
-
-			$ang_init_data = angInit([
-				"Branches"	=> Branches::$all,
-				"Grades"	=> Grades::$all,
-				"Subjects"	=> Subjects::$all,
-			]);
-
-			$this->render("clientsmap", [
-				"ang_init_data" => $ang_init_data,
-			]);
-		}
-
 		public function actionBranchesDelete()
 		{
 			error_reporting(E_ALL);
