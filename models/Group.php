@@ -614,7 +614,7 @@
 				
 				if ($Group->ready_to_start) {
 					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
-				}
+				} 
 				
 				$data[] = $Group;
 			//	$data[] = Group::findById($row->id);
