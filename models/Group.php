@@ -656,7 +656,7 @@
                     $time_cond = ' ('.implode(' OR ', $time_cond).') ';
                 }
 			}
-			
+
 			$main_query = "
 				FROM groups g
 				" . (! empty($search->time) ? " JOIN group_time gt ON (g.id = gt.id_group AND {$time_cond})" : "") . "
@@ -666,7 +666,8 @@
 				. ((! isBlank($search->id_teacher) && empty($ending)) ? " AND g.id_teacher={$search->id_teacher}" : "")
 				. (!isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
 				. (!isBlank($search->id_branch) ? " AND g.id_branch={$search->id_branch}" : "")
-				. (!isBlank($search->grade) ? " AND g.grade={$search->grade}" : "");
+				. (!isBlank($search->grade) ? " AND g.grade={$search->grade}" : "")
+				. (!isBlank($search->level) ? $search->level == GroupLevels::EXTERNAL ? " AND g.level=".GroupLevels::EXTERNAL : " AND g.level <> ".GroupLevels::EXTERNAL : "");
 			return "SELECT " . $select . $main_query . $ending;
 
 		}

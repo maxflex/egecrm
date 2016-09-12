@@ -1266,7 +1266,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     });
   });
 }).controller("ListCtrl", function($scope, $timeout) {
-  var bindDraggable2;
+  var bindDraggable2, filterBranches;
   $scope.updateCache = function() {
     ajaxStart();
     return $.post("groups/ajax/UpdateCacheAll", {}, function() {
@@ -1449,6 +1449,13 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     }
     return ((ref = String(Group.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ((ref1 = String(Group.branch), indexOf.call($scope.search2.branches, ref1) >= 0) || $scope.search2.branches.length === 0) && (Group.subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject);
   };
+  filterBranches = function(Student) {
+    return _.intersection($scope.search2.branches.map(Number), Student.branches).length > 0;
+  };
+  $scope.studentsWithNoGroupFilter = function(Student) {
+    var ref;
+    return ((ref = String(Student.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ($scope.search2.branches.length === 0 || filterBranches(Student)) && (Student.id_subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject) && (Student.year === parseInt($scope.search2.year) || !$scope.search2.year) && (Student.level === parseInt($scope.search2.level) || !$scope.search2.level);
+  };
   $scope.inGroupDay = function(weekday, Group) {
     var days, group_days;
     weekday++;
@@ -1622,12 +1629,13 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     grades: "",
     branches: "",
     id_subject: "",
-    year: ""
+    year: "",
+    level: ""
   };
   $scope.loadStudentPicker = function() {
     $scope.students_picker = true;
     if (!$scope.search2.grades && $scope.search.grade) {
-      $scope.search2.grades = $scope.search.grade;
+      $scope.search2.grades = [$scope.search.grade];
     }
     if (!$scope.search2.year && $scope.search.year) {
       $scope.search2.year = $scope.search.year;
@@ -1635,8 +1643,11 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     if (!$scope.search2.branches && $scope.search.id_branch) {
       $scope.search2.branches = $scope.search.id_branch;
     }
-    if (!$scope.search2.id_subject && $scope.search.subjects.length) {
+    if (!$scope.search2.id_subject && $scope.search.subjects && $scope.search.subjects.length) {
       $scope.search2.id_subject = $scope.search.subjects[0];
+    }
+    if (!$scope.search2.level && $scope.search.level) {
+      $scope.search2.level = $scope.search.level === '5' ? '1' : '0';
     }
     $("html, body").animate({
       scrollTop: $(document).height()

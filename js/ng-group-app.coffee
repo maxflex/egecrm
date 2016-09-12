@@ -27,6 +27,7 @@
 				for i in [0...total] by 1
 					input.push i
 				input
+
 		.controller "JournalCtrl", ($scope) ->
 			$scope.grayMonth = (date) ->
 				d = moment(date).format("M")
@@ -1203,6 +1204,16 @@
 					(String(Group.branch) in $scope.search2.branches or $scope.search2.branches.length == 0) and
 					(Group.subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject)
 
+			filterBranches = (Student) ->
+				_.intersection($scope.search2.branches.map(Number), Student.branches).length > 0
+
+			$scope.studentsWithNoGroupFilter = (Student) ->
+				return (String(Student.grade) in $scope.search2.grades or $scope.search2.grades.length == 0) and
+					($scope.search2.branches.length is 0 or filterBranches(Student)) and
+					(Student.id_subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject) and
+					(Student.year is parseInt($scope.search2.year) or not $scope.search2.year) and
+					(Student.level is parseInt($scope.search2.level) or not $scope.search2.level)
+
 
 			$scope.inGroupDay = (weekday, Group) ->
 				weekday++
@@ -1341,13 +1352,16 @@
 				branches: ""
 				id_subject: ""
 				year: ""
+				level: ""
 
 			$scope.loadStudentPicker = ->
 				$scope.students_picker = true
-				$scope.search2.grades = $scope.search.grade if not $scope.search2.grades and $scope.search.grade
+				$scope.search2.grades = [$scope.search.grade] if not $scope.search2.grades and $scope.search.grade
 				$scope.search2.year = $scope.search.year if not $scope.search2.year and $scope.search.year
 				$scope.search2.branches = $scope.search.id_branch if not $scope.search2.branches and $scope.search.id_branch
-				$scope.search2.id_subject = $scope.search.subjects[0] if not $scope.search2.id_subject and $scope.search.subjects.length
+				$scope.search2.id_subject = $scope.search.subjects[0] if not $scope.search2.id_subject and $scope.search.subjects and $scope.search.subjects.length
+				if not $scope.search2.level and $scope.search.level
+					$scope.search2.level = if $scope.search.level is '5' then '1' else '0'
 				$("html, body").animate { scrollTop: $(document).height() }, 1000
 				$timeout ->
 					$('#group-branch-filter2').selectpicker('refresh')

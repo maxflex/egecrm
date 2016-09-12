@@ -241,18 +241,18 @@
 			$result = dbConnection()->query("
 				SELECT 	s.id, s.branches, s.first_name, s.last_name, s.middle_name,
 						cs.id_subject, cs.status, cs.count,
-						c.id as id_contract, c.grade, c.date
+						c.id as id_contract, c.grade, c.date, c.year, c.external as level
 				FROM students s
 					LEFT JOIN contracts c on c.id_student = s.id
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND c.year = g.year)
 					WHERE c.id IS NOT NULL AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL AND cs.id_subject > 0
-						AND cs.status != 1 AND c.external != 1
-			");
+						AND cs.status != 1 
+			");//AND c.external != 1
 
 			while ($row = $result->fetch_assoc()) {
 				$student_branches = explode(",", $row['branches']);
-				unset($row['branches']);
+				$row['branches'] = $student_branches;
 				foreach ($student_branches as $id_branch) {
 					$row['branch_short'][$id_branch] = Branches::getShortColoredById($id_branch);
 				}

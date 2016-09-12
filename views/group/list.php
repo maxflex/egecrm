@@ -71,6 +71,16 @@
 									value="{{year}}">{{ yearLabel(year) }}</option>
 							</select>
 						</div>
+						<div class="form-group">
+							<select class="watch-select single-select form-control" ng-model="search.level" ng-change='filter()'>
+								<option value="" data-subtext="{{ counts.level[''] || '' }}">все</option>
+								<option disabled>────────</option>
+								<option data-subtext="{{ counts.level['not_external'] || '' }}"
+										value="-1">все кроме экстерната</option>
+								<option data-subtext="{{ counts.level['external'] || '' }}"
+										value="<?= GroupLevels::EXTERNAL; ?>">экстернат</option>
+							</select>
+						</div>
 					</div>
 
 					<div ng-show="Groups === undefined" style="padding: 100px" class="small half-black center">
@@ -90,17 +100,17 @@
 			</div>
 
 			<div ng-show="students_picker">
-				<div class="row" style="margin-bottom: 15px">
-							<div class="col-sm-3">
+				<div class="row flex-list" style="margin-bottom: 15px">
+							<div>
 								<?= Grades::buildMultiSelector(false, ["ng-model" => "search2.grades", "id" => "grades-select2"]) ?>
 							</div>
-							<div class="col-sm-3">
+							<div>
 				                <?= Branches::buildMultiSelector(false, ["id" => "group-branch-filter2", "ng-model" => "search2.branches"]) ?>
 							</div>
-							<div class="col-sm-3">
+							<div>
 								<?= Subjects::buildSelector(false, false, ["ng-model" => "search2.id_subject"]) ?>
 							</div>
-							<div class="col-sm-3"> 
+							<div>
 								<select class="form-control" 
 									ng-model="search2.year">
 									<option value="">все</option>
@@ -108,6 +118,14 @@
 									<option ng-repeat="year in <?= Years::json() ?>" 
 											value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
 								</select> 
+							</div>
+							<div>
+								<select class="single-select form-control" ng-model="search2.level">
+									<option value="" data-subtext="">все</option>
+									<option disabled>────────</option>
+									<option data-subtext="" value="0">все кроме экстерната</option>
+									<option data-subtext="" value="1">экстернат</option>
+								</select>
 							</div>
 						</div>
 
@@ -121,7 +139,7 @@
 
 						<table class="table table-divlike">
 							<tbody>
-								<tr ng-repeat="Student in StudentsWithNoGroup" class="student-line is-draggable"
+								<tr ng-repeat="Student in StudentsWithNoGroup | filter:studentsWithNoGroupFilter" class="student-line is-draggable"
 									data-group-index="{{$parent.$index}}" data-student="{{Student}}" data-id="{{Student.id}}">
 									<td width="300">
 										<a href="student/{{Student.id}}" ng-class="{
