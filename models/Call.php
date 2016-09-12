@@ -2,7 +2,7 @@
 	class Call
 	{
 		const TEST_NUMBER		= '74955653170';
-		const APERS_NUMBER 		= '74956461080';
+		const EGEREP_NUMBER 	= '74956461080';
 		const EGECENTR_NUMBER 	= '74956468592';
 		
 		/*
@@ -52,10 +52,17 @@
 		
 		
 		/*
-		 * Звонок от ЕГЭ-Центра
+		 * Номер ЕГЭ-Центра
 		 */
 		public static function isEgecentr($number) {
             return $number == self::EGECENTR_NUMBER;
+        }
+        
+        /*
+		 * Номер ЕГЭ-Репетитора
+		 */
+		public static function isEgerep($number) {
+            return $number == self::EGEREP_NUMBER;
         }
         
         /*
@@ -174,11 +181,21 @@
         
         /**
 	     * Уведомить pusher о входящем звонке
+	     * $number – входящий номер нужен для определения crm
 	     */
-        public static function notifyIncoming($id_user, $data)
+        public static function notifyIncoming($id_user, $data, $number)
         {
-	        Socket::trigger('user_' . $id_user, 'incoming', $data);
+	        Socket::trigger('user_' . $id_user, 'incoming', $data, static::_getCrmByNumber($number));
         }
+		
+		private static function _getCrmByNumber($number)
+		{
+			if (static::isEgerep($number)) {
+				return 'egerep';
+			} else {
+				return 'egecrm';
+			}
+		}
 		
 		private static function _nameOrEmpty($name)
         {

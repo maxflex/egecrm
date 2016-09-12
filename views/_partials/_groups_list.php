@@ -64,8 +64,7 @@
 		</td>
 		<td>
 			<span ng-show="Group.id_teacher" ng-init="_Teacher = Group.Teacher || getTeacher(Group.id_teacher)">
-				{{_Teacher.last_name}}
-				{{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.
+				<a target="_blank" href="teachers/edit/{{ _Teacher.id }}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
 			</span>
 		</td>
 		<td>
@@ -82,6 +81,9 @@
 		</td>
 		<td>
 			<span ng-show='Group.ended'>заархивирована</span>
+		</td>
+		<td>
+			<span ng-show='Group.ready_to_start' class='text-danger'>требует запуска {{ Group.notified_students_count }}/{{ Group.students.length }}</span>
 		</td>
 <!--
 		<td width="150">

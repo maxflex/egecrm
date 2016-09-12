@@ -61,14 +61,14 @@
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
-		public function getNotifiedStudentsCount()
+		public static function getNotifiedStudentsCount($Group)
 		{
-			if (!count($this->students) || !$this->id_branch || !$this->id_subject || !$this->first_schedule || !$this->cabinet) {
+			if (!count($Group->students) || !$Group->id_branch || !$Group->id_subject || !$Group->first_schedule || !$Group->cabinet) {
 				return 0;
 			}
 			return GroupSms::count([
-				"condition" => "id_branch = {$this->id_branch} AND id_student IN (" . implode(",", $this->students) . ") 
-								 AND id_subject = {$this->id_subject} AND first_schedule = '{$this->first_schedule}' AND cabinet={$this->cabinet}"
+				"condition" => "id_branch = {$Group->id_branch} AND id_student IN (" . implode(",", $Group->students) . ") 
+								 AND id_subject = {$Group->id_subject} AND first_schedule = '{$Group->first_schedule}' AND cabinet={$Group->cabinet}"
 			]);
 		}
 
@@ -589,7 +589,7 @@
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "g.id, g.id_branch, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.cabinet, g.ended");
+			$query = static::_generateQuery($search, "g.id, g.id_branch, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.cabinet, g.ended, g.ready_to_start");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
 			
 			while ($row = $result->fetch_object()) {
@@ -611,6 +611,10 @@
 				$Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
 				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTimeStatic($Group->id);
+				
+				if ($Group->ready_to_start) {
+					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
+				}
 				
 				$data[] = $Group;
 			//	$data[] = Group::findById($row->id);

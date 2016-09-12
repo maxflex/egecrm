@@ -1,0 +1,37 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "b803cb4b3a2764baabf59ea6d5e633d2",
+    "content-hash": "59c61e11fe8386bd9bfee1f89d221b5e",
+    "packages": [
+        {
+            "name": "ege-shared",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://mkolyadin@bitbucket.org/mkolyadin/ege-shared.git",
+                "reference": "844381e3a1b7f0c1390f1e75dfb5681f03149fcd"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Shared\\": "src/"
+                }
+            },
+            "time": "2016-09-09 11:27:41"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "ege-shared": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

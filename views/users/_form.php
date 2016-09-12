@@ -121,16 +121,13 @@
             <input type="hidden" ng-model="User.type" value="User.type"/>
         </div>
     </div>
+    <?php if (User::isDev() || User::isRoot() || User::fromSession()->id == 65) :?>
     <div class="col-sm-2">
         <div class="form-group">
-            <input class="form-control"
-                   type="number"
-                   placeholder="зарплата"
-                   ng-model="User.salary"
-                   ng-if="<?= User::isDev() || User::isRoot(); ?>">
+            <input class="form-control" type="number" placeholder="зарплата" ng-model="User.salary">
         </div>
-
     </div>
+    <?php endif ?>
 </div>
 <!--/user data-->
 <!--access settings -->

@@ -24,8 +24,8 @@
 				}
 			}
 			
-			// входящий звонок от ЕГЭ-Центра			
-			if (Call::isEgecentr($data->to->line_number)) {
+			// входящий звонок в ЕГЭ-Центр или ЕГЭ-Репетитор
+			if (in_array($data->to->line_number, [Call::EGEREP_NUMBER, Call::EGECENTR_NUMBER])) {
 				// @рассмотреть добавление определения в appeared
 				switch ($data->call_state) {
 					case Mango::STATE_APPEARED:
@@ -42,7 +42,7 @@
 						break;
 				}
 				// уведомляем о входящем звонке
-				Call::notifyIncoming($data->to->extension, $data);
+				Call::notifyIncoming($data->to->extension, $data, $data->to->line_number);
 			}
 		}
 		

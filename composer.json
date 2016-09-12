@@ -1,0 +1,14 @@
+{
+    "name": "EGE CMS",
+    "description": "lk.ege-centr.ru",
+    "type": "project",
+    "repositories":[
+        {
+            "type":"git",
+            "url":"https://mkolyadin@bitbucket.org/mkolyadin/ege-shared.git"
+        }
+    ],
+    "require": {
+        "ege-shared":"dev-master"
+    }
+}
