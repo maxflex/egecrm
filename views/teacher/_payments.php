@@ -2,7 +2,7 @@
 	<div class="col-sm-12">
 		<?= globalPartial('loading', ['model' => 'payments', 'message' => 'нет платежей']) ?>
 	    <div class="form-group payment-line">
-            <?= globalPartial("payments_list", ['entity_page' => true]) ?>
+            <?= globalPartial("payments_list", ['teacher_page' => true]) ?>
 	    </div>
 	</div>
 </div>

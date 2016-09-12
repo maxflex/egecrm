@@ -95,7 +95,7 @@
 		public static function getCaller($phone)
 		{
             // Ищем учителя с таким номером
-            $teacher = dbConnection()->query("
+            $teacher = dbEgerep()->query("
             	select id, first_name, last_name, middle_name from teachers
             	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
             ");

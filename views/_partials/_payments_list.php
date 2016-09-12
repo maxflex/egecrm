@@ -53,7 +53,7 @@
                 {{payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}
             </td>
         </tr>
-        <?php if ($entity_page) :?>
+        <?php if ($student_page || $teacher_page) :?>
         <tr ng-show='payments !== undefined'>
 	        <td colspan="10">
 		        <a class="link-like link-reverse" ng-click="addPaymentDialog()">добавить</a>
