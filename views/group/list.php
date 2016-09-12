@@ -120,8 +120,8 @@
 								</select> 
 							</div>
 							<div>
-								<select class="single-select form-control" ng-model="search2.level">
-									<option value="" data-subtext="">все</option>
+								<select id='external-filter' class="single-select form-control" ng-model="search2.level">
+									<option value="" data-subtext=" ">все</option>
 									<option disabled>────────</option>
 									<option data-subtext="" value="0">все кроме экстерната</option>
 									<option data-subtext="" value="1">экстернат</option>

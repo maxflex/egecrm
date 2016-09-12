@@ -1654,7 +1654,8 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     }, 1000);
     $timeout(function() {
       $('#group-branch-filter2').selectpicker('refresh');
-      return $('#grades-select2').selectpicker('refresh');
+      $('#group-branch-filter2').selectpicker('refresh');
+      return $('#external-filter').selectpicker('refresh');
     });
     return $.post("ajax/StudentsWithNoGroup", {}, function(response) {
       $scope.StudentsWithNoGroup = response;
