@@ -1365,7 +1365,7 @@
 				$("html, body").animate { scrollTop: $(document).height() }, 1000
 				$timeout ->
 					$('#group-branch-filter2').selectpicker('refresh')
-					$('#group-branch-filter2').selectpicker('refresh')
+					$('#grades-select2').selectpicker('refresh')
 					$('#external-filter').selectpicker('refresh')
 
 				$.post "ajax/StudentsWithNoGroup", {}, (response) ->
