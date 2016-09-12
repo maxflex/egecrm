@@ -1641,7 +1641,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       $scope.search2.year = $scope.search.year;
     }
     if (!$scope.search2.branches && $scope.search.id_branch) {
-      $scope.search2.branches = $scope.search.id_branch;
+      $scope.search2.branches = [$scope.search.id_branch];
     }
     if (!$scope.search2.id_subject && $scope.search.subjects && $scope.search.subjects.length) {
       $scope.search2.id_subject = $scope.search.subjects[0];
@@ -1674,6 +1674,14 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       });
       return $('.watch-select').selectpicker('refresh', 100);
     });
+  };
+  $scope.branchCabinetFilter = function() {
+    var ids;
+    ids = $scope.search.branch_cabinet.split('-');
+    $scope.search.id_branch = ids[0];
+    $scope.search.cabinet = ids[1];
+    $scope.$apply();
+    return $scope.filter();
   };
   $scope.filter = function() {
     $.cookie("groups", JSON.stringify($scope.search), {

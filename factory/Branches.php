@@ -89,21 +89,33 @@
 		 * Построить селектор с кружочками метро
 		 * $multiple - множественный выбор
 		 */
-		public static function buildSvgSelectorCabinets($selected = false, $cabinet = false, $attrs, $multiple = false)
+		public static function buildSvgSelectorCabinets($selected = false, $cabinet = false, $attrs, $params = [])
 		{	
 			
-			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
+			echo "<select ".($params['multiple'] ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
 			
 			// Заголовок
-			if (!$multiple) {
-				echo "<option selected style='cursor: default; outline: none' value=''>". static::$title ."</option>";
+			if (!$params['multiple']) {
+				echo "<option selected style='cursor: default; outline: none' value=''>". ($params['title'] ? $params['title'] : static::$title ) ."</option>";
 				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
 			}
 			
 			// Получаем филиалы
 			$branches = self::getBranches();
-			
+
 			foreach ($branches as $branch) {
+                if ($params['all_cabinets']) {
+                    $isSelected = $selected == $branch["id"]  && !$cabinet ? "selected" : "";
+                    echo "<option ".$isSelected." value='{$branch['id']}'
+							ng-selected=".($isSelected ? 'true' : 'false')."
+							data-content='".
+                                ($params['coloured_text'] ? '<span style="color:'.$branch['color'].';">' : '').
+                                ($params['without_svg']   ? '' : $branch['svg']).
+                                ($params['short'] ? $branch['short'].' (все кабинеты)' : $branch['name']).
+                                ($params['coloured_text'] ? '</span>' : '').
+                            "'></option>";
+                }
+
 				$Cabinets = Cabinet::getBranchId($branch['id']);
 				foreach($Cabinets as $Cabinet) {
 					// если это массив выбранных элементов (при $multiple = true)
@@ -117,7 +129,12 @@
 						echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}-{$Cabinet->id}'
 							ng-selected='" . ( $option_selected ? 'true' : 'false' ). "'
 							ng-class=\"{'half-opacity': free_cabinets[" . $branch["id"] . "][{$Cabinet->id}]}\"
-							data-content='{$branch['svg']}{$branch['name']}-{$Cabinet->number}'></option>";	
+							data-content='".
+                                    ($params['coloured_text'] ? '<span style="color:'.$branch['color'].';">' : '').
+                                    ($params['without_svg']   ? '' : $branch['svg']).
+                                    ($params['short'] ? $branch['short'] : $branch['name'])."-{$Cabinet->number}".
+                                    ($params['coloured_text'] ? '</span>' : '').
+                            "'></option>";
 					}
 					// 
 				}
@@ -336,7 +353,9 @@
 					"id"	=> $id,
 					"name"	=> $branch,
 					"line"	=> self::metroSvg($id, true),
-					"svg"	=> self::metroSvg($id)
+					"svg"	=> self::metroSvg($id),
+					"short"	=> self::$short[$id],
+					"color"	=> self::metroSvg($id, false, true)
 				];
 			}
 			

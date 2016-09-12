@@ -1358,7 +1358,7 @@
 				$scope.students_picker = true
 				$scope.search2.grades = [$scope.search.grade] if not $scope.search2.grades and $scope.search.grade
 				$scope.search2.year = $scope.search.year if not $scope.search2.year and $scope.search.year
-				$scope.search2.branches = $scope.search.id_branch if not $scope.search2.branches and $scope.search.id_branch
+				$scope.search2.branches = [$scope.search.id_branch] if not $scope.search2.branches and $scope.search.id_branch
 				$scope.search2.id_subject = $scope.search.subjects[0] if not $scope.search2.id_subject and $scope.search.subjects and $scope.search.subjects.length
 				if not $scope.search2.level and $scope.search.level
 					$scope.search2.level = if $scope.search.level is '5' then '1' else '0'
@@ -1384,6 +1384,13 @@
 		                $(el).data 'content', $(el).attr 'data-content'
 		            $('.watch-select').selectpicker 'refresh'
 		        , 100
+
+			$scope.branchCabinetFilter = ->
+				ids = $scope.search.branch_cabinet.split('-')
+				$scope.search.id_branch = ids[0]
+				$scope.search.cabinet = ids[1]
+				$scope.$apply()
+				$scope.filter()
 
 			$scope.filter = ->
 				$.cookie("groups", JSON.stringify($scope.search), { expires: 365, path: '/' });

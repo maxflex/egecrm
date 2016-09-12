@@ -21,13 +21,27 @@
 								<option ng-repeat="(grade, label) in Grades | toArray" value="{{(grade + 1)}}" data-subtext="{{ counts.grade[grade] || '' }}">{{label}}</option>
 							</select>
 				        </div>
-						<div>
-							 <?= Branches::buildSvgSelector($search->id_branch, [
-				                "id" => "group-branch-filter",
-				                "class" => "watch-select",
-				                "ng-model" => "search.id_branch",
-				                "ng-change" => "filter()"
-				            ]) ?>
+<!--						<div>-->
+<!--							 --><?//= Branches::buildSvgSelector($search->id_branch, [
+//				                "id" => "group-branch-filter",
+//				                "class" => "watch-select",
+//				                "ng-model" => "search.id_branch",
+//				                "ng-change" => "filter()"
+//				            ]) ?>
+<!--						</div>-->
+				        <div>
+							 <?= Branches::buildSvgSelectorCabinets($search->id_branch, $search->cabinet, [
+				                "id" => "group-branch-cabinet-filter",
+				                "class" => "single-select",
+				                "ng-model" => "search.branch_cabinet",
+				                "ng-change" => "branchCabinetFilter()"
+				            ], [
+								 'short' => true,
+								 'all_cabinets' => true,
+								 'title' => 'все филиалы',
+								 'coloured_text' => true,
+								 'without_svg' => true,
+							]) ?>
 						</div>
 				        <div>
 							<select id='subjects-select' multiple class="watch-select form-control single-select" ng-model="search.subjects" ng-change='filter()'>
@@ -45,16 +59,16 @@
 									value="{{Teacher.id}}">{{ Teacher.last_name }} {{ Teacher.first_name }} {{ Teacher.middle_name }}</option>
 							</select>
 				        </div>
-				        <div>
-							<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.cabinet" ng-change='filter()'>
-								<option value="" data-subtext="{{ counts.cabinet[''] || '' }}">№ кабинета</option>
-								<option disabled>──────────────</option>
-								<option
-									data-subtext="{{ counts.cabinet[id_subject] || '' }}"
-									ng-repeat="Cabinet in Cabinets"
-									value="{{Cabinet.id}}">{{Cabinet.number}}</option>
-							</select>
-						</div>
+<!--				        <div>-->
+<!--							<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.cabinet" ng-change='filter()'>-->
+<!--								<option value="" data-subtext="{{ counts.cabinet[''] || '' }}">№ кабинета</option>-->
+<!--								<option disabled>──────────────</option>-->
+<!--								<option-->
+<!--									data-subtext="{{ counts.cabinet[id_subject] || '' }}"-->
+<!--									ng-repeat="Cabinet in Cabinets"-->
+<!--									value="{{Cabinet.id}}">{{Cabinet.number}}</option>-->
+<!--							</select>-->
+<!--						</div>-->
 						<div>
 							<?= Freetime::buildMultiSelector($search->time, [
 								"id" => "time-select",
@@ -102,7 +116,7 @@
 			<div ng-show="students_picker">
 				<div class="row flex-list" style="margin-bottom: 15px">
 							<div>
-								<?= Grades::buildMultiSelector(false, ["ng-model" => "search2.grades", "id" => "grades-select2"]) ?>
+								<?= Grades::buildMultiSelector(false, ["ng-model" => "search2.grades", 'class' => 'watch-select', "id" => "grades-select2"]) ?>
 							</div>
 							<div>
 				                <?= Branches::buildMultiSelector(false, ["id" => "group-branch-filter2", "ng-model" => "search2.branches"]) ?>
