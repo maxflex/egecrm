@@ -1,6 +1,6 @@
-<div class="phone-app" <?= User::fromSession()->show_phone_calls ? '' : 'style="display:none;"' ?> >
+<?php if (User::fromSession()->show_phone_calls) :?>
+<div class="phone-app">
     <phone user_id="<?= User::fromSession()->id ?>"></phone>
-
     <template id="phone-template">
         <!-- ФОРМА ЗВОНКА -->
 		<div class="call-popup animated" v-if='show_element'>
@@ -21,7 +21,9 @@
                 		'circle-red':   last_call_data.user_busy == true,
                 		'circle-green': last_call_data.user_busy == false
                 	}"></span>
-                    {{ last_call_data.user_login }} {{ formatDateTime(last_call_data.date_start) }}, разговор {{ time(last_call_data.finish - last_call_data.start) }}
+                    {{ last_call_data.user_login }} {{ formatDateTime(last_call_data.date_start) }}, 
+                    <span v-if='last_call_data.answer'>разговор {{ time(last_call_data.finish - last_call_data.answer) }}</span>
+                    <span v-else>безуспешный вызов</span>
                 </div>
                 <div v-if="answered_user">
                 	ответил {{ answered_user }}
@@ -31,3 +33,4 @@
         <!-- Звонок -->
     </template>
 </div>
+<?php endif ?>

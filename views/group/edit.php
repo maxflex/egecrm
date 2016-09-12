@@ -34,11 +34,11 @@
 	<div class="panel-body" style="position: relative">
 		<form id="group-edit" autocomplete='off'>
 		<div class="top-group-menu-thin">
-			<?php if (User::fromSession()->id != 77) :?>
+			<?php if (User::fromSession()->id != 77 && !User::isRoot() && !User::isDev()) :?>
 			<div class='div-blocker'></div>
 			<?php endif ?>
 			<div>
-	            <?=
+	            <?= 
 	                Branches::buildSvgSelectorCabinets($Group->id_branch, $Group->cabinet, [
 		                "id"		=> "group-branch",
 		                "ng-model"	=> "id_branch_cabinet",
@@ -131,17 +131,17 @@
 									<span class="text-success default" ng-show="Student.sms_notified">SMS отправлена</span>
 								</span>
 							</td>
-							<td width="150">
+							<td width="220">
 								<span ng-repeat="(day, data) in Student.bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
 								</span>
 							</td>
 						</tr>
 						<tr ng-show="Group.id_teacher">
-							<td width="250" colspan="4">
+							<td width="220" colspan="4">
 								Преподаватель: <a href="teachers/edit/{{Group.id_teacher}}" target="_blank">{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}</a>
 							</td>
-							<td width="150">
+							<td width="220">
 							   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
 								</span>
@@ -149,9 +149,9 @@
 						</tr>
 						<tr>
 							<td colspan="4">Загрузка кабинета</td>
-							<td width="150">
+							<td width="220">
 							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
-									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
+									<span ng-repeat="bar in data" class="bar {{bar}}">{{ timeid }}</span>
 								</span>
 							</td>
 						</tr>

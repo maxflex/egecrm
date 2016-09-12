@@ -27,45 +27,45 @@
 		.controller "FaqCtrl", ($scope) ->
 			$scope.save = ->
 				ajaxStart()
-				$.post 'ajax/saveTeacherFaq', 
+				$.post 'ajax/saveTeacherFaq',
 					html: $scope.editor.getValue()
 				, ->
 					ajaxEnd()
-			
+
 			angular.element(document).ready ->
 				$scope.editor = ace.edit("editor")
 				$scope.editor.setOptions
 					minLines: 43
 					maxLines: 43
 				$scope.editor.getSession().setMode("ace/mode/html")
-					
+
 		.controller "SalaryCtrl", ($scope) ->
 			angular.element(document).ready ->
 				set_scope "Teacher"
 		.controller "EditCtrl", ($scope, $timeout, $http) ->
 			$scope.enum = review_statuses
-			
+
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars']
-			
+
 			$scope.setMenu = (menu) ->
 				$.each menus, (index, value) ->
 					_loadData(index, menu, value)
 				$scope.current_menu = menu
-			
+
 			_postData = (menu) ->
 				id_teacher: $scope.Teacher.id
 				menu: menu
-			
+
 			_loadData = (menu, selected_menu, ngModel) ->
 				if $scope[ngModel] is undefined and menu is selected_menu
 					$.post "teachers/ajax/menu", _postData(menu), (response) ->
 						$scope[ngModel] = response
 						$scope.$apply()
 					, "json"
-					
+
 			$scope.yearDifference = (year) ->
 	            moment().format("YYYY") - year
-				
+
 			$scope.toggleFreetime = (day, time_id) ->
 			  time_id++
 			  if day >= 6
@@ -81,7 +81,7 @@
 			    $scope.$apply()
 			    return
 			  return
-			
+
 			$scope.picture_version = 1;
 			bindFileUpload = ->
 				# загрузка файла договора
@@ -363,11 +363,11 @@
 				set_scope "Teacher"
 
 				$scope.weekdays = [
-					{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", $scope.time[1], $scope.time[2]]},
-					{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
-					{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", $scope.time[1], $scope.time[2]]},
-					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
-					{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+					{"short" : "ПН", "full" : "Понедельник", 	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
+					{"short" : "ВТ", "full" : "Вторник", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
+					{"short" : "СР", "full" : "Среда", 			"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
+					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
+					{"short" : "ПТ", "full" : "Пятница", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
 					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
 					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
 				]
@@ -387,7 +387,7 @@
 
 			$scope.goToTutor = ->
 				window.open "https://crm.a-perspektiva.ru/repetitors/edit/?id=#{$scope.Teacher.id_a_pers}", "_blank"
-			
+
 			# разбить "1 класс, 2 класс, 3 класс" на "1-3 классы"
 			$scope.shortenGrades = ->
 			    a = $scope.Teacher.grades
@@ -398,17 +398,17 @@
 			    i = 0
 			    while i <= limit
 			        combo_start = parseInt(a[i])
-			
+
 			        if combo_start > 11
 			            i++
 			            combo_end = -1
 			            pairs.push $scope.Grades[combo_start]
 			            continue
-			
+
 			        if combo_start <= combo_end
 			            i++
 			            continue
-			
+
 			        j = i
 			        while j <= limit
 			            combo_end = parseInt(a[j])
@@ -424,7 +424,7 @@
 			    $timeout ->
 			        $('#public-grades').parent().find('.filter-option').html pairs.join ', '
 			    return
-			
+
 			$(document).ready ->
 				bindFileUpload()
 
@@ -435,7 +435,7 @@
 				$('#public-grades').selectpicker
 					noneSelectedText: "классы"
 					multipleSeparator: ", "
-				
+
 				$scope.shortenGrades()
 
 				$("#teacher-branches").selectpicker
@@ -516,31 +516,31 @@
 		.controller "ListCtrl", ($scope, $timeout) ->
 			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0
 			$scope.id_subject = localStorage.getItem('teachers_id_subject') or 0
-			
+
 			# The amount of hidden teachers
 			$scope.othersCount = ->
 				_.where($scope.Teachers, {had_lesson: 0}).length
 
 			$scope.smsDialog = smsDialogTeachers
-			
+
 			$scope.changeState = ->
 				localStorage.setItem('teachers_in_egecentr', $scope.in_egecentr)
 				$scope.refreshCounts()
-			
+
 			$scope.changeSubjects = ->
 				localStorage.setItem('teachers_id_subject', $scope.id_subject)
 				$scope.refreshCounts()
-			
+
 			$scope.teachersFilter = (Teacher) ->
 				subjects = [$scope.id_subject]
 				(if not $scope.in_egecentr then true else Teacher.in_egecentr is (parseInt($scope.in_egecentr) or 1)) and (if not $scope.id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length)
-					
+
 			$scope.getCount = (state, id_subject) ->
 				subjects = [id_subject]
 				_.filter($scope.Teachers, (Teacher) ->
 					(if not state then true else Teacher.in_egecentr is (parseInt(state) or 1)) and (if not id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length)
 				).length
-			
+
 			$scope.refreshCounts = ->
 				$timeout ->
 					$('#state-select option, #subjects-select option').each (index, el) ->
@@ -548,18 +548,18 @@
 		                $(el).data 'content', $(el).attr 'data-content'
 		            $('#state-select, #subjects-select').selectpicker 'refresh'
 		        , 100
-			
-			
-			
+
+
+
 			angular.element(document).ready ->
 				set_scope 'Teacher'
-				
+
 				$("#subjects-select").selectpicker
 					noneSelectedText: "предметы"
 					multipleSeparator: "+"
-				
+
 				$("#state-select").selectpicker()
-				
+
 				smsMode 4
 
 			$scope.totalHold = (grade) ->

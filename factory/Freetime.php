@@ -7,12 +7,14 @@
 		
 		// ID => TIME
 		const TIME = [
-			1 => "16:15",
-			2 => "18:40",
+			7 => "16:15",
+			8 => "18:40",
 			3 => "11:00",
 			4 => "13:30",
 			5 => "16:00",
 			6 => "18:30",
+			1 => "11:00",
+			2 => "13:30",
 		];
 		
 		const DAYS_SHORT = [
@@ -33,24 +35,24 @@
 			5 => "Пятница",
 			6 => "Суббота",
 			7 => "Воскресенье",
-		];
+		]; 
 		
 		public static $weekdays_time = [
-			1 => [1, 2],
-			2 => [1, 2],
-			3 => [1, 2],
-			4 => [1, 2],
-			5 => [1, 2],
+			1 => [1, 2, 7, 8],
+			2 => [1, 2, 7, 8],
+			3 => [1, 2, 7, 8],
+			4 => [1, 2, 7, 8],
+			5 => [1, 2, 7, 8],
 			6 => [3, 4, 5, 6],
 			7 => [3, 4, 5, 6],
 		];
 		
 		public static $weekdays = [
-			1 => ["", "", self::TIME[1], self::TIME[2]],
-			2 => ["", "", self::TIME[1], self::TIME[2]],
-			3 => ["", "", self::TIME[1], self::TIME[2]],
-			4 => ["", "", self::TIME[1], self::TIME[2]],
-			5 => ["", "", self::TIME[1], self::TIME[2]],
+			1 => [self::TIME[1], self::TIME[2], self::TIME[7], self::TIME[8]],
+			2 => [self::TIME[1], self::TIME[2], self::TIME[7], self::TIME[8]],
+			3 => [self::TIME[1], self::TIME[2], self::TIME[7], self::TIME[8]],
+			4 => [self::TIME[1], self::TIME[2], self::TIME[7], self::TIME[8]],
+			5 => [self::TIME[1], self::TIME[2], self::TIME[7], self::TIME[8]],
 			6 => [self::TIME[3], self::TIME[4], self::TIME[5], self::TIME[6]],
 			7 => [self::TIME[3], self::TIME[4], self::TIME[5], self::TIME[6]],
 		];
@@ -235,7 +237,6 @@
 		    
 			foreach (self::$weekdays_time as $day => $time_data) {
 				foreach ($time_data as $time_index => $time_id) {
-
 					// подсчитываем кол-во групп в этом кабинете в это время
 					$result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt FROM group_time gt

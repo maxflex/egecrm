@@ -11,10 +11,10 @@ angular.module "Reports", ["ui.bootstrap"]
 			input
 	.controller "UserListCtrl", ($scope, $timeout) ->
 		$scope.helper_updating = false
-		
+
 		$scope.formatDateTime = (date) ->
 			moment(date).format "DD.MM.YY в HH:mm"
-		
+
 		$scope.forceNoreport = (d) ->
 			$.post "reports/AjaxForceNoreport",
 				id_student: d.id_entity,
@@ -27,7 +27,7 @@ angular.module "Reports", ["ui.bootstrap"]
 
 		$scope.yearLabel = (year) ->
 			year + '-' + (parseInt(year) + 1) + ' уч. г.'
-		
+
 		$scope.refreshCounts = ->
 			$timeout ->
 				$('.watch-select option').each (index, el) ->
@@ -35,7 +35,7 @@ angular.module "Reports", ["ui.bootstrap"]
 	                $(el).data 'content', $(el).attr 'data-content'
 	            $('.watch-select').selectpicker 'refresh'
 	        , 100
-	    
+
 		$scope.updateHelperTable = ->
 			frontendLoadingStart()
 			$scope.helper_updating = true
@@ -46,19 +46,19 @@ angular.module "Reports", ["ui.bootstrap"]
 				$('#red-report-count').html(response.red_count)
 				$scope.$apply()
 			, "json"
-				
+
 		$scope.filter = ->
 			$.cookie("reports", JSON.stringify($scope.search), { expires: 365, path: '/' });
 			$scope.current_page = 1
 			$scope.getByPage($scope.current_page)
-		
+
 		# Страница изменилась
 		$scope.pageChanged = ->
 			console.log $scope.currentPage
 			window.history.pushState {}, '', 'reports/?page=' + $scope.current_page if $scope.current_page > 1
 			# Получаем задачи, соответствующие странице и списку
 			$scope.getByPage($scope.current_page)
-		
+
 		$scope.getByPage = (page) ->
 			frontendLoadingStart()
 			$.post "reports/AjaxGetReports",
@@ -71,14 +71,14 @@ angular.module "Reports", ["ui.bootstrap"]
 				$scope.$apply()
 				$scope.refreshCounts()
 			, "json"
-						 
+
 		angular.element(document).ready ->
 			set_scope "Reports"
 			$scope.search = if $.cookie("reports") then JSON.parse($.cookie("reports")) else {}
 			$scope.current_page = $scope.currentPage
 			$scope.pageChanged()
 			$(".single-select").selectpicker()
-				
+
 
 	.controller "ListCtrl", ($scope) ->
 		$scope.getReports = (id_student) ->
@@ -116,11 +116,11 @@ angular.module "Reports", ["ui.bootstrap"]
 
 		angular.element(document).ready ->
 			$scope.weekdays = [
-				{"short" : "ПН", "full" : "Понедельник", 	"schedule": ["", "", $scope.time[1], $scope.time[2]]},
-				{"short" : "ВТ", "full" : "Вторник", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
-				{"short" : "СР", "full" : "Среда", 			"schedule": ["", "", $scope.time[1], $scope.time[2]]},
-				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
-				{"short" : "ПТ", "full" : "Пятница", 		"schedule": ["", "", $scope.time[1], $scope.time[2]]},
+				{"short" : "ПН", "full" : "Понедельник", 	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
+				{"short" : "ВТ", "full" : "Вторник", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
+				{"short" : "СР", "full" : "Среда", 			"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
+				{"short" : "ЧТ", "full" : "Четверг", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
+				{"short" : "ПТ", "full" : "Пятница", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
 				{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
 				{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
 			]

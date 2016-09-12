@@ -30,8 +30,8 @@
 				switch ($data->call_state) {
 					case Mango::STATE_APPEARED:
 						// определить последнего говорившего
-						$data->caller			= Call::getCaller($data->from->number);
-						$data->last_call_data 	= Call::lastData($data->from->number);
+						$data->caller			= Call::getCaller($data->from->number, $data->to->line_number);
+						$data->last_call_data 	= Call::lastData($data->from->number, $data->to->line_number);
 						break;
 					case Mango::STATE_CONNECTED:
 						User::setCallBusy($data->to->extension);

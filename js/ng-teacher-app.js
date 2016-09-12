@@ -420,23 +420,23 @@ angular.module("Teacher", ["ngMap"]).config([
       {
         "short": "ПН",
         "full": "Понедельник",
-        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
       }, {
         "short": "ВТ",
         "full": "Вторник",
-        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
       }, {
         "short": "СР",
         "full": "Среда",
-        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
       }, {
         "short": "ЧТ",
         "full": "Четверг",
-        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
       }, {
         "short": "ПТ",
         "full": "Пятница",
-        "schedule": ["", "", $scope.time[1], $scope.time[2]]
+        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
       }, {
         "short": "СБ",
         "full": "Суббота",

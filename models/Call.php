@@ -72,7 +72,7 @@
 		{
 			$result = dbEgerep()->query("
 				SELECT * FROM mango 
-				WHERE (from_number='{$phone}' OR to_number='{$phone}') AND answer!=0
+				WHERE (from_number='{$phone}' AND answer!=0) OR to_number='{$phone}'
 				ORDER BY id DESC
 				LIMIT 1
 			");
@@ -92,7 +92,7 @@
 		/*
 		 * Определить звонящего
 		 */
-		public static function getCaller($phone)
+		public static function getCaller($phone, $to_number)
 		{
             // Ищем учителя с таким номером
             $teacher = dbEgerep()->query("
@@ -107,51 +107,69 @@
                     'id'	=> $data->id,
                 ];
             } else {
-                # Ищем представителя с таким же номером телефона
-                $represetative = dbConnection()->query("
-				SELECT s.id, r.first_name, r.last_name, r.middle_name FROM ".Representative::$mysql_table." r
-				LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
-				WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
-                );
-                // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-                if ($represetative->num_rows) {
-                    $data = $represetative->fetch_object();
-                    $return = [
-                        'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
-                        'type'	=> 'representative',
-                        'id'	=> $data->id,
-                    ];
-                } else {
-                    # Ищем ученика с таким же номером телефона
-                    $student = dbConnection()->query("
+	            if (static::isEgecentr($to_number)) {
+		      		# Ищем представителя с таким же номером телефона
+	                $represetative = dbConnection()->query("
+					SELECT s.id, r.first_name, r.last_name, r.middle_name FROM ".Representative::$mysql_table." r
+					LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
+					WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
+	                );
+	                // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+	                if ($represetative->num_rows) {
+	                    $data = $represetative->fetch_object();
+	                    $return = [
+	                        'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+	                        'type'	=> 'representative',
+	                        'id'	=> $data->id,
+	                    ];
+	                } else {
+	                    # Ищем ученика с таким же номером телефона
+	                    $student = dbConnection()->query("
+	                        select id, first_name, last_name, middle_name from students
+	                        WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+	                    ");
+	                    // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+	                    if ($student->num_rows) {
+	                        $data = $student->fetch_object();
+	                        $return = [
+	                            'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+	                            'type'	=> 'student',
+	                            'id'	=> $data->id
+	                        ];
+	                    } else {
+	                        # Ищем заявку с таким же номером телефона
+	                        $request = dbConnection()->query("
+	                            select id, name from requests
+	                            WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+	                        ");
+	                        // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+	                        if ($request->num_rows) {
+	                            $data = $request->fetch_object();
+	                            $return = [
+	                                'name'	=> static::_nameOrEmpty($data->name),
+	                                'type'	=> 'request',
+	                                'id'	=> $data->id
+	                            ];
+	                        }
+	                    }
+	                }      
+	            }
+	            else {
+		            # ищем ученика в ЕГЭ-РЕПЕТИТОРЕ с таким номером
+                    $student = dbEgerep()->query("
                         select id, first_name, last_name, middle_name from students
-                        WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+                        WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}' OR phone4='{$phone}'
                     ");
                     // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
                     if ($student->num_rows) {
                         $data = $student->fetch_object();
                         $return = [
                             'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
-                            'type'	=> 'student',
+                            'type'	=> 'egerep_student',
                             'id'	=> $data->id
                         ];
-                    } else {
-                        # Ищем заявку с таким же номером телефона
-                        $request = dbConnection()->query("
-                            select id, name from requests
-                            WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
-                        ");
-                        // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-                        if ($request->num_rows) {
-                            $data = $request->fetch_object();
-                            $return = [
-                                'name'	=> static::_nameOrEmpty($data->name),
-                                'type'	=> 'request',
-                                'id'	=> $data->id
-                            ];
-                        }
                     }
-                }
+	            }
             }
 
             // возвращается, если номера нет в базе
