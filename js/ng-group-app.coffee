@@ -887,7 +887,16 @@
 				$scope.updateTeacherBar()
 				$scope.updateCabinetBar(false)
 				$scope.updateStudentBars()
-
+			
+			$scope.toggleReadyToStart = ->
+				ready_to_start = if $scope.Group.ready_to_start then 0 else 1
+				$.post "groups/ajax/toggleReadyToStart",
+					id: $scope.Group.id
+					ready_to_start: ready_to_start
+				, ->
+					$scope.Group.ready_to_start = ready_to_start
+					$scope.$apply()
+				
 
 
 			$scope.addGroupsPanel = ->

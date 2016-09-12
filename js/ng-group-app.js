@@ -1086,6 +1086,17 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     $scope.updateCabinetBar(false);
     return $scope.updateStudentBars();
   };
+  $scope.toggleReadyToStart = function() {
+    var ready_to_start;
+    ready_to_start = $scope.Group.ready_to_start ? 0 : 1;
+    return $.post("groups/ajax/toggleReadyToStart", {
+      id: $scope.Group.id,
+      ready_to_start: ready_to_start
+    }, function() {
+      $scope.Group.ready_to_start = ready_to_start;
+      return $scope.$apply();
+    });
+  };
   $scope.addGroupsPanel = function() {
     if (!$scope.Groups) {
       $scope.loadGroups();

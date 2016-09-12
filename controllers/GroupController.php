@@ -1168,4 +1168,10 @@
 				Freetime::checkFreeCabinets($id_group, $year, $day_and_time)
 			);
 		}
+		
+		public function actionAjaxToggleReadyToStart()
+		{
+			extract($_POST);
+			Group::updateById($id, compact('ready_to_start'));
+		}
 	}

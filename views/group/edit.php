@@ -155,6 +155,11 @@
 								</span>
 							</td>
 						</tr>
+						<tr>
+							<td colspan="5">
+								Готова к запуску: <span class="link-like" ng-click="toggleReadyToStart()"> {{ Group.ready_to_start ? 'да' : 'нет' }}</span>
+							</td>
+						</tr>
 					</table>
 				</div>
 			</div>
