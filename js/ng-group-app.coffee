@@ -1059,7 +1059,7 @@
 				$scope.create_helper_data = null
 				$.post "ajax/GroupCreateHelper",
 					year: $scope.search.year
-					subjects: $scope.search.id_subject
+					subjects: $scope.search.subjects
 					grade: $scope.search.grade					
 				, (response) ->
 					$scope.create_helper_data = response
@@ -1347,7 +1347,7 @@
 				$scope.search2.grades = $scope.search.grade if not $scope.search2.grades and $scope.search.grade
 				$scope.search2.year = $scope.search.year if not $scope.search2.year and $scope.search.year
 				$scope.search2.branches = $scope.search.id_branch if not $scope.search2.branches and $scope.search.id_branch
-				$scope.search2.id_subject = $scope.search.id_subject[0] if not $scope.search2.id_subject and $scope.search.id_subject.length
+				$scope.search2.id_subject = $scope.search.subjects[0] if not $scope.search2.id_subject and $scope.search.subjects.length
 				$("html, body").animate { scrollTop: $(document).height() }, 1000
 				$timeout ->
 					$('#group-branch-filter2').selectpicker('refresh')

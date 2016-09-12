@@ -1,14 +1,14 @@
 <!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ДОГОВОРА -->
 <div class="lightbox-new lightbox-contract-stats" style="padding-bottom: 10px">
 	<h4 style="margin-bottom: 10px">СТАТИСТИКА ЗАКЛЮЧЕНИЙ ДОГОВОРОВ</h4>
-	<div class="row" ng-show="search.id_subject.length || search.grade || search.year" style="margin-bottom: 20px">
+	<div class="row" ng-show="search.subjects.length || search.grade || search.year" style="margin-bottom: 20px">
 		<div class="col-sm-12">
 			Статистика выведена по критериям: 
 			<span ng-show="search.year">
 				{{ yearLabel(search.year) }}<span ng-show="search.id_subject.length || search.grade">,</span>
 			</span>
-			<span ng-show="search.id_subject.length">
-				<span ng-repeat="id_subject in search.id_subject">{{SubjectsFull[id_subject]}}{{$last ? "" : ", "}}</span><span ng-show="search.grade">,</span>
+			<span ng-show="search.subjects.length">
+				<span ng-repeat="id_subject in search.subjects">{{SubjectsFull[id_subject]}}{{$last ? "" : ", "}}</span><span ng-show="search.grade">,</span>
 			</span>
 			<span ng-show="search.grade">
 				{{search.grade}} класс
