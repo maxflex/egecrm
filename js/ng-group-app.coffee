@@ -1474,3 +1474,13 @@
 			console.log 'init'
 		.controller "TeacherListCtrl", ($scope) ->
 			console.log 'init'
+			$scope.weekdays = [
+				{"short" : "ПН"},
+				{"short" : "ВТ"},
+				{"short" : "СР"},
+				{"short" : "ЧТ"},
+				{"short" : "ПТ"},
+				{"short" : "СБ"},
+				{"short" : "ВС"}
+			]
+
