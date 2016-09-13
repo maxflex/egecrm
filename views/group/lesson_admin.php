@@ -44,12 +44,12 @@
 					<button class="btn btn-success ajax-payment-button"
                             ng-click="changeRegisterInJournal()"
                             ng-show="registered_in_journal == true"
-                            ng-disabled="saving">
+                            ng-disabled="saving || students_not_filled">
 						    <span>Сохранить без отправки СМС</span>
 					</button>
 
 					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true && !(registered_in_journal === true)"
-						ng-disabled="registered_in_journal === true || saving">
+						ng-disabled="registered_in_journal === true || saving || students_not_filled">
 						<span ng-show="registered_in_journal !== true">Сохранить</span>
 					</button>
 					<span ng-show="until_save !== true">
