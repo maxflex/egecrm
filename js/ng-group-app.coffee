@@ -53,7 +53,7 @@
 				diff = date_now.getTime() - date_lesson.getTime()
 				data =
 					seconds: 59 - (Math.floor(diff / 1000) - (Math.floor(diff / 1000 / 60) * 60))
-					minutes: 30 - Math.floor(diff / 1000 / 60)
+					minutes: 40 - Math.floor(diff / 1000 / 60)
 
 				if data.minutes < 0
 					return true
@@ -78,6 +78,9 @@
 
 			$scope.saveStudent = ->
 				$scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData
+				$scope.students_not_filled = _.filter($scope.LessonData, (v) ->
+												v and +(v.presence)
+											).length isnt $scope.Group.Students.length
 				lightBoxHide()
 
 			$scope.registerInJournal = ->
@@ -122,6 +125,7 @@
 
 			angular.element(document).ready ->
 				$scope.until_save = $scope.timeUntilSave()
+				$scope.students_not_filled = true
 				$scope.$apply()
 				set_scope "Group"
 

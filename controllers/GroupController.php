@@ -158,7 +158,7 @@
 							$OrderedLessonData[$OneData->id_entity] = $OneData;
 						}
 
-						$Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"]);
+						$Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"], true);
 					} else {
 						$Group->Students = $Group->getStudents();
 					}
