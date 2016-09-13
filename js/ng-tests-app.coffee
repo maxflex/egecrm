@@ -208,6 +208,11 @@
 
 		.controller "ListCtrl", ($scope) ->
 			console.log 'inited'
+
+			$scope.timeLeft = (StudentTest) ->
+				timestamp_end = moment(StudentTest.date_start).add(30, 'minutes').unix()
+				moment({}).seconds(timestamp_end - moment().unix()).format("mm:ss")
+
 			angular.element(document).ready ->
 				set_scope 'Tests'
 

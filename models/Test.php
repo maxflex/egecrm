@@ -174,18 +174,22 @@
 		{
 			return round($this->score * 100 / Test::getMaxScore($this->id_test));
 		}
-		
+
+		public function calcScore()
+        {
+            $score = 0;
+            foreach($this->answers as $id_problem => $answer) {
+                $Problem = TestProblem::findById($id_problem);
+                if ($Problem->correct_answer == $answer) {
+                    $score += $Problem->score;
+                }
+            }
+            $this->score = $score;
+        }
+
 		public function finish()
 		{
-			$score = 0;
-			foreach($this->answers as $id_problem => $answer) {
-				$Problem = TestProblem::findById($id_problem);
-				if ($Problem->correct_answer == $answer) {
-					$score += $Problem->score;
-				}
-			}
-			
-			$this->score = $score;
+			$this->calcScore();
 			$this->date_finish = now();
 			$this->save();
 		}

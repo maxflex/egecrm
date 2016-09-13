@@ -1803,5 +1803,22 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
 }).controller("StudentListCtrl", function($scope) {
   return console.log('init');
 }).controller("TeacherListCtrl", function($scope) {
-  return console.log('init');
+  console.log('init');
+  return $scope.weekdays = [
+    {
+      "short": "ПН"
+    }, {
+      "short": "ВТ"
+    }, {
+      "short": "СР"
+    }, {
+      "short": "ЧТ"
+    }, {
+      "short": "ПТ"
+    }, {
+      "short": "СБ"
+    }, {
+      "short": "ВС"
+    }
+  ];
 });
