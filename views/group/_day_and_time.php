@@ -19,7 +19,6 @@
 						<input type="checkbox"
 							ng-model="Group.day_and_time[$index + 1][n]"
 							ng-click="dayAndTimeClick($index, n)"
-							ng-show="weekday.schedule[n] != ''" 
 							ng-value="weekday.schedule[n]"
 							ng-checked="inDayAndTime($index + 1, weekday.schedule[n])"
 						>

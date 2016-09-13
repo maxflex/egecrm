@@ -644,16 +644,12 @@
 		
 		private static function _generateQuery($search, $select, $ending = '')
 		{
-			if (! empty($search->time)) {
+			if (! empty($search->ntime)) {
 			    $time_cond = [];
-			    foreach ($search->time as $search_time) {
+			    foreach ($search->ntime as $search_time) {
                     $data 	= explode("-", $search_time);
                     $day 	= $data[0];
                     $time	= $data[1];
-                    if ($day < 6) {
-                        $time = $time - 2;
-                    }
-                    $time 	= Freetime::$weekdays_time[$day][$time];
                     $time_cond[] = " (gt.day={$day} AND gt.time = {$time}) ";
                 }
                 if (count($time_cond)) {
@@ -663,7 +659,7 @@
 			
 			$main_query = "
 				FROM groups g
-				" . (! empty($search->time) ? " JOIN group_time gt ON (g.id = gt.id_group AND {$time_cond})" : "") . "
+				" . (! empty($search->ntime) ? " JOIN group_time gt ON (g.id = gt.id_group AND {$time_cond})" : "") . "
 				WHERE true "
 				. (!isBlank($search->cabinet) ? " AND g.cabinet={$search->cabinet}" : "")
 				. (!isBlank($search->year) ? " AND g.year={$search->year}" : "")
@@ -701,7 +697,8 @@
 		public function getDayAndTime()
 		{
 			$GroupTime = GroupTime::findAll([
-				"condition"	=> "id_group=" . $this->id
+				"condition"	=> "id_group=" . $this->id,
+				"order" => "day ASC, time ASC"
 			]);
 
 			if (!$GroupTime) {
@@ -709,8 +706,7 @@
 			}
 
 			foreach ($GroupTime as $GroupTimeData) {
-				$index = Freetime::getIndexByTime($GroupTimeData->time);
-				$return[$GroupTimeData->day][$index] = $GroupTimeData->time;
+				$return[$GroupTimeData->day][] = $GroupTimeData->time;
 			}
 
 			return $return;

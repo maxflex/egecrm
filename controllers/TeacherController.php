@@ -167,6 +167,7 @@
 				"payment_statuses"	=> Payment::$all,
 				"user"				=> User::fromSession(),
 				"time" 				=> Freetime::TIME,
+				"weekdays_time"		=> Freetime::$weekdays_time,
 				"Grades"			=> Grades::$all,
 			]);
 

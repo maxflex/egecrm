@@ -1429,9 +1429,9 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   };
   $scope.groupsFilter = function(Group) {
     var ref, time_correct;
-    if ($scope.search.time && $scope.search.time.length) {
+    if ($scope.search.ntime && $scope.search.ntime.length) {
       time_correct = false;
-      $.each($scope.search.time, function(index, time) {
+      $.each($scope.search.ntime, function(index, time) {
         var day, t, time_index;
         t = time.split("-");
         day = t[0];

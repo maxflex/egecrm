@@ -79,19 +79,16 @@
 				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
 			}
 						
-			foreach (self::$weekdays as $day => $time_data) {
+			foreach (self::$weekdays_time as $day => $time_data) {
 				echo "<optgroup label='" . self::DAYS_FULL[$day] . "'>";
-				foreach ($time_data as $time_index => $time) {
-					if (empty($time)) {
-						continue;
-					}
-					$value = "{$day}-{$time_index}";
+				foreach ($time_data as $time) {
+					$value = "{$day}-{$time}";
 					// если это массив выбранных элементов (при $multiple = true)
 					// $option_selected = in_array($time_id, $selected);
 					$option_selected = $selected == $value;
 					
 					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
-					echo "<option ".($option_selected ? "selected" : "")." value='{$value}'>" . $time ."</option>";
+					echo "<option ".($option_selected ? "selected" : "")." value='{$value}'>" . self::TIME[$time] ."</option>";
 				}
 				echo '</optgroup>';
 			}

@@ -285,10 +285,8 @@
 		            
 		            <h4 style="margin-top: 78px" class="row-header">График</h4>
 			            <div class="row">
-				            <div class="col-sm-4">
-					            свободно:
-				            </div>
-				            <div class="col-sm-8" style="text-align: right">
+				            <div class="col-sm-12">
+					            свободно:<br>
 					            <span ng-repeat="(day, data) in FreetimeBar" class="group-freetime-block">
 									<span ng-click="toggleStudentFreetime(day, $index)" ng-repeat="bar in data" class="pointer bar {{bar}}"></span>
 								</span>
@@ -296,9 +294,7 @@
 			            </div>
 						<div class="row" style="margin-top: 10px">
 				            <div class="col-sm-4" style="white-space: nowrap">
-					            занято в группах:
-				            </div>
-				            <div class="col-sm-8" style="text-align: right">
+					            занято в группах:<br>
 					            <span ng-repeat="(day, data) in GroupsBar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
 								</span>

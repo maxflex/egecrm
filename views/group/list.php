@@ -70,9 +70,9 @@
 <!--							</select>-->
 <!--						</div>-->
 						<div>
-							<?= Freetime::buildMultiSelector($search->time, [
+							<?= Freetime::buildMultiSelector($search->ntime, [
 								"id" => "time-select",
-								"ng-model" 	=> "search.time",
+								"ng-model" 	=> "search.ntime",
 								"ng-change"	=> "filter()"
 							], true) ?>
 						</div>

@@ -1147,11 +1147,8 @@
 				return Math.round(price * coeff)
 			}
 			
-			$scope.toggleStudentFreetime = function(day, time_id) {
-				time_id++
-				if (day >= 6) {
-					time_id += 2	
-				}
+			$scope.toggleStudentFreetime = function(day, index) {
+				time_id = $scope.weekdays_time[day][index]
 				mode = $scope.FreetimeBar[day][time_id] === 'green' ? 'Delete' : 'Add'
 				$.post("ajax/" + mode + "Freetime", {
 					'id_entity': $scope.student.id,
@@ -1907,7 +1904,7 @@
 		    $scope.setMenu = function(menu) {
 			    if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				    $.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-						['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
+						['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 'weekdays_time',
 							'branches_brick', 'time', 'representative_phone_level', 'representative'].forEach(function(field) {
 							$scope[field] = response[field]
 						})

@@ -473,6 +473,7 @@
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_bar"			=> Freetime::getCabinetBar($Group->cabinet, $Group),
 				"time" => Freetime::TIME,
+				"weekdays_time"		=> Freetime::$weekdays_time,
 				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time)
 			]);
 

@@ -66,10 +66,8 @@
 			$scope.yearDifference = (year) ->
 	            moment().format("YYYY") - year
 
-			$scope.toggleFreetime = (day, time_id) ->
-			  time_id++
-			  if day >= 6
-			    time_id += 2
+			$scope.toggleFreetime = (day, index) ->
+			  time_id = $scope.weekdays_time[day][index]
 			  mode = if $scope.Bars.Freetime[day][time_id] == 'green' then 'Delete' else 'Add'
 			  $.post 'ajax/' + mode + 'Freetime', {
 			    'id_entity': $scope.Teacher.id

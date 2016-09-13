@@ -1182,9 +1182,9 @@
 
 			$scope.groupsFilter = (Group) ->
 				#time filtering
-				if $scope.search.time and $scope.search.time.length
+				if $scope.search.ntime and $scope.search.ntime.length
 					time_correct = false
-					$.each $scope.search.time, (index, time) ->
+					$.each $scope.search.ntime, (index, time) ->
 						t = time.split "-"
 						day = t[0]
 						time_index = t[1]

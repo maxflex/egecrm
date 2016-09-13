@@ -2,7 +2,7 @@
 	<div class="col-sm-12">
 		<?= globalPartial('loading', ['model' => 'Bars']) ?>
 		<div ng-if="Bars !== undefined">
-			<div class="row" style="width: 315px">
+			<div class="row" style="width: 350px">
 	            <div class="col-sm-4">
 		            свободно:
 	            </div>
@@ -12,7 +12,7 @@
 					</span>
 	            </div>
 	        </div>
-			<div class="row" style="margin-top: 10px; width: 315px">
+			<div class="row" style="margin-top: 10px; width: 350px">
 	            <div class="col-sm-4" style="white-space: nowrap">
 		            занято в группах:
 	            </div>

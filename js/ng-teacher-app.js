@@ -80,12 +80,9 @@ angular.module("Teacher", ["ngMap"]).config([
   $scope.yearDifference = function(year) {
     return moment().format("YYYY") - year;
   };
-  $scope.toggleFreetime = function(day, time_id) {
-    var mode;
-    time_id++;
-    if (day >= 6) {
-      time_id += 2;
-    }
+  $scope.toggleFreetime = function(day, index) {
+    var mode, time_id;
+    time_id = $scope.weekdays_time[day][index];
     mode = $scope.Bars.Freetime[day][time_id] === 'green' ? 'Delete' : 'Add';
     $.post('ajax/' + mode + 'Freetime', {
       'id_entity': $scope.Teacher.id,
