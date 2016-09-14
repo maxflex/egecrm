@@ -501,6 +501,9 @@
 				locale: 'ru',
 			})
 
+			$.mask.definitions['~']='[4-6]';
+			$(".card-first-number").mask("~XXX", { autoclear: false })
+
 			$(".passport-number").inputmask("Regex", {regex: "[a-zA-Z0-9]{0,12}"});
 
 			// REGEX для полей типа "число" и "1-5"

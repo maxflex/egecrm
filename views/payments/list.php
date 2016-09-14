@@ -4,7 +4,7 @@
 <div class="lightbox-new lightbox-addpayment">
 
     <h4 style="display: inline-block">{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
-    <span class="small" ng-show="new_payment.id_status == <?= Payment::PAID_CASH ?> && new_payment.id_type == == <?= PaymentTypes::PAYMENT ?>">({{ new_payment.document_number ? 'ПКО присвоен порядковый номер ' + new_payment.document_number : 'будет присвоен порядковый номер ПКО' }})</span>
+    <span class="small" ng-show="new_payment.id_status == <?= Payment::PAID_CASH ?> && new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">({{ new_payment.document_number ? 'ПКО присвоен порядковый номер ' + new_payment.document_number : 'будет присвоен порядковый номер ПКО' }})</span>
 
     <div class="form-group payment-line">
 		<div class="form-group inline-block">
