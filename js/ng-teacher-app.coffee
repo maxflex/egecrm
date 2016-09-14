@@ -236,18 +236,28 @@
 			  payment_sum = $('#payment-sum')
 			  payment_select = $('#payment-select')
 			  payment_type = $('#paymenttypes-select')
-			  payment_card = $('#payment-card')
-			  # Установлен ли способ оплаты
+			  payment_card = $('#payment-card-number')
+			  payment_card_first_number = $("#payment-card-first-number")
+
+			# Установлен ли способ оплаты
 			  if !$scope.new_payment.id_status
 			    payment_select.focus().parent().addClass 'has-error'
 			    return
 			  else
-			    if parseInt($scope.new_payment.id_status) is 1 and !$scope.new_payment.card_number # если это карта
-			      payment_card.focus().addClass 'has-error'
-			      return
-			    else
-			      payment_select.parent().removeClass 'has-error'
-			      payment_card.removeClass 'has-error'
+			    payment_select.parent().removeClass 'has-error'
+			    if 1 is parseInt $scope.new_payment.id_status
+			        if not $scope.new_payment.card_first_number
+				        payment_card_first_number.focus().addClass 'has-error'
+				        return
+				    else
+					    payment_card_first_number.removeClass 'has-error'
+
+					if not $scope.new_payment.card_number
+						payment_card.focus().addClass 'has-error'
+						return
+					else
+						payment_card.removeClass 'has-error'
+
 			  # Установлена ли сумма платежа?
 			  if !$scope.new_payment.sum
 			    payment_sum.focus().parent().addClass 'has-error'
