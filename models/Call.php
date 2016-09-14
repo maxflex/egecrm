@@ -13,7 +13,7 @@
 		*/
 		const MISSED_CALLS_SQL = "
 				FROM (
-					SELECT from_number, start
+					SELECT entry_id, from_number, start
 					FROM `mango`
 					WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0
 					GROUP BY entry_id
@@ -49,7 +49,11 @@
 		{
 			return dbEgerep()->query("SELECT 1" . self::MISSED_CALLS_SQL)->num_rows;
 		}
-		
+
+		public static function delete($entry_id)
+        {
+            dbEgerep()->query("DELETE FROM `mango` WHERE entry_id = '{$entry_id}'");
+        }
 		
 		/*
 		 * Номер ЕГЭ-Центра

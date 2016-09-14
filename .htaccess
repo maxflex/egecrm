@@ -142,6 +142,7 @@ RewriteRule ^tests/ajax/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=Ajax$
 
 # Пропущенные
 RewriteRule ^calls/missed[/]?$ index.php?controller=calls&action=missed [QSA,L]
+RewriteRule ^calls/ajax/([a-zA-Z]+)[/]?$ index.php?controller=calls&action=Ajax$1 [QSA,L]
 
 # as
 RewriteRule ^as/(teacher|student)/([0-9]+)[/]?$ index.php?controller=as&type=$1&id=$2 [QSA,L]
