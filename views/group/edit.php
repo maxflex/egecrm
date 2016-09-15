@@ -34,7 +34,7 @@
 	<div class="panel-body" style="position: relative">
 		<form id="group-edit" autocomplete='off'>
 		<div class="top-group-menu-thin">
-			<?php if (User::fromSession()->id != 77 && !User::isRoot() && !User::isDev()) :?>
+			<?php if (User::fromSession()->id != 77) :?>
 			<div class='div-blocker'></div>
 			<?php endif ?>
 			<div>

@@ -501,8 +501,13 @@
 				locale: 'ru',
 			})
 
+      function focusSibling(elem) {
+        $(elem).siblings(':enabled').first().focus()
+      }
 			$.mask.definitions['~']='[4-6]';
-			$(".card-first-number").mask("~XXX", { autoclear: false })
+			$(".card-first-number").on('keyup', function(e){ if (e.keyCode == 13) {
+        focusSibling(this)
+      } }).mask("~XXX", { autoclear: false, completed:function(){this.val().length == 4 ? focusSibling(this) : false;} });
 
 			$(".passport-number").inputmask("Regex", {regex: "[a-zA-Z0-9]{0,12}"});
 
