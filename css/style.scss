@@ -1760,9 +1760,9 @@ h4.row-header {
 
 
 .lightbox-email, .lightbox-freetime {
-	width: 60%;
+	width: 70%;
 //	height: 80%;
-	left: 20%;
+	left: 15%;
 	top: 10%;
 }
 
@@ -3128,4 +3128,8 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 }
 .contract-table .head td {
   background:#63b2de;
+}
+
+.branch-cabinet {
+	width: 80px;
 }

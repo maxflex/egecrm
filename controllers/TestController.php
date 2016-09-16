@@ -14,6 +14,11 @@
     //            error_reporting(E_ALL);
     //        }
     	
+		public function actionTimeTest()
+		{
+			$Group = Group::find(74);
+			preType($Group);
+		}
     	
     	public function actionSmsSendNew()
     	{

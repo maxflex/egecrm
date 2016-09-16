@@ -15,7 +15,11 @@
 	            <a style="margin-right: 12px" class="link-reverse" href="groups/edit/<?= $Group->id ?>/schedule"><span ng-show="Group.schedule_count.paid">{{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span>
 				<ng-pluralize count="Group.schedule_count.paid" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize></span><span ng-show="!Group.schedule_count.paid">установить расписание</span></a>
 	            <span style="margin-right: 12px" ng-click="dayAndTime()">
-	            	<span class="link-like link-reverse link-white" ng-show='hasDayAndTime()'><span ng-repeat="(day, day_data) in day_and_time_object">{{weekdays[day - 1].short}} в <span ng-repeat="dd in day_data">{{dd}}{{$last ? "" : ", "}}</span>{{$last ? "" : " и "}}</span></span>
+	            	<span class="link-like link-reverse link-white" ng-show='hasDayAndTime()'>
+	            		<span ng-repeat="(day, data) in Group.day_and_time">
+							{{ weekdays[day] }} в <span ng-repeat='d in data'>{{ d.time.time }}{{$last ? '' : ', '}}</span> {{ $last ? '' : ' и '}}
+	            		</span>
+					</span>
 	            	<span class="link-like link-reverse link-white" ng-show='!hasDayAndTime()'>установить день и время</span>
 	            </span>
 	        <?php endif ?>
@@ -38,7 +42,7 @@
 			<div class='div-blocker'></div>
 			<?php endif ?>
 			<div>
-	            <?= 
+	            <?=
 	                Branches::buildSvgSelectorCabinets($Group->id_branch, $Group->cabinet, [
 		                "id"		=> "group-branch",
 		                "ng-model"	=> "id_branch_cabinet",

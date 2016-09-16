@@ -470,10 +470,11 @@
 				"subjects_short" => Subjects::$short,
 				"duration"		=> Group::DURATION,
 				"Cabinets"	=> Cabinet::getByBranch($Group->id_branch, $Group->id),
+				"all_cabinets"			=> Branches::allCabinets(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"cabinet_bar"			=> Freetime::getCabinetBar($Group->cabinet, $Group),
-				"time" => Freetime::TIME,
-				"weekdays_time"		=> Freetime::$weekdays_time,
+				"time"			=> Time::get(),
+				"weekdays"		=> Time::WEEKDAYS,
 				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time)
 			]);
 

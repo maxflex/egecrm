@@ -9,7 +9,7 @@
 
 		const DURATION = [135];
 		const PER_PAGE = 1000;
- 
+
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
@@ -67,7 +67,7 @@
 				return 0;
 			}
 			return GroupSms::count([
-				"condition" => "id_branch = {$Group->id_branch} AND id_student IN (" . implode(",", $Group->students) . ") 
+				"condition" => "id_branch = {$Group->id_branch} AND id_student IN (" . implode(",", $Group->students) . ")
 								 AND id_subject = {$Group->id_subject} AND first_schedule = '{$Group->first_schedule}' AND cabinet={$Group->cabinet}"
 			]);
 		}
@@ -135,7 +135,7 @@
 
 		/**
 		 * Если хотя бы 1 день в расписании группы не соответствует дням недели этой группы то в списке групп нужно
-		   ставить пиктограммку в конце например типа восклицательный значок.
+		 * ставить пиктограммку в конце например типа восклицательный значок.
 		 *
 		 */
 		public function lessonDaysMatch()
@@ -215,40 +215,40 @@
 				"condition" => "id_group=$id_group AND date='$date'".($withoutCancelled ? " AND cancelled = 0 " : "")
 			]);
 		}
-		
+
 		/**
 		 * Получить отсутствующие занятие за последние 7 дней
 		 */
 		public static function getLastWeekMissing($total_count = false)
 		{
 			$date = date('Y-m-d', strtotime('yesterday'));
-			
+
 			foreach(range(1, 10) as $i) {
 				$GroupSchedule = GroupSchedule::findAll([
 					"condition" => "date='$date' AND id_group > 0 AND cancelled=0"
 				]);
-				
+
 				foreach ($GroupSchedule as $Schedule) {
 					// Проверяем было ли это занятие
 					$was_lesson = VisitJournal::find([
 						"condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
 					]);
-					
+
 					// если занятия не было, добавляем в ошибки
 					if (! $was_lesson) {
 						$return[$date]++;
 						$total_missing_count++;
-					}	
+					}
 				}
 				$date = date('Y-m-d', strtotime($date . "-$i day"));
 			}
-			
+
 			return $total_count ? $total_missing_count : $return;
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-		
-		
+
+
 		// @test – используется только в TestController
 		// @refactored
 		public function daysBeforeExam()
@@ -286,7 +286,7 @@
 		public function getSchedule($withoutCancelled=false)
 		{
 			return GroupSchedule::findAll([
-				"condition" => "date >= '{$this->year}-09-01' AND date <= '" . ($this->year + 1) . "-08-31' 
+				"condition" => "date >= '{$this->year}-09-01' AND date <= '" . ($this->year + 1) . "-08-31'
 									AND id_group=".$this->id.($withoutCancelled ? ' AND cancelled = 0 ' : ''),
 				"order"		=> "date ASC, time ASC",
 			]);
@@ -308,7 +308,7 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
-		
+
 		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
 		public function getFutureSchedule()
 		{
@@ -317,7 +317,7 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
-		
+
 		// @refactored
 		public function countFutureSchedule()
 		{
@@ -326,7 +326,7 @@
 				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW()) AND cancelled=0",
 			]);
 		}
-		
+
 		public function countFutureScheduleStatic($id)
 		{
 			// @refactored
@@ -334,7 +334,7 @@
 				"condition" => "id_group=".$id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW()) AND cancelled=0",
 			]);
 		}
-		
+
 		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
 		public function getPastSchedule()
 		{
@@ -343,7 +343,7 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
-		
+
 		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
 
 		// LESSON_LENGTH = 105 минут - 1:45 - 30 минут до конца занятия
@@ -361,7 +361,7 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 		}
-		
+
 		// @delete – удалить после обновления крона
 		// получить прошлое расписание для уведомления учителя об отсутсвии записи в журнале
 		public function getPastScheduleTeacherReport()
@@ -393,7 +393,7 @@
 				'paid' => $paid,
 			];
 		}
-		
+
 		public function countScheduleStatic($id)
 		{
 			// @REFACTORED
@@ -441,7 +441,7 @@
 			}
 			return $return;
 		}
-		
+
 		public function getPastScheduleCountCached()
 		{
 			if (LOCAL_DEVELOPMENT) {
@@ -455,7 +455,7 @@
 			}
 			return $return;
 		}
-		
+
 		public static function getScheduleCountCachedStatic($id_group)
 		{
 			if (LOCAL_DEVELOPMENT) {
@@ -471,7 +471,7 @@
 			}
 			return $return;
 		}
-		
+
 		public static function getPastScheduleCountCachedStatic($id_group)
 		{
 			if (LOCAL_DEVELOPMENT) {
@@ -505,7 +505,7 @@
 				return $GroupFirstSchedule;
 			}
 		}
-		
+
 		/**
 		 * Получить дату первого занятия из расписания.
 		 */
@@ -554,14 +554,14 @@
 
 		/**
 		 * Если в группе состоит хотя бы 1 ученик с занятиями больше 40, то в списке групп предмет выглядит вместо "русский" пишем "русский (спецгруппа)"
-		 * 
+		 *
 		 */
 		public function isSpecial()
 		{
 			if (!$this->id_subject) {
 				return false;
 			}
-			
+
 			// @refactored
 			return dbConnection()->query("
 				SELECT g.id FROM groups g
@@ -572,7 +572,7 @@
 				LIMIT 1
 			")->num_rows;
 		}
-		
+
 		/*
 		 * Получить данные для основного модуля
 		 * $id_student – если просматриваем отзывы отдельного ученика
@@ -582,66 +582,66 @@
 			if (!$page) {
 				$page = 1;
 			}
-			
+
 			// С какой записи начинать отображение, по формуле
 			$start_from = ($page - 1) * Group::PER_PAGE;
-			
+
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
-			
+
 			// получаем данные
 			$query = static::_generateQuery($search, "g.id, g.id_branch, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.cabinet, g.ended, g.ready_to_start");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
-			
+
 			while ($row = $result->fetch_object()) {
 				$Group = $row;
-				
+
 				if ($Group->id_branch) {
 					$Group->branch = Branches::getShortColoredById($Group->id_branch,
 						($Group->cabinet ? "-".Cabinet::findById($Group->cabinet)->number : "")
 					);
 				}
-				
+
 				if ($Group->id_teacher) {
 					$Group->Teacher = Teacher::getLight($Group->id_teacher);
 				}
-				
+
 				$Group->students = empty($Group->students) ? [] : explode(',', $Group->students);
-				
-				$Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id); 
+
+				$Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
 				$Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
 				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTimeStatic($Group->id);
-				
+
 				if ($Group->ready_to_start) {
 					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
-				} 
-				
+				}
+
 				$data[] = $Group;
 			//	$data[] = Group::findById($row->id);
 			}
-			
+
 /*
 			foreach ($data as &$d) {
 				$d->Student = Student::getLight($d->id_entity);
 				$d->Teacher = Teacher::getLight($d->id_teacher);
 			}
 */
-			
+
 			// counts
-			
+
 			$query = dbConnection()->query(static::_generateQuery($search, "g.id_teacher", " GROUP BY g.id_teacher"));
 			$teacher_ids = [];
 			while ($row = $query->fetch_object()) {
 				$teacher_ids[] = $row->id_teacher;
 			}
-			
+
 			return [
 				'teacher_ids'	=> $teacher_ids,
 				'data' 			=> $data,
 				'counts' 		=> $counts,
 			];
 		}
-		
+
 		private static function _generateQuery($search, $select, $ending = '')
 		{
 			if (! empty($search->ntime)) {
@@ -656,7 +656,7 @@
                     $time_cond = ' ('.implode(' OR ', $time_cond).') ';
                 }
 			}
-			
+
 			$main_query = "
 				FROM groups g
 				" . (! empty($search->ntime) ? " JOIN group_time gt ON (g.id = gt.id_group AND {$time_cond})" : "") . "
@@ -691,22 +691,19 @@
 		}
 
 		/**
-		 * Получить свободное время ученика.
-		 *
+		 * Получить свободное.
+		 * @refactored
 		 */
 		public function getDayAndTime()
 		{
 			$GroupTime = GroupTime::findAll([
 				"condition"	=> "id_group=" . $this->id,
-				"order" => "day ASC, time ASC"
 			]);
 
-			if (!$GroupTime) {
-				return [];
-			}
+			$return = [];
 
 			foreach ($GroupTime as $GroupTimeData) {
-				$return[$GroupTimeData->day][] = $GroupTimeData->time;
+				$return[$GroupTimeData->time->day][] = $GroupTimeData;
 			}
 
 			return $return;
@@ -824,14 +821,13 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
-
-			if (!$this->isNewRecord) {
-				$this->time = Freetime::TIME[$this->time];
+			if ($this->id_time) {
+				$this->time = Time::findById($this->id_time);
 			}
 		}
 		/**
-		 * Добавить свободное время
-		 *
+		 * Добавить время группы
+		 * @refactored
 		 */
 		public static function addData($data, $id_group)
 		{
@@ -840,23 +836,14 @@
 			]);
 
 			foreach ($data as $day => $day_data) {
-				foreach ($day_data as $time) {
-					if (empty(trim($time))) {
-						continue;
-					}
+				foreach ($day_data as $d) {
 					$GroupTime = new self([
 						"id_group"	=> $id_group,
-						"day"		=> $day,
-						"time"		=> Freetime::getId($time),
+						"id_time"	=> $d['id_time'],
+						"id_cabinet"=> $d['id_cabinet'],
 					]);
-
 					$GroupTime->save();
 				}
 			}
 		}
-	}
-
-	class GroupNote extends Model
-	{
-		public static $mysql_table	= "group_missing_notes";
 	}
