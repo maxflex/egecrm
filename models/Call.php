@@ -16,6 +16,8 @@
         {
             $excluded_sql = " and 1 ";
             if (($excluded_entries = memcached()->get("excluded_missed")) && is_array($excluded_entries) && !empty($excluded_entries)) {
+                // in (string, string) => in ('string', 'string')
+                $excluded_entries = array_map(function($item){return "'".$item."'"; }, $excluded_entries);
                 $excluded_sql = " and entry_id not in (".implode(",", $excluded_entries).") ";
             }
 
