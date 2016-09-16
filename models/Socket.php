@@ -32,7 +32,7 @@
 				static::EGECRM_APP_KEY,
 				static::EGECRM_APP_SECRET,
 				static::EGECRM_APP_ID,
-				['encrypted' => true]
+				['encrypted' => true, 'cluster' => 'eu']
 			);
 		}
 		
