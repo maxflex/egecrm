@@ -20,7 +20,7 @@
 					$pusher = static::_getEgerepInstance();
 					break;
 				default:
-					$pusher = static::_getEgecrmInstance();		
+					$pusher = static::_getEgecrmInstance();
 			}
 			$pusher->trigger($channel, $event, $data);
 		}
@@ -32,7 +32,7 @@
 				static::EGECRM_APP_KEY,
 				static::EGECRM_APP_SECRET,
 				static::EGECRM_APP_ID,
-				['encrypted' => true, 'cluster' => 'eu']
+				['encrypted' => true]
 			);
 		}
 		
