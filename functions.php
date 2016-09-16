@@ -742,4 +742,9 @@
 	{
 		return ($seconds * 60);
 	}
+
+	function tillNextDay()
+	{
+		return strtotime('tomorrow') - time() + 20;
+	}
 ?>

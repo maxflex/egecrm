@@ -11,26 +11,35 @@
 				* mango.to_number = missed.from_number								мы перезвонили (неважно ответил ли клиент)
 				* mango.from_number = missed.from_number and mango.answer != 0		клиент сам перезвонил и мы ответили
 		*/
-		const MISSED_CALLS_SQL = "
-				FROM (
-					SELECT entry_id, from_number, start
-					FROM `mango`
-					WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0
-					GROUP BY entry_id
-					HAVING sum(answer) = 0
-				) missed 
-				WHERE NOT EXISTS (SELECT 1 FROM mango WHERE mango.start > missed.start and 
-					(mango.to_number = missed.from_number or (mango.from_number = missed.from_number and mango.answer != 0))
-				)
-				GROUP BY from_number 
-				ORDER BY start DESC";
-		
-		/**
+
+        private static function getMissedCallsSql()
+        {
+            $excluded_sql = " and 1 ";
+            if (($excluded_entries = memcached()->get("excluded_missed")) && is_array($excluded_entries) && !empty($excluded_entries)) {
+                $excluded_sql = " and entry_id not in (".implode(",", $excluded_entries).") ";
+            }
+
+            return "
+                    FROM (
+                        SELECT entry_id, from_number, start
+                        FROM `mango`
+                        WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0 {$excluded_sql}
+                        GROUP BY entry_id
+                        HAVING sum(answer) = 0
+                    ) missed 
+                    WHERE NOT EXISTS (SELECT 1 FROM mango WHERE mango.start > missed.start and 
+                        (mango.to_number = missed.from_number or (mango.from_number = missed.from_number and mango.answer != 0))
+                    )
+                    GROUP BY from_number 
+                    ORDER BY start DESC";
+        }
+
+        /**
 		 * Выбираем пропущенные за сегодня звонки, на которые потом не перезвонили
 		 */
 		public static function missed($get_caller = true)
-		{
-			$result = dbEgerep()->query("SELECT *" . self::MISSED_CALLS_SQL);
+        {
+            $result = dbEgerep()->query("SELECT *" . self::getMissedCallsSql());
 			$missed = [];
 			while ($row = $result->fetch_object()) {
 				if ($get_caller) {
@@ -47,12 +56,17 @@
 		 */
 		public static function missedCount()
 		{
-			return dbEgerep()->query("SELECT 1" . self::MISSED_CALLS_SQL)->num_rows;
+			return dbEgerep()->query("SELECT 1" . self::getMissedCallsSql())->num_rows;
 		}
 
-		public static function delete($entry_id)
+		public static function excludeFromMissed($entry_id)
         {
-            dbEgerep()->query("DELETE FROM `mango` WHERE entry_id = '{$entry_id}'");
+            if ($excluded = memcached()->get('excluded_missed')) {
+                $excluded[] = $entry_id;
+            } else {
+                $excluded = [$entry_id];
+            }
+            memcached()->set('excluded_missed', $excluded, tillNextDay());
         }
 		
 		/*
