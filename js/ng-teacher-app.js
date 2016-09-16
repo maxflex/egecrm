@@ -80,17 +80,15 @@ angular.module("Teacher", ["ngMap"]).config([
   $scope.yearDifference = function(year) {
     return moment().format("YYYY") - year;
   };
-  $scope.toggleFreetime = function(day, index) {
-    var mode, time_id;
-    time_id = $scope.weekdays_time[day][index];
-    mode = $scope.Bars.Freetime[day][time_id] === 'green' ? 'Delete' : 'Add';
+  $scope.toggleFreetime = function(day, id_time) {
+    var mode;
+    mode = $scope.Bars.Freetime[day][id_time] === 'green' ? 'Delete' : 'Add';
     $.post('ajax/' + mode + 'Freetime', {
       'id_entity': $scope.Teacher.id,
       'type_entity': 'teacher',
-      'day': day,
-      'time_id': time_id
+      'id_time': id_time
     }, function() {
-      $scope.Bars.Freetime[day][time_id] = mode === 'Add' ? 'green' : 'empty';
+      $scope.Bars.Freetime[day][id_time] = mode === 'Add' ? 'green' : 'empty';
       $scope.$apply();
     });
   };

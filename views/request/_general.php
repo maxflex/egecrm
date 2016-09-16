@@ -38,7 +38,7 @@
 			                </div>
 			            </div>
 		            </div>
-	
+
 					<div>
 			        	<div class="form-group">
 				            <div class="input-group"
@@ -60,7 +60,7 @@
 						            </div>
 							</div>
 						</div>
-	
+
 						<div class="form-group" ng-show="student_phone_level >= 2">
 				            <div class="input-group"
 					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-2')  || (!isMobilePhone('student-phone-2') && student_phone_level >= 3) }">
@@ -81,8 +81,8 @@
 					            </div>
 							</div>
 						</div>
-	
-	
+
+
 						<div class="form-group" ng-show="student_phone_level >= 3">
 							<div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-3') || !isMobilePhone('student-phone-3') }">
 				                <input type="text" id="student-phone-3" placeholder="телефон 3"
@@ -100,11 +100,11 @@
 							</div>
 			            </div>
 					</div>
-	
+
 					 <div class="form-group">
 			            <input class="form-control" ng-model="student.school" name="Student[school]" placeholder="№ школы">
 		            </div>
-	
+
 					<div class="form-group">
 						<input placeholder="серия" class="form-control half-field passport-number" id="student-passport-series"
 							name="StudentPassport[series]" value="<?= $Request->Student->Passport->series ?>">
@@ -137,7 +137,7 @@
 								</div>
 			            </div>
 		            </div>
-	
+
 					<div>
 			        	<div class="form-group">
 				            <div class="input-group"
@@ -160,7 +160,7 @@
 						            </div>
 							</div>
 						</div>
-	
+
 						<div class="form-group" ng-show="representative_phone_level >= 2">
 				            <div class="input-group"
 				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-2')  || (!isMobilePhone('representative-phone-2') && representative_phone_level >= 3)  }">
@@ -182,8 +182,8 @@
 					            </div>
 							</div>
 						</div>
-	
-	
+
+
 						<div class="form-group" ng-show="representative_phone_level >= 3">
 							<div class="input-group"
 				ng-class="{'input-group-with-hidden-span' : !phoneCorrect('representative-phone-3')  || !isMobilePhone('representative-phone-3')  }">
@@ -203,24 +203,24 @@
 							</div>
 			            </div>
 					</div>
-	
+
 					<div class="form-group">
 						 <textarea placeholder="адрес фактического проживания"  style="height: 123px"
 						 	class="form-control" name="Representative[address]" ng-model="representative.address">
 		                </textarea>
 					</div>
-	
-	
-	
-	
-	
+
+
+
+
+
 			    </div>
 			    <div class="col-sm-3">
 				    <h4 style="margin-top: 0" class="row-header">Паспорт</h4>
 				    <div class="form-group">
 						<input placeholder="серия" class="form-control half-field passport-number" id="passport-series"
 							name="Passport[series]" ng-model="representative.Passport.series">
-	
+
 						<input placeholder="номер" class="form-control half-field pull-right passport-number" id="passport-number"
 							name="Passport[number]" ng-model="representative.Passport.number">
 		            </div>
@@ -269,7 +269,7 @@
 		            <div style="margin-bottom: 20px">
 			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
 		            </div>
-		            
+
 		            <div class="form-group">
 			            <?= Branches::buildSvgSelector($Request->Student->branches, [
 				            "name" => "Student[branches][]",
@@ -282,13 +282,13 @@
 			            <span class="link-like" ng-click="showMap()"><span class="glyphicon glyphicon-map-marker"></span>Метки</span>
 			            <span class="text-primary">({{markers.length}})</span>
 		            </div>
-		            
+
 		            <h4 style="margin-top: 78px" class="row-header">График</h4>
 			            <div class="row">
 				            <div class="col-sm-12">
 					            свободно:<br>
 					            <span ng-repeat="(day, data) in FreetimeBar" class="group-freetime-block">
-									<span ng-click="toggleStudentFreetime(day, $index)" ng-repeat="bar in data" class="pointer bar {{bar}}"></span>
+									<span ng-repeat="(id_time, bar) in data" ng-click="toggleStudentFreetime(day, id_time)" class="pointer bar {{bar}}"></span>
 								</span>
 				            </div>
 			            </div>
@@ -305,7 +305,7 @@
 		    </div>
 	    </div>
 	</div>
-	
+
 	<?= partial('contracts', compact('Request')) ?>
 	<?= partial('groups', compact('Request')) ?>
 

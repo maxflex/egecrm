@@ -151,11 +151,14 @@
 			return array_search($id_time, self::$weekdays_time);
 		}
 
+		/**
+		 * @refactored
+		 */
 		public static function getFreetimeBar($id_entity, $type_entity)
 		{
-			foreach (self::$weekdays_time as $day => $time_data) {
-				foreach ($time_data as $time_index => $time_id) {
-					$bar[$day][$time_id] = EntityFreetime::hasFreetime($id_entity, $type_entity, $day, $time_id) ? 'green' : 'empty';
+			foreach(Time::MAP as $day => $data) {
+				foreach ($data as $id_time) {
+					$bar[$day][$id_time] = EntityFreetime::hasFreetime($id_entity, $type_entity, $id_time) ? 'green' : 'empty';
 				}
 			}
 			return $bar;
@@ -178,6 +181,7 @@
 			} else {
 				$bar = [];
 			}
+
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
                     $result = dbConnection()->query("

@@ -14,7 +14,6 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
-
 		}
 
 		/**
@@ -23,7 +22,7 @@
 		public static function remove($id_entity, $type_entity, $id_time)
 		{
 			static::deleteAll([
-				'condition' => "id_entity=$id_entity AND type_entity='$type_entity' AND day=$day AND time_id=$time_id"
+				'condition' => "id_entity=$id_entity AND type_entity='$type_entity' AND id_time=$id_time"
 			]);
 		}
 
@@ -34,7 +33,7 @@
 		public static function hasFreetime($id_entity, $type_entity, $id_time)
 		{
 			return static::count([
-				'condition' => "id_entity=$id_entity AND type_entity='$type_entity' AND day=$day AND time_id=$time_id"
+				'condition' => "id_entity=$id_entity AND type_entity='$type_entity' AND id_time=$id_time"
 			]);
 		}
 

@@ -8,7 +8,7 @@
 	            </div>
 	            <div class="col-sm-8" style="text-align: right">
 		            <span ng-repeat="(day, data) in Bars.Freetime" class="group-freetime-block">
-						<span ng-click="toggleFreetime(day, $index)" ng-repeat="bar in data" class="pointer bar {{bar}}"></span>
+						<span ng-repeat="(id_time, bar) in data" ng-click="toggleFreetime(day, id_time)" class="pointer bar {{bar}}"></span>
 					</span>
 	            </div>
 	        </div>
@@ -24,7 +24,7 @@
 	        </div>
 		</div>
 	</div>
-	
+
 	<div class="col-sm-12" style="margin-top: 13px">
 		<?= Html::comments('Bars', Comment::PLACE_TEACHER) ?>
 	</div>
