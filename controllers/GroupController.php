@@ -408,10 +408,10 @@
 				$this->addJs("dnd");
 				$Group = Group::findById($_GET['id']);
 			}
-			
+
 			if (! LOCAL_DEVELOPMENT) {
 				$Teachers = Teacher::findAll();
-	
+
 				if ($Group->id_teacher) {
 					foreach ($Teachers as &$Teacher) {
 						if ($Teacher->id == $Group->id_teacher) {
@@ -442,7 +442,7 @@
 				}
 
 				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
-				$Student->bar					= $Student->getBar($Group->id, $Group->id_branch);
+				$Student->bar					= Freetime::getStudentBar($Student->id, true, $Group->id); // @refactored
 
 				# Статус доставки СМС
 				// $Student->delivery_data			= $Student->getAwaitingSmsStatuses($Group->id);
@@ -459,11 +459,11 @@
 			usort($Students, function($a, $b) {
 				return ($a->Contract->id < $b->Contract->id ? -1 : 1);
 			});
-			
+
 			$ang_init_data = angInit([
 				"Group" 	=> $Group,
 				"Teachers"	=> $Teachers,
-				"TmpStudents" => $Students, 
+				"TmpStudents" => $Students,
 //				"Students"	=> $Students,
 				"Subjects"	=> Subjects::$three_letters,
 				"GroupLevels" => GroupLevels::$all,
@@ -1169,7 +1169,7 @@
 				Freetime::checkFreeCabinets($id_group, $year, $day_and_time)
 			);
 		}
-		
+
 		public function actionAjaxToggleReadyToStart()
 		{
 			extract($_POST);
