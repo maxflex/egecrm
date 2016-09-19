@@ -63,8 +63,8 @@
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
 		</td>
 		<td>
-			<span ng-show="Group.id_teacher" ng-init="_Teacher = Group.Teacher || getTeacher(Group.id_teacher)">
-				<a target="_blank" href="teachers/edit/{{ _Teacher.id }}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
+			<span ng-show="Group.id_teacher" ng-init="_Teacher = Group.Teacher || getTeacher(Group.id_teacher)" style="position: relative;">
+				<a class="hint-bottom-t-egecentr hint-bottom-s-big hint-fade-d-long" data-hint="{{ _Teacher.comment ? _Teacher.comment : 'Описание отсутствует' }}" target="_blank" href="teachers/edit/{{ _Teacher.id }}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
 			</span>
 		</td>
 		<td>

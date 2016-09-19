@@ -602,7 +602,7 @@
 				}
 				
 				if ($Group->id_teacher) {
-					$Group->Teacher = Teacher::getLight($Group->id_teacher);
+					$Group->Teacher = Teacher::getLight($Group->id_teacher, ['comment']);
 				}
 				
 				$Group->students = empty($Group->students) ? [] : explode(',', $Group->students);
