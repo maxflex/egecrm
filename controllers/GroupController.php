@@ -167,7 +167,7 @@
 
 					$ang_init_data = angInit([
 						"Group" 	=> $Group,
-						"LessonData"=> $OrderedLessonData,
+						"LessonData"=> (object)$OrderedLessonData,
 						"Schedule"	=> $Schedule,
 						"lesson_statuses" => VisitJournal::$statuses,
 						"id_group"		=> $id_group,
