@@ -30,6 +30,9 @@ angular.module "Contracts", ["ui.bootstrap"]
 				$scope.$apply()
 			, "json"
 
+		$scope.keyFilter = (event) ->
+			$scope.filter() if event.keyCode is 13
+
 		angular.element(document).ready ->
 			set_scope "Contracts"
 			$scope.search = if $.cookie("contracts") then JSON.parse($.cookie("contracts")) else {}

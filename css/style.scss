@@ -3172,3 +3172,6 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .full-width {
 	width: 100% !important;
 }
+.form-control[readonly] {
+  background-color: white;
+}

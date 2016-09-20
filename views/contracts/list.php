@@ -5,19 +5,19 @@
             <div class="col-sm-2">
                 <div class="input-group custom" style="position: relative">
                     <span class="input-group-addon">начало - </span>
-                    <input class="form-control bs-date" ng-model="search.start_date" ng-change="filter()">
+                    <input class="form-control bs-date-clear pointer" readonly ng-model="search.start_date" ng-change="filter()">
                 </div>
             </div>
             <div class="col-sm-2">
                 <div class="input-group custom" style="position: relative">
                     <span class="input-group-addon">конец - </span>
-                    <input class="form-control bs-date" ng-model="search.end_date" ng-change="filter()">
+                    <input class="form-control bs-date-clear pointer" readonly ng-model="search.end_date" ng-change="filter()">
                 </div>
             </div>
             <div class="col-sm-2">
                 <div class="input-group custom" style="position: relative">
                     <span class="input-group-addon">ID ученика - </span>
-                    <input class="digits-only form-control" ng-model="search.id_student" ng-change="filter()">
+                    <input class="digits-only form-control" ng-model="search.id_student" ng-keyup='keyFilter($event)'>
                 </div>
             </div>
         </div>
