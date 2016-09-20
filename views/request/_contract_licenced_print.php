@@ -28,7 +28,7 @@
 <p>1.2. Обучение осуществляется в порядке, установленном локальными нормативными актами Исполнителя и настоящим Договором.</p>
 <p>1.3. Продолжительность образовательной программы по программе курса
 	<span ng-repeat="program in contract.subjects">
-			«{{SubjectsFull2[program.id_subject]}}-{{(program.count * 1) + (program.count2 * 1)}}» ({{((program.count * 1) + (program.count2 * 1))*3}}
+			«{{SubjectsFull2[program.id_subject]}}-{{contract.grade}}-{{(program.count * 1) + (program.count2 * 1)}}» ({{((program.count * 1) + (program.count2 * 1))*3}}
 			аудиторных <ng-pluralize count="((program.count * 1) + (program.count2 * 1))*3" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> и {{((program.count * 1) + (program.count2 * 1))*1.5}}
 			 <ng-pluralize count="((program.count * 1) + (program.count2 * 1))*1.5" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> на самостоятельную подготовку){{$last ? '.' : ','}}
 	</span>
@@ -252,7 +252,7 @@
 	
 	<h4>
  АКТ ОБ ОКАЗАННЫХ УСЛУГАХ<br>
-ПО ДОГОВОРУ №{{contract.id}}<br>
+ПО ДОГОВОРУ
 №{{contract.id}} от {{contract.date}}
 	</h4>
 
