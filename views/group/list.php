@@ -103,7 +103,7 @@
 					<div ng-show="Groups === null" style="padding: 100px" class="small half-black center">
 						нет групп
 					</div>
-					<?= globalPartial("groups_list", ["filter" => false]) ?>
+					<?= globalPartial("groups_list", ["filter" => false, 'teacher_comment' => true]) ?>
 
 					<div ng-show="Groups.length == 0" class="center half-black small" style="margin-bottom: 30px">список групп пуст</div>
 				</div>
