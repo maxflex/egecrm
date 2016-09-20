@@ -88,6 +88,11 @@ RewriteRule ^clients[?page=(0-9)]?[/]?$ index.php?controller=clients&page=$1 [QS
 RewriteRule ^clients/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=$1 [QSA,L]
 RewriteRule ^clients/ajax/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=Ajax$1 [QSA,L]
 
+# Договора
+RewriteRule ^contracts[?page=(0-9)]?[/]?$ index.php?controller=contracts&page=$1 [QSA,L]
+RewriteRule ^contracts/ajax/([a-zA-Z]+)[/]?$ index.php?controller=contracts&action=Ajax$1 [QSA,L]
+
+
 RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
 RewriteRule ^(teachers/)?payments/([a-zA-Z]+)[/]?$ index.php?controller=payments&action=$2 [QSA,L]
 RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]

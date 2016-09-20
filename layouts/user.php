@@ -200,7 +200,8 @@
 		    }
 		?>
     </a>
-	<a class="list-group-item active">Финансы</a>
+    <a href="contracts" class="list-group-item">Версии договоров</a>
+    <a class="list-group-item active">Финансы</a>
 	<a href="payments" class="list-group-item">Платежи
 	    <?php
 		    $unconfirmed_payment_count = Payment::countUnconfirmed();

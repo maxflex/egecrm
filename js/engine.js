@@ -516,7 +516,15 @@
 			$(".digits-only-minus").inputmask("Regex", {regex: "[-]?[0-9]*"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
 			$('.bs-date input, .bs-date-top input, input.bs-date, input.bs-date-top').mask("99.99.9999", {clearIfNotMatch: true});
-			$.mask.definitions['H'] = "[0-2]";
+
+      $('#contracts-list .input-group-addon').on('click', function(){$(this).siblings('input').focus();});
+      // $('#contracts-list input.bs-date').on('keyup', function(){
+      // 		if (!this.value.replace(/[\._]g/, '').length) {
+      // 			this.value = '';
+				// 	}
+      // });
+
+      $.mask.definitions['H'] = "[0-2]";
 		    $.mask.definitions['h'] = "[0-9]";
 		    $.mask.definitions['M'] = "[0-5]";
 		    $.mask.definitions['m'] = "[0-9]";
