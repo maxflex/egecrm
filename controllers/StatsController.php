@@ -274,7 +274,7 @@
 
 			$return['in_time'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-					. " AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+					. " AND type_entity='STUDENT' AND presence!=2 AND (late is null or late = 0)"
 			]);
 
 			$return['late_count'] = VisitJournal::count([
@@ -390,7 +390,7 @@
 				]);
 
 				$return[$day]['in_time'] = VisitJournal::count([
-					"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+					"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND type_entity='STUDENT' AND presence!=2 AND (late is null or late = 0)"
 				]);
 
 				$return[$day]['late_count'] = VisitJournal::count([
@@ -428,7 +428,7 @@
 					]);
 
 					$return[$key]['in_time'] = VisitJournal::count([
-						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='STUDENT' AND presence!=2 AND (late is null or late = 0)"
 					]);
 
 					$return[$key]['late_count'] = VisitJournal::count([
@@ -555,7 +555,7 @@
 				]);
 
 				$Student->in_time = VisitJournal::count([
-					"condition" => "id_entity={$Student->id} AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+					"condition" => "id_entity={$Student->id} AND type_entity='STUDENT' AND presence!=2 AND (late is null or late = 0)"
 				]);
 
 				$Student->late_count = VisitJournal::count([
@@ -619,7 +619,7 @@
 				]);
 
 				$Teacher->in_time = VisitJournal::count([
-					"condition" => "id_teacher={$Teacher->id} AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+					"condition" => "id_teacher={$Teacher->id} AND type_entity='STUDENT' AND presence!=2 AND (late is null or late = 0)"
 				]);
 
 				$Teacher->late_count = VisitJournal::count([
@@ -662,7 +662,7 @@
 				]);
 
 				$return[$grade]['in_time'] = VisitJournal::count([
-					"condition" => "grade=$grade AND  type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+					"condition" => "grade=$grade AND  type_entity='STUDENT' AND presence!=2 AND (late is null or late = 0)"
 				]);
 
 				$return[$grade]['late_count'] = VisitJournal::count([
@@ -705,7 +705,7 @@
 				]);
 
 				$return[$id_subject]['in_time'] = VisitJournal::count([
-					"condition" => "id_subject=$id_subject AND  type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+					"condition" => "id_subject=$id_subject AND  type_entity='STUDENT' AND presence!=2 AND (late is null or late = 0)"
 				]);
 
 				$return[$id_subject]['late_count'] = VisitJournal::count([
