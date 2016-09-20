@@ -24,6 +24,6 @@
 		</div>
 		<div ng-show="!Groups" class="center half-black small" style="margin-top: 35px">загрузка групп...</div>
 		<div class="col-sm-12">
-			<?= globalPartial("groups_list", ["filter" => true]) ?>
+			<?= globalPartial("groups_list", ["filter" => true, "teacher_comment" => true]) ?>
 		</div>
 </div>

@@ -24,7 +24,7 @@
 			$this->first_schedule 		= $this->getFirstSchedule();
 
 			if ($this->id_teacher) {
-				$this->Teacher	= Teacher::getLight($this->id_teacher);
+				$this->Teacher	= Teacher::getLight($this->id_teacher, ['comment']);
 			}
 
 			if (!$this->isNewRecord) {

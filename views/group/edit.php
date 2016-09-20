@@ -202,7 +202,7 @@
 			</div>
 		</form>
 
-		<?= partial("groups_list") ?>
+		<?= partial("groups_list", ['teacher_comment' => true]) ?>
 
 </div>
 	<?= partial("day_and_time") ?>
