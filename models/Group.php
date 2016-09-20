@@ -57,7 +57,6 @@
 		public static function getNotifiedStudentsCount($Group)
 		{
 			$FirstLesson = Group::getFirstLesson($Group->id, true);
-
 			if (!count($Group->students) || !$Group->id_subject || !$Group->first_schedule || !$FirstLesson->cabinet) {
 				return 0;
 			}

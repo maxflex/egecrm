@@ -59,8 +59,7 @@
 		<td>
             <!-- @time-refactored @time-checked -->
 			<span ng-repeat="data in Group.day_and_time">
-				<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>
-				{{ $last ? '' : ', '}}
+				<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
 			</span>
 			<span ng-show="Group.day_and_time.length !== undefined">без расписания</span>
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->

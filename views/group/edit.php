@@ -17,7 +17,7 @@
 	            <span style="margin-right: 12px" ng-click="dayAndTime()">
 	            	<span class="link-like link-reverse link-white" ng-show='hasDayAndTime()'>
 	            		<span ng-repeat="(day, data) in Group.day_and_time">
-							{{ weekdays[day] }} в <span ng-repeat='d in data'>{{ d.time.time }}{{$last ? '' : ', '}}</span> {{ $last ? '' : ', '}}
+							{{ weekdays[day] }} в <span ng-repeat='d in data'>{{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
 	            		</span>
 					</span>
 	            	<span class="link-like link-reverse link-white" ng-show='!hasDayAndTime()'>установить день и время</span>
@@ -137,7 +137,7 @@
 								</span>
 							</td>
 						</tr>
-						<tr ng-repeat="(id_cabinet, cabinet_bar) in cabinet_bars">
+						<tr ng-repeat="(id_cabinet, cabinet_bar) in cabinet_bars" ng-show='id_cabinet > 0'>
 							<td colspan="4">Загрузка кабинета <span style='color: {{ getCabinet(id_cabinet).color }}'>{{ getCabinet(id_cabinet).label }}</span></td>
 							<td width="220">
 								<span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">

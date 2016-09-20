@@ -407,6 +407,9 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   $scope.dayAndTime = function() {
     return lightBoxShow("freetime");
   };
+  $scope.getTestStatus = function(Test) {
+    return test_statuses[Test.intermediate];
+  };
   $scope.saveDayAndTime = function() {
     lightBoxHide();
     return justSave(function() {

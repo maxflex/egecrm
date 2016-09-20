@@ -50,10 +50,25 @@
 			<div class="col-sm-1"></div>
 			<div class="col-sm-6">
 				<div style="margin-bottom: 15px; font-weight: bold">Текущий состав группы учеников:</div>
-				<div ng-repeat="Student in Group.Students">
-					{{$index + 1}}. {{Student.last_name}} {{Student.first_name}}
-				</div>
-
+				<table>
+					<tr ng-repeat="Student in Group.Students">
+						<td>{{$index + 1}}. {{Student.last_name}} {{Student.first_name}}</td>
+						<td style="padding-left: 10px;">
+							<span ng-show="Student && Student.Test">
+								<span ng-show="Student.Test.notStarted" class="quater-black">к тесту не приступал</span>
+								<span ng-show="Student.Test.inProgress" class="quater-black">тест в процессе</span>
+								<span ng-show="Student.Test.isFinished">
+									<span class="text-gray">{{ getTestStatus(Student.Test) }}</span>
+									{{ Student.Test.final_score }} <ng-pluralize count="Student.Test.final_score" when="{
+									'one': 'балл',
+									'few': 'балла',
+									'many': 'баллов'
+								}"></ng-pluralize></span>
+							</span>
+							<span ng-show="!Student.Test" class="text-gray">тест не найден</span>
+						</td>
+					</tr>
+				</table>
 				<div style="margin: 15px 0; font-weight: bold">Расписание занятий:</div>
 
 <!--

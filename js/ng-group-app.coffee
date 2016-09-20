@@ -340,6 +340,8 @@
 
 			$scope.dayAndTime = ->
 				lightBoxShow "freetime"
+			$scope.getTestStatus = (Test) ->
+				test_statuses[Test.intermediate]
 
 			$scope.saveDayAndTime = ->
 				lightBoxHide()

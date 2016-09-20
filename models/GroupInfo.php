@@ -54,7 +54,11 @@
 		public static function getStatus($id_student, $Group)
 		{
 			$FirstLesson = Group::getFirstLesson($Group->id, true);
-
+			
+			if (!count($Group->students) || !$Group->id_subject || !$Group->first_schedule || !$FirstLesson->cabinet) {
+				return 0;
+			}
+			
 			// preType([$id_student, $id_branch, $id_subject, $first_schedule, $cabinet]);
 			return self::count([
 				"condition" => "id_student={$id_student}
