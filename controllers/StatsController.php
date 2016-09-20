@@ -73,7 +73,7 @@
 						// сумма заключенных дагаваров
 						$stats['contract_sum_new']['external'] += $Contract->sum;
 					} else {
-						$stats['contract_new']['basic']++;	
+						$stats['contract_new']['basic']++;
 						$stats['subjects_new']['basic'] += count($Contract->subjects);
 						$stats['contract_sum_new']['basic'] += $Contract->sum;
 					}
@@ -287,8 +287,8 @@
 					. " AND type_entity='STUDENT' AND presence=2"
 			]);
 
-
-			$return['abscent_percent'] = round($return['abscent_count'] / ($return['in_time'] + $return['late_count'] + $return['abscent_count']) * 100);
+			$denominator = $return['in_time'] + $return['late_count'] + $return['abscent_count'];
+			$return['abscent_percent'] = $denominator ? round($return['abscent_count'] / $denominator * 100) : 0;
 
 			return $return;
 		}
@@ -377,8 +377,7 @@
 
 		private function getTotalVisitsByWeekdays()
 		{
-// 			foreach(range(0, 6) as $day_number) {
-			foreach(Freetime::DAYS_SHORT as $day => $title) {
+			foreach(Time::WEEKDAYS as $day => $title) {
 				if ($day == 7) {
 					$day_number = 0;
 				} else {
@@ -401,9 +400,8 @@
 					"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND type_entity='STUDENT' AND presence=2"
 				]);
 
-
-				$return[$day]['abscent_percent'] = round($return[$day]['abscent_count'] / ($return[$day]['in_time']
-					+ $return[$day]['late_count'] + $return[$day]['abscent_count']) * 100);
+				$denominator = $return[$day]['in_time'] + $return[$day]['late_count'] + $return[$day]['abscent_count'];
+				$return[$day]['abscent_percent'] = $denominator ? round($return[$day]['abscent_count'] / $denominator * 100) : 0;
 
 				$return[$day]['title'] = $title;
 			}
@@ -411,11 +409,13 @@
 			return $return;
 		}
 
+		// @time-refactored
 		private function getTotalVisitsBySchedule()
 		{
-			foreach (Freetime::$weekdays_time as $day => $time_ids) {
-				foreach ($time_ids as $time_id) {
-					$key = $day . "_" . $time_id;
+			$Time = Time::getLight();
+			foreach(Time::MAP as $day => $data) {
+				foreach ($data as $id_time) {
+					$key = $day . "_" . $id_time;
 
 					if ($day == 7) {
 						$day_number = 0;
@@ -424,26 +424,25 @@
 					}
 
 					$return[$key]['lesson_count'] = VisitJournal::count([
-						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='TEACHER'"
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . $Time[$id_time] . ":00' AND type_entity='TEACHER'"
 					]);
 
 					$return[$key]['in_time'] = VisitJournal::count([
-						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . $Time[$id_time] . ":00' AND type_entity='STUDENT' AND presence!=2 AND late IS NULL"
 					]);
 
 					$return[$key]['late_count'] = VisitJournal::count([
-						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='STUDENT' AND presence!=2 AND late > 0"
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . $Time[$id_time] . ":00' AND type_entity='STUDENT' AND presence!=2 AND late > 0"
 					]);
 
 					$return[$key]['abscent_count'] = VisitJournal::count([
-						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . Freetime::TIME[$time_id] . ":00' AND type_entity='STUDENT' AND presence=2"
+						"condition" => "DATE_FORMAT(lesson_date, '%w')=$day_number AND lesson_time='" . $Time[$id_time] . ":00' AND type_entity='STUDENT' AND presence=2"
 					]);
 
+					$denominator = $return[$key]['in_time'] + $return[$key]['late_count'] + $return[$key]['abscent_count'];
+					$return[$key]['abscent_percent'] = $denominator ? round($return[$key]['abscent_count'] / $denominator * 100) : 0;
 
-					$return[$key]['abscent_percent'] = round($return[$key]['abscent_count'] / ($return[$key]['in_time']
-						+ $return[$key]['late_count'] + $return[$key]['abscent_count']) * 100);
-
-					$return[$key]['title'] = Freetime::DAYS_SHORT[$day] . " в " . Freetime::TIME[$time_id];
+					$return[$key]['title'] = Time::WEEKDAYS[$day] . " в " . $Time[$id_time];
 				}
 			}
 
@@ -566,7 +565,8 @@
 					"condition" => "id_entity={$Student->id} AND type_entity='STUDENT' AND presence=2"
 				]);
 
-				$Student->abscent_percent = round($Student->abscent_count / ($Student->in_time + $Student->late_count + $Student->abscent_count) * 100);
+				$denominator = $Student->in_time + $Student->late_count + $Student->abscent_count;
+				$Student->abscent_percent = $denominator ? round($Student->abscent_count / $denominator * 100) : 0;
 			}
 
 			usort($Students, function($a, $b) {
@@ -630,7 +630,8 @@
 					"condition" => "id_teacher={$Teacher->id} AND type_entity='STUDENT' AND presence=2"
 				]);
 
-				$Teacher->abscent_percent = round($Teacher->abscent_count / ($Teacher->in_time + $Teacher->late_count + $Teacher->abscent_count) * 100);
+				$denominator = $Teacher->in_time + $Teacher->late_count + $Teacher->abscent_count;
+				$Teacher->abscent_percent = $denominator ? round($Teacher->abscent_count / $denominator * 100) : 0;
 			}
 
 			$this->render("total_visit_teachers", [
@@ -673,7 +674,8 @@
 					"condition" => "grade=$grade AND type_entity='STUDENT' AND presence=2"
 				]);
 
-				$return[$grade]['abscent_percent'] = round($return[$grade]['abscent_count'] / ($return[$grade]['in_time'] + $return[$grade]['late_count'] + $return[$grade]['abscent_count']) * 100);
+				$denominator = $return[$grade]['in_time'] + $return[$grade]['late_count'] + $return[$grade]['abscent_count'];
+				$return[$grade]['abscent_percent'] = $denominator ? round($return[$grade]['abscent_count'] / $denominator * 100) : 0;
 			}
 
 			$this->render("total_visit_grades", [
@@ -716,7 +718,8 @@
 					"condition" => "id_subject=$id_subject AND type_entity='STUDENT' AND presence=2"
 				]);
 
-				$return[$id_subject]['abscent_percent'] = round($return[$id_subject]['abscent_count'] / ($return[$id_subject]['in_time'] + $return[$id_subject]['late_count'] + $return[$id_subject]['abscent_count']) * 100);
+				$denominator = $return[$id_subject]['in_time'] + $return[$id_subject]['late_count'] + $return[$id_subject]['abscent_count'];
+				$return[$id_subject]['abscent_percent'] = $denominator ? round($return[$id_subject]['abscent_count'] / $denominator * 100) : 0;
 			}
 
 			$this->render("total_visit_subjects", [

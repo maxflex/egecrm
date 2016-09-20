@@ -7,6 +7,18 @@
 
 		public static $statuses = ["не указано", "был", "не был"];
 
+		public function __construct($array)
+		{
+			parent::__construct($array);
+
+			if ($this->lesson_time) {
+				$this->lesson_time = mb_strimwidth($this->lesson_time, 0, 5);
+				if ($this->lesson_time == "00:00") {
+					$this->lesson_time = null; // чтобы отображало "не установлено"
+				}
+			}
+		}
+
 		public static function addData($id_group, $date, $data)
 		{
 			$Schedule = GroupSchedule::find([
@@ -53,14 +65,13 @@
 						}
 					}
 				}
-
+				// @time-refactored
 				self::add([
 					"id_entity" 			=> $id_student,
 					"type_entity"			=> Student::USER_TYPE,
 					"id_group"				=> $id_group,
 					"id_subject"			=> $Group->id_subject,
-					"id_branch"				=> $Schedule->id_branch,
-					"cabinet"				=> $Group->cabinet,
+					"cabinet"				=> $Schedule->cabinet,
 					"is_special"			=> $Group->is_special,
 					"lesson_date"			=> $date,
 					"lesson_time"			=> $Schedule->time,
@@ -75,14 +86,13 @@
 					"year"					=> static::_academicYear($date),
 				]);
 			}
-
+			// @time-refactored
 			self::add([
 				"id_entity" 			=> $Group->id_teacher,
 				"type_entity"			=> Teacher::USER_TYPE,
 				"id_group"				=> $id_group,
 				"id_subject"			=> $Group->id_subject,
-				"id_branch"				=> $Schedule->id_branch,
-				"cabinet"				=> $Group->cabinet,
+				"cabinet"				=> $Schedule->cabinet,
 				"is_special"			=> $Group->is_special,
 				"lesson_date"			=> $date,
 				"lesson_time"			=> $Schedule->time,

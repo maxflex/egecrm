@@ -25,11 +25,6 @@
 	        <?php endif ?>
 			<span class="link-like link-reverse link-white" ng-click="addGroupsPanel()" style="margin-right: 12px">
 					похожие группы</span>
-<!--
-			<a class="link-reverse" target="_blank" style="margin-right: 12px"
-				href="requests/relevant?subject={{Group.id_subject}}&branch={{Group.id_branch}}&grade={{Group.grade}}">
-					релевантные заявки</a>
--->
 			<span class="link-like link-reverse link-white" ng-click="smsDialog2(Group.id)">групповое SMS</span>
 
 			<span style="margin-left: 12px" class="link-reverse pointer" ng-click="deleteGroup(Group.id)" ng-show="Group.id">удалить группу</span>
@@ -41,15 +36,6 @@
 			<?php if (User::fromSession()->id != 77 && !User::isRoot() && !User::isDev()) :?>
 			<div class='div-blocker'></div>
 			<?php endif ?>
-			<div>
-	            <?=
-	                Branches::buildSvgSelectorCabinets($Group->id_branch, $Group->cabinet, [
-		                "id"		=> "group-branch",
-		                "ng-model"	=> "id_branch_cabinet",
-		                "ng-change"	=> "changeBranch()",
-	                ])
-	            ?>
-			</div>
             <div class="form-group">
 				<?= Subjects::buildSelector(false, false, [
 					"ng-model" => "Group.id_subject",
@@ -151,10 +137,10 @@
 								</span>
 							</td>
 						</tr>
-						<tr>
-							<td colspan="4">Загрузка кабинета</td>
+						<tr ng-repeat="(id_cabinet, cabinet_bar) in cabinet_bars">
+							<td colspan="4">Загрузка кабинета <span style='color: {{ getCabinet(id_cabinet).color }}'>{{ getCabinet(id_cabinet).label }}</span></td>
 							<td width="220">
-							    <span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
+								<span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 									<span ng-repeat="bar in data" class="bar {{bar}}">{{ timeid }}</span>
 								</span>
 							</td>

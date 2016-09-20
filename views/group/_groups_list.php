@@ -6,19 +6,27 @@
 					<?= Grades::buildSelector(false, false, ["ng-model" => "search_groups.grade"]) ?>
 				</div>
 				<div class="col-sm-3">
-	                <?= Branches::buildSvgSelector(false, ["id" => "groups-branch-filter", "ng-model" => "search_groups.id_branch"]) ?>
+					<select ng-model='search_groups.id_cabinet' id='groups-cabinet-filter' class="full-width">
+						<option selected value=''>кабинет</option>
+						<option disabled>──────────────</option>
+						<option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}"
+							ng-class="{'half-opacity': free_cabinets[d.id][cabinet.id]}"
+							style='color: {{ cabinet.color }}'>
+							{{ cabinet.label}}
+						</option>
+					</select>
 				</div>
 				<div class="col-sm-3">
 					<?= Subjects::buildSelector(false, false, ["ng-model" => "search_groups.id_subject"]) ?>
 				</div>
-				<div class="col-sm-3"> 
-					<select class="form-control" 
+				<div class="col-sm-3">
+					<select class="form-control"
 						ng-model="search_groups.year">
 						<option value="">все</option>
 						<option disabled>──────────────</option>
-						<option ng-repeat="year in <?= Years::json() ?>" 
+						<option ng-repeat="year in <?= Years::json() ?>"
 								value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
-					</select> 
+					</select>
 				</div>
 			</div>
 		</div>

@@ -82,6 +82,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     date_now = new Date();
     date_lesson = new Date($scope.Schedule.date + " " + $scope.Schedule.time + ":00");
     diff = date_now.getTime() - date_lesson.getTime();
+    console.log('diff', diff);
     data = {
       seconds: 59 - (Math.floor(diff / 1000) - (Math.floor(diff / 1000 / 60) * 60)),
       minutes: 40 - Math.floor(diff / 1000 / 60)
@@ -169,6 +170,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   });
 }).controller("ScheduleCtrl", function($scope) {
   $scope.schedulde_loaded = false;
+  $scope.changeCabinet = function(Schedule) {
+    return $.post('groups/ajax/ChangeScheduleCabinet', {
+      id: Schedule.id,
+      cabinet: Schedule.cabinet
+    });
+  };
   $scope.formatDate = function(date) {
     return moment(date).format("D MMMM YYYY г.");
   };
@@ -180,53 +187,27 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       cancelled: 0
     }).length;
   };
-  $scope.studentsToLayeredScheduleTitle = function(Schedule, students) {
-    var j, last, len, student, title;
-    title = '';
-    last = students[students.length - 1];
-    for (j = 0, len = students.length; j < len; j++) {
-      student = students[j];
-      title += student.first_name + ' ' + student.last_name;
-      if (last !== student) {
-        title += ',';
-      }
-    }
-    Schedule.title = title;
-    return $scope.$apply();
-  };
   $scope.setParamsFromGroup = function(Group) {
-    $.each($scope.Group.Schedule, function(i, v) {
-      var d, key;
+    return $.each($scope.Group.Schedule, function(i, v) {
+      var d;
       d = moment(v.date).format("d");
       d = parseInt(d);
       if (d === 0) {
         d = 7;
       }
       if (Group.day_and_time[d] !== void 0) {
-        key = Object.keys(Group.day_and_time[d])[0];
-        v.time = Group.day_and_time[d][key];
+        v.time = $scope.Time[Group.day_and_time[d][0].id_time];
+        v.cabinet = Group.day_and_time[d][0].id_cabinet;
+      } else {
+        v.time = null;
+        v.cabinet = '';
       }
-      if (Group.id_branch) {
-        v.id_branch = Group.id_branch;
-        $scope.changeBranch(v);
-      }
-      if (Group.id_branch && Group.cabinet) {
-        if (Group.cabinet) {
-          return v.cabinet = Group.cabinet;
-        }
-      }
+      return $.post("groups/ajax/TimeFromGroup", {
+        id: v.id,
+        time: v.time,
+        cabinet: v.cabinet
+      });
     });
-    return $.post("groups/ajax/TimeFromGroup", {
-      id_group: Group.id
-    }, function(response) {
-      if (response) {
-        return $.each($scope.Group.Schedule, function(i, v) {
-          if (response[v.date]) {
-            return $scope.studentsToLayeredScheduleTitle(v, response[v.date]);
-          }
-        });
-      }
-    }, "json");
   };
   $scope.lessonCount = function() {
     return Object.keys($scope.Group.day_and_time).length;
@@ -236,25 +217,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       id: Schedule.id,
       is_free: Schedule.is_free
     });
-  };
-  $scope.changeCabinet = function(Schedule) {
-    return $.post("groups/ajax/changeScheduleCabinet", {
-      date: Schedule.date,
-      id_group: $scope.Group.id,
-      cabinet: Schedule.cabinet
-    });
-  };
-  $scope.changeBranch = function(Schedule) {
-    return $.post("groups/ajax/changeScheduleBranch", {
-      date: Schedule.date,
-      id_group: $scope.Group.id,
-      id_branch: Schedule.id_branch
-    }, function(response) {
-      if ($scope.Cabinets[Schedule.id_branch] == null) {
-        $scope.Cabinets[Schedule.id_branch] = response;
-      }
-      return $scope.$apply();
-    }, "json");
   };
   $scope.setTime = function(Schedule, event) {
     $(event.target).hide();
@@ -267,11 +229,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
           time: time,
           date: Schedule.date,
           id_group: $scope.Group.id
-        }, function(response) {
-          if (response) {
-            return $scope.studentsToLayeredScheduleTitle(Schedule, response);
-          }
-        }, "json");
+        });
         $scope.$apply();
       }
       return $(this).hide().parent().children("span").html(time ? time : "не установлено").show();
@@ -281,6 +239,17 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   $scope.inDate = function(date, dates) {
     var ref;
     return ref = moment(date).format("YYYY-MM-DD"), indexOf.call(dates, ref) >= 0;
+  };
+  $scope.inPastLessons = function(date) {
+    if (typeof date === 'object') {
+      date = moment(date).format("YYYY-MM-DD");
+    }
+    return $scope.getPastLesson(date) !== void 0;
+  };
+  $scope.getPastLesson = function(date) {
+    return _.findWhere($scope.past_lessons, {
+      lesson_date: date
+    });
   };
   $scope.lessonStarted = function(Schedule) {
     var lesson_time;
@@ -303,7 +272,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       multidate: true,
       beforeShowDay: function(d, inst) {
         var add_class;
-        if ($scope.inDate(d, $scope.past_lesson_dates)) {
+        if ($scope.inPastLessons(d)) {
           add_class = 'was-lesson disabled ';
         }
         if ($scope.inDate(d, $scope.vocation_dates)) {
@@ -371,37 +340,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   return angular.element(document).ready(function() {
     var init_dates, j, len, ref, schedule_date;
     set_scope('Group');
-    $scope.weekdays = [
-      {
-        "short": "ПН",
-        "full": "Понедельник",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "ВТ",
-        "full": "Вторник",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "СР",
-        "full": "Среда",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "ЧТ",
-        "full": "Четверг",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "ПТ",
-        "full": "Пятница",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "СБ",
-        "full": "Суббота",
-        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
-      }, {
-        "short": "ВС",
-        "full": "Воскресенье",
-        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
-      }
-    ];
     init_dates = [];
     ref = $scope.Group.Schedule;
     for (j = 0, len = ref.length; j < len; j++) {
@@ -466,10 +404,11 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   };
   $scope.saveDayAndTime = function() {
     lightBoxHide();
-    justSave();
-    $scope.updateCabinetBar(false);
-    $scope.day_and_time_object = $scope.dayAndTimeObject();
-    return checkFreeCabinets();
+    return justSave(function() {
+      $scope.updateCabinetBar(false);
+      $scope.reloadSmsNotificationStatuses();
+      return checkFreeCabinets();
+    });
   };
   $scope.hasDayAndTime = function() {
     return Object.keys($scope.Group.day_and_time).length;
@@ -515,15 +454,16 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   };
   $scope.search_groups = {
     grade: "",
-    id_branch: "",
+    id_cabinet: "",
     id_subject: "",
     year: ""
   };
   $scope.groupsFilter = function(Group) {
+    var ref;
     if (Group.id === $scope.Group.id) {
       return false;
     }
-    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && (parseInt($scope.search_groups.id_branch) === Group.id_branch || !$scope.search_groups.id_branch) && (parseInt($scope.search_groups.year) === Group.year || !$scope.search_groups.year) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
+    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && ((ref = parseInt($scope.search_groups.id_cabinet), indexOf.call(Group.cabinet_ids, ref) >= 0) || !$scope.search_groups.id_cabinet) && (parseInt($scope.search_groups.year) === Group.year || !$scope.search_groups.year) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
   };
   bindDraggable = function() {
     $(".student-line").draggable({
@@ -556,13 +496,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   checkFreeCabinets = function() {
     return $.post('groups/ajax/checkFreeCabinets', {
       id_group: $scope.Group.id,
-      day_and_time: $scope.day_and_time_object,
       year: $scope.Group.year
     }, function(response) {
       $scope.free_cabinets = response;
       $scope.$apply();
       return $timeout(function() {
-        return $('#group-branch').selectpicker('refresh');
+        return $('.branch-cabinet').selectpicker('refresh');
       });
     }, 'json');
   };
@@ -574,17 +513,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     });
   };
   $scope.enoughSmsParams = function() {
-    return $scope.Group.year > 0 && $scope.Group.id_subject > 0 && $scope.Group.id_branch > 0 && $scope.Group.cabinet > 0 && $scope.Group.first_schedule && $scope.Group.id_subject > 0;
-  };
-  $scope.changeCabinet = function() {
-    if (!$scope.Group.id) {
-      return;
-    }
-    $scope.reloadSmsNotificationStatuses();
-    $scope.updateGroup({
-      cabinet: $scope.Group.cabinet
-    });
-    return $scope.updateCabinetBar();
+    return $scope.Group.year > 0 && $scope.Group.id_subject > 0 && $scope.Group.cabinet_ids.length > 0 && $scope.Group.first_schedule && $scope.Group.id_subject > 0;
   };
   $scope.changeTeacher = function() {
     if (!$scope.Group.id) {
@@ -594,7 +523,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     $.post("groups/ajax/changeTeacher", {
       id_group: $scope.Group.id,
       id_subject: $scope.Group.id_subject,
-      id_branch: $scope.Group.id_branch,
       day_and_time: $scope.Group.day_and_time,
       id_teacher: $scope.Group.id_teacher,
       year: $scope.Group.year,
@@ -635,16 +563,20 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       ajaxStart();
     }
     return $.post("groups/ajax/GetCabinetBar", {
-      cabinet: $scope.Group.cabinet,
       id_group: $scope.Group.id
-    }, function(bar) {
+    }, function(bars) {
       if (ajax_animation) {
         ajaxEnd();
       }
-      $scope.cabinet_bar = bar;
+      $scope.cabinet_bars = bars;
       $scope.$apply();
       return rebindBlinking();
     }, "json");
+  };
+  $scope.getCabinet = function(id) {
+    return _.findWhere($scope.all_cabinets, {
+      id: parseInt(id)
+    });
   };
   $scope.updateStudentBars = function() {
     return $.post("groups/ajax/GetStudentBars", {
@@ -676,8 +608,8 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     }
   });
   $scope.teachersFilter = function(Teacher) {
-    var ref, ref1;
-    return ((ref = parseInt($scope.Group.id_branch), indexOf.call(Teacher.branches, ref) >= 0) || !$scope.Group.id_branch) && ((ref1 = parseInt($scope.Group.id_subject), indexOf.call(Teacher.subjects, ref1) >= 0) || !$scope.Group.id_subject);
+    var ref;
+    return (ref = parseInt($scope.Group.id_subject), indexOf.call(Teacher.subjects, ref) >= 0) || !$scope.Group.id_subject;
   };
   $scope.emptyDayFilter = function(day_and_time) {
     return _.filter(day_and_time, function(d) {
@@ -689,11 +621,8 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   };
   $scope.reloadSmsNotificationStatuses = function() {
     return $.post("groups/ajax/ReloadSmsNotificationStatuses", {
-      students: $scope.Group.students,
-      id_branch: $scope.Group.id_branch,
-      id_subject: $scope.Group.id_subject,
-      cabinet: $scope.Group.cabinet,
-      first_schedule: $scope.Group.first_schedule
+      id: $scope.Group.id,
+      students: $scope.Group.students
     }, function(response) {
       $.each(response.sms_notification_statuses, function(id_student, id_status) {
         return $scope.getStudent(id_student).sms_notified = id_status;
@@ -717,9 +646,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     $(event.target).html("отправка...").removeAttr("ng-click").removeClass("pointer").addClass("default");
     return $.post("groups/ajax/smsNotify", {
       id_student: Student.id,
-      id_branch: $scope.Group.id_branch,
       id_subject: $scope.Group.id_subject,
-      cabinet: $scope.Group.cabinet,
       first_schedule: $scope.Group.first_schedule,
       id_group: $scope.Group.id
     }, function(response) {
@@ -828,26 +755,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       }
     });
   };
-  $scope.changeBranch = function() {
-    var arr;
-    if ($scope.id_branch_cabinet) {
-      arr = $scope.id_branch_cabinet.split('-');
-      console.log('split', arr);
-      $scope.Group.id_branch = arr[0];
-      $scope.Group.cabinet = arr[1];
-    } else {
-      $scope.Group.id_branch = '';
-      $scope.Group.cabinet = '';
-    }
-    $scope.reloadSmsNotificationStatuses();
-    $scope.updateGroup({
-      id_branch: $scope.Group.id_branch,
-      cabinet: $scope.Group.cabinet
-    });
-    $scope.updateTeacherBar();
-    $scope.updateCabinetBar(false);
-    return $scope.updateStudentBars();
-  };
   $scope.toggleReadyToStart = function() {
     var ready_to_start;
     ready_to_start = $scope.Group.ready_to_start ? 0 : 1;
@@ -870,14 +777,14 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     if (!$scope.search_groups.year && $scope.Group.year) {
       $scope.search_groups.year = $scope.Group.year;
     }
-    if (!$scope.search_groups.id_branch && $scope.Group.id_branch) {
-      $scope.search_groups.id_branch = $scope.Group.id_branch;
+    if (!$scope.search_groups.id_cabinet) {
+      $scope.search_groups.id_cabinet = '';
     }
     if (!$scope.search_groups.id_subject && $scope.Group.id_subject) {
       $scope.search_groups.id_subject = $scope.Group.id_subject;
     }
     return $timeout(function() {
-      return $('#groups-branch-filter').selectpicker('refresh');
+      return $('#groups-cabinet-filter').selectpicker('refresh');
     });
   };
   $scope.subjectChange = function() {
@@ -959,11 +866,11 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     emailMode(2);
     smsMode(2);
     bindDraggable();
-    $("#group-cabinet").selectpicker();
+    $(".branch-cabinet").selectpicker();
     return set_scope("Group");
   });
-  return justSave = function() {
-    return $.post("groups/ajax/save", $scope.Group);
+  return justSave = function(callback) {
+    return $.post("groups/ajax/save", $scope.Group, callback);
   };
 }).controller("ListCtrl", function($scope, $timeout) {
   var bindDraggable2, filterBranches;
@@ -1021,20 +928,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       id: parseInt(id)
     });
   };
-  $scope.changeBranch = function() {
-    $("#group-cabinet").attr("disabled", "disabled");
-    ajaxStart();
-    return $.post("groups/ajax/getCabinet", {
-      id_branch: $scope.search.id_branch
-    }, function(cabinets) {
-      ajaxEnd();
-      $scope.Cabinets = cabinets;
-      $scope.search.cabinet = 0;
-      $("#group-cabinet").removeAttr("disabled");
-      $scope.$apply();
-      return clearSelect();
-    }, "json");
-  };
   $scope.order_reverse = false;
   $scope.orderByTime = function() {
     $scope.Groups.sort(function(a, b) {
@@ -1071,15 +964,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   $scope.orderByStudentCount = function() {
     $scope.Groups.sort(function(a, b) {
       return a.students.length - b.students.length;
-    });
-    if ($scope.order_reverse) {
-      $scope.Groups.reverse();
-    }
-    return $scope.order_reverse = !$scope.order_reverse;
-  };
-  $scope.orderByCabinet = function() {
-    $scope.Groups.sort(function(a, b) {
-      return a.CabinetInfo.number - b.CabinetInfo.number;
     });
     if ($scope.order_reverse) {
       $scope.Groups.reverse();
@@ -1123,25 +1007,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     branches: [],
     id_subject: ""
   };
-  $scope.groupsFilter = function(Group) {
-    var ref, time_correct;
-    if ($scope.search.ntime && $scope.search.ntime.length) {
-      time_correct = false;
-      $.each($scope.search.ntime, function(index, time) {
-        var day, t, time_index;
-        t = time.split("-");
-        day = t[0];
-        time_index = t[1];
-        if (Group.day_and_time[day] !== void 0 && Group.day_and_time[day][time_index] !== void 0) {
-          time_correct = true;
-        }
-      });
-    } else {
-      time_correct = true;
-    }
-    Group.id_subject = Group.id_subject || 0;
-    return time_correct && (Group.grade === parseInt($scope.search.grade) || !$scope.search.grade) && (parseInt($scope.search.id_branch) === Group.id_branch || !$scope.search.id_branch) && ($scope.search.year === Group.year || !$scope.search.year) && ((ref = Group.id_subject.toString(), indexOf.call($scope.search.subjects, ref) >= 0) || $scope.search.subjects.length === 0) && (parseInt($scope.search.id_teacher) === parseInt(Group.id_teacher) || !$scope.search.id_teacher) && (parseInt($scope.search.cabinet) === parseInt(Group.cabinet) || !parseInt($scope.search.cabinet));
-  };
   $scope.groupsFilter2 = function(Group) {
     var ref, ref1;
     if (!Group.hasOwnProperty("grade")) {
@@ -1155,44 +1020,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   $scope.studentsWithNoGroupFilter = function(Student) {
     var ref;
     return ((ref = String(Student.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ($scope.search2.branches.length === 0 || filterBranches(Student)) && (Student.id_subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject) && (Student.year === parseInt($scope.search2.year) || !$scope.search2.year) && (Student.level === parseInt($scope.search2.level) || !$scope.search2.level);
-  };
-  $scope.inGroupDay = function(weekday, Group) {
-    var days, group_days;
-    weekday++;
-    days = [];
-    group_days = Object.keys(Group.day_and_time);
-    $.each(group_days, function(index, day) {
-      day = parseInt(day);
-      if (days.indexOf(day) === -1) {
-        return days.push(day);
-      }
-    });
-    if (days.indexOf(weekday) === -1) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-  $scope.inGroupDays = function(weekday) {
-    var Groups, days;
-    weekday++;
-    Groups = $scope.$eval('Groups | filter:groupsFilter');
-    days = [];
-    $.each(Groups, function(index, Group) {
-      var group_days;
-      group_days = Object.keys(Group.day_and_time);
-      return $.each(group_days, function(index, day) {
-        day = parseInt(day);
-        if (days.indexOf(day) === -1) {
-          return days.push(day);
-        }
-      });
-    });
-    if (days.indexOf(weekday) === -1) {
-      return false;
-    } else {
-      return true;
-    }
   };
   $scope.dateToStart = function(date) {
     var D;
@@ -1456,37 +1283,6 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   });
   return angular.element(document).ready(function() {
     set_scope("Group");
-    $scope.weekdays = [
-      {
-        "short": "ПН",
-        "full": "Понедельник",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "ВТ",
-        "full": "Вторник",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "СР",
-        "full": "Среда",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "ЧТ",
-        "full": "Четверг",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "ПТ",
-        "full": "Пятница",
-        "schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]
-      }, {
-        "short": "СБ",
-        "full": "Суббота",
-        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
-      }, {
-        "short": "ВС",
-        "full": "Воскресенье",
-        "schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]
-      }
-    ];
     $scope.search = $.cookie("groups") ? JSON.parse($.cookie("groups")) : {};
     $scope.current_page = $scope.currentPage;
     $scope.pageChanged();
@@ -1499,22 +1295,5 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
 }).controller("StudentListCtrl", function($scope) {
   return console.log('init');
 }).controller("TeacherListCtrl", function($scope) {
-  console.log('init');
-  return $scope.weekdays = [
-    {
-      "short": "ПН"
-    }, {
-      "short": "ВТ"
-    }, {
-      "short": "СР"
-    }, {
-      "short": "ЧТ"
-    }, {
-      "short": "ПТ"
-    }, {
-      "short": "СБ"
-    }, {
-      "short": "ВС"
-    }
-  ];
+  return console.log('init');
 });

@@ -126,7 +126,7 @@
 					}
 					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
 					if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
-						echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}-{$Cabinet->id}'
+						echo "<option ".($option_selected ? "selected" : "")." value='-{$Cabinet->id}'
 							ng-selected='" . ( $option_selected ? 'true' : 'false' ). "'
 							ng-class=\"{'half-opacity': free_cabinets[" . $branch["id"] . "][{$Cabinet->id}]}\"
 							data-content='".
@@ -173,6 +173,7 @@
 				foreach($Cabinets as $Cabinet) {
 					$return[] = [
 						'id' 	=> $Cabinet->id,
+						'color' => static::metroSvg($Cabinet->id_branch, false, true),
 						'label'	=> $branch['short'] . "–" . $Cabinet->number,
 					];
 				}

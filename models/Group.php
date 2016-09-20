@@ -31,28 +31,20 @@
 				$this->past_lesson_count 		= $this->getPastScheduleCountCached();;
 				$this->schedule_count = $this->getScheduleCountCached();
 
-                                                        // + group is not ended and has schedule
 				if ($this->grade && $this->id_subject && !$this->ended && $this->schedule_count['paid']) {
 					$this->days_before_exam = $this->daysBeforeExam();
 				}
+
+				// @time-refactored
+				static::_addCabinets($this);
 			}
 
-			if (!$this->student_statuses) {
+			if (! $this->student_statuses) {
 				$this->student_statuses = [];
 			}
 
-			if ($this->cabinet) {
-				$this->CabinetInfo = Cabinet::findById($this->cabinet);
-			}
-
-			if ($this->id_branch) {
-				$this->branch = Branches::getShortColoredById($this->id_branch,
-					($this->cabinet ? "-".$this->CabinetInfo->number : "")
-				);
-			}
-
 			$this->is_special 			= $this->isSpecial();
-			$this->day_and_time 		= $this->getDayAndTime();
+			$this->day_and_time 		= $this->getDayAndTime($this->id);
 
 			$this->Comments	= Comment::findAll([
 				"condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
@@ -61,34 +53,40 @@
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
+		// @time-refactored
 		public static function getNotifiedStudentsCount($Group)
 		{
-			if (!count($Group->students) || !$Group->id_branch || !$Group->id_subject || !$Group->first_schedule || !$Group->cabinet) {
+			$FirstLesson = Group::getFirstLesson($Group->id, true);
+
+			if (!count($Group->students) || !$Group->id_subject || !$Group->first_schedule || !$FirstLesson->cabinet) {
 				return 0;
 			}
 			return GroupSms::count([
-				"condition" => "id_branch = {$Group->id_branch} AND id_student IN (" . implode(",", $Group->students) . ")
-								 AND id_subject = {$Group->id_subject} AND first_schedule = '{$Group->first_schedule}' AND cabinet={$Group->cabinet}"
+				"condition" => "id_student IN (" . implode(",", $Group->students) . ") AND id_subject = {$Group->id_subject}
+									AND first_schedule = '{$Group->first_schedule}' AND cabinet={$FirstLesson->cabinet}"
 			]);
+		}
+
+		public static function getCabinetIds($id_group)
+		{
+			$cabinet_ids = [];
+			$result = dbConnection()->query("SELECT id_cabinet FROM group_time WHERE id_group={$id_group} GROUP BY id_cabinet");
+			while($row = $result->fetch_object()) {
+				$cabinet_ids[] = $row->id_cabinet;
+			}
+			return $cabinet_ids;
 		}
 
 		/**
 		 * Получить даты проведенных занятий.
-		 *
+		 * @time-refactored
 		 */
-		public function getPastLessonDates()
+		public function getPastLessons()
 		{
-
-			$Lessons = VisitJournal::findAll([
-				"condition" => "id_group={$this->id}",
+			return VisitJournal::findAll([
+				"condition" => "id_group={$this->id} AND year={$this->year}",
 				"group"		=> "lesson_date",
 			]);
-
-			foreach ($Lessons as $Lesson) {
-				$dates[] = $Lesson->lesson_date;
-			}
-
-			return $dates;
 		}
 
 		/**
@@ -202,10 +200,6 @@
 
 */
         /**
-         * @param $id_group                 ID группы
-         * @param $date                     Дата
-         * @param bool $withoutCancelled    Надо ли учитовать отмененные пары
-         * @return GroupSchedule[]|bool
          * @refactored
          */
 		public function inSchedule($id_group, $date, $withoutCancelled = false)
@@ -291,22 +285,6 @@
 				"order"		=> "date ASC, time ASC",
 			]);
 
-		}
-
-		/**
-		 * Gets all schedules of group, where schedule time is not defined and lesson isn't cancelled.
-		 *
-		 * @return GroupSchedule[]|bool		Group schedules, where time is not defined if found,
-		 * 									false otherwise.
-		 */
-		public function getScheduleWithoutTime()
-		{
-			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id." AND ".
-							   "(time IS NULL OR time = '00:00:00' OR cabinet IS NULL OR id_branch IS NULL OR ".
-							   "0 in (cabinet, id_branch)) AND cancelled = 0",
-				"order"		=> "date ASC, time ASC",
-			]);
 		}
 
 		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
@@ -543,13 +521,24 @@
 		 * Получить первое занятие
 		 * $from_today – первое относительно сегодняшнего дня (ближайшее следующее)
 		 */
-		public function getFirstLesson($from_today = false)
+		public static function getFirstLesson($id_group, $from_today = false)
 		{
 			// @refactored
 			return GroupSchedule::find([
-				"condition" => "id_group={$this->id} AND cancelled=0 " . ($from_today ? " AND date >= '" . date("Y-m-d") . "'" : ""),
+				"condition" => "id_group={$id_group} AND cancelled=0 " . ($from_today ? " AND date >= '" . date("Y-m-d") . "'" : ""),
 				"order"		=> "date ASC"
 			]);
+		}
+
+		/**
+		 * Добавить информацию по кабинетам в группу
+		 */
+		private static function _addCabinets(&$Group)
+		{
+			$Group->cabinet_ids = Group::getCabinetIds($Group->id);
+			foreach($Group->cabinet_ids as $id_cabinet) {
+				$Group->cabinets[] = Cabinet::getBlock($id_cabinet);
+			}
 		}
 
 		/**
@@ -576,6 +565,7 @@
 		/*
 		 * Получить данные для основного модуля
 		 * $id_student – если просматриваем отзывы отдельного ученика
+		 * @time-refactored
 		 */
 		public static function getData($page)
 		{
@@ -589,43 +579,31 @@
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "g.id, g.id_branch, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.cabinet, g.ended, g.ready_to_start");
+			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.ready_to_start");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
 
 			while ($row = $result->fetch_object()) {
 				$Group = $row;
 
-				if ($Group->id_branch) {
-					$Group->branch = Branches::getShortColoredById($Group->id_branch,
-						($Group->cabinet ? "-".Cabinet::findById($Group->cabinet)->number : "")
-					);
-				}
-
 				if ($Group->id_teacher) {
 					$Group->Teacher = Teacher::getLight($Group->id_teacher);
 				}
+
+				static::_addCabinets($Group);
 
 				$Group->students = empty($Group->students) ? [] : explode(',', $Group->students);
 
 				$Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
 				$Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
 				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
-				$Group->day_and_time 		= Group::getDayAndTimeStatic($Group->id);
+				$Group->day_and_time 		= Group::getDayAndTime($Group->id);
 
 				if ($Group->ready_to_start) {
 					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
 				}
 
 				$data[] = $Group;
-			//	$data[] = Group::findById($row->id);
 			}
-
-/*
-			foreach ($data as &$d) {
-				$d->Student = Student::getLight($d->id_entity);
-				$d->Teacher = Teacher::getLight($d->id_teacher);
-			}
-*/
 
 			// counts
 
@@ -642,33 +620,24 @@
 			];
 		}
 
+		// @time-refactored
 		private static function _generateQuery($search, $select, $ending = '')
 		{
-			if (! empty($search->ntime)) {
-			    $time_cond = [];
-			    foreach ($search->ntime as $search_time) {
-                    $data 	= explode("-", $search_time);
-                    $day 	= $data[0];
-                    $time	= $data[1];
-                    $time_cond[] = " (gt.day={$day} AND gt.time = {$time}) ";
-                }
-                if (count($time_cond)) {
-                    $time_cond = ' ('.implode(' OR ', $time_cond).') ';
-                }
-			}
-
+			// " . ((! empty($search->time_ids) || !isBlank($search->id_branch) || $search->cabinet) ? " JOIN group_time gt ON (g.id = gt.id_group " . . ")" : "") . "
+			// 		AND (" . implode(' OR ', array_map(function($id_time) { return "gt.id_time=$id_time"; }, $search->time_ids)) . "))"
 			$main_query = "
 				FROM groups g
-				" . (! empty($search->ntime) ? " JOIN group_time gt ON (g.id = gt.id_group AND {$time_cond})" : "") . "
-				WHERE true "
-				. (!isBlank($search->cabinet) ? " AND g.cabinet={$search->cabinet}" : "")
-				. (!isBlank($search->year) ? " AND g.year={$search->year}" : "")
+				" . ((! empty($search->time_ids) || !isBlank($search->id_branch) || $search->cabinet) ? 'JOIN group_time gt ON (g.id = gt.id_group '
+					. (! empty($search->time_ids) ? " AND (" . implode(' OR ', array_map(function($id_time) { return "gt.id_time=$id_time"; }, $search->time_ids)) . ")" : '')
+					. ($search->cabinet ? " AND (gt.id_cabinet = {$search->cabinet})" : "")
+				. ')' : '' )
+				. ((! isBlank($search->id_branch)) ? " JOIN cabinets c ON (c.id = gt.id_cabinet AND c.id_branch={$search->id_branch})" : '')
+				. " WHERE true "
+				. (! isBlank($search->year) ? " AND g.year={$search->year}" : "")
 				. ((! isBlank($search->id_teacher) && empty($ending)) ? " AND g.id_teacher={$search->id_teacher}" : "")
-				. (!isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
-				. (!isBlank($search->id_branch) ? " AND g.id_branch={$search->id_branch}" : "")
-				. (!isBlank($search->grade) ? " AND g.grade={$search->grade}" : "")
-				. (!isBlank($search->level) ? $search->level == GroupLevels::EXTERNAL ? " AND g.level=".GroupLevels::EXTERNAL : " AND g.level <> ".GroupLevels::EXTERNAL : "");
-
+				. (! isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
+				. (! isBlank($search->grade) ? " AND g.grade={$search->grade}" : "")
+				. (! isBlank($search->level) ? $search->level == GroupLevels::EXTERNAL ? " AND g.level=".GroupLevels::EXTERNAL : " AND g.level <> ".GroupLevels::EXTERNAL : "");
 			return "SELECT " . $select . $main_query . $ending;
 
 		}
@@ -691,43 +660,27 @@
 		}
 
 		/**
-		 * Получить свободное.
+		 * Получить время занятий группы.
+		 *
+		 * $sort_by_days – вернуть по дням недели
+		 *
 		 * @refactored
 		 */
-		public function getDayAndTime()
+		public static function getDayAndTime($id_group, $sort_by_days = true)
 		{
 			$GroupTime = GroupTime::findAll([
-				"condition"	=> "id_group=" . $this->id,
+				"condition"	=> "id_group=" . $id_group,
 			]);
 
-			$return = [];
-
-			foreach ($GroupTime as $GroupTimeData) {
-				$return[$GroupTimeData->time->day][] = $GroupTimeData;
+			if ($sort_by_days) {
+				$return = [];
+				foreach ($GroupTime as $GroupTimeData) {
+					$return[$GroupTimeData->time->day][] = $GroupTimeData;
+				}
+				return $return;
+			} else {
+				return $GroupTime;
 			}
-
-			return $return;
-		}
-		/**
-		 * Получить свободное время ученика.
-		 *
-		 */
-		public function getDayAndTimeStatic($id_group)
-		{
-			$GroupTime = GroupTime::findAll([
-				"condition"	=> "id_group=" . $id_group
-			]);
-
-			if (!$GroupTime) {
-				return [];
-			}
-
-			foreach ($GroupTime as $GroupTimeData) {
-				$index = Freetime::getIndexByTime($GroupTimeData->time);
-				$return[$GroupTimeData->day][$index] = $GroupTimeData->time;
-			}
-
-			return $return;
 		}
 	}
 
@@ -741,9 +694,12 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
-
+			// @time-refactored
 			if ($this->time) {
 				$this->time = mb_strimwidth($this->time, 0, 5);
+				if ($this->time == "00:00") {
+					$this->time = null; // чтобы отображало "не установлено"
+				}
 			}
 
 			$this->was_lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
@@ -790,26 +746,6 @@
 			}
 
 			return $vocation_dates;
-		}
-
-		/**
-		 * Return array of ids of branches, where group lessons are held.
-		 *
-		 * @param int $id_group     	Id of group
-		 * @return string[] 		    Array of branch ids
-		 */
-		public static function getBranchIds($id_group, $asArray = true)
-		{
-			$result = dbConnection()->query(
-				"SELECT GROUP_CONCAT(DISTINCT gs.id_branch ORDER BY gs.id_branch ASC) as ids ".
-				"FROM  `group_schedule` gs ".
-				"WHERE gs.id_branch <> 0 AND gs.id_group = ".intval($id_group)
-			);
-			if ($result) {
-				return explode(',',$result->fetch_object()->ids);
-			} else {
-				return [];
-			}
 		}
     }
 

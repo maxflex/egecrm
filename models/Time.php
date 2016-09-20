@@ -13,6 +13,16 @@
 			7 => "ВС",
 		];
 
+		const WEEKDAYS_FULL = [
+			1 => "Понедельник",
+			2 => "Вторник",
+			3 => "Среда",
+			4 => "Четверг",
+			5 => "Пятница",
+			6 => "Суббота",
+			7 => "Воскресенье",
+		];
+
 		// карта времени
 		const MAP = [
 			1 => [1,  2,  3,  4 ],
@@ -24,6 +34,18 @@
 			7 => [25, 26, 27, 28],
 		];
 
+		public function __construct($array)
+		{
+			parent::__construct($array);
+
+			if (! $this->isNewRecord) {
+				$this->weekday_name = static::WEEKDAYS[$this->day];
+			}
+		}
+
+		/**
+		 * Отсортировано по дням
+		 */
 		public static function get()
 		{
 			// @todo: надо кешировать, очерь редко меняется
@@ -37,6 +59,20 @@
 						return $T->id == $id_time;
 					}));
 				}
+			}
+
+			return $return;
+		}
+
+		/**
+		 * Без дней и сортировки
+		 */
+		public function getLight()
+		{
+			$restult = dbConnection()->query("SELECT id, time FROM time");
+
+			while($row = $restult->fetch_object()) {
+				$return[$row->id] = $row->time;
 			}
 
 			return $return;

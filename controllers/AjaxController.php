@@ -804,11 +804,8 @@
 					"condition" => "id_group={$S->id_group} AND cancelled = 0"
 				]);
 
-                $Cabinet = Cabinet::findById($S->cabinet);
-				$S->branch = Branches::getShortColoredById($S->id_branch,
-					($S->cabinet ? "-".$Cabinet->number : "")
-				);
-                $S->cabinetNumber = $Cabinet->number;
+				// @time-refactored
+				$S->cabinet = Cabinet::getBlock($S->cabinet);
 			}
 
             /*
@@ -912,15 +909,17 @@
             Student::updateById($id_student, ['id_user_review' => $id_user_new]);
 		}
 
+		// @time-refactored
 		public function actionAjaxAddFreetime()
 		{
 			extract($_POST);
 			EntityFreetime::add($_POST);
 		}
 
+		// @time-refactored
 		public function actionAjaxDeleteFreetime()
 		{
 			extract($_POST);
-			EntityFreetime::remove($id_entity, $type_entity, $time_id);
+			EntityFreetime::remove($id_entity, $type_entity, $id_time);
 		}
 	}

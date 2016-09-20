@@ -1,10 +1,10 @@
 <div ng-app="Group" ng-controller="TeacherListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
-			
-			
+
+
 <table class="table table-divlike" style="position: relative; width: 90%">
-	<tr ng-repeat="Group in Groups" 
+	<tr ng-repeat="Group in Groups"
 		class="group-list" data-id="{{Group.id}}">
 		<td>
 			Группа №{{Group.id}}
@@ -23,15 +23,18 @@
 			}"></ng-pluralize>
 		</td>
 		<td>
-			<div ng-repeat="(day, day_data) in Group.day_and_time">
-				{{weekdays[day - 1].short}}
-				<span ng-repeat="dd in day_data">
-					в {{dd}}{{$last ? "" : ","}}
-				</span>
-			</div>
+			<!-- @time-refactored -->
+			<span ng-repeat="data in Group.day_and_time">
+				<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>
+				{{ $last ? '' : ' и '}}
+			</span>
 		</td>
 		<td>
-			<span>ЕГЭ-Центр-{{Branches[Group.id_branch]}}</span>
+			<!-- @time-refactored -->
+			<span ng-repeat='cabinet in Group.cabinets'>
+				<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
+				<span class="remove-space">{{$last ? '' : ', '}}</span>
+			</span>
 		</td>
 		<td>
 			<a href="teachers/groups/edit/{{Group.id}}/schedule">расписание</a>
@@ -41,7 +44,7 @@
 		</td>
 	</tr>
 </table>
-			
+
 			<div ng-show="Groups.length == 0" class="center half-black small" style="margin-bottom: 30px">список групп пуст</div>
 		</div>
 	</div>

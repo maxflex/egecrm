@@ -370,7 +370,7 @@ body {
 .top-group-menu-thin {
   position: relative; }
   .top-group-menu-thin > div {
-    width: 10.8%;
+    width: 12.5%;
     display: inline-block;
     margin-right: 5px; }
 
@@ -1574,8 +1574,7 @@ h4.row-header {
   white-space: nowrap; }
 
 .lightbox-freetime {
-  max-height: 700px;
-  overflow-y: scroll; }
+  max-height: 700px; }
 
 #sms-history {
   margin-bottom: 10px;
@@ -2583,4 +2582,18 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
   background: #63b2de; }
 
 .branch-cabinet {
-  width: 80px; }
+  width: 92px !important; }
+  .branch-cabinet .btn {
+    height: 20px;
+    padding: 0 0 0 5px; }
+    .branch-cabinet .btn span {
+      line-height: 18px !important;
+      overflow: visible !important; }
+    .branch-cabinet .btn .caret {
+      right: 5px !important; }
+
+.remove-space {
+  margin-left: -4px; }
+
+.full-width {
+  width: 100% !important; }

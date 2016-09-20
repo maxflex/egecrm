@@ -11,18 +11,27 @@
 						>
 						{{ d.time }}
 
-						<select class='branch-cabinet' ng-if='timeChecked(day, d)'
-							ng-model='getGroupTime(day, d).id_cabinet'
-						>
-							<option selected value=''>кабинет</option>
-							<option disabled>──────────────</option>
-						  	<option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}" ng-selected="getGroupTime(day, d).id_cabinet == cabinet.id">{{ cabinet.label}}</option>
-						</select>
-						
+						<span ng-show='timeChecked(day, d)'>
+							<select class='branch-cabinet'
+								ng-model='getGroupTime(day, d).id_cabinet'
+							>
+								<option selected value=''>кабинет</option>
+								<option disabled>──────────────</option>
+							  	<option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}"
+									ng-class="{'half-opacity': free_cabinets[d.id][cabinet.id]}"
+									style='color: {{ cabinet.color }}'
+									ng-selected="getGroupTime(day, d).id_cabinet == cabinet.id">
+									{{ cabinet.label}}
+								</option>
+							</select>
+						</span>
+
 						<!-- заглушка -->
-						<select class='branch-cabinet' disabled ng-if='!timeChecked(day, d)'>
-							<option selected value=''>кабинет</option>
-						</select>
+						<span ng-show='!timeChecked(day, d)'>
+							<select class='branch-cabinet' disabled>
+								<option selected value=''>кабинет</option>
+							</select>
+						</span>
 					</td>
 				</tr>
 			</tbody>

@@ -10,7 +10,7 @@
 					'few': 'занятия',
 					'many': 'занятий'
 				}"></ng-pluralize>)</span>
-		
+
 		<span ng-hide="<?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>" class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
 		<div class="pull-right">
 			<span class="link-reverse pointer" ng-click="setParamsFromGroup(Group)" ng-show="Group.Schedule.length && Group.start"
@@ -40,7 +40,7 @@
 						'few': 'занятия',
 						'many': 'занятий'
 					}"></ng-pluralize></h3>
-					
+
 				<table class="table table-divlike">
 					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px"
                         ng-class="Schedule.title ? 'students-11' : '';"
@@ -50,34 +50,25 @@
 							<a href='groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-hide='Schedule.cancelled'>{{getLine1(Schedule)}}</a>
 						</td>
 						<td>
-							<div class="lessons-table">
+							<div class="lessons-table" ng-show="!inPastLessons(Schedule.date)">
 								<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
 								<span  <?= (User::isTeacher() || User::isStudent() ? '' : 'ng-click="setTime(Schedule, $event)"') ?>>
 									{{Schedule.time ? Schedule.time : 'не установлено'}}
 								</span>
 							</div>
+							<div class="lessons-table" ng-show="inPastLessons(Schedule.date)">
+								{{ getPastLesson(Schedule.date).lesson_time }}
+							</div>
 						</td>
 						<td>
-                            <!-- branches selector -->
-                            <select ng-model="Schedule.id_branch" style="width: 130px" ng-change="changeBranch(Schedule)">
-								<option selected value="">выберите филиал</option>
+							<select ng-disabled="inPastLessons(Schedule.date)" class='branch-cabinet' ng-model='Schedule.cabinet' ng-change='changeCabinet(Schedule)'>
+								<option selected value=''>кабинет</option>
 								<option disabled>──────────────</option>
-								<option ng-repeat="Branch in Branches" value="{{Branch.id}}" ng-selected="Branch.id == Schedule.id_branch">
-                                    {{Branch.name}}
-                                </option>
-                            </select>
-                            <!-- /branches selector -->
-
-							<select ng-model="Schedule.cabinet" style="width: 130px" ng-change="changeCabinet(Schedule)">
-								<option selected value="">выберите кабинет</option>
-								<option disabled>──────────────</option>
-								<option ng-repeat="Cabinet in Cabinets[Schedule.id_branch]" value="{{Cabinet.id}}" ng-selected="Cabinet.id == Schedule.cabinet">
-									{{Cabinet.number}}
-								</option>
+							  	<option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}" ng-selected="(inPastLessons(Schedule.date) ? getPastLesson(Schedule.date).cabinet : Schedule.cabinet) == cabinet.id">{{ cabinet.label}}</option>
 							</select>
 						</td>
 						<td>
-							<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Schedule.is_free" ng-change="changeFree(Schedule)"> 
+							<input ng-disabled="inPastLessons(Schedule.date)" type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Schedule.is_free" ng-change="changeFree(Schedule)">
 							бесплатное занятие
 						</td>
 					</tr>
