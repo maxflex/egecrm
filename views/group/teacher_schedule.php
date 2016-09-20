@@ -90,8 +90,8 @@
 							</div>
 						</td>
 						<td>
-                            <!-- @have-to-refactor -->
-							кабинет {{Schedule.Cabinet.number}}
+							<!-- @have-to-refactor  -->
+							кабинет {{ inPastLessons(Schedule.date) ? getPastLessonCabinet(Schedule.date) : Schedule.Cabinet.number }}
 						</td>
 						<td>
 							<!-- @time-refactored   -->

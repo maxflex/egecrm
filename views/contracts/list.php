@@ -17,7 +17,7 @@
             <div class="col-sm-2">
                 <div class="input-group custom" style="position: relative">
                     <span class="input-group-addon">ID ученика - </span>
-                    <input class="digits-only form-control" ng-model="search.id_student" ng-change="filter()" ng-model-options="{ debounce: 300 }">
+                    <input class="digits-only form-control" ng-model="search.id_student" ng-change="filter()">
                 </div>
             </div>
         </div>

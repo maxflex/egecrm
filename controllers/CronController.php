@@ -101,19 +101,12 @@
 		/**
 		 * Сообщить о незапланированных занятиях.
 		 * @have-to-refactor !!!
+		 * @refactored !!!
 		 */
 		public static function actionNotifyUnplannedLessons()
 		{
-            $Time = Time::getLight();
 			$tomorrow_month = date("n", strtotime("tomorrow"));
 			$tomorrow_month = russian_month($tomorrow_month);
-
-            $tomorrow_day = date("w", strtotime('tomorrow')); // день недели завтра
-            if (! $tomorrow_day) {
-                $tomorrow_day = 7;
-            }
-
-
 			$tomorrow = date("j", strtotime("tomorrow")) . " " . $tomorrow_month;
 
 			// @refactored

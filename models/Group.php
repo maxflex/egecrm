@@ -709,6 +709,7 @@
 
         /**
          * незапланированное @have-to-refactor
+         * @refactored
          */
 		public function isUnplanned()
 		{

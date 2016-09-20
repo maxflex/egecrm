@@ -298,8 +298,9 @@
 					"vocation_dates"		=> GroupSchedule::getVocationDates(true),
 					"exam_dates"			=> ExamDay::getExamDates($Group),
 					"SubjectsDative"		=> Subjects::$dative,
-					"past_lessons" 	=> $Group->getPastLessons(), // @time-refactored @time-checked
+					"past_lessons" 	        => $Group->getPastLessons(), // @time-refactored @time-checked
 					"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
+                    "all_cabinets"			=> Branches::allCabinets(), // @to show past lesson cabinet number
 				]);
 
 				$this->render("student_schedule", [
@@ -350,6 +351,7 @@
 						"exam_dates"			=> ExamDay::getExamDates($Group),
 						"past_lessons" 			=> $Group->getPastLessons(), // @time-refactored @time-checked
 						"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
+                        "all_cabinets"			=> Branches::allCabinets(), // @to show past lesson cabinet number
 					]);
 
 					$this->render("teacher_schedule", [

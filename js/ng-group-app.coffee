@@ -217,7 +217,11 @@
 		    	$scope.getPastLesson(date) isnt undefined
 
 		    $scope.getPastLesson = (date) ->
-		    	_.findWhere($scope.past_lessons, {lesson_date: date})
+		        _.findWhere($scope.past_lessons, {lesson_date: date})
+
+		    $scope.getPastLessonCabinet = (date) ->
+		        _.findWhere($scope.all_cabinets, {id: $scope.getPastLesson(date).cabinet}).number
+
 
 		    $scope.lessonStarted = (Schedule) ->
 		        lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime()

@@ -66,7 +66,7 @@
 						</td>
 						<td>
                             <!-- @have-to-refactor  -->
-							кабинет {{Schedule.Cabinet.number}}
+							кабинет {{ inPastLessons(Schedule.date) ? getPastLessonCabinet(Schedule.date) : Schedule.Cabinet.number }}
 						</td>
 						<td>
 							<!-- @time-refactored  -->

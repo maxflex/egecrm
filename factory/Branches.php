@@ -175,6 +175,7 @@
 						'id' 	=> $Cabinet->id,
 						'color' => static::metroSvg($Cabinet->id_branch, false, true),
 						'label'	=> $branch['short'] . "–" . $Cabinet->number,
+						'number'	=> $Cabinet->number,
 					];
 				}
 			}
