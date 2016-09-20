@@ -18,7 +18,7 @@
 		# Все
 		static $all = [
 			self::NEWR			=> "невыполненные",
-			self::COURSES 			=> "поздние курсы",
+			self::COURSES 		=> "поздние курсы",
 			self::AWAITING		=> "ожидаются",
 			self::FINISHED		=> "выполненные",
 			self::DENY			=> "отказ",

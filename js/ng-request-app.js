@@ -1,4 +1,4 @@
-	var test;
+		var test;
 	var test2;
 
 	angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
@@ -99,7 +99,7 @@
 					$scope.changeList(e.state, false)
 				}
 			})
-			
+
 			$scope.toggleUser = function() {
 	            new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
 	            $.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
@@ -107,7 +107,7 @@
 	                $scope.$apply();
 	            });
 	        }
-	        
+
 			$scope.pickUser = function(request, id_user) {
 				if (request.id_user > 0) {
 					id_user_new = 0
@@ -116,29 +116,29 @@
 				}
 				$.post("ajax/changeRequestUser", {"id_request" : request.id, "id_user_new" : id_user_new}, function() {
 					request.id_user = id_user_new
-					$scope.$apply()	
+					$scope.$apply()
 				})
 			}
-			
+
 			selectNextUser = function(id_user) {
 				user = _.find($scope.users, function(user) {
-					return user.id > id_user	
+					return user.id > id_user
 				})
 				return ((user && user.id <= 112) ? user.id : 0)
 			}
-			
+
 			// проверить номер телефона
 		    $scope.isMobilePhone = function(phone) {
 			    // пустой номер телефона – это тоже правильный номер телефона
 			    if (!phone) {
 				    return false
 			    }
-				
+
 				return !phone.indexOf("+7 (9")
 		    }
 
 			$scope.smsDialog = smsDialog;
-			
+
 			$scope.sipNumber = function(number) {
 				return "sip:" + number.replace(/[^0-9]/g, '')
 			}
@@ -153,9 +153,9 @@
 				if (request.id_status != 0) {
 					return
 				}
-				
+
 				timestamp = request.date_timestamp
-				
+
 				hour = 60 * 60 * 1000;
 
 				// если больше 2 часов
@@ -196,10 +196,10 @@
 					$("#user-filter").selectpicker('render')
 				}
 			})
-			
+
 			bindDraggable = function() {
 				$scope.dragging = false
-				
+
 				$(".request-main-list").draggable({
 					connectToSortable: ".request-main-list",
 					start: function() {
@@ -212,24 +212,24 @@
 					},
 					revert: 'invalid',
 				})
-				
+
 				$(".request-status-li").droppable({
 					tolerance: 'pointer',
 					hoverClass: "request-status-drop-hover",
 					drop: function(event, ui) {
 						id_request_status = $(this).data("id")
 						id_request = $(ui.draggable).data("id")
-						
+
 						$scope.request_statuses_count[$scope.chosen_list]--
 						$scope.request_statuses_count[id_request_status]++
 						$scope.$apply()
-						
+
 						$.post("requests/ajax/changeStatus", {id_request_status: id_request_status, id_request: id_request})
-						
+
 						ui.draggable.remove()
 					}
 				})
-				
+
 				$(".delete-request-li").droppable({
 					tolerance: 'pointer',
 					hoverClass: "request-status-drop-hover-delete",
@@ -239,12 +239,12 @@
 						$scope.request_statuses_count[$scope.chosen_list]--
 						$scope.$apply()
 						$.post("ajax/deleteRequest", {"id_request": id_request})
-						
+
 						ui.draggable.remove()
 					}
 				})
 			}
-			
+
 			// Выбрать список
 			$scope.changeList = function(request_status, push_history) {
 				//  Если нажимаем на один и тот же список -- ничего не делаем
@@ -293,8 +293,8 @@
 					initComments()
 				}, "json")
 			}
-			
-			
+
+
 			// Страница изменилась
 			$scope.pageChangedRelevant = function() {
 				// Получаем задачи, соответствующие странице и списку
@@ -344,13 +344,13 @@
 						}
 					}
 				}
-				
+
 				$scope.formatTestDate = function(StudentTest) {
 					if (StudentTest) {
-						return moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')	
+						return moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')
 					}
 				}
-				
+
 				$scope.getTestHint = function(Problem, StudentTest) {
 					answer = $scope.getStudentAnswer(Problem, StudentTest)
 					switch(answer) {
@@ -365,7 +365,7 @@
 						}
 					}
 				}
-				
+
 				$scope.deleteTest = function(StudentTest) {
 					$.post("tests/ajaxDeleteStudentTest", {id: StudentTest.id}, function() {
 						$scope.StudentTests = _.reject($scope.StudentTests, function(e) {
@@ -376,11 +376,11 @@
 					})
 
 				}
-				
+
 				$scope.testDisplay = function(StudentTest) {
 					return (StudentTest && (StudentTest.isFinished || StudentTest.inProgress))
 				}
-				
+
 				$scope.getStudentAnswer = function(Problem, StudentTest) {
 					if (StudentTest && StudentTest.answers && StudentTest.answers[Problem.id] !== undefined) {
 						if (StudentTest.answers[Problem.id] == Problem.correct_answer) {
@@ -391,7 +391,7 @@
 					}
 					return "circle-gray";
 				}
-				
+
 				$scope.getCurrentScore = function(Test, StudentTest) {
 					count = 0
 					$.each(Test.Problems, function(index, Problem) {
@@ -401,7 +401,7 @@
 					})
 					return Math.round(count * 100 / Test.max_score)
 				}
-				
+
 				$scope.toggleUser = function() {
 						new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
 						$.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
@@ -432,7 +432,7 @@
 			$scope.markers 	= [];
 			// ID маркера
 			$scope.marker_id= 1;
-			
+
 			$scope.sipNumber = function(number) {
 				return "sip:" + number.replace(/[^0-9]/g, '')
 			}
@@ -442,7 +442,7 @@
 				number = $scope.sipNumber(number)
 				location.href = number;
 			}
-			
+
 			// OUTDATED: ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 			// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
 			// $scope.new_contract_id = -1;
@@ -454,15 +454,15 @@
 					$(".phone-masked").keyup()
 				}, 100)
 			})
-			
+
 			$scope.getGroup = function(id) {
 				return _.findWhere($scope.Groups, {id: parseInt(id)})
 			}
-			
+
 			$scope.getJournalGroup = function(id) {
 				return _.findWhere($scope.JournalGroups, {id: parseInt(id)})
 			}
-			
+
 			// Пытается найти сначала существующую группу, если нет, то пытаетя найти группу из журнала
 			$scope.getAnyGroup = function(id) {
 				Group = $scope.getGroup(id)
@@ -471,51 +471,51 @@
 				}
 				return Group
 			}
-			
+
 			// получить группы из журнала
 			$scope.getJournalGroups = function() {
 				return Object.keys(_.chain($scope.Journal).groupBy('id_group').value())
 			}
-			
+
 			$scope.getStudentGroups = function() {
 				group_ids = $scope.getJournalGroups()
-				
+
 				$.each($scope.Groups, function(index, Group) {
 					if ($.inArray(Group.id.toString(), group_ids) < 0) {
 						group_ids.push(Group.id)
 					}
 				})
-				
+
 				return group_ids
 			}
-			
+
 			$scope.getVisitsByGroup = function(id_group) {
 				id_group = parseInt(id_group)
 				return _.where($scope.Journal, {id_group: id_group})
 			}
-			
+
 			$scope.getVisit = function(id_group, date) {
 				id_group = parseInt(id_group)
 				return _.findWhere($scope.Journal, {id_group: id_group, lesson_date: date})
 			}
-			
+
 			$scope.getVisitBoolean = function(id_group, date) {
 				id_group = parseInt(id_group)
 				return _.findWhere($scope.Journal, {id_group: id_group, lesson_date: date}) !== undefined
 			}
-			
-			
+
+
 			$scope.inActiveGroup = function(id_group) {
 				id_group = parseInt(id_group)
 				return _.where($scope.Groups, {id: id_group}).length
 			}
-			
+
 			$scope.getMaxVisits = function() {
 				max = -1;
 				$.each($scope.Groups, function(i, group) {
-					count = $scope.getVisitsByGroup(group.id).length 
+					count = $scope.getVisitsByGroup(group.id).length
 					if ($scope.getGroup(group.id).Schedule) {
-						count += $scope.getGroup(group.id).Schedule.length	
+						count += $scope.getGroup(group.id).Schedule.length
 					}
 					if (count > max) {
 						max = count
@@ -528,11 +528,11 @@
 			$scope.formatVisitDate = function (date) {
 				return moment(date).format("DD.MM.YY")
 			}
-			
+
 			$scope.toggleSubject = function(id_subject) {
 				// если предметы не установлены
 				$scope.current_contract.subjects = initIfNotSet($scope.current_contract.subjects)
-				
+
 				if ($("#checkbox-subject-" + id_subject).is(":checked") == false) {
 					delete $scope.current_contract.subjects[id_subject]
 				} else {
@@ -543,18 +543,18 @@
 					$scope.$apply()
 				}, 100);
 			}
-			
+
 			// проверка на корректность емайл
 			$scope.emailFull = function(email) {
 				re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
 				return re.test(email)
 			}
-			
+
 			$scope.emailDialog = function(email) {
 				$("#email-history").html('<center class="text-gray">загрузка истории сообщений...</center>')
-				
+
 				html = ""
-				
+
 				$.post("ajax/emailHistory", {"email": email}, function(response) {
 					console.log(response);
 					if (response != false) {
@@ -571,14 +571,14 @@
 											' + v.message + ' 		\
 											<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '\
 									    </div>						\
-									</div>';	
+									</div>';
 							})
 						$("#email-history").html(html)
 					} else {
 						$("#email-history").html("")
 					}
 				}, "json")
-				
+
 				$("#email-address").text(email)
 				lightBoxShow('email')
 			}
@@ -588,20 +588,20 @@
 					return
 				}
 				date = date.split('.')
-				
+
 				// был баг. месяц делал автоматически +1
 				month = date[1] - 1;
 				console.log(date[2] + "-" + month + "-" + date[0])
 				date = new Date(date[2], month, date[0])
 				return moment(date).format("D MMMM YYYY г.")
 			}
-			
+
 			$scope.objectLength = function(object) {
 				if (object !== undefined && object !== null) {
 					return Object.keys(object).length
 				}
 			}
-			
+
 			$scope.setMode = function(mode) {
 				$scope.mode = mode
 				if (mode == 'student') {
@@ -628,7 +628,7 @@
 			$scope.glue = function(delete_student) {
 				ajaxStart()
 				$.post("requests/ajax/GlueRequest", {
-					id_request: $scope.id_request, 
+					id_request: $scope.id_request,
 					id_student: $scope.id_student_glue,
 					delete_student: delete_student
 				}, function(response) {
@@ -658,7 +658,7 @@
 					$scope.GlueStudent = null
 				}
 			}
-			
+
 			$scope.getFirstVersionDate = function(contract)
 			{
 				if (!contract.History) {
@@ -680,7 +680,7 @@
 				html = $("#contract-print-" + $scope.id_contract_print).html()
 				$scope.editBeforePrint(html)
 			}
-			
+
             $scope.printContractLicenced = function(id_contract) {
 				$scope.print_mode = 'contract-licenced'
 				$scope.id_contract_print = id_contract
@@ -688,7 +688,7 @@
 				html = $("#contract-licenced-print-" + $scope.id_contract_print).html()
 				$scope.editBeforePrint(html)
 			}
-			
+
 			$scope.printContractAdditional = function(contract) {
 				$scope.print_mode = 'agreement'
 				$scope.contract_additional = contract
@@ -696,7 +696,7 @@
 				html = $("#agreement-print-" + $scope.id_contract_print).html()
 				$scope.editBeforePrint(html)
 			}
-			
+
 			$scope.printContractAdditionalOoo = function(contract) {
 				$scope.print_mode = 'agreement-ooo'
 				$scope.contract_additional = contract
@@ -704,7 +704,7 @@
 				html = $("#agreement-ooo-print-" + $scope.id_contract_print).html()
 				$scope.editBeforePrint(html)
 			}
-			
+
 			$scope.printAct = function(contract) {
 				$scope.print_mode = 'act'
 				$scope.contract_act = contract
@@ -712,7 +712,7 @@
 				html = $("#act-print-" + $scope.id_contract_print).html()
 				$scope.editBeforePrint(html)
 			}
-			
+
 			$scope.getLastLessonDate = function() {
         date = '0000-00-00'
         // если есть активные группы
@@ -735,22 +735,22 @@
         }
         return $scope.textDate(date)
 			}
-			
+
 			$scope.todayDate = function() {
 				return moment().format("DD.MM.YYYY");
 			}
-			
+
 			$scope.textDate = function(date) {
 				return moment(date).format("DD MMMM YYYY")
 			}
-			
+
 			$scope.editBeforePrint = function(html) {
 				$("#contract-manual-edit").val(html)
-				
+
 				if (CKEDITOR.instances['contract-manual-edit'] != undefined) {
-					CKEDITOR.instances['contract-manual-edit'].destroy(true)	
+					CKEDITOR.instances['contract-manual-edit'].destroy(true)
 				}
-				
+
 				if (CKEDITOR.instances['contract-manual-edit'] == undefined) {
 					editor = CKEDITOR.replace('contract-manual-edit', {
 						fullPage: true,
@@ -759,15 +759,15 @@
 						height: 600
 					})
 				}
-				
+
 				lightBoxHide()
 				lightBoxShow('manualedit')
 			}
-			
-			
+
+
 			$scope.printBill = function(payment) {
 				$scope.print_mode = 'bill'
-				$scope.PrintPayment = payment 
+				$scope.PrintPayment = payment
 				$scope.$apply()
 				printDiv($scope.print_mode + "-print")
 			}
@@ -786,7 +786,7 @@
 				$scope.$apply()
 				printDiv($scope.print_mode + "-print")
 			}
-			
+
 			/**
 			 * Запустить печать договора
 			 *
@@ -795,14 +795,14 @@
 				printDiv($scope.print_mode + "-print-" + $scope.id_contract_print)
 				lightBoxHide()
 			}
-			
+
 			$scope.runPrintManual = function() {
 				html = CKEDITOR.instances['contract-manual-edit'].getData()
 				$("#contract-manual-div").html(html)
 				printDiv('contract-manual-div')
 				lightBoxHide()
 			}
-			
+
 
 			// Возвращаем структурированные данные по маркерам
 			// для передачи на сохранение
@@ -825,29 +825,29 @@
 					return ""
 				}
 			}
-			
+
 			$scope.saveMarkersToServer = function() {
 				$.post("requests/ajax/saveMarkers", {markers: $scope.markerData(), id_student: $scope.student.id})
 				lightBoxHide()
 			}
-			
+
 			// Показать карту
 			$scope.showMap = function() {
 				// устанавливаем тип метки
 				// $scope.marker_type = type
 
-				
+
 				// Показываем карту
 				lightBoxShow('map')
 				google.maps.event.trigger($scope.gmap, 'resize')
-				
+
 				// Зум и центр карты по умолчанию
 				$scope.gmap.setCenter(new google.maps.LatLng(55.7387, 37.6032))
 				$scope.gmap.setZoom(10)
-				
+
 				// Обнуляем значение поиска
 				$("#map-search").val("")
-				
+
 				// Удаляем все маркеры поиска
 				if ($scope.search_markers && $scope.search_markers.length) {
 					$.each($scope.search_markers, function(i, marker) {
@@ -856,7 +856,7 @@
 					})
 					$scope.search_markers = []
 				}
-				
+
 				// Если уже есть добавленные маркеры
 				if ($scope.markers.length) {
 					// отображать только метки с выбранным типом
@@ -887,11 +887,11 @@
 			$scope.bindMarkerDelete = function(marker) {
 				google.maps.event.addListener(marker, "dblclick", function(event) {
 					t = this
-					
+
 					// удаляем маркер с карты
 					t.setMap(null)
-					
-					
+
+
 					// удаляем маркер из коллекции
 					$.each($scope.markers, function(index, m) {
 						if (t.id == m.id) {
@@ -900,7 +900,7 @@
 					})
 				})
 			}
-			
+
 			$scope.bindMarkerChangeType = function(marker) {
 				google.maps.event.addListener(marker, "click", function(event) {
 					if (this.type == 'home') {
@@ -933,15 +933,15 @@
 				// применяем изменения (ОБЯЗАТЕЛЬНО, иначе слетят метки без изменений)
 				$scope.$apply()
 			}
-			
+
 			$scope.gmapAddMarker = function(event) {
 				// Создаем маркер
 				// var marker = newMarker($scope.marker_id++, $scope.marker_type, event.latLng)
 				marker = newMarker($scope.marker_id++, event.latLng, $scope.map)
-				
+
 				// Добавляем маркер в маркеры
 				$scope.markers.push(marker)
-				
+
 				// Добавляем маркер на карту
 				marker.setMap($scope.gmap)
 
@@ -950,23 +950,23 @@
 				//
 				$scope.bindMarkerChangeType(marker)
 			}
-			
+
 			// ПОСЛЕ ЗАГРУЗКИ КАРТЫ
 			$scope.$on('mapInitialized', function(event, map) {
 				// Запоминаем карту после инициалицации
 				$scope.gmap = map
-				
+
 				test = map
-				
+
 				// generate recommended search bounds
 				INIT_COORDS = {lat: 55.7387, lng: 37.6032};
 				$scope.RECOM_BOUNDS = new google.maps.LatLngBounds(
-		            new google.maps.LatLng(INIT_COORDS.lat-0.5, INIT_COORDS.lng-0.5), 
+		            new google.maps.LatLng(INIT_COORDS.lat-0.5, INIT_COORDS.lng-0.5),
 		            new google.maps.LatLng(INIT_COORDS.lat+0.5, INIT_COORDS.lng+0.5)
-		        );        
+		        );
 				$scope.geocoder = new google.maps.Geocoder();
 		    });
-		    
+
 		    // Поиск по карте
 		    $scope.searchMap = function(address) {
 				$scope.geocoder.geocode({
@@ -977,51 +977,51 @@
 					bounds: $scope.RECOM_BOUNDS,
 				}, function(results, status) {
 				    if (status == google.maps.GeocoderStatus.OK) {
-					    
+
 					    // максимальное кол-во результатов
 					    max_results = 3
-					    
+
 					    // масштаб поиска
 						search_result_bounds = new google.maps.LatLngBounds()
-					    
+
 					    $.each(results, function(i, result) {
 						    if (i >= max_results) {
 							    return
 						    }
-						    
+
 							search_result_bounds.extend(result.geometry.location) // границы карты в зависимости от поставленных меток
-					        
+
 							search_marker = new google.maps.Marker({
 							    map: $scope.map,
 							    position: result.geometry.location,
 							    icon: ICON_SEARCH,
 							});
-							
+
 							google.maps.event.addListener(search_marker, 'click', function(event) {
-								this.setMap(null)	
+								this.setMap(null)
 								$scope.gmapAddMarker(event)
 							})
-							
+
 							$scope.search_markers = initIfNotSet($scope.search_markers)
 //							$log.log($scope.search_markers)
-							$scope.search_markers.push(search_marker)  
+							$scope.search_markers.push(search_marker)
 					    })
-					    
+
 					    // если отображаемые маркеры есть, делаем зум на них
 						if (results.length > 0) {
 							$scope.gmap.fitBounds(search_result_bounds)
 							$scope.gmap.panToBounds(search_result_bounds)
 							if (results.length == 1) {
-								$scope.gmap.setZoom(12)	
+								$scope.gmap.setZoom(12)
 							}
-						
+
 						}
 				    } else {
 						$("#map-search").addClass("has-error").focus()
 				    }
 				});
 			}
-			
+
 			// Запуск поиска по карте
 			$scope.gmapsSearch = function($event) {
 				if ($event.keyCode == 13 || $event.type == "click") {
@@ -1032,7 +1032,7 @@
 					} else {
 						$("#map-search").removeClass("has-error")
 					}
-					
+
 					$scope.searchMap($("#map-search").val())
 				}
 			}
@@ -1051,7 +1051,7 @@
 						if (!isNaN(cnt1)) {
 							count += cnt1
 						}
-						
+
 						cnt2 = parseInt(subject.count2)
 						if (!isNaN(cnt2)) {
 							count += cnt2
@@ -1063,7 +1063,7 @@
 
 			// Передаем функция numToText() в SCOPE
 			$scope.numToText = numToText;
-			
+
 			// Первая часть суммы для печати в договоре
 			$scope.contractFirstPart = function(contract) {
 				count = 0
@@ -1075,13 +1075,13 @@
 						}
 					}
 				})
-				
+
 				// сколько процентов составляет первая часть предметов
 				percentage = count / $scope.subjectCount(contract)
-				
+
 				return Math.round(contract.sum * percentage)
 			}
-			
+
 			// Первая часть суммы для печати в договоре
 			$scope.contractSecondPart = function(contract) {
 				count = 0
@@ -1093,10 +1093,10 @@
 						}
 					}
 				})
-				
+
 				// сколько процентов составляет первая часть предметов
 				percentage = count / $scope.subjectCount(contract)
-				
+
 				return Math.round(contract.sum * percentage)
 			}
 
@@ -1105,62 +1105,61 @@
 				count = $scope.subjectCount(contract)
 				if (contract.grade == 11) {
 					recommended_price = 0
-					
+
 					if (count > 96) {
 						mod = count % 96
 						recommended_price += (mod * 1400)
 						count -= mod
 					}
-					
+
 					if (count > 64) {
 						mod = count % 64
 						recommended_price += (mod * 1500)
 						count -= mod
 					}
-					
+
 					recommended_price += count * 1600
-					
+
 					return recommended_price
 				} else {
 					recommended_price = 0
-					
+
 					if (count > 96) {
 						mod = count % 96
 						recommended_price += (mod * 1250)
 						count -= mod
 					}
-					
+
 					if (count > 64) {
 						mod = count % 64
 						recommended_price += (mod * 1350)
 						count -= mod
 					}
-					
+
 					recommended_price += count * 1450
-					
+
 					return recommended_price
 				}
 			}
-			
+
 			$scope.getSubjectPrice = function(contract, price) {
 				coeff = contract.sum / $scope.recommendedPrice(contract)
 				return Math.round(price * coeff)
 			}
-			
-			$scope.toggleStudentFreetime = function(day, index) {
-				time_id = $scope.weekdays_time[day][index]
-				mode = $scope.FreetimeBar[day][time_id] === 'green' ? 'Delete' : 'Add'
+
+			// @time-refactored
+			$scope.toggleStudentFreetime = function(day, id_time) {
+				mode = $scope.FreetimeBar[day][id_time] === 'green' ? 'Delete' : 'Add'
 				$.post("ajax/" + mode + "Freetime", {
 					'id_entity': $scope.student.id,
 					'type_entity': 'student',
-					'day': day,
-					'time_id': time_id,
+					'id_time': id_time,
 				}, function() {
-					$scope.FreetimeBar[day][time_id] = mode == 'Add' ? 'green' : 'empty'
-					$scope.$apply()	
+					$scope.FreetimeBar[day][id_time] = mode == 'Add' ? 'green' : 'empty'
+					$scope.$apply()
 				})
 			}
-			
+
 			// Склонять имя в дательном падеже
 			// https://github.com/petrovich/petrovich-js
 			$scope.contractPrintName = function(person, padej) {
@@ -1264,14 +1263,14 @@
 					}
 				}
 			}
-			
+
 			// для позднего обновления
 			$scope.lateApply = function() {
 				setTimeout(function() {
 					$scope.$apply()
 				}, 100)
 			}
-			
+
 			// для позднего обновления
 			$scope.lateApplyShort = function() {
 				setTimeout(function() {
@@ -1327,14 +1326,14 @@
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
 						console.log(response)
 						test = response
-						
+
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
-							
+
 							if ($scope.current_contract.history_edit) {
 								console.log($scope.current_contract)
 								parent_contract		= _.findWhere($scope.contracts, {id: $scope.current_contract.id_contract})
-								
+
 								$.each(parent_contract.History, function(index, contract) {
 									if (contract.id == $scope.current_contract.id) {
 										parent_contract.History[index] = $scope.current_contract
@@ -1357,9 +1356,9 @@
 											$scope.contracts[i].History.push(old_contract)
 										}
 									}
-								})								
+								})
 							}
-							
+
 						$scope.$apply()
 						ajaxEnd('contract')
 						lightBoxHide()
@@ -1374,18 +1373,18 @@
 						$scope.current_contract.id 			= response.id
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
-						
+
 						//new_contract = angular.copy($scope.current_contract)
 						//new_contract.subjects = angular.copy($scope.current_contract.subjects)
 						new_contract = $.extend(true, {}, $scope.current_contract)
-						
-						
+
+
 						new_contract.subjects = new_contract.subjects.filter(function(e){return e})
-						
+
 						new_contract.subjects.sort(function(a, b) {
 							return a.id_subject - b.id_subject
 						})
-						
+
 						$scope.contracts = initIfNotSet($scope.contracts)
 						$scope.contracts.push(new_contract)
 						$scope.$apply()
@@ -1393,7 +1392,7 @@
 					}, "json");
 				}
 			}
-			
+
 			$scope.subjectChecked = function(id_subject) {
 // 				return _.findWhere($scope.current_contract.subjects, {id_subject: id_subject}) !== undefined
 				checked = false
@@ -1419,14 +1418,14 @@
 
 				return res
 			}
-			
+
 			$scope.subjectHandle = function(id_subject) {
 				subjects 	= $scope.current_contract.subjects
 				subject 	= subjects[id_subject]
-				
-// 				subject.status = $("#checkbox-subject-" + id_subject).val()					
-				console.log('changed', subject.status, $("#checkbox-subject-" + id_subject).val()) 
-				
+
+// 				subject.status = $("#checkbox-subject-" + id_subject).val()
+				console.log('changed', subject.status, $("#checkbox-subject-" + id_subject).val())
+
 				if (subject.status != 0) {
 					if (!subject.id_subject) {
 						subject.id_subject = id_subject
@@ -1439,7 +1438,7 @@
 				}
 				$scope.lateApplyShort()
 			}
-			
+
 			// вызывает окно редактирования контракта
 			$scope.callContractEdit = function(contract)
 			{
@@ -1448,11 +1447,11 @@
 				if ($scope.current_contract.grade === null) {
 					$scope.current_contract.grade = ""
 				}
-				
+
 				lightBoxShow('addcontract')
 				$("select[name='grades']").removeClass("has-error")
 				$scope.lateApply()
-		
+
 				setTimeout(function() {
 // 					$('.triple-switch').slider('reset')
 					$('.triple-switch').each(function(index, e) {
@@ -1468,7 +1467,7 @@
 				contract.no_version_control = 0
 				contract.history_edit = 0
 				contract.date = moment().format("DD.MM.YYYY")
-				
+
 				$scope.callContractEdit(contract)
 			}
 
@@ -1477,14 +1476,14 @@
 			$scope.editContractWithoutVersionControl = function(contract) {
 				contract.no_version_control = 1
 				contract.history_edit = 0
-				
+
 				$scope.callContractEdit(contract)
 			}
-			
+
 			$scope.editHistoryContract = function(contract) {
 				contract.no_version_control = 1
 				contract.history_edit = 1
-				
+
 				$scope.callContractEdit(contract)
 			}
 
@@ -1492,9 +1491,9 @@
 			$scope.addContractDialog = function() {
 				$scope.current_contract = {subjects : [], year: $scope.academic_year}
 				$scope.current_contract.date = moment().format("DD.MM.YYYY")
-				
-				$('.triple-switch').slider('setValue', 0)	
-				
+
+				$('.triple-switch').slider('setValue', 0)
+
 				lightBoxShow('addcontract')
 				$("select[name='grades']").removeClass("has-error")
 				$scope.lateApply()
@@ -1555,7 +1554,7 @@
 					}
 				})
 			}
-			
+
 			$scope.confirmPayment = function(payment) {
 				bootbox.prompt({
 					title: "Введите пароль",
@@ -1569,7 +1568,7 @@
 						} else if (result != null) {
 							$('.bootbox-form').addClass('has-error').children().first().focus()
 							$('.bootbox-input-text').on('keydown', function() {
-								$(this).parent().removeClass('has-error')	
+								$(this).parent().removeClass('has-error')
 							})
 							return false
 						}
@@ -1580,11 +1579,11 @@
 						},
 						cancel: {
 							className: "display-none"
-						}		
+						}
 					}
 				})
 			}
-			
+
 			// @todo: удалить вместе с AJAX
 			$scope.getDocumentNumber = function(payment) {
 				if (payment.document_number) {
@@ -1596,14 +1595,14 @@
 					}, 'json');
 				}
 			}
-			
+
 			$scope.dontAssignPko = function(payment) {
 				if (payment.dont_assign_pko) {
 					payment.dont_assign_pko = false
 				} else {
 					payment.dont_assign_pko = true
 				}
-				 // payment.dont_assign_pko = payment.dont_assign_pko 
+				 // payment.dont_assign_pko = payment.dont_assign_pko
 				// payment.dont_assign_pko = payment.dont_assign_pko ? true : false
 			}
 
@@ -1623,14 +1622,14 @@
 						else if (hex_md5(result) === payments_hash) {
 							$scope.new_payment = angular.copy(payment)
 							$scope.$apply()
-							lightBoxShow('addpayment')		
+							lightBoxShow('addpayment')
 						} else if (result != null) {
 							$('.bootbox-form').addClass('has-error').children().first().focus()
 							$('.bootbox-input-text').on('keydown', function() {
-								$(this).parent().removeClass('has-error')	
+								$(this).parent().removeClass('has-error')
 							})
 							return false
-						}	
+						}
 					},
 					buttons: {
 						confirm: {
@@ -1638,7 +1637,7 @@
 						},
 						cancel: {
 							className: "display-none"
-						}		
+						}
 					}
 				})
 			}
@@ -1646,7 +1645,7 @@
 			// Показать окно добавления платежа
 			$scope.addPaymentDialog = function() {
 				$scope.new_payment = {id_status : 0}
-				lightBoxShow('addpayment')	
+				lightBoxShow('addpayment')
 			}
 
 			// Добавить платеж
@@ -1750,7 +1749,7 @@
 					}, 'json')
 				}
 			}
-			
+
 			// Удалить платеж
 			$scope.deletePayment = function(index, payment) {
 				if (!payment.confirmed) {
@@ -1778,10 +1777,10 @@
 							} else if (result != null) {
 								$('.bootbox-form').addClass('has-error').children().first().focus()
 								$('.bootbox-input-text').on('keydown', function() {
-									$(this).parent().removeClass('has-error')	
+									$(this).parent().removeClass('has-error')
 								})
 								return false
-							}	
+							}
 						},
 						buttons: {
 							confirm: {
@@ -1789,12 +1788,12 @@
 							},
 							cancel: {
 								className: "display-none"
-							}		
+							}
 						}
 					})
-				}	
+				}
 			}
-			
+
 			$scope.dateToStart = function(date) {
 				var D;
 				date = date.split(".");
@@ -1820,11 +1819,11 @@
 		    }
 
 		    // проверить номер телефона
-		    $scope.phoneCorrect = phoneCorrect	
-		    	    
+		    $scope.phoneCorrect = phoneCorrect
+
 			// проверить номер телефона
 		    $scope.isMobilePhone = isMobilePhone
-		    
+
 		    // Превратить в файлаплоад
 		    $scope.bindFileUpload = function(contract) {
 				// загрузка файла договора
@@ -1864,7 +1863,7 @@
 			        }
 			    })
 		    }
-		    
+
 		    $scope.groupsFilter = function(Group) {
 			    if ($scope.academic_year > 0) {
 				    return Group.year == $scope.academic_year
@@ -1872,7 +1871,7 @@
 					return true
 				}
 		    }
-		    
+
 			$scope.hasHiddenGroups = function() {
 				if ($scope.Groups) {
 					return $scope.$eval('Groups | filter:groupsFilter').length != $scope.Groups.length
@@ -1880,80 +1879,70 @@
 					return false
 				}
 			}
-			
+
 			$scope.showHiddenGroups = function() {
 				// перезаписываем фильтр
 				$scope.groupsFilter = function() { return true }
 			}
-			
+
 			$scope.signUpForTest = function(Test) {
 				$.post("tests/ajaxSignUp", {Test: Test, id_student: $scope.id_student})
 			}
-			
-			
+
+
 /*
 			$scope.signedUpForTest = function(Test) {
 				return $scope.getStudentTest(Test.id) !== undefined
 			}
 */
-			
+
 			$scope.getStudentTest = function(id) {
 				return _.find($scope.StudentTests, {id_test: id})
 			}
-			
+
 			$scope.getTestStatus = function(Test) {
 				if (Test !== undefined) {
 					return test_statuses[Test.intermediate || 0]
 				}
 			}
-			
+
 			$scope.toggleTestStatus = function(Test) {
 				$.post("tests/ajaxToggleStatus", {
-					id_test: (Test.hasOwnProperty('id_test') ? Test.id_test : Test.id), 
+					id_test: (Test.hasOwnProperty('id_test') ? Test.id_test : Test.id),
 					id_student: $scope.id_student}
 				, function(new_status) {
 					Test.intermediate = parseInt(new_status)
 					$scope.$apply()
 				})
 			}
-		    
+
 		    $scope.setMenu = function(menu) {
 			    if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				    $.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-						['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 'weekdays_time',
-							'branches_brick', 'time', 'representative_phone_level', 'representative'].forEach(function(field) {
+						['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
+							'branches_brick', 'representative_phone_level', 'representative'].forEach(function(field) {
 							$scope[field] = response[field]
 						})
-						
-						$scope.weekdays = [
-							{"short" : "ПН", "full" : "Понедельник", 	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-							{"short" : "ВТ", "full" : "Вторник", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-							{"short" : "СР", "full" : "Среда", 			"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-							{"short" : "ЧТ", "full" : "Четверг", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-							{"short" : "ПТ", "full" : "Пятница", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-							{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
-							{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
-						]
-						
+
 						$.each($scope.student.branches, function(index, branch) {
 							$scope.student.branches[index] = branch.toString();
 						});
-						
+
 						$scope.$apply()
-						
+
 						console.log('BEFORE ITMEOUT BIND SWITCH')
 						$timeout(function() {
 							// ios-like triple switch
 							$('.triple-switch').slider({
 								tooltip: 'hide',
 							});
-							
+
 							console.log('BIND SWITCH')
 							rebindMasks()
-							
+
 							// Добавляем существующие метки
 							$scope.loadServerMarkers();
-							
+
 							// События добавления меток
 							google.maps.event.addListener($scope.gmap, 'click', function(event) {
 								$scope.gmapAddMarker(event)
@@ -1982,7 +1971,7 @@
 			    }
 			    if ($scope.Reviews === undefined && menu == 3) {
 				    $scope.enum = review_statuses
-					
+
 					$.post("requests/ajax/LoadReviews", {id_student: $scope.id_student}, function(response) {
 						['Reviews', 'id_user_review', 'user', 'users'].forEach(function(field) {
 							$scope[field] = response[field]
@@ -2056,12 +2045,12 @@
 					}
 				}
 				$("#request-subjects").selectpicker({noneSelectedText: "предметы", multipleSeparator: "+"})
-				
+
 				$("#request-edit").on('keyup change', 'input, select, textarea', function(){
 			        $scope.form_changed = true
 			        $scope.$apply()
 			    })
-			    
+
 				// код подразделения
 				$("#code-podr").mask("999-999");
 
@@ -2082,13 +2071,13 @@
 						$scope.visit_data_counts[id_group]['last'] = $scope.getGroup(id_group).Schedule.length - change_index
 					}
 				})
-			    
+
 			  // promo-code-loading
 				$(".map-save-button, .bs-datetime").on("click", function() {
 				    $scope.form_changed = true
 			        $scope.$apply()
 			    })
-				
+
 				// Биндим загрузку к уже имеющимся дагаварам
 				$.each($scope.contracts, function(index, contract) {
 					$scope.bindFileUpload(contract)
@@ -2097,11 +2086,11 @@
 				// дополнительный apply on document.ready
 				$scope.$apply()
 			})
-			
+
 			$scope.save = function() {
 				// Проверяем все ли номера телефона заполнены
 				has_errors = false
-				
+
 				$(".phone-masked").filter(function() {
 					// если есть нижнее подчеркивание, то номер заполнен не полностью
 					not_filled = $(this).val().match(/_/)
@@ -2115,8 +2104,8 @@
 						$(this).removeClass("has-error")
 					}
 				})
-				
-				
+
+
 				$(".email").filter(function() {
 					if ($(this).val() != '' && !validateEmail($(this).val())) {
 						$(this).addClass("has-error").focus()

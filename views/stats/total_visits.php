@@ -19,37 +19,37 @@
 		<?php } else { ?>
 		<a href="stats/visits/total?group=d" style="margin-right: 15px">дни</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "w") { ?>
 		<span style="margin-right: 15px; font-weight: bold">недели</span>
 		<?php } else { ?>
 		<a href="stats/visits/total?group=w" style="margin-right: 15px">недели</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "m") { ?>
 		<span style="margin-right: 15px; font-weight: bold">месяцы</span>
 		<?php } else { ?>
 		<a href="stats/visits/total?group=m" style="margin-right: 15px">месяцы</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "y") { ?>
 		<span style="margin-right: 15px; font-weight: bold">годы</span>
 		<?php } else { ?>
 		<a href="stats/visits/total?group=y" style="margin-right: 15px">годы</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "wd") { ?>
 		<span style="margin-right: 15px; font-weight: bold">дни недели</span>
 		<?php } else { ?>
 		<a href="stats/visits/total?group=wd" style="margin-right: 15px">дни недели</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "s") { ?>
 		<span style="margin-right: 15px; font-weight: bold">расписание</span>
 		<?php } else { ?>
 		<a href="stats/visits/total?group=s" style="margin-right: 15px">расписание</a>
 		<?php } ?>
-		
+
 		<div class="top-links pull-right">
 			<span class="link-like active">хронологически</span>
 			<a href="stats/visits/students">ученики</a>
@@ -57,9 +57,9 @@
 			<a href="stats/visits/grades">классы</a>
 			<a href="stats/visits/subjects" style="margin-right: 0">предметы</a>
 		</div>
-		
+
 	</div>
-	
+
 	<table class="table table-hover">
 		<thead style="font-weight: bold">
 			<tr>
@@ -114,7 +114,8 @@
 								{{Schedule.time}}
 							</td>
 							<td>
-								<div ng-bind-html="Schedule.branch | to_trusted"></div>
+								<!-- @time-refactored @time-checked  -->
+								<span style='color: {{ Schedule.cabinet.color }}'>{{ Schedule.cabinet.label }}</span>
 							</td>
 							<td>
 								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
@@ -134,7 +135,7 @@
 							</td>
 							<td>
 								<a class="pointer" target="_blank" href="teachers/edit/{{Schedule.Group.Teacher.id}}">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
-								
+
 								<span class="label label-danger pointer label-transparent" ng-click="callSip(Schedule.Group.Teacher.phone)"
 									style="margin-left: 3px">позвонить</span>
 							</td>
@@ -164,7 +165,7 @@
 			</tr>
 		</tbody>
 	</table>
-	
+
 	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
 	<pagination
 	  ng-model="currentPage"
@@ -182,7 +183,7 @@
 </div>
 
 
-<style> 
+<style>
 	.no-hover td {
 		border-top: none !important;
 	}

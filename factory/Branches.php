@@ -1,16 +1,16 @@
 <?php
-	
-	
+
+
 	/**
 	 * Филиалы.
-	 * 
+	 *
 	 */
 	class Branches extends Factory {
-		
+
 		# Список
 		const TRG = 1;
-		const PVN = 2;	
-		const BGT = 3; 
+		const PVN = 2;
+		const BGT = 3;
 		const IZM = 5;
 		const OPL = 6;
 		const RPT = 7;
@@ -22,9 +22,9 @@
 		const BRT = 14;
 		const MLD = 15;
 		const VLD = 16;
-		
-		
-		
+
+
+
 		# Все
 		static $all  = [
 			self::TRG => "Тургеневская",
@@ -42,7 +42,7 @@
 			self::MLD => "Молодежная",
 			self::VLD => "Владыкино",
 		];
-		
+
 		# Короткие
 		static $short  = [
 			self::TRG => "ТУР",
@@ -60,7 +60,7 @@
 			self::MLD => "МОЛ",
 			self::VLD => "ВЛА",
 		];
-		
+
 		# Короткие
 		static $address  = [
 			self::TRG => "Мясницкая 40с1",
@@ -78,28 +78,28 @@
 			self::MLD => "",
 			self::VLD => "",
 		];
-		
+
 		# title
 		static $title = "филиал";
-		
+
 		# удаленные станции
 		static $deleted = [];
-		
+
 		/**
 		 * Построить селектор с кружочками метро
 		 * $multiple - множественный выбор
 		 */
 		public static function buildSvgSelectorCabinets($selected = false, $cabinet = false, $attrs, $params = [])
-		{	
-			
+		{
+
 			echo "<select ".($params['multiple'] ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
-			
+
 			// Заголовок
 			if (!$params['multiple']) {
 				echo "<option selected style='cursor: default; outline: none' value=''>". ($params['title'] ? $params['title'] : static::$title ) ."</option>";
 				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
 			}
-			
+
 			// Получаем филиалы
 			$branches = self::getBranches();
 
@@ -126,7 +126,7 @@
 					}
 					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
 					if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
-						echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}-{$Cabinet->id}'
+						echo "<option ".($option_selected ? "selected" : "")." value='-{$Cabinet->id}'
 							ng-selected='" . ( $option_selected ? 'true' : 'false' ). "'
 							ng-class=\"{'half-opacity': free_cabinets[" . $branch["id"] . "][{$Cabinet->id}]}\"
 							data-content='".
@@ -136,30 +136,69 @@
                                     ($params['coloured_text'] ? '</span>' : '').
                             "'></option>";
 					}
-					// 
+					//
 				}
 			}
 			echo "</select>";
 			echo "<script>$('#{$attrs['id']}').selectpicker()</script>";
 		}
-				
+
+
+		public static function cabinetsSelector($attrs = [])
+		{
+
+			echo "<select class='branch-cabinet' ".Html::generateAttrs($attrs).">";
+			echo "<option selected style='cursor: default; outline: none' value=''>кабинет</option>";
+			echo "<option disabled style='cursor: default' value=''>──────────────</option>";
+			// Получаем филиалы
+			$branches = self::getBranches();
+
+			foreach ($branches as $branch) {
+				$Cabinets = Cabinet::getBranchId($branch['id']);
+				foreach($Cabinets as $Cabinet) {
+					echo "<option value='{$Cabinet->id}'>" . $branch['short'] . "–" . $Cabinet->number ."</option>";
+				}
+			}
+			echo "</select>";
+		}
+
+		/**
+		 * Вернуть массив кабинетов в формате филиал-кабинет
+		 */
+		public static function allCabinets()
+		{
+			$branches = self::getBranches();
+			foreach ($branches as $branch) {
+				$Cabinets = Cabinet::getBranchId($branch['id']);
+				foreach($Cabinets as $Cabinet) {
+					$return[] = [
+						'id' 	=> $Cabinet->id,
+						'color' => static::metroSvg($Cabinet->id_branch, false, true),
+						'label'	=> $branch['short'] . "–" . $Cabinet->number,
+					];
+				}
+			}
+			return $return;
+		}
+
+
 		/**
 		 * Построить селектор с кружочками метро
 		 * $multiple - множественный выбор
 		 */
 		public static function buildSvgSelector($selected = false, $attrs, $multiple = false)
-		{	
+		{
 			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
-			
+
 			// Заголовок
 			if (!$multiple) {
 				echo "<option selected style='cursor: default; outline: none' value=''>". static::$title ."</option>";
 				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
 			}
-			
+
 			// Получаем филиалы
 			$branches = self::getBranches();
-			
+
 			foreach ($branches as $branch) {
 				// если это массив выбранных элементов (при $multiple = true)
 				if (is_array($selected)) {
@@ -169,31 +208,31 @@
 				}
 				// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
 				if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
-					echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}' data-content='{$branch['svg']}{$branch['name']}'></option>";	
+					echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}' data-content='{$branch['svg']}{$branch['name']}'></option>";
 				}
 			}
 			echo "</select>";
 			echo "<script>$('#{$attrs['id']}').selectpicker()</script>";
 		}
-		
+
 		/**
 		 * Построить селектор с кружочками метро
 		 * $multiple - множественный выбор
 		 */
 		public static function buildMultiSelector($selected = false, $attrs, $none_selected = '')
-		{	
+		{
 			$multiple = true;
 			echo "<select ".($multiple ? "multiple" : "")." class='form-control' ".Html::generateAttrs($attrs).">";
-			
+
 			// Заголовок
 			if (!$multiple) {
 				echo "<option selected style='cursor: default; outline: none' value=''>". static::$title ."</option>";
 				echo "<option disabled style='cursor: default' value=''>──────────────</option>";
 			}
-			
+
 			// Получаем филиалы
 			$branches = self::getBranches();
-			
+
 			foreach ($branches as $branch) {
 				// если это массив выбранных элементов (при $multiple = true)
 				if (is_array($selected)) {
@@ -203,7 +242,7 @@
 				}
 				// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
 				if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
-					echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}' data-content='{$branch['svg']}{$branch['name']}'></option>";	
+					echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}' data-content='{$branch['svg']}{$branch['name']}'></option>";
 				}
 			}
 			echo "</select>";
@@ -211,11 +250,11 @@
 				echo "<script>$('#{$attrs['id']}').selectpicker({noneSelectedText: '$none_selected'})</script>";
 			}
 		}
-		
-		
+
+
 		/**
 		 * Цвет метро, СВГ-кружок.
-		 * 
+		 *
 		 * $return - возвратить вес линии для сортировки
 		 * $return_color_only – возвратить только цвет вместо SVG
 		 */
@@ -305,48 +344,48 @@
 					break;
 				}
 			}
-			
+
 			if ($return_color_only) {
 				return $color;
 			} else {
 				return
 					'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
 	            		<circle fill="'.$color.'" r="6" cx="7" cy="7"></circle>
-					</svg>';	
+					</svg>';
 			}
 		}
-		
-		
+
+
 		public static function getName($id_branch) {
 			return self::metroSvg($id_branch) .  self::getById($id_branch);
 		}
-		
-		public static function getShortColoredById($id_branch, $additional = false) 
+
+		public static function getShortColoredById($id_branch, $additional = false)
 		{
 			$name = self::$short[$id_branch];
-			
-			return "<span style='color: ". self::metroSvg($id_branch, false, true) . "'>" 
+
+			return "<span style='color: ". self::metroSvg($id_branch, false, true) . "'>"
 				. $name . ($additional ? $additional : "") . "</span>";
 		}
-		
-		
+
+
 		public static function getShortColored()
 		{
 			foreach (self::$all as $id_branch => $name) {
-				$return[$id_branch] = self::getShortColoredById($id_branch);	
+				$return[$id_branch] = self::getShortColoredById($id_branch);
 			}
-			
+
 			return $return;
 		}
-		
+
 		/**
 		 * Получить отсортированные по весу линий филиалы с другими параметрами (имя, свг и тд)
-		 * 
+		 *
 		 */
 		public static function getBranches()
 		{
 			$branches = static::$all;
-			
+
 			// Генерируем филиалы
 			foreach ($branches as $id => $branch) {
 				$return[] = [
@@ -358,7 +397,7 @@
 					"color"	=> self::metroSvg($id, false, true)
 				];
 			}
-			
+
 			// Сортируем по весу ветки метро
 			usort($return, function($a, $b) {
 				$lineWeightA = $a["line"];
@@ -368,10 +407,10 @@
 					// Внутри одинакового цвета ветки сортируем по ID (чем меньше ID, тем выше)
 					return ($a["id"] < $b["id"]) ? -1 : 1;
 				}
-				
+
 				return ($lineWeightA < $lineWeightB) ? -1 : 1;
 			});
-			
+
 			return $return;
 		}
 	}

@@ -50,15 +50,21 @@
 			self::add($data);
 		}
 
-		public static function getStatus($id_student, $id_branch, $id_subject, $first_schedule, $cabinet)
+		// @time-refactored @time-checked
+		public static function getStatus($id_student, $Group)
 		{
+			$FirstLesson = Group::getFirstLesson($Group->id, true);
+			
+			if (!count($Group->students) || !$Group->id_subject || !$Group->first_schedule || !$FirstLesson->cabinet) {
+				return 0;
+			}
+			
 			// preType([$id_student, $id_branch, $id_subject, $first_schedule, $cabinet]);
 			return self::count([
 				"condition" => "id_student={$id_student}
-								 AND id_branch={$id_branch}
-								 AND id_subject={$id_subject}
-								 AND first_schedule='{$first_schedule}'
-								 AND cabinet={$cabinet}"
+								 AND id_subject={$Group->id_subject}
+								 AND first_schedule='{$Group->first_schedule}'
+								 AND cabinet={$FirstLesson->cabinet}"
 			]);
 		}
 	}

@@ -100,12 +100,19 @@
 
 		/**
 		 * Сообщить о незапланированных занятиях.
-		 *
+		 * @have-to-refactor !!!
 		 */
 		public static function actionNotifyUnplannedLessons()
 		{
+            $Time = Time::getLight();
 			$tomorrow_month = date("n", strtotime("tomorrow"));
 			$tomorrow_month = russian_month($tomorrow_month);
+
+            $tomorrow_day = date("w", strtotime('tomorrow')); // день недели завтра
+            if (! $tomorrow_day) {
+                $tomorrow_day = 7;
+            }
+
 
 			$tomorrow = date("j", strtotime("tomorrow")) . " " . $tomorrow_month;
 
@@ -275,13 +282,15 @@
 			$GroupSchedule = GroupSchedule::find([
 				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."'"
 			]);
+			// @time-refactored @time-checked
+			// @sms-checked
 			return Template::get(10, [
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
-				'address'		=> Branches::$address[$GroupSchedule->id_branch],
-				'branch' 		=> Branches::$all[$GroupSchedule->id_branch],
-				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
+				'address'		=> Branches::$address[Cabinet::getField($GroupSchedule->cabinet)],
+				'branch' 		=> Branches::$all[Cabinet::getField($GroupSchedule->cabinet)],
+				'cabinet'		=> trim(Cabinet::getField($GroupSchedule->cabinet, 'number')),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
 			]);
@@ -292,13 +301,15 @@
 			$GroupSchedule = GroupSchedule::find([
 				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."'"
 			]);
+			// @time-refactored @time-checked
+			// @sms-checked
 			return Template::get(12, [
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
-				'address'		=> Branches::$address[$GroupSchedule->id_branch],
-				'branch' 		=> Branches::$all[$GroupSchedule->id_branch],
-				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
+				'address'		=> Branches::$address[Cabinet::getField($GroupSchedule->cabinet)],
+				'branch' 		=> Branches::$all[Cabinet::getField($GroupSchedule->cabinet)],
+				'cabinet'		=> trim(Cabinet::getField($GroupSchedule->cabinet, 'number')),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
 			]);
@@ -369,6 +380,10 @@
 			$ec_connection->query("INSERT INTO groups_count (name, value) VALUES " . implode(",", $values));
 		}
 
+        /*
+         * Шаблон: занятие завтра
+         *
+         */
 		public static function actionNotifyGroupsFirstLesson()
 		{
 			// все завтрашние занятия
@@ -476,13 +491,15 @@
 			$GroupSchedule = GroupSchedule::find([
 				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."' AND cancelled = 0"
 			]);
+			// @time-refactored @time-checked
+			// @sms-checked
 			return Template::get(5, [
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,
 				'subject'		=> Subjects::$dative[$Group->id_subject],
-				'address'		=> Branches::$address[$GroupSchedule->id_branch],
-				'branch' 		=> Branches::$all[$GroupSchedule->id_branch],
-				'cabinet'		=> trim(Cabinet::findById($GroupSchedule->cabinet)->number),
+				'address'		=> Branches::$address[Cabinet::getField($GroupSchedule->cabinet)],
+				'branch' 		=> Branches::$all[Cabinet::getField($GroupSchedule->cabinet)],
+				'cabinet'		=> trim(Cabinet::getField($GroupSchedule->cabinet, 'number')),
 				'entity_login'	=> $Entity->login,
 				'entity_password' => $Entity->password,
 			]);

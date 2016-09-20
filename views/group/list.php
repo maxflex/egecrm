@@ -70,9 +70,9 @@
 <!--							</select>-->
 <!--						</div>-->
 						<div>
-							<?= Freetime::buildMultiSelector($search->ntime, [
+							<?= Freetime::buildMultiSelector($search->time_ids, [
 								"id" => "time-select",
-								"ng-model" 	=> "search.ntime",
+								"ng-model" 	=> "search.time_ids",
 								"ng-change"	=> "filter()"
 							], true) ?>
 						</div>
@@ -125,13 +125,13 @@
 								<?= Subjects::buildSelector(false, false, ["ng-model" => "search2.id_subject"]) ?>
 							</div>
 							<div>
-								<select class="form-control" 
+								<select class="form-control"
 									ng-model="search2.year">
 									<option value="">все</option>
 									<option disabled>──────────────</option>
-									<option ng-repeat="year in <?= Years::json() ?>" 
+									<option ng-repeat="year in <?= Years::json() ?>"
 											value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
-								</select> 
+								</select>
 							</div>
 							<div>
 								<select id='external-filter' class="single-select form-control" ng-model="search2.level">

@@ -1,16 +1,20 @@
 <div ng-app="Group" ng-controller="StudentListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
-			
-			
+
+
 			<table class="table table-divlike" style="position: relative">
-	<tr ng-repeat="Group in Groups" 
+	<tr ng-repeat="Group in Groups"
 		class="group-list" data-id="{{Group.id}}">
 		<td width="100">
 			<a href="students/groups/edit/{{Group.id}}/schedule">Группа №{{Group.id}}</a>
 		</td>
 		<td>
-			<span>ЕГЭ-Центр-{{Branches[Group.id_branch]}}</span>
+			<!-- @time-refactored @time-checked -->
+			<span ng-repeat='cabinet in Group.cabinets'>
+				<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
+				<span class="remove-space">{{$last ? '' : ', '}}</span>
+			</span>
 		</td>
 		<td>
 			{{Subjects[Group.id_subject]}}
@@ -33,7 +37,7 @@
 		</td>
 	</tr>
 </table>
-			
+
 			<div ng-show="Groups.length == 0" class="center half-black small" style="margin-bottom: 30px">список групп пуст</div>
 		</div>
 	</div>

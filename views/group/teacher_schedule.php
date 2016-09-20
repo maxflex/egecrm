@@ -70,7 +70,7 @@
 					</tr>
 				</table>
 				<div style="margin: 15px 0; font-weight: bold">Расписание занятий:</div>
-				
+
 <!--
 				<h3 style="font-weight: bold; margin: 10px 0 25px">{{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
 						'one': 'занятие',
@@ -90,19 +90,21 @@
 							</div>
 						</td>
 						<td>
+                            <!-- @have-to-refactor -->
 							кабинет {{Schedule.Cabinet.number}}
 						</td>
 						<td>
-							<span ng-show="inDate(Schedule.date, past_lesson_dates)">занятие проведено</span>
+							<!-- @time-refactored   -->
+							<span ng-show="inPastLessons(Schedule.date)">занятие проведено</span>
 							<span ng-show="Schedule.cancelled">занятие отменено</span>
-							<a href='teachers/groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inDate(Schedule.date, past_lesson_dates) && lessonStarted(Schedule) && !Schedule.cancelled' 
-								ng-class="{'add-to-journal': !inDate(Schedule.date, past_lesson_dates) && !Schedule.cancelled}">
+							<a href='teachers/groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inPastLessons(Schedule.date) && lessonStarted(Schedule) && !Schedule.cancelled'
+								ng-class="{'add-to-journal': !inPastLessons(Schedule.date) && !Schedule.cancelled}">
 								создать запись в журнале
 							</a>
 						</td>
 					</tr>
 				</table>
-				
+
 				<div style="margin: 15px 0; font-weight: bold">Итого: {{ countNotCancelled(Group.Schedule) }} <ng-pluralize count="countNotCancelled(Group.Schedule)" when="{
 						'one': 'занятие',
 						'few': 'занятия',
@@ -110,7 +112,7 @@
 					}"></ng-pluralize></div>
 			</div>
 		</div>
-		
+
 	</div>
 </div>
 </div>

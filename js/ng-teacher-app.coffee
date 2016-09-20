@@ -66,16 +66,15 @@
 			$scope.yearDifference = (year) ->
 	            moment().format("YYYY") - year
 
-			$scope.toggleFreetime = (day, index) ->
-			  time_id = $scope.weekdays_time[day][index]
-			  mode = if $scope.Bars.Freetime[day][time_id] == 'green' then 'Delete' else 'Add'
+			# @time-refactored @time-checked
+			$scope.toggleFreetime = (day, id_time) ->
+			  mode = if $scope.Bars.Freetime[day][id_time] == 'green' then 'Delete' else 'Add'
 			  $.post 'ajax/' + mode + 'Freetime', {
 			    'id_entity': $scope.Teacher.id
 			    'type_entity': 'teacher'
-			    'day': day
-			    'time_id': time_id
+			    'id_time': id_time
 			  }, ->
-			    $scope.Bars.Freetime[day][time_id] = if mode == 'Add' then 'green' else 'empty'
+			    $scope.Bars.Freetime[day][id_time] = if mode == 'Add' then 'green' else 'empty'
 			    $scope.$apply()
 			    return
 			  return
@@ -369,16 +368,6 @@
 
 			angular.element(document).ready ->
 				set_scope "Teacher"
-
-				$scope.weekdays = [
-					{"short" : "ПН", "full" : "Понедельник", 	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ВТ", "full" : "Вторник", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "СР", "full" : "Среда", 			"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ПТ", "full" : "Пятница", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
-					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
-				]
 
 				$.each $scope.Teacher.branches, (index, branch) ->
 					$scope.Teacher.branches[index] = branch.toString()

@@ -19,7 +19,10 @@
 			<a href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
 		</td>
 		<td>
-			<span ng-show="Group.id_branch" ng-bind-html="Group.branch | to_trusted" ng-class="{'mr3' : !$last}" class="center-label"></span>
+			<span ng-repeat='cabinet in Group.cabinets'>
+				<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
+				<span class="remove-space">{{$last ? '' : ', '}}</span>
+			</span>
 		</td>
 		<td width="150">
 			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + <?= GroupLevels::json() ?>[Group.level] : ''}}{{Group.is_special ? " (спец.)" : ""}}
@@ -48,16 +51,15 @@
 					'one': 'занятие',
 					'few': 'занятия',
 					'many': 'занятий'
-				}"></ng-pluralize></span></span><span ng-show="Group.first_schedule && Group.schedule_count.paid > 0">, </span><span ng-show="Group.schedule_count.paid > 0">всего 
+				}"></ng-pluralize></span></span><span ng-show="Group.first_schedule && Group.schedule_count.paid > 0">, </span><span ng-show="Group.schedule_count.paid > 0">всего
                 {{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}
                 </span>
             </span>
 		</td>
 		<td>
-			<span ng-repeat="(day, day_data) in Group.day_and_time">
-				{{weekdays[day - 1].short}}
-				<span ng-repeat="dd in day_data">
-					в {{dd}}{{$last ? "" : ","}}</span>{{$last ? "" : ","}}
+            <!-- @time-refactored @time-checked -->
+			<span ng-repeat="data in Group.day_and_time">
+				<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
 			</span>
 			<span ng-show="Group.day_and_time.length !== undefined">без расписания</span>
 <!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->

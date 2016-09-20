@@ -521,7 +521,7 @@ body {
 .top-group-menu-thin {
 	position: relative;
 	& > div {
-		width: 10.8%;
+		width: 12.5%;
 		display: inline-block;
 		margin-right: 5px;	
 	}
@@ -1781,9 +1781,9 @@ h4.row-header {
 
 
 .lightbox-email, .lightbox-freetime {
-	width: 60%;
+	width: 70%;
 //	height: 80%;
-	left: 20%;
+	left: 15%;
 	top: 10%;
 }
 
@@ -1831,7 +1831,6 @@ white-space: nowrap;
 
 .lightbox-freetime {
     max-height: 700px;
-    overflow-y: scroll;
 }
 
 #sms-history {
@@ -3149,4 +3148,27 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 }
 .contract-table .head td {
   background:#63b2de;
+}
+
+.branch-cabinet {
+	width: 92px !important;
+	& .btn {
+	    height: 20px;
+	    padding: 0 0 0 5px;
+	    & span {
+	        line-height: 18px !important;
+	        overflow: visible !important;
+	    }
+	    & .caret {
+		    right: 5px !important;
+	    }
+	}
+}
+
+.remove-space {
+	margin-left: -4px;
+}
+
+.full-width {
+	width: 100% !important;
 }

@@ -12,11 +12,11 @@
 		{
 			$this->addJs("ng-teacher-app");
 		}
-		
+
 		public function actionFaq()
 		{
 			$this->setTabTitle("Редактирование FAQ преподавателя");
-			
+
 			$ang_init_data = angInit([
 				"html" => Settings::get('teachers_faq'),
 			]);
@@ -25,7 +25,7 @@
 				"ang_init_data" => $ang_init_data,
 			]);
 		}
-		
+
 		public function actionSalary()
 		{
 			$Data = VisitJournal::findAll([
@@ -120,10 +120,10 @@
 		public function actionList()
 		{
 			$this->_custom_panel = true;
-			
+
 			$this->addJs("bootstrap-select");
 			$this->addCss("bootstrap-select");
-			
+
 			$Teachers = Teacher::findAll([
 				"condition" => "in_egecentr > 0",
 				"order" => "last_name ASC",
@@ -140,11 +140,12 @@
 			]);
 		}
 
+		// @time-refactored @time-checked
 		public function actionEdit()
 		{
 			$id_teacher = $_GET['id'];
 			$Teacher = Teacher::findById($id_teacher);
-			
+
 			$this->setTabTitle("Редактирование преподавателя " . $Teacher->getFullName());
 			$this->setRightTabTitle("
 				<a class='link-white' style='margin-right: 10px' href='https://lk.ege-repetitor.ru/tutors/{$id_teacher}/edit'>профиль в системе ЕГЭ-Репетитор</a>
@@ -166,8 +167,6 @@
 				"SubjectsFull" => Subjects::$all,
 				"payment_statuses"	=> Payment::$all,
 				"user"				=> User::fromSession(),
-				"time" 				=> Freetime::TIME,
-				"weekdays_time"		=> Freetime::$weekdays_time,
 				"Grades"			=> Grades::$all,
 			]);
 
@@ -176,11 +175,11 @@
 				"ang_init_data" => $ang_init_data
 			]);
 		}
-		
-		
-		
+
+
+
 		/******* AJAX ********/
-		
+
 		public function actionAjaxMenu()
 		{
 			extract($_POST);
@@ -208,20 +207,20 @@
 				case 5: {
 					$Teacher = Teacher::findById($id_teacher);
 					$Stats = Teacher::stats($id_teacher);
-					
+
 					$Stats['clients_count'] = dbEgerep()->query("SELECT COUNT(*) AS cnt FROM attachments WHERE tutor_id=" . $id_teacher)->fetch_object()->cnt;
 					$Stats['er_review_count'] = dbEgerep()->query("
 						SELECT COUNT(*) AS cnt FROM reviews r
 						JOIN attachments a ON a.id = r.attachment_id
 						WHERE a.tutor_id={$id_teacher} AND r.score < 11 AND r.score > 0
 					")->fetch_object()->cnt;
-					
+
 					$review_score_sum = dbEgerep()->query("
 						SELECT SUM(r.score) AS sm FROM reviews r
 						JOIN attachments a ON a.id = r.attachment_id
 						WHERE a.tutor_id={$id_teacher} AND r.score < 11 AND r.score > 0
 					")->fetch_object()->sm;
-					
+
 			        switch($Teacher->js) {
 			            case 10: {
 			                $js = 8;
@@ -235,7 +234,7 @@
 			                $js = $Teacher->js;
 			            }
 			        }
-			
+
 			        $Stats['er_review_avg'] = (4* (($Teacher->lk + $Teacher->tb + $js) / 3) + $review_score_sum)/(4 + $Stats['er_review_count']);
 					returnJsonAng($Stats);
 				}

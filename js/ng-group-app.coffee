@@ -27,7 +27,6 @@
 				for i in [0...total] by 1
 					input.push i
 				input
-
 		.controller "JournalCtrl", ($scope) ->
 			$scope.grayMonth = (date) ->
 				d = moment(date).format("M")
@@ -51,6 +50,7 @@
 				date_now = new Date()
 				date_lesson = new Date($scope.Schedule.date + " " + $scope.Schedule.time + ":00")
 				diff = date_now.getTime() - date_lesson.getTime()
+				console.log('diff', diff)
 				data =
 					seconds: 59 - (Math.floor(diff / 1000) - (Math.floor(diff / 1000 / 60) * 60))
 					minutes: 40 - Math.floor(diff / 1000 / 60)
@@ -130,232 +130,238 @@
 				set_scope "Group"
 
 		.controller "ScheduleCtrl", ($scope) ->
-			$scope.schedulde_loaded = false
+		    $scope.schedulde_loaded = false
 
-			$scope.formatDate = (date) ->
-				moment(date).format "D MMMM YYYY г."
+		    $scope.changeCabinet = (Schedule) ->
+            	$.post 'groups/ajax/ChangeScheduleCabinet',
+            		id: Schedule.id
+            		cabinet: Schedule.cabinet
 
-			$scope.getLine1 = (Schedule) ->
-				moment(Schedule.date).format "D MMMM YYYY г."
+		    $scope.formatDate = (date) ->
+		        moment(date).format "D MMMM YYYY г."
 
-			$scope.countNotCancelled = (Schedule) ->
-				_.where(Schedule, { cancelled: 0 }).length
+		    $scope.getLine1 = (Schedule) ->
+		        moment(Schedule.date).format "D MMMM YYYY г."
 
-			$scope.studentsToLayeredScheduleTitle = (Schedule, students) ->
-				title = ''
-				[...,last] = students
-				for student in students
-					title += student.first_name + ' ' + student.last_name
-					if last isnt student then title += ','
-				Schedule.title = title
-				$scope.$apply()
+		    $scope.countNotCancelled = (Schedule) ->
+		        _.where(Schedule, { cancelled: 0 }).length
 
-			# установка времени филиала и кабинета из настроек группы
-			$scope.setParamsFromGroup = (Group) ->
-				$.each $scope.Group.Schedule, (i, v) ->
-					# if not v.time
-					d = moment(v.date).format("d")
-					d = parseInt d
-					d = 7 if d is 0
-					# если в этот день установлено расписание и время в группе. иначе не устанавливать
-					# console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
-					if Group.day_and_time[d] isnt undefined
-						key = Object.keys(Group.day_and_time[d])[0]
-						v.time = Group.day_and_time[d][key]
+			# установка времени филиала и кабинета из настроек группы @time-checked
+		    $scope.setParamsFromGroup = (Group) ->
+		        $.each $scope.Group.Schedule, (i, schedule) ->
+		            # обновляем только после ответа сервера
+		            v = angular.copy(schedule)
 
-					# устанавливаем филиалы и кабинеты для дат где не указаны филиал/кабинеты
-					if Group.id_branch # and not v.id_branch
-						v.id_branch = Group.id_branch
-						$scope.changeBranch(v)
+		            # if not v.time
+		            d = moment(v.date).format("d")
+		            d = parseInt d
+		            d = 7 if d is 0
 
-					if Group.id_branch and Group.cabinet
-						v.cabinet = Group.cabinet if Group.cabinet
+		            # если в этот день установлено расписание и время в группе. иначе не устанавливать
+		            # console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
+		            if Group.day_and_time[d] isnt undefined
+		                v.time    = $scope.Time[Group.day_and_time[d][0].id_time]
+		                v.cabinet = Group.day_and_time[d][0].id_cabinet
+		            else
+		                v.time = null
+		                v.cabinet = ''
 
-				$.post "groups/ajax/TimeFromGroup", {id_group: Group.id}
-				, (response) ->
-					if response
-						$.each $scope.Group.Schedule, (i, v) ->
-							if response[v.date]
-								$scope.studentsToLayeredScheduleTitle(v, response[v.date])
-				, "json"
+		            # @time-refactored
+		            $.post "groups/ajax/TimeFromGroup",
+		                id: v.id
+		                time: v.time
+		                cabinet: v.cabinet
+		            , ->
+		                schedule.time = v.time
+		                schedule.cabinet = v.cabinet
+		                $scope.$apply()
 
-			$scope.lessonCount = ->
-				Object.keys($scope.Group.day_and_time).length
+		    $scope.lessonCount = ->
+		        Object.keys($scope.Group.day_and_time).length
 
-			$scope.changeFree = (Schedule) ->
-				$.post "groups/ajax/changeScheduleFree",
-					id: Schedule.id
-					is_free: Schedule.is_free
+		    $scope.changeFree = (Schedule) ->
+		        $.post "groups/ajax/changeScheduleFree",
+		            id: Schedule.id
+		            is_free: Schedule.is_free
 
-			$scope.changeCabinet = (Schedule) ->
-				$.post "groups/ajax/changeScheduleCabinet",
-					date: Schedule.date
-					id_group: $scope.Group.id
-					cabinet: Schedule.cabinet
+		    $scope.setTime = (Schedule, event) ->
+		        $(event.target).hide()
 
-			$scope.changeBranch = (Schedule) ->
-				$.post "groups/ajax/changeScheduleBranch",
-					date: Schedule.date
-					id_group: $scope.Group.id
-					id_branch: Schedule.id_branch
-					, (response) ->
-						$scope.Cabinets[Schedule.id_branch] = response if not $scope.Cabinets[Schedule.id_branch]?
-						$scope.$apply()
-					, "json"
-
-
-			$scope.setTime = (Schedule, event) ->
-				$(event.target).hide()
-
-				$(event.target)
-					.parent()
-					.children("input")
-					.show()
-					.on "changeTime, blur", (e) ->
-						time = $(this).val()
-						if time
-							Schedule.time = time
-							$.post "groups/ajax/AddScheduleTime", {time: time, date: Schedule.date, id_group: $scope.Group.id}
-							, (response) ->
-								if response
-									$scope.studentsToLayeredScheduleTitle(Schedule, response)
-							, "json"
-							$scope.$apply()
-						$(this)
-							.hide()
-							.parent()
-							.children "span"
-							.html if time then time else "не установлено"
-							.show()
-					.focus()
+		        $(event.target)
+		            .parent()
+		            .children("input")
+		            .show()
+		            .on "changeTime, blur", (e) ->
+		                time = $(this).val()
+		                if time
+		                    Schedule.time = time
+		                    $.post "groups/ajax/AddScheduleTime", {time: time, date: Schedule.date, id_group: $scope.Group.id}
+		                    $scope.$apply()
+		                $(this)
+		                    .hide()
+		                    .parent()
+		                    .children "span"
+		                    .html if time then time else "не установлено"
+		                    .show()
+		            .focus()
 
 
-				return false
+		        return false
 
-			$scope.inDate = (date, dates) ->
-				moment(date).format("YYYY-MM-DD") in dates
+		    $scope.inDate = (date, dates) ->
+		        moment(date).format("YYYY-MM-DD") in dates
 
-			$scope.lessonStarted = (Schedule) ->
-				lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime()
-				lesson_time < new Date().getTime()
+		    # @time-refactored
+		    $scope.inPastLessons = (date) ->
+		    	date = moment(date).format("YYYY-MM-DD") if typeof date is 'object'
+		    	$scope.getPastLesson(date) isnt undefined
 
-			$scope.getInitParams = (el) ->
-				month = parseInt $(el).attr "month"
-				# year = if month >= 8 then parseInt moment().format "YYYY" else moment().add(1, "years").format "YYYY"
-				# year = if month >= 8 then parseInt moment().subtract(1, "years").format "YYYY" else moment().format "YYYY"
-				year = $scope.Group.year
-				year++ if month <=8
-				current_date = new Date "#{year}-#{month}-01"
-				console.log(current_date)
-				language: 'ru'
-				startDate: current_date
-				endDate: moment(current_date).endOf("month").toDate()
-				multidate: true
-				beforeShowDay: (d, inst) ->
-					if $scope.inDate(d, $scope.past_lesson_dates)
-						add_class = 'was-lesson disabled '
-					if $scope.inDate(d, $scope.vocation_dates)
-						add_class += ' vocation'
-					if $scope.inDate(d, $scope.exam_dates.other_subject)
-						add_class += ' exam'
-					if $scope.inDate(d, $scope.exam_dates.this_subject)
-						add_class += ' exam-subject'
-					if $scope.inDate(d, $scope.cancelled_lesson_dates)
-						add_class += ' cancelled'
-					add_class
+		    $scope.getPastLesson = (date) ->
+		    	_.findWhere($scope.past_lessons, {lesson_date: date})
 
-			$scope.monthName = (month) ->
-				moment().month(month - 1).format "MMMM"
+		    $scope.lessonStarted = (Schedule) ->
+		        lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime()
+		        lesson_time < new Date().getTime()
 
-			$scope.dateChange = (e) ->
-				return if not $scope.schedule_loaded
-				# console.log clicked_date
+		    $scope.getInitParams = (el) ->
+		        month = parseInt $(el).attr "month"
+		        # year = if month >= 8 then parseInt moment().format "YYYY" else moment().add(1, "years").format "YYYY"
+		        # year = if month >= 8 then parseInt moment().subtract(1, "years").format "YYYY" else moment().format "YYYY"
+		        year = $scope.Group.year
+		        year++ if month <=8
+		        current_date = new Date "#{year}-#{month}-01"
+		        console.log(current_date)
+		        language: 'ru'
+		        startDate: current_date
+		        endDate: moment(current_date).endOf("month").toDate()
+		        multidate: true
+		        beforeShowDay: (d, inst) ->
+		            if $scope.inPastLessons(d)
+		                add_class = 'was-lesson disabled '
+		            if $scope.inDate(d, $scope.vocation_dates)
+		                add_class += ' vocation'
+		            if $scope.inDate(d, $scope.exam_dates.other_subject)
+		                add_class += ' exam'
+		            if $scope.inDate(d, $scope.exam_dates.this_subject)
+		                add_class += ' exam-subject'
+		            if $scope.inDate(d, $scope.cancelled_lesson_dates)
+		                add_class += ' cancelled'
+		            add_class
 
-				d = moment(clicked_date).format("YYYY-MM-DD")
+		    $scope.monthName = (month) ->
+		        moment().month(month - 1).format "MMMM"
 
-				$scope.Group.Schedule = initIfNotSet $scope.Group.Schedule
+		    $scope.dateChange = (e) ->
+		        return if not $scope.schedule_loaded
+		        # console.log clicked_date
 
-				# check if date is in schedule
-				t = $scope.Group.Schedule.filter (schedule) ->
-					schedule.date is d
+		        d = moment(clicked_date).format("YYYY-MM-DD")
 
-				if t.length is 0
-					$scope.Group.Schedule.push
-						date: d
-						cancelled: 0
-					$.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}
-				else
-# 					index = $scope.schedule.indexOf d
-# 					$scope.schedule.splice index, 1
-					$.each $scope.Group.Schedule, (i, v) ->
-						if v isnt undefined
-							if v.date is d
-								if not v.cancelled
-									v.title = false
-									v.cancelled = 1
-									$.post "groups/ajax/CancelScheduleDate", {date: d, id_group: $scope.Group.id}
-								else
-									$scope.Group.Schedule.splice i, 1
-									$.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}
-				$scope.$apply()
+		        $scope.Group.Schedule = initIfNotSet $scope.Group.Schedule
 
-			$scope.getTestStatus = (Test) ->
-				test_statuses[Test.intermediate]
+		        # check if date is in schedule
+		        t = $scope.Group.Schedule.filter (schedule) ->
+		            schedule.date is d
 
-			angular.element(document).ready ->
-				set_scope 'Group'
-				$scope.weekdays = [
-					{"short" : "ПН", "full" : "Понедельник", 	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ВТ", "full" : "Вторник", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "СР", "full" : "Среда", 			"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ПТ", "full" : "Пятница", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
-					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
-				]
-				init_dates = []
-				for schedule_date in $scope.Group.Schedule
-					init_dates.push new Date schedule_date.date
-# 					$scope.schedule.push
-# 				console.log init_dates
-				$(".calendar-month").each ->
-					$(this)
-						.datepicker $scope.getInitParams this
-						.on "changeDate", $scope.dateChange
-					m = $(this).attr "month"
+		        if t.length is 0
+		            $scope.Group.Schedule.push
+		                date: d
+		                cancelled: 0
+		            $.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}
+		        else
+		# 					index = $scope.schedule.indexOf d
+		# 					$scope.schedule.splice index, 1
+		            $.each $scope.Group.Schedule, (i, v) ->
+		                if v isnt undefined
+		                    if v.date is d
+		                        if not v.cancelled
+		                            v.title = false
+		                            v.cancelled = 1
+		                            $.post "groups/ajax/CancelScheduleDate", {date: d, id_group: $scope.Group.id}
+		                        else
+		                            $scope.Group.Schedule.splice i, 1
+		                            $.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}
+		        $scope.$apply()
 
-					# loading schedule on calendar
-					for d in init_dates
-						month_number = moment(d).format("M")
-						if month_number is m
-							year 	= parseInt moment(d).format("YYYY")
-							month 	= parseInt moment(d).format("M") - 1 # fix. because months are zero-based
-							day 	= parseInt moment(d).format("D")
-							# console.log year, month, day
-							$(this).datepicker "_setDate", new Date(Date.UTC.apply(Date, [year, month, day]))
-					# schedule loaded after 500 ms
-					setTimeout ->
-						$scope.schedule_loaded = true
-						$scope.$apply()
-					, 500
+		    angular.element(document).ready ->
+		        set_scope 'Group'
+		        init_dates = []
+		        for schedule_date in $scope.Group.Schedule
+		            init_dates.push new Date schedule_date.date
+		# 					$scope.schedule.push
+		# 				console.log init_dates
+		        $(".calendar-month").each ->
+		            $(this)
+		                .datepicker $scope.getInitParams this
+		                .on "changeDate", $scope.dateChange
+		            m = $(this).attr "month"
 
-				$(".table-condensed").first().children("thead").css "display", "table-caption"
-				# hack пустые строки
-				$('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide()
+		            # loading schedule on calendar
+		            for d in init_dates
+		                month_number = moment(d).format("M")
+		                if month_number is m
+		                    year 	= parseInt moment(d).format("YYYY")
+		                    month 	= parseInt moment(d).format("M") - 1 # fix. because months are zero-based
+		                    day 	= parseInt moment(d).format("D")
+		                    # console.log year, month, day
+		                    $(this).datepicker "_setDate", new Date(Date.UTC.apply(Date, [year, month, day]))
+		            # schedule loaded after 500 ms
+		            setTimeout ->
+		                $scope.schedule_loaded = true
+		                $scope.$apply()
+		            , 500
+
+		        $(".table-condensed").first().children("thead").css "display", "table-caption"
+		        # hack пустые строки
+		        $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide()
 
 		.controller "EditCtrl", ($scope, $timeout) ->
 			$timeout ->
 				ajaxEnd()
 
-			$scope.allStudentStatuses = ->
-				student_statuses_count = _.filter $scope.Group.student_statuses, (s, id_student) ->
-											s isnt undefined and s.id_status and _.where($scope.TmpStudents, {id: parseInt(id_student)}).length
-				student_statuses_count.length is $scope.TmpStudents.length
+			######## ВЫБОР ВРЕМЕНИ ########
+			$scope.timeClick = (day, time) ->
+				if $scope.timeChecked(day, time)
+					$scope.Group.day_and_time[day] = _.reject $scope.Group.day_and_time[day], (t) ->
+						t.id_time is time.id
+					delete $scope.Group.day_and_time[day] if not $scope.Group.day_and_time[day].length
+				else
+					$scope.Group.day_and_time[day] = [] if $scope.Group.day_and_time[day] is undefined
+					$scope.Group.day_and_time[day].push
+						time: time
+						id_time: time.id
+
+			$scope.timeChecked = (day, time) ->
+				$scope.Group.day_and_time[day] and $scope.getGroupTime(day, time) isnt undefined
+
+			# найти конкретное время из Group.day_and_time по day, time.id
+			$scope.getGroupTime = (day, time) ->
+				_.findWhere($scope.Group.day_and_time[day], {id_time: time.id})
+
+			$scope.dayAndTime = ->
+				lightBoxShow "freetime"
+			$scope.getTestStatus = (Test) ->
+				test_statuses[Test.intermediate]
+
+			$scope.saveDayAndTime = ->
+				lightBoxHide()
+				justSave ->
+					$scope.updateCabinetBar(false)
+					$scope.reloadSmsNotificationStatuses()
+					checkFreeCabinets()
+
+			$scope.hasDayAndTime = ->
+				Object.keys($scope.Group.day_and_time).length
+			######## /ВЫБОР ВРЕМЕНИ ########
+
+			rebindBlinking = ->
+				blinking = $(".blink")
+				blinking.removeClass "blink"
+				setTimeout ->
+					blinking.addClass "blink"
+					, 50
 
 			$scope.smsDialog2 = smsDialog2
-
-			$scope.getGroup = (id_group) ->
-				Group = (i for i in $scope.Groups when i.id is id_group)[0]
 
 			$scope.getSubject = (subjects, id_subject) ->
 				_.findWhere subjects, {id_subject: id_subject}
@@ -379,25 +385,16 @@
 							$scope.removeStudent id_student, true
 							$scope.$apply()
 
-			$scope.dateToStart = (date) ->
-				date = date.split "."
-				date = date.reverse()
-				date = date.join "-"
-
-				D = new Date(date)
-
-				moment().to D
-
+			# @time-refactored @time-checked
 			$scope.search_groups =
 				grade: ""
-				id_branch: ""
 				id_subject: ""
 				year: ""
 
+			# @time-refactored @time-checked
 			$scope.groupsFilter = (Group) ->
 				return false if Group.id is $scope.Group.id
 				return (Group.grade is parseInt($scope.search_groups.grade) or not $scope.search_groups.grade) and
-					(parseInt($scope.search_groups.id_branch) is Group.id_branch or not $scope.search_groups.id_branch) and
 					(parseInt($scope.search_groups.year) is Group.year or not $scope.search_groups.year) and
 					(parseInt($scope.search_groups.id_subject) is Group.id_subject or not $scope.search_groups.id_subject)
 
@@ -425,126 +422,26 @@
 						$scope.$apply()
 
 
-# 				$(".table-students").droppable
-# 					tolerance: 'pointer'
-# 					hoverClass: "request-status-drop-hover",
-# 					drop: (event, ui) ->
-# 						console.log ""
-# 						ui.draggable.remove();
-# 						id_group	 = $(this).data("id")
-# 						id_student	 = $(ui.draggable).data("id")
-#
-# 						Group = $scope.getGroup id_group
-#
-# 						if id_student in Group.students
-# 							notifySuccess "Ученик уже в группе"
-# 						else
-# 							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}
-# 							Group.students.push id_student
-# 							$scope.$apply()
-
-
-			$scope.dayAndTime = ->
-				lightBoxShow "freetime"
-
-			rebindBlinking = ->
-				blinking = $(".blink")
-				blinking.removeClass "blink"
-				setTimeout ->
-					blinking.addClass "blink"
-				, 50
-
-			$scope.dayAndTimeClick = (index, n) ->
-				index++
-				$scope.form_changed = true
-				$scope.Group.day_and_time[index] = initIfNotSet $scope.Group.day_and_time[index]
-				if 	$scope.Group.day_and_time[index][n] isnt true
-# 					console.log "here", $scope.Group.day_and_time[index][n]
-					$scope.Group.day_and_time[index][n] = ""
-				else
-# 					console.log "here2", $scope.Group.day_and_time[index][n]
-					# rebind blinking
-					$scope.Group.day_and_time[index][n] = $scope.weekdays[index - 1].schedule[n]
-
-			$scope.saveDayAndTime = ->
-				lightBoxHide()
-				$(".save-button").mousedown()
-				$scope.day_and_time_object = $scope.dayAndTimeObject()
-				checkFreeCabinets()
-
 			checkFreeCabinets = ->
 				$.post 'groups/ajax/checkFreeCabinets',
 					id_group: $scope.Group.id
-					day_and_time: $scope.day_and_time_object
 					year: $scope.Group.year
 				, (response) ->
 					$scope.free_cabinets = response
 					$scope.$apply()
 					$timeout ->
-						$('#group-branch').selectpicker('refresh')
+						$('.branch-cabinet').selectpicker('refresh')
 				, 'json'
-
-			initDayAndTime = (day) ->
-				$scope.Group.day_and_time = initIfNotSet $scope.Group.day_and_time
-				$scope.Group.day_and_time[day] = initIfNotSet $scope.Group.day_and_time[day]
-
-			$scope.inDayAndTime = (day, value) ->
-				initDayAndTime day
-				return $.inArray(value, objectToArray($scope.Group.day_and_time[day])) >= 0
-
-			$scope.inDayAndTime2 = (time, freetime) ->
-				return false if freetime is undefined
-				freetime = objectToArray freetime
-				return $.inArray(time, freetime) >= 0
-
-			$scope.inCabinetFreetime = (time, freetime) ->
-				return false if freetime is undefined
-				freetime = objectToArray freetime
-				return $.inArray(time, freetime) >= 0
-
-			$scope.justInDayFreetime = (day, time, freetime) ->
-				return false if freetime is undefined or freetime is null
-				return $.inArray(time, freetime[day]) >= 0
-
-
-			$scope.isOrangeBrick = (day, time) ->
-				current_index = $.inArray(time, $scope.weekdays[day - 1].schedule)
 
 			$scope.changeYear = ->
 				$scope.changeTeacher()
 				$scope.reloadSmsNotificationStatuses()
 				$scope.updateGroup
 					year: $scope.Group.year
-			
+
+			# @time-refactored
 			$scope.enoughSmsParams = ->
-				($scope.Group.year > 0 and $scope.Group.id_subject > 0 and $scope.Group.id_branch > 0 and $scope.Group.cabinet > 0 and $scope.Group.first_schedule and $scope.Group.id_subject > 0)
-
-			$scope.changeCabinet = ->
-				return if not $scope.Group.id
-				$scope.reloadSmsNotificationStatuses()
-				$scope.updateGroup
-					cabinet: $scope.Group.cabinet
-
-				$scope.updateCabinetBar()
-
-			$scope.dayAndTimeObject = ->
-				day_and_time = {}
-				$.each $scope.Group.day_and_time, (day, value) ->
-					return if value is undefined
-					$.each value, (index, time) ->
-						if time
-							day_and_time[day] = {} if day_and_time[day] is undefined
-							day_and_time[day][index] = time
-				day_and_time
-
-			$timeout ->
-				$scope.day_and_time_object = $scope.dayAndTimeObject()
-				$('#group-branch').selectpicker('refresh')
-
-			$scope.hasDayAndTime = ->
-				return false if not $scope.day_and_time_object
-				Object.keys($scope.day_and_time_object).length > 0
-
+				($scope.Group.year > 0 and $scope.Group.id_subject > 0 and $scope.Group.cabinet_ids.length > 0 and $scope.Group.first_schedule and $scope.Group.id_subject > 0)
 
 			$scope.changeTeacher = ->
 				return if not $scope.Group.id
@@ -552,7 +449,6 @@
 				$.post "groups/ajax/changeTeacher",
 					id_group: $scope.Group.id
 					id_subject: $scope.Group.id_subject
-					id_branch: $scope.Group.id_branch
 					day_and_time: $scope.Group.day_and_time
 					id_teacher: $scope.Group.id_teacher
 					year: $scope.Group.year
@@ -583,12 +479,15 @@
 
 			$scope.updateCabinetBar = (ajax_animation = true) ->
 				ajaxStart() if ajax_animation
-				$.post "groups/ajax/GetCabinetBar", {cabinet: $scope.Group.cabinet, id_group: $scope.Group.id}, (bar) ->
+				$.post "groups/ajax/GetCabinetBar", {id_group: $scope.Group.id}, (bars) ->
 					ajaxEnd() if ajax_animation
-					$scope.cabinet_bar = bar
+					$scope.cabinet_bars = bars
 					$scope.$apply()
 					rebindBlinking()
 				, "json"
+
+			$scope.getCabinet = (id) ->
+				_.findWhere($scope.all_cabinets, {id: parseInt(id)})
 
 			$scope.updateStudentBars = ->
 				$.post "groups/ajax/GetStudentBars",
@@ -607,40 +506,6 @@
 					id_group: $scope.Group.id
 					data: data
 
-			$scope.selectAllWorking = (id_branch) ->
-				$.each $scope.weekdays, (index, weekday) ->
-					return if index > 4
-					if  $scope.freetime_selected_all_working
-						$scope.Group.day_and_time[index + 1][2] = ""
-						$scope.Group.day_and_time[index + 1][3] = ""
-					else
-						$scope.Group.day_and_time[index + 1][2] = weekday.schedule[2]
-						$scope.Group.day_and_time[index + 1][3] = weekday.schedule[3]
-				$scope.freetime_selected_all_working = !$scope.freetime_selected_all_working
-
-			$scope.selectAllWeek = ->
-				$.each $scope.weekdays, (index, weekday) ->
-					if $scope.freetime_selected_all_week
-						$scope.Group.day_and_time[index + 1][0] = ""
-						$scope.Group.day_and_time[index + 1][1] = ""
-						$scope.Group.day_and_time[index + 1][2] = ""
-						$scope.Group.day_and_time[index + 1][3] = ""
-					else
-						$scope.Group.day_and_time[index + 1][0] = weekday.schedule[0]
-						$scope.Group.day_and_time[index + 1][1] = weekday.schedule[1]
-						$scope.Group.day_and_time[index + 1][2] = weekday.schedule[2]
-						$scope.Group.day_and_time[index + 1][3] = weekday.schedule[3]
-				$scope.freetime_selected_all_week = !$scope.freetime_selected_all_week
-
-			$scope.selectAllIndex = (index) ->
-				$scope.freetime_selected_all_index = initIfNotSet($scope.freetime_selected_all_index)
-				$.each $scope.weekdays, (i, weekday) ->
-					if $scope.freetime_selected_all_index[index]
-						$scope.Group.day_and_time[i + 1][index] = ""
-					else
-						$scope.Group.day_and_time[i + 1][index] = weekday.schedule[index]
-				$scope.freetime_selected_all_index[index] = !$scope.freetime_selected_all_index[index]
-
 			$scope.to_students = true
 			$scope.to_representatives = false
 			$scope.to_teacher = false
@@ -652,62 +517,9 @@
 				else
 					$(".ajax-email-button").removeAttr "disabled"
 
-			$scope.emailDialog = ->
-				$("#email-history").html "<center class='text-gray'>загрузка истории сообщений...</center>"
-				html = ""
-
-				$.post "ajax/emailHistory", {place: "GROUP", id_place: $scope.Group.id}, (response) ->
-					console.log(response);
-					if response isnt false
-						$.each response, (i, v) ->
-							files_html = ""
-							$.each v.files, (i, file) ->
-								files_html += '<div class="sms-coordinates">\
-									<a target="_blank" href="files/email/' + file.name + '" class="link-reverse small">' + file.uploaded_name + '</a>\
-									<span> (' + file.size + ')</span>\
-									</div>'
-							html += '<div class="clear-sms">		\
-										<div class="from-them">		\
-											' + v.message + ' 		\
-											<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '\
-											</div>						\
-									</div>';
-						$("#email-history").html(html)
-					else
-						$("#email-history").html("")
-				, "json"
-
-				$("#email-address").text "Группа #{$scope.Group.id} " + (if $scope.Group.is_special then "(спецгруппа)" else "")
-				lightBoxShow('email')
-
-			initFreetime = (freetime, day) ->
-				freetime								= initIfNotSet freetime
-				freetime[$scope.Group.id_branch] 		= initIfNotSet freetime[$scope.Group.id_branch]
-				freetime[$scope.Group.id_branch][day] 	= initIfNotSet freetime[$scope.Group.id_branch][day]
-
-
-			$scope.inRedFreetime = (time, Student, day) ->
-				return false if Student.freetime_red is null
-				$.inArray(time, Student.freetime_red[day]) >= 0
-
-
-			$scope.setStudentStatus = (Student, event) ->
-				$(event.target).hide()
-				$(".student-status-select-#{Student.id}").show 0, ->
-					$(@).simulate 'mousedown'
-					$("option[value^='?']").remove()
-				return false
-
-			$scope.setTeacherStatus = (Teacher, event) ->
-				$(event.target).hide()
-				$(".teacher-status-select-#{Teacher.id}").show 0, ->
-					$(@).simulate 'mousedown'
-					$("option[value^='?']").remove()
-				return false
-
+			# @time-refactored было условие Group.id_branch in Teacher.branches @time-checked
 			$scope.teachersFilter = (Teacher) ->
-				return (parseInt($scope.Group.id_branch) in Teacher.branches or not $scope.Group.id_branch) and
-					(parseInt($scope.Group.id_subject) in Teacher.subjects or not $scope.Group.id_subject)
+				return (parseInt($scope.Group.id_subject) in Teacher.subjects or not $scope.Group.id_subject)
 
 			$scope.emptyDayFilter = (day_and_time) ->
 				return _.filter day_and_time, (d) ->
@@ -717,31 +529,10 @@
 			$scope.countSubjects = (Contract) ->
 				Object.keys(Contract.subjects).length
 
-			# on dropdown close fix
-			$(document).on "mouseup", ->
-				$("select[class^='student-status-select'], select[class^='teacher-status-select']").hide()
-				$(".s-s-s, .t-s-s").show()
-
-
-			$scope.changeReviewStatus = (id_student) ->
-				$scope.form_changed = true
-				$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0, review_status: 0} if $scope.Group.student_statuses[id_student] is undefined
-
-				$scope.Group.student_statuses[id_student].review_status
-
-				if $scope.Group.student_statuses[id_student].review_status is 3
-					$scope.Group.student_statuses[id_student].review_status = 0
-				else
-					$scope.Group.student_statuses[id_student].review_status++
-				$scope.getStudent(id_student).review_status = $scope.Group.student_statuses[id_student].review_status
-
 			$scope.reloadSmsNotificationStatuses = ->
 				$.post "groups/ajax/ReloadSmsNotificationStatuses",
+					id: $scope.Group.id
 					students: $scope.Group.students
-					id_branch: $scope.Group.id_branch
-					id_subject: $scope.Group.id_subject
-					cabinet: $scope.Group.cabinet
-					first_schedule: $scope.Group.first_schedule
 				, (response) ->
 					$.each response.sms_notification_statuses, (id_student, id_status)->
 						$scope.getStudent(id_student).sms_notified = id_status
@@ -759,6 +550,7 @@
 					$scope.$apply()
 				, "json"
 
+			# @time-refactored
 			$scope.smsNotify = (Student, event) ->
 				$(event.target)
 					.html "отправка..."
@@ -767,30 +559,13 @@
 					.addClass "default"
 				$.post "groups/ajax/smsNotify",
 					id_student: Student.id
-					id_branch: $scope.Group.id_branch
 					id_subject: $scope.Group.id_subject
-					cabinet: $scope.Group.cabinet
 					first_schedule: $scope.Group.first_schedule
 					id_group: $scope.Group.id
 				, (response) ->
 					Student.sms_notified = true
 					$scope.$apply()
 
-
-			$scope.bindGroupStudentStatusChange = ->
-				$("select[class^='student-status-select']")
-					.on "input", ->
-						$(@).hide()
-						id_student = $(@).data "id"
-						$(".student-status-span-#{id_student}").show()
-						$scope.Group.student_statuses[id_student] = {id_status: 0, notified: 0} if $scope.Group.student_statuses[id_student] is undefined
-						$scope.Group.student_statuses[id_student].id_status = $(@).val()
-				$("select[class^='teacher-status-select']")
-					.on "input", ->
-						$(@).hide()
-						id_teacher = $(@).data "id"
-						$(".teacher-status-span-#{id_teacher}").show()
-						$scope.Group.teacher_status = $(@).val()
 			$scope.addStudent = (Student, event) ->
 				if Student.id not in $scope.Group.students
 					el = $(event.target)
@@ -829,9 +604,6 @@
 					if data isnt undefined and data.id is id_student
 						$scope.TmpStudents.splice index, 1
 
-			$scope.studentAdded = (id_student) ->
-				id_student in $scope.Group.students
-
 			$scope.getStudent = (id_student) ->
 				id_student = parseInt id_student
 				Student = (i for i in $scope.TmpStudents when i.id is id_student)[0]
@@ -857,45 +629,7 @@
 						$.post "groups/ajax/delete", {id_group: id_group}, ->
 							redirect "groups"
 
-			$scope.cabinetTimeBusy = (cabinet) ->
-				return false if $.isArray(cabinet.freetime)
 
-				busy = false # not busy by default
-
-				$.each $scope.Group.day_and_time, (day, time_data) ->
-					return if busy # stop foreach if busy already
-					return if not cabinet.freetime or not cabinet.freetime[day]?
-					freetime = objectToArray(cabinet.freetime[day])
-
-					time_data = objectToArray time_data
-					if time_data.length
-						$.each time_data, (i, time) ->
-							busy = true if _.contains(freetime, time)
-
-				# todo сделать watch Group.day_and_time и вынести отсюда
-				clearSelect 50, ->
-					$("#group-cabinet").selectpicker 'refresh'
-
-				return busy
-
-			$scope.changeBranch = ->
-				if $scope.id_branch_cabinet
-					arr = $scope.id_branch_cabinet.split('-')
-					console.log('split', arr)
-					$scope.Group.id_branch = arr[0]
-					$scope.Group.cabinet = arr[1]
-				else
-					$scope.Group.id_branch = ''
-					$scope.Group.cabinet = ''
-
-				$scope.reloadSmsNotificationStatuses()
-				$scope.updateGroup
-					id_branch: $scope.Group.id_branch
-					cabinet: $scope.Group.cabinet
-				$scope.updateTeacherBar()
-				$scope.updateCabinetBar(false)
-				$scope.updateStudentBars()
-			
 			$scope.toggleReadyToStart = ->
 				ready_to_start = if $scope.Group.ready_to_start then 0 else 1
 				$.post "groups/ajax/toggleReadyToStart",
@@ -904,7 +638,7 @@
 				, ->
 					$scope.Group.ready_to_start = ready_to_start
 					$scope.$apply()
-				
+
 
 
 			$scope.addGroupsPanel = ->
@@ -912,10 +646,7 @@
 				$scope.add_groups_panel = not $scope.add_groups_panel
 				$scope.search_groups.grade = $scope.Group.grade if not $scope.search_groups.grade and $scope.Group.grade
 				$scope.search_groups.year = $scope.Group.year if not $scope.search_groups.year and $scope.Group.year
-				$scope.search_groups.id_branch = $scope.Group.id_branch if not $scope.search_groups.id_branch and $scope.Group.id_branch
 				$scope.search_groups.id_subject = $scope.Group.id_subject if not $scope.search_groups.id_subject and $scope.Group.id_subject
-				$timeout ->
-					$('#groups-branch-filter').selectpicker('refresh')
 
 
 			$scope.subjectChange = ->
@@ -976,25 +707,10 @@
 
 			angular.element(document).ready ->
 				set_scope "Group"
-
-				$scope.weekdays = [
-					{"short" : "ПН", "full" : "Понедельник","time": [1,2], 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ВТ", "full" : "Вторник",  	"time": [1,2],		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "СР", "full" : "Среда", 		"time": [1,2], 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ЧТ", "full" : "Четверг", 	"time": [1,2], 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ПТ", "full" : "Пятница", 	"time": [1,2],		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "СБ", "full" : "Суббота",  	"time": [3,4,5,6],	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ВС", "full" : "Воскресенье","time": [3,4,5,6],	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]}
-				]
 				$scope.$apply()
-
-# 				$scope.loadStudents()
-
-				$scope.bindGroupStudentStatusChange()
 
 				if $scope.Group.Comments is false
 					$scope.Group.Comments = []
-
 				frontendLoadingEnd()
 
 			$scope.form_changed = false
@@ -1003,47 +719,22 @@
 				emailMode 2
 				smsMode 2
 				bindDraggable()
-				$("#group-edit").on 'keyup change', 'input, select, textarea', ->
-					$scope.form_changed = true
-					$scope.$apply()
-
-				$("#group-cabinet").selectpicker()
+				$(".branch-cabinet").selectpicker()
 				set_scope "Group"
 
 			# save without notice
-			justSave = ->
-				$.post "groups/ajax/save", $scope.Group
-
-			$(".save-button").on "mousedown", ->
-					ajaxStart()
-					$scope.saving = true
-					$scope.$apply()
-
-					$.post "groups/ajax/save", $scope.Group, (response) ->
-						console.log response
-						if $scope.Group.id
-							ajaxEnd()
-							$scope.saving = false
-							$scope.form_changed = false
-
-							$scope.updateTeacherBar()
-							$scope.updateCabinetBar(false)
-							$scope.updateStudentBars()
-
-							$scope.$apply()
-						else
-							redirect "groups/edit/#{response}"
-
+			justSave = (callback) ->
+				$.post "groups/ajax/save", $scope.Group, callback
 		.controller "ListCtrl", ($scope, $timeout) ->
 			$scope.updateCache = ->
 				ajaxStart()
 				$.post "groups/ajax/UpdateCacheAll", {}, ->
 					redirect "groups"
-			
+
 			# from newer version of angular
 			angular.merge = (s1,s2) ->
 				$.extend(true, s1, s2)
-				
+
 			$scope.series = ["договоров"]
 			$scope.datasetOverride = [
 		        type: 'bar'
@@ -1068,7 +759,7 @@
 				$.post "ajax/GroupCreateHelper",
 					year: $scope.search.year
 					subjects: $scope.search.subjects
-					grade: $scope.search.grade					
+					grade: $scope.search.grade
 				, (response) ->
 					$scope.create_helper_data = response
 					# chart data
@@ -1082,20 +773,6 @@
 
 			$scope.getTeacher = (id) ->
 				_.find($scope.Teachers, {id: parseInt(id)})
-
-			$scope.changeBranch = ->
-				$("#group-cabinet").attr "disabled", "disabled"
-				ajaxStart()
-				$.post "groups/ajax/getCabinet", {id_branch: $scope.search.id_branch}, (cabinets) ->
-					ajaxEnd()
-					$scope.Cabinets = cabinets
-					$scope.search.cabinet = 0
-					$("#group-cabinet").removeAttr "disabled"
-
-					$scope.$apply()
-					clearSelect()
-				, "json"
-
 
 			$scope.order_reverse = false
 			$scope.orderByTime = ->
@@ -1139,15 +816,6 @@
 
 				$scope.order_reverse = !$scope.order_reverse
 
-			$scope.orderByCabinet = ->
-				$scope.Groups.sort (a, b) ->
-					a.CabinetInfo.number - b.CabinetInfo.number
-
-				if $scope.order_reverse
-					$scope.Groups.reverse()
-
-				$scope.order_reverse = !$scope.order_reverse
-
 			$scope.orderByFirstLesson = ->
 				$scope.Groups.sort (a, b) ->
 					a.first_schedule - b.first_schedule
@@ -1183,27 +851,6 @@
 				branches: []
 				id_subject: ""
 
-			$scope.groupsFilter = (Group) ->
-				#time filtering
-				if $scope.search.ntime and $scope.search.ntime.length
-					time_correct = false
-					$.each $scope.search.ntime, (index, time) ->
-						t = time.split "-"
-						day = t[0]
-						time_index = t[1]
-						if Group.day_and_time[day] isnt undefined and Group.day_and_time[day][time_index] isnt undefined
-							time_correct = true
-							return
-				else
-					time_correct = true
-				Group.id_subject = Group.id_subject || 0
-				return time_correct and (Group.grade is parseInt($scope.search.grade) or not $scope.search.grade) and
-					(parseInt($scope.search.id_branch) is Group.id_branch or not $scope.search.id_branch) and
-					($scope.search.year is Group.year or not $scope.search.year) and
-					((Group.id_subject.toString() in $scope.search.subjects) or $scope.search.subjects.length is 0) and
-					(parseInt($scope.search.id_teacher) is parseInt(Group.id_teacher) or not $scope.search.id_teacher) and
-					(parseInt($scope.search.cabinet) is parseInt(Group.cabinet) or not parseInt($scope.search.cabinet))
-
 			$scope.groupsFilter2 = (Group) ->
 				return true if not Group.hasOwnProperty "grade"
 
@@ -1220,28 +867,6 @@
 					(Student.id_subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject) and
 					(Student.year is parseInt($scope.search2.year) or not $scope.search2.year) and
 					(Student.level is parseInt($scope.search2.level) or not $scope.search2.level)
-
-
-			$scope.inGroupDay = (weekday, Group) ->
-				weekday++
-				days = []
-				group_days = Object.keys(Group.day_and_time)
-				$.each group_days, (index, day) ->
-					day = parseInt(day)
-					days.push day if days.indexOf(day) is -1
-				return if days.indexOf(weekday) is -1 then false else true
-
-			# группировка по дням недели
-			$scope.inGroupDays = (weekday) ->
-				weekday++
-				Groups = $scope.$eval 'Groups | filter:groupsFilter'
-				days = []
-				$.each Groups, (index, Group) ->
-					group_days = Object.keys(Group.day_and_time)
-					$.each group_days, (index, day) ->
-						day = parseInt(day)
-						days.push day if days.indexOf(day) is -1
-				return if days.indexOf(weekday) is -1 then false else true
 
 			$scope.dateToStart = (date) ->
 				return "" if date is null
@@ -1456,15 +1081,6 @@
 
 			angular.element(document).ready ->
 				set_scope "Group"
-				$scope.weekdays = [
-					{"short" : "ПН", "full" : "Понедельник", 	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ВТ", "full" : "Вторник", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "СР", "full" : "Среда", 			"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ЧТ", "full" : "Четверг", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "ПТ", "full" : "Пятница", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
-					{"short" : "СБ", "full" : "Суббота", 		"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]},
-					{"short" : "ВС", "full" : "Воскресенье",	"schedule": [$scope.time[3], $scope.time[4], $scope.time[5], $scope.time[6]]}
-				]
 				$scope.search = if $.cookie("groups") then JSON.parse($.cookie("groups")) else {}
 				$scope.current_page = $scope.currentPage
 				$scope.pageChanged()
@@ -1477,13 +1093,3 @@
 			console.log 'init'
 		.controller "TeacherListCtrl", ($scope) ->
 			console.log 'init'
-			$scope.weekdays = [
-				{"short" : "ПН"},
-				{"short" : "ВТ"},
-				{"short" : "СР"},
-				{"short" : "ЧТ"},
-				{"short" : "ПТ"},
-				{"short" : "СБ"},
-				{"short" : "ВС"}
-			]
-

@@ -1,34 +1,33 @@
 <div class="lightbox-new lightbox-freetime">
+    <!-- @time-refactored @time-checked -->
 	<h4 style="text-transform: uppercase; margin-bottom: 25px">ДАТА И ВРЕМЯ ЗАНЯТИЙ</h4>
-		<span ng-bind-html="branches_brick[Group.id_branch] | to_trusted" style="display:inline-block; margin-bottom: 10px; position: relative; left: -3px"></span>
-		<span style="margin: 0 10px">
-			<input type="checkbox" ng-click="selectAllWorking()"> будни
-		</span>
-		<span>
-			<input type="checkbox" ng-click="selectAllWeek()"> вся неделя
-		</span>
 		<table class="table table-divlike">
-			<thead>
-				<tr>
-					<td ng-repeat="weekday in weekdays">{{weekday.short}}</td>
-				</tr>
-			</thead>
 			<tbody>
-				<tr ng-repeat="n in [] | range:4">
-					<td ng-repeat="weekday in weekdays">
+				<tr ng-repeat='(day, data) in time'>
+					<td style="width: 100px"><b>{{ weekdays[day] }}</b></td>
+					<td ng-repeat='d in data' style="text-align: left; width: 200px; padding-left: 15px">
 						<input type="checkbox"
-							ng-model="Group.day_and_time[$index + 1][n]"
-							ng-click="dayAndTimeClick($index, n)"
-							ng-value="weekday.schedule[n]"
-							ng-checked="inDayAndTime($index + 1, weekday.schedule[n])"
+							ng-checked='timeChecked(day, d)'
+							ng-click="timeClick(day, d)"
 						>
-						{{weekday.schedule[n]}}
-					</td>
-					<td width="100">
-						<input type="checkbox" ng-click="selectAllIndex(n)"> выбрать все
+						{{ d.time }}
+
+						<span ng-show='timeChecked(day, d)'>
+							<select class='branch-cabinet'
+								ng-model='getGroupTime(day, d).id_cabinet'
+							>
+								<option selected value=''>кабинет</option>
+								<option disabled>──────────────</option>
+							  	<option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}"
+									ng-class="{'quater-opacity': free_cabinets[d.id][cabinet.id]}"
+									style='color: {{ cabinet.color }}'
+									ng-selected="getGroupTime(day, d).id_cabinet == cabinet.id">
+									{{ cabinet.label}}
+								</option>
+							</select>
+						</span>
 					</td>
 				</tr>
-				
 			</tbody>
 		</table>
 	<div class="center" style="margin-top: 10px">

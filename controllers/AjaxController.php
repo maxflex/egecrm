@@ -1,5 +1,5 @@
 <?php
- 
+
 	// Контроллер
 	class AjaxController extends Controller
 	{
@@ -85,14 +85,14 @@
 			extract($_POST);
 			$days = 45; // отображать статистику за последние n дней
 			$date = new DateTime('today');
-			
+
 	        $end_date   = clone $date;
 	        $start_date = clone $date->sub(new DateInterval("P{$days}D"));
-			
+
 			if ($subjects) {
 				$subject_ids = implode(",", $subjects);
 			}
-			
+
 	        $return = [];
 	        while ($start_date < $end_date) {
 		        $start = $start_date->modify('+1 day')->format('Y-m-d'); // переход на новую неделю
@@ -101,7 +101,7 @@
 				$query = "
 	            	SELECT COUNT(*) AS cnt FROM contracts c
 	            	LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-	            	WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}'" 
+	            	WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}'"
 	            	  . Contract::ZERO_OR_NULL_CONDITION_JOIN . " AND cs.status=3 AND c.external=0
 	            	" . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
 	            	" . ($grade ? " AND c.grade = {$grade} " : "") . "
@@ -110,7 +110,7 @@
 	            $return[date('d.m.y', strtotime($return_date))] = dbConnection()->query($query)->fetch_object()->cnt;
 
 	        }
-			
+
 			returnJsonAng($return);
 
 
@@ -804,11 +804,8 @@
 					"condition" => "id_group={$S->id_group} AND cancelled = 0"
 				]);
 
-                $Cabinet = Cabinet::findById($S->cabinet);
-				$S->branch = Branches::getShortColoredById($S->id_branch,
-					($S->cabinet ? "-".$Cabinet->number : "")
-				);
-                $S->cabinetNumber = $Cabinet->number;
+				// @time-refactored @time-checked
+				$S->cabinet = Cabinet::getBlock($S->cabinet);
 			}
 
             /*
@@ -911,16 +908,18 @@
 			extract($_POST);
             Student::updateById($id_student, ['id_user_review' => $id_user_new]);
 		}
-		
+
+		// @time-refactored @time-checked
 		public function actionAjaxAddFreetime()
 		{
 			extract($_POST);
 			EntityFreetime::add($_POST);
 		}
-		
+
+		// @time-refactored @time-checked
 		public function actionAjaxDeleteFreetime()
 		{
 			extract($_POST);
-			EntityFreetime::remove($id_entity, $type_entity, $day, $time_id);
+			EntityFreetime::remove($id_entity, $type_entity, $id_time);
 		}
 	}

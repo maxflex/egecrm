@@ -1,24 +1,22 @@
 <div ng-show="add_groups_panel" class="row">
 		<hr>
+        <!-- @time-refactored @time-checked -->
 		<div class="col-sm-12">
 			<div class="row" style="margin-bottom: 15px">
-				<div class="col-sm-3">
+				<div class="col-sm-4">
 					<?= Grades::buildSelector(false, false, ["ng-model" => "search_groups.grade"]) ?>
 				</div>
-				<div class="col-sm-3">
-	                <?= Branches::buildSvgSelector(false, ["id" => "groups-branch-filter", "ng-model" => "search_groups.id_branch"]) ?>
-				</div>
-				<div class="col-sm-3">
+				<div class="col-sm-4">
 					<?= Subjects::buildSelector(false, false, ["ng-model" => "search_groups.id_subject"]) ?>
 				</div>
-				<div class="col-sm-3"> 
-					<select class="form-control" 
+				<div class="col-sm-4">
+					<select class="form-control"
 						ng-model="search_groups.year">
 						<option value="">все</option>
 						<option disabled>──────────────</option>
-						<option ng-repeat="year in <?= Years::json() ?>" 
+						<option ng-repeat="year in <?= Years::json() ?>"
 								value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
-					</select> 
+					</select>
 				</div>
 			</div>
 		</div>

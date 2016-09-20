@@ -40,7 +40,7 @@
 		global $db_connection;
 		return $db_connection;
 	}
-	
+
 	function dbEgerep()
 	{
 		global $db_egerep;
@@ -713,28 +713,28 @@
 	   }
 	   return null;
 	}
-	
+
 	function isBlank($value) {
 		return empty($value) && !is_numeric($value);
 	}
-	
+
 	/**
 	 * Текущий учебный год
 	 */
 	function academicYear($date = false)
 	{
 		if ($date === false) {
-			$date = now();	
+			$date = now();
 		}
 		$year = date("Y", strtotime($date));
 		$day_month = date("m-d", strtotime($date));
-		
+
 		if ($day_month >= '01-01' && $day_month <= '07-15') {
 			$year--;
 		}
 		return $year;
 	}
-	
+
 	/*
 	 * указать кол-во минут для кэша
 	 */

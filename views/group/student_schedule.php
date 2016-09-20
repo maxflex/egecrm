@@ -50,9 +50,9 @@
 				<div>
 					{{Group.Teacher.last_name}} {{Group.Teacher.first_name}} {{Group.Teacher.middle_name}}
 				</div>
-				
+
 				<div style="margin: 15px 0; font-weight: bold">Расписание занятий:</div>
-				
+
 				<table class="table table-divlike">
 					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
 						<td>
@@ -65,10 +65,12 @@
 							</div>
 						</td>
 						<td>
+                            <!-- @have-to-refactor  -->
 							кабинет {{Schedule.Cabinet.number}}
 						</td>
 						<td>
-							<span ng-show="inDate(Schedule.date, past_lesson_dates)">занятие проведено</span>
+							<!-- @time-refactored  -->
+							<span ng-show="inPastLessons(Schedule.date)">занятие проведено</span>
 							<span ng-show="Schedule.cancelled">занятие отменено</span>
 						</td>
 					</tr>
@@ -81,7 +83,7 @@
 					}"></ng-pluralize></div>
 			</div>
 		</div>
-		
+
 	</div>
 </div>
 </div>
