@@ -334,9 +334,14 @@
 						}
 					}
 
-					$Group->Students = Student::findAll([
-						"condition" => "id IN (" . implode(',', $Group->students) . ")"
-					]);
+                    $Group->Students = [];
+                    foreach ($Group->students as $id_student) {
+                        $Student = Student::getLight($id_student);
+                        if ($Group->grade && $Group->id_subject) {
+                            $Student->Test = TestStudent::getForGroup($id_student, $Group->id_subject, $Group->grade);
+                        }
+                        $Group->Students[] = $Student;
+                    }
 
 					$Teacher = Teacher::findById($Group->id_teacher);
 

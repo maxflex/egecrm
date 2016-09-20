@@ -368,6 +368,9 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     }
     return $scope.$apply();
   };
+  $scope.getTestStatus = function(Test) {
+    return test_statuses[Test.intermediate];
+  };
   return angular.element(document).ready(function() {
     var init_dates, j, len, ref, schedule_date;
     set_scope('Group');

@@ -299,8 +299,11 @@
 									$.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}
 				$scope.$apply()
 
+			$scope.getTestStatus = (Test) ->
+				test_statuses[Test.intermediate]
+
 			angular.element(document).ready ->
-				set_scope 'Group' 
+				set_scope 'Group'
 				$scope.weekdays = [
 					{"short" : "ПН", "full" : "Понедельник", 	"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
 					{"short" : "ВТ", "full" : "Вторник", 		"schedule": [$scope.time[1], $scope.time[2], $scope.time[7], $scope.time[8]]},
