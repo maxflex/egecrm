@@ -116,79 +116,56 @@
 				"group"		=> "id_group",
 			]);
 
-			$group_ids = [];
 			foreach ($GroupSchedule as $GS) {
-				$group_ids[] = $GS->id_group;
-			}
+				if ($GS->isUnplanned()) {
+                    $Group = Group::findById($GS->id_group);
+                    if ($Group->id_teacher) {
+                        $Teacher = Teacher::findById($Group->id_teacher);
+                        if ($Teacher) {
+                            foreach (Student::$_phone_fields as $phone_field) {
+                                $teacher_number = $Teacher->{$phone_field};
+                                if (!empty($teacher_number)) {
+                                    $messages[] = [
+                                        "type"      => "Учителю #" . $Teacher->id,
+                                        "number" 	=> $teacher_number,
+                                        "message"	=> self::_generateMessage2($Group, $Teacher, $tomorrow),
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                    foreach ($Group->students as $id_student) {
+                        $Student = Student::findById($id_student);
+                        if (!$Student) {
+                            continue;
+                        }
 
-			// @refactored
-			$Groups = Group::findAll([
- 				"condition" => "id IN (" . implode(",", $group_ids) . ") AND ended=0"
-			]);
+                        foreach (Student::$_phone_fields as $phone_field) {
+                            $student_number = $Student->{$phone_field};
+                            if (!empty($student_number)) {
+                                $messages[] = [
+                                    "type"      => "Ученику #" . $Student->id,
+                                    "number" 	=> $student_number,
+                                    "message"	=> self::_generateMessage2($Group, $Student, $tomorrow),
+                                ];
+                            }
 
-			foreach($Groups as $Group) {
-				$days = array_keys($Group->day_and_time);
+                            if ($Student->Representative) {
+                                $representative_number = $Student->Representative->{$phone_field};
+                                if (!empty($representative_number)) {
+                                    $messages[] = [
+                                        "type"      => "Представителю #" . $Student->Representative->id,
+                                        "number" 	=> $representative_number,
+                                        "message"	=> self::_generateMessage2($Group, $Student, $tomorrow),
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-				// sunday in mysql is 0
-				foreach ($days as &$day) {
-					if ($day == 7) {
-						$day = 0;
-					}
-				}
-
-				// дни совпали
-				$days_match = GroupSchedule::count([
-					"condition" => "id_group={$Group->id} AND DATE_FORMAT('" . date("Y-m-d", strtotime("tomorrow")) . "', '%w') NOT IN (" . implode(',', $days) . ") AND cancelled = 0"
-				]) > 0 ? false : true;
-
-				if (!$days_match) {
-					if ($Group->id_teacher) {
-						$Teacher = Teacher::findById($Group->id_teacher);
-						if ($Teacher) {
-							foreach (Student::$_phone_fields as $phone_field) {
-								$teacher_number = $Teacher->{$phone_field};
-								if (!empty($teacher_number)) {
-									$messages[] = [
-										"type"      => "Учителю #" . $Teacher->id,
-										"number" 	=> $teacher_number,
-										"message"	=> self::_generateMessage2($Group, $Teacher, $tomorrow),
-									];
-								}
-							}
-						}
-					}
-					foreach ($Group->students as $id_student) {
-						$Student = Student::findById($id_student);
-						if (!$Student) {
-							continue;
-						}
-
-						foreach (Student::$_phone_fields as $phone_field) {
-							$student_number = $Student->{$phone_field};
-							if (!empty($student_number)) {
-								$messages[] = [
-									"type"      => "Ученику #" . $Student->id,
-									"number" 	=> $student_number,
-									"message"	=> self::_generateMessage2($Group, $Student, $tomorrow),
-								];
-							}
-
-							if ($Student->Representative) {
-								$representative_number = $Student->Representative->{$phone_field};
-								if (!empty($representative_number)) {
-									$messages[] = [
-										"type"      => "Представителю #" . $Student->Representative->id,
-										"number" 	=> $representative_number,
-										"message"	=> self::_generateMessage2($Group, $Student, $tomorrow),
-									];
-								}
-							}
-						}
-					}
-				}
-			}
-
-			$sent_to = [];
+            $sent_to = [];
 			foreach ($messages as $message) {
 				if (!in_array($message['number'], $sent_to)) {
 					SMS::send($message['number'], $message['message']);
@@ -330,41 +307,35 @@
 
 		/**
 		 * Уведомить учителя об отсутствии записи в журнале
-		 *
-		 * @todo: переделать функцию, чтобы она использовала даты из Group::lastWeekMissing
+		 * Берем тудейные занятия, если нет в журнале записи, отправляем смс.
 		 */
 		public static function actionTeacherNotifyJournalMiss()
 		{
-			// @refactored
-			// Высчитываем полностью отсутствующие занятия
-			$Groups = Group::findAll([
-				'condition' => 'ended=0',
-			]);
+            $date = date('Y-m-d', strtotime('today'));  // потому что проверяется сегодня в 9-05
+            $GroupSchedule = GroupSchedule::findAll([
+                "condition" => "date='$date' AND id_group > 0 AND cancelled=0"
+            ]);
 
-			foreach ($Groups as $Group) {
-				if (!$Group->Teacher) {
-					continue;
-				}
-				$PastSchedule = $Group->getPastScheduleTeacherReport();
+            foreach ($GroupSchedule as $Schedule) {
+                $was_lesson = VisitJournal::find([
+                    "condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
+                ]);
 
-				foreach ($PastSchedule as $Schedule) {
-					// Проверяем было ли это занятие
-					$was_lesson = VisitJournal::find([
-						"condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
-					]);
+                $Group = Group::findById($Schedule->id_group);
 
-					// если занятия не было, отправляем смс
-					if (!$was_lesson) {
-						$message = Template::get(9, [
-							"time" 			=> $Schedule->time,
-							"teacher_name"	=> $Group->Teacher->first_name ." " .$Group->Teacher->middle_name
-						]);
-						if (!empty($Group->Teacher->phone)) {
-							SMS::send($Group->Teacher->phone, $message);
-						}
-					}
-				}
-			}
+                if ($Group->Teacher) {
+                    if (!$was_lesson) {
+                        $message = Template::get(9, [
+                            "time" 			=> $Schedule->time,
+                            "teacher_name"	=> $Group->Teacher->first_name ." " .$Group->Teacher->middle_name
+                        ]);
+
+                        if (!empty($Group->Teacher->phone)) {
+                            SMS::send($Group->Teacher->phone, $message);
+                        }
+                    }
+                }
+            }
 		}
 
 		/**
