@@ -10,7 +10,7 @@
 			<a href="students/groups/edit/{{Group.id}}/schedule">Группа №{{Group.id}}</a>
 		</td>
 		<td>
-			<!-- @time-refactored -->
+			<!-- @time-refactored @time-checked -->
 			<span ng-repeat='cabinet in Group.cabinets'>
 				<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
 				<span class="remove-space">{{$last ? '' : ', '}}</span>

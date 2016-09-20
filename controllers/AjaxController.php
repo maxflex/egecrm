@@ -804,7 +804,7 @@
 					"condition" => "id_group={$S->id_group} AND cancelled = 0"
 				]);
 
-				// @time-refactored
+				// @time-refactored @time-checked
 				$S->cabinet = Cabinet::getBlock($S->cabinet);
 			}
 
@@ -909,14 +909,14 @@
             Student::updateById($id_student, ['id_user_review' => $id_user_new]);
 		}
 
-		// @time-refactored
+		// @time-refactored @time-checked
 		public function actionAjaxAddFreetime()
 		{
 			extract($_POST);
 			EntityFreetime::add($_POST);
 		}
 
-		// @time-refactored
+		// @time-refactored @time-checked
 		public function actionAjaxDeleteFreetime()
 		{
 			extract($_POST);

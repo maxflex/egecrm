@@ -188,8 +188,9 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     }).length;
   };
   $scope.setParamsFromGroup = function(Group) {
-    return $.each($scope.Group.Schedule, function(i, v) {
-      var d;
+    return $.each($scope.Group.Schedule, function(i, schedule) {
+      var d, v;
+      v = angular.copy(schedule);
       d = moment(v.date).format("d");
       d = parseInt(d);
       if (d === 0) {
@@ -206,6 +207,10 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
         id: v.id,
         time: v.time,
         cabinet: v.cabinet
+      }, function() {
+        schedule.time = v.time;
+        schedule.cabinet = v.cabinet;
+        return $scope.$apply();
       });
     });
   };
@@ -454,16 +459,14 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   };
   $scope.search_groups = {
     grade: "",
-    id_cabinet: "",
     id_subject: "",
     year: ""
   };
   $scope.groupsFilter = function(Group) {
-    var ref;
     if (Group.id === $scope.Group.id) {
       return false;
     }
-    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && ((ref = parseInt($scope.search_groups.id_cabinet), indexOf.call(Group.cabinet_ids, ref) >= 0) || !$scope.search_groups.id_cabinet) && (parseInt($scope.search_groups.year) === Group.year || !$scope.search_groups.year) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
+    return (Group.grade === parseInt($scope.search_groups.grade) || !$scope.search_groups.grade) && (parseInt($scope.search_groups.year) === Group.year || !$scope.search_groups.year) && (parseInt($scope.search_groups.id_subject) === Group.id_subject || !$scope.search_groups.id_subject);
   };
   bindDraggable = function() {
     $(".student-line").draggable({
@@ -777,15 +780,9 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     if (!$scope.search_groups.year && $scope.Group.year) {
       $scope.search_groups.year = $scope.Group.year;
     }
-    if (!$scope.search_groups.id_cabinet) {
-      $scope.search_groups.id_cabinet = '';
-    }
     if (!$scope.search_groups.id_subject && $scope.Group.id_subject) {
-      $scope.search_groups.id_subject = $scope.Group.id_subject;
+      return $scope.search_groups.id_subject = $scope.Group.id_subject;
     }
-    return $timeout(function() {
-      return $('#groups-cabinet-filter').selectpicker('refresh');
-    });
   };
   $scope.subjectChange = function() {
     if (!$scope.Group.id) {

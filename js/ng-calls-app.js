@@ -15,7 +15,15 @@ angular.module("Calls", []).config([
     number = $scope.sipNumber(number);
     return location.href = number;
   };
-  return $scope.formatTime = function(time) {
+  $scope.formatTime = function(time) {
     return moment(time * 1000).format("DD.MM.YY в HH:mm");
+  };
+  return $scope.deleteCall = function(call) {
+    return $.post('calls/ajax/delete', {
+      entry_id: call.entry_id
+    }, function() {
+      $scope.missed = _.without($scope.missed, call);
+      return $scope.$apply();
+    });
   };
 });

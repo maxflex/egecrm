@@ -50,7 +50,7 @@
 			self::add($data);
 		}
 
-		// @time-refactored
+		// @time-refactored @time-checked
 		public static function getStatus($id_student, $Group)
 		{
 			$FirstLesson = Group::getFirstLesson($Group->id, true);

@@ -146,28 +146,35 @@
 		    $scope.countNotCancelled = (Schedule) ->
 		        _.where(Schedule, { cancelled: 0 }).length
 
-		    # установка времени филиала и кабинета из настроек группы
+			# установка времени филиала и кабинета из настроек группы @time-checked
 		    $scope.setParamsFromGroup = (Group) ->
-		        $.each $scope.Group.Schedule, (i, v) ->
+		        $.each $scope.Group.Schedule, (i, schedule) ->
+		            # обновляем только после ответа сервера
+		            v = angular.copy(schedule)
+
 		            # if not v.time
 		            d = moment(v.date).format("d")
 		            d = parseInt d
 		            d = 7 if d is 0
 
-					# если в этот день установлено расписание и время в группе. иначе не устанавливать
+		            # если в этот день установлено расписание и время в группе. иначе не устанавливать
 		            # console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
 		            if Group.day_and_time[d] isnt undefined
 		                v.time    = $scope.Time[Group.day_and_time[d][0].id_time]
 		                v.cabinet = Group.day_and_time[d][0].id_cabinet
 		            else
-		            	v.time = null
-		            	v.cabinet = ''
+		                v.time = null
+		                v.cabinet = ''
 
-    				# @time-refactored
-    		        $.post "groups/ajax/TimeFromGroup",
-    		        	id: v.id
-    		        	time: v.time
-    		        	cabinet: v.cabinet
+		            # @time-refactored
+		            $.post "groups/ajax/TimeFromGroup",
+		                id: v.id
+		                time: v.time
+		                cabinet: v.cabinet
+		            , ->
+		                schedule.time = v.time
+		                schedule.cabinet = v.cabinet
+		                $scope.$apply()
 
 		    $scope.lessonCount = ->
 		        Object.keys($scope.Group.day_and_time).length
@@ -376,18 +383,16 @@
 							$scope.removeStudent id_student, true
 							$scope.$apply()
 
-			# @time-refactored
+			# @time-refactored @time-checked
 			$scope.search_groups =
 				grade: ""
-				id_cabinet: ""
 				id_subject: ""
 				year: ""
 
-			# @time-refactored
+			# @time-refactored @time-checked
 			$scope.groupsFilter = (Group) ->
 				return false if Group.id is $scope.Group.id
 				return (Group.grade is parseInt($scope.search_groups.grade) or not $scope.search_groups.grade) and
-					(parseInt($scope.search_groups.id_cabinet) in Group.cabinet_ids or not $scope.search_groups.id_cabinet) and
 					(parseInt($scope.search_groups.year) is Group.year or not $scope.search_groups.year) and
 					(parseInt($scope.search_groups.id_subject) is Group.id_subject or not $scope.search_groups.id_subject)
 
@@ -510,7 +515,7 @@
 				else
 					$(".ajax-email-button").removeAttr "disabled"
 
-			# @time-refactored было условие Group.id_branch in Teacher.branches
+			# @time-refactored было условие Group.id_branch in Teacher.branches @time-checked
 			$scope.teachersFilter = (Teacher) ->
 				return (parseInt($scope.Group.id_subject) in Teacher.subjects or not $scope.Group.id_subject)
 
@@ -639,10 +644,7 @@
 				$scope.add_groups_panel = not $scope.add_groups_panel
 				$scope.search_groups.grade = $scope.Group.grade if not $scope.search_groups.grade and $scope.Group.grade
 				$scope.search_groups.year = $scope.Group.year if not $scope.search_groups.year and $scope.Group.year
-				$scope.search_groups.id_cabinet = '' if not $scope.search_groups.id_cabinet
 				$scope.search_groups.id_subject = $scope.Group.id_subject if not $scope.search_groups.id_subject and $scope.Group.id_subject
-				$timeout ->
-					$('#groups-cabinet-filter').selectpicker('refresh')
 
 
 			$scope.subjectChange = ->

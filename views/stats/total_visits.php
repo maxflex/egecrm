@@ -114,7 +114,7 @@
 								{{Schedule.time}}
 							</td>
 							<td>
-								<!-- @time-refactored  -->
+								<!-- @time-refactored @time-checked  -->
 								<span style='color: {{ Schedule.cabinet.color }}'>{{ Schedule.cabinet.label }}</span>
 							</td>
 							<td>

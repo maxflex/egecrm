@@ -67,6 +67,7 @@
     <script type="text/javascript" src="js/pusher.js?ver=<?= settings()->version ?>"></script>
     <script type="text/javascript" src="js/bower/vue/dist/vue.js"></script>
     <!-- <script src="js/bower/vue-resource/dist/vue-resource.js"></script> -->
+	  <script type="text/javascript" src="js/bower/phoneapi/dist/js/pusher.js"></script>
 
 	<script src="js/spin.js"></script>
 	<script src="js/ladda.js"></script>

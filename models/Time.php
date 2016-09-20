@@ -25,7 +25,7 @@
 
 		// карта времени
 		const MAP = [
-			1 => [1,  2,  3,  4 ],
+			1 => [1,  2,  3,  4],
 			2 => [5,  6,  7,  8 ],
 			3 => [9,  10, 11, 12],
 			4 => [13, 14, 15, 16],
@@ -76,5 +76,15 @@
 			}
 
 			return $return;
+		}
+
+        /*
+		 * Получить день по TIME ID
+		 */
+		public static function getDay($id_time)
+		{
+			return array_keys(array_filter(Time::MAP, function($e) {
+				return in_array($id_time, $e);
+			}))[0];
 		}
 	}

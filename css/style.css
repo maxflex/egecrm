@@ -41,6 +41,23 @@
   color: #999999;
   left: 49px; }
 
+.input-group.custom.tiny {
+  width: 120px;
+  margin: 0 auto; }
+
+.input-group.custom .input-group-addon {
+  background-color: white;
+  color: #999999;
+  padding-right: 0; }
+
+.input-group.custom input {
+  border-left: none !important;
+  box-shadow: none !important;
+  padding-left: 3px; }
+
+.input-group.custom .form-control:focus {
+  border-color: #ccc; }
+
 .dropdown-menu .divider {
   display: none; }
 

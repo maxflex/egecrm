@@ -167,7 +167,7 @@
 
 					$ang_init_data = angInit([
 						"Group" 	=> $Group,
-						"LessonData"=> $OrderedLessonData,
+						"LessonData"=> (object)$OrderedLessonData,
 						"Schedule"	=> $Schedule,
 						"lesson_statuses" => VisitJournal::$statuses,
 						"id_group"		=> $id_group,
@@ -298,7 +298,7 @@
 					"vocation_dates"		=> GroupSchedule::getVocationDates(true),
 					"exam_dates"			=> ExamDay::getExamDates($Group),
 					"SubjectsDative"		=> Subjects::$dative,
-					"past_lessons" 	=> $Group->getPastLessons(), // @time-refactored
+					"past_lessons" 	=> $Group->getPastLessons(), // @time-refactored @time-checked
 					"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
 				]);
 
@@ -343,7 +343,7 @@
 						"vocation_dates"		=> GroupSchedule::getVocationDates(true),
 						"SubjectsDative"		=> Subjects::$dative,
 						"exam_dates"			=> ExamDay::getExamDates($Group),
-						"past_lessons" 			=> $Group->getPastLessons(), // @time-refactored
+						"past_lessons" 			=> $Group->getPastLessons(), // @time-refactored @time-checked
 						"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
 					]);
 
@@ -361,11 +361,11 @@
 
 					$ang_init_data = angInit([
 						"Group" 			=> $Group,
-						"past_lessons" => $Group->getPastLessons(), 		// @time-refactored
+						"past_lessons" => $Group->getPastLessons(), 		// @time-refactored @time-checked
 						"vocation_dates"	=> GroupSchedule::getVocationDates(),
 						"exam_dates"		=> ExamDay::getExamDates($Group),
 						"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
-						"all_cabinets"			=> Branches::allCabinets(), // @time-refactored
+						"all_cabinets"			=> Branches::allCabinets(), // @time-refactored @time-checked
 						"Time"				=> Time::getLight(),
 					]);
 
@@ -729,7 +729,8 @@
 			$GroupSchedule = GroupSchedule::find([
 				"condition" => "id_group={$Group->id} AND date='" . $FirstLesson->date ."'"
 			]);
-			// @time-refactored
+			// @time-refactored @time-checked
+			// @sms-checked
 			$Template = Template::getFull(8, [
 				"student_name"	=> $Student->last_name . " " . $Student->first_name,
 				"subject"		=> Subjects::$dative[$Group->id_subject],

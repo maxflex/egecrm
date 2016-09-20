@@ -35,6 +35,7 @@
 				if (!isAdmin()) {
 					// если отсутствовал на занятии
 					if ($data[$id_student]['presence'] == 2) {
+                        // @sms-checked
 						$message = Template::get(7, [
 							"date" 			=> today_text(),
 							"student_name"	=> $Student->last_name . " " . $Student->first_name,
@@ -49,7 +50,8 @@
 						}
 					} else
 					// если отсутствовал на занятии
-					if ($data[$id_student]['late'] >= 15) {
+					if ($data[$id_student]['late'] >= 5) {
+                        // @sms-checked
 						$message = Template::get(6, [
 							"date" 			=> today_text($Schedule->date),
 							"student_name"	=> $Student->last_name . " " . $Student->first_name,
@@ -65,7 +67,7 @@
 						}
 					}
 				}
-				// @time-refactored
+				// @time-refactored @time-checked
 				self::add([
 					"id_entity" 			=> $id_student,
 					"type_entity"			=> Student::USER_TYPE,
@@ -86,7 +88,7 @@
 					"year"					=> static::_academicYear($date),
 				]);
 			}
-			// @time-refactored
+			// @time-refactored @time-checked
 			self::add([
 				"id_entity" 			=> $Group->id_teacher,
 				"type_entity"			=> Teacher::USER_TYPE,

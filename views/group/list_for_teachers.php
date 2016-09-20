@@ -23,14 +23,14 @@
 			}"></ng-pluralize>
 		</td>
 		<td>
-			<!-- @time-refactored -->
+			<!-- @time-refactored @time-checked -->
 			<span ng-repeat="data in Group.day_and_time">
 				<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>
-				{{ $last ? '' : ' и '}}
+				{{ $last ? '' : ', '}}
 			</span>
 		</td>
 		<td>
-			<!-- @time-refactored -->
+			<!-- @time-refactored @time-checked -->
 			<span ng-repeat='cabinet in Group.cabinets'>
 				<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
 				<span class="remove-space">{{$last ? '' : ', '}}</span>

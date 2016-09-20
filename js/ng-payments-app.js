@@ -208,15 +208,31 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     return lightBoxShow('addpayment');
   };
   $scope.addPayment = function() {
-    var payment_date, payment_select, payment_sum, payment_type;
+    var payment_card, payment_card_first_number, payment_date, payment_select, payment_sum, payment_type;
     payment_date = $("#payment-date");
     payment_sum = $("#payment-sum");
     payment_select = $("#payment-select");
     payment_type = $("#paymenttypes-select");
+    payment_card = $('#payment-card-number');
+    payment_card_first_number = $("#payment-card-first-number");
     if (!$scope.new_payment.id_status) {
       payment_select.focus().parent().addClass("has-error");
     } else {
       payment_select.parent().removeClass("has-error");
+      if (1 === parseInt($scope.new_payment.id_status)) {
+        if (!$scope.new_payment.card_first_number) {
+          payment_card_first_number.focus().addClass('has-error');
+          return;
+        } else {
+          payment_card_first_number.removeClass('has-error');
+        }
+      }
+      if (!$scope.new_payment.card_number) {
+        payment_card.focus().addClass('has-error');
+        return;
+      } else {
+        payment_card.removeClass('has-error');
+      }
     }
     if ($scope.new_payment === 'teacher' && !$scope.new_payment.id_type) {
       payment_type.focus().parent().addClass("has-error");

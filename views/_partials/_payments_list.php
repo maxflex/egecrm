@@ -16,7 +16,7 @@
             <td>
 						<span class="">{{payment_statuses[payment.id_status]}}
 							<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">
-								{{payment.card_number ? " *" + payment.card_number.trim() : ""}}
+								{{payment.card_number ? payment.card_first_number.replace('XXX','') + "*** " + payment.card_number.trim() : ""}}
 							</span>
 						</span>
             </td>

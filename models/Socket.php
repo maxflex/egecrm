@@ -20,7 +20,7 @@
 					$pusher = static::_getEgerepInstance();
 					break;
 				default:
-					$pusher = static::_getEgecrmInstance();		
+					$pusher = static::_getEgecrmInstance();
 			}
 			$pusher->trigger($channel, $event, $data);
 		}

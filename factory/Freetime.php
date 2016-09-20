@@ -11,7 +11,7 @@
 		/**
 		 * Построить селектор
 		 * $multiple - множественный выбор
-		 * @time-refactored селектор времени в списке групп
+		 * @time-refactored @time-checked селектор времени в списке групп
 		 */
 		public static function buildMultiSelector($selected = false, $attrs, $multiple = false)
 		{
@@ -39,16 +39,6 @@
 			echo "</select>";
 		}
 
-		/*
-		 * Получить день по TIME ID
-		 */
-		public static function getDay($id_time)
-		{
-			return array_keys(array_filter(Time::MAP, function($e) {
-				return in_array($id_time, $e);
-			}))[0];
-		}
-
 		/**
 		 * @refactored
 		 */
@@ -62,6 +52,7 @@
 			return $bar;
 		}
 
+        // @time-refactored @time-checked
 		public static function getStudentBar($id_student, $with_freetime = false, $id_group = false)
 		{
 			if ($with_freetime) {
@@ -83,6 +74,7 @@
             return $bar;
         }
 
+        // @time-refactored @time-checked
 		public static function getTeacherBar($id_teacher, $with_freetime = false, $id_group = false)
 		{
 		    if ($with_freetime) {
@@ -142,7 +134,7 @@
             }
         }
 
-		// @time-refactored multiple cabinets
+		// @time-refactored @time-checked multiple cabinets
 		public static function getCabinetBar($Group, $cabinet = null)
 		{
 		    $bars = [];
@@ -216,7 +208,7 @@
 			return count($a) > 0;
 		}
 
-		// @time-refactored
+		// @time-refactored @time-checked
 		public static function checkFreeCabinets($id_group, $year)
 		{
 			$Cabinets = Cabinet::findAll();

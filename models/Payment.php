@@ -38,6 +38,9 @@
 			if ($this->card_number) {
 				$this->card_number .= ' ';
 			}
+			if ($this->card_first_number) {
+				$this->card_first_number .= 'XXX';
+			}
 			
 			// Добавляем данные
 			$this->user_login = User::findById($this->id_user)->login;
@@ -161,7 +164,10 @@
 		}
 
 		public function beforeSave()
-        { 
+        {
+            if ($this->id_status == self::PAID_CARD) {
+                $this->card_first_number = in_array(intval($this->card_first_number), range(4,6)) ? intval($this->card_first_number) : '4';
+            }
             // наличные и платеж и не имеет номера и клиент
            if ($this->isNewRecord && !$this->dont_assign_pko &&
            $this->id_status == self::PAID_CASH && $this->id_type == PaymentTypes::PAYMENT && $this->entity_type == Student::USER_TYPE) {

@@ -20,3 +20,10 @@
 			
 			$scope.formatTime = (time) ->
 				moment(time * 1000).format "DD.MM.YY в HH:mm"
+
+			$scope.deleteCall = (call) ->
+				$.post 'calls/ajax/delete',
+					entry_id: call.entry_id
+				, ->
+					$scope.missed = _.without $scope.missed, call
+					$scope.$apply()

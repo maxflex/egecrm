@@ -140,7 +140,7 @@
 			]);
 		}
 
-		// @time-refactored
+		// @time-refactored @time-checked
 		public function actionEdit()
 		{
 			$id_teacher = $_GET['id'];

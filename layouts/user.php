@@ -3,6 +3,7 @@
 <script type="text/javascript" src="js/bower/cropper/dist/cropper.js"></script>
 <script src="//cdn.jsdelivr.net/jquery.color-animation/1/mainfile"></script>
 <link rel="stylesheet" href="js/bower/cropper/dist/cropper.min.css">
+<link media="all" rel="stylesheet" type="text/css" href="js/bower/simple-hint/dist/simple-hint.css" />
 
 <?php if (in_array(User::fromSession()->id, [-1])) :?>
 <div class="menu-wrap">
@@ -199,7 +200,8 @@
 		    }
 		?>
     </a>
-	<a class="list-group-item active">Финансы</a>
+    <a href="contracts" class="list-group-item">Версии договоров</a>
+    <a class="list-group-item active">Финансы</a>
 	<a href="payments" class="list-group-item">Платежи
 	    <?php
 		    $unconfirmed_payment_count = Payment::countUnconfirmed();

@@ -42,7 +42,7 @@
 			]);
 		}
 
-		// @time-refactored
+		// @time-refactored @time-checked
 		public function actionCabinet()
         {
             $this->setTabTitle("Загрузка кабинетов");

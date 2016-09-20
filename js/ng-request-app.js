@@ -1656,6 +1656,8 @@
 				payment_sum 	= $("#payment-sum")
 				payment_select	= $("#payment-select")
 				payment_type	= $("#paymenttypes-select")
+				payment_card	= $("#payment-card-number")
+				payment_card_first_num	= $("#payment-card-first-number")
 
 				// Установлен ли способ оплаты
 				if (!$scope.new_payment.id_status) {
@@ -1663,6 +1665,20 @@
 					return
 				} else {
 					payment_select.parent().removeClass("has-error")
+					if ($scope.new_payment.id_status == 1) {
+						if (!$scope.new_payment.card_first_number) {
+							payment_card_first_num.focus().addClass("has-error")
+							return
+						} else {
+							payment_card_first_num.removeClass("has-error")
+						}
+						if (!$scope.new_payment.card_number) {
+							payment_card.focus().addClass("has-error")
+							return
+						} else {
+							payment_card.removeClass("has-error")
+						}
+					}
 				}
 
 				// Установлен ли тип платежа?

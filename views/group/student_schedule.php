@@ -65,6 +65,7 @@
 							</div>
 						</td>
 						<td>
+                            <!-- @have-to-refactor  -->
 							кабинет {{Schedule.Cabinet.number}}
 						</td>
 						<td>

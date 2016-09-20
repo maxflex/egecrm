@@ -501,6 +501,14 @@
 				locale: 'ru',
 			})
 
+      function focusSibling(elem) {
+        $(elem).siblings(':enabled').first().focus()
+      }
+			$.mask.definitions['~']='[4-6]';
+			$(".card-first-number").on('keyup', function(e){ if (e.keyCode == 13) {
+        focusSibling(this)
+      } }).mask("~XXX", { autoclear: false, completed:function(){this.val().length == 4 ? focusSibling(this) : false;} });
+
 			$(".passport-number").inputmask("Regex", {regex: "[a-zA-Z0-9]{0,12}"});
 
 			// REGEX для полей типа "число" и "1-5"
@@ -508,7 +516,15 @@
 			$(".digits-only-minus").inputmask("Regex", {regex: "[-]?[0-9]*"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
 			$('.bs-date input, .bs-date-top input, input.bs-date, input.bs-date-top').mask("99.99.9999", {clearIfNotMatch: true});
-			$.mask.definitions['H'] = "[0-2]";
+
+      $('#contracts-list .input-group-addon').on('click', function(){$(this).siblings('input').focus();});
+      // $('#contracts-list input.bs-date').on('keyup', function(){
+      // 		if (!this.value.replace(/[\._]g/, '').length) {
+      // 			this.value = '';
+				// 	}
+      // });
+
+      $.mask.definitions['H'] = "[0-2]";
 		    $.mask.definitions['h'] = "[0-9]";
 		    $.mask.definitions['M'] = "[0-5]";
 		    $.mask.definitions['m'] = "[0-9]";

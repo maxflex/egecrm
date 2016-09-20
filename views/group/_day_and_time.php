@@ -1,10 +1,11 @@
 <div class="lightbox-new lightbox-freetime">
+    <!-- @time-refactored @time-checked -->
 	<h4 style="text-transform: uppercase; margin-bottom: 25px">ДАТА И ВРЕМЯ ЗАНЯТИЙ</h4>
 		<table class="table table-divlike">
 			<tbody>
 				<tr ng-repeat='(day, data) in time'>
-					<td><b>{{ weekdays[day] }}</b></td>
-					<td ng-repeat='d in data' style="text-align: center">
+					<td style="width: 100px"><b>{{ weekdays[day] }}</b></td>
+					<td ng-repeat='d in data' style="text-align: left; width: 200px; padding-left: 15px">
 						<input type="checkbox"
 							ng-checked='timeChecked(day, d)'
 							ng-click="timeClick(day, d)"
@@ -18,18 +19,11 @@
 								<option selected value=''>кабинет</option>
 								<option disabled>──────────────</option>
 							  	<option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}"
-									ng-class="{'half-opacity': free_cabinets[d.id][cabinet.id]}"
+									ng-class="{'quater-opacity': free_cabinets[d.id][cabinet.id]}"
 									style='color: {{ cabinet.color }}'
 									ng-selected="getGroupTime(day, d).id_cabinet == cabinet.id">
 									{{ cabinet.label}}
 								</option>
-							</select>
-						</span>
-
-						<!-- заглушка -->
-						<span ng-show='!timeChecked(day, d)'>
-							<select class='branch-cabinet' disabled>
-								<option selected value=''>кабинет</option>
 							</select>
 						</span>
 					</td>

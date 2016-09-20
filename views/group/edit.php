@@ -17,7 +17,7 @@
 	            <span style="margin-right: 12px" ng-click="dayAndTime()">
 	            	<span class="link-like link-reverse link-white" ng-show='hasDayAndTime()'>
 	            		<span ng-repeat="(day, data) in Group.day_and_time">
-							{{ weekdays[day] }} в <span ng-repeat='d in data'>{{ d.time.time }}{{$last ? '' : ', '}}</span> {{ $last ? '' : ' и '}}
+							{{ weekdays[day] }} в <span ng-repeat='d in data'>{{ d.time.time }}{{$last ? '' : ', '}}</span> {{ $last ? '' : ', '}}
 	            		</span>
 					</span>
 	            	<span class="link-like link-reverse link-white" ng-show='!hasDayAndTime()'>установить день и время</span>
@@ -33,7 +33,7 @@
 	<div class="panel-body" style="position: relative">
 		<form id="group-edit" autocomplete='off'>
 		<div class="top-group-menu-thin">
-			<?php if (User::fromSession()->id != 77 && !User::isRoot() && !User::isDev()) :?>
+			<?php if (User::fromSession()->id != 77) :?>
 			<div class='div-blocker'></div>
 			<?php endif ?>
             <div class="form-group">
@@ -192,7 +192,7 @@
 			</div>
 		</form>
 
-		<?= partial("groups_list") ?>
+		<?= partial("groups_list", ['teacher_comment' => true]) ?>
 
 </div>
 	<?= partial("day_and_time") ?>

@@ -17,6 +17,9 @@
                 <span ng-if="m.caller.type == 'request'">по заявке <a target='_blank' href='requests/edit/{{m.caller.id}}'>{{ m.caller.name }}</a></span>
                 <span ng-if="!m.caller.type">неизвестный номер</span>
 			</td>
+			<td>
+				<span ng-click="deleteCall(m)" class="glyphicon glyphicon-remove pointer" aria-hidden="true"></span>
+			</td>
 		</tr>
 	</table>
 </div>

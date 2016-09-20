@@ -24,7 +24,7 @@
 			$this->first_schedule 		= $this->getFirstSchedule();
 
 			if ($this->id_teacher) {
-				$this->Teacher	= Teacher::getLight($this->id_teacher);
+				$this->Teacher	= Teacher::getLight($this->id_teacher, ['comment']);
 			}
 
 			if (!$this->isNewRecord) {
@@ -35,7 +35,7 @@
 					$this->days_before_exam = $this->daysBeforeExam();
 				}
 
-				// @time-refactored
+				// @time-refactored @time-checked
 				static::_addCabinets($this);
 			}
 
@@ -53,7 +53,7 @@
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
-		// @time-refactored
+		// @time-refactored @time-checked
 		public static function getNotifiedStudentsCount($Group)
 		{
 			$FirstLesson = Group::getFirstLesson($Group->id, true);
@@ -79,7 +79,7 @@
 
 		/**
 		 * Получить даты проведенных занятий.
-		 * @time-refactored
+		 * @time-refactored @time-checked
 		 */
 		public function getPastLessons()
 		{
@@ -537,6 +537,9 @@
 		{
 			$Group->cabinet_ids = Group::getCabinetIds($Group->id);
 			foreach($Group->cabinet_ids as $id_cabinet) {
+                if (empty($id_cabinet)) {
+                    continue;
+                }
 				$Group->cabinets[] = Cabinet::getBlock($id_cabinet);
 			}
 		}
@@ -565,7 +568,7 @@
 		/*
 		 * Получить данные для основного модуля
 		 * $id_student – если просматриваем отзывы отдельного ученика
-		 * @time-refactored
+		 * @time-refactored @time-checked
 		 */
 		public static function getData($page)
 		{
@@ -579,14 +582,14 @@
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.ready_to_start");
+			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.ready_to_start", " GROUP BY g.id");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
 
 			while ($row = $result->fetch_object()) {
 				$Group = $row;
 
 				if ($Group->id_teacher) {
-					$Group->Teacher = Teacher::getLight($Group->id_teacher);
+					$Group->Teacher = Teacher::getLight($Group->id_teacher, ['comment']);
 				}
 
 				static::_addCabinets($Group);
@@ -620,7 +623,7 @@
 			];
 		}
 
-		// @time-refactored
+		// @time-refactored @time-checked
 		private static function _generateQuery($search, $select, $ending = '')
 		{
 			// " . ((! empty($search->time_ids) || !isBlank($search->id_branch) || $search->cabinet) ? " JOIN group_time gt ON (g.id = gt.id_group " . . ")" : "") . "
@@ -694,7 +697,7 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
-			// @time-refactored
+			// @time-refactored @time-checked
 			if ($this->time) {
 				$this->time = mb_strimwidth($this->time, 0, 5);
 				if ($this->time == "00:00") {
@@ -705,9 +708,13 @@
 			$this->was_lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
 		}
 
-
+        /**
+         * незапланированное @have-to-refactor
+         */
 		public function isUnplanned()
 		{
+            $Time = Time::getLight();
+
 			$GroupTimeData = GroupTime::findAll([
 				"condition" => "id_group=" . $this->id_group,
 			]);
@@ -718,9 +725,7 @@
 				if ($day_of_the_week == 0) {
 					$day_of_the_week = 7;
 				}
-
-				// error_log("{$this->id_group} | {$day_of_the_week} / {$GroupTime->day} | " . $GroupTime->time . " / {$this->time}");
-				if ($day_of_the_week == $GroupTime->day && $this->time == $GroupTime->time) {
+				if ($day_of_the_week == Time::getDay($GroupTime->id_time) && $this->time == $Time[$GroupTime->id_time]) {
 					$is_planned = true;
 					break;
 				}

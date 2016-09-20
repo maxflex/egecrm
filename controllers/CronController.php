@@ -100,12 +100,19 @@
 
 		/**
 		 * Сообщить о незапланированных занятиях.
-		 *
+		 * @have-to-refactor !!!
 		 */
 		public static function actionNotifyUnplannedLessons()
 		{
+            $Time = Time::getLight();
 			$tomorrow_month = date("n", strtotime("tomorrow"));
 			$tomorrow_month = russian_month($tomorrow_month);
+
+            $tomorrow_day = date("w", strtotime('tomorrow')); // день недели завтра
+            if (! $tomorrow_day) {
+                $tomorrow_day = 7;
+            }
+
 
 			$tomorrow = date("j", strtotime("tomorrow")) . " " . $tomorrow_month;
 
@@ -127,21 +134,21 @@
 			]);
 
 			foreach($Groups as $Group) {
-				$days = array_keys($Group->day_and_time);
+                // @have-to-refactor
+                $GroupSchedule = GroupSchedule::find([
+    				"condition" => "date='" . date("Y-m-d", strtotime("tomorrow")) . "' AND cancelled  = 0 AND id_group={$Group->id}",
+    			]);
 
-				// sunday in mysql is 0
-				foreach ($days as &$day) {
-					if ($day == 7) {
-						$day = 0;
-					}
-				}
+                $days_match = false;
+                if (isset($Group->day_and_time[$tomorrow_day])) {
+                    foreach($Group->day_and_time[$tomorrow_day] as $time_id) {
+                        if ($Time[$time_id] == $GroupSchedule->time) {
+                            $days_match = true;
+                        }
+                    }
+                }
 
-				// дни совпали
-				$days_match = GroupSchedule::count([
-					"condition" => "id_group={$Group->id} AND DATE_FORMAT('" . date("Y-m-d", strtotime("tomorrow")) . "', '%w') NOT IN (" . implode(',', $days) . ") AND cancelled = 0"
-				]) > 0 ? false : true;
-
-				if (!$days_match) {
+				if (! $days_match) {
 					if ($Group->id_teacher) {
 						$Teacher = Teacher::findById($Group->id_teacher);
 						if ($Teacher) {
@@ -298,7 +305,8 @@
 			$GroupSchedule = GroupSchedule::find([
 				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."'"
 			]);
-			// @time-refactored
+			// @time-refactored @time-checked
+			// @sms-checked
 			return Template::get(10, [
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,
@@ -316,7 +324,8 @@
 			$GroupSchedule = GroupSchedule::find([
 				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."'"
 			]);
-			// @time-refactored
+			// @time-refactored @time-checked
+			// @sms-checked
 			return Template::get(12, [
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,
@@ -334,9 +343,11 @@
 		 * Уведомить учителя об отсутствии записи в журнале
 		 *
 		 * @todo: переделать функцию, чтобы она использовала даты из Group::lastWeekMissing
+		 * каждый день в 21-05 все группы, которые имели за сегодняшний день занятие и смотреть какие не зарегистрированы
 		 */
 		public static function actionTeacherNotifyJournalMiss()
 		{
+
 			// @refactored
 			// Высчитываем полностью отсутствующие занятия
 			$Groups = Group::findAll([
@@ -344,7 +355,7 @@
 			]);
 
 			foreach ($Groups as $Group) {
-				if (!$Group->Teacher) {
+				if (! $Group->Teacher) {
 					continue;
 				}
 				$PastSchedule = $Group->getPastScheduleTeacherReport();
@@ -356,7 +367,8 @@
 					]);
 
 					// если занятия не было, отправляем смс
-					if (!$was_lesson) {
+					// @sms-checked
+					if (! $was_lesson) {
 						$message = Template::get(9, [
 							"time" 			=> $Schedule->time,
 							"teacher_name"	=> $Group->Teacher->first_name ." " .$Group->Teacher->middle_name
@@ -400,6 +412,10 @@
 			$ec_connection->query("INSERT INTO groups_count (name, value) VALUES " . implode(",", $values));
 		}
 
+        /*
+         * Шаблон: занятие завтра
+         *
+         */
 		public static function actionNotifyGroupsFirstLesson()
 		{
 			// все завтрашние занятия
@@ -507,7 +523,8 @@
 			$GroupSchedule = GroupSchedule::find([
 				"condition" => "id_group={$Group->id} AND date='" . date("Y-m-d", strtotime("tomorrow")) ."' AND cancelled = 0"
 			]);
-			// @time-refactored
+			// @time-refactored @time-checked
+			// @sms-checked
 			return Template::get(5, [
 				'tomorrow'		=> $tomorrow,
 				'time'			=> $GroupSchedule->time,

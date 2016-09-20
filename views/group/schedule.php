@@ -68,7 +68,7 @@
 							</select>
 						</td>
 						<td>
-							<input ng-disabled="inPastLessons(Schedule.date)" type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Schedule.is_free" ng-change="changeFree(Schedule)">
+							<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Schedule.is_free" ng-change="changeFree(Schedule)">
 							бесплатное занятие
 						</td>
 					</tr>

@@ -88,6 +88,11 @@ RewriteRule ^clients[?page=(0-9)]?[/]?$ index.php?controller=clients&page=$1 [QS
 RewriteRule ^clients/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=$1 [QSA,L]
 RewriteRule ^clients/ajax/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=Ajax$1 [QSA,L]
 
+# Договора
+RewriteRule ^contracts[?page=(0-9)]?[/]?$ index.php?controller=contracts&page=$1 [QSA,L]
+RewriteRule ^contracts/ajax/([a-zA-Z]+)[/]?$ index.php?controller=contracts&action=Ajax$1 [QSA,L]
+
+
 RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
 RewriteRule ^(teachers/)?payments/([a-zA-Z]+)[/]?$ index.php?controller=payments&action=$2 [QSA,L]
 RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
@@ -142,6 +147,7 @@ RewriteRule ^tests/ajax/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=Ajax$
 
 # Пропущенные
 RewriteRule ^calls/missed[/]?$ index.php?controller=calls&action=missed [QSA,L]
+RewriteRule ^calls/ajax/([a-zA-Z]+)[/]?$ index.php?controller=calls&action=Ajax$1 [QSA,L]
 
 # as
 RewriteRule ^as/(teacher|student)/([0-9]+)[/]?$ index.php?controller=as&type=$1&id=$2 [QSA,L]
