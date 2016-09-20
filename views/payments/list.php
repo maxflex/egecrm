@@ -24,11 +24,11 @@
 	<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
 		<h4>Номер карты</h4>
 		<div class="form-group inline-block">
-			<input class="form-control card-first-number" placeholder="XXXX" id="payment-card-first-number" ng-model="new_payment.card_first_number" style="width: 70px; display: inline-block; margin-left: 5px"> -
+			<input class="form-control card-first-number" placeholder="_XXX" id="payment-card-first-number" ng-model="new_payment.card_first_number" style="width: 70px; display: inline-block; margin-left: 5px"> -
 			<input class="form-control" disabled placeholder="XXXX" style="width: 70px; display: inline-block"> -
 			<input class="form-control" disabled placeholder="XXXX" style="width: 70px; display: inline-block"> -
 			<input class="form-control digits-only" maxlength="4" id="payment-card-number" ng-model="new_payment.card_number"
-				   style="width: 60px; display: inline-block">
+				   style="width: 70px; display: inline-block">
 		</div>
 	</div>
 	<center>
