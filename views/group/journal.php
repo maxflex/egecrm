@@ -54,14 +54,4 @@
 			</tr>
 		</tbody>
 	</table>
-
-	<table id="k_u">
-		<thead>
-			<th colspan="2">КУ</th>
-		</thead>
-		<tr ng-repeat="Teacher in Teachers">
-			<td><a href="teachers/edit/{{Teacher.id}}">{{Teacher.first_name}} {{Teacher.last_name}}</a></td>
-			<td>{{ Teacher.hold_coeff }}% (потеря: {{ Teacher.loss }}, общее количество: {{ Teacher.total_lessons }})</td>
-		</tr>
-	</table>
 </div>
