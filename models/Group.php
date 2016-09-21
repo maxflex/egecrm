@@ -609,9 +609,9 @@
 				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTime($Group->id);
 
-//				if ($Group->ready_to_start) {
-//					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
-//				}
+				if ($Group->ready_to_start) {
+					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
+				}
 
 				$data[] = $Group;
 			}
@@ -737,7 +737,6 @@
 
 			$is_planned = false;
 			foreach ($GroupTimeData as $GroupTime) {
-				preType([$day_of_the_week, Time::getDay($GroupTime->id_time), $this->time, $Time[$GroupTime->id_time]]);
 				if ($day_of_the_week == Time::getDay($GroupTime->id_time) && $this->time == $Time[$GroupTime->id_time]) {
 					$is_planned = true;
 					break;
