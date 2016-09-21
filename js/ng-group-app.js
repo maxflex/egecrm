@@ -663,7 +663,8 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       id_student: Student.id,
       id_subject: $scope.Group.id_subject,
       first_schedule: $scope.Group.first_schedule,
-      id_group: $scope.Group.id
+      id_group: $scope.Group.id,
+      cabinet: $scope.FirstLesson.cabinet
     }, function(response) {
       Student.sms_notified = true;
       return $scope.$apply();
@@ -881,7 +882,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   justSave = function(callback) {
     return $.post("groups/ajax/save", $scope.Group, callback);
   };
-  return $(".save-button").on("mousedown", function() {
+  $(".save-button").on("mousedown", function() {
     ajaxStart();
     $scope.saving = true;
     $scope.$apply();
@@ -900,6 +901,21 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       }
     });
   });
+  return $scope.getGroup = function(id_group) {
+    var Group, i;
+    return Group = ((function() {
+      var j, len, ref, results;
+      ref = $scope.Groups;
+      results = [];
+      for (j = 0, len = ref.length; j < len; j++) {
+        i = ref[j];
+        if (i.id === id_group) {
+          results.push(i);
+        }
+      }
+      return results;
+    })())[0];
+  };
 }).controller("ListCtrl", function($scope, $timeout) {
   var bindDraggable2, filterBranches;
   $scope.updateCache = function() {

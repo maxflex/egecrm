@@ -568,6 +568,7 @@
 					id_subject: $scope.Group.id_subject
 					first_schedule: $scope.Group.first_schedule
 					id_group: $scope.Group.id
+					cabinet: $scope.FirstLesson.cabinet
 				, (response) ->
 					Student.sms_notified = true
 					$scope.$apply()
@@ -751,6 +752,8 @@
 						$scope.$apply()
 					else
 						redirect "groups/edit/#{response}"
+			$scope.getGroup = (id_group) ->
+				Group = (i for i in $scope.Groups when i.id is id_group)[0]
 
 
 		.controller "ListCtrl", ($scope, $timeout) ->

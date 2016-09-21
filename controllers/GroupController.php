@@ -459,7 +459,8 @@
 				"cabinet_bars"			=> Freetime::getCabinetBar($Group),
 				"time"			=> Time::get(),
 				"weekdays"		=> Time::WEEKDAYS,
-				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time)
+				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
+                'FirstLesson' => Group::getFirstLesson($Group->id)
 			]);
 
 			$this->render("edit", [

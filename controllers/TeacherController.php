@@ -162,12 +162,12 @@
 				"teacher_phone_level"	=> $Teacher->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"GroupLevels"			=> GroupLevels::$all,
-				"Subjects"	=> Subjects::$three_letters,
-				"three_letters" => Subjects::$three_letters,
-				"SubjectsFull" => Subjects::$all,
-				"payment_statuses"	=> Payment::$all,
-				"user"				=> User::fromSession(),
-				"Grades"			=> Grades::$all,
+				"Subjects"	            => Subjects::$three_letters,
+				"three_letters"         => Subjects::$three_letters,
+				"SubjectsFull"          => Subjects::$all,
+				"payment_statuses"	    => Payment::$all,
+				"user"				    => User::fromSession(),
+				"Grades"			    => Grades::$all,
 			]);
 
 			$this->render("edit", [
@@ -206,7 +206,7 @@
 				}
 				case 5: {
 					$Teacher = Teacher::findById($id_teacher);
-					$Stats = Teacher::stats($id_teacher);
+					$Stats = Teacher::stats($id_teacher, false);
 
 					$Stats['clients_count'] = dbEgerep()->query("SELECT COUNT(*) AS cnt FROM attachments WHERE tutor_id=" . $id_teacher)->fetch_object()->cnt;
 					$Stats['er_review_count'] = dbEgerep()->query("
