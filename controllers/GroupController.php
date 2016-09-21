@@ -808,18 +808,6 @@
 
 			$objPHPExcel->setActiveSheetIndex(0);
 
-			$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'РАСПИСАНИЕ');
-
-			$objPHPExcel->getActiveSheet()->getStyle('B1')
-				->getAlignment()
-				->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$objPHPExcel->getActiveSheet()->getStyle('B1')->getFont()
-				->setBold(true)
-				->setName('Apple SD Gothic Neo')
-				->setSize(46);
-
-			$objPHPExcel->getActiveSheet()->mergeCells('B1:S1');
-
 			//
 			// CABINETS
 			//
@@ -925,6 +913,20 @@
 			}
 
 			$objPHPExcel->getActiveSheet()->getStyle("A5:{$cursor}{$rowID}")->applyFromArray($style_thick_border);
+
+
+            // Надпись "РАСПИСАНИЕ" вверху
+            $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'РАСПИСАНИЕ');
+
+			$objPHPExcel->getActiveSheet()->getStyle('B1')
+				->getAlignment()
+				->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->getStyle('B1')->getFont()
+				->setBold(true)
+				->setName('Apple SD Gothic Neo')
+				->setSize(46); 
+
+			$objPHPExcel->getActiveSheet()->mergeCells("B1:{$cursor}1");
 
 			$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
 			$objWriter->save('php://output');

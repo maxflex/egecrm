@@ -792,6 +792,7 @@
 
 			foreach ($Schedule as &$S) {
 				$S->Group = Group::findById($S->id_group);
+				$S->Group->Teacher = Teacher::getLight($S->Group->Teacher->id, ['phone']);
 				$S->is_unplanned = $S->isUnplanned();
 
 				// номер урока

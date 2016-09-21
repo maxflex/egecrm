@@ -1,5 +1,10 @@
 angular.module "Templates", []
 	.controller "ListCtrl", ($scope) ->
+		$scope.mode = 1
+		
+		$scope.getTemplates = ->
+			_.where($scope.Templates, {type: $scope.mode})
+		
 		$scope.toggle = (n, Template) ->
 			index = Template.who.indexOf n
 			

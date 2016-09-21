@@ -83,7 +83,7 @@
 		 */
 		public static function getDay($id_time)
 		{
-			return array_keys(array_filter(Time::MAP, function($e) {
+			return array_keys(array_filter(Time::MAP, function($e) use ($id_time) {
 				return in_array($id_time, $e);
 			}))[0];
 		}

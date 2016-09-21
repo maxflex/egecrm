@@ -697,6 +697,7 @@
 		{
 			parent::__construct($array);
 			// @time-refactored @time-checked
+
 			if ($this->time) {
 				$this->time = mb_strimwidth($this->time, 0, 5);
 				if ($this->time == "00:00") {
@@ -704,12 +705,13 @@
 				}
 			}
 
+			$this->isUnplanned = $this->isUnplanned();
+
 			$this->was_lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
 		}
 
         /**
          * незапланированное @have-to-refactor
-         * @refactored
          */
 		public function isUnplanned()
 		{
@@ -719,12 +721,14 @@
 				"condition" => "id_group=" . $this->id_group,
 			]);
 
+			$day_of_the_week = date("w", strtotime($this->date));
+			if ($day_of_the_week == 0) {
+				$day_of_the_week = 7;
+			}
+
 			$is_planned = false;
 			foreach ($GroupTimeData as $GroupTime) {
-				$day_of_the_week = date("w", strtotime($this->date));
-				if ($day_of_the_week == 0) {
-					$day_of_the_week = 7;
-				}
+				preType([$day_of_the_week, Time::getDay($GroupTime->id_time), $this->time, $Time[$GroupTime->id_time]]);
 				if ($day_of_the_week == Time::getDay($GroupTime->id_time) && $this->time == $Time[$GroupTime->id_time]) {
 					$is_planned = true;
 					break;
