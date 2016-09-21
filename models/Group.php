@@ -12,7 +12,7 @@
 
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
-
+ 
 		public function __construct($array, $light = false)
 		{
 			parent::__construct($array);

@@ -835,7 +835,8 @@
 
 				foreach (Time::MAP as $day => $time_ids) {
 					foreach($time_ids as $id_time) {
-						$cursor = static::_ordConvert(ord($cursor) + 1);
+						$cursor = static::_ordToChr(static::_chrToOrd($cursor) + 1);
+
 						$query = dbConnection()->query("
 							SELECT g.id_subject, g.id_teacher, g.grade FROM groups g
 							JOIN group_time gt ON gt.id_group = g.id
@@ -874,16 +875,16 @@
 			foreach(Time::MAP as $day => $time_ids) {
 				$cursor_start = $cursor;
 				// preType([$cursor . '3', strtoupper(Time::WEEKDAYS_FULL[$day])]);
-				// preType([$cursor . '3:' . static::_ordConvert(ord($cursor) + count($time_ids) - 1) .'3']);
+				// preType([$cursor . '3:' . static::_ordToChr(ord($cursor) + count($time_ids) - 1) .'3']);
 				$objPHPExcel->getActiveSheet()->SetCellValue($cursor . '3', strtoupper(Time::WEEKDAYS_FULL[$day]));
-				$objPHPExcel->getActiveSheet()->mergeCells($cursor . '3:' . static::_ordConvert(ord($cursor) + count($time_ids) - 1) .'3');
+				$objPHPExcel->getActiveSheet()->mergeCells($cursor . '3:' . static::_ordToChr(static::_chrToOrd($cursor) + count($time_ids) - 1) .'3');
 
 				foreach($time_ids as $index => $id_time) {
-					$objPHPExcel->getActiveSheet()->SetCellValue(static::_ordConvert(ord($cursor) + $index) . '4', $Time[$id_time]);
-					// preType([static::_ordConvert(ord($cursor) + $index) . '4', $Time[$id_time]]);
+					$objPHPExcel->getActiveSheet()->SetCellValue(static::_ordToChr(static::_chrToOrd($cursor) + $index) . '4', $Time[$id_time]);
+					// preType([static::_ordToChr(ord($cursor) + $index) . '4', $Time[$id_time]]);
 				}
-				$cursor = static::_ordConvert(ord($cursor) + count($time_ids));
-				$objPHPExcel->getActiveSheet()->getStyle("{$cursor_start}3:" . static::_chrConvert($cursor) . "{$row}")->applyFromArray($style_thick_border);
+				$cursor = static::_ordToChr(static::_chrToOrd($cursor) + count($time_ids));
+				$objPHPExcel->getActiveSheet()->getStyle("{$cursor_start}3:" . static::_ordToChr(static::_chrToOrd($cursor) - 1) . "{$row}")->applyFromArray($style_thick_border);
 			}
 			$cursor = $cursor[0] . chr(ord($cursor[1]) - 1);
 			$objPHPExcel->getActiveSheet()->getStyle("B3:{$cursor}4")
@@ -905,7 +906,7 @@
 			// + 25 потому что А = 65, Z = 90, Z - A = 90 - 65 = 25
 			// $objPHPExcel->getActiveSheet()->getHighestDataColumn()[1] – второй символ
 			foreach(range(ord('B'), ord($objPHPExcel->getActiveSheet()->getHighestDataColumn()[1]) + 26) as $columnID) {
-			    $objPHPExcel->getActiveSheet()->getColumnDimension(static::_ordConvert($columnID))->setWidth(20);
+			    $objPHPExcel->getActiveSheet()->getColumnDimension(static::_ordToChr($columnID))->setWidth(20);
 			}
 
 			foreach(range(5, $row) as $rowID) {
@@ -924,7 +925,7 @@
 			$objPHPExcel->getActiveSheet()->getStyle('B1')->getFont()
 				->setBold(true)
 				->setName('Apple SD Gothic Neo')
-				->setSize(46); 
+				->setSize(46);
 
 			$objPHPExcel->getActiveSheet()->mergeCells("B1:{$cursor}1");
 
@@ -932,7 +933,8 @@
 			$objWriter->save('php://output');
 		}
 
-		private static function _ordConvert($ord)
+        // ord to chr
+		private static function _ordToChr($ord)
 		{
 			$prefix = '';
 			if ($ord > 90) {
@@ -942,16 +944,16 @@
 			return $prefix . chr($ord);
 		}
 
-		// @return int ord (from AA)
-		private static function _chrConvert($chr, $return_ord = false)
+		// @return convert AA to 91
+		private static function _chrToOrd($chr)
 		{
-			$ord = ord($chr) - 1;
 			if (strlen($chr) > 1) {
-				// @hardcoded 7 - ?
-				$ord += ord($chr[1]) - 7;
+				return ord($chr[1]) + 26;
+			} else {
+				return ord($chr);
 			}
-			return ($return_ord ? $ord : static::_ordConvert($ord));
 		}
+
 
 		public function actionAjaxChangeTeacher()
 		{
