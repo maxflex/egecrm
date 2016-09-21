@@ -211,13 +211,17 @@
 		// @time-refactored @time-checked
 		public static function checkFreeCabinets($id_group, $year)
 		{
+            $exclude_group_sql = " 1 ";
+		    if ($id_group) {
+		        $exclude_group_sql = " g.id != $id_group ";
+            }
 			$Cabinets = Cabinet::findAll();
 			foreach(Time::getLight() as $id_time => $time) {
 				foreach($Cabinets as $Cabinet) {
 					$sql = "
 						SELECT g.id FROM group_time gt
 						JOIN groups g ON g.id = gt.id_group
-						WHERE g.id!=$id_group AND g.year=$year AND gt.id_cabinet={$Cabinet->id}
+						WHERE {$exclude_group_sql} AND g.year=$year AND gt.id_cabinet={$Cabinet->id}
 						AND gt.id_time = {$id_time}
 						LIMIT 1
 					";

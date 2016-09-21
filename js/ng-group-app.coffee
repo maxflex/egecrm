@@ -403,27 +403,28 @@
 					(parseInt($scope.search_groups.id_subject) is Group.id_subject or not $scope.search_groups.id_subject)
 
 			bindDraggable = ->
-				$(".student-line").draggable
-					helper: 'clone'
-					revert: 'invalid'
-					start: (event, ui) ->
-						$scope.is_student_dragging = true
-						$scope.$apply()
-						$(this).css "visibility", "hidden"
-						$(ui.helper).addClass "single-dragging"
-					stop: (event, ui) ->
-						$scope.is_student_dragging = false
-						$scope.$apply()
-						$(this).css "visibility", "visible"
+				if $(".student-line").length
+					$(".student-line").draggable
+						helper: 'clone'
+						revert: 'invalid'
+						start: (event, ui) ->
+							$scope.is_student_dragging = true
+							$scope.$apply()
+							$(this).css "visibility", "hidden"
+							$(ui.helper).addClass "single-dragging"
+						stop: (event, ui) ->
+							$scope.is_student_dragging = false
+							$scope.$apply()
+							$(this).css "visibility", "visible"
 
-				$(".student-dragout").droppable
-					tolerance: 'pointer'
-					hoverClass: 'student-dragout-hover'
-					drop: (event, ui) ->
-						ui.draggable.remove()
-						id_student	 = $(ui.draggable).data("id")
-						$scope.removeStudent id_student
-						$scope.$apply()
+					$(".student-dragout").droppable
+						tolerance: 'pointer'
+						hoverClass: 'student-dragout-hover'
+						drop: (event, ui) ->
+							ui.draggable.remove()
+							id_student	 = $(ui.draggable).data("id")
+							$scope.removeStudent id_student
+							$scope.$apply()
 
 
 			checkFreeCabinets = ->
@@ -538,9 +539,10 @@
 					id: $scope.Group.id
 					students: $scope.Group.students
 				, (response) ->
-					$.each response.sms_notification_statuses, (id_student, id_status)->
-						$scope.getStudent(id_student).sms_notified = id_status
-					$scope.$apply()
+					if response
+						$.each response.sms_notification_statuses, (id_student, id_status)->
+							$scope.getStudent(id_student).sms_notified = id_status
+						$scope.$apply()
 				, "json"
 
 			$scope.reloadTests = ->
@@ -729,6 +731,28 @@
 			# save without notice
 			justSave = (callback) ->
 				$.post "groups/ajax/save", $scope.Group, callback
+
+			$(".save-button").on "mousedown", ->
+				ajaxStart()
+				$scope.saving = true
+				$scope.$apply()
+
+				$.post "groups/ajax/save", $scope.Group, (response) ->
+					console.log response
+					if $scope.Group.id
+						ajaxEnd()
+						$scope.saving = false
+						$scope.form_changed = false
+
+						$scope.updateTeacherBar()
+						$scope.updateCabinetBar(false)
+						$scope.updateStudentBars()
+
+						$scope.$apply()
+					else
+						redirect "groups/edit/#{response}"
+
+
 		.controller "ListCtrl", ($scope, $timeout) ->
 			$scope.updateCache = ->
 				ajaxStart()

@@ -75,13 +75,15 @@
 			]);
 		}
 
-		public static function getCabinetIds($id_group)
+		public static function getCabinetIds($id_group = false)
 		{
 			$cabinet_ids = [];
 			$result = dbConnection()->query("SELECT id_cabinet FROM group_time WHERE id_group={$id_group} GROUP BY id_cabinet");
-			while($row = $result->fetch_object()) {
-				$cabinet_ids[] = $row->id_cabinet;
-			}
+            if ($result->num_rows) {
+                while($row = $result->fetch_object()) {
+                    $cabinet_ids[] = $row->id_cabinet;
+                }
+            }
 			return $cabinet_ids;
 		}
 
