@@ -446,7 +446,7 @@
 
 			# @time-refactored
 			$scope.enoughSmsParams = ->
-				($scope.Group.year > 0 and $scope.Group.id_subject > 0 and $scope.Group.cabinet_ids.length > 0 and $scope.Group.first_schedule and $scope.Group.id_subject > 0)
+				($scope.Group.year > 0 and $scope.Group.id_subject > 0 and $scope.Group.cabinet_ids.length > 0 and $scope.Group.first_schedule and $scope.Group.id_subject > 0 and $scope.FirstLesson.cabinet)
 
 			$scope.changeTeacher = ->
 				return if not $scope.Group.id

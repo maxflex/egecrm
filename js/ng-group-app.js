@@ -526,7 +526,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     });
   };
   $scope.enoughSmsParams = function() {
-    return $scope.Group.year > 0 && $scope.Group.id_subject > 0 && $scope.Group.cabinet_ids.length > 0 && $scope.Group.first_schedule && $scope.Group.id_subject > 0;
+    return $scope.Group.year > 0 && $scope.Group.id_subject > 0 && $scope.Group.cabinet_ids.length > 0 && $scope.Group.first_schedule && $scope.Group.id_subject > 0 && $scope.FirstLesson.cabinet;
   };
   $scope.changeTeacher = function() {
     if (!$scope.Group.id) {
