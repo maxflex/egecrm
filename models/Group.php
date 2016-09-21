@@ -13,7 +13,7 @@
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
-		public function __construct($array)
+		public function __construct($array, $light = false)
 		{
 			parent::__construct($array);
 
@@ -21,9 +21,18 @@
 				$this->students = [];
 			}
 
-			$this->first_schedule 		= $this->getFirstSchedule();
+            $this->first_schedule 		= $this->getFirstSchedule();
 
-			if ($this->id_teacher) {
+            // @notice  порядок first_schedule - notified_students важен.
+            // @todo    перенести heavy данные под if.
+            if (!$light) {
+                if ($this->ready_to_start) {
+                    $this->notified_students_count = static::getNotifiedStudentsCount($this);
+                }
+            }
+
+
+            if ($this->id_teacher) {
 				$this->Teacher	= Teacher::getLight($this->id_teacher, ['comment']);
 			}
 
@@ -600,9 +609,9 @@
 				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTime($Group->id);
 
-				if ($Group->ready_to_start) {
-					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
-				}
+//				if ($Group->ready_to_start) {
+//					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
+//				}
 
 				$data[] = $Group;
 			}
