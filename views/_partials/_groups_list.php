@@ -15,8 +15,8 @@
 			'half-opacity': Group.day_and_time.length !== undefined
 		}"
 		class="group-list" data-id="{{Group.id}}">
-		<td width="120">
-			<a href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
+		<td width="70" style="padding-left: 10px;">
+			<a href="groups/edit/{{Group.id}}">{{Group.id}}</a>
 		</td>
 		<td>
 			<span ng-repeat='cabinet in Group.cabinets'>
