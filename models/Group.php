@@ -26,9 +26,9 @@
             // @notice  порядок first_schedule - notified_students важен.
             // @todo    перенести heavy данные под if.
             if (!$light) {
-                if ($this->ready_to_start) {
+//                if ($this->ready_to_start) {
                     $this->notified_students_count = static::getNotifiedStudentsCount($this);
-                }
+//                }
             }
 
 
@@ -618,9 +618,9 @@
 				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTime($Group->id);
 
-				if ($Group->ready_to_start) {
+//				if ($Group->ready_to_start) {
 					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
-				}
+//				}
 
 				$data[] = $Group;
 			}
