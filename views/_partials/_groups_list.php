@@ -15,7 +15,7 @@
 			'half-opacity': Group.day_and_time.length !== undefined
 		}"
 		class="group-list" data-id="{{Group.id}}">
-		<td width="70" style="padding-left: 10px;">
+		<td width="70" style="padding-left: 10px!important;">
 			<a href="groups/edit/{{Group.id}}">{{Group.id}}</a>
 		</td>
 		<td>
