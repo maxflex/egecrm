@@ -32,9 +32,6 @@
 				'many': 'занятий'
 			}"></ng-pluralize>
 		</td>
-		<td>
-			{{Group.is_special ? " (спец.)" : ""}}
-		</td>
 	</tr>
 </table>
 

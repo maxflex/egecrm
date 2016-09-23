@@ -12,7 +12,7 @@
 
 
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
- 
+
 		public function __construct($array, $light = false)
 		{
 			parent::__construct($array);
@@ -52,7 +52,6 @@
 				$this->student_statuses = [];
 			}
 
-			$this->is_special 			= $this->isSpecial();
 			$this->day_and_time 		= $this->getDayAndTime($this->id);
 
 			$this->Comments	= Comment::findAll([
@@ -550,27 +549,6 @@
                 }
 				$Group->cabinets[] = Cabinet::getBlock($id_cabinet);
 			}
-		}
-
-		/**
-		 * Если в группе состоит хотя бы 1 ученик с занятиями больше 40, то в списке групп предмет выглядит вместо "русский" пишем "русский (спецгруппа)"
-		 *
-		 */
-		public function isSpecial()
-		{
-			if (!$this->id_subject) {
-				return false;
-			}
-
-			// @refactored
-			return dbConnection()->query("
-				SELECT g.id FROM groups g
-					LEFT JOIN students s ON s.id IN (" . implode(",", $this->students) . ")
-					LEFT JOIN contracts c ON c.id_student = s.id
-					LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
-				WHERE g.id = {$this->id} AND (c.id_contract=0 OR c.id_contract IS NULL) AND cs.count>40 AND cs.id_subject={$this->id_subject}
-				LIMIT 1
-			")->num_rows;
 		}
 
 		/*

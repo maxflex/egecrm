@@ -10,33 +10,10 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
 
-		// условие, которое не берет в расчет версии договора
-		const ZERO_OR_NULL_CONDITION = "AND (id_contract=0 OR id_contract IS NULL)";
-
-
 		public function beforeAction()
 		{
 			$this->addJs("ng-stats-app");
 		}
-
-/*
-		private function _getSubjectColorCount($Group, $status)
-		{
-			if (!count($Group->students)) {
-				return 0;
-			}
-
-			$student_ids = implode(",", $Group->students);
-
-			$result = dbConnection()->query("
-				SELECT COUNT(*) as cnt FROM contract_subjects cs
-				LEFT JOIN contracts c on cs.id_contract = c.id
-				LEFT JOIN students s on c.id_student = s.id
-				WHERE s.id IN {$student_ids} AND cs.id_subject = {$Group->id_subject} AND cs.status = {$status}
-			");
-		}
-*/
-
 
 
 		# ============================= #
@@ -44,15 +21,12 @@
 		# ============================= #
 
 
-
-
-
-
 		private function _getStats($date_start, $date_end = false)
 		{
 			$date_start_formatted 	= date("Y-m-d", strtotime($date_start));
 			$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 
+            // @contract-refactored
 			$Contracts = Contract::findAll([
 				"condition" =>
 					$date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
@@ -891,128 +865,4 @@
 				"stats" 		=> $stats,
 			]);
 		}
-
-
-
-
-		public function actionUsers()
-		{
-			if (!empty($_GET['date_start'])) {
-				$date_start = $_GET['date_start'];
-				$date_end 	= $_GET['date_end'];
-
-				$date_condition = " AND (date >= '". $date_start ."' AND date <= '" . $date_end . "')";
-			} else {
-				$date_condition = " AND (date >= '2015-09-01' AND date <= '2015-09-31')";
-			}
-
-			$Sources = Sources::$all;
-			$Sources[0] = 'не установлен';
-
-			$Users = User::findAll([
-				"condition" => "type='USER'"
-			]);
-
-
-			// Все решающие заявки
-			$success_request_ids = Request::getIds([
-				"condition" => "id_user > 0",
-				"group"		=> "id_student",
-				"order"		=> "id ASC",
-			]);
-
-			$success_request_ids = implode(",", $success_request_ids);
-
-			foreach ($Users as &$User) {
-				// заявок всего
-				$User->total_requests = Request::count([
-					'condition' => 'id_user=' . $User->id . $date_condition,
-				]);
-
-				// решающих заявок
-				$user_success_request_ids = Request::getIds([
-					"condition" => "id_user={$User->id} AND id IN ($success_request_ids)" . $date_condition,
-				]);
-
-				// статусы заявок
-				foreach ($Sources as $id_source => $name) {
-					$count = Request::count([
-						"condition" => "id_source=".$id_source." AND id_user={$User->id} AND id IN ($success_request_ids)" . $date_condition,
-					]);
-
-					if ($count > 0) {
-						$User->counts[$id_source] = $count;
-					}
-				}
-
-				if ($user_success_request_ids) {
-					$User->total_success_requests = count($user_success_request_ids);
-
-
-					// кол-во договоров
-					$result = dbConnection()->query("SELECT id_student, id_source FROM requests WHERE id IN (" . implode(",", $user_success_request_ids) .")");
-
-					$student_ids = [];
-					while ($row = $result->fetch_object()) {
-						$student_ids[] = $row->id_student;
-
-						// кол-во разных учеников
-						$User->count_students[$row->id_source]++;
-					}
-
-					$User->student_count = count($student_ids);
-
-					$student_ids = implode(",", $student_ids);
-
-
-					// получаем договоры ученика
-					$Contracts = Contract::findAll([
-						"condition" => "id_student IN ($student_ids)"
-					]);
-
-					if ($Contracts) {
-						$User->total_contracts = count($Contracts);
-
-						foreach ($Contracts as $Contract) {
-
-							$result = dbConnection()->query("
-								SELECT id_source FROM requests r
-								LEFT JOIN contracts c on c.id_student = r.id_student
-								WHERE r.id_student = {$Contract->id_student} AND r.id_user = {$User->id}
-							");
-
-							$id_source = $result->fetch_object()->id_source;
-
-							$User->count_contracts[$id_source]++;
-							$User->count_contracts_sum[$id_source] += $Contract->sum;
-
-							if ($Contract->History) {
-								$User->total_contract_sum += $Contract->History[0]->sum;
-							} else {
-								$User->total_contract_sum += $Contract->sum;
-							}
-						}
-					} else {
-						$User->total_contracts = 0;
-					}
-				} else {
-					$User->total_success_requests = 0;
-				}
-			}
-
-			$ang_init_data = angInit([
-				"date_start"	=> $date_start,
-				"date_end"		=> $date_end,
-				"Sources" 		=> $Sources,
-				"Users" => $Users
-			]);
-
-			$this->setTabTitle("Статистика по пользователям");
-			$this->render("users", [
-				"ang_init_data" => $ang_init_data
-			]);
-
-// 			preType($Users);
-		}
-
 	}

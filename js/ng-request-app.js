@@ -1317,84 +1317,36 @@
 					return
 				}
 
-				if (!$scope.current_contract.history_edit) {
-					$scope.current_contract.id_student = $scope.student.id
-				}
-
 				if ($scope.current_contract.id) {
 					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
-						console.log(response)
-						test = response
-
-						$scope.current_contract.user_login 	= response.user_login
-						$scope.current_contract.date_changed= response.date_changed
-
-							if ($scope.current_contract.history_edit) {
-								console.log($scope.current_contract)
-								parent_contract		= _.findWhere($scope.contracts, {id: $scope.current_contract.id_contract})
-
-								$.each(parent_contract.History, function(index, contract) {
-									if (contract.id == $scope.current_contract.id) {
-										parent_contract.History[index] = $scope.current_contract
-										// баг - вкладка сбивается
-										setTimeout(function() {
-											$('#contract_history_li_' + parent_contract.id + '_' + $scope.current_contract.id + ' a').click()
-										}, 50)
-										return
-									}
-								})
-							} else {
-								angular.forEach($scope.contracts, function(contract, i) {
-									if (contract.id == $scope.current_contract.id) {
-// 										old_contract = $scope.contracts[i]
-										old_contract = response.History[response.History.length - 1]
-										$scope.contracts[i] = $scope.current_contract
-										// если создалась новая версия, пушим в историю
-										if (!$scope.current_contract.no_version_control) {
-											$scope.contracts[i].History = initIfNotSet($scope.contracts[i].History)
-											$scope.contracts[i].History.push(old_contract)
-										}
-									}
-								})
-							}
-
-						$scope.$apply()
 						ajaxEnd('contract')
 						lightBoxHide()
 					}, "json")
 				} else {
+                    $scope.current_contract.id_student = $scope.student.id
 					// сохраняем догавар
 					ajaxStart('contract')
 					$.post("ajax/contractSave", $scope.current_contract, function(response) {
 						ajaxEnd('contract')
 						lightBoxHide()
-
 						$scope.current_contract.id 			= response.id
+                        $scope.current_contract.id_contract = response.id_contract
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
-
-						//new_contract = angular.copy($scope.current_contract)
-						//new_contract.subjects = angular.copy($scope.current_contract.subjects)
 						new_contract = $.extend(true, {}, $scope.current_contract)
-
-
 						new_contract.subjects = new_contract.subjects.filter(function(e){return e})
-
 						new_contract.subjects.sort(function(a, b) {
 							return a.id_subject - b.id_subject
 						})
-
 						$scope.contracts = initIfNotSet($scope.contracts)
 						$scope.contracts.push(new_contract)
 						$scope.$apply()
-
 					}, "json");
 				}
 			}
 
 			$scope.subjectChecked = function(id_subject) {
-// 				return _.findWhere($scope.current_contract.subjects, {id_subject: id_subject}) !== undefined
 				checked = false
 				angular.forEach($scope.current_contract.subjects, function(subject) {
 					if (subject.id_subject == id_subject) {
@@ -1462,21 +1414,16 @@
 				}, 100)
 			}
 
-			// Окно редактирования договора
-			$scope.editContract = function(contract) {
-				contract.no_version_control = 0
-				contract.history_edit = 0
-				contract.date = moment().format("DD.MM.YYYY")
-
-				$scope.callContractEdit(contract)
+			// создать новую версию
+			$scope.createNewContract = function(contract) {
+                new_contract = angular.copy(contract)
+                delete new_contract.id
+				new_contract.date = moment().format("DD.MM.YYYY")
+				$scope.callContractEdit(new_contract)
 			}
 
-
-			// без проводки
-			$scope.editContractWithoutVersionControl = function(contract) {
-				contract.no_version_control = 1
-				contract.history_edit = 0
-
+			// изменить параметры без проводки
+			$scope.editContract = function(contract) {
 				$scope.callContractEdit(contract)
 			}
 
@@ -1919,7 +1866,7 @@
 		    $scope.setMenu = function(menu) {
 			    if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				    $.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-						['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level', 
+						['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level',
 							'branches_brick', 'representative_phone_level', 'representative'].forEach(function(field) {
 							$scope[field] = response[field]
 						})

@@ -94,102 +94,23 @@
 			}
 
 	        $return = [];
+            // @contract-refactored
 	        while ($start_date < $end_date) {
 		        $start = $start_date->modify('+1 day')->format('Y-m-d'); // переход на новую неделю
 	            $end   = $start_date->format('Y-m-d');
 	            $return_date = $end;
 				$query = "
 	            	SELECT COUNT(*) AS cnt FROM contracts c
+                    JOIN contracts parent_contract ON parent_contract.id = c.id_contract
 	            	LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-	            	WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}'"
-	            	  . Contract::ZERO_OR_NULL_CONDITION_JOIN . " AND cs.status=3 AND c.external=0
+	            	WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND c.current_version=1 AND cs.status=3 AND c.external=0
 	            	" . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
-	            	" . ($grade ? " AND c.grade = {$grade} " : "") . "
-	            	" . ($year ? " AND c.year = {$year} " : "") . "
+	            	" . ($grade ? " AND parent_contract.grade = {$grade} " : "") . "
+	            	" . ($year ? " AND parent_contract.year = {$year} " : "") . "
 	            ";
 	            $return[date('d.m.y', strtotime($return_date))] = dbConnection()->query($query)->fetch_object()->cnt;
 
 	        }
-
-			returnJsonAng($return);
-
-
-			/**** old version *****/
-
-
-
-			if ($subjects) {
-				$subjects_ids = implode(",", $subjects);
-
-				$subject_condition = [];
-				foreach ($subjects as $id_subject) {
-					$subject_condition[] = "CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%' ";
-				}
-			}
-
-
-			foreach(range(0, 6) as $month) {
-				$contract_count = 0;
-// 				$messages = [];
-
-                // @link http://php.net/manual/ru/function.strtotime.php#107331
-                $month_timestamp = strtotime("first day of -$month months");
-
-				$date = date("Y-m", $month_timestamp);
-
-				$result = dbConnection()->query("
-					SELECT c.id FROM contracts c
-						LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
-						LEFT JOIN students s ON s.id = c.id_student
-						LEFT JOIN requests r ON r.id_student = s.id
-					WHERE STR_TO_DATE(c.date, '%d.%m.%Y') >= '$date-01'
-						AND STR_TO_DATE(c.date, '%d.%m.%Y') <= '$date-31'
-						" . ($subjects ? " AND cs.id_subject IN ($subjects_ids) " : "") . "
-						" . ($id_branch ? " AND CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%' " : "") . "
-						" . ($grade ? " AND c.grade = {$grade} " : "") . "
-						" . ($year ? " AND c.year = {$year} " : "") . "
-					GROUP BY c.id
-				");
-
-				while ($row = $result->fetch_object()) {
-					$Contract = Contract::findById($row->id);
-
-					// Если договор оригинальный, то прибавляем + все предметы в количество
-					if ($Contract->isOriginal()) {
-						$contract_count += count($Contract->subjects);
-// 						$messages[] = "Original contract №" . $Contract->id . ": +" . count($Contract->subjects);
-					} else {
-						// если это версия договора
-						$PreviousContract = $Contract->getPreviousVersion();
-
-						// разница в предметах = кол-во новых договоров
-						$contract_count += count($Contract->subjects) - count($PreviousContract->subjects);
-
-/*
-						$cnt = count($Contract->subjects) - count($PreviousContract->subjects);
-						if ($cnt > 0) {
-							$messages[] = "Contract №" . $Contract->id . ": +" . $cnt;
-						}
-*/
-					}
-				}
-
-				$request_count = Request::count([
-					"condition" => "date >= '$date-01' AND date <= '$date-31'
-						" . ($subjects ? " AND (" . implode(' OR ', $subject_condition) . ")" : "") . "
-						" . ($grade ? " AND grade = {$grade} " : "") . "
-						AND id_status!=" . RequestStatuses::DUPLICATE . " AND id_status!=" . RequestStatuses::SPAM
-				]);
-
-				$return[] = [
-					"month" => date("n", $month_timestamp),
-					"contract_count"	=> $contract_count,
-					"request_count"		=> $request_count,
-// 					"messages"			=> $messages,
-				];
-			}
-
-			$return = array_reverse($return);
 
 			returnJsonAng($return);
 		}
@@ -280,7 +201,7 @@
 
 		public function actionAjaxContractSave()
 		{
-			returnJson(Contract::addNewAndReturn($_POST));
+			returnJson(Contract::addNew($_POST));
 		}
 
 		public function actionAjaxContractEdit()
@@ -692,94 +613,6 @@
 			} else {
 				returnJson(false);
 			}
-		}
-
-		public function actionAjaxClientsMap()
-		{
-			extract($_GET);
-
-// 			preType($_GET);
-
-			if (!$branches_invert && !$branches && !$grades && !$subjects) {
-				returnJsonAng(false);
-			}
-
-			if ($branches_invert) {
-				foreach ($branches_invert as $id_branch) {
-					$condition_branches_invert[] = "CONCAT(',', CONCAT(s.branches, ',')) NOT LIKE '%,{$id_branch},%'";
-				}
-				$condition[] = "(".implode(" AND ", $condition_branches_invert).")";
-			}
-
-			if ($branches) {
-				foreach ($branches as $id_branch) {
-					$condition_branches[] = "CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%'";
-				}
-				$condition[] = "(".implode(" OR ", $condition_branches).")";
-			}
-
-			if ($subjects) {
-				$condition_subjects = "(cs.id_subject IN (". implode(",", $subjects) ."))";
-				$condition[] = $condition_subjects;
-			}
-
-			if ($grades) {
-				$condition_grades = "(c.grade IN (". implode(",", $grades) ."))";
-				$condition[] = $condition_grades;
-			}
-
-			$query = dbConnection()->query("
-				SELECT s.id FROM contracts c
-				LEFT JOIN students s ON s.id = c.id_student
-				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
-				WHERE (". implode(" AND ", $condition) .")
-					AND (c.id_contract=0 OR c.id_contract IS NULL) AND cs.status > 1 GROUP BY s.id");
-
-/*
-			ECHO("
-				SELECT s.id FROM contracts c
-				LEFT JOIN students s ON s.id = c.id_student
-				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id
-				WHERE (". implode(" AND ", $condition) .")
-					AND (c.id_contract=0 OR c.id_contract IS NULL) GROUP BY s.id");
-*/
-
-			while ($row = $query->fetch_array()) {
-				if ($row["id"]) {
-					$ids[] = $row["id"];
-				}
-			}
-
-			$Students = Student::findAll([
-				"condition"	=> "id IN (". implode(",", $ids) .")"
-			]);
-
-			foreach ($Students as &$Student) {
-				$Student->Contract 	= $Student->getLastContract();
-
-				if ($Student->Contract->subjects) {
-					foreach ($Student->Contract->subjects as $subject) {
-						$Student->subjects_string[] = $subject['count'] > 40
-							? "<span class='text-danger bold'>" . Subjects::$short[$subject['id_subject']] . "</span>" : Subjects::$short[$subject['id_subject']];
-					}
-					$Student->subjects_string = implode("+", $Student->subjects_string);
-				}
-
-				$Student->markers = $Student->getMarkers();
-
-				if ($Student->branches) {
-					foreach ($Student->branches as $id_branch) {
-						if (!$id_branch) {
-							continue;
-						}
-						$Student->branches_string[] = Branches::getName($id_branch);
-					}
-
-					$Student->branches_string = implode("<br>", $Student->branches_string);
-				}
-			}
-
-			returnJsonAng($Students);
 		}
 
 		public function actionAjaxLoadStatsSchedule()

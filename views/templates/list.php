@@ -6,8 +6,8 @@
     </div>
 	<div ng-repeat="Template in getTemplates()" class="row" style="margin-bottom: 20px">
 		<div class="col-sm-12">
-			<div class="form-group">
-				<b class="from-capital" style="margin: 0 0 3px">{{Template.name}}</b>
+			<div class="form-group task" style="display: inline-block; width: 100%">
+				<b style="margin: 0 0 3px; padding-left: 5px">{{Template.name}}</b>
 				<textarea ng-model="Template.text" class="form-control" rows="3"></textarea>
 				<div class="pull-right" ng-show="Template.type > 1">
 					<span style="margin-right: 8px">

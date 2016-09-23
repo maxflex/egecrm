@@ -139,36 +139,6 @@
 			return Freetime::getStudentBar($this->id);
 		}
 
-		/**
-		 * Получить студентов с договорами.
-		 *
-		 */
-		public static function countWithoutContract()
-		{
-			$query = dbConnection()->query("
-				SELECT s.id FROM students s
-					LEFT JOIN requests r 	ON r.id_student = s.id
-					LEFT JOIN contracts c 	ON c.id_student = s.id
-				WHERE r.adding = 0 	AND c.id_student IS NULL
-				GROUP BY s.id
-			");
-
-			return $query->num_rows;
-		}
-
-		/**
-		 * Посчитать студентов с не расторгнутыми договорами.
-		 *
-		 */
-		public static function countWithActiveContract()
-		{
-			$query = dbConnection()->query("SELECT c.id_student FROM contracts c
-				LEFT JOIN contract_subjects cs ON cs.id_contract = c.id WHERE cs.status > 1"
-				. Contract::ZERO_OR_NULL_CONDITION_JOIN . " GROUP BY c.id_student");
-
-			return $query->num_rows;
-		}
-
 		public static function reviewsNeeded()
 		{
 
@@ -201,32 +171,6 @@
 				"condition" => "id_entity=$id_student AND type_entity='" . self::USER_TYPE . "' AND presence=1",
 				"group"		=> "id_entity, id_subject, id_teacher"
 			]);
-
-/*
-			$group_ids = [];
-			foreach ($VisitJournal as $VJ) {
-				$group_ids[] = $VJ->id_group;
-			}
-
-			if (!$group_ids) {
-				return false;
-			}
-
-			$VisitJournal = VisitJournal::findAll([
-				"condition" => "id_group IN (" . implode(",", $group_ids) . ") AND type_entity='". Teacher::USER_TYPE ."'",
-				"group"		=> "id_entity",
-			]);
-
-			if ($VisitJournal) {
-				foreach ($VisitJournal as $VJ) {
-					$teacher_ids[] = $VJ->id_entity;
-				}
-
-				return $teacher_ids;
-			}
-
-			return false;
-*/
 		}
 
 		/**
@@ -238,6 +182,7 @@
 		 */
 		public static function getWithoutGroup()
 		{
+            // @contract-refactored
 			$result = dbConnection()->query("
 				SELECT 	s.id, s.branches, s.first_name, s.last_name, s.middle_name,
 						cs.id_subject, cs.status, cs.count,
@@ -246,8 +191,8 @@
 					LEFT JOIN contracts c on c.id_student = s.id
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND c.year = g.year)
-					WHERE c.id IS NOT NULL AND (c.id_contract=0 OR c.id_contract IS NULL) AND g.id IS NULL AND cs.id_subject > 0
-						AND cs.status != 1 
+					WHERE c.id IS NOT NULL AND c.current_version=1 AND g.id IS NULL AND cs.id_subject > 0
+						AND cs.status != 1
 			");//AND c.external != 1
 
 			while ($row = $result->fetch_assoc()) {
@@ -263,26 +208,6 @@
 			return $Students;
 		}
 
-		public static function getWithContractByBranch($id_branch)
-		{
-			$query = dbConnection()->query("
-				SELECT s.id FROM contracts c
-				LEFT JOIN students s ON s.id = c.id_student
-				WHERE CONCAT(',', CONCAT(s.branches, ',')) LIKE '%,{$id_branch},%'
-					AND (c.id_contract=0 OR c.id_contract IS NULL) GROUP BY s.id");
-
-			while ($row = $query->fetch_array()) {
-				if ($row["id"]) {
-					$ids[] = $row["id"];
-				}
-			}
-
-			return self::findAll([
-				"condition"	=> "id IN (". implode(",", $ids) .")"
-			]);
-		}
-
-
 		/**
 		 * Уже было хотя бы одно занятие
 		 */
@@ -297,62 +222,6 @@
 		{
 			return VisitJournal::count([
 				"condition" => "id_entity={$id_student} AND type_entity='STUDENT' AND presence=1 AND id_group=$id_group"
-			]);
-		}
-
-
-		/**
-		 * Получить студентов с договорами.
-		 *
-		 * $only_active - только активные договоры
-		 */
-		public static function getWithContract()
-		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
-
-
-			while ($row = $query->fetch_array()) {
-				if ($row["id_student"]) {
-					$ids[] = $row["id_student"];
-				}
-			}
-
-			return self::findAll([
-				"condition"	=> "id IN (". implode(",", $ids) .")"
-			]);
-		}
-
-		/**
-		 * Посчитать студентов с договорами.
-		 *
-		 */
-		public static function countWithContract()
-		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
-
-			return $query->num_rows;
-		}
-
-		/**
-		 * Получить студентов с договорами.
-		 *
-		 */
-		public static function getWithContractPreCancelled()
-		{
-			$query = dbConnection()->query("SELECT id_student FROM contracts WHERE true "
-				. Contract::ZERO_OR_NULL_CONDITION . " GROUP BY id_student");
-
-			while ($row = $query->fetch_array()) {
-				if ($row["id_student"]) {
-					$ids[] = $row["id_student"];
-				}
-			}
-
-
-			return self::findAll([
-				"condition"	=> "id IN (". implode(",", $ids) .")"
 			]);
 		}
 
@@ -414,14 +283,6 @@
 			// Очищаем номера телефонов
 			foreach (static::$_phone_fields as $phone_field) {
 				$this->{$phone_field} = cleanNumber($this->{$phone_field});
-			}
-
-			if ($this->isNewRecord) {
-				if (!LOCAL_DEVELOPMENT) {
-					// кеш количества учеников без договоров обновляется только при создании нового ученика
-					// т.е. если существующему ученику добавить договор, количество не отнимется до создания нового ученика
-					memcached()->set("TotalStudentsWithNoContract", Student::countWithoutContract(), 3600 * 24 * 30);
-				}
 			}
 		}
 
@@ -606,43 +467,18 @@
 		}
 
 		/**
-		 * Получить договоры студента без версий.
-		 *
-		 */
-		public function getActiveContracts()
-		{
-			return Contract::findAll([
-				"condition"	=> "id_student=" . $this->id . Contract::ZERO_OR_NULL_CONDITION
-			]);
-		}
-
-		/**
 		 * Получить постудний договор студента.
 		 *
 		 */
 		public function getLastContract($year = false)
 		{
+            // @contract-refactored
 			return Contract::find([
-				"condition"	=> "id_student=" . $this->id .  Contract::ZERO_OR_NULL_CONDITION . ($year ? " AND year={$year}" : ""),
+				"condition"	=> "id_student=" . $this->id .  " AND current_version=1 " . ($year ? " AND year={$year}" : ""),
 				"order"		=> "id DESC",
 				"limit"		=> "1",
 			]);
 		}
-
-
-		/**
-		 * Получить постудний договор студента текущего учебного года.
-		 *
-		 */
-		public function getCurrentYearLastContract()
-		{
-			return Contract::find([
-				"condition"	=> "year = " . (date("Y") - 1) . " AND id_student=" . $this->id .  Contract::ZERO_OR_NULL_CONDITION,
-				"order"		=> "id DESC",
-				"limit"		=> "1",
-			]);
-		}
-
 
 		/**
 		 * Получить пол.
@@ -976,29 +812,6 @@
 			]);
 		}
 
-		public static function getSameSubjectErrors()
-		{
-			$Students = Student::getWithContract();
-
-
-			foreach ($Students as $Student) {
-				$Groups = $Student->getGroups();
-
-				foreach ($Groups as $Group) {
-					$count = Group::count([
-						"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$Student->id},%' AND id_subject={$Group->id_subject}"
-					]);
-
-					if ($count > 1) {
-						$return[] = $Student;
-					}
-				}
-			}
-
-			return $return;
-		}
-
-
 		/**
 		 * Получить только список ID => ФИО. C договорами
 		 *
@@ -1224,6 +1037,7 @@
 
 		private static function _generateQuery($search, $select)
 		{
+            // @contract-refactored
 			$main_query = "
 				FROM students s " .
 				(! isBlank($search->year) ? " JOIN contracts yc ON (yc.id_student = s.id AND yc.year = {$search->year}) " : "") .
@@ -1231,7 +1045,7 @@
 				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension <> '' AND u.has_photo_cropped = 0 " : "") . "
 				JOIN (
 					SELECT id, id_student, external FROM contracts
-					WHERE 1 " . Contract::ZERO_OR_NULL_CONDITION . "
+					WHERE current_version=1
 					GROUP BY id_student
 					ORDER BY year DESC
 				) c ON c.id_student = s.id WHERE true "

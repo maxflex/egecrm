@@ -72,7 +72,6 @@ RewriteRule ^tasks/ajax/([a-zA-Z]+)[/]?$ index.php?controller=task&action=Ajax$1
 
 # Статистика
 RewriteRule ^stats[/]?$ index.php?controller=stats [QSA,L]
-RewriteRule ^stats/users[/]?$ index.php?controller=stats&action=users [QSA,L]
 RewriteRule ^stats/groups[/]?$ index.php?controller=stats&action=groups [QSA,L]
 RewriteRule ^stats/payments[/]?$ index.php?controller=stats&action=payments [QSA,L]
 RewriteRule ^stats/visits/total[/]?$ index.php?controller=stats&action=TotalVisits [QSA,L]

@@ -79,10 +79,10 @@
 							</div>
 						</div>
 						<div class="col-sm-5" style="padding: 0">
-							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="editContract(contract)">
+							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="createNewContract(contract)">
 								создать новую версию
 							</div>
-							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="editContractWithoutVersionControl(contract)">
+							<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="editContract(contract)">
 								изменить без проводки
 							</div>
 							<div class="form-group" style="margin-bottom: 3px" >

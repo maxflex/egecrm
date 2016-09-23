@@ -13,11 +13,11 @@
 		public static $mysql_table	= "requests";
 
 		protected $_inline_data = ["subjects", "branches"]; // Предметы (в БД хранятся строкой "1, 2, 3" – а тут в массиве
-		
+
 		// Номера телефонов
 		public static $_phone_fields = ["phone", "phone2", "phone3"];
 
-		
+
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
 		public function __construct($array)
@@ -34,7 +34,7 @@
 			if ($this->branches[0] != "") {
 				$this->addBranchInfo();
 			}
-			
+
 			// Генерируем форматированные номера
 			foreach (static::$_phone_fields as $phone_field) {
 				if ($this->{$phone_field} != "") {
@@ -66,29 +66,12 @@
 
 			return $id_status;
 		}
-		
-		/**
-		 * Получить студентов с договорами.
-		 * 
-		 */
-		public static function countWithoutContract()
-		{
-			$query = dbConnection()->query("
-				SELECT r.id FROM requests r
-					LEFT JOIN students s 	ON r.id_student = s.id
-					LEFT JOIN contracts c 	ON c.id_student = s.id
-				WHERE r.adding = 0 	AND c.id_student IS NULL
-				GROUP BY r.id
-			");
-			
-			return $query->num_rows;
-		}
-		
+
 		public static function findByStudent($id_student)
 		{
 			return self::find([
 				"condition" => "id_student=$id_student"
-			]);			
+			]);
 		}
 
 		/**
@@ -173,17 +156,17 @@
 				"order"		=> "date DESC",
 				"limit" 	=> $start_from. ", " .self::PER_PAGE
 			]);
-			
+
 			// Добавляем дубликаты
 			foreach ($Requests as &$Request) {
 				$Request->duplicates = $Request->getDuplicates();
-				
+
 				$Request->has_contract = $Request->hasContract();
-				
+
 				if ($Request->has_contract) {
 					$Request->contract_time = $Request->contractTimeDiff();
 				}
-				
+
 				if ($Request->duplicates) {
 					$Request->total_count = count($Request->duplicates) + 1;
 				}
@@ -195,10 +178,10 @@
 					}
 				}
 			}
-			
+
 			return $Requests;
 		}
-		
+
 		/**
 		 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
 		 *
@@ -212,10 +195,10 @@
 					. (!empty($id_subject) ? " AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%'" : "")
 					. (empty($_COOKIE["id_user_list"]) ? "" : " AND id_user=".$_COOKIE["id_user_list"]) ,
 			]);
-			
+
 			return $Requests;
 		}
-		
+
 		/**
 		 * Получить релевантные заявки по номеру страницы
 		 *
@@ -239,11 +222,11 @@
 			foreach ($Requests as &$Request) {
 				$Request->duplicates = $Request->getDuplicates();
 				$Request->has_contract = $Request->hasContract();
-				
+
 				if ($Request->has_contract) {
 					$Request->contract_time = $Request->contractTimeDiff();
 				}
-				
+
 				if ($Request->duplicates) {
 					$Request->total_count = count($Request->duplicates) + 1;
 				}
@@ -251,7 +234,7 @@
 				if ($Request->id_status == RequestStatuses::NEWR && $id_status != RequestStatuses::ALL) {
 					$Request->list_duplicates = $Request->countListDuplicates();
 				}
-				
+
 				// дубликаты для подсветки
 				foreach (static::$_phone_fields as $phone_field) {
 					if (!empty($Request->{$phone_field})) {
@@ -276,33 +259,33 @@
 					Socket::trigger('requests', 'incoming', ['delete' => true]);
 				}
 			}
-			
+
 			if (empty(trim($this->date))) {
 				$this->date = now();
 			}
-			
+
 			// Очищаем номера телефонов
 			foreach (static::$_phone_fields as $phone_field) {
 				$this->{$phone_field} = cleanNumber($this->{$phone_field});
 			}
 		}
-		
+
 		private static function _getStatus($id_request)
 		{
 			return dbConnection()->query('SELECT id_status FROM requests WHERE id = ' . $id_request)->fetch_object()->id_status;
 		}
-		
+
 		public function hasContract()
 		{
 			return Contract::count([
 				"condition" => "id_student=" . $this->id_student
 			]) > 0;
 		}
-		
-		
+
+
 		/**
 		 * Время между созданием договора и созданием заявки.
-		 * 
+		 *
 		 */
 		public function contractTimeDiff()
 		{
@@ -310,7 +293,7 @@
 				"condition" => "id_student=" . $this->id_student,
 				"order"		=> "id ASC"
 			]);
-			
+
 			return (strtotime($OriginalContract->date_changed) - strtotime($this->date));
 		}
 
@@ -333,7 +316,7 @@
 			// Устанавливаем статус заявки
 /*
 			if (time() - $this->delay_time < 10) {
-				$this->id_status = RequestStatuses::SPAM;	
+				$this->id_status = RequestStatuses::SPAM;
 			} else
 */
 			if ($this->_phoneExists()) {
@@ -462,7 +445,7 @@
 				unset($data["id"]);
 				Request::add($data);
 			}
-			
+
 			$this->id_student = $id_student;
 			return ($this->save("id_student") > 0 ? true : false);
 		}
@@ -477,17 +460,17 @@
 				"condition"	=> "adding=0 AND id_student=".$this->id_student.($get_self ? "" : " AND id!=".$this->id)
 			]);
 		}
-		
+
 		public function getDuplicateComments($get_self = false)
 		{
 			$ids = self::getIds([
 				"condition"	=> "adding=0 AND id_student=".$this->id_student.($get_self ? "" : " AND id!=".$this->id)
 			]);
-			
+
 			foreach ($ids as $id) {
 				$return[$id] = Comment::count(["condition" => "place='REQUEST' AND id_place=$id"]) > 0;
 			}
-			
+
 			return $return;
 		}
 
@@ -584,20 +567,20 @@
 
 			return false;
 		}
-		
-		
+
+
 		/**
 		 * Коливество дней/недель/месяцев/лет с момента первой заявки
-		 * 
+		 *
 		 * @param string $mode (default: 'days')
 		 * $mode = days | weeks | months | years
 		 */
 		public static function timeFromFirst($mode = 'days')
 		{
 			$today = time(); // or your date as well
-			
+
 		    $first_request_date = 1432071360; // #hardcoded first request timestamp
-		    
+
 		    $datediff = $today - $first_request_date;
 
 		    switch ($mode) {
