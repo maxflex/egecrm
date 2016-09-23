@@ -204,8 +204,8 @@
 		
 		/**
 		 * Уведомить всех пользователей об ответе на звонок
-		 */
-		public static function notifyAnswered($id_user, $call_id)
+		 */ 
+		public static function notifyAnswered($id_user, $call_id, $number)
         {
 	        $user_ids = User::getIds([
 		       'condition' => 'banned=0 AND show_phone_calls=1'
@@ -215,7 +215,7 @@
 		    	Socket::trigger('user_' . $id, 'answered', [
 			    	'answered_user' => User::getLogin($id_user),
 			    	'call_id'		=> $call_id,
-		    	]);
+		    	], static::_getCrmByNumber($number));
 	        }
         }
         

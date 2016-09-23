@@ -35,7 +35,7 @@
 						break;
 					case Mango::STATE_CONNECTED:
 						User::setCallBusy($data->to->extension);
-						Call::notifyAnswered($data->to->extension, $data->call_id);
+						Call::notifyAnswered($data->to->extension, $data->call_id, $data->to->line_number);
 						break;
 					case Mango::STATE_DISCONNECTED:
 						User::setCallFree($data->to->extension);

@@ -101,12 +101,12 @@
 	            $return_date = $end;
 				$query = "
 	            	SELECT COUNT(*) AS cnt FROM contracts c
-                    JOIN contracts parent_contract ON parent_contract.id = c.id_contract
+                    JOIN contract_info ON contract_info.id_contract = c.id_contract
 	            	LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-	            	WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND c.current_version=1 AND cs.status=3 AND c.external=0
+	            	WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND c.id=c.id_contract AND cs.status=3 AND c.external=0
 	            	" . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
-	            	" . ($grade ? " AND parent_contract.grade = {$grade} " : "") . "
-	            	" . ($year ? " AND parent_contract.year = {$year} " : "") . "
+	            	" . ($grade ? " AND contract_info.grade = {$grade} " : "") . "
+	            	" . ($year ? " AND contract_info.year = {$year} " : "") . "
 	            ";
 	            $return[date('d.m.y', strtotime($return_date))] = dbConnection()->query($query)->fetch_object()->cnt;
 

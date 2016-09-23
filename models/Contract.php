@@ -25,6 +25,7 @@
 			// логин пользователя
 			if (!$this->isNewRecord) {
 				$this->user_login = User::getLogin($this->id_user);
+                $this->info = ContractInfo::get($this->id_contract);
 			}
 		}
 
@@ -257,3 +258,15 @@
             return "select " . $select . ($with_colors ? $color_counts : ''). $main_query;
         }
 	}
+
+    class ContractInfo extends Model
+	{
+		public static $mysql_table	= "contract_info";
+
+        public static function get($id_contract)
+        {
+            return ContractInfo::find([
+                'condition' => "id_contract={$id_contract}"
+            ]);
+        }
+    }

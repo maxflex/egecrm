@@ -186,13 +186,13 @@
 			$result = dbConnection()->query("
 				SELECT 	s.id, s.branches, s.first_name, s.last_name, s.middle_name,
 						cs.id_subject, cs.status, cs.count,
-						c.id as id_contract, c.grade, c.date, c.year, c.external as level
+						contract_info.*, c.external as level
 				FROM students s
-					LEFT JOIN contracts c on c.id_student = s.id
+                    JOIN contract_info on contract_info.id_student = s.id
+					JOIN contracts c on c.id_contract = contract_info.id_contract
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-					LEFT JOIN groups g ON (g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND c.year = g.year)
-					WHERE c.id IS NOT NULL AND c.current_version=1 AND g.id IS NULL AND cs.id_subject > 0
-						AND cs.status != 1
+					WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1
+                        AND EXISTS(SELECT 1 FROM groups g WHERE g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND contract_info.year = g.year)
 			");//AND c.external != 1
 
 			while ($row = $result->fetch_assoc()) {
@@ -818,15 +818,6 @@
 		 */
 		public static function getAllList()
 		{
-//			$query = dbConnection()->query("
-//				SELECT s.id, CONCAT_WS(' ', s.last_name, s.first_name, s.middle_name) as name FROM students s
-//					LEFT JOIN contracts c 	ON c.id_student = s.id
-//					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-//				WHERE c.id_student IS NOT NULL AND cs.status > 1
-//				GROUP BY s.id
-//				ORDER BY name ASC
-//			");
-
             $query = dbConnection()->query("
 				SELECT s.id, CONCAT_WS(' ', s.last_name, s.first_name, s.middle_name) as name
 				FROM students s
@@ -1038,6 +1029,7 @@
 		private static function _generateQuery($search, $select)
 		{
             // @contract-refactored
+            // @have-to-refactor c.id_student – depricated
 			$main_query = "
 				FROM students s " .
 				(! isBlank($search->year) ? " JOIN contracts yc ON (yc.id_student = s.id AND yc.year = {$search->year}) " : "") .
