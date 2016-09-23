@@ -413,7 +413,7 @@
 		public function getContracts()
 		{
 			return Contract::findAll([
-				"condition"	=> "id_student=" . $this->id
+				"condition"	=> "id_contract IN (" . Contract::getIdsByStudent($this->id) . ")"
 			]);
 		}
 
@@ -474,7 +474,7 @@
 		{
             // @contract-refactored
 			return Contract::find([
-				"condition"	=> "id_student=" . $this->id .  " AND current_version=1 " . ($year ? " AND year={$year}" : ""),
+				"condition"	=> "id_contract IN (" . Contract::getIdsByStudent($this->id) . ") AND current_version=1 " . ($year ? " AND year={$year}" : ""),
 				"order"		=> "id DESC",
 				"limit"		=> "1",
 			]);

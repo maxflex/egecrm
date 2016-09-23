@@ -290,7 +290,7 @@
 		public function contractTimeDiff()
 		{
 			$OriginalContract = Contract::find([
-				"condition" => "id_student=" . $this->id_student,
+				"condition" => "id_contract IN (" . Contract::getIdsByStudent($this->id_student) . ")",
 				"order"		=> "id ASC"
 			]);
 

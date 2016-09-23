@@ -209,13 +209,6 @@
 			returnJson(Contract::edit($_POST));
 		}
 
-		public function actionAjaxUploadFiles()
-		{
-			$Contract = Contract::findById($_POST["id_contract"]);
-			$Contract->files = $_POST["files"];
-			$Contract->uploadFile();
-		}
-
 		public function actionAjaxContractDelete()
 		{
 			extract($_POST);

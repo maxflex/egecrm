@@ -196,6 +196,14 @@
 			return $this->activeSubjectsCount() <= 0;
 		}
 
+        /**
+         * Вернуть по ID студента
+         */
+        public static function getIdsByStudent($id_student)
+        {
+            return dbConnection()->query("SELECT GROUP_CONCAT(contract_id) as contract_ids FROM contract_info WHERE id_student=" . $id_student)->fetch_object()->contract_ids;
+        }
+
         /*
          * Получить данные для основного модуля
          * $page==-1 – получить без лимита
