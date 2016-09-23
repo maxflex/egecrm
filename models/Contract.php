@@ -29,6 +29,22 @@
 			}
 		}
 
+		public static function deleteById($id) {
+		    $Contract = self::findById($id);
+            if ($Contract->current_version) {
+                self::dbConnection()->query(
+                    "update contracts " .
+                    "set current_version = 1 " .
+                    "where id = (" .
+                        "select max(c.id) from (select id from contracts where id_contract = {$Contract->id_contract} and id <> {$Contract->id}) as c" .
+                    ")"
+                );
+		    }
+		    ContractSubject::deleteAll([
+                "condition" => "id_contract = {$Contract->id}"
+            ]);
+            $Contract->delete();
+        }
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
@@ -201,7 +217,7 @@
          */
         public static function getIdsByStudent($id_student)
         {
-            return dbConnection()->query("SELECT GROUP_CONCAT(contract_id) as contract_ids FROM contract_info WHERE id_student=" . $id_student)->fetch_object()->contract_ids;
+            return dbConnection()->query("SELECT GROUP_CONCAT(id_contract) as contract_ids FROM contract_info WHERE id_student=" . $id_student)->fetch_object()->contract_ids;
         }
 
         /*
@@ -222,7 +238,7 @@
             // получаем данные
             $query = static::_generateQuery($search, "s.id as id_student, s.first_name, s.last_name, s.middle_name, c.sum, c.date, c.year, ", true);
             $result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Contract::PER_PAGE));
-//dd($query);
+
             while ($row = $result->fetch_object()) {
                 $data[] = ($page == -1 ? $row->id : $row);
             }
@@ -249,6 +265,7 @@
                                 select c1.*, if(c1.id_contract, (select c2.id_student from contracts c2 where c2.id = c1.id_contract), 0) as parent_id_student
                                 from contracts c1
                             ) c
+                         join  contract_info ci on ci.id_contract = c.id_contract
                          join  students s on c.id_student = s.id or c.parent_id_student = s.id
                          where 1 ".
                          (!isBlank($search->start_date) ? " and str_to_date(c.date, '%d.%m.%Y') >= str_to_date('" . $search->start_date . "', '%d.%m.%Y') " : "") .
@@ -263,6 +280,7 @@
                             " (select count(id) from contracts h
                                 where c.date_changed > h.date_changed and h.id_contract = if(c.id_contract, c.id_contract, c.id)) as version ";
 
+            dd("select " . $select . ($with_colors ? $color_counts : ''). $main_query);
             return "select " . $select . ($with_colors ? $color_counts : ''). $main_query;
         }
 	}

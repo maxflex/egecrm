@@ -38,7 +38,14 @@
 	        return function(text) {
 	            return $sce.trustAsHtml(text);
 	        };
-	    }])
+		}])
+		.filter('group_by_id_contract', function() {
+			return function(items, id_contract) {
+					return _.filter(items, function (item) {
+						return item.id_contract == id_contract;
+					});
+			};
+		})
 		/*
 
 			Контроллер списка заявок
@@ -324,6 +331,14 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
+				$scope.getContractIds = function (contracts) {
+					return _.uniq(_.pluck(contracts, 'id_contract'), true); // second param sorts
+				}
+				$scope.parentContractById = function(id_contract) {
+					return _.find($scope.contracts, function(contract) {
+						return contract.id == id_contract;
+					});
+				}
 
 				$scope.week_count = function (programm) {
 					c = parseInt(_.max(programm, function(v){ return v.count; }).count)
@@ -661,6 +676,7 @@
 
 			$scope.getFirstVersionDate = function(contract)
 			{
+
 				if (!contract.History) {
 					return contract.date
 				} else {
@@ -1045,19 +1061,21 @@
 			// Получить общее количество предметов (для печати договора)
 			$scope.subjectCount = function(contract) {
 				count = 0
-				$.each(contract.subjects, function(i, subject) {
-					if (subject != undefined) {
-						cnt1 = parseInt(subject.count)
-						if (!isNaN(cnt1)) {
-							count += cnt1
-						}
+				if (contract.subjects.length) {
+					$.each(contract.subjects, function(i, subject) {
+						if (subject != undefined) {
+							cnt1 = parseInt(subject.count)
+							if (!isNaN(cnt1)) {
+								count += cnt1
+							}
 
-						cnt2 = parseInt(subject.count2)
-						if (!isNaN(cnt2)) {
-							count += cnt2
+							cnt2 = parseInt(subject.count2)
+							if (!isNaN(cnt2)) {
+								count += cnt2
+							}
 						}
-					}
-				})
+					})
+				}
 				return count
 			}
 
@@ -1416,10 +1434,17 @@
 
 			// создать новую версию
 			$scope.createNewContract = function(contract) {
-                new_contract = angular.copy(contract)
-                delete new_contract.id
+				new_contract = angular.copy(contract)
+				delete new_contract.id
 				new_contract.date = moment().format("DD.MM.YYYY")
+				new_contract.disabled = ['year', 'grade']
 				$scope.callContractEdit(new_contract)
+			}
+
+			$scope.isDisabledField = function(contract, field) {
+				if (contract.disabled && contract.disabled.length)
+					return _.contains(contract.disabled, field)
+				else return false;
 			}
 
 			// изменить параметры без проводки

@@ -44,7 +44,8 @@
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label" style="max-width: 180px; top: -9px; position: absolute">общая сумма оказанных и планируемых услуг</span>
-					<span class="half-black contract-recommended-price" ng-show="recommendedPrice(current_contract) && current_contract.grade >= 9">
+					<span class="half-black contract-recommended-price" ng-show="recommendedPrice(current_contract) && current_contract.info.
+					grade >= 9">
 						рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
 					</span>
 					<div class="input-group">
@@ -65,7 +66,7 @@
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">класс</span>
-					    <?= Grades::buildSelector(false, false, ["ng-model" => "current_contract.grade"]) ?>
+					    <?= Grades::buildSelector(false, false, ["ng-model" => "current_contract.grade", "ng-disabled" => 'isDisabledField(current_contract, "grade")']) ?>
 				</div>
 			</div>
 			<div class="row" style="margin-bottom: 10px">
@@ -80,7 +81,7 @@
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">учебный год</span>
-						<select class="form-control"  ng-model="current_contract.year">
+						<select class="form-control"  ng-model="current_contract.year" ng-disabled="isDisabledField(current_contract, 'year')">
 							<option ng-repeat="year in <?= Years::json() ?>" 
 								value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
 						</select>

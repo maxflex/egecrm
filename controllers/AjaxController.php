@@ -212,10 +212,7 @@
 		public function actionAjaxContractDelete()
 		{
 			extract($_POST);
-
-			Contract::deleteAll([
-				"condition" => "id=$id_contract OR id_contract=$id_contract"
-			]);
+            Contract::deleteById($id_contract);
 		}
 
 		public function actionAjaxContractDeleteHistory()
