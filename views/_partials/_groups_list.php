@@ -6,16 +6,23 @@
 			* dateToStart()
 	*/
 ?>
-<table class="table table-hover border-reverse" style="position: relative">
+<style>
+	caption {
+		color: #000;
+		font-size: 1.2em;
+	}
+</style>
+<table class="table table-hover border-reverse" style="position: relative" <?= ($group_by_year ? ' ng-repeat="groupYear in getGroupsYears()"' : '') ?>>
+	<caption ng-show="groupYear">Группы {{ groupYear + '-' + (groupYear + 1) }} учебного года</caption>
 	<?php if ($loading) :?>
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
 	<?php endif ?>
-	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?>"
+	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?> <?= ($group_by_year ? '| yearFilter:groupYear ': "" ) ?>"
 		ng-class="{
 			'half-opacity': Group.day_and_time.length !== undefined
 		}"
 		class="group-list" data-id="{{Group.id}}">
-		<td width="5%" style="padding-left: 10px!important;">
+		<td width="5%">
 			<a href="groups/edit/{{Group.id}}">{{Group.id}}</a>
 		</td>
 		<td width="8%">
@@ -47,13 +54,11 @@
 -->
 		<td width="15%">
 			<span ng-show="Group.first_schedule">
-				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span>
-				<span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
+				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
 					'one': 'занятие',
 					'few': 'занятия',
 					'many': 'занятий'
-				}"></ng-pluralize></span></span>
-			<span ng-show="Group.first_schedule && Group.schedule_count.paid > 0">, </span><span ng-show="Group.schedule_count.paid > 0">всего
+				}"></ng-pluralize></span></span><span ng-show="Group.first_schedule && Group.schedule_count.paid > 0">, </span><span ng-show="Group.schedule_count.paid > 0">всего
                 {{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}
                 </span>
             </span>

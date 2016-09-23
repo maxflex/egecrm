@@ -24,6 +24,10 @@
 			(item) ->
 				if item > 0 then item else null
 
+		.filter 'yearFilter', () ->
+			(items, year) ->
+				_.where items, {'year': year }
+
 		.controller "FaqCtrl", ($scope) ->
 			$scope.save = ->
 				ajaxStart()
@@ -509,6 +513,10 @@
 				, 'json'
 				$('#email-address').text email
 				lightBoxShow 'email'
+
+			$scope.getGroupsYears = ->
+				if $scope.Groups
+					_.uniq _.pluck ang_scope.Groups, 'year'
 
 		.controller "ListCtrl", ($scope, $timeout) ->
 			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0
