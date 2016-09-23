@@ -6,28 +6,35 @@
 			* dateToStart()
 	*/
 ?>
-<table class="table table-hover border-reverse" style="position: relative">
+<style>
+	caption {
+		color: #000;
+		font-size: 1.2em;
+	}
+</style>
+<table class="table table-hover border-reverse" style="position: relative" <?= ($group_by_year ? ' ng-repeat="groupYear in getGroupsYears()"' : '') ?>>
+	<caption ng-show="groupYear">Группы {{ groupYear + '-' + (groupYear + 1) }} учебного года</caption>
 	<?php if ($loading) :?>
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
 	<?php endif ?>
-	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?>"
+	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?> <?= ($group_by_year ? '| yearFilter:groupYear ': "" ) ?>"
 		ng-class="{
 			'half-opacity': Group.day_and_time.length !== undefined
 		}"
 		class="group-list" data-id="{{Group.id}}">
-		<td width="120">
-			<a href="groups/edit/{{Group.id}}">Группа №{{Group.id}}</a>
+		<td width="5%">
+			<a href="groups/edit/{{Group.id}}">{{Group.id}}</a>
 		</td>
-		<td>
+		<td width="8%">
 			<span ng-repeat='cabinet in Group.cabinets'>
 				<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
 				<span class="remove-space">{{$last ? '' : ', '}}</span>
 			</span>
 		</td>
-		<td width="150">
+		<td width="10%">
 			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + <?= GroupLevels::json() ?>[Group.level] : ''}}{{Group.is_special ? " (спец.)" : ""}}
 		</td>
-		<td>
+		<td width="10%">
 			{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
 				'one': 'ученик',
 				'few': 'ученика',
@@ -45,7 +52,7 @@
 			}">{{Group.notified_students_count}}</span>
 		</td>
 -->
-		<td>
+		<td width="15%">
 			<span ng-show="Group.first_schedule">
 				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
 					'one': 'занятие',
@@ -56,7 +63,7 @@
                 </span>
             </span>
 		</td>
-		<td>
+		<td width="15%">
             <!-- @time-refactored @time-checked -->
 			<span ng-repeat="data in Group.day_and_time">
 				<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
@@ -70,23 +77,23 @@
 					target="_blank" href="teachers/edit/{{ _Teacher.id }}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
 			</span>
 		</td>
-		<td>
-			<span ng-show="Group.days_before_exam !== false">
-				<span ng-show="Group.days_before_exam > 0">
-					запас {{Group.days_before_exam}} <ng-pluralize count="Group.days_before_exam" when="{
-						'one': 'день',
-						'few': 'дня',
-						'many': 'дней'
-					}"></ng-pluralize>
-				</span>
-				<span ng-show="Group.days_before_exam <= 0">запаса нет</span>
-			</span>
-		</td>
-		<td>
+		<td width="13%">
 			<span ng-show='Group.ended'>заархивирована</span>
-		</td>
-		<td>
-			<span ng-show='Group.ready_to_start' class='text-danger'>требует запуска {{ Group.notified_students_count }}/{{ Group.students.length }}</span>
+			<span ng-show='!Group.ended'>
+				<span ng-show='Group.past_lesson_count < 2'>
+					<span class='text-danger'>требует запуска {{ Group.notified_students_count }}/{{ Group.students.length }}</span>
+				</span>
+				<span ng-show="Group.past_lesson_count >= 2">
+					<span ng-show="Group.days_before_exam > 0">
+						запас {{Group.days_before_exam}} <ng-pluralize count="Group.days_before_exam" when="{
+							'one': 'день',
+							'few': 'дня',
+							'many': 'дней'
+						}"></ng-pluralize>
+					</span>
+					<span ng-show="Group.days_before_exam <= 0">запаса нет</span>
+				</span>
+			</span>
 		</td>
 <!--
 		<td width="150">

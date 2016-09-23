@@ -507,7 +507,7 @@
 		/**
 		 * Получить статистику преподавателя
 		 */
-		public static function stats($tutor_id)
+		public static function stats($tutor_id, $full = true)
 		{
 			$ec_lesson_count = VisitJournal::count([
 								    "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'"
@@ -527,42 +527,44 @@
 			$result = dbConnection()->query("select avg(admin_rating_final) as cnt from teacher_reviews where id_teacher = {$tutor_id} AND admin_rating_final <= 5 AND admin_rating_final > 0");
 			$ec_review_avg = $result->fetch_assoc();
 			$ec_review_avg = floatval($ec_review_avg['cnt']);
-			
-			$t = Teacher::findById($tutor_id);
-			$t->calcHoldCoeff();
-			
-			// общий
-			$Teachers = Teacher::findAll([
-				"condition" => "in_egecentr > 0",
-				"order" => "last_name ASC",
-			]);
 
-            foreach ($Teachers as $Teacher) {
-                $Teacher->calcHoldCoeff(['fact_lesson_cnt' => true]);
+            if ($full) {
+                $t = Teacher::findById($tutor_id);
+                $t->calcHoldCoeff();
+
+                // общий
+                $Teachers = Teacher::findAll([
+                    "condition" => "in_egecentr > 0",
+                    "order" => "last_name ASC",
+                ]);
+
+                foreach ($Teachers as $Teacher) {
+                    $Teacher->calcHoldCoeff(['fact_lesson_cnt' => true]);
+                }
+
+                $coeff_total = [];
+                foreach ([0, 9, 10, 11] as $grade) {
+                    $numerator = 0;
+                    $denominator = 0;
+                    foreach($Teachers as $Teacher) {
+                        if ($grade) {
+                            if ($Teacher->loss_by_grade[$grade]) {
+                                $numerator += $Teacher->total_lessons_by_grade[$grade] - $Teacher->loss_by_grade[$grade];
+                                $denominator += $Teacher->total_lessons_by_grade[$grade];
+                            }
+                        } else {
+                            $numerator += $Teacher->total_lessons - $Teacher->loss;
+                            $denominator += $Teacher->total_lessons;
+                        }
+                    }
+                    if (! $denominator) {
+                        $coeff_total[$grade] = 0;
+                    } else {
+                        $coeff_total[$grade] = round(100 * $numerator / $denominator);
+                    }
+                }
             }
-            
-            $coeff_total = [];
-            foreach ([0, 9, 10, 11] as $grade) {
-	            $numerator = 0;
-				$denominator = 0;
-				foreach($Teachers as $Teacher) {
-					if ($grade) {
-						if ($Teacher->loss_by_grade[$grade]) {
-							$numerator += $Teacher->total_lessons_by_grade[$grade] - $Teacher->loss_by_grade[$grade];
-							$denominator += $Teacher->total_lessons_by_grade[$grade];
-						}
-					} else {
-						$numerator += $Teacher->total_lessons - $Teacher->loss;
-						$denominator += $Teacher->total_lessons;
-					}
-				}
-				if (! $denominator) {
-					$coeff_total[$grade] = 0;
-				} else {
-					$coeff_total[$grade] = round(100 * $numerator / $denominator);
-				}
-            }
-            
+
 			return [
 				'ec_lesson_count' 		=> $ec_lesson_count,
 				'ec_review_count' 		=> $ec_review_count,

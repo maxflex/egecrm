@@ -26,9 +26,9 @@
             // @notice  порядок first_schedule - notified_students важен.
             // @todo    перенести heavy данные под if.
             if (!$light) {
-                if ($this->ready_to_start) {
+//                if ($this->ready_to_start) {
                     $this->notified_students_count = static::getNotifiedStudentsCount($this);
-                }
+//                }
             }
 
 
@@ -75,13 +75,15 @@
 			]);
 		}
 
-		public static function getCabinetIds($id_group)
+		public static function getCabinetIds($id_group = false)
 		{
 			$cabinet_ids = [];
 			$result = dbConnection()->query("SELECT id_cabinet FROM group_time WHERE id_group={$id_group} GROUP BY id_cabinet");
-			while($row = $result->fetch_object()) {
-				$cabinet_ids[] = $row->id_cabinet;
-			}
+            if ($result->num_rows) {
+                while($row = $result->fetch_object()) {
+                    $cabinet_ids[] = $row->id_cabinet;
+                }
+            }
 			return $cabinet_ids;
 		}
 
@@ -255,31 +257,37 @@
 		// @refactored
 		public function daysBeforeExam()
 		{
-			if ($this->grade == 10) {
-				return false;
-			}
-
-			// Получаем дату последнего запланированного занятия
-			// @refactored
-			$GroupSchedule = GroupSchedule::find([
-				"condition" => "id_group={$this->id} AND cancelled=0",
-				"order"		=> "date DESC",
-			]);
-
-			// Дату экзамена
-			$ExamDay = ExamDay::find([
-				"condition" => "id_subject={$this->id_subject} AND grade={$this->grade}"
-			]);
-
-/*
-			$datetime1 = new DateTime(date("Y-m-d", strtotime($ExamDay->date)));
-			$datetime2 = new DateTime(date("Y-m-d", strtotime($GroupSchedule->date)));
-			$difference = $datetime1->diff($datetime2);
-			return ($difference->d - 1);
-*/
-			$diff = strtotime($ExamDay->date) - strtotime($GroupSchedule->date);
-			return floor($diff/(60*60*24)) - 1;
+			return static::_getDaysBeforeExam($this);
 		}
+
+		public static function _getDaysBeforeExam($Group)
+        {
+            if ($Group->grade == 10) {
+                return false;
+            }
+
+            // Получаем дату последнего запланированного занятия
+            // @refactored
+            $GroupSchedule = GroupSchedule::find([
+                "condition" => "id_group={$Group->id} AND cancelled=0",
+                "order"		=> "date DESC",
+            ]);
+
+            $exam_year = $Group->year + 1;
+            // Дату экзамена
+            $ExamDay = ExamDay::find([
+                "condition" => "id_subject={$Group->id_subject} AND grade={$Group->grade} AND date like '%{$exam_year}'"
+            ]);
+
+            /*
+                        $datetime1 = new DateTime(date("Y-m-d", strtotime($ExamDay->date)));
+                        $datetime2 = new DateTime(date("Y-m-d", strtotime($GroupSchedule->date)));
+                        $difference = $datetime1->diff($datetime2);
+                        return ($difference->d - 1);
+            */
+            $diff = strtotime($ExamDay->date) - strtotime($GroupSchedule->date);
+            return floor($diff/(60*60*24)) - 1;
+        }
 
 		/**
 		 * @param bool $withoutCancelled	whether cancelled lessons should be ignored.
@@ -590,7 +598,7 @@
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.ready_to_start", " GROUP BY g.id");
+			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.year, g.ready_to_start", " GROUP BY g.id");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
 
 			while ($row = $result->fetch_object()) {
@@ -601,6 +609,7 @@
 				}
 
 				static::_addCabinets($Group);
+                $Group->days_before_exam = static::_getDaysBeforeExam($Group);
 
 				$Group->students = empty($Group->students) ? [] : explode(',', $Group->students);
 
@@ -609,9 +618,9 @@
 				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTime($Group->id);
 
-				if ($Group->ready_to_start) {
+//				if ($Group->ready_to_start) {
 					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
-				}
+//				}
 
 				$data[] = $Group;
 			}

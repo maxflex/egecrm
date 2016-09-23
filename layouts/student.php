@@ -22,11 +22,11 @@
 		?>
     </a>
     <?php
-		$Student = Student::findById(User::fromSession()->id_entity);
-
-		if ($Student->grade == 11 || $Student->grade == 9) {
-			echo '<a href="students/testing" class="list-group-item">Запись на пробный ЕГЭ</a>';
-		}
+//		$Student = Student::findById(User::fromSession()->id_entity);
+//
+//		if ($Student->grade == 11 || $Student->grade == 9) {
+//			echo '<a href="students/testing" class="list-group-item">Запись на пробный ЕГЭ</a>';
+//		}
 	?>
 	<a href="students/reports" class="list-group-item">Отчеты
 		<?php
@@ -57,7 +57,7 @@
 		?>
     </a>
     <a href="students/photo" class="list-group-item">Фото <?= User::fromSession()->photo_extension ? '' : '<span class="badge badge-danger pull-right add-photo-badge">добавить</span>'; ?></a>
-    <a href="students/faq" class="list-group-item">Необходимая информация</a>
+<!--    <a href="students/faq" class="list-group-item">Необходимая информация</a>-->
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>

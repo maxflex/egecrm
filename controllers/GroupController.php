@@ -87,9 +87,7 @@
 			$Teachers = [];
 			if (count($teacher_ids)) {
 				$Teachers = Teacher::findAll(['condition' => 'id in ('.implode(',', array_unique($teacher_ids)).')']);
-				foreach ($Teachers as $Teacher) {
-					$Teacher->calcHoldCoeff(['group_id' => $Group->id]);
-				}
+                // @notice не убран метод из класса потому что в егерепетиторе используется в статистике
 			}
 
 			$LessonData = VisitJournal::findAll([
@@ -461,7 +459,8 @@
 				"cabinet_bars"			=> Freetime::getCabinetBar($Group),
 				"time"			=> Time::get(),
 				"weekdays"		=> Time::WEEKDAYS,
-				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time)
+				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
+                'FirstLesson' => Group::getFirstLesson($Group->id)
 			]);
 
 			$this->render("edit", [

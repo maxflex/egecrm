@@ -41,7 +41,7 @@
 			</tr>
 			<tr ng-repeat="Teacher in Teachers">
 				<td style="text-align: left; width: 250px">
-					<a style="white-space: nowrap" href="teacher/{{Teacher.id}}">{{Teacher.first_name}} {{Teacher.last_name}}</a>
+					<a style="white-space: nowrap" href="teachers/edit/{{Teacher.id}}">{{Teacher.first_name}} {{Teacher.last_name}}</a>
 				</td>
 				<td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
 					<span class="circle-default"
@@ -53,15 +53,5 @@
 				</td>
 			</tr>
 		</tbody>
-	</table>
-
-	<table id="k_u">
-		<thead>
-			<th colspan="2">КУ</th>
-		</thead>
-		<tr ng-repeat="Teacher in Teachers">
-			<td><a href="teachers/edit/{{Teacher.id}}">{{Teacher.first_name}} {{Teacher.last_name}}</a></td>
-			<td>{{ Teacher.hold_coeff }}% (потеря: {{ Teacher.loss }}, общее количество: {{ Teacher.total_lessons }})</td>
-		</tr>
 	</table>
 </div>
