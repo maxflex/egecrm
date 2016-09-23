@@ -80,10 +80,10 @@
 		<td width="13%">
 			<span ng-show='Group.ended'>заархивирована</span>
 			<span ng-show='!Group.ended'>
-				<span ng-show='Group.past_lesson_count < 2'>
-					<span class='text-danger'>требует запуска {{ Group.notified_students_count }}/{{ Group.students.length }}</span>
+				<span ng-show='!Group.past_lesson_count'>
+					<span class='text-danger' ng-show='Group.ready_to_start'>требует запуска {{ Group.notified_students_count }}/{{ Group.students.length }}</span>
 				</span>
-				<span ng-show="Group.past_lesson_count >= 2">
+				<span ng-show="Group.past_lesson_count">
 					<span ng-show="Group.days_before_exam > 0">
 						запас {{Group.days_before_exam}} <ng-pluralize count="Group.days_before_exam" when="{
 							'one': 'день',
