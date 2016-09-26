@@ -1,6 +1,6 @@
 <div id="agreement-print-{{contract.id}}" class="printable">
 	<h4 style="margin-bottom: 0">Дополнительное соглашение №{{contract.id_additional}}</h4>
-	<h4 style="margin-top: 0">к агентскому договору №{{contract.id}} от {{getFirstVersionDate(contract)}} г.</h4>
+	<h4 style="margin-top: 0">к агентскому договору №{{contract.id}} от {{firstContractInChain(contract).date}} г.</h4>
 	<div style="display: inline-block; width: 100%; margin-bottom: 20px">
 		<span style="float: left">г. Москва</span> 
 		<span style="float: right">{{contract.date}} г.</span>
@@ -13,7 +13,7 @@
 	 
 		<h4>1. ПРЕДМЕТ СОГЛАШЕНИЯ</h4>
 	
-	<p>1.1. Стороны пришли к соглашению внести следующие изменения в Договор №{{contract.id}} от {{getFirstVersionDate(contract)}} года:<br>
+	<p>1.1. Стороны пришли к соглашению внести следующие изменения в Договор №{{contract.id}} от {{getFirstContractInChain(contract).date}} года:<br>
 		– Пункт 1.1. Договора изложить в следующей редакции:</p>
 	
 	<p>«Агент обязуется совершить от своего имени и за счет Принципала действия по организации предметных консультаций, направленных на подготовку Принципала (лица, назначенного Принципалом - консультируемого) к сдаче {{(student.grade >= 10) ? "ЕГЭ" : "ОГЭ"}}, согласно следующим требованиям Принципала:</p>

@@ -277,7 +277,7 @@
 
 		public function hasContract()
 		{
-			return Contract::count([
+			return ContractInfo::count([
 				"condition" => "id_student=" . $this->id_student
 			]) > 0;
 		}

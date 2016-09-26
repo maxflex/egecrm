@@ -413,7 +413,8 @@
 		public function getContracts()
 		{
 			return Contract::findAll([
-				"condition"	=> "id_contract IN (" . Contract::getIdsByStudent($this->id) . ")"
+				"condition"	=> "id_contract IN (" . Contract::getIdsByStudent($this->id) . ")",
+                "order"     => "str_to_date(date, '%d.%m.%Y'), date_changed desc"
 			]);
 		}
 

@@ -331,13 +331,37 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
-				$scope.getContractIds = function (contracts) {
-					return _.uniq(_.pluck(contracts, 'id_contract'), true); // second param sorts
+				closeContexMenu = function() {
+					_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
+					$scope.$apply();
 				}
-				$scope.parentContractById = function(id_contract) {
-					return _.find($scope.contracts, function(contract) {
-						return contract.id == id_contract;
-					});
+				$(document).on('keyup', function(event){
+						if (event.keyCode == 27) {
+							closeContexMenu()
+						}
+					})
+				$('.emptyClickHandler').on('click', function(){
+					console.log(123);
+				});
+				$('.contex-menu li, .emptyClickHandler').on('click', function(){
+					closeContexMenu();
+				})
+
+				$scope.getContractIds = function () {
+					return _.uniq(_.pluck($scope.contracts, 'id_contract'));
+				}
+				$scope.firstContractInChainById = function(id_contract) {
+					return _.first(_.where($scope.contracts, {id: id_contract}));
+				}
+				$scope.firstContractInChain = function(contract) {
+					return contract && $scope.firstContractInChainById(contract.id_contract)
+				}
+				$scope.isLastContractInChain = function(contract) {
+					return $scope.lastContractInChain(contract).id == contract.id
+				}
+
+				$scope.lastContractInChain = function(contract) {
+					return _.last(_.where($scope.contracts, {id_contract: contract.id_contract}))
 				}
 
 				$scope.week_count = function (programm) {
@@ -494,12 +518,12 @@
 
 			$scope.getStudentGroups = function() {
 				group_ids = $scope.getJournalGroups()
-
-				$.each($scope.Groups, function(index, Group) {
-					if ($.inArray(Group.id.toString(), group_ids) < 0) {
-						group_ids.push(Group.id)
-					}
-				})
+				if ($scope.Groups)
+					$.each($scope.Groups, function(index, Group) {
+						if ($.inArray(Group.id.toString(), group_ids) < 0) {
+							group_ids.push(Group.id)
+						}
+					})
 
 				return group_ids
 			}
@@ -606,7 +630,7 @@
 
 				// был баг. месяц делал автоматически +1
 				month = date[1] - 1;
-				console.log(date[2] + "-" + month + "-" + date[0])
+				// console.log(date[2] + "-" + month + "-" + date[0])
 				date = new Date(date[2], month, date[0])
 				return moment(date).format("D MMMM YYYY г.")
 			}
@@ -689,19 +713,19 @@
 			 * Выбрать ID контракта для последующей печати договора
 			 *
 			 */
-			$scope.printContract = function(id_contract) {
+			$scope.printContract = function(contract) {
+				$scope.contract = $scope.firstContractInChain(contract)
 				$scope.print_mode = 'contract'
-				$scope.id_contract_print = id_contract
 				$scope.id_user_print = 0
-				html = $("#contract-print-" + $scope.id_contract_print).html()
+				html = $("#contract-print").html()
 				$scope.editBeforePrint(html)
 			}
 
-            $scope.printContractLicenced = function(id_contract) {
+			$scope.printContractLicenced = function(contract) {
+				$scope.contract = $scope.firstContractInChain(contract)
 				$scope.print_mode = 'contract-licenced'
-				$scope.id_contract_print = id_contract
 				$scope.id_user_print = 0
-				html = $("#contract-licenced-print-" + $scope.id_contract_print).html()
+				html = $("#contract-licenced-print").html()
 				$scope.editBeforePrint(html)
 			}
 
@@ -1061,7 +1085,7 @@
 			// Получить общее количество предметов (для печати договора)
 			$scope.subjectCount = function(contract) {
 				count = 0
-				if (contract.subjects.length) {
+				if (contract && contract.subjects.length) {
 					$.each(contract.subjects, function(i, subject) {
 						if (subject != undefined) {
 							cnt1 = parseInt(subject.count)
@@ -1085,6 +1109,10 @@
 			// Первая часть суммы для печати в договоре
 			$scope.contractFirstPart = function(contract) {
 				count = 0
+				if (!contract) {
+					return count;
+				}
+
 				$.each(contract.subjects, function(i, subject) {
 					if (subject != undefined) {
 						cnt1 = parseInt(subject.count)
@@ -1093,7 +1121,6 @@
 						}
 					}
 				})
-
 				// сколько процентов составляет первая часть предметов
 				percentage = count / $scope.subjectCount(contract)
 
@@ -1103,6 +1130,7 @@
 			// Первая часть суммы для печати в договоре
 			$scope.contractSecondPart = function(contract) {
 				count = 0
+				if (!contract) {return count;}
 				$.each(contract.subjects, function(i, subject) {
 					if (subject != undefined) {
 						cnt2 = parseInt(subject.count2)
@@ -1120,8 +1148,9 @@
 
 			// Рекомендуемая цена договора
 			$scope.recommendedPrice = function(contract) {
+				if (!contract) return false;
 				count = $scope.subjectCount(contract)
-				if (contract.grade == 11) {
+				if (contract.info && contract.info.grade == 11) {
 					recommended_price = 0
 
 					if (count > 96) {
@@ -1161,8 +1190,10 @@
 			}
 
 			$scope.getSubjectPrice = function(contract, price) {
-				coeff = contract.sum / $scope.recommendedPrice(contract)
-				return Math.round(price * coeff)
+				if (contract) {
+					coeff = contract.sum / $scope.recommendedPrice(contract)
+					return Math.round(price * coeff)
+				} else return false;
 			}
 
 			// @time-refactored
@@ -1313,7 +1344,7 @@
 					$("#contract-date").removeClass("has-error")
 				}
 
-				if (!$scope.current_contract.grade) {
+				if (!$scope.current_contract.info.grade) {
 					$("select[name='grades']").addClass("has-error").focus()
 					return false
 				} else {
@@ -1338,22 +1369,24 @@
 				if ($scope.current_contract.id) {
 					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
+						_.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) { c = $scope.current_contract })
 						ajaxEnd('contract')
 						lightBoxHide()
+						$scope.lateApply()
 					}, "json")
 				} else {
-                    $scope.current_contract.id_student = $scope.student.id
+					$scope.current_contract.info.id_student = $scope.student.id
 					// сохраняем догавар
 					ajaxStart('contract')
 					$.post("ajax/contractSave", $scope.current_contract, function(response) {
 						ajaxEnd('contract')
 						lightBoxHide()
-						$scope.current_contract.id 			= response.id
-                        $scope.current_contract.id_contract = response.id_contract
+						$scope.current_contract.id = response.id
+						$scope.current_contract.id_contract = response.id_contract
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
 						new_contract = $.extend(true, {}, $scope.current_contract)
-						new_contract.subjects = new_contract.subjects.filter(function(e){return e})
+						new_contract.subjects = _.filter(new_contract.subjects, function(e){return e})
 						new_contract.subjects.sort(function(a, b) {
 							return a.id_subject - b.id_subject
 						})
@@ -1414,8 +1447,8 @@
 			{
 				$scope.current_contract = angular.copy(contract)
 
-				if ($scope.current_contract.grade === null) {
-					$scope.current_contract.grade = ""
+				if ($scope.current_contract.info.grade === null) {
+					$scope.current_contract.info.grade = ""
 				}
 
 				lightBoxShow('addcontract')
@@ -1434,7 +1467,7 @@
 
 			// создать новую версию
 			$scope.createNewContract = function(contract) {
-				new_contract = angular.copy(contract)
+				new_contract = angular.copy($scope.lastContractInChain(contract))
 				delete new_contract.id
 				new_contract.date = moment().format("DD.MM.YYYY")
 				new_contract.disabled = ['year', 'grade']
@@ -1461,7 +1494,7 @@
 
 			// Показать окно добавления платежа
 			$scope.addContractDialog = function() {
-				$scope.current_contract = {subjects : [], year: $scope.academic_year}
+				$scope.current_contract = {subjects : [], info: {year: $scope.academic_year}}
 				$scope.current_contract.date = moment().format("DD.MM.YYYY")
 
 				$('.triple-switch').slider('setValue', 0)
@@ -1494,15 +1527,8 @@
 					if (result === true) {
 						$.post("ajax/contractDelete", {"id_contract": contract.id})
 
-						$.each($scope.contracts, function(i, v) {
-							if (v !== undefined) {
-								if (v.id == contract.id) {
-									$scope.contracts.splice(i, 1)
-									$scope.$apply()
-									return
-								}
-							}
-						})
+						$scope.contracts = _.without($scope.contracts, contract);
+						$scope.$apply()
 					}
 				})
 			}

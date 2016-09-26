@@ -215,14 +215,14 @@
             Contract::deleteById($id_contract);
 		}
 
-		public function actionAjaxContractDeleteHistory()
-		{
-			extract($_POST);
-
-			Contract::deleteAll([
-				"condition" => "id=$id_contract"
-			]);
-		}
+//		public function actionAjaxContractDeleteHistory()
+//		{
+//			extract($_POST);
+//
+//			Contract::deleteAll([
+//				"condition" => "id=$id_contract"
+//			]);
+//		}
 
 		public function actionAjaxChangeRequestUser()
 		{

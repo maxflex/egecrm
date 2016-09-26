@@ -31,7 +31,8 @@
 
 		public static function deleteById($id) {
 		    $Contract = self::findById($id);
-            if ($Contract->current_version) {
+
+            if ($Contract->current_version) { // установка текущей версии на предыдущую версию
                 self::dbConnection()->query(
                     "update contracts " .
                     "set current_version = 1 " .
@@ -44,6 +45,10 @@
                 "condition" => "id_contract = {$Contract->id}"
             ]);
             $Contract->delete();
+
+            if ($Contract->id == $Contract->id_contract) { // удаление инфо если это базовая версия
+                ContractInfo::deleteById($Contract->id);
+            }
         }
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -70,18 +75,24 @@
 			return $code;
 		}
 
+		public static function add($data = false)
+        {
+            $newContract = parent::add($data);
+            $newContract->info = ContractInfo::add(array_merge($data['info'], ['id_contract' => $newContract->id]));
+            return $newContract;
+        }
+
 		public static function addNew($Contract)
 		{
 			// Создаем договор
 			$NewContract = self::add($Contract);
-
 			// логин пользователя
 			if ($NewContract->id_user) {
 				$NewContract->user_login = User::getCached()[$NewContract->id_user]['login'];
 			}
 
 			// Создаем логин-пароль пользователя
-			$Student = Student::findById($NewContract->id_student);
+			$Student = Student::findById($NewContract->info->id_student, true);
 			if (!$Student->login) {
 				$Student->login 	= $NewContract->id;
 				$Student->password	= mt_rand(10000000, 99999999);

@@ -12,17 +12,16 @@
 				/*.no-last-item-border tr:last td {*/
 					/*border-bottom: none!important;*/
 				/*}*/
-
 		</style>
 		<table class="table table-hover border-reverse no-last-item-border"
-			   ng-repeat="id_contract in getContractIds(contracts)"
+			   ng-repeat="id_contract in getContractIds()"
 		>
 				<caption>
 					Договор №{{ id_contract }}
-					на {{ parentContractById(id_contract).info.year + '-' + (parentContractById(id_contract).info.year + 1) }}
-					учебный год ({{ parentContractById(id_contract).info.grade }} класс)
+					на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }}
+					учебный год ({{ firstContractInChainById(id_contract).info.grade }} класс)
 				</caption>
-				<tr ng-repeat="contract in contracts | group_by_id_contract:id_contract | orderBy:'date_changed' as filtered_contracts">
+				<tr ng-repeat="contract in contracts | group_by_id_contract:id_contract | orderBy:'date_changed'">
 					<td width="15%">версия {{ $index + 1 }} от {{ formatContractDate(contract.date) }}</td>
 					<td width="10%">{{ contract.sum | number }} <ng-pluralize count="contract.sum" when="{
 						'one': 'рубль',
@@ -44,28 +43,19 @@
 						создал {{contract.user_login}} {{formatDate(contract.date_changed) | date:'dd.MM.yyyy'}}
 					</td>
 					<td align="right">
-						<span class="link-like" ng-click="contract.show_actions = !contract.show_actions" ng-class="{'fadeInUp': contract.show_actions, 'fadeOutDown': !contract.show_actions}">действия</span>
-
-						<div ng-show="contract.show_actions" style="position: absolute;" class="contex-menu">
-							<!-- ДАГАВАРА -->
-							<div>
-								<div class="col-sm-5" style="padding: 0">
-									<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="createNewContract(contract)">
-										создать новую версию
-									</div>
-									<div class="form-group link-like link-reverse" style="margin-bottom: 3px" ng-click="editContract(contract)">
-										изменить без проводки
-									</div>
-									<span class='link-like' ng-click="printContract(contract.id)">печать договора ИП</span>
-									<span class='link-like' ng-click="printContractLicenced(contract.id)">печать договора ООО</span>
-									<span class='link-like' ng-click="printContractAdditional(contract)">печать доп.соглашения ИП</span>
-									<span class='link-like' ng-click="printContractAdditionalOoo(contract)">печать доп.соглашения ООО</span>
-									<span class='link-like' ng-click="printAct(contract)">акта сдачи-приемки ИП</span>
-									<div class='link-like' ng-show='contract.id == contract.id_contract && filtered_contracts.length > 1' ng-click='deleteContract(contract)'>
-										удалить
-									</div>
-								</div>
-							</div>
+						<span class="link-like" ng-click="contract.show_actions = !contract.show_actions">действия</span>
+						<div ng-show="contract.show_actions"
+                             class="contex-menu fadeInUp fadeOutDown">
+<!--							<div class="emptyClickHandler"></div>-->
+                            <ul>
+                                <li class='link-like' ng-click="createNewContract(contract)">создать новую версию</li>
+                                <li class='link-like' ng-click="editContract(contract)">изменить без проводки</li>
+                                <li class='link-like' ng-click="printContract(contract)">печать договора ИП</li>
+                                <li class='link-like' ng-click="printContractLicenced(contract)">печать договора ООО</li>
+                                <li class='link-like' ng-click="printContractAdditional(contract)">печать доп.соглашения ИП</li>
+                                <li class='link-like' ng-click="printContractAdditionalOoo(contract)">печать доп.соглашения ООО</li>
+                                <li class='link-like' ng-show='contract.id == contract.id_contract' ng-click='deleteContract(contract)'>удалить</li>
+                            </ul>
 							<!-- /ДАГАВАРА -->
 						</div>
 					</td>
@@ -79,3 +69,34 @@
 		<?= partial("act") ?>
     </div>
 </div>
+<style>
+    .contex-menu {
+        padding: 5px;
+		z-index:5;
+        position: absolute;
+        /*width: 200px;*/
+        right: 20px;
+        background: white;
+        box-shadow: 0px 1px 6px #cdcdcd;
+        border-radius: 3px;
+        border: 1px solid #aaa;
+        text-align: left;
+        -vendor-animation-duration: 0.5s;
+        -vendor-animation-delay: 0.5s;
+    }
+    .contex-menu ul {
+        padding: 0;
+    }
+    .contex-menu li {
+        list-style: none;
+        padding: 5px;
+	}
+	.emptyClickHandler {
+		position:fixed;
+		top: 0;
+		left: 0;
+		width:100%;
+		height: 100%;
+		z-index: 4;
+	}
+</style>

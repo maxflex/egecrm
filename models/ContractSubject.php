@@ -49,7 +49,7 @@
 		public static function addData($subjects_data, $id_contract) 
 		{
 			$subjects_data = array_filter($subjects_data);
-			
+
 			// Если никаких данных нет
 			if (!count($subjects_data)) {
 				return false;
