@@ -44,9 +44,8 @@
 					</td>
 					<td align="right">
 						<span class="link-like" ng-click="contract.show_actions = !contract.show_actions">действия</span>
-						<div ng-show="contract.show_actions"
-                             class="contex-menu fadeInUp fadeOutDown">
-<!--							<div class="emptyClickHandler"></div>-->
+                        <div ng-show="contract.show_actions" class="emptyClickHandler" ng-click="closeContexMenu()"></div>
+						<div ng-show="contract.show_actions" class="contex-menu fadeInUp fadeOutDown">
                             <ul>
                                 <li class='link-like' ng-click="createNewContract(contract)">создать новую версию</li>
                                 <li class='link-like' ng-click="editContract(contract)">изменить без проводки</li>
@@ -56,8 +55,7 @@
                                 <li class='link-like' ng-click="printContractAdditionalOoo(contract)">печать доп.соглашения ООО</li>
                                 <li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContract(contract)'>удалить</li>
                             </ul>
-							<!-- /ДАГАВАРА -->
-						</div>
+                        </div>
 					</td>
 				</tr>
 		</table>
@@ -86,6 +84,7 @@
     }
     .contex-menu ul {
         padding: 0;
+        z-index:10;
     }
     .contex-menu li {
         list-style: none;

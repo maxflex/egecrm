@@ -331,23 +331,17 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
-				closeContexMenu = function() {
+        $scope.closeContexMenu = function() {
 					_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
 					$scope.$apply();
 				}
 				$(document).on('keyup', function(event){
-						if (event.keyCode == 27) {
-							closeContexMenu()
-						}
-					})
-				$('.emptyClickHandler').on('click', function(){
-					console.log(123);
-				});
-				$('.contex-menu li, .emptyClickHandler').on('click', function(){
-					closeContexMenu();
-				})
+          if (event.keyCode == 27) {
+            $scope.closeContexMenu()
+          }
+        })
 
-				$scope.getContractIds = function () {
+        $scope.getContractIds = function () {
 					return _.uniq(_.pluck($scope.contracts, 'id_contract'));
 				}
 				$scope.firstContractInChainById = function(id_contract) {
@@ -1538,6 +1532,9 @@
 						$.post("ajax/contractDelete", {"id_contract": contract.id})
 
 						$scope.contracts = _.without($scope.contracts, contract);
+						if (contract.current_version) {
+              $scope.lastContractInChain(contract).current_version = true
+            }
 						$scope.$apply()
 					}
 				})
