@@ -715,7 +715,9 @@
 			 */
 			$scope.printContract = function(contract) {
 				$scope.contract = $scope.firstContractInChain(contract)
-				$scope.print_mode = 'contract'
+				$scope.$apply();
+
+        $scope.print_mode = 'contract'
 				$scope.id_user_print = 0
 				html = $("#contract-print").html()
 				$scope.editBeforePrint(html)
@@ -723,14 +725,19 @@
 
 			$scope.printContractLicenced = function(contract) {
 				$scope.contract = $scope.firstContractInChain(contract)
-				$scope.print_mode = 'contract-licenced'
+        $scope.$apply();
+
+        $scope.print_mode = 'contract-licenced'
 				$scope.id_user_print = 0
 				html = $("#contract-licenced-print").html()
 				$scope.editBeforePrint(html)
 			}
 
 			$scope.printContractAdditional = function(contract) {
-				$scope.print_mode = 'agreement'
+        $scope.contract = contract
+        $scope.$apply();
+
+			  $scope.print_mode = 'agreement'
 				$scope.contract_additional = contract
 				$scope.id_contract_print = contract.id
 				html = $("#agreement-print-" + $scope.id_contract_print).html()
@@ -738,7 +745,10 @@
 			}
 
 			$scope.printContractAdditionalOoo = function(contract) {
-				$scope.print_mode = 'agreement-ooo'
+        $scope.contract = contract
+        $scope.$apply();
+
+			  $scope.print_mode = 'agreement-ooo'
 				$scope.contract_additional = contract
 				$scope.id_contract_print = contract.id
 				html = $("#agreement-ooo-print-" + $scope.id_contract_print).html()
@@ -1085,7 +1095,7 @@
 			// Получить общее количество предметов (для печати договора)
 			$scope.subjectCount = function(contract) {
 				count = 0
-				if (contract && contract.subjects.length) {
+				if (contract && Object.keys(contract.subjects).length) {
 					$.each(contract.subjects, function(i, subject) {
 						if (subject != undefined) {
 							cnt1 = parseInt(subject.count)
