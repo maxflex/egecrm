@@ -6,6 +6,12 @@ angular.module "Clients", ["ui.bootstrap"]
 	.filter 'hideZero', ->
         (item) ->
             if item > 0 then item else null
+	.filter 'toArray', ->
+		(obj) ->
+			arr = []
+			$.each obj, (index, value) ->
+				arr.push(value)
+			return arr
 	.controller "ListCtrl", ($scope, $timeout) ->
 		$scope.yearLabel = (year) ->
 			'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год'

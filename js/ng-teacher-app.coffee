@@ -27,7 +27,12 @@
 		.filter 'yearFilter', () ->
 			(items, year) ->
 				_.where items, {'year': year }
-
+		.filter 'toArray', ->
+			(obj) ->
+				arr = []
+				$.each obj, (index, value) ->
+					arr.push(value)
+				return arr
 		.controller "FaqCtrl", ($scope) ->
 			$scope.save = ->
 				ajaxStart()

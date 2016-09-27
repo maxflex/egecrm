@@ -38,6 +38,15 @@ angular.module("Teacher", ["ngMap"]).config([
       'year': year
     });
   };
+}).filter('toArray', function() {
+  return function(obj) {
+    var arr;
+    arr = [];
+    $.each(obj, function(index, value) {
+      return arr.push(value);
+    });
+    return arr;
+  };
 }).controller("FaqCtrl", function($scope) {
   $scope.save = function() {
     ajaxStart();
