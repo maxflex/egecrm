@@ -1514,7 +1514,9 @@
 			}
 			// создать новую версию
 			$scope.createNewContract = function(contract) {
-				new_contract = angular.copy($scope.lastContractInChain(contract))
+        delete contract.show_actions // закрыть меню
+
+			  new_contract = angular.copy($scope.lastContractInChain(contract))
 				delete new_contract.id
 				new_contract.date = moment().format("DD.MM.YYYY")
 				$scope.callContractEdit(disableContractFields(new_contract))
