@@ -6,7 +6,7 @@
 			* dateToStart()
 	*/
 ?>
-<table class="table table-hover border-reverse" style="position: relative" <?= ($group_by_year ? ' ng-repeat="groupYear in getGroupsYears()"' : '') ?>>
+<table class="table table-hover border-reverse table last-item-no-border" style="position: relative" <?= ($group_by_year ? ' ng-repeat="groupYear in getGroupsYears()"' : '') ?>>
 	<tr class="no-hover">
 		<td colspan="8" class="no-border-bottom">
 			<b ng-show="groupYear">Группы {{ groupYear + '-' + (groupYear + 1) }} учебного года</b>

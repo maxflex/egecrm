@@ -348,16 +348,16 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
-        /*** contex menu functions ***/
+				/*** contex menu functions ***/
 				$scope.closeContexMenu = function() {
-					_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
-					$scope.$apply();
+						_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
+						$scope.$apply();
 				}
 				$(document).on('keyup', function(event){
-          if (event.keyCode == 27) {
-            $scope.closeContexMenu()
-          }
-        })
+						if (event.keyCode == 27) {
+								$scope.closeContexMenu()
+						}
+				})
 
 				/*** contract functions ***/
 				$scope.getGroupsYears = function() {
@@ -386,7 +386,7 @@
 					return contract.current_version
 				}
 				$scope.lastContractInChain = function(contract) {
-					return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
+					return _.find($scope.contractsChain(+contract.id_contract), function (c) { return c.current_version == 1})
 				}
 
 				$scope.week_count = function (programm) {
@@ -1398,14 +1398,7 @@
 					return
 				}
 
-        pushAndSetCurrentVersion = function (contract) {
-          $scope.lastContractInChain(contract).current_version = 0
-          _.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) {
-            $scope.current_contract.current_version = 1
-            c = $scope.current_contract
-          })
-        }
-				if ($scope.current_contract.id) {
+        if ($scope.current_contract.id) {
 					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
             pushAndSetCurrentVersion($scope.current_contract)
@@ -1421,7 +1414,7 @@
 						ajaxEnd('contract')
 						lightBoxHide()
 						$scope.current_contract.id = response.id
-						$scope.current_contract.id_contract = response.id_contract
+						$scope.current_contract.id_contract = +response.id_contract
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
 						$scope.current_contract.current_version = 1
@@ -1432,10 +1425,17 @@
 							return a.id_subject - b.id_subject
 						})
 						$scope.contracts = initIfNotSet($scope.contracts)
-						$scope.contracts.push(new_contract)
+						pushAndSetCurrentVersion(new_contract)
 						$scope.$apply()
 					}, "json");
 				}
+			}
+			pushAndSetCurrentVersion = function (contract) {
+				if ($scope.contractsChain(contract.id_contract).length) {
+					$scope.lastContractInChain(contract).current_version = 0
+				}
+				contract.current_version = 1
+				$scope.contracts.push(contract)
 			}
 
 			$scope.subjectChecked = function(id_subject) {
@@ -1572,11 +1572,10 @@
 				bootbox.confirm("Вы уверены, что хотите удалить договор?", function(result) {
 					if (result === true) {
 						$.post("ajax/contractDelete", {"id_contract": contract.id})
-
 						$scope.contracts = _.without($scope.contracts, contract);
-						if ($scope.lastContractInChain(contract) && contract.current_version) {
-              $scope.lastContractInChain(contract).current_version = 1
-            }
+						if ($scope.contractsChain(contract.id_contract).length && contract.current_version) {
+							_.last($scope.contractsChain(contract.id_contract)).current_version = 1
+						}
 						$scope.$apply()
 					}
 				})

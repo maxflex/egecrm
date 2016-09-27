@@ -29,17 +29,29 @@
 			}
 		}
 
+		private static function setCurrentVersionToPrev($Contract) {
+            self::dbConnection()->query(
+                "update contracts " .
+                "set current_version = 1 " .
+                "where id = (" .
+                "select max(c.id) from (select id from contracts where id_contract = {$Contract->id_contract} and id <> {$Contract->id}) as c" .
+                ")"
+            );
+        }
+
+        private static function unsetCurrentVersionOfPrev($id_contract) {
+            self::dbConnection()->query(
+                "update contracts " .
+                "set current_version = 0 " .
+                "where id_contract = {$id_contract} "
+            );
+        }
+
 		public static function deleteById($id) {
 		    $Contract = self::findById($id);
 
             if ($Contract->current_version) { // установка текущей версии на предыдущую версию
-                self::dbConnection()->query(
-                    "update contracts " .
-                    "set current_version = 1 " .
-                    "where id = (" .
-                        "select max(c.id) from (select id from contracts where id_contract = {$Contract->id_contract} and id <> {$Contract->id}) as c" .
-                    ")"
-                );
+                self::setCurrentVersionToPrev($Contract);
 		    }
 		    ContractSubject::deleteAll([
                 "condition" => "id_contract = {$Contract->id}"
@@ -49,6 +61,14 @@
             if ($Contract->id == $Contract->id_contract) { // удаление инфо если это базовая версия
                 ContractInfo::deleteById($Contract->id);
             }
+        }
+
+        public static function add($data = false)
+        {
+            self::unsetCurrentVersionOfPrev($data['id_contract']);
+            $newContract = parent::add($data);
+            $newContract->info = ContractInfo::add(array_merge($data['info'], ['id_contract' => $newContract->id]));
+            return $newContract;
         }
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -74,13 +94,6 @@
 
 			return $code;
 		}
-
-		public static function add($data = false)
-        {
-            $newContract = parent::add($data);
-            $newContract->info = ContractInfo::add(array_merge($data['info'], ['id_contract' => $newContract->id]));
-            return $newContract;
-        }
 
 		public static function addNew($Contract)
 		{
