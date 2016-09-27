@@ -8,7 +8,7 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<?= $Group->id ? "Группа {$Group->id} " . ($Group->is_special ? "(спецгруппа)" : "") : "Добавление группы" ?>
+		<?= $Group->id ? "Группа {$Group->id}" : "Добавление группы" ?>
 		<div class="pull-right">
 			 <?php if ($Group->id): ?>
 				<a style="margin-right: 12px" class="link-reverse" href="groups/journal/<?= $Group->id ?>">посещаемость</a>

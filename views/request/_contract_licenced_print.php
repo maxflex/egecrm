@@ -1,4 +1,4 @@
-<div id="contract-licenced-print-{{contract.id}}" class="printable printable-contract">
+<div id="contract-licenced-print" class="printable printable-contract">
 
 	 <style type="text/css">
     .ng-hide {

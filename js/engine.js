@@ -656,6 +656,7 @@
 	 */
 	function lightBoxShow(element)
 	{
+		ang_scope && ang_scope.closeContexMenu && ang_scope.closeContexMenu()
 		if (element == "addcontract") {
 			setTimeout(function(){$(".transition-control").removeClass("no-transition")}, 300)
 		}

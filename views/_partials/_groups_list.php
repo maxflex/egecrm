@@ -31,8 +31,8 @@
 				<span class="remove-space">{{$last ? '' : ', '}}</span>
 			</span>
 		</td>
-		<td width="10%">
-			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + <?= GroupLevels::json() ?>[Group.level] : ''}}{{Group.is_special ? " (спец.)" : ""}}
+		<td width="150">
+			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade : ''}}{{Group.level ? '-' + <?= GroupLevels::json() ?>[Group.level] : ''}}
 		</td>
 		<td width="10%">
 			{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{

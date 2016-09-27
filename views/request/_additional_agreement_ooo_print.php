@@ -6,7 +6,7 @@
 	}
     </style>
 	<h4 style="margin-bottom: 0">Дополнительное соглашение №{{contract.id_additional}}</h4>
-	<h4 style="margin-top: 0">к договору на оказание платных образовательных услуг №{{contract.id}} от {{getFirstVersionDate(contract)}} г.</h4>
+	<h4 style="margin-top: 0">к договору на оказание платных образовательных услуг №{{contract.id}} от {{getFirstContractInChain(contract).date}} г.</h4>
 	<div style="display: inline-block; width: 100%; margin-bottom: 20px">
 		<span style="float: left">г. Москва</span> 
 		<span style="float: right">{{contract.date}} г.</span>
@@ -19,7 +19,7 @@
 	 
 		<h4>1. ПРЕДМЕТ СОГЛАШЕНИЯ</h4>
 	
-	<p>1.1. Стороны пришли к соглашению внести следующие изменения в Договор №{{contract.id}} от {{getFirstVersionDate(contract)}} г.:</p>
+	<p>1.1. Стороны пришли к соглашению внести следующие изменения в Договор №{{contract.id}} от {{getFirstContractInChain(contract).date}} г.:</p>
 	
 	<p>- Пункт 1.3. Договора изложить в следующей редакции:<br>
 		«Продолжительность образовательной программы по программе курса 

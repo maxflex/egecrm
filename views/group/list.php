@@ -185,49 +185,6 @@
 								</tr>
 							</tbody>
 						</table>
-
-						<div ng-repeat="Group in Groups2 | filter:groupsFilter2" ng-show="Groups2" class="ng-hide group-list-2"
-							ng-class="{'mt10': !$first, 'last': Group.Students.length == 0}" data-index="{{$index}}" id="group-index-{{$index}}">
-			<!--
-							<h5>
-								<span ng-bind-html="Group.branch_svg | to_trusted"></span>, {{Group.grade}} класс, {{Subjects[Group.subject]}}
-							</h5>
-			-->
-							<table class="table table-divlike">
-								<tbody>
-									<tr ng-repeat="Student in Group.Students" class="student-line is-draggable"
-										data-group-index="{{$parent.$index}}" data-student="{{Student}}" data-id="{{Student.id}}">
-			<!-- 							<td width="50"></td> -->
-										<td width="300">
-											<a href="student/{{Student.id}}" ng-class="{
-												'text-warning': getSubject(Student.Contract.subjects, Group.subject).status == 2
-											}">
-											<span ng-show="Student.last_name || Student.first_name || Student.middle_name">{{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}</span>
-											<span ng-show="!Student.last_name && !Student.first_name && !Student.middle_name">Неизвестно</span>
-											</a>
-										</td>
-										<td width="100">
-											{{Student.Contract.id}}
-										</td>
-										<td width="100">
-											{{Student.Contract.grade}} класс
-										</td>
-										<td width="100">
-											{{Student.Contract.date}}
-										</td>
-										<td width="100">
-
-											<span ng-repeat="subject in Student.Contract.subjects" ng-show="subject.id_subject == Group.subject"><span class="text-danger bold" ng-show="subject.count > 40">{{subject.short}}</span><span ng-show="subject.count <= 40">{{subject.short}}</span></span>
-										</td>
-										<td width="300">
-											<span ng-repeat="(id_branch, short) in Student.branch_short track by $index"
-												ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}"></span>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div ng-show="(Groups2 | filter:groupsFilter2).length == 0" class="center half-black small" style="margin: 30px 0 15px">не найдено групп</div>
 				</div>
 			</div>
 		</div>

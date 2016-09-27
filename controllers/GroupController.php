@@ -440,11 +440,6 @@
 				$Students[] = $Student;
 			}
 
-			// сортировка по номеру договора
-			usort($Students, function($a, $b) {
-				return ($a->Contract->id < $b->Contract->id ? -1 : 1);
-			});
-
 			$ang_init_data = angInit([
 				"Group" 	=> $Group,
 				"Teachers"	=> $Teachers,

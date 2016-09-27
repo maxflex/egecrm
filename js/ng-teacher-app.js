@@ -286,20 +286,20 @@ angular.module("Teacher", ["ngMap"]).config([
       return;
     } else {
       payment_select.parent().removeClass('has-error');
-      if (1 === parseInt($scope.new_payment.id_status)) {
+      if (parseInt($scope.new_payment.id_status) === 1) {
         if (!$scope.new_payment.card_first_number) {
           payment_card_first_number.focus().addClass('has-error');
           return;
+        } else {
+          payment_card_first_number.removeClass('has-error');
         }
-      } else {
-        payment_card_first_number.removeClass('has-error');
+        if (!$scope.new_payment.card_number) {
+          payment_card.focus().addClass('has-error');
+          return;
+        } else {
+          payment_card.removeClass('has-error');
+        }
       }
-    }
-    if (!$scope.new_payment.card_number) {
-      payment_card.focus().addClass('has-error');
-      return;
-    } else {
-      payment_card.removeClass('has-error');
     }
     if (!$scope.new_payment.sum) {
       payment_sum.focus().parent().addClass('has-error');

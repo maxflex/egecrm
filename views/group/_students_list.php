@@ -24,9 +24,11 @@
 							</a>
 						</td>
 						<td>
+                            <!-- @contract-refactored  -->
 							{{Student.Contract.id}}
 						</td>
 						<td>
+                            <!-- @contract-refactored  -->
 							{{Student.Contract.grade}} класс
 						</td>
 						<td>

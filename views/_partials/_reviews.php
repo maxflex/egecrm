@@ -52,3 +52,8 @@
 		</td>		
 	</tr>
 </table>
+<style>
+	.hint--bottom::after{
+		white-space: pre-line;
+	}
+</style>
