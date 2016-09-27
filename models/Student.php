@@ -192,7 +192,7 @@
 					JOIN contracts c on c.id_contract = contract_info.id_contract
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1
-                        AND EXISTS(SELECT 1 FROM groups g WHERE g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND contract_info.year = g.year)
+                        AND NOT EXISTS(SELECT 1 FROM groups g WHERE g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND contract_info.year = g.year)
 			");//AND c.external != 1
 
 			while ($row = $result->fetch_assoc()) {

@@ -147,7 +147,8 @@
         {
             if (! $this->id_contract) {
                 $this->id_contract = $this->id;
-                $this->save('id_contract');
+                $this->current_version = 1;
+                $this->save();
             }
         }
 

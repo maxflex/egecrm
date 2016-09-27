@@ -68,10 +68,11 @@
 			if (!count($Group->students) || !$Group->id_subject || !$Group->first_schedule || !$FirstLesson->cabinet) {
 				return 0;
 			}
-			return GroupSms::count([
-				"condition" => "id_student IN (" . implode(",", $Group->students) . ") AND id_subject = {$Group->id_subject}
-									AND first_schedule = '{$Group->first_schedule}' AND cabinet={$FirstLesson->cabinet}"
-			]);
+			return dbConnection()->query("
+				SELECT COUNT(DISTINCT id_student) AS c FROM group_sms 
+				WHERE id_student IN (" . implode(",", $Group->students) . ") AND id_subject = {$Group->id_subject}
+					AND first_schedule = '{$Group->first_schedule}' AND cabinet={$FirstLesson->cabinet}
+			")->fetch_object()->c;
 		}
 
 		public static function getCabinetIds($id_group = false)
