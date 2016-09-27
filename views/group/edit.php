@@ -123,7 +123,7 @@
 							</td>
 							<td width="220">
 								<span ng-repeat="(day, data) in Student.bar" class="group-freetime-block">
-									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
+									<span ng-repeat="bar in data | toArray track by $index" class="bar {{bar}}"></span>
 								</span>
 							</td>
 						</tr>
@@ -133,7 +133,7 @@
 							</td>
 							<td width="220">
 							   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">
-									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
+									<span ng-repeat="bar in data | toArray track by $index" class="bar {{bar}}"></span>
 								</span>
 							</td>
 						</tr>
@@ -141,7 +141,7 @@
 							<td colspan="4">Загрузка кабинета <span style='color: {{ getCabinet(id_cabinet).color }}'>{{ getCabinet(id_cabinet).label }}</span></td>
 							<td width="220">
 								<span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
-									<span ng-repeat="bar in data" class="bar {{bar}}">{{ timeid }}</span>
+									<span ng-repeat="bar in data | toArray track by $index" class="bar {{bar}}">{{ timeid }}</span>
 								</span>
 							</td>
 						</tr>

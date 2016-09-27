@@ -13,7 +13,7 @@
                         <td width="200px" style="padding-left: 20px;">{{ Cabinet.number }}</td>
                         <td width="150">
 							    <span ng-repeat="(day, data) in Cabinet.bar" class="group-freetime-block">
-									<span ng-repeat="bar in data" class="bar {{bar}}"></span>
+									<span ng-repeat="bar in data | toArray track by $index" class="bar {{bar}}"></span>
 								</span>
                         </td>
                     </tr>

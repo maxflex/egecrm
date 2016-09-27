@@ -6,14 +6,12 @@
 			* dateToStart()
 	*/
 ?>
-<style>
-	caption {
-		color: #000;
-		font-size: 1.2em;
-	}
-</style>
 <table class="table table-hover border-reverse" style="position: relative" <?= ($group_by_year ? ' ng-repeat="groupYear in getGroupsYears()"' : '') ?>>
-	<caption ng-show="groupYear">Группы {{ groupYear + '-' + (groupYear + 1) }} учебного года</caption>
+	<tr class="no-hover">
+		<td colspan="8" class="no-border-bottom">
+			<b ng-show="groupYear">Группы {{ groupYear + '-' + (groupYear + 1) }} учебного года</b>
+		</td>
+	</tr>
 	<?php if ($loading) :?>
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
 	<?php endif ?>

@@ -2617,3 +2617,40 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .form-control[readonly] {
   background-color: white;
 }
+table.last-item-no-border tr:last-child td {
+  border-bottom: none!important;
+}
+.contex-menu {
+  padding: 5px;
+  z-index:5;
+  position: absolute;
+  /*width: 200px;*/
+  right: 20px;
+  background: white;
+  box-shadow: 0px 1px 6px #cdcdcd;
+  border-radius: 3px;
+  border: 1px solid #aaa;
+  text-align: left;
+  -vendor-animation-duration: 0.5s;
+  -vendor-animation-delay: 0.5s;
+}
+.contex-menu ul {
+  padding: 0;
+  z-index:10;
+}
+.contex-menu li {
+  list-style: none;
+  padding: 5px;
+}
+.emptyClickHandler {
+  position:fixed;
+  top: 0;
+  left: 0;
+  width:100%;
+  height: 100%;
+  z-index: 4;
+}
+
+.no-hover {
+  hover:none
+}

@@ -4,25 +4,14 @@
 			<a ng-click="addContractDialog()" class="link-like link-reverse">добавить</a>
 	    </div>
 		<!--договора-->
-		<style>
-				caption {
-					color: #000;
-					font-size: 14px !important;
-					font-weight: bold;
-					padding: 0 !important;
-				}
-				/*.no-last-item-border tr:last td {*/
-					/*border-bottom: none!important;*/
-				/*}*/
-		</style>
-		<table class="table table-hover border-reverse no-last-item-border"
+		<table class="table table-hover border-reverse last-item-no-border"
 			   ng-repeat="id_contract in getContractIds()"
 		>
-				<caption>
-					Договор №{{ id_contract }}
-					на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }}
-					учебный год ({{ firstContractInChainById(id_contract).info.grade }} класс)
-				</caption>
+			<tr class="no-hover">
+				<td colspan="8" class="no-border-bottom">
+					<b> Договор №{{ id_contract }} на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainById(id_contract).info.grade }} класс)</b>
+				</td>
+			</tr>
 				<tr ng-repeat="contract in contracts | group_by_id_contract:id_contract | orderBy:'date_changed'">
 					<td width="20%">версия {{ $index + 1 }} от {{ formatContractDate(contract.date) }}</td>
 					<td width="15%">{{ contract.sum | number }} <ng-pluralize count="contract.sum" when="{
@@ -69,35 +58,3 @@
 		<?= partial("act") ?>
     </div>
 </div>
-<style>
-    .contex-menu {
-        padding: 5px;
-		z-index:5;
-        position: absolute;
-        /*width: 200px;*/
-        right: 20px;
-        background: white;
-        box-shadow: 0px 1px 6px #cdcdcd;
-        border-radius: 3px;
-        border: 1px solid #aaa;
-        text-align: left;
-        -vendor-animation-duration: 0.5s;
-        -vendor-animation-delay: 0.5s;
-    }
-    .contex-menu ul {
-        padding: 0;
-        z-index:10;
-    }
-    .contex-menu li {
-        list-style: none;
-        padding: 5px;
-	}
-	.emptyClickHandler {
-		position:fixed;
-		top: 0;
-		left: 0;
-		width:100%;
-		height: 100%;
-		z-index: 4;
-	}
-</style>

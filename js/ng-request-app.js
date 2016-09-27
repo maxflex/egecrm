@@ -53,6 +53,16 @@
 					});
 			};
 		})
+		.filter('toArray', function() {
+			return function(obj) {
+				var arr;
+				arr = [];
+				$.each(obj, function(index, value) {
+					return arr.push(value);
+				});
+				return arr;
+			};
+		})
 		/*
 
 			Контроллер списка заявок
@@ -338,7 +348,8 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
-        $scope.closeContexMenu = function() {
+        /*** contex menu functions ***/
+				$scope.closeContexMenu = function() {
 					_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
 					$scope.$apply();
 				}
@@ -347,28 +358,35 @@
             $scope.closeContexMenu()
           }
         })
-		
-		$scope.getGroupsYears = function() {
-		    if ($scope.Groups) {
-		      return _.uniq(_.pluck(ang_scope.Groups, 'year'));
-		    }
-		  };
-		
-        $scope.getContractIds = function () {
+
+				/*** contract functions ***/
+				$scope.getGroupsYears = function() {
+					if ($scope.Groups) {
+						return _.uniq(_.pluck(ang_scope.Groups, 'year'));
+					}
+				};
+
+				$scope.getContractIds = function () {
 					return _.uniq(_.pluck($scope.contracts, 'id_contract'));
 				}
+
+				$scope.contractsChain = function(id_contract) {
+					return _.where($scope.contracts, {id_contract: id_contract})
+				}
 				$scope.firstContractInChainById = function(id_contract) {
-					return _.first(_.where($scope.contracts, {id: id_contract}));
+					return _.find($scope.contractsChain(id_contract), function(c){ return c.id == c.id_contract})
 				}
 				$scope.firstContractInChain = function(contract) {
 					return contract && $scope.firstContractInChainById(contract.id_contract)
 				}
-				$scope.isLastContractInChain = function(contract) {
-					return $scope.lastContractInChain(contract).id == contract.id
+				$scope.isFirstContractInChain = function(contract) {
+					return contract.id == contract.id_contract
 				}
-
+				$scope.isLastContractInChain = function(contract) {
+					return contract.current_version
+				}
 				$scope.lastContractInChain = function(contract) {
-					return _.last(_.where($scope.contracts, {id_contract: contract.id_contract}))
+					return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
 				}
 
 				$scope.week_count = function (programm) {
@@ -1383,10 +1401,17 @@
 					return
 				}
 
+        pushAndSetCurrentVersion = function (contract) {
+          $scope.lastContractInChain(contract).current_version = 0
+          _.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) {
+            $scope.current_contract.current_version = 1
+            c = $scope.current_contract
+          })
+        }
 				if ($scope.current_contract.id) {
 					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
-						_.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) { c = $scope.current_contract })
+            pushAndSetCurrentVersion($scope.current_contract)
 						ajaxEnd('contract')
 						lightBoxHide()
 						$scope.lateApply()
@@ -1402,6 +1427,8 @@
 						$scope.current_contract.id_contract = response.id_contract
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
+						$scope.current_contract.current_version = 1
+
 						new_contract = $.extend(true, {}, $scope.current_contract)
 						new_contract.subjects = _.filter(new_contract.subjects, function(e){return e})
 						new_contract.subjects.sort(function(a, b) {
@@ -1482,13 +1509,18 @@
 				}, 100)
 			}
 
+			disableContractFields = function(contract) {
+				// if (!($scope.isFirstContractInChain(contract) && $scope.isLastContractInChain(contract)) {
+					contract.disabled = ['year', 'grade']
+				// }
+				return contract
+			}
 			// создать новую версию
 			$scope.createNewContract = function(contract) {
 				new_contract = angular.copy($scope.lastContractInChain(contract))
 				delete new_contract.id
 				new_contract.date = moment().format("DD.MM.YYYY")
-				new_contract.disabled = ['year', 'grade']
-				$scope.callContractEdit(new_contract)
+				$scope.callContractEdit(disableContractFields(new_contract))
 			}
 
 			$scope.isDisabledField = function(contract, field) {
@@ -1499,15 +1531,15 @@
 
 			// изменить параметры без проводки
 			$scope.editContract = function(contract) {
-				$scope.callContractEdit(contract)
+				$scope.callContractEdit(disableContractFields(contract))
 			}
 
-			$scope.editHistoryContract = function(contract) {
-				contract.no_version_control = 1
-				contract.history_edit = 1
-
-				$scope.callContractEdit(contract)
-			}
+			// $scope.editHistoryContract = function(contract) {
+			// 	contract.no_version_control = 1
+			// 	contract.history_edit = 1
+      //
+			// 	$scope.callContractEdit(contract)
+			// }
 
 			// Показать окно добавления платежа
 			$scope.addContractDialog = function() {
@@ -1545,8 +1577,8 @@
 						$.post("ajax/contractDelete", {"id_contract": contract.id})
 
 						$scope.contracts = _.without($scope.contracts, contract);
-						if (contract.current_version) {
-              $scope.lastContractInChain(contract).current_version = true
+						if ($scope.lastContractInChain(contract) && contract.current_version) {
+              $scope.lastContractInChain(contract).current_version = 1
             }
 						$scope.$apply()
 					}
