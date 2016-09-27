@@ -5,6 +5,12 @@ angular.module "Settings", ["ui.bootstrap", 'ngSanitize']
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
+	.filter 'toArray', ->
+		(obj) ->
+			arr = []
+			$.each obj, (index, value) ->
+				arr.push(value)
+			return arr
 	.controller "VocationsCtrl", ($scope) ->
 		$scope.schedulde_loaded = false
 		$scope.menu = 1
