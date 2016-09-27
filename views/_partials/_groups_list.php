@@ -81,7 +81,7 @@
 				<span ng-show='!Group.past_lesson_count'>
 					<span class='text-danger' ng-show='Group.ready_to_start'>требует запуска {{ Group.notified_students_count }}/{{ Group.students.length }}</span>
 				</span>
-				<span ng-show="Group.past_lesson_count">
+				<span ng-show="Group.past_lesson_count && [9,11].indexOf(Group.grade) != -1">
 					<span ng-show="Group.days_before_exam > 0">
 						запас {{Group.days_before_exam}} <ng-pluralize count="Group.days_before_exam" when="{
 							'one': 'день',
