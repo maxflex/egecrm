@@ -262,7 +262,7 @@
 
 
             // получаем данные
-            $query = static::_generateQuery($search, "s.id as id_student, s.first_name, s.last_name, s.middle_name, c.sum, c.date, c.year, ", true);
+            $query = static::_generateQuery($search, "s.id as id_student, s.first_name, s.last_name, s.middle_name, c.sum, c.date, ci.year, ", true);
             $result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Contract::PER_PAGE));
 
             while ($row = $result->fetch_object()) {
@@ -286,13 +286,9 @@
         private static function _generateQuery($search, $select, $with_colors = false)
         {
             $main_query = "
-                         from
-                            (
-                                select c1.*, if(c1.id_contract, (select c2.id_student from contracts c2 where c2.id = c1.id_contract), 0) as parent_id_student
-                                from contracts c1
-                            ) c
+                         from contracts c
                          join  contract_info ci on ci.id_contract = c.id_contract
-                         join  students s on c.id_student = s.id or c.parent_id_student = s.id
+                         join  students s on ci.id_student = s.id 
                          where 1 ".
                          (!isBlank($search->start_date) ? " and str_to_date(c.date, '%d.%m.%Y') >= str_to_date('" . $search->start_date . "', '%d.%m.%Y') " : "") .
                          (!isBlank($search->end_date) ? " and str_to_date(c.date, '%d.%m.%Y') <= str_to_date('" . $search->end_date . "', '%d.%m.%Y') " : "") .
@@ -306,7 +302,6 @@
                             " (select count(id) from contracts h
                                 where c.date_changed > h.date_changed and h.id_contract = if(c.id_contract, c.id_contract, c.id)) as version ";
 
-            dd("select " . $select . ($with_colors ? $color_counts : ''). $main_query);
             return "select " . $select . ($with_colors ? $color_counts : ''). $main_query;
         }
 	}
