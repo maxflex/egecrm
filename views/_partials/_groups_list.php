@@ -9,7 +9,7 @@
 <table class="table table-hover border-reverse table last-item-no-border" style="position: relative" <?= ($group_by_year ? ' ng-repeat="groupYear in getGroupsYears()"' : '') ?>>
 	<tr class="no-hover">
 		<td colspan="8" class="no-border-bottom">
-			<b ng-show="groupYear">Группы {{ groupYear + '-' + (groupYear + 1) }} учебного года</b>
+			<h4 class="row-header default-case" ng-show="groupYear">Группы {{ groupYear + '-' + (groupYear + 1) }} учебного года</h4>
 		</td>
 	</tr>
 	<?php if ($loading) :?>

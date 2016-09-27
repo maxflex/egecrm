@@ -133,6 +133,7 @@
         public static function edit($Contract)
         {
             Contract::updateById($Contract['id'], $Contract);
+            ContractInfo::updateById($Contract['info']['id_contract'], $Contract['info']);
             ContractSubject::addData($Contract['subjects'], $Contract['id']);
         }
 
@@ -319,5 +320,11 @@
             return ContractInfo::find([
                 'condition' => "id_contract={$id_contract}"
             ]);
+        }
+
+        public static function updateById($id, $data)
+        {
+            self::deleteAll(["condition" => "id_contract = {$id}"]);
+            self::add($data);
         }
     }

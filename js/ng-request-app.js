@@ -1398,10 +1398,14 @@
 					return
 				}
 
-        if ($scope.current_contract.id) {
+				if ($scope.current_contract.id) {
 					ajaxStart('contract')
-					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
-            pushAndSetCurrentVersion($scope.current_contract)
+					$.post("ajax/contractEdit", $scope.current_contract, function(response){
+						key = _.findIndex($scope.contracts, function(c){ return c.id == $scope.current_contract.id; })
+						$scope.contracts[key] = $scope.current_contract
+						if ($scope.isFirstContractInChain($scope.current_contract)) {
+							updateVersions($scope.current_contract)
+						}
 						ajaxEnd('contract')
 						lightBoxHide()
 						$scope.lateApply()
@@ -1429,6 +1433,9 @@
 						$scope.$apply()
 					}, "json");
 				}
+			}
+			updateVersions = function(contract) {
+				$scope.contractsChain(contract.id_contract).map(function(version){ return version.info = contract.info })
 			}
 			pushAndSetCurrentVersion = function (contract) {
 				if ($scope.contractsChain(contract.id_contract).length) {
@@ -1486,7 +1493,7 @@
 			// вызывает окно редактирования контракта
 			$scope.callContractEdit = function(contract)
 			{
-				$scope.current_contract = angular.copy(contract)
+				$scope.current_contract = cloneContract(contract)
 
 				if ($scope.current_contract.info.grade === null) {
 					$scope.current_contract.info.grade = ""
@@ -1506,17 +1513,20 @@
 				}, 100)
 			}
 
+			cloneContract = function(contract) {
+				copy = angular.copy(contract)
+				delete copy.show_actions
+				return copy;
+			}
 			disableContractFields = function(contract) {
-				// if (!($scope.isFirstContractInChain(contract) && $scope.isLastContractInChain(contract)) {
+				if (!$scope.isFirstContractInChain(contract)) {
 					contract.disabled = ['year', 'grade']
-				// }
+				}
 				return contract
 			}
 			// создать новую версию
 			$scope.createNewContract = function(contract) {
-        delete contract.show_actions // закрыть меню
-
-			  new_contract = angular.copy($scope.lastContractInChain(contract))
+        new_contract = cloneContract($scope.lastContractInChain(contract))
 				delete new_contract.id
 				new_contract.date = moment().format("DD.MM.YYYY")
 				$scope.callContractEdit(disableContractFields(new_contract))

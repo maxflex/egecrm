@@ -9,7 +9,7 @@
 		>
 			<tr class="no-hover">
 				<td colspan="8" class="no-border-bottom">
-					<b> Договор №{{ id_contract }} на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainById(id_contract).info.grade }} класс)</b>
+					<h4 class="row-header default-case"> Договор №{{ id_contract }} на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainById(id_contract).info.grade }} класс)</h4>
 				</td>
 			</tr>
 				<tr ng-repeat="contract in contracts | group_by_id_contract:id_contract | orderBy:'date_changed'">
@@ -33,7 +33,7 @@
 					<td width="20%">
 						создал {{contract.user_login}} {{formatDate(contract.date_changed) | date:'dd.MM.yyyy'}}
 					</td>
-					<td align="right" width="3%">
+					<td align="right" width="3%" class="no-padding-right">
 						<span class="link-like" ng-click="contract.show_actions = !contract.show_actions">действия</span>
                         <div ng-show="contract.show_actions" class="emptyClickHandler" ng-click="closeContexMenu()"></div>
 						<div ng-show="contract.show_actions" class="contex-menu fadeInUp fadeOutDown">
