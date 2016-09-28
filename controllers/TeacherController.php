@@ -166,6 +166,7 @@
 				"three_letters"         => Subjects::$three_letters,
 				"SubjectsFull"          => Subjects::$all,
 				"payment_statuses"	    => Payment::$all,
+				"payment_types"	        => PaymentTypes::$all,
 				"user"				    => User::fromSession(),
 				"Grades"			    => Grades::$all,
 			]);
@@ -191,12 +192,24 @@
 					returnJsonAng(Teacher::getReviews($id_teacher));
 				}
 				case 2: {
-					returnJsonAng(
-						VisitJournal::findAll([
-							"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'",
-							"order"		=> "lesson_date DESC, lesson_time DESC",
-						])
-					);
+                    $Lessons = VisitJournal::findAll([
+                        "condition" => "id_entity=$id_teacher AND type_entity='TEACHER'",
+                        "order"		=> "lesson_date, lesson_time",
+                    ]);
+                    $prev_lesson_date = '2000-01-01';
+				    for ($i = 0; $i < count($Lessons); $i++) {
+                        $Lesson = $Lessons[$i];
+                        $NextLesson = isset($Lessons[$i + 1]) ? $Lessons[$i + 1] : false;
+
+                        $Lesson->cabinet = Cabinet::getBlock($Lesson->cabinet, $Lesson->id_branch);
+                        $Lesson->group_level = dbConnection()->query("SELECT level FROM groups WHERE id= {$Lesson->id_group}")->fetch_object()->level;
+                        $Lesson->login_user_saved = dbConnection()->query("select login from users where id = {$Lesson->id_user_saved}")->fetch_object()->login;
+                        $Lesson->payment = Payment::find([
+				            "condition" => "entity_id={$id_teacher} and entity_type='".Teacher::USER_TYPE."' ".
+                                           "and str_to_date(date, '%d.%m.%Y') >= '{$Lesson->lesson_date}' " . ($NextLesson ? " and str_to_date(date, '%d.%m.%Y') < '" . $NextLesson->lesson_date . "' " : "")
+                        ]);
+                    }
+					returnJsonAng($Lessons);
 				}
 				case 3: {
 					returnJsonAng(Payment::findAll(["condition" => "entity_id=$id_teacher and entity_type='".Teacher::USER_TYPE."'", 'order'=>'first_save_date desc']));
@@ -208,8 +221,12 @@
 					$Teacher = Teacher::findById($id_teacher);
 					$Stats = Teacher::stats($id_teacher, false);
 
-					$Stats['clients_count'] = dbEgerep()->query("SELECT COUNT(*) AS cnt FROM attachments WHERE tutor_id=" . $id_teacher)->fetch_object()->cnt;
-					$Stats['er_review_count'] = dbEgerep()->query("
+                    $Stats['clients_count'] = dbEgerep()->query("SELECT COUNT(*) AS cnt FROM attachments WHERE tutor_id=" . $id_teacher)->fetch_object()->cnt;
+                    if ($Stats['clients_count']) {
+                        $Stats['er_first_attachment_date'] = dbEgerep()->query("SELECT date FROM attachments WHERE tutor_id=" . $id_teacher. " ORDER BY date LIMIT 1")->fetch_object()->date;
+                    }
+
+                    $Stats['er_review_count'] = dbEgerep()->query("
 						SELECT COUNT(*) AS cnt FROM reviews r
 						JOIN attachments a ON a.id = r.attachment_id
 						WHERE a.tutor_id={$id_teacher} AND r.score < 11 AND r.score > 0

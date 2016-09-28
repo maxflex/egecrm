@@ -2664,3 +2664,9 @@ h4.row-header.default-case{
 .no-margin{
   margin: 0;
 }
+.text-thin{
+  font-weight:300;
+}
+.no-border, .no-border td{
+  border:none!important;
+}

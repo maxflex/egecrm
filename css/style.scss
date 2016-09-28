@@ -3220,3 +3220,9 @@ table.last-item-no-border tr:last-child td {
 	.no-margin{
 	  margin: 0;
 	}
+	.text-thin{
+	  font-weight:300;
+	}
+	.no-border, .no-border td{
+	  border:none!important;
+	}

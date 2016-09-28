@@ -145,19 +145,54 @@ angular.module("Teacher", ["ngMap"]).config([
       }
     });
   };
-  $scope.toBePaid = function() {
-    var lessons_sum, payments_sum;
-    if (!$scope.Lessons.length) {
-      return;
+  $scope.paymentPeriodLessons = function(Lesson) {
+    var prev_paid_lesson;
+    prev_paid_lesson = _.last(_.filter($scope.Lessons, function(l) {
+      return l.payment && l.payment.id < Lesson.payment.id;
+    }));
+    if (!prev_paid_lesson) {
+      prev_paid_lesson = {
+        id: 0
+      };
     }
+    return _.filter($scope.Lessons, function(lesson) {
+      return prev_paid_lesson.id < lesson.id && lesson.id <= Lesson.id;
+    });
+  };
+  $scope.paymentPeriodFirstLesson = function(Lesson) {
+    return _.first($scope.paymentPeriodLessons(Lesson));
+  };
+  $scope.lessonsTotalSum = function() {
+    var lessons_sum;
     lessons_sum = 0;
     $.each($scope.Lessons, function(index, value) {
       return lessons_sum += parseInt(value.teacher_price);
     });
+    return lessons_sum;
+  };
+  $scope.lessonsTotalPaid = function(from_lessons) {
+    var payments_sum;
     payments_sum = 0;
-    $.each($scope.payments, function(index, value) {
-      return payments_sum += parseInt(value.sum);
-    });
+    if (from_lessons) {
+      $.each($scope.Lessons, function(index, lesson) {
+        if (lesson.payment) {
+          return payments_sum += parseInt(lesson.payment.sum);
+        }
+      });
+    } else {
+      $.each($scope.payments, function(index, value) {
+        return payments_sum += parseInt(value.sum);
+      });
+    }
+    return payments_sum;
+  };
+  $scope.toBePaid = function(from_lessons) {
+    var lessons_sum, payments_sum;
+    if (!($scope.Lessons && $scope.Lessons.length)) {
+      return;
+    }
+    lessons_sum = $scope.lessonsTotalSum();
+    payments_sum = $scope.lessonsTotalPaid(from_lessons);
     return lessons_sum - payments_sum;
   };
   $scope.sipNumber = function(number) {
@@ -174,6 +209,14 @@ angular.module("Teacher", ["ngMap"]).config([
     var dateOut;
     dateOut = new Date(date);
     return dateOut;
+  };
+  $scope.dateFromCustomFormat = function(date) {
+    var D;
+    date = date.split(".");
+    date = date.reverse();
+    date = date.join("-");
+    D = new Date(date);
+    return moment(D).format("D MMMM YYYY");
   };
   $scope.confirmPayment = function(payment) {
     bootbox.prompt({
@@ -409,8 +452,8 @@ angular.module("Teacher", ["ngMap"]).config([
       });
     }
   };
-  $scope.formatDateMonthName = function(date) {
-    return moment(date).format("D MMMM YY");
+  $scope.formatDateMonthName = function(date, full_year) {
+    return moment(date).format("D MMMM YY" + (full_year ? 'YY' : ''));
   };
   $scope.formatDate = function(date) {
     var dateOut;
@@ -590,9 +633,14 @@ angular.module("Teacher", ["ngMap"]).config([
     $('#email-address').text(email);
     return lightBoxShow('email');
   };
-  return $scope.getGroupsYears = function() {
+  $scope.getGroupsYears = function() {
     if ($scope.Groups) {
       return _.uniq(_.pluck(ang_scope.Groups, 'year'));
+    }
+  };
+  return $scope.getReviewsYears = function() {
+    if ($scope.Reviews) {
+      return _.uniq(_.pluck(ang_scope.Reviews, 'year'));
     }
   };
 }).controller("ListCtrl", function($scope, $timeout) {

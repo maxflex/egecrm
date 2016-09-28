@@ -122,17 +122,38 @@
 							notifyError error
 				})
 
-			# солько нужно выплатить репетитору
-			$scope.toBePaid = ->
-				return if not $scope.Lessons.length
+			$scope.paymentPeriodLessons = (Lesson) ->
+				prev_paid_lesson = _.last _.filter $scope.Lessons, (l) ->
+					l.payment and l.payment.id < Lesson.payment.id
+				prev_paid_lesson = {id:0} if not prev_paid_lesson
+				_.filter $scope.Lessons, (lesson) ->
+					prev_paid_lesson.id < lesson.id and lesson.id <= Lesson.id
 
+			$scope.paymentPeriodFirstLesson = (Lesson) ->
+				_.first($scope.paymentPeriodLessons(Lesson))
+
+			$scope.lessonsTotalSum = ->
 				lessons_sum = 0
 				$.each $scope.Lessons, (index, value) ->
 					lessons_sum += parseInt(value.teacher_price)
+				lessons_sum
 
+			$scope.lessonsTotalPaid = (from_lessons)->
 				payments_sum = 0
-				$.each $scope.payments, (index, value) ->
-					payments_sum += parseInt(value.sum)
+				if from_lessons
+					$.each $scope.Lessons, (index, lesson) ->
+						payments_sum += parseInt(lesson.payment.sum) if lesson.payment
+				else
+					$.each $scope.payments, (index, value) ->
+						payments_sum += parseInt(value.sum)
+				return payments_sum
+
+		# солько нужно выплатить репетитору
+			$scope.toBePaid = (from_lessons)->
+				return if not ($scope.Lessons and $scope.Lessons.length)
+
+				lessons_sum  = $scope.lessonsTotalSum()
+				payments_sum = $scope.lessonsTotalPaid(from_lessons)
 
 				lessons_sum - payments_sum
 
@@ -150,6 +171,12 @@
 			  dateOut = new Date(date)
 			  dateOut
 
+			$scope.dateFromCustomFormat = (date) ->
+				date = date.split "."
+				date = date.reverse()
+				date = date.join "-"
+				D = new Date(date)
+				moment(D).format "D MMMM YYYY"
 
 			$scope.confirmPayment = (payment) ->
 			  bootbox.prompt
@@ -350,8 +377,8 @@
 			        cancel: className: 'display-none'
 			  return
 
-			$scope.formatDateMonthName = (date) ->
-				moment(date).format "D MMMM YY"
+			$scope.formatDateMonthName = (date, full_year) ->
+				moment(date).format "D MMMM YY" + (if full_year then 'YY' else '')
 
 			$scope.formatDate = (date) ->
                 dateOut = new Date(date)
@@ -522,6 +549,10 @@
 			$scope.getGroupsYears = ->
 				if $scope.Groups
 					_.uniq _.pluck ang_scope.Groups, 'year'
+
+			$scope.getReviewsYears = ->
+				if $scope.Reviews
+					_.uniq _.pluck ang_scope.Reviews, 'year'
 
 		.controller "ListCtrl", ($scope, $timeout) ->
 			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0
