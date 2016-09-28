@@ -13,14 +13,14 @@
 	}
     </style>
 
-	<h4 style="margin-bottom: 0">Договор №{{contract.id}}</h4>
+	<h4 style="margin-bottom: 0">Договор №{{contract.id_contract}}</h4>
     <h4 style="margin-top: 0">на оказание платных образовательных услуг</h4>
-    
+
     <div style="display: inline-block; width: 100%; margin-bottom: 20px">
 		<span style="float: left">г. Москва</span>
 		<span style="float: right">{{contract.date}} г.</span>
 	</div>
- 
+
 	<p><b>Общество с ограниченной ответственностью «ЕГЭ-ЦЕНТР»</b>, в лице Генерального директора Капралова Константина Александровича, действующего на основании Устава, именуемое в дальнейшем «Исполнитель», «ЕГЭ-Центр», на основании лицензии на осуществление образовательной деятельности № 037742, выданной Департаментом образования города Москвы 08.08.2016 г., с одной стороны, и
 {{contractPrintName(representative, 'nominative')}}, именуемый(ая) в дальнейшем «Заказчик», являющийся(щаяся) родителем (законным представителем) {{contractPrintName(student, 'genitive')}}, {{ student.Passport.date_birthday }} года рождения, именуемого(ой) в дальнейшем «Обучающийся», с другой стороны, совместно именуемые «Стороны», заключили настоящий Договор на оказание платных образовательных услуг (далее – «Договор») о нижеследующем:</p>
 <h4>1. Предмет Договора.</h4>
@@ -28,7 +28,7 @@
 <p>1.2. Обучение осуществляется в порядке, установленном локальными нормативными актами Исполнителя и настоящим Договором.</p>
 <p>1.3. Продолжительность образовательной программы по программе курса
 	<span ng-repeat="program in contract.subjects">
-			«{{SubjectsFull2[program.id_subject]}}-{{contract.grade}}-{{(program.count * 1) + (program.count2 * 1)}}» ({{((program.count * 1) + (program.count2 * 1))*3}}
+			«{{SubjectsFull2[program.id_subject]}}-{{contract.info.grade}}-{{(program.count * 1) + (program.count2 * 1)}}» ({{((program.count * 1) + (program.count2 * 1))*3}}
 			аудиторных <ng-pluralize count="((program.count * 1) + (program.count2 * 1))*3" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> и {{((program.count * 1) + (program.count2 * 1))*1.5}}
 			 <ng-pluralize count="((program.count * 1) + (program.count2 * 1))*1.5" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> на самостоятельную подготовку){{$last ? '.' : ','}}
 	</span>
@@ -41,7 +41,7 @@
 <p><b>2.1. Исполнитель обязуется:</b></p>
 	<p>2.1.1. Предоставить Заказчику и Обучающемуся доступ к личному кабинету. Указанные данные известны только сторонам договора. Данные для доступа в личный кабинет:
 		<div style="width: 200px; margin: 15px auto 0; border: 1px dotted black; padding: 10px; border-radius: 5px">
-			<span style='display: inline-block; width: 60px'>логин:</span> <b>{{ student.login }}</b><br> 
+			<span style='display: inline-block; width: 60px'>логин:</span> <b>{{ student.login }}</b><br>
 			<span style='display: inline-block; width: 60px'>пароль:</span> <b>{{ student.password }}</b>
 		</div>
 	</p>
@@ -93,8 +93,8 @@
 			'few'	: 'рубля',
 			'many'	: 'рублей',
 		}"></ng-pluralize>.</p>
-<p ng-show="contract.grade == 11">3.2. Стоимость занятий с 1 по 64 составляет {{ getSubjectPrice(contract, 1600) }} ({{numToText(getSubjectPrice(contract, 1600))}}) рублей за одно занятие, стоимость занятий с 65 по 96 составляет {{ getSubjectPrice(contract, 1500) }} ({{numToText(getSubjectPrice(contract, 1500))}}) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет {{ getSubjectPrice(contract, 1400) }} ({{numToText(getSubjectPrice(contract, 1400))}}) рублей.</p>
-<p ng-show="contract.grade == 9 || contract.grade == 10">3.2. Стоимость занятий с 1 по 64 составляет {{ getSubjectPrice(contract, 1450) }} ({{numToText(getSubjectPrice(contract, 1450))}}) рублей за одно занятие, стоимость занятий с 65 по 96 составляет {{ getSubjectPrice(contract, 1350) }} ({{numToText(getSubjectPrice(contract, 1350))}}) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет {{ getSubjectPrice(contract, 1250) }} ({{numToText(getSubjectPrice(contract, 1250))}}) рублей.</p>
+<p ng-show="contract.info.grade == 11">3.2. Стоимость занятий с 1 по 64 составляет {{ getSubjectPrice(contract, 1600) }} ({{numToText(getSubjectPrice(contract, 1600))}}) рублей за одно занятие, стоимость занятий с 65 по 96 составляет {{ getSubjectPrice(contract, 1500) }} ({{numToText(getSubjectPrice(contract, 1500))}}) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет {{ getSubjectPrice(contract, 1400) }} ({{numToText(getSubjectPrice(contract, 1400))}}) рублей.</p>
+<p ng-show="contract.info.grade == 9 || contract.info.grade == 10">3.2. Стоимость занятий с 1 по 64 составляет {{ getSubjectPrice(contract, 1450) }} ({{numToText(getSubjectPrice(contract, 1450))}}) рублей за одно занятие, стоимость занятий с 65 по 96 составляет {{ getSubjectPrice(contract, 1350) }} ({{numToText(getSubjectPrice(contract, 1350))}}) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет {{ getSubjectPrice(contract, 1250) }} ({{numToText(getSubjectPrice(contract, 1250))}}) рублей.</p>
 <p>3.3. В случае изменения Договора в связи с уменьшением или увеличением количества необходимых Заказчику занятий цена Договора пересчитывается в соответствии со стоимостью занятий по их порядковому номеру.</p>
 <p>3.4. Оплата Услуг по настоящему Договору  производится Заказчиком следующим образом:</p>
 <ul>
@@ -218,7 +218,7 @@
 				{{representative.email ? "e-mail: " + representative.email : ""}}<br>
 			</div>
 		</div>
-		
+
 		<div style='margin: 50px 0 0 0'>
 			<div style="display: inline-block; float: left; width: 50%">
 				Генеральный директор  ООО «ЕГЭ-Центр»<br>
@@ -228,7 +228,7 @@
 				{{ representative.last_name }} {{ representative.first_name[0] }}. {{ representative.middle_name[0] }}
 			</div>
 		</div>
-		
+
 		<div style='margin: 50px 0 0'>
 			<div style="display: inline-block; width: 50%">
 				<div style='margin-top: 30px'>
@@ -247,13 +247,13 @@
 	Приложение № 1<br>
 к Договору оказания платных<br>
 образовательных услуг<br>
-№{{contract.id}} от {{contract.date}}
+№{{contract.id_contract}} от {{contract.date}}
 	</div>
-	
+
 	<h4>
  АКТ ОБ ОКАЗАННЫХ УСЛУГАХ<br>
 ПО ДОГОВОРУ
-№{{contract.id}} от {{contract.date}}
+№{{contract.id_contract}} от {{contract.date}}
 	</h4>
 
 <div style="display: inline-block; width: 100%; margin-bottom: 20px">
@@ -278,7 +278,7 @@
 			{{ representative.last_name }} {{ representative.first_name[0] }}. {{ representative.middle_name[0] }}
 		</div>
 	</div>
-		
+
 	<div style='margin: 50px 0 0'>
 		<div style="display: inline-block; width: 50%">
 			<div style='margin-top: 30px'>

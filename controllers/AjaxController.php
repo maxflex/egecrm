@@ -629,7 +629,9 @@
 				]);
 
 				// @time-refactored @time-checked
-				$S->cabinet = Cabinet::getBlock($S->cabinet);
+				if ($S->cabinet) { 
+                    $S->cabinet = Cabinet::getBlock($S->cabinet);
+                }
 			}
 
             /*

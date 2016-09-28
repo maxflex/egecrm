@@ -770,13 +770,10 @@
 			}
 
 			$scope.printContractAdditionalOoo = function(contract) {
-        $scope.contract = contract
-        $scope.$apply();
-
-			  $scope.print_mode = 'agreement-ooo'
-				$scope.contract_additional = contract
-				$scope.id_contract_print = contract.id
-				html = $("#agreement-ooo-print-" + $scope.id_contract_print).html()
+				$scope.contract = contract
+		        $scope.$apply();
+				$scope.print_mode = 'agreement-ooo'
+				html = $("#agreement-ooo-print-" + contract.id).html()
 				$scope.editBeforePrint(html)
 			}
 

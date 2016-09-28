@@ -46,7 +46,7 @@
                 <tr>
                     <td align="center" style="font-size: 12px">1</td>
 
-                    <td align="left" style="font-size: 12px">Агентские услуги согласно договору №{{contract.id}} от {{getFirstContractInChain(contract).date}}г.</td>
+                    <td align="left" style="font-size: 12px">Агентские услуги согласно договору №{{contract.id_contract}} от {{getFirstContractInChain(contract).date}}г.</td>
 
                     <td align="center" style="font-size: 12px">1</td>
 
