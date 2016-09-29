@@ -19,7 +19,7 @@
 				<table class="table table-hover border-reverse" style="position: relative" ng-show="Lessons.length">
 					<tr ng-repeat-start="Lesson in Lessons">
 						<td width="10%">
-							<a href="groups/edit/{{Lesson.id_group}}">Группа №{{Lesson.id_group}}</a>
+							Группа №{{Lesson.id_group}}
 						</td>
 						<td width="10%">
 							{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade : ''}}{{Lesson.group_level ? '-' + <?= GroupLevels::json() ?>[Lesson.group_level] : ''}}

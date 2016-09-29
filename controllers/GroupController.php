@@ -211,7 +211,7 @@
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity, false);
                 foreach ($Groups as &$Group) {
                     $counts = Group::getScheduleCountCachedStatic($Group->id);
-                    $Group->schedule_count      = $counts->free + $counts->paid;
+                    $Group->schedule_count      = $counts['free'] + $counts['paid'];
                     $Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
                     $Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
 

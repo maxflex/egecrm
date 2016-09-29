@@ -1,7 +1,7 @@
 <div ng-app="Group" ng-controller="TeacherListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
-			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;" ng-repeat="group_year in getGroupsYears()">
+			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;width: 100%" ng-repeat="group_year in getGroupsYears()">
 				<tr class="no-hover" ng-if="group_year">
 					<td colspan="8" class="no-border-bottom">
 						<h4 class="row-header default-case no-margin">Группы {{ group_year + '-' + (group_year + 1) }} учебного года</h4>
@@ -19,7 +19,7 @@
 							<span class="remove-space">{{$last ? '' : ', '}}</span>
 						</span>
 					</td>
-					<td width="150">
+					<td width="100">
 						{{Subjects[Group.id_subject]}}-{{Group.grade}}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
 					</td>
 					<td width="10%">
@@ -29,27 +29,25 @@
 							'many': 'учеников',
 						}"></ng-pluralize>
 					</td>
-					<td width="15%">
+					<td>
 						<span ng-show="Group.first_schedule">
-							<span ng-show="!Group.past_lesson_count">1-й урок {{ Group.first_schedule | date:"dd.MM"}}</span>
-							<span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
+							<span ng-show="!Group.past_lesson_count">1-й урок {{ Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">был {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
 								'one': 'урок',
 								'few': 'урока',
 								'many': 'уроков'
-							}"></ng-pluralize></span></span>
-							<span ng-show="Group.first_schedule && Group.schedule_count > 0">, всего {{Group.schedule_count }}</span>
+							}"></ng-pluralize></span></span><span ng-show="Group.first_schedule && Group.schedule_count > 0">, всего {{Group.schedule_count }}</span>
 					</td>
-					<td width="15%">
+					<td width="16%">
 						<!-- @time-refactored @time-checked -->
 						<span ng-repeat="data in Group.day_and_time">
 							<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>
 							{{ $last ? '' : ', '}}
 						</span>
 					</td>
-					<td>
+					<td width="100px">
 						<a href="teachers/groups/edit/{{Group.id}}/schedule">расписание</a>
 					</td>
-					<td>
+					<td width="100px">
 						<a href="teachers/groups/journal/{{Group.id}}">посещаемость</a>
 					</td>
 					<td width="13%">
