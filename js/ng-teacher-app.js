@@ -165,20 +165,24 @@ angular.module("Teacher", ["ngMap"]).config([
   $scope.lessonsTotalSum = function() {
     var lessons_sum;
     lessons_sum = 0;
-    $.each($scope.Lessons, function(index, value) {
-      return lessons_sum += parseInt(value.teacher_price);
-    });
+    if ($scope.Lessons) {
+      $.each($scope.Lessons, function(index, value) {
+        return lessons_sum += parseInt(value.teacher_price);
+      });
+    }
     return lessons_sum;
   };
   $scope.lessonsTotalPaid = function(from_lessons) {
     var payments_sum;
     payments_sum = 0;
     if (from_lessons) {
-      $.each($scope.Lessons, function(index, lesson) {
-        if (lesson.payment) {
-          return payments_sum += parseInt(lesson.payment.sum);
-        }
-      });
+      if ($scope.Lessons) {
+        $.each($scope.Lessons, function(index, lesson) {
+          if (lesson.payment) {
+            return payments_sum += parseInt(lesson.payment.sum);
+          }
+        });
+      }
     } else {
       $.each($scope.payments, function(index, value) {
         return payments_sum += parseInt(value.sum);

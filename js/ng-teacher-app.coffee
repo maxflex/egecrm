@@ -134,15 +134,17 @@
 
 			$scope.lessonsTotalSum = ->
 				lessons_sum = 0
-				$.each $scope.Lessons, (index, value) ->
-					lessons_sum += parseInt(value.teacher_price)
+				if $scope.Lessons
+					$.each $scope.Lessons, (index, value) ->
+						lessons_sum += parseInt(value.teacher_price)
 				lessons_sum
 
 			$scope.lessonsTotalPaid = (from_lessons)->
 				payments_sum = 0
 				if from_lessons
-					$.each $scope.Lessons, (index, lesson) ->
-						payments_sum += parseInt(lesson.payment.sum) if lesson.payment
+					if $scope.Lessons
+						$.each $scope.Lessons, (index, lesson) ->
+							payments_sum += parseInt(lesson.payment.sum) if lesson.payment
 				else
 					$.each $scope.payments, (index, value) ->
 						payments_sum += parseInt(value.sum)
