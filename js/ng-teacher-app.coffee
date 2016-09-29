@@ -148,7 +148,7 @@
 						payments_sum += parseInt(value.sum)
 				return payments_sum
 
-		# солько нужно выплатить репетитору
+			# солько нужно выплатить репетитору
 			$scope.toBePaid = (from_lessons)->
 				return if not ($scope.Lessons and $scope.Lessons.length)
 

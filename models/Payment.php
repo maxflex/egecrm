@@ -32,7 +32,7 @@
 		
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
-		public function __construct($array) {
+		public function __construct($array, $flag = false) {
 			parent::__construct($array);
 			
 			if ($this->card_number) {
@@ -43,7 +43,9 @@
 			}
 			
 			// Добавляем данные
-			$this->user_login = User::findById($this->id_user)->login;
+            if (!$flag) {
+                $this->user_login = User::findById($this->id_user)->login;
+            }
 		}
 		
 		

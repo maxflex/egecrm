@@ -6,30 +6,73 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     }
   };
 }).controller("LkTeacherCtrl", function($scope, $http) {
+  $scope.paymentPeriodLessons = function(Lesson) {
+    var prev_paid_lesson;
+    prev_paid_lesson = _.last(_.filter($scope.Lessons, function(l) {
+      return l.payment && l.payment.id < Lesson.payment.id;
+    }));
+    if (!prev_paid_lesson) {
+      prev_paid_lesson = {
+        id: 0
+      };
+    }
+    return _.filter($scope.Lessons, function(lesson) {
+      return prev_paid_lesson.id < lesson.id && lesson.id <= Lesson.id;
+    });
+  };
+  $scope.paymentPeriodFirstLesson = function(Lesson) {
+    return _.first($scope.paymentPeriodLessons(Lesson));
+  };
+  $scope.lessonsTotalSum = function() {
+    var lessons_sum;
+    lessons_sum = 0;
+    if ($scope.Lessons) {
+      $.each($scope.Lessons, function(index, value) {
+        return lessons_sum += parseInt(value.teacher_price);
+      });
+    }
+    return lessons_sum;
+  };
+  $scope.lessonsTotalPaid = function(from_lessons) {
+    var payments_sum;
+    payments_sum = 0;
+    if (from_lessons) {
+      if ($scope.Lessons) {
+        $.each($scope.Lessons, function(index, lesson) {
+          if (lesson.payment) {
+            return payments_sum += parseInt(lesson.payment.sum);
+          }
+        });
+      }
+    } else {
+      $.each($scope.payments, function(index, value) {
+        return payments_sum += parseInt(value.sum);
+      });
+    }
+    return payments_sum;
+  };
+  $scope.toBePaid = function(from_lessons) {
+    var lessons_sum, payments_sum;
+    if (!($scope.Lessons && $scope.Lessons.length)) {
+      return;
+    }
+    lessons_sum = $scope.lessonsTotalSum();
+    payments_sum = $scope.lessonsTotalPaid(from_lessons);
+    return lessons_sum - payments_sum;
+  };
+  $scope.dateFromCustomFormat = function(date) {
+    var D;
+    date = date.split(".");
+    date = date.reverse();
+    date = date.join("-");
+    D = new Date(date);
+    return moment(D).format("D MMMM YYYY");
+  };
   $scope.formatDate = function(date) {
     return moment(date).format("D MMMM YYYY");
   };
   $scope.formatTime = function(time) {
     return time.substr(0, 5);
-  };
-  $scope.totalPaid = function() {
-    var sum;
-    sum = 0;
-    $.each($scope.payments, function(i, payment) {
-      return sum += payment.sum;
-    });
-    return sum;
-  };
-  $scope.totalEarned = function() {
-    var sum;
-    sum = 0;
-    $.each($scope.Data, function(i, data) {
-      return sum += data.teacher_price;
-    });
-    return sum;
-  };
-  $scope.toBePaid = function() {
-    return $scope.totalEarned() - $scope.totalPaid();
   };
   return angular.element(document).ready(function() {
     return bootbox.prompt({
@@ -47,9 +90,7 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
             if (response === true) {
               $scope.password_correct = true;
               $.post("payments/ajaxLkTeacher", {}, function(response) {
-                console.log(response);
-                $scope.payments = response.payments;
-                $scope.Data = response.Data;
+                $scope.Lessons = response.Lessons;
                 $scope.loaded = true;
                 return $scope.$apply();
               }, "json");

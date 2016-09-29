@@ -27,6 +27,11 @@
 				for i in [0...total] by 1
 					input.push i
 				input
+
+		.filter 'yearFilter', ->
+			(items, year) ->
+				_.where items, 'year': year
+
 		.controller "JournalCtrl", ($scope) ->
 			$scope.grayMonth = (date) ->
 				d = moment(date).format("M")
@@ -1123,4 +1128,9 @@
 		.controller "StudentListCtrl", ($scope) ->
 			console.log 'init'
 		.controller "TeacherListCtrl", ($scope) ->
-			console.log 'init'
+			set_scope "Group"
+			# @todo объединить все getGroupsYears в сервис/факторй
+			$scope.getGroupsYears = ->
+				if $scope.Groups
+					return _.uniq _.pluck ang_scope.Groups, 'year'
+				return []

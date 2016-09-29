@@ -40,9 +40,10 @@
 			$this->setRights([Teacher::USER_TYPE]);
 			
 			$ang_init_data = angInit([
-				"Subjects" => Subjects::$all,
+				"Subjects" => Subjects::$three_letters,
 				"Branches" => Branches::$all,
 				"payment_statuses"	=> Payment::$all,
+                'payment_types'		=> PaymentTypes::$all,
 			]);
 			
 			$this->render("lk_teacher", [
@@ -107,24 +108,25 @@
 		
 		public function actionAjaxLkTeacher()
 		{
-			# Данные по занятиям/выплатам
-			$Data = VisitJournal::findAll([
-						"condition" => "id_entity=". User::fromSession()->id_entity ." AND type_entity='".Teacher::USER_TYPE."'",
-						"order"		=> "lesson_date DESC, lesson_time DESC",
-					]);
-			# Добавляем группы к инфе					
-			foreach ($Data as &$D) {
-				$D->Group = Group::findById($D->id_group);
-			}
-			
-			returnJsonAng([
-				# Платежи
-				'payments' 	=> 	Payment::findAll([
-									'condition' => "entity_id=" . User::fromSession()->id_entity." and entity_type='".Teacher::USER_TYPE."'"
-								]),
-				# Данные по занятиям/выплатам
-				'Data'		=> 	$Data,
-			]);
+            $Lessons = VisitJournal::findAll([
+                "condition" => "id_entity=". User::fromSession()->id_entity ." AND type_entity='".Teacher::USER_TYPE."'",
+                "order"		=> "lesson_date, lesson_time",
+            ]);
+            for ($i = 0; $i < count($Lessons); $i++) {
+                $Lesson = $Lessons[$i];
+                $NextLesson = isset($Lessons[$i + 1]) ? $Lessons[$i + 1] : false;
+
+                $Lesson->cabinet = Cabinet::getBlock($Lesson->cabinet, $Lesson->id_branch);
+                $Lesson->group_level = dbConnection()->query("SELECT level FROM groups WHERE id= {$Lesson->id_group}")->fetch_object()->level;
+                $Lesson->payment = Payment::find([
+                    "condition" => "entity_id=" . User::fromSession()->id_entity . " and entity_type = '" . Teacher::USER_TYPE . "' " .
+                                   "and str_to_date(date, '%d.%m.%Y') >= '{$Lesson->lesson_date}' " . ($NextLesson ? " and str_to_date(date, '%d.%m.%Y') < '" . $NextLesson->lesson_date . "' " : "")
+                ], true);
+            }
+
+            returnJsonAng([
+                'Lessons' => $Lessons,
+            ]);
 		}
 
 		public function actionAjaxNewDocumentNumber()

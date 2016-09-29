@@ -48,6 +48,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     }
     return input;
   };
+}).filter('yearFilter', function() {
+  return function(items, year) {
+    return _.where(items, {
+      'year': year
+    });
+  };
 }).controller("JournalCtrl", function($scope) {
   $scope.grayMonth = function(date) {
     var d;
@@ -1339,5 +1345,11 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
 }).controller("StudentListCtrl", function($scope) {
   return console.log('init');
 }).controller("TeacherListCtrl", function($scope) {
-  return console.log('init');
+  set_scope("Group");
+  return $scope.getGroupsYears = function() {
+    if ($scope.Groups) {
+      return _.uniq(_.pluck(ang_scope.Groups, 'year'));
+    }
+    return [];
+  };
 });

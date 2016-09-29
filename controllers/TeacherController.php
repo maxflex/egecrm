@@ -196,8 +196,7 @@
                         "condition" => "id_entity=$id_teacher AND type_entity='TEACHER'",
                         "order"		=> "lesson_date, lesson_time",
                     ]);
-                    $prev_lesson_date = '2000-01-01';
-				    for ($i = 0; $i < count($Lessons); $i++) {
+                    for ($i = 0; $i < count($Lessons); $i++) {
                         $Lesson = $Lessons[$i];
                         $NextLesson = isset($Lessons[$i + 1]) ? $Lessons[$i + 1] : false;
 

@@ -195,13 +195,20 @@
 
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
-				$Groups = Teacher::getGroups(User::fromSession()->id_entity);
+				$Groups = Teacher::getGroups(User::fromSession()->id_entity, false);
+                foreach ($Groups as &$Group) {
+                    $counts = Group::getScheduleCountCachedStatic($Group->id);
+                    $Group->schedule_count      = $counts->free + $counts->paid;
+                    $Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
+                    $Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
+
+                }
 
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
-					"Subjects" 		=> Subjects::$all,
+					"Subjects" 		=> Subjects::$three_letters,
 					"Grades"		=> Grades::$all,
-					"GroupLevels"	=> GroupLevels::$all,
+					"GroupLevels"	=> GroupLevels::$short,
 					"Branches"		=> Branches::$all,
 				]);
 

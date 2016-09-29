@@ -5,27 +5,55 @@ angular.module "Payments", ["ui.bootstrap"]
                 items.slice().reverse()
 
     .controller "LkTeacherCtrl", ($scope, $http) ->
+        # @todo remove
+        $scope.paymentPeriodLessons = (Lesson) ->
+            prev_paid_lesson = _.last _.filter $scope.Lessons, (l) ->
+                l.payment and l.payment.id < Lesson.payment.id
+            prev_paid_lesson = {id:0} if not prev_paid_lesson
+            _.filter $scope.Lessons, (lesson) ->
+                prev_paid_lesson.id < lesson.id and lesson.id <= Lesson.id
 
+        # @todo remove
+        $scope.paymentPeriodFirstLesson = (Lesson) ->
+            _.first($scope.paymentPeriodLessons(Lesson))
+
+        $scope.lessonsTotalSum = ->
+            lessons_sum = 0
+            if $scope.Lessons
+                $.each $scope.Lessons, (index, value) ->
+                    lessons_sum += parseInt(value.teacher_price)
+            lessons_sum
+
+        $scope.lessonsTotalPaid = (from_lessons)->
+            payments_sum = 0
+            if from_lessons
+                if $scope.Lessons
+                    $.each $scope.Lessons, (index, lesson) ->
+                            payments_sum += parseInt(lesson.payment.sum) if lesson.payment
+            else
+                $.each $scope.payments, (index, value) ->
+                    payments_sum += parseInt(value.sum)
+            return payments_sum
+
+        # солько нужно выплатить репетитору
+        $scope.toBePaid = (from_lessons)->
+            return if not ($scope.Lessons and $scope.Lessons.length)
+
+            lessons_sum  = $scope.lessonsTotalSum()
+            payments_sum = $scope.lessonsTotalPaid(from_lessons)
+
+            lessons_sum - payments_sum
+        $scope.dateFromCustomFormat = (date) ->
+            date = date.split "."
+            date = date.reverse()
+            date = date.join "-"
+            D = new Date(date)
+            moment(D).format "D MMMM YYYY"
         $scope.formatDate = (date) ->
             moment(date).format("D MMMM YYYY")
 
         $scope.formatTime = (time) ->
             return time.substr(0, 5)
-
-        $scope.totalPaid = ->
-            sum = 0
-            $.each $scope.payments, (i, payment) ->
-                sum += payment.sum
-            sum
-
-        $scope.totalEarned = ->
-            sum = 0
-            $.each $scope.Data, (i, data) ->
-                sum += data.teacher_price
-            sum
-
-        $scope.toBePaid = ->
-            $scope.totalEarned() - $scope.totalPaid()
 
         angular.element(document).ready ->
             bootbox.prompt {
@@ -41,9 +69,7 @@ angular.module "Payments", ["ui.bootstrap"]
                             if response == true
                                 $scope.password_correct = true;
                                 $.post "payments/ajaxLkTeacher", {}, (response) ->
-                                    console.log response
-                                    $scope.payments = response.payments
-                                    $scope.Data 	= response.Data
+                                    $scope.Lessons 	= response.Lessons
                                     $scope.loaded	= true # data loaded
                                     $scope.$apply()
                                 , "json"
