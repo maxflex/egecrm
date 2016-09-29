@@ -227,6 +227,12 @@
 		    $scope.getPastLessonCabinet = (date) ->
 		        _.findWhere($scope.all_cabinets, {id: $scope.getPastLesson(date).cabinet}).number
 
+		    $scope.getPastLessonCabinetName = (date) ->
+		        _.findWhere($scope.all_cabinets, {id: $scope.getPastLesson(date).cabinet}).label
+
+		    $scope.getCabinetName = (id) ->
+		        if id
+			        _.findWhere($scope.all_cabinets, {id: id}).label
 
 		    $scope.lessonStarted = (Schedule) ->
 		        lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime()

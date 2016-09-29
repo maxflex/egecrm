@@ -267,6 +267,18 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       id: $scope.getPastLesson(date).cabinet
     }).number;
   };
+  $scope.getPastLessonCabinetName = function(date) {
+    return _.findWhere($scope.all_cabinets, {
+      id: $scope.getPastLesson(date).cabinet
+    }).label;
+  };
+  $scope.getCabinetName = function(id) {
+    if (id) {
+      return _.findWhere($scope.all_cabinets, {
+        id: id
+      }).label;
+    }
+  };
   $scope.lessonStarted = function(Schedule) {
     var lesson_time;
     lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime();

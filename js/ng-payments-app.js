@@ -31,9 +31,11 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
         return results;
       });
     } else {
-      $.each($scope.payments, function(index, value) {
-        return payments_sum += parseInt(value.sum);
-      });
+      if ($scope.payments) {
+        $.each($scope.payments, function(index, value) {
+          return payments_sum += parseInt(value.sum);
+        });
+      }
     }
     return payments_sum;
   };

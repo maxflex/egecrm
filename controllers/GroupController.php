@@ -30,7 +30,7 @@
 
 			$this->setTabTitle("Посещаемость группы №" . $id_group);
 
-			$Group = Group::findById($id_group);
+			$Group = Group::findById($id_group, true);
 
 			// restrict other teachers to access journal
 			if ((User::fromSession()->type == Teacher::USER_TYPE) && ($Group->id_teacher != User::fromSession()->id_entity)) {
@@ -86,24 +86,37 @@
 
 			$Teachers = [];
 			if (count($teacher_ids)) {
-				$Teachers = Teacher::findAll(['condition' => 'id in ('.implode(',', array_unique($teacher_ids)).')']);
-                // @notice не убран метод из класса потому что в егерепетиторе используется в статистике
+				foreach (array_unique($teacher_ids) as $id) {
+                    $Teachers[] = Teacher::getLight($id);
+                }
 			}
 
 			$LessonData = VisitJournal::findAll([
 				"condition" => "id_group=$id_group" //и преподы и студенты
 			]);
 
+            if (User::fromSession()->type == Teacher::USER_TYPE) {
+                $ang_init_data = angInit([
+                    "Group" 		=> $Group,
+                    "LessonData"	=> $LessonData,
+                    "Teachers"		=> $Teachers,
+                ]);
 
-			$ang_init_data = angInit([
-				"Group" 		=> $Group,
-				"LessonData"	=> $LessonData,
-				"Teachers"		=> $Teachers,
-			]);
+                $this->_viewsFolder = 'journal';
+                $this->render("teacher_journal", [
+                    "ang_init_data" => $ang_init_data
+                ]);
+            } else {
+                $ang_init_data = angInit([
+                    "Group" 		=> $Group,
+                    "LessonData"	=> $LessonData,
+                    "Teachers"		=> $Teachers,
+                ]);
 
-			$this->render("journal", [
-				"ang_init_data" => $ang_init_data,
-			]);
+                $this->render("journal", [
+                    "ang_init_data" => $ang_init_data,
+                ]);
+            }
 		}
 
 		public function actionLesson()

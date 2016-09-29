@@ -18,8 +18,9 @@ angular.module "Payments", ["ui.bootstrap"]
                 $.each $scope.Lessons, (index, lesson) ->
                     payments_sum += parseInt(payment.sum) for payment in lesson.payments
             else
-                $.each $scope.payments, (index, value) ->
-                    payments_sum += parseInt(value.sum)
+	            if $scope.payments
+	                $.each $scope.payments, (index, value) ->
+	                    payments_sum += parseInt(value.sum)
             return payments_sum
 
         # солько нужно выплатить репетитору

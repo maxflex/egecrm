@@ -170,9 +170,11 @@ angular.module("Teacher", ["ngMap"]).config([
         return results;
       });
     } else {
-      $.each($scope.payments, function(index, value) {
-        return payments_sum += parseInt(value.sum);
-      });
+      if ($scope.payments) {
+        $.each($scope.payments, function(index, value) {
+          return payments_sum += parseInt(value.sum);
+        });
+      }
     }
     return payments_sum;
   };
