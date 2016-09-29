@@ -22,11 +22,11 @@
 					{{ Lesson.login_user_saved }} {{formatDate(Lesson.date) | date:'dd.MM.yy в HH:mm'}}
 				</td>
 			</tr>
-			<tr ng-repeat-end ng-if="Lesson.payment" class="text-gray">
-				<td colspan="2">{{ payment_types[Lesson.payment.id_type] }}</td>
-				<td colspan="2">от {{ dateFromCustomFormat(Lesson.payment.date) }}</td>
-				<td>{{ Lesson.payment.sum + ' руб. (' + payment_statuses[Lesson.payment.id_status] + ')' }}</td>
-				<td>{{ Lesson.payment.user_login}} {{formatDate(Lesson.payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}</td>
+			<tr ng-repeat-end ng-if="Lesson.payments" ng-repeat="payment in Lesson.payments" class="text-gray">
+				<td colspan="2">{{ payment_types[payment.id_type] }}</td>
+				<td colspan="2">от {{ dateFromCustomFormat(payment.date) }}</td>
+				<td>{{ payment.sum + ' руб. (' + payment_statuses[payment.id_status] + ')' }}</td>
+				<td>{{ payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}</td>
 			</tr>
 			<tr class="text-gray no-border">
 				<td colspan="4">Всего проведено {{ Lessons.length }} занятий на сумму</td>

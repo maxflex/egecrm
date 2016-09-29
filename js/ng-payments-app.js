@@ -6,23 +6,6 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     }
   };
 }).controller("LkTeacherCtrl", function($scope, $http) {
-  $scope.paymentPeriodLessons = function(Lesson) {
-    var prev_paid_lesson;
-    prev_paid_lesson = _.last(_.filter($scope.Lessons, function(l) {
-      return l.payment && l.payment.id < Lesson.payment.id;
-    }));
-    if (!prev_paid_lesson) {
-      prev_paid_lesson = {
-        id: 0
-      };
-    }
-    return _.filter($scope.Lessons, function(lesson) {
-      return prev_paid_lesson.id < lesson.id && lesson.id <= Lesson.id;
-    });
-  };
-  $scope.paymentPeriodFirstLesson = function(Lesson) {
-    return _.first($scope.paymentPeriodLessons(Lesson));
-  };
   $scope.lessonsTotalSum = function() {
     var lessons_sum;
     lessons_sum = 0;
@@ -36,14 +19,17 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
   $scope.lessonsTotalPaid = function(from_lessons) {
     var payments_sum;
     payments_sum = 0;
-    if (from_lessons) {
-      if ($scope.Lessons) {
-        $.each($scope.Lessons, function(index, lesson) {
-          if (lesson.payment) {
-            return payments_sum += parseInt(lesson.payment.sum);
-          }
-        });
-      }
+    if (from_lessons && $scope.Lessons) {
+      $.each($scope.Lessons, function(index, lesson) {
+        var j, len, payment, ref, results;
+        ref = lesson.payments;
+        results = [];
+        for (j = 0, len = ref.length; j < len; j++) {
+          payment = ref[j];
+          results.push(payments_sum += parseInt(payment.sum));
+        }
+        return results;
+      });
     } else {
       $.each($scope.payments, function(index, value) {
         return payments_sum += parseInt(value.sum);

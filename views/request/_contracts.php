@@ -40,10 +40,10 @@
                             <ul>
                                 <li class='link-like' ng-click="createNewContract(contract)">создать новую версию</li>
                                 <li class='link-like' ng-click="editContract(contract)">изменить без проводки</li>
-                                <li class='link-like' ng-click="printContract(contract)">печать договора ИП</li>
-                                <li class='link-like' ng-click="printContractLicenced(contract)">печать договора ООО</li>
-                                <li class='link-like' ng-click="printContractAdditional(contract)">печать доп.соглашения ИП</li>
-                                <li class='link-like' ng-click="printContractAdditionalOoo(contract)">печать доп.соглашения ООО</li>
+                                <li class='link-like' ng-click="printContract(contract)" ng-show='isFirstContractInChain(contract)'>печать договора ИП</li>
+                                <li class='link-like' ng-click="printContractLicenced(contract)" ng-show='isFirstContractInChain(contract)'>печать договора ООО</li>
+                                <li class='link-like' ng-click="printContractAdditional(contract)" ng-show='!isFirstContractInChain(contract)'>печать доп.соглашения ИП</li>
+                                <li class='link-like' ng-click="printContractAdditionalOoo(contract)" ng-show='!isFirstContractInChain(contract)'>печать доп.соглашения ООО</li>
                                 <li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContract(contract)'>удалить</li>
                             </ul>
                         </div>

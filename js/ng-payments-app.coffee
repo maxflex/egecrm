@@ -5,18 +5,6 @@ angular.module "Payments", ["ui.bootstrap"]
                 items.slice().reverse()
 
     .controller "LkTeacherCtrl", ($scope, $http) ->
-        # @todo remove
-        $scope.paymentPeriodLessons = (Lesson) ->
-            prev_paid_lesson = _.last _.filter $scope.Lessons, (l) ->
-                l.payment and l.payment.id < Lesson.payment.id
-            prev_paid_lesson = {id:0} if not prev_paid_lesson
-            _.filter $scope.Lessons, (lesson) ->
-                prev_paid_lesson.id < lesson.id and lesson.id <= Lesson.id
-
-        # @todo remove
-        $scope.paymentPeriodFirstLesson = (Lesson) ->
-            _.first($scope.paymentPeriodLessons(Lesson))
-
         $scope.lessonsTotalSum = ->
             lessons_sum = 0
             if $scope.Lessons
@@ -26,10 +14,9 @@ angular.module "Payments", ["ui.bootstrap"]
 
         $scope.lessonsTotalPaid = (from_lessons)->
             payments_sum = 0
-            if from_lessons
-                if $scope.Lessons
-                    $.each $scope.Lessons, (index, lesson) ->
-                            payments_sum += parseInt(lesson.payment.sum) if lesson.payment
+            if from_lessons and $scope.Lessons
+                $.each $scope.Lessons, (index, lesson) ->
+                    payments_sum += parseInt(payment.sum) for payment in lesson.payments
             else
                 $.each $scope.payments, (index, value) ->
                     payments_sum += parseInt(value.sum)

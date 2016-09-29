@@ -453,7 +453,7 @@
 		public static function getScheduleCountCachedStatic($id_group)
 		{
 			if (LOCAL_DEVELOPMENT) {
-				return 0;
+				return (object)['paid' => 32, 'free' => 1];
 			}
 
 
