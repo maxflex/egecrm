@@ -382,7 +382,7 @@ angular.module("Teacher", ["ngMap"]).config([
         $scope.new_payment.id = response.id;
         $scope.new_payment.document_number = response.document_number;
         $scope.payments = initIfNotSet($scope.payments);
-        $scope.payments.push($scope.new_payment);
+        $scope.payments.unshift($scope.new_payment);
         $scope.new_payment = {
           id_status: 0
         };

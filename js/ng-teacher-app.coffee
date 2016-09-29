@@ -325,7 +325,7 @@
 			      $scope.new_payment.document_number = response.document_number
 			      # Инициализация если не установлено
 			      $scope.payments = initIfNotSet($scope.payments)
-			      $scope.payments.push $scope.new_payment
+			      $scope.payments.unshift $scope.new_payment
 			      $scope.new_payment = id_status: 0
 			      $scope.$apply()
 			      ajaxEnd()

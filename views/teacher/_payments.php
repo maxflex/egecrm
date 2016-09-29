@@ -12,12 +12,9 @@
 			<input type="text" class="form-control digits-only" id="payment-sum" ng-model="new_payment.sum"  ng-keydown="watchEnter($event)"> от
 		</div>
 		<div class="form-group inline-block">
-			<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date" pattern="[0-9]{2}.[0-9]{2}.[0-9]{4}">
+			<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
 		</div>
 	</div>
-	<script>
-		$("#payment-date").inputmask("99.99.9999");
-	</script>
 	<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
 		<h4>Номер карты</h4>
 		<div class="form-group inline-block">
