@@ -1217,7 +1217,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     /* IE6-9 */ }
 
 #calendar-app .cancelled {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+  background-color: rgba(0, 0, 0, 0.25) !important;
   color: white !important; }
 
 #calendar-app .exam-subject {

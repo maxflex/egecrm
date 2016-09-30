@@ -52,10 +52,10 @@
 -->
 		<td width="15%">
 			<span ng-show="Group.first_schedule">
-				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
-					'one': 'занятие',
-					'few': 'занятия',
-					'many': 'занятий'
+				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">был {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
+					'one': 'урок',
+					'few': 'урока',
+					'many': 'уроков'
 				}"></ng-pluralize></span></span><span ng-show="Group.first_schedule && Group.schedule_count.paid > 0">, </span><span ng-show="Group.schedule_count.paid > 0">всего
                 {{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free' class="text-gray">+{{Group.schedule_count.free}}
                 </span>
