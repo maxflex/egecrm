@@ -175,15 +175,15 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     return set_scope("Group");
   });
 }).controller("ScheduleCtrl", function($scope) {
+  var hideRows;
   $scope.schedulde_loaded = false;
   $scope.changeCabinet = function(Schedule) {
     ajaxStart();
     return $.post('groups/ajax/ChangeScheduleCabinet', {
-      id: Schedule.id({
-        cabinet: Schedule.cabinet
-      }, function() {
-        return ajaxEnd();
-      })
+      id: Schedule.id,
+      cabinet: Schedule.cabinet
+    }, function() {
+      return ajaxEnd();
     });
   };
   $scope.formatDate = function(date) {
@@ -344,20 +344,23 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     t = $scope.Group.Schedule.filter(function(schedule) {
       return schedule.date === d;
     });
+    hideRows();
     if (t.length === 0) {
-      $scope.Group.Schedule.push({
-        date: d,
-        cancelled: 0
-      });
       ajaxStart();
-      $.post("groups/ajax/AddScheduleDate", {
+      return $.post("groups/ajax/AddScheduleDate", {
         date: d,
         id_group: $scope.Group.id
-      }, function() {
-        return ajaxEnd();
-      });
+      }, function(response) {
+        ajaxEnd();
+        $scope.Group.Schedule.push({
+          date: d,
+          cancelled: 0,
+          id: response.id
+        });
+        return $scope.$apply();
+      }, 'json');
     } else {
-      $.each($scope.Group.Schedule, function(i, v) {
+      return $.each($scope.Group.Schedule, function(i, v) {
         if (v !== void 0) {
           if (v.date === d) {
             if (!v.cancelled) {
@@ -377,16 +380,16 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
                 date: d,
                 id_group: $scope.Group.id
               }, function() {
-                return ajaxEnd();
+                ajaxEnd();
+                return $scope.$apply();
               });
             }
           }
         }
       });
     }
-    return $scope.$apply();
   };
-  return angular.element(document).ready(function() {
+  angular.element(document).ready(function() {
     var init_dates, j, len, ref, schedule_date;
     set_scope('Group');
     init_dates = [];
@@ -415,8 +418,11 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       }, 500);
     });
     $(".table-condensed").first().children("thead").css("display", "table-caption");
-    return $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide();
+    return hideRows();
   });
+  return hideRows = function() {
+    return $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide();
+  };
 }).controller("EditCtrl", function($scope, $timeout) {
   var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, rebindBlinking;
   $timeout(function() {
@@ -647,13 +653,15 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     }, "json");
   };
   $scope.updateGroup = function(data) {
-    ajaxStart();
-    return $.post("groups/ajax/updateGroup", {
-      id_group: $scope.Group.id,
-      data: data
-    }, function() {
-      return ajaxEnd();
-    });
+    if ($scope.Group.id) {
+      ajaxStart();
+      return $.post("groups/ajax/updateGroup", {
+        id_group: $scope.Group.id,
+        data: data
+      }, function() {
+        return ajaxEnd();
+      });
+    }
   };
   $scope.to_students = true;
   $scope.to_representatives = false;
@@ -823,15 +831,17 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   $scope.toggleReadyToStart = function() {
     var ready_to_start;
     ready_to_start = $scope.Group.ready_to_start ? 0 : 1;
-    ajaxStart();
-    return $.post("groups/ajax/toggleReadyToStart", {
-      id: $scope.Group.id,
-      ready_to_start: ready_to_start
-    }, function() {
-      ajaxEnd();
-      $scope.Group.ready_to_start = ready_to_start;
-      return $scope.$apply();
-    });
+    if ($scope.Group.id) {
+      ajaxStart();
+      return $.post("groups/ajax/toggleReadyToStart", {
+        id: $scope.Group.id,
+        ready_to_start: ready_to_start
+      }, function() {
+        ajaxEnd();
+        $scope.Group.ready_to_start = ready_to_start;
+        return $scope.$apply();
+      });
+    }
   };
   $scope.addGroupsPanel = function() {
     if (!$scope.Groups) {
@@ -1391,12 +1401,17 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     return frontendLoadingEnd();
   });
 }).controller("StudentListCtrl", function($scope) {
-  return console.log('init');
+  return $scope.getGroupsYears = function() {
+    if ($scope.Groups) {
+      return _.uniq(_.pluck($scope.Groups, 'year'));
+    }
+    return [];
+  };
 }).controller("TeacherListCtrl", function($scope) {
   set_scope("Group");
   return $scope.getGroupsYears = function() {
     if ($scope.Groups) {
-      return _.uniq(_.pluck(ang_scope.Groups, 'year'));
+      return _.uniq(_.pluck($scope.Groups, 'year'));
     }
     return [];
   };

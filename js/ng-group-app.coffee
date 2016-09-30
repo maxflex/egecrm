@@ -139,10 +139,7 @@
 
 		    $scope.changeCabinet = (Schedule) ->
 			    ajaxStart()
-			    $.post 'groups/ajax/ChangeScheduleCabinet',
-			    	id: Schedule.id
-            		cabinet: Schedule.cabinet
-		        , ->
+			    $.post 'groups/ajax/ChangeScheduleCabinet', {id: Schedule.id, cabinet: Schedule.cabinet}, ->
 			        ajaxEnd()
 
 		    $scope.formatDate = (date) ->
@@ -287,14 +284,18 @@
 		        # check if date is in schedule
 		        t = $scope.Group.Schedule.filter (schedule) ->
 		            schedule.date is d
-
+		        hideRows()
 		        if t.length is 0
-		            $scope.Group.Schedule.push
-		                date: d
-		                cancelled: 0
 		            ajaxStart()
-		            $.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}, ->
+		            $.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}
+		            , (response)->
 		                ajaxEnd()
+		                $scope.Group.Schedule.push
+		                    date: d
+		                    cancelled: 0
+		                    id: response.id
+		                $scope.$apply()
+		            , 'json'
 		        else
 		            $.each $scope.Group.Schedule, (i, v) ->
 		                if v isnt undefined
@@ -310,15 +311,13 @@
 		                            ajaxStart()
 		                            $.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}, ->
 		                                ajaxEnd()
-		        $scope.$apply()
+		                                $scope.$apply()
 
 		    angular.element(document).ready ->
 		        set_scope 'Group'
 		        init_dates = []
 		        for schedule_date in $scope.Group.Schedule
 		            init_dates.push new Date schedule_date.date
-		# 					$scope.schedule.push
-		# 				console.log init_dates
 		        $(".calendar-month").each ->
 		            $(this)
 		                .datepicker $scope.getInitParams this
@@ -341,6 +340,8 @@
 		            , 500
 
 		        $(".table-condensed").first().children("thead").css "display", "table-caption"
+		        hideRows()
+		    hideRows = ->
 		        # hack пустые строки
 		        $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide()
 
@@ -536,12 +537,13 @@
 				, "json"
 
 			$scope.updateGroup = (data) ->
-				ajaxStart()
-				$.post "groups/ajax/updateGroup",
-					id_group: $scope.Group.id
-					data: data
-				, ->
-					ajaxEnd()
+				if $scope.Group.id
+					ajaxStart()
+					$.post "groups/ajax/updateGroup",
+						id_group: $scope.Group.id
+						data: data
+					, ->
+						ajaxEnd()
 
 			$scope.to_students = true
 			$scope.to_representatives = false
@@ -675,14 +677,15 @@
 
 			$scope.toggleReadyToStart = ->
 				ready_to_start = if $scope.Group.ready_to_start then 0 else 1
-				ajaxStart()
-				$.post "groups/ajax/toggleReadyToStart",
-					id: $scope.Group.id
-					ready_to_start: ready_to_start
-				, ->
-					ajaxEnd()
-					$scope.Group.ready_to_start = ready_to_start
-					$scope.$apply()
+				if $scope.Group.id
+					ajaxStart()
+					$.post "groups/ajax/toggleReadyToStart",
+						id: $scope.Group.id
+						ready_to_start: ready_to_start
+					, ->
+						ajaxEnd()
+						$scope.Group.ready_to_start = ready_to_start
+						$scope.$apply()
 
 
 
@@ -1161,11 +1164,15 @@
 				, 25
 				frontendLoadingEnd()
 		.controller "StudentListCtrl", ($scope) ->
-			console.log 'init'
+			# @todo объединить все getGroupsYears в сервис/факторй
+			$scope.getGroupsYears = ->
+				if $scope.Groups
+					return _.uniq _.pluck $scope.Groups, 'year'
+				return []
 		.controller "TeacherListCtrl", ($scope) ->
 			set_scope "Group"
 			# @todo объединить все getGroupsYears в сервис/факторй
 			$scope.getGroupsYears = ->
 				if $scope.Groups
-					return _.uniq _.pluck ang_scope.Groups, 'year'
+					return _.uniq _.pluck $scope.Groups, 'year'
 				return []
