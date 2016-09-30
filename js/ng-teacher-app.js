@@ -98,11 +98,13 @@ angular.module("Teacher", ["ngMap"]).config([
   $scope.toggleFreetime = function(day, id_time) {
     var mode;
     mode = $scope.Bars.Freetime[day][id_time] === 'green' ? 'Delete' : 'Add';
+    ajaxStart();
     $.post('ajax/' + mode + 'Freetime', {
       'id_entity': $scope.Teacher.id,
       'type_entity': 'teacher',
       'id_time': id_time
     }, function() {
+      ajaxEnd();
       $scope.Bars.Freetime[day][id_time] = mode === 'Add' ? 'green' : 'empty';
       $scope.$apply();
     });
@@ -219,9 +221,12 @@ angular.module("Teacher", ["ngMap"]).config([
 
         } else if (hex_md5(result === payments_hash)) {
           payment.confirmed = payment.confirmed ? 0 : 1;
+          ajaxStart();
           $.post('ajax/confirmPayment', {
             id: payment.id,
             confirmed: payment.confirmed
+          }, function() {
+            return ajaxEnd();
           });
           $scope.$apply();
         } else if (result !== null) {

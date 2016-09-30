@@ -78,11 +78,13 @@
 			# @time-refactored @time-checked
 			$scope.toggleFreetime = (day, id_time) ->
 			  mode = if $scope.Bars.Freetime[day][id_time] == 'green' then 'Delete' else 'Add'
+			  ajaxStart()
 			  $.post 'ajax/' + mode + 'Freetime', {
 			    'id_entity': $scope.Teacher.id
 			    'type_entity': 'teacher'
 			    'id_time': id_time
 			  }, ->
+			    ajaxEnd()
 			    $scope.Bars.Freetime[day][id_time] = if mode == 'Add' then 'green' else 'empty'
 			    $scope.$apply()
 			    return
@@ -178,9 +180,12 @@
 			      if result is null
 			      else if hex_md5 result == payments_hash
 			        payment.confirmed = if payment.confirmed then 0 else 1
+			        ajaxStart()
 			        $.post 'ajax/confirmPayment',
 			          id: payment.id
 			          confirmed: payment.confirmed
+			        , ->
+			            ajaxEnd()
 			        $scope.$apply()
 			      else if result != null
 			        $('.bootbox-form').addClass('has-error').children().first().focus()
@@ -340,7 +345,9 @@
 			    bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
 			      if result == true
 			        console.log index
-			        $.post 'ajax/deletePayment', 'id_payment': payment.id
+			            ajaxStart()
+			        $.post 'ajax/deletePayment', 'id_payment': payment.id, ->
+			            ajaxEnd()
 			        $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
 			        $scope.$apply()
 			      return

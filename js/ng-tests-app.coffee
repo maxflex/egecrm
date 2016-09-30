@@ -75,10 +75,12 @@
 				_.find($scope.Tests, {id: parseInt(id_testing) })
 
 			$scope.toggleTestStatus = (StudentTest) ->
+				ajaxStart()
 				$.post "tests/ajaxToggleStatus",
 					id_test:    StudentTest.id_test
 					id_student: StudentTest.id_student
 				, (new_status) ->
+					ajaxEnd()
 					StudentTest.intermediate = parseInt(new_status)
 					$scope.$apply()
 
@@ -119,9 +121,11 @@
 						else 'ответ верный, ' + Problem.score + ' баллов'
 
 			$scope.deleteTest = (StudentTest) ->
+				ajaxStart()
 				$.post "tests/ajaxDeleteStudentTest",
 					id: StudentTest.id
 				, ->
+					ajaxEnd()
 					$scope.StudentTests = _.reject $scope.StudentTests, (e) ->
 						e.id == StudentTest.id
 					$scope.Tests = angular.copy($scope.Tests)
@@ -250,6 +254,8 @@
 						ajaxStart()
 						$.post "tests/ajaxDeleteTest", {id_test: $scope.Test.id}, ->
 							redirect "tests"
+						, ->
+							ajaxEnd()
 				
 			$scope.addProblem = ->
 				$scope.form_changed = true
@@ -295,8 +301,11 @@
 				$scope.editing_problem = undefined
 				$scope.Test.Problems.splice(index, 1)
 				if Problem.id
+					ajaxStart()
 					$.post "tests/ajaxDeleteProblem", 
 						id_problem: Problem.id
+					, ->
+						ajaxEnd()
 			
 			$scope.editAnswer = (Problem, parent_index, index) ->
 				console.log(parent_index, index)

@@ -41,7 +41,7 @@
             </tr>
             <tr ng-repeat="Teacher in Teachers">
                 <td style="text-align: left; width: 250px">
-                    {{Teacher.first_name}} {{Teacher.last_name}} {{Teacher.middle_name}}
+                    {{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
                 </td>
                 <td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
                         <span class="circle-default"

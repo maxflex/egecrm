@@ -171,9 +171,12 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
 
         } else if (hex_md5(result) === payments_hash) {
           payment.confirmed = (payment.confirmed + 1) % 2;
+          ajaxStart();
           $.post("ajax/confirmPayment", {
             id: payment.id,
             confirmed: payment.confirmed
+          }, function() {
+            return ajaxEnd();
           });
           return $scope.$apply();
         } else if (result !== null) {
@@ -319,8 +322,11 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     if (!payment.confirmed) {
       return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
         if (result === true) {
+          ajaxStart();
           $.post("ajax/deletePayment", {
             id_payment: payment.id
+          }, function() {
+            return ajaxEnd();
           });
           $scope.payments.splice(index, 1);
           return $scope.$apply();
@@ -336,8 +342,11 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
           } else if (hex_md5(result) === payments_hash) {
             return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
               if (result === true) {
+                ajaxStart();
                 $.post("ajax/deletePayment", {
                   id_payment: payment.id
+                }, function() {
+                  return ajaxEnd();
                 });
                 $scope.payments.splice(index, 1);
                 return $scope.$apply();

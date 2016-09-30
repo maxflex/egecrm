@@ -23,7 +23,9 @@
 				$scope.BranchLoad[id_branch].push
 					color: 1
 					id_branch: id_branch
-				$.post "ajax/BranchLoadAdd", {id_branch: id_branch} 
+				ajaxStart()
+				$.post "ajax/BranchLoadAdd", {id_branch: id_branch}, ->
+					ajaxEnd()
 			
 			$scope.addLoadFull = (id_branch, grade, id_subject) ->
 				$scope.BranchLoad[grade] = initIfNotSet $scope.BranchLoad[grade]
@@ -34,7 +36,9 @@
 					id_branch: id_branch
 					grade: grade
 					id_subject: id_subject
-				$.post "ajax/BranchLoadAdd", {id_branch: id_branch, grade: grade, id_subject: id_subject}
+				ajaxStart()
+				$.post "ajax/BranchLoadAdd", {id_branch: id_branch, grade: grade, id_subject: id_subject}, ->
+					ajaxEnd()
 			
 			$scope.addLoadSubject = (id_branch, grade, id_subject) ->
 				$scope.BranchLoad[grade] = initIfNotSet $scope.BranchLoad[grade]
@@ -45,24 +49,32 @@
 					id_branch: id_branch
 					grade: grade
 					id_subject: id_subject
-				$.post "ajax/BranchLoadAdd", {id_branch: id_branch, grade: grade, id_subject: id_subject}
+				ajaxStart()
+				$.post "ajax/BranchLoadAdd", {id_branch: id_branch, grade: grade, id_subject: id_subject}, ->
+					ajaxEnd()
 			
 			$scope.changeLoad = (id_branch, index) ->
-				$.post "ajax/BranchLoadChange", {id_branch: id_branch, index: index}
+				ajaxStart()
+				$.post "ajax/BranchLoadChange", {id_branch: id_branch, index: index}, ->
+					ajaxEnd()
 				if $scope.BranchLoad[id_branch][index].color is 3
 					$scope.BranchLoad[id_branch].splice index, 1
 				else
 					$scope.BranchLoad[id_branch][index].color++
 			
 			$scope.changeLoadFull = (id_branch, grade, id_subject, index) ->
-				$.post "ajax/BranchLoadChangeFull", {id_branch: id_branch, grade: grade, id_subject: id_subject, index: index}
+				ajaxStart()
+				$.post "ajax/BranchLoadChangeFull", {id_branch: id_branch, grade: grade, id_subject: id_subject, index: index}, ->
+					ajaxEnd()
 				if $scope.BranchLoad[grade][id_subject][index].color is 3
 					$scope.BranchLoad[grade][id_subject].splice index, 1
 				else
 					$scope.BranchLoad[grade][id_subject][index].color++
 			
 			$scope.changeLoadSubject = (id_branch, grade, id_subject, index) ->
-				$.post "ajax/BranchLoadChangeFull", {id_branch: id_branch, grade: grade, id_subject: id_subject, index: index}
+				ajaxStart()
+				$.post "ajax/BranchLoadChangeFull", {id_branch: id_branch, grade: grade, id_subject: id_subject, index: index}, ->
+					ajaxEnd()
 				if $scope.BranchLoad[grade][id_branch][index].color is 3
 					$scope.BranchLoad[grade][id_branch].splice index, 1
 				else

@@ -51,7 +51,9 @@ angular.module "Settings", ["ui.bootstrap", 'ngSanitize']
 					time = $(this).val()
 					if time
 						Schedule.time = time
-						$.post "groups/ajax/AddScheduleTime", {time: time, date: Schedule.date, id_group: $scope.Group.id}
+						ajaxStart()
+						$.post "groups/ajax/AddScheduleTime", {time: time, date: Schedule.date, id_group: $scope.Group.id}, ->
+							ajaxEnd()
 						$scope.$apply()
 					$(this)
 						.hide()
@@ -90,7 +92,9 @@ angular.module "Settings", ["ui.bootstrap", 'ngSanitize']
 			if t.length is 0
 				$scope.Group.Schedule.push
 					date: d
-				$.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}
+				ajaxStart()
+				$.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}, ->
+					ajaxEnd()
 			else
 # 					index = $scope.schedule.indexOf d
 # 					$scope.schedule.splice index, 1
@@ -98,7 +102,9 @@ angular.module "Settings", ["ui.bootstrap", 'ngSanitize']
 					if v isnt undefined
 						if v.date is d
 							$scope.Group.Schedule.splice i, 1
-				$.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}
+				ajaxStart()
+				$.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}, ->
+					ajaxEnd()
 			$scope.$apply()
 
 		angular.element(document).ready ->

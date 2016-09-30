@@ -137,9 +137,12 @@ angular.module "Payments", ["ui.bootstrap"]
                     if result is null
                     else if hex_md5(result) is payments_hash
                         payment.confirmed = (payment.confirmed + 1) % 2
+                        ajaxStart()
                         $.post "ajax/confirmPayment",
                             id:        payment.id
                             confirmed: payment.confirmed
+                        , ->
+                            ajaxEnd()
                         $scope.$apply()
                     else if result != null
                         $('.bootbox-form').addClass('has-error').children().first().focus()
@@ -288,8 +291,11 @@ angular.module "Payments", ["ui.bootstrap"]
             if not payment.confirmed
                 bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
                     if result is true
+                        ajaxStart()
                         $.post "ajax/deletePayment",
                             id_payment: payment.id
+                        , ->
+                            ajaxEnd()
                         $scope.payments.splice index, 1
                         $scope.$apply()
             else
@@ -301,8 +307,11 @@ angular.module "Payments", ["ui.bootstrap"]
                         else if hex_md5(result) is payments_hash
                             bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
                                 if result is true
+                                    ajaxStart()
                                     $.post "ajax/deletePayment",
                                         id_payment: payment.id
+                                    , ->
+                                        ajaxEnd()
                                     $scope.payments.splice index, 1
                                     $scope.$apply()
                         else if result != null

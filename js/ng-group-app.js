@@ -177,9 +177,13 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
 }).controller("ScheduleCtrl", function($scope) {
   $scope.schedulde_loaded = false;
   $scope.changeCabinet = function(Schedule) {
+    ajaxStart();
     return $.post('groups/ajax/ChangeScheduleCabinet', {
-      id: Schedule.id,
-      cabinet: Schedule.cabinet
+      id: Schedule.id({
+        cabinet: Schedule.cabinet
+      }, function() {
+        return ajaxEnd();
+      })
     });
   };
   $scope.formatDate = function(date) {
@@ -209,11 +213,13 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
         v.time = null;
         v.cabinet = '';
       }
+      ajaxStart();
       return $.post("groups/ajax/TimeFromGroup", {
         id: v.id,
         time: v.time,
         cabinet: v.cabinet
       }, function() {
+        ajaxEnd();
         schedule.time = v.time;
         schedule.cabinet = v.cabinet;
         return $scope.$apply();
@@ -224,9 +230,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     return Object.keys($scope.Group.day_and_time).length;
   };
   $scope.changeFree = function(Schedule) {
+    ajaxStart();
     return $.post("groups/ajax/changeScheduleFree", {
       id: Schedule.id,
       is_free: Schedule.is_free
+    }, function() {
+      return ajaxEnd();
     });
   };
   $scope.setTime = function(Schedule, event) {
@@ -236,10 +245,13 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       time = $(this).val();
       if (time) {
         Schedule.time = time;
+        ajaxStart();
         $.post("groups/ajax/AddScheduleTime", {
           time: time,
           date: Schedule.date,
           id_group: $scope.Group.id
+        }, function() {
+          return ajaxEnd();
         });
         $scope.$apply();
       }
@@ -337,9 +349,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
         date: d,
         cancelled: 0
       });
+      ajaxStart();
       $.post("groups/ajax/AddScheduleDate", {
         date: d,
         id_group: $scope.Group.id
+      }, function() {
+        return ajaxEnd();
       });
     } else {
       $.each($scope.Group.Schedule, function(i, v) {
@@ -348,15 +363,21 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
             if (!v.cancelled) {
               v.title = false;
               v.cancelled = 1;
+              ajaxStart();
               return $.post("groups/ajax/CancelScheduleDate", {
                 date: d,
                 id_group: $scope.Group.id
+              }, function() {
+                return ajaxEnd();
               });
             } else {
               $scope.Group.Schedule.splice(i, 1);
+              ajaxStart();
               return $.post("groups/ajax/DeleteScheduleDate", {
                 date: d,
                 id_group: $scope.Group.id
+              }, function() {
+                return ajaxEnd();
               });
             }
           }
@@ -471,11 +492,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
           return notifySuccess("Ученик уже в группе");
         } else {
           old_id_group = $scope.Group && ($scope.Group.id !== id_group) ? $scope.Group.id : false;
+          ajaxStart();
           $.post("groups/ajax/AddStudentDnd", {
             id_group: id_group,
             id_student: id_student,
             old_id_group: old_id_group
-          });
+          }, ajaxEnd());
           Group.students.push(id_student);
           $scope.removeStudent(id_student, true);
           return $scope.$apply();
@@ -551,6 +573,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       return;
     }
     console.log('changin teacher');
+    ajaxStart();
     $.post("groups/ajax/changeTeacher", {
       id_group: $scope.Group.id,
       id_subject: $scope.Group.id_subject,
@@ -559,6 +582,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       year: $scope.Group.year,
       students: $scope.Group.students
     }, function(response) {
+      ajaxEnd();
       console.log('teacher changed', response);
       $.each(response.teacher_like_statuses, function(id_student, id_status) {
         console.log('hiiaa');
@@ -623,9 +647,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
     }, "json");
   };
   $scope.updateGroup = function(data) {
+    ajaxStart();
     return $.post("groups/ajax/updateGroup", {
       id_group: $scope.Group.id,
       data: data
+    }, function() {
+      return ajaxEnd();
     });
   };
   $scope.to_students = true;
@@ -677,6 +704,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   };
   $scope.smsNotify = function(Student, event) {
     $(event.target).html("отправка...").removeAttr("ng-click").removeClass("pointer").addClass("default");
+    ajaxStart();
     return $.post("groups/ajax/smsNotify", {
       id_student: Student.id,
       id_subject: $scope.Group.id_subject,
@@ -684,6 +712,7 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       id_group: $scope.Group.id,
       cabinet: $scope.FirstLesson.cabinet
     }, function(response) {
+      ajaxEnd();
       Student.sms_notified = true;
       return $scope.$apply();
     });
@@ -694,11 +723,13 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
       el = $(event.target);
       el.hide();
       $("#student-adding-" + Student.id).show();
+      ajaxStart();
       return $.post("groups/ajax/inGroup", {
         id_student: Student.id,
         id_group: $scope.Group.id,
         id_subject: $scope.Group.id_subject
       }, function(in_other_group) {
+        ajaxEnd();
         if (!in_other_group) {
           console.log(el);
           el.show();
@@ -792,10 +823,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
   $scope.toggleReadyToStart = function() {
     var ready_to_start;
     ready_to_start = $scope.Group.ready_to_start ? 0 : 1;
+    ajaxStart();
     return $.post("groups/ajax/toggleReadyToStart", {
       id: $scope.Group.id,
       ready_to_start: ready_to_start
     }, function() {
+      ajaxEnd();
       $scope.Group.ready_to_start = ready_to_start;
       return $scope.$apply();
     });
@@ -1159,9 +1192,12 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
         if (indexOf.call(Group.students, id_student) >= 0) {
           return notifySuccess("Ученик уже в группе");
         } else {
+          ajaxStart();
           $.post("groups/ajax/AddStudentDnd", {
             id_group: id_group,
             id_student: id_student
+          }, function() {
+            return ajaxEnd();
           });
           Group.students.push(id_student);
           $scope.$apply();
