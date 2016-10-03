@@ -386,8 +386,13 @@
 					return contract.current_version
 				}
 				$scope.lastContractInChain = function(contract) {
-					return _.find($scope.contractsChain(+contract.id_contract), function (c) { return c.current_version == 1})
+					return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
 				}
+
+                // первая версия последней цепи (выше chain – неправильно, это версии)
+                $scope.firstInLastChain = function() {
+                    return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
+                }
 
 				$scope.week_count = function (programm) {
 					c = parseInt(_.max(programm, function(v){ return v.count; }).count)
@@ -1398,14 +1403,17 @@
 					return
 				}
 
+        pushAndSetCurrentVersion = function (contract) {
+          $scope.lastContractInChain(contract).current_version = 0
+          _.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) {
+            $scope.current_contract.current_version = 1
+            c = $scope.current_contract
+          })
+        }
 				if ($scope.current_contract.id) {
 					ajaxStart('contract')
-					$.post("ajax/contractEdit", $scope.current_contract, function(response){
-						key = _.findIndex($scope.contracts, function(c){ return c.id == $scope.current_contract.id; })
-						$scope.contracts[key] = $scope.current_contract
-						if ($scope.isFirstContractInChain($scope.current_contract)) {
-							updateVersions($scope.current_contract)
-						}
+					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
+            pushAndSetCurrentVersion($scope.current_contract)
 						ajaxEnd('contract')
 						lightBoxHide()
 						$scope.lateApply()
@@ -1418,7 +1426,7 @@
 						ajaxEnd('contract')
 						lightBoxHide()
 						$scope.current_contract.id = response.id
-						$scope.current_contract.id_contract = +response.id_contract
+						$scope.current_contract.id_contract = response.id_contract
 						$scope.current_contract.user_login 	= response.user_login
 						$scope.current_contract.date_changed= response.date_changed
 						$scope.current_contract.current_version = 1
@@ -1429,20 +1437,10 @@
 							return a.id_subject - b.id_subject
 						})
 						$scope.contracts = initIfNotSet($scope.contracts)
-						pushAndSetCurrentVersion(new_contract)
+						$scope.contracts.push(new_contract)
 						$scope.$apply()
 					}, "json");
 				}
-			}
-			updateVersions = function(contract) {
-				$scope.contractsChain(contract.id_contract).map(function(version){ return version.info = contract.info })
-			}
-			pushAndSetCurrentVersion = function (contract) {
-				if ($scope.contractsChain(contract.id_contract).length) {
-					$scope.lastContractInChain(contract).current_version = 0
-				}
-				contract.current_version = 1
-				$scope.contracts.push(contract)
 			}
 
 			$scope.subjectChecked = function(id_subject) {
@@ -1493,7 +1491,7 @@
 			// вызывает окно редактирования контракта
 			$scope.callContractEdit = function(contract)
 			{
-				$scope.current_contract = cloneContract(contract)
+				$scope.current_contract = angular.copy(contract)
 
 				if ($scope.current_contract.info.grade === null) {
 					$scope.current_contract.info.grade = ""
@@ -1513,20 +1511,15 @@
 				}, 100)
 			}
 
-			cloneContract = function(contract) {
-				copy = angular.copy(contract)
-				delete copy.show_actions
-				return copy;
-			}
 			disableContractFields = function(contract) {
-				if (!$scope.isFirstContractInChain(contract)) {
+				// if (!($scope.isFirstContractInChain(contract) && $scope.isLastContractInChain(contract)) {
 					contract.disabled = ['year', 'grade']
-				}
+				// }
 				return contract
 			}
 			// создать новую версию
 			$scope.createNewContract = function(contract) {
-        new_contract = cloneContract($scope.lastContractInChain(contract))
+				new_contract = angular.copy($scope.lastContractInChain(contract))
 				delete new_contract.id
 				new_contract.date = moment().format("DD.MM.YYYY")
 				$scope.callContractEdit(disableContractFields(new_contract))
@@ -1584,10 +1577,11 @@
 				bootbox.confirm("Вы уверены, что хотите удалить договор?", function(result) {
 					if (result === true) {
 						$.post("ajax/contractDelete", {"id_contract": contract.id})
+
 						$scope.contracts = _.without($scope.contracts, contract);
-						if ($scope.contractsChain(contract.id_contract).length && contract.current_version) {
-							_.last($scope.contractsChain(contract.id_contract)).current_version = 1
-						}
+						if ($scope.lastContractInChain(contract) && contract.current_version) {
+              $scope.lastContractInChain(contract).current_version = 1
+            }
 						$scope.$apply()
 					}
 				})
