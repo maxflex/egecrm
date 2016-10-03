@@ -5,7 +5,7 @@
 		text-indent: 2cm;
 	}
     </style>
-	<h4 style="margin-bottom: 0">Дополнительное соглашение №{{contract.id_contract}}</h4>
+	<h4 style="margin-bottom: 0">Дополнительное соглашение №</h4>
 	<h4 style="margin-top: 0">к договору на оказание платных образовательных услуг №{{contract.id_contract}} от {{firstContractInChain(contract).date}} г.</h4>
 	<div style="display: inline-block; width: 100%; margin-bottom: 20px">
 		<span style="float: left">г. Москва</span>
@@ -27,7 +27,7 @@
 			«{{SubjectsFull2[program.id_subject]}}-{{contract.info.grade}}-{{(program.count * 1) + (program.count2 * 1)}}» ({{((program.count * 1) + (program.count2 * 1))*3}}
 			аудиторных <ng-pluralize count="((program.count * 1) + (program.count2 * 1))*3" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> и {{((program.count * 1) + (program.count2 * 1))*1.5}}
 			 <ng-pluralize count="((program.count * 1) + (program.count2 * 1))*1.5" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> на самостоятельную подготовку){{$last ? '.' : ','}}
-		</span>
+		</span> Форма обучения – очная.
 	</p>
 	<p>- Пункт 3.1. Договора изложить в следующей редакции:<br>
 		«Общая стоимость Услуг Исполнителя по Договору складывается из стоимости {{ subjectCount(contract) }} <ng-pluralize count="subjectCount(contract)" when="{

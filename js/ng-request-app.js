@@ -389,6 +389,11 @@
 					return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
 				}
 
+                // первая версия последней цепи (выше chain – неправильно, это версии)
+                $scope.firstInLastChain = function() {
+                    return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
+                }
+
 				$scope.week_count = function (programm) {
 					c = parseInt(_.max(programm, function(v){ return v.count; }).count)
 					c += parseInt(_.max(programm, function(v){ return v.count2; }).count2)

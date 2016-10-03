@@ -114,7 +114,7 @@
 
                     <tr><td style="padding:10px;"></td></tr>
 
-                    <tr><td>Основание: <br>Договор на оказание платных образовательных услуг <br>№{{ contract.id_contract }} от {{firstContractInChain(contract).date}}г.</td></tr>
+                    <tr><td>Основание: <br>Договор на оказание платных образовательных услуг <br>№{{ firstInLastChain().id_contract }} от {{ firstInLastChain().date }}г.</td></tr>
 
                     <tr><td style="padding:10px;"></td></tr>
 
@@ -172,7 +172,7 @@
                 <table>
                     <tr><td colspan="2" align="center"><h3><b>Квитанция</b></h3></td></tr>
                     <tr><td colspan="2" align="center" style="border-bottom: 1px solid black;">к приходному кассовому ордеру №{{PrintPayment.document_number}}</td></tr>
-                    <tr><td align="right" width="40%">от </td><td align="left" style="border-bottom: 1px solid black"><b>{{formatContractDate(PrintPayment.date)}}</b></td></tr>
+                    <tr><td align="right" width="40%">от </td><td align="left" style="border-bottom: 1px solid black"><b>{{ formatContractDate(PrintPayment.date) }}</b></td></tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr><td colspan="2">
@@ -184,7 +184,7 @@
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr><td colspan="2">
 	                    <div style="height: 72px !important">
-	                    Основание <br>Договор на оказание платных образовательных услуг № {{contracts[contracts.length - 1].id}} от {{firstContractInChain(contract).date}}г.
+	                    Основание <br>Договор на оказание платных образовательных услуг № {{ firstInLastChain().id}} от {{ firstInLastChain().date}}г.
 	                    </div>
 	                 </td></tr>
 
@@ -211,7 +211,7 @@
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr>
                         <td width="30%"></td>
-                        <td style="border-bottom: 1px solid black;"><b>{{formatContractDate(PrintPayment.date)}}</b></td>
+                        <td style="border-bottom: 1px solid black;"><b>{{ formatContractDate(PrintPayment.date) }}</b></td>
                     </tr>
                     <tr>
                         <td colspan="2"><b>М.П. (штампа)<br>Главный бухгалтер</b></td>

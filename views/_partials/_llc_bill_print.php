@@ -10,7 +10,7 @@
                 .printable table tr th {font-size: 12px}
                 .m_title {display:inline-block}
                 .m_title:first-letter {text-transform: uppercase}
-                
+
                 .bordered { border: 1px solid!important; }
             }
         </style>
@@ -113,7 +113,7 @@
         </table>
 
         <div style="font-weight: bold; font-size: 16px; padding-left:5px;margin-top:10px; margin-bottom: 5px; border-bottom: 2px solid black; padding-bottom: 5px">
-            Счет на оплату №{{contracts[0].id}} от {{formatContractDate(PrintPayment.date)}}
+            Счет на оплату №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}
         </div>
 
         <table width="100%">
@@ -152,7 +152,7 @@
                     </div>
                 </td>
                 <td>
-                    <div style="padding: 5px 0 5px 2px">договор №{{contracts[0].id}} от {{formatContractDate(contracts[0].date)}}</div>
+                    <div style="padding: 5px 0 5px 2px">договор №{{ firstInLastChain().id }} от {{ formatContractDate(firstInLastChain().date) }}</div>
                 </td>
             </tr>
         </table>
@@ -178,7 +178,7 @@
                 <tr>
                     <td align="center" style="font-size: 12px">1</td>
 
-                    <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{contracts[0].id}} от {{formatContractDate(PrintPayment.date)}}г.</td>
+                    <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}г.</td>
 
                     <td align="right" style="font-size: 12px;text-align:center;" class="bordered">1</td>
 
@@ -347,7 +347,7 @@
         </table>
 
         <div style="font-weight: bold; font-size: 16px; padding-left:5px;margin-top:10px; margin-bottom: 5px; border-bottom: 2px solid black; padding-bottom: 5px">
-            Счет на оплату №{{contracts[0].id}} от {{formatContractDate(PrintPayment.date)}}
+            Счет на оплату №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}
         </div>
 
         <table width="100%">
@@ -386,7 +386,7 @@
                     </div>
                 </td>
                 <td>
-                    <div style="padding: 5px 0 5px 2px">договор №{{contracts[0].id}} от {{formatContractDate(contracts[0].date)}}</div>
+                    <div style="padding: 5px 0 5px 2px">договор №{{ firstInLastChain().id_contract }} от {{ formatContractDate(firstInLastChain().date) }}</div>
                 </td>
             </tr>
         </table>
@@ -412,7 +412,7 @@
                 <tr>
                     <td align="center" style="font-size: 12px">1</td>
 
-                    <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{contracts[0].id}} от {{formatContractDate(PrintPayment.date)}}г.</td>
+                    <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}г.</td>
 
                     <td align="right" style="font-size: 12px;text-align:center;" class="bordered">1</td>
 
@@ -450,7 +450,7 @@
                 <td style="width:27mm; font-weight:bold;  text-align:right;">{{PrintPayment.sum | number}},00</td>
             </tr>
         </table>
-        
+
         <div style="font-size: 12px; margin-bottom: 8px;  border-bottom: 2px solid black; padding-bottom: 5px">
             Всего наименований 1, на сумму  {{PrintPayment.sum | number}},00 <ng-pluralize count="PrintPayment.sum" when="{
             'one'   : 'рубль',
