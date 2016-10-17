@@ -637,6 +637,7 @@
 				. (! isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
 				. (! isBlank($search->grade) ? " AND g.grade={$search->grade}" : "")
 				. (! isBlank($search->level) ? $search->level == GroupLevels::EXTERNAL ? " AND g.level=".GroupLevels::EXTERNAL : " AND g.level <> ".GroupLevels::EXTERNAL : "");
+
 			return "SELECT " . $select . $main_query . $ending;
 
 		}

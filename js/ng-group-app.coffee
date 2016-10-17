@@ -301,17 +301,17 @@
 		                if v isnt undefined
 		                    if v.date is d
 		                        if not v.cancelled
-		                            v.title = false
-		                            v.cancelled = 1
 		                            ajaxStart()
 		                            $.post "groups/ajax/CancelScheduleDate", {date: d, id_group: $scope.Group.id}, ->
-		                                ajaxEnd()
+			                            v.title = false
+			                            v.cancelled = 1
+			                            ajaxEnd()
 		                        else
-		                            $scope.Group.Schedule.splice i, 1
 		                            ajaxStart()
 		                            $.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}, ->
 		                                ajaxEnd()
-		                                $scope.$apply()
+			                            $scope.Group.Schedule.splice i, 1
+			                            $scope.$apply()
 
 		    angular.element(document).ready ->
 		        set_scope 'Group'
@@ -411,11 +411,12 @@
 						else
 							old_id_group = if $scope.Group and ($scope.Group.id isnt id_group) then $scope.Group.id else false
 							ajaxStart()
-							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student, old_id_group: old_id_group},
+							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student, old_id_group: old_id_group}
+							, ->
 								ajaxEnd()
-							Group.students.push id_student
-							$scope.removeStudent id_student, true
-							$scope.$apply()
+								Group.students.push id_student
+								$scope.removeStudent id_student, true
+								$scope.$apply()
 
 			# @time-refactored @time-checked
 			$scope.search_groups =
@@ -1002,8 +1003,8 @@
 							ajaxStart()
 							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}, ->
 								ajaxEnd()
-							Group.students.push id_student
-							$scope.$apply()
+								Group.students.push id_student
+								$scope.$apply()
 
 							student_group_index = $(ui.draggable).data "group-index"
 

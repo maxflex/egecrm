@@ -11,6 +11,10 @@ angular.module "Stats", ["ui.bootstrap"]
             return $sce.trustAsHtml(text)
 	]
 
+	.filter 'hideZero', ->
+		(item) ->
+			if item > 0 then item else null
+
 	.controller "ListCtrl", ($scope) ->
 
 		$scope.round1 = (n) ->

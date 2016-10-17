@@ -354,8 +354,9 @@
 			        ajaxStart()
 			        $.post 'ajax/deletePayment', 'id_payment': payment.id, ->
 			            ajaxEnd()
-			        $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
-			        $scope.$apply()
+			            $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
+			            $timeout ->
+				            $scope.$apply()
 			      return
 			  else
 			    bootbox.prompt
@@ -367,8 +368,10 @@
 			          bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
 			            if result == true
 			              $.post 'ajax/deletePayment', 'id_payment': payment.id
-			              $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
-			              $scope.$apply()
+			              , ->
+			                $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
+			                $timeout ->
+			                    $scope.$apply()
 			            return
 			        else if result != null
 			          $('.bootbox-form').addClass('has-error').children().first().focus()
