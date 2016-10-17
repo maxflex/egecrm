@@ -627,7 +627,16 @@
 				$S->total_lessons = GroupSchedule::count([
 					"condition" => "id_group={$S->id_group} AND cancelled = 0"
 				]);
-
+				
+				// данные по прошедшему занятию из журнала
+				if ($S->was_lesson) {
+					$S->Lesson = VisitJournal::find(["condition" => "id_group={$S->id_group} AND lesson_date='{$S->date}'"]);
+					if ($S->Lesson->cabinet) { 
+	                    $S->Lesson->cabinet = Cabinet::getBlock($S->Lesson->cabinet);
+	                }
+	                $S->Lesson->Teacher = Teacher::getLight($S->Lesson->id_teacher, ['phone']);
+				}
+				
 				// @time-refactored @time-checked
 				if ($S->cabinet) { 
                     $S->cabinet = Cabinet::getBlock($S->cabinet);

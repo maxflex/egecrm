@@ -348,16 +348,16 @@
 
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
-        /*** contex menu functions ***/
+				/*** contex menu functions ***/
 				$scope.closeContexMenu = function() {
-					_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
-					$scope.$apply();
+						_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
+						$scope.$apply();
 				}
 				$(document).on('keyup', function(event){
-          if (event.keyCode == 27) {
-            $scope.closeContexMenu()
-          }
-        })
+						if (event.keyCode == 27) {
+								$scope.closeContexMenu()
+						}
+				})
 
 				/*** contract functions ***/
 				$scope.getGroupsYears = function() {
@@ -1387,7 +1387,15 @@
 				} else {
 					$("select[name='grades']").removeClass("has-error")
 				}
-
+				
+				// обновить contract.info
+				if ($scope.current_contract.id_contract > 0) {
+					$scope.contractsChain($scope.current_contract.id_contract).forEach(function(contract) {
+						contract.info = $scope.current_contract.info
+					})	
+				}
+				
+				
 				// количество активных, но незаполненных полей "кол-во занятий"
 				count = $(".contract-lessons").filter(function() {
 					if (!$(this).val() && $(this).is(":visible")) {
@@ -1512,9 +1520,9 @@
 			}
 
 			disableContractFields = function(contract) {
-				// if (!($scope.isFirstContractInChain(contract) && $scope.isLastContractInChain(contract)) {
+				if (! $scope.isFirstContractInChain(contract)) {
 					contract.disabled = ['year', 'grade']
-				// }
+				}
 				return contract
 			}
 			// создать новую версию

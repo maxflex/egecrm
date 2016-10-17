@@ -1217,7 +1217,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     /* IE6-9 */ }
 
 #calendar-app .cancelled {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+  background-color: rgba(0, 0, 0, 0.25) !important;
   color: white !important; }
 
 #calendar-app .exam-subject {
@@ -2286,6 +2286,9 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .glyphicon-th, .no-margin-right {
   margin-right: 0 !important; }
 
+.no-padding-right {
+  padding-right: 0 !important; }
+
 .datepicker-dropdown {
   margin-top: 26px !important; }
 
@@ -2566,7 +2569,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
   border: none !important; }
 
 .request-list-nav li {
-  margin-right: 20px; }
+  margin-right: 30px; }
   .request-list-nav li a {
     margin-right: 0px;
     display: inline-block; }
@@ -2614,43 +2617,64 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 
 .full-width {
   width: 100% !important; }
+
 .form-control[readonly] {
-  background-color: white;
-}
+  background-color: white; }
+
 table.last-item-no-border tr:last-child td {
-  border-bottom: none!important;
-}
+  border-bottom: none !important; }
+
 .contex-menu {
   padding: 5px;
-  z-index:5;
+  z-index: 5;
   position: absolute;
   /*width: 200px;*/
-  right: 20px;
+  right: 15px;
   background: white;
   box-shadow: 0px 1px 6px #cdcdcd;
   border-radius: 3px;
   border: 1px solid #aaa;
   text-align: left;
   -vendor-animation-duration: 0.5s;
-  -vendor-animation-delay: 0.5s;
-}
+  -vendor-animation-delay: 0.5s; }
+
 .contex-menu ul {
   padding: 0;
-  z-index:10;
-}
+  z-index: 10; }
+
 .contex-menu li {
   list-style: none;
-  padding: 5px;
-}
+  padding: 5px; }
+
 .emptyClickHandler {
-  position:fixed;
+  position: fixed;
   top: 0;
   left: 0;
-  width:100%;
+  width: 100%;
   height: 100%;
-  z-index: 4;
-}
+  z-index: 4; }
 
 .no-hover {
-  hover:none
-}
+  hover: none; }
+
+h4.row-header.default-case {
+  text-transform: none !important; }
+
+.no-margin {
+  margin: 0; }
+
+.text-thin {
+  font-weight: 300; }
+
+.no-border, .no-border td {
+  border: none !important; }
+
+.visits-weekend td {
+  background: rgba(0, 0, 0, 0.05); }
+
+.bold-red {
+  color: #c40000 !important;
+  font-weight: bold; }
+
+.table-with-padding tr td:first-child {
+  padding-left: 4px !important; }

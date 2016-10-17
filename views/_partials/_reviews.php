@@ -1,5 +1,10 @@
-<table class="table table-hover border-reverse" style='font-size: 12px'>
-	<tr ng-repeat="Review in Reviews">
+<table class="table table-hover border-reverse" style='font-size: 12px' <?= ($review_by_year ? ' ng-repeat="review_year in getReviewsYears()"' : '') ?>>
+	<tr class="no-hover" ng-if="review_year">
+		<td colspan="8" class="no-border-bottom">
+			<h4 class="row-header default-case no-margin">Отзывы {{ review_year + '-' + (review_year + 1) }} учебного года</h4>
+		</td>
+	</tr>
+	<tr ng-repeat="Review in Reviews <?= ($review_by_year ? '|yearFilter:review_year' : '')?>">
 		<td style="width: 9%">
 			<a href="{{ <?= User::fromSession()->isStudent(true) ?> ? 'students/' : ''}}reviews/{{Review.id_teacher}}/{{Review.id_subject}}/{{Review.year}}{{<?= User::fromSession()->isStudent(true) ?> ? '' : '/' + (Review.id_entity || Review.id_student)}}">
 				{{Review.id ? 'отзыв ' + Review.id : 'создать'}}

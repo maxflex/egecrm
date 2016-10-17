@@ -73,10 +73,12 @@ angular.module("TeacherReview", ["ui.bootstrap"]).filter('range', function() {
   $scope.toggleReviewUser = function() {
     var new_user_id;
     new_user_id = $scope.id_user_review === $scope.user.id ? 0 : $scope.user.id;
+    ajaxStart();
     return $.post('ajax/UpdateStudentReviewUser', {
       'id_student': $scope.Student.id,
       'id_user_new': new_user_id
     }, function() {
+      ajaxEnd();
       $scope.id_user_review = new_user_id;
       return $scope.$apply();
     });

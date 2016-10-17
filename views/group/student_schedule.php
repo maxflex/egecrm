@@ -2,7 +2,7 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Расписание группы №<?= $Group->id ?>
-		(ЕГЭ-Центр-<?= Branches::$all[$Group->id_branch] ?>, <?= Subjects::$all[$Group->id_subject] ?>, <?= $Group->grade ?> класс)
+		| <?= Subjects::$three_letters[$Group->id_subject] ?>-<?= $Group->grade ?>
 	</div>
 	<div class="panel-body" style="position: relative">
 		<div class="row calendar">
@@ -44,8 +44,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-2"></div>
-			<div class="col-sm-5">
+			<div class="col-sm-1"></div>
+			<div class="col-sm-6">
 				<div style="margin-bottom: 15px; font-weight: bold">Преподаватель:</div>
 				<div>
 					{{Group.Teacher.last_name}} {{Group.Teacher.first_name}} {{Group.Teacher.middle_name}}
@@ -53,25 +53,33 @@
 
 				<div style="margin: 15px 0; font-weight: bold">Расписание занятий:</div>
 
-				<table class="table table-divlike">
+                <table class="table table-divlike" style="margin-left: -15px;">
 					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
-						<td>
+						<td style="padding:2px 4px 2px 0px;">
+							<span class="day-explain"
+								  ng-class="{
+									'was-lesson': inPastLessons(Schedule.date),
+									'cancelled':Schedule.cancelled
+								  }"
+							></span>
+						</td>
+						<td width="30%">
 							{{getLine1(Schedule)}}
 						</td>
-						<td>
+						<td width="20%">
 							<div class="lessons-table">
 								<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
 								<span>{{Schedule.time ? Schedule.time : 'не установлено'}}</span>
 							</div>
 						</td>
-						<td>
+						<td width="15%">
                             <!-- @have-to-refactor  -->
-							кабинет {{ inPastLessons(Schedule.date) ? getPastLessonCabinet(Schedule.date) : Schedule.Cabinet.number }}
+							{{ inPastLessons(Schedule.date) ? getPastLessonCabinetName(Schedule.date) : getCabinetName(Schedule.Cabinet.id) }}
 						</td>
-						<td>
-							<!-- @time-refactored  -->
-							<span ng-show="inPastLessons(Schedule.date)">занятие проведено</span>
-							<span ng-show="Schedule.cancelled">занятие отменено</span>
+						<td width="35%">
+							<!-- @time-refactored   -->
+							<span ng-show="inPastLessons(Schedule.date)">урок проведен</span>
+							<span ng-show="Schedule.cancelled">урок отменен</span>
 						</td>
 					</tr>
 				</table>

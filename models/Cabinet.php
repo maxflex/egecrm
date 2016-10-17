@@ -94,9 +94,12 @@
 			return dbConnection()->query("SELECT $field FROM cabinets WHERE id={$id_cabinet}")->fetch_object()->{$field};
 		}
 
-		public static function getBlock($id_cabinet)
+		public static function getBlock($id_cabinet, $id_branch = false)
 		{
-			$id_branch = self::getField($id_cabinet);
+		    if (!$id_branch) {
+                $id_branch = self::getField($id_cabinet);
+            }
+
 			return [
 				'id' 	=> $id_cabinet,
 				'color' => Branches::metroSvg($id_branch, false, true),

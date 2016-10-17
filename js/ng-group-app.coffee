@@ -27,6 +27,11 @@
 				for i in [0...total] by 1
 					input.push i
 				input
+
+		.filter 'yearFilter', ->
+			(items, year) ->
+				_.where items, 'year': year
+
 		.controller "JournalCtrl", ($scope) ->
 			$scope.grayMonth = (date) ->
 				d = moment(date).format("M")
@@ -133,9 +138,9 @@
 		    $scope.schedulde_loaded = false
 
 		    $scope.changeCabinet = (Schedule) ->
-            	$.post 'groups/ajax/ChangeScheduleCabinet',
-            		id: Schedule.id
-            		cabinet: Schedule.cabinet
+			    ajaxStart()
+			    $.post 'groups/ajax/ChangeScheduleCabinet', {id: Schedule.id, cabinet: Schedule.cabinet}, ->
+			        ajaxEnd()
 
 		    $scope.formatDate = (date) ->
 		        moment(date).format "D MMMM YYYY г."
@@ -167,11 +172,13 @@
 		                v.cabinet = ''
 
 		            # @time-refactored
+		            ajaxStart()
 		            $.post "groups/ajax/TimeFromGroup",
 		                id: v.id
 		                time: v.time
 		                cabinet: v.cabinet
 		            , ->
+		                ajaxEnd()
 		                schedule.time = v.time
 		                schedule.cabinet = v.cabinet
 		                $scope.$apply()
@@ -180,9 +187,12 @@
 		        Object.keys($scope.Group.day_and_time).length
 
 		    $scope.changeFree = (Schedule) ->
+		        ajaxStart()
 		        $.post "groups/ajax/changeScheduleFree",
 		            id: Schedule.id
 		            is_free: Schedule.is_free
+		        , ->
+		            ajaxEnd()
 
 		    $scope.setTime = (Schedule, event) ->
 		        $(event.target).hide()
@@ -195,7 +205,9 @@
 		                time = $(this).val()
 		                if time
 		                    Schedule.time = time
-		                    $.post "groups/ajax/AddScheduleTime", {time: time, date: Schedule.date, id_group: $scope.Group.id}
+		                    ajaxStart()
+		                    $.post "groups/ajax/AddScheduleTime", {time: time, date: Schedule.date, id_group: $scope.Group.id}, ->
+		                        ajaxEnd()
 		                    $scope.$apply()
 		                $(this)
 		                    .hide()
@@ -222,6 +234,12 @@
 		    $scope.getPastLessonCabinet = (date) ->
 		        _.findWhere($scope.all_cabinets, {id: $scope.getPastLesson(date).cabinet}).number
 
+		    $scope.getPastLessonCabinetName = (date) ->
+		        _.findWhere($scope.all_cabinets, {id: $scope.getPastLesson(date).cabinet}).label
+
+		    $scope.getCabinetName = (id) ->
+		        if id
+			        _.findWhere($scope.all_cabinets, {id: id}).label
 
 		    $scope.lessonStarted = (Schedule) ->
 		        lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime()
@@ -266,34 +284,40 @@
 		        # check if date is in schedule
 		        t = $scope.Group.Schedule.filter (schedule) ->
 		            schedule.date is d
-
+		        hideRows()
 		        if t.length is 0
-		            $scope.Group.Schedule.push
-		                date: d
-		                cancelled: 0
+		            ajaxStart()
 		            $.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}
+		            , (response)->
+		                ajaxEnd()
+		                $scope.Group.Schedule.push
+		                    date: d
+		                    cancelled: 0
+		                    id: response.id
+		                $scope.$apply()
+		            , 'json'
 		        else
-		# 					index = $scope.schedule.indexOf d
-		# 					$scope.schedule.splice index, 1
 		            $.each $scope.Group.Schedule, (i, v) ->
 		                if v isnt undefined
 		                    if v.date is d
 		                        if not v.cancelled
 		                            v.title = false
 		                            v.cancelled = 1
-		                            $.post "groups/ajax/CancelScheduleDate", {date: d, id_group: $scope.Group.id}
+		                            ajaxStart()
+		                            $.post "groups/ajax/CancelScheduleDate", {date: d, id_group: $scope.Group.id}, ->
+		                                ajaxEnd()
 		                        else
 		                            $scope.Group.Schedule.splice i, 1
-		                            $.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}
-		        $scope.$apply()
+		                            ajaxStart()
+		                            $.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}, ->
+		                                ajaxEnd()
+		                                $scope.$apply()
 
 		    angular.element(document).ready ->
 		        set_scope 'Group'
 		        init_dates = []
 		        for schedule_date in $scope.Group.Schedule
 		            init_dates.push new Date schedule_date.date
-		# 					$scope.schedule.push
-		# 				console.log init_dates
 		        $(".calendar-month").each ->
 		            $(this)
 		                .datepicker $scope.getInitParams this
@@ -316,6 +340,8 @@
 		            , 500
 
 		        $(".table-condensed").first().children("thead").css "display", "table-caption"
+		        hideRows()
+		    hideRows = ->
 		        # hack пустые строки
 		        $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide()
 
@@ -384,7 +410,9 @@
 							notifySuccess "Ученик уже в группе"
 						else
 							old_id_group = if $scope.Group and ($scope.Group.id isnt id_group) then $scope.Group.id else false
-							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student, old_id_group: old_id_group}
+							ajaxStart()
+							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student, old_id_group: old_id_group},
+								ajaxEnd()
 							Group.students.push id_student
 							$scope.removeStudent id_student, true
 							$scope.$apply()
@@ -451,6 +479,7 @@
 			$scope.changeTeacher = ->
 				return if not $scope.Group.id
 				console.log 'changin teacher'
+				ajaxStart()
 				$.post "groups/ajax/changeTeacher",
 					id_group: $scope.Group.id
 					id_subject: $scope.Group.id_subject
@@ -459,6 +488,7 @@
 					year: $scope.Group.year
 					students: $scope.Group.students
 				, (response) ->
+					ajaxEnd()
 					console.log 'teacher changed', response
 					$.each response.teacher_like_statuses, (id_student, id_status)->
 						console.log 'hiiaa'
@@ -507,9 +537,13 @@
 				, "json"
 
 			$scope.updateGroup = (data) ->
-				$.post "groups/ajax/updateGroup",
-					id_group: $scope.Group.id
-					data: data
+				if $scope.Group.id
+					ajaxStart()
+					$.post "groups/ajax/updateGroup",
+						id_group: $scope.Group.id
+						data: data
+					, ->
+						ajaxEnd()
 
 			$scope.to_students = true
 			$scope.to_representatives = false
@@ -563,6 +597,7 @@
 					.removeAttr "ng-click"
 					.removeClass "pointer"
 					.addClass "default"
+				ajaxStart()
 				$.post "groups/ajax/smsNotify",
 					id_student: Student.id
 					id_subject: $scope.Group.id_subject
@@ -570,6 +605,7 @@
 					id_group: $scope.Group.id
 					cabinet: $scope.FirstLesson.cabinet
 				, (response) ->
+					ajaxEnd()
 					Student.sms_notified = true
 					$scope.$apply()
 
@@ -578,11 +614,13 @@
 					el = $(event.target)
 					el.hide()
 					$("#student-adding-#{Student.id}").show()
+					ajaxStart()
 					$.post "groups/ajax/inGroup",
 						id_student: Student.id
 						id_group: $scope.Group.id
 						id_subject: $scope.Group.id_subject
 					, (in_other_group) ->
+						ajaxEnd()
 						if not in_other_group
 							console.log el
 							el.show()
@@ -639,12 +677,15 @@
 
 			$scope.toggleReadyToStart = ->
 				ready_to_start = if $scope.Group.ready_to_start then 0 else 1
-				$.post "groups/ajax/toggleReadyToStart",
-					id: $scope.Group.id
-					ready_to_start: ready_to_start
-				, ->
-					$scope.Group.ready_to_start = ready_to_start
-					$scope.$apply()
+				if $scope.Group.id
+					ajaxStart()
+					$.post "groups/ajax/toggleReadyToStart",
+						id: $scope.Group.id
+						ready_to_start: ready_to_start
+					, ->
+						ajaxEnd()
+						$scope.Group.ready_to_start = ready_to_start
+						$scope.$apply()
 
 
 
@@ -958,7 +999,9 @@
 						if id_student in Group.students
 							notifySuccess "Ученик уже в группе"
 						else
-							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}
+							ajaxStart()
+							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}, ->
+								ajaxEnd()
 							Group.students.push id_student
 							$scope.$apply()
 
@@ -1121,6 +1164,15 @@
 				, 25
 				frontendLoadingEnd()
 		.controller "StudentListCtrl", ($scope) ->
-			console.log 'init'
+			# @todo объединить все getGroupsYears в сервис/факторй
+			$scope.getGroupsYears = ->
+				if $scope.Groups
+					return _.uniq _.pluck $scope.Groups, 'year'
+				return []
 		.controller "TeacherListCtrl", ($scope) ->
-			console.log 'init'
+			set_scope "Group"
+			# @todo объединить все getGroupsYears в сервис/факторй
+			$scope.getGroupsYears = ->
+				if $scope.Groups
+					return _.uniq _.pluck $scope.Groups, 'year'
+				return []

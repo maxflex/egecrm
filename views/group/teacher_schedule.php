@@ -2,7 +2,7 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Расписание группы №<?= $Group->id ?>
-		(ЕГЭ-Центр-<?= Branches::$all[$Group->id_branch] ?>, <?= Subjects::$all[$Group->id_subject] ?>, <?= $Group->grade ?> класс)
+		| <?= Subjects::$three_letters[$Group->id_subject] ?>-<?= $Group->grade ?>
 		<div class="pull-right">
 			<a class="like-white" href="teachers/groups/journal/{{Group.id}}">журнал посещаемости</a>
 		</div>
@@ -50,9 +50,9 @@
 			<div class="col-sm-1"></div>
 			<div class="col-sm-6">
 				<div style="margin-bottom: 15px; font-weight: bold">Текущий состав группы учеников:</div>
-				<table>
+				<table width="100%">
 					<tr ng-repeat="Student in Group.Students">
-						<td>{{$index + 1}}. {{Student.last_name}} {{Student.first_name}}</td>
+						<td width="40%">{{$index + 1}}. {{Student.last_name}} {{Student.first_name}}</td>
 						<td style="padding-left: 10px;">
 							<span ng-show="Student && Student.Test">
 								<span ng-show="Student.Test.notStarted" class="quater-black">к тесту не приступал</span>
@@ -70,37 +70,34 @@
 					</tr>
 				</table>
 				<div style="margin: 15px 0; font-weight: bold">Расписание занятий:</div>
-
-<!--
-				<h3 style="font-weight: bold; margin: 10px 0 25px">{{Group.Schedule.length}} <ng-pluralize count="Group.Schedule.length" when="{
-						'one': 'занятие',
-						'few': 'занятия',
-						'many': 'занятий'
-					}"></ng-pluralize></h3>
--->
-				<table class="table table-divlike">
+				<table class="table table-divlike" style="margin-left: -15px;">
 					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
-						<td>
+						<td style="padding:2px 4px 2px 0px;">
+							<span class="day-explain"
+								  ng-class="{
+									'was-lesson': inPastLessons(Schedule.date),
+									'cancelled':Schedule.cancelled
+								  }"
+							></span>
+						</td>
+						<td width="30%">
 							{{getLine1(Schedule)}}
 						</td>
-						<td>
+						<td width="20%">
 							<div class="lessons-table">
 								<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
 								<span>{{Schedule.time ? Schedule.time : 'не установлено'}}</span>
 							</div>
 						</td>
-						<td>
+						<td width="15%">
 							<!-- @have-to-refactor  -->
-							кабинет {{ inPastLessons(Schedule.date) ? getPastLessonCabinet(Schedule.date) : Schedule.Cabinet.number }}
+							{{ inPastLessons(Schedule.date) ? getPastLessonCabinetName(Schedule.date) : getCabinetName(Schedule.Cabinet.id) }}
 						</td>
-						<td>
+						<td width="35%">
 							<!-- @time-refactored   -->
-							<span ng-show="inPastLessons(Schedule.date)">занятие проведено</span>
-							<span ng-show="Schedule.cancelled">занятие отменено</span>
-							<a href='teachers/groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inPastLessons(Schedule.date) && lessonStarted(Schedule) && !Schedule.cancelled'
-								ng-class="{'add-to-journal': !inPastLessons(Schedule.date) && !Schedule.cancelled}">
-								создать запись в журнале
-							</a>
+							<span ng-show="inPastLessons(Schedule.date)">урок проведен</span>
+							<span ng-show="Schedule.cancelled">урок отменен</span>
+							<a href='teachers/groups/<?= $Group->id ?>/lesson/{{Schedule.date}}' ng-show='!inPastLessons(Schedule.date) && !Schedule.cancelled'>зарегистрировать урок</a>
 						</td>
 					</tr>
 				</table>
@@ -116,10 +113,3 @@
 	</div>
 </div>
 </div>
-
-<script>
-	$(document).ready(function() {
-		// ссылка "создать запись в журнале" всегда стоит на следующем занятии по отношению к последнему проведенному... ну или на первом.
-		$(".add-to-journal").first().show();
-	})
-</script>

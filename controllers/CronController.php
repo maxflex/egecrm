@@ -315,30 +315,30 @@
 		 */
 		public static function actionTeacherNotifyJournalMiss()
 		{
-            $date = date('Y-m-d', strtotime('today'));  // потому что проверяется сегодня в 9-05
+            $date = date('Y-m-d', strtotime('today'));  // потому что проверяется сегодня в 21:05
             $GroupSchedule = GroupSchedule::findAll([
                 "condition" => "date='$date' AND id_group > 0 AND cancelled=0"
             ]);
-
+            
             foreach ($GroupSchedule as $Schedule) {
-                $was_lesson = VisitJournal::find([
-                    "condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
-                ]);
-
-                $Group = Group::findById($Schedule->id_group);
-
-                if ($Group->Teacher) {
-                    if (!$was_lesson) {
-                        $message = Template::get(9, [
-                            "time" 			=> $Schedule->time,
-                            "teacher_name"	=> $Group->Teacher->first_name ." " .$Group->Teacher->middle_name
-                        ]);
-
-                        if (!empty($Group->Teacher->phone)) {
-                            SMS::send($Group->Teacher->phone, $message);
-                        }
-                    }
-                }
+	            if (! $Schedule->was_lesson) {
+					$Group = Group::findById($Schedule->id_group);
+					if ($Group) {
+						$Teacher = Teacher::findById($Group->id_teacher);
+						if ($Teacher) {
+							$message = Template::get(9, [
+	                            "time" 			=> $Schedule->time,
+	                            "teacher_name"	=> $Teacher->first_name ." " .$Teacher->middle_name
+	                        ]);
+	                        foreach (Student::$_phone_fields as $phone_field) {
+								$teacher_number = $Teacher->{$phone_field};
+								if (!empty($teacher_number)) {
+									SMS::send($teacher_number, $message);
+								}
+							}
+						}
+					}
+				}
             }
 		}
 

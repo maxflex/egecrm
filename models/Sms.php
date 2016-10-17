@@ -72,7 +72,7 @@ class SMS extends Model
 		foreach ($to as $number) {
 			$number = cleanNumber($number);
 			$number = trim($number);
-			if (!preg_match('/[0-9]{10}/', $number)) {
+			if (!preg_match('/[0-9]{10}/', $number) || $number[1] != '9') {
 				continue;
 			}
 			$params = array(

@@ -29,17 +29,29 @@
 			}
 		}
 
+		private static function setCurrentVersionToPrev($Contract) {
+            self::dbConnection()->query(
+                "update contracts " .
+                "set current_version = 1 " .
+                "where id = (" .
+                "select max(c.id) from (select id from contracts where id_contract = {$Contract->id_contract} and id <> {$Contract->id}) as c" .
+                ")"
+            );
+        }
+
+        private static function unsetCurrentVersionOfPrev($id_contract) {
+            self::dbConnection()->query(
+                "update contracts " .
+                "set current_version = 0 " .
+                "where id_contract = {$id_contract} "
+            );
+        }
+
 		public static function deleteById($id) {
 		    $Contract = self::findById($id);
 
             if ($Contract->current_version) { // установка текущей версии на предыдущую версию
-                self::dbConnection()->query(
-                    "update contracts " .
-                    "set current_version = 1 " .
-                    "where id = (" .
-                        "select max(c.id) from (select id from contracts where id_contract = {$Contract->id_contract} and id <> {$Contract->id}) as c" .
-                    ")"
-                );
+                self::setCurrentVersionToPrev($Contract);
 		    }
 		    ContractSubject::deleteAll([
                 "condition" => "id_contract = {$Contract->id}"
@@ -49,6 +61,14 @@
             if ($Contract->id == $Contract->id_contract) { // удаление инфо если это базовая версия
                 ContractInfo::deleteById($Contract->id);
             }
+        }
+
+        public static function add($data = false)
+        {
+            self::unsetCurrentVersionOfPrev($data['id_contract']);
+            $newContract = parent::add($data);
+            $newContract->info = ContractInfo::add(array_merge($data['info'], ['id_contract' => $newContract->id]));
+            return $newContract;
         }
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -74,13 +94,6 @@
 
 			return $code;
 		}
-
-		public static function add($data = false)
-        {
-            $newContract = parent::add($data);
-            $newContract->info = ContractInfo::add(array_merge($data['info'], ['id_contract' => $newContract->id]));
-            return $newContract;
-        }
 
 		public static function addNew($Contract)
 		{
@@ -120,6 +133,7 @@
         public static function edit($Contract)
         {
             Contract::updateById($Contract['id'], $Contract);
+            ContractInfo::updateById($Contract['info']['id_contract'], $Contract['info']);
             ContractSubject::addData($Contract['subjects'], $Contract['id']);
         }
 
@@ -248,7 +262,7 @@
 
 
             // получаем данные
-            $query = static::_generateQuery($search, "s.id as id_student, s.first_name, s.last_name, s.middle_name, c.sum, c.date, c.year, ", true);
+            $query = static::_generateQuery($search, "s.id as id_student, s.first_name, s.last_name, s.middle_name, c.sum, c.date, ci.year, ", true);
             $result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Contract::PER_PAGE));
 
             while ($row = $result->fetch_object()) {
@@ -272,13 +286,9 @@
         private static function _generateQuery($search, $select, $with_colors = false)
         {
             $main_query = "
-                         from
-                            (
-                                select c1.*, if(c1.id_contract, (select c2.id_student from contracts c2 where c2.id = c1.id_contract), 0) as parent_id_student
-                                from contracts c1
-                            ) c
+                         from contracts c
                          join  contract_info ci on ci.id_contract = c.id_contract
-                         join  students s on c.id_student = s.id or c.parent_id_student = s.id
+                         join  students s on ci.id_student = s.id 
                          where 1 ".
                          (!isBlank($search->start_date) ? " and str_to_date(c.date, '%d.%m.%Y') >= str_to_date('" . $search->start_date . "', '%d.%m.%Y') " : "") .
                          (!isBlank($search->end_date) ? " and str_to_date(c.date, '%d.%m.%Y') <= str_to_date('" . $search->end_date . "', '%d.%m.%Y') " : "") .
@@ -292,7 +302,6 @@
                             " (select count(id) from contracts h
                                 where c.date_changed > h.date_changed and h.id_contract = if(c.id_contract, c.id_contract, c.id)) as version ";
 
-            dd("select " . $select . ($with_colors ? $color_counts : ''). $main_query);
             return "select " . $select . ($with_colors ? $color_counts : ''). $main_query;
         }
 	}
@@ -306,5 +315,11 @@
             return ContractInfo::find([
                 'condition' => "id_contract={$id_contract}"
             ]);
+        }
+
+        public static function updateById($id, $data)
+        {
+            self::deleteAll(["condition" => "id_contract = {$id}"]);
+            self::add($data);
         }
     }

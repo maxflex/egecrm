@@ -18,7 +18,7 @@ angular.module "Stats", ["ui.bootstrap"]
 
 		$scope.round2 = (n) ->
 			return Math.round(n / 1000) * 1000
-
+		
 		$scope.goDates = ->
 			ajaxStart()
 			date_start 	= $("#date-start").val()
@@ -74,7 +74,7 @@ angular.module "Stats", ["ui.bootstrap"]
 			else
 				redirect "teachers/edit/#{Teacher.id}"
 
-		$scope.day = 0;
+		$scope.day = 2;
 		$scope.plusDays = ->
 			$.post "ajax/plusDays", {day: $scope.day++}, (response) ->
 				console.log response
@@ -88,6 +88,12 @@ angular.module "Stats", ["ui.bootstrap"]
 		
 		$scope.isToday = (date)->
 			date is moment().format "YYYY-MM-DD"
+		
+		$scope.isFuture = (date) ->
+			date >= moment().format "YYYY-MM-DD"
+		
+		$scope.isWeekend = (date) ->
+			moment(date).isoWeekday() in [6, 7]
 
 		$scope.sortByDate = (stats) ->
 			tmp = []

@@ -17,11 +17,13 @@
 				
 			$scope.addTesting = (Testing) ->
 				Testing.adding = true
+				ajaxStart()
 				$.post 'testing/ajaxAddStudent', 
 					id_testing: Testing.id
 					id_subject: Testing.selected_subject
 					grade: $scope.grade
 				, (response) ->
+					ajaxEnd()
 					Testing.Students = initIfNotSet Testing.Students
 					Testing.Students.push response
 					$scope.$apply()
@@ -104,10 +106,12 @@
 			
 			$scope.changeDate = ->
 				$scope.cabinet_load = undefined
+				ajaxStart()
 				$.post "testing/ajaxChangeDate", 
 					id: $scope.Testing.id
 					date: $scope.Testing.date
 				, (response) ->
+					ajaxEnd()
 					$scope.cabinet_load = response
 					$scope.$apply()
 				, "json"

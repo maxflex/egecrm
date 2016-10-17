@@ -117,9 +117,9 @@
 				$page = 1;
 			}
 
-			$start = ($page - 1) * self::PER_PAGE;
+			$start = ($page - 1) * self::PER_PAGE_STUDENTS;
 
-			for ($i = (self::PER_PAGE * $page); $i >= $start + ($page > 1 ? 1 : 0); $i--) {
+			for ($i = (self::PER_PAGE_STUDENTS * $page); $i >= $start + ($page > 1 ? 1 : 0); $i--) {
 				$date = date("d.m.Y", strtotime("today -$i day"));
 				$stats[$date] = self::_getStats($date);
 			}
@@ -245,20 +245,34 @@
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
 					. " AND type_entity='TEACHER'"
 			]);
+			
+			// кол-во запланированных занятий	
+			if ($date_start >= date('Y-m-d') && !$date_end) {
+				$return['planned_lesson_count'] = GroupSchedule::count([
+					"condition" => "date='$date_start' AND id_group>0"
+				]);
+				// вычитаем кол-во прошедших занятий
+				$return['planned_lesson_count'] -= $return['lesson_count'];
+			}
 
 			$return['in_time'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-					. " AND type_entity='STUDENT' AND presence!=2 AND (late is null or late = 0)"
+					. " AND type_entity='STUDENT' AND presence=1 AND (late is null or late = 0)"
 			]);
 
 			$return['late_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-					. " AND type_entity='STUDENT' AND presence!=2 AND late > 0"
+					. " AND type_entity='STUDENT' AND presence=1 AND late > 0"
 			]);
 
 			$return['abscent_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
 					. " AND type_entity='STUDENT' AND presence=2"
+			]);
+			
+			$return['unset_count'] = VisitJournal::count([
+				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
+					. " AND type_entity='STUDENT' AND (presence is null or presence=0)"
 			]);
 
 			$denominator = $return['in_time'] + $return['late_count'] + $return['abscent_count'];
@@ -280,7 +294,8 @@
 
 			$start = ($page - 1) * self::PER_PAGE_STUDENTS;
 			for ($i = (self::PER_PAGE_STUDENTS * $page); $i >= $start + ($page > 1 ? 1 : 0); $i--) {
-				$date = date("Y-m-d", strtotime("today -$i day"));
+				$minus_days = $i - 6; // на неделю выше от сегодняшней даты показываем
+				$date = date("Y-m-d", strtotime("today -$minus_days day"));
 				$stats[$date] = self::_totalVisits($date);
 			}
 

@@ -6,30 +6,61 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     }
   };
 }).controller("LkTeacherCtrl", function($scope, $http) {
+  $scope.lessonsTotalSum = function() {
+    var lessons_sum;
+    lessons_sum = 0;
+    if ($scope.Lessons) {
+      $.each($scope.Lessons, function(index, value) {
+        return lessons_sum += parseInt(value.teacher_price);
+      });
+    }
+    return lessons_sum;
+  };
+  $scope.lessonsTotalPaid = function(from_lessons) {
+    var payments_sum;
+    payments_sum = 0;
+    if (from_lessons && $scope.Lessons) {
+      $.each($scope.Lessons, function(index, lesson) {
+        var j, len, payment, ref, results;
+        ref = lesson.payments;
+        results = [];
+        for (j = 0, len = ref.length; j < len; j++) {
+          payment = ref[j];
+          results.push(payments_sum += parseInt(payment.sum));
+        }
+        return results;
+      });
+    } else {
+      if ($scope.payments) {
+        $.each($scope.payments, function(index, value) {
+          return payments_sum += parseInt(value.sum);
+        });
+      }
+    }
+    return payments_sum;
+  };
+  $scope.toBePaid = function(from_lessons) {
+    var lessons_sum, payments_sum;
+    if (!($scope.Lessons && $scope.Lessons.length)) {
+      return;
+    }
+    lessons_sum = $scope.lessonsTotalSum();
+    payments_sum = $scope.lessonsTotalPaid(from_lessons);
+    return lessons_sum - payments_sum;
+  };
+  $scope.dateFromCustomFormat = function(date) {
+    var D;
+    date = date.split(".");
+    date = date.reverse();
+    date = date.join("-");
+    D = new Date(date);
+    return moment(D).format("D MMMM YYYY");
+  };
   $scope.formatDate = function(date) {
     return moment(date).format("D MMMM YYYY");
   };
   $scope.formatTime = function(time) {
     return time.substr(0, 5);
-  };
-  $scope.totalPaid = function() {
-    var sum;
-    sum = 0;
-    $.each($scope.payments, function(i, payment) {
-      return sum += payment.sum;
-    });
-    return sum;
-  };
-  $scope.totalEarned = function() {
-    var sum;
-    sum = 0;
-    $.each($scope.Data, function(i, data) {
-      return sum += data.teacher_price;
-    });
-    return sum;
-  };
-  $scope.toBePaid = function() {
-    return $scope.totalEarned() - $scope.totalPaid();
   };
   return angular.element(document).ready(function() {
     return bootbox.prompt({
@@ -47,9 +78,7 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
             if (response === true) {
               $scope.password_correct = true;
               $.post("payments/ajaxLkTeacher", {}, function(response) {
-                console.log(response);
-                $scope.payments = response.payments;
-                $scope.Data = response.Data;
+                $scope.Lessons = response.Lessons;
                 $scope.loaded = true;
                 return $scope.$apply();
               }, "json");
@@ -142,9 +171,12 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
 
         } else if (hex_md5(result) === payments_hash) {
           payment.confirmed = (payment.confirmed + 1) % 2;
+          ajaxStart();
           $.post("ajax/confirmPayment", {
             id: payment.id,
             confirmed: payment.confirmed
+          }, function() {
+            return ajaxEnd();
           });
           return $scope.$apply();
         } else if (result !== null) {
@@ -217,21 +249,22 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     payment_card_first_number = $("#payment-card-first-number");
     if (!$scope.new_payment.id_status) {
       payment_select.focus().parent().addClass("has-error");
+      return;
     } else {
       payment_select.parent().removeClass("has-error");
-      if (1 === parseInt($scope.new_payment.id_status)) {
+      if (parseInt($scope.new_payment.id_status) === 1) {
         if (!$scope.new_payment.card_first_number) {
           payment_card_first_number.focus().addClass('has-error');
           return;
         } else {
           payment_card_first_number.removeClass('has-error');
         }
-      }
-      if (!$scope.new_payment.card_number) {
-        payment_card.focus().addClass('has-error');
-        return;
-      } else {
-        payment_card.removeClass('has-error');
+        if (!$scope.new_payment.card_number) {
+          payment_card.focus().addClass('has-error');
+          return;
+        } else {
+          payment_card.removeClass('has-error');
+        }
       }
     }
     if ($scope.new_payment === 'teacher' && !$scope.new_payment.id_type) {
@@ -289,8 +322,11 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
     if (!payment.confirmed) {
       return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
         if (result === true) {
+          ajaxStart();
           $.post("ajax/deletePayment", {
             id_payment: payment.id
+          }, function() {
+            return ajaxEnd();
           });
           $scope.payments.splice(index, 1);
           return $scope.$apply();
@@ -306,8 +342,11 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
           } else if (hex_md5(result) === payments_hash) {
             return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
               if (result === true) {
+                ajaxStart();
                 $.post("ajax/deletePayment", {
                   id_payment: payment.id
+                }, function() {
+                  return ajaxEnd();
                 });
                 $scope.payments.splice(index, 1);
                 return $scope.$apply();

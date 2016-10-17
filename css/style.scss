@@ -1393,7 +1393,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	    }
     }
 	& .cancelled {
-		background-color: $half_black !important;
+		background-color: $quater_black !important;
 		color: white !important;
 	}
     & .exam-subject {
@@ -2774,7 +2774,9 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .glyphicon-th, .no-margin-right {
 	margin-right: 0 !important;
 }
-
+.no-padding-right{
+  padding-right: 0 !important;
+}
 .datepicker-dropdown {
 	margin-top: 26px !important;
 }
@@ -3111,7 +3113,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 }
 
 .request-list-nav li {
-  margin-right: 20px;
+  margin-right: 30px;
   & a {
 	margin-right: 0px;
 	display: inline-block;
@@ -3184,7 +3186,7 @@ table.last-item-no-border tr:last-child td {
 	  z-index:5;
 	  position: absolute;
 	  /*width: 200px;*/
-	  right: 20px;
+	  right: 15px;
 	  background: white;
 	  box-shadow: 0px 1px 6px #cdcdcd;
 	  border-radius: 3px;
@@ -3211,4 +3213,31 @@ table.last-item-no-border tr:last-child td {
 	}
 	.no-hover {
 	  hover:none
+	}
+	h4.row-header.default-case{
+	  text-transform: none!important;
+	}
+	.no-margin{
+	  margin: 0;
+	}
+	.text-thin{
+	  font-weight:300;
+	}
+	.no-border, .no-border td{
+	  border:none!important;
+	}
+	
+	.visits-weekend {
+		& td {
+			background: rgba(black, 0.05);
+		}
+	}
+	
+	.bold-red {
+		color: $red !important;
+		font-weight: bold;
+	}
+	
+	.table-with-padding tr td:first-child {
+		padding-left: 4px !important;
 	}

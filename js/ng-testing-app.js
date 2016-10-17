@@ -23,11 +23,13 @@ angular.module("Testing", ['angucomplete-alt']).filter('range', function() {
   };
   $scope.addTesting = function(Testing) {
     Testing.adding = true;
+    ajaxStart();
     return $.post('testing/ajaxAddStudent', {
       id_testing: Testing.id,
       id_subject: Testing.selected_subject,
       grade: $scope.grade
     }, function(response) {
+      ajaxEnd();
       Testing.Students = initIfNotSet(Testing.Students);
       Testing.Students.push(response);
       $scope.$apply();
@@ -122,10 +124,12 @@ angular.module("Testing", ['angucomplete-alt']).filter('range', function() {
   };
   $scope.changeDate = function() {
     $scope.cabinet_load = void 0;
+    ajaxStart();
     return $.post("testing/ajaxChangeDate", {
       id: $scope.Testing.id,
       date: $scope.Testing.date
     }, function(response) {
+      ajaxEnd();
       $scope.cabinet_load = response;
       return $scope.$apply();
     }, "json");

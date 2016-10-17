@@ -9,7 +9,7 @@
 				>
 					<a class="list-link" href="#{{request_status.id}}" ng-click="changeList(request_status, true)" data-toggle="tab" aria-expanded="{{$index == 0}}">
 						{{request_status.name}}
-					</a> ({{counts.requests[request_status.id]}})</li>
+					</a> <span class='text-gray' style='font-size: 10px; margin-left: 3px'>{{ counts.requests[request_status.id] }}</span></li>
 				<li class="delete-request-li" ng-show="dragging">
 					<a class="text-danger">удалить</a>
 				</li>

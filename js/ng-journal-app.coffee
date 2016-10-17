@@ -33,21 +33,23 @@ angular.module "Journal", []
 		  max
 		
 		$scope.toggleMissingNote = (Schedule) ->
-		  note = Schedule.missing_note
-		  note++
-		  $.post 'ajax/MissingNoteToggle', {
-		    id_student: $scope.student.id
-		    id_group: Schedule.id_group
-		    date: if Schedule.hasOwnProperty('lesson_date') then Schedule.lesson_date else Schedule.date
-		  }, ((response) ->
-		    Schedule.missing_note = response
-		    $scope.$apply()
-		    return
-		  ), 'json'
-		  return
+			note = Schedule.missing_note
+			note++
+			ajaxStart()
+			$.post 'ajax/MissingNoteToggle', {
+				id_student: $scope.student.id
+				id_group: Schedule.id_group
+				date: if Schedule.hasOwnProperty('lesson_date') then Schedule.lesson_date else Schedule.date
+			}, ((response) ->
+				ajaxEnd()
+				Schedule.missing_note = response
+				$scope.$apply()
+				return
+			), 'json'
+			return
 		
 		$scope.formatVisitDate = (date) ->
-		  moment(date).format 'DD.MM.YY'
+			moment(date).format 'DD.MM.YY'
 		
 		angular.element(document).ready ->
 			set_scope "Journal"

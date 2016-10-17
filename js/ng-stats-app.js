@@ -78,7 +78,7 @@ angular.module("Stats", ["ui.bootstrap"]).config([
       return redirect("teachers/edit/" + Teacher.id);
     }
   };
-  $scope.day = 0;
+  $scope.day = 2;
   $scope.plusDays = function() {
     return $.post("ajax/plusDays", {
       day: $scope.day++
@@ -95,6 +95,13 @@ angular.module("Stats", ["ui.bootstrap"]).config([
   };
   $scope.isToday = function(date) {
     return date === moment().format("YYYY-MM-DD");
+  };
+  $scope.isFuture = function(date) {
+    return date >= moment().format("YYYY-MM-DD");
+  };
+  $scope.isWeekend = function(date) {
+    var ref;
+    return (ref = moment(date).isoWeekday()) === 6 || ref === 7;
   };
   $scope.sortByDate = function(stats) {
     var tmp;

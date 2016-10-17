@@ -5,27 +5,43 @@ angular.module "Payments", ["ui.bootstrap"]
                 items.slice().reverse()
 
     .controller "LkTeacherCtrl", ($scope, $http) ->
+        $scope.lessonsTotalSum = ->
+            lessons_sum = 0
+            if $scope.Lessons
+                $.each $scope.Lessons, (index, value) ->
+                    lessons_sum += parseInt(value.teacher_price)
+            lessons_sum
 
+        $scope.lessonsTotalPaid = (from_lessons)->
+            payments_sum = 0
+            if from_lessons and $scope.Lessons
+                $.each $scope.Lessons, (index, lesson) ->
+                    payments_sum += parseInt(payment.sum) for payment in lesson.payments
+            else
+	            if $scope.payments
+	                $.each $scope.payments, (index, value) ->
+	                    payments_sum += parseInt(value.sum)
+            return payments_sum
+
+        # солько нужно выплатить репетитору
+        $scope.toBePaid = (from_lessons)->
+            return if not ($scope.Lessons and $scope.Lessons.length)
+
+            lessons_sum  = $scope.lessonsTotalSum()
+            payments_sum = $scope.lessonsTotalPaid(from_lessons)
+
+            lessons_sum - payments_sum
+        $scope.dateFromCustomFormat = (date) ->
+            date = date.split "."
+            date = date.reverse()
+            date = date.join "-"
+            D = new Date(date)
+            moment(D).format "D MMMM YYYY"
         $scope.formatDate = (date) ->
             moment(date).format("D MMMM YYYY")
 
         $scope.formatTime = (time) ->
             return time.substr(0, 5)
-
-        $scope.totalPaid = ->
-            sum = 0
-            $.each $scope.payments, (i, payment) ->
-                sum += payment.sum
-            sum
-
-        $scope.totalEarned = ->
-            sum = 0
-            $.each $scope.Data, (i, data) ->
-                sum += data.teacher_price
-            sum
-
-        $scope.toBePaid = ->
-            $scope.totalEarned() - $scope.totalPaid()
 
         angular.element(document).ready ->
             bootbox.prompt {
@@ -41,9 +57,7 @@ angular.module "Payments", ["ui.bootstrap"]
                             if response == true
                                 $scope.password_correct = true;
                                 $.post "payments/ajaxLkTeacher", {}, (response) ->
-                                    console.log response
-                                    $scope.payments = response.payments
-                                    $scope.Data 	= response.Data
+                                    $scope.Lessons 	= response.Lessons
                                     $scope.loaded	= true # data loaded
                                     $scope.$apply()
                                 , "json"
@@ -123,9 +137,12 @@ angular.module "Payments", ["ui.bootstrap"]
                     if result is null
                     else if hex_md5(result) is payments_hash
                         payment.confirmed = (payment.confirmed + 1) % 2
+                        ajaxStart()
                         $.post "ajax/confirmPayment",
                             id:        payment.id
                             confirmed: payment.confirmed
+                        , ->
+                            ajaxEnd()
                         $scope.$apply()
                     else if result != null
                         $('.bootbox-form').addClass('has-error').children().first().focus()
@@ -192,20 +209,21 @@ angular.module "Payments", ["ui.bootstrap"]
             # Установлен ли способ оплаты
             if !$scope.new_payment.id_status
                 payment_select.focus().parent().addClass "has-error"
+                return
             else
                 payment_select.parent().removeClass "has-error"
-                if 1 is parseInt $scope.new_payment.id_status
+                if parseInt($scope.new_payment.id_status) is 1
                     if not $scope.new_payment.card_first_number
                         payment_card_first_number.focus().addClass 'has-error'
                         return
                     else
                         payment_card_first_number.removeClass 'has-error'
 
-                if not $scope.new_payment.card_number
-                    payment_card.focus().addClass 'has-error'
-                    return
-                else
-                    payment_card.removeClass 'has-error'
+                    if not $scope.new_payment.card_number
+                        payment_card.focus().addClass 'has-error'
+                        return
+                    else
+                        payment_card.removeClass 'has-error'
 
             # Установлен ли тип платежа?
             if  $scope.new_payment is 'teacher' and !$scope.new_payment.id_type
@@ -273,8 +291,11 @@ angular.module "Payments", ["ui.bootstrap"]
             if not payment.confirmed
                 bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
                     if result is true
+                        ajaxStart()
                         $.post "ajax/deletePayment",
                             id_payment: payment.id
+                        , ->
+                            ajaxEnd()
                         $scope.payments.splice index, 1
                         $scope.$apply()
             else
@@ -286,8 +307,11 @@ angular.module "Payments", ["ui.bootstrap"]
                         else if hex_md5(result) is payments_hash
                             bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
                                 if result is true
+                                    ajaxStart()
                                     $.post "ajax/deletePayment",
                                         id_payment: payment.id
+                                    , ->
+                                        ajaxEnd()
                                     $scope.payments.splice index, 1
                                     $scope.$apply()
                         else if result != null

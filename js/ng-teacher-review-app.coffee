@@ -61,10 +61,12 @@ angular.module "TeacherReview", ["ui.bootstrap"]
 	.controller "Main", ($scope) -> 
 		$scope.toggleReviewUser = ->
 			new_user_id = if $scope.id_user_review == $scope.user.id then 0 else $scope.user.id
+			ajaxStart()
 			$.post 'ajax/UpdateStudentReviewUser',
 			'id_student': $scope.Student.id
 			'id_user_new': new_user_id
 			, ->
+				ajaxEnd()
 				$scope.id_user_review = new_user_id
 				$scope.$apply()
 		

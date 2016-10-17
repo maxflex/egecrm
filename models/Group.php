@@ -33,7 +33,7 @@
 
 
             if ($this->id_teacher) {
-				$this->Teacher	= Teacher::getLight($this->id_teacher, ['comment']);
+				$this->Teacher = Teacher::getLight($this->id_teacher, ['comment']);
 			}
 
 			if (!$this->isNewRecord) {
@@ -221,7 +221,7 @@
 		}
 
 		/**
-		 * Получить отсутствующие занятие за последние 7 дней
+		 * Получить отсутствующие занятие за последние N дней
 		 */
 		public static function getLastWeekMissing($total_count = false)
 		{
@@ -453,7 +453,7 @@
 		public static function getScheduleCountCachedStatic($id_group)
 		{
 			if (LOCAL_DEVELOPMENT) {
-				return 0;
+				return (object)['paid' => 32, 'free' => 1];
 			}
 
 
@@ -703,8 +703,8 @@
 			}
 
 			$this->isUnplanned = $this->isUnplanned();
-
-			$this->was_lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
+			
+			$this->was_lesson = VisitJournal::count(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
 		}
 
         /**

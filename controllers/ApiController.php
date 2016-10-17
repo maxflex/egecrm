@@ -172,19 +172,6 @@
 			returnJSON($Metors);
 		}
 
-		public function actionTeacherHoldCoeff()
-		{
-			extract($_POST);
-			$Teacher = Teacher::findById($tutor_id);
-			$Teacher->calcHoldCoeff();
-			returnJSON([
-				'coeff' => $Teacher->hold_coeff,
-				//'loss' => $Teacher->loss,
-				//'loss_data' => $Teacher->loss_data
-			]);
-		}
-		
-		
 		public function actionTeacherStatistics()
 		{
 			extract($_POST);

@@ -44,11 +44,13 @@ angular.module("Journal", []).controller("StudentsCtrl", function($scope) {
     var note;
     note = Schedule.missing_note;
     note++;
+    ajaxStart();
     $.post('ajax/MissingNoteToggle', {
       id_student: $scope.student.id,
       id_group: Schedule.id_group,
       date: Schedule.hasOwnProperty('lesson_date') ? Schedule.lesson_date : Schedule.date
     }, (function(response) {
+      ajaxEnd();
       Schedule.missing_note = response;
       $scope.$apply();
     }), 'json');

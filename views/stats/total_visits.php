@@ -60,14 +60,14 @@
 
 	</div>
 
-	<table class="table table-hover">
+	<table class="table table-hover table-with-padding left-align">
 		<thead style="font-weight: bold">
 			<tr>
 				<td>
 					<span ng-show="days_mode" ng-click="plusDays()" class="half-black pointer" style="font-weight: normal">+3 дня</span>
 				</td>
 				<td>
-					кол-во занятий
+					занятия
 				</td>
 				<td>
 					пришли вовремя
@@ -79,83 +79,97 @@
 					отсутствовали
 				</td>
 				<td>
+					не установлено
+				</td>
+				<td>
 					доля пропуска
 				</td>
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat-start="stat in sortByDate(stats)" ng-class="{'pointer': days_mode}" ng-click="dateLoad(stat.date)">
-				<td>
-					{{formatDate(stat.date)}}
+			<tr ng-repeat-start="stat in sortByDate(stats)" ng-class="{
+				'pointer': days_mode, 
+				'visits-weekend': isWeekend(stat.date)
+			}" ng-click="dateLoad(stat.date)">
+				<td ng-class="{'text-gray': isFuture(stat.date), 'bold-red': missing[stat.date] > 0}">
+					{{formatDate(stat.date)}} <span ng-show='isToday(stat.date)'>(сегодня)</span>
 				</td>
 				<td>
-					{{stat.lesson_count ? stat.lesson_count : ''}}<span ng-show="missing[stat.date] > 0" class="text-danger">{{stat.lesson_count ? '+' : ''}}{{ missing[stat.date] }}</span>
+					{{stat.lesson_count ? stat.lesson_count : ''}}<span ng-show="missing[stat.date] > 0" class="text-danger">{{stat.lesson_count ? '+' : ''}}{{ missing[stat.date] }}</span><span ng-show="stat.planned_lesson_count" class="text-gray">{{ stat.lesson_count ? '+' : ''}}{{ stat.planned_lesson_count }}</span>
 				</td>
 				<td>
-					{{stat.in_time ? stat.in_time : ''}}
+					{{stat.in_time || ''}}
 				</td>
 				<td>
-					{{stat.late_count ? stat.late_count : ''}}
+					{{stat.late_count || ''}}
 				</td>
 				<td>
-					{{stat.abscent_count ? stat.abscent_count : ''}}
+					{{stat.abscent_count || ''}}
+				</td>
+				<td>
+					{{stat.unset_count || ''}}
 				</td>
 				<td>
 					{{stat.abscent_percent ? (stat.abscent_percent + '%') : ''}}
 				</td>
 			</tr>
 			<tr id="{{stat.date}}" style="display: none" class="no-hover" ng-repeat-end>
-				<td colspan="6">
+				<td colspan="7">
 					<table class="table table-divlike left-align" style="margin: 0; width: 95%">
-						<tr ng-repeat="Schedule in Schedules[stat.date]" ng-class="{
-							'quater-opacity': Schedule.cancelled
-						}">
-							<td>
-								{{Schedule.time}}
+						<tr ng-repeat="Schedule in Schedules[stat.date]">
+							<td width="5%">
+								{{ Schedule.was_lesson ? Schedule.Lesson.lesson_time : Schedule.time }}
 							</td>
-							<td>
-								<!-- @time-refactored @time-checked  -->
-								<span style='color: {{ Schedule.cabinet.color }}'>{{ Schedule.cabinet.label }}</span>
+							<td width="7%" ng-init="_cabinet = (Schedule.was_lesson ? Schedule.Lesson.cabinet : Schedule.cabinet)">
+								<span style='color: {{ _cabinet.color }}'>{{ _cabinet.label }}</span>
 							</td>
-							<td>
+							<td width="9%">
 								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
 							</td>
-							<td width="90">
+							<td width="7%">
 								{{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade : ''}}
 							</td>
-							<td>
+							<td width="10%">
 								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule">расписание</a>
 							</td>
-							<td>
+							<td width="10%">
 								{{Schedule.Group.students.length}} <ng-pluralize count="Schedule.Group.students.length" when="{
 									'one': 'ученик',
 									'few': 'ученика',
 									'many': 'учеников',
 								}"></ng-pluralize>
 							</td>
-							<td>
-								<a class="pointer" target="_blank" href="teachers/edit/{{Schedule.Group.Teacher.id}}">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
-
-								<span class="label label-danger pointer label-transparent" ng-click="callSip(Schedule.Group.Teacher.phone)"
+							<td width="33%" ng-init="_Teacher = (Schedule.was_lesson ? Schedule.Lesson.Teacher : Schedule.Group.Teacher)">
+								<a class="pointer" target="_blank" href="teachers/edit/{{ _Teacher.id }}">
+									{{ _Teacher.last_name }} {{ _Teacher.first_name }} {{ _Teacher.middle_name }}
+								</a>
+								<span class="label label-danger pointer label-transparent" ng-click="callSip(_Teacher.phone)"
 									style="margin-left: 3px">позвонить</span>
 							</td>
-							<td>
-								{{Schedule.lesson_number}} из {{Schedule.total_lessons}} <ng-pluralize count="Schedule.total_lessons" when="{
-									'one': 'урока',
-									'few': 'уроков',
-									'many': 'уроков',
-								}"></ng-pluralize>
+							<td width="11%">
+								<span ng-if='!Schedule.cancelled'>
+									{{Schedule.lesson_number}} из {{Schedule.total_lessons}} <ng-pluralize count="Schedule.total_lessons" when="{
+										'one': 'урока',
+										'few': 'уроков',
+										'many': 'уроков',
+									}"></ng-pluralize>
+								</span>
 							</td>
-							<td>
-								<span class="label label-warning" ng-show="Schedule.lesson_number == 1">старт группы</span>
-								<span class="label label-primary" ng-show="Schedule.is_unplanned">внеплановое</span>
-								<span class="label label-danger" ng-show="Schedule.cancelled">отменено</span>
-								<span class="label label-danger"
+							<td width="2.5%">
+								<span class="day-explain cancelled" ng-show="Schedule.cancelled" title="отменено"></span>
+								<span class="day-explain was-lesson" ng-show="!Schedule.cancelled && Schedule.was_lesson" title="проведено"></span>
+								<span class="day-explain" ng-show="!Schedule.cancelled && !Schedule.was_lesson" title="планируется"></span>
+							</td>
+							<td width="6.5%">
+								<span class="day-explain exam-day-subject" ng-show="Schedule.is_unplanned" title="внеплановое"></span>
+								<span class="day-explain exam-day" ng-show="Schedule.lesson_number == 1 && !Schedule.cancelled" title="старт группы"></span>
+								<span class="day-explain cancelled" ng-show="Schedule.is_free" title="бесплатное"></span>
+								<span class="day-explain vocation"
                                       ng-show="Schedule.cabinetLayered || Schedule.studentLayered"
                                       title="{{ (Schedule.cabinetLayered ? 'Наслоение кабинета:\nКабинет № ' + Schedule.cabinetNumber + '\n': '') +
-                                                (Schedule.studentLayered ? 'Наслоение студентов:\n' + Schedule.studentLayered : '') }}">наслоение</span>
-								<span class="label label-danger" ng-show="!Schedule.was_lesson && !isToday()">не зарегистрирован</span>
-								<span class="label label-default" ng-show="Schedule.is_free">бесплатное</span>
+                                                (Schedule.studentLayered ? 'Наслоение студентов:\n' + Schedule.studentLayered : '') }}" title="наслоение">
+								</span>
+								<span class="day-explain vocation" ng-show="!Schedule.was_lesson && !Schedule.cancelled && !isFuture(Schedule.date)" title="не зарегистрирован"></span>
 							</td>
 						</tr>
 					</table>
@@ -172,7 +186,7 @@
 	  ng-change="pageStudentChanged()"
 	  total-items="<?= round(VisitJournal::fromFirstLesson()) ?>"
 	  max-size="10"
-	  items-per-page="<?= StatsController::PER_PAGE ?>"
+	  items-per-page="<?= StatsController::PER_PAGE_STUDENTS ?>"
 	  first-text="«"
 	  last-text="»"
 	  previous-text="«"

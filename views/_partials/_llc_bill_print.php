@@ -178,11 +178,10 @@
                 <tr>
                     <td align="center" style="font-size: 12px">1</td>
 
-                    <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}г.</td>
-
+                    <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{ firstInLastChain().id }} от {{ formatContractDate(firstInLastChain().date) }}</td>
                     <td align="right" style="font-size: 12px;text-align:center;" class="bordered">1</td>
 
-                    <td align="left" style="font-size: 12px;text-align:center;" class="bordered">шт.</td>
+                    <td align="left" style="font-size: 12px;text-align:center;" class="bordered">услуга</td>
 
                     <td align="right" style="font-size: 12px" class="bordered">{{PrintPayment.sum | number}},00</td>
 
@@ -413,10 +412,9 @@
                     <td align="center" style="font-size: 12px">1</td>
 
                     <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}г.</td>
-
                     <td align="right" style="font-size: 12px;text-align:center;" class="bordered">1</td>
 
-                    <td align="left" style="font-size: 12px;text-align:center;" class="bordered">шт.</td>
+                    <td align="left" style="font-size: 12px;text-align:center;" class="bordered">услуга</td>
 
                     <td align="right" style="font-size: 12px" class="bordered">{{PrintPayment.sum | number}},00</td>
 

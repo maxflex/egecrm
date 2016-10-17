@@ -74,15 +74,24 @@
 
 			$scope.yearDifference = (year) ->
 	            moment().format("YYYY") - year
+	        
+	        $scope.show_all_lessons = false
+	        $scope.getLessons = ->
+	        	return $scope.Lessons if $scope.show_all_lessons
+	        	_.filter $scope.Lessons, (Lesson) ->
+	        		Lesson.date > $scope.academic_year + "-07-15"
+	        	
 
 			# @time-refactored @time-checked
 			$scope.toggleFreetime = (day, id_time) ->
 			  mode = if $scope.Bars.Freetime[day][id_time] == 'green' then 'Delete' else 'Add'
+			  ajaxStart()
 			  $.post 'ajax/' + mode + 'Freetime', {
 			    'id_entity': $scope.Teacher.id
 			    'type_entity': 'teacher'
 			    'id_time': id_time
 			  }, ->
+			    ajaxEnd()
 			    $scope.Bars.Freetime[day][id_time] = if mode == 'Add' then 'green' else 'empty'
 			    $scope.$apply()
 			    return
@@ -122,17 +131,30 @@
 							notifyError error
 				})
 
-			# солько нужно выплатить репетитору
-			$scope.toBePaid = ->
-				return if not $scope.Lessons.length
-
+			$scope.lessonsTotalSum = ->
 				lessons_sum = 0
-				$.each $scope.Lessons, (index, value) ->
-					lessons_sum += parseInt(value.teacher_price)
+				if $scope.Lessons
+					$.each $scope.Lessons, (index, value) ->
+						lessons_sum += parseInt(value.teacher_price)
+				lessons_sum
 
+			$scope.lessonsTotalPaid = (from_lessons)->
 				payments_sum = 0
-				$.each $scope.payments, (index, value) ->
-					payments_sum += parseInt(value.sum)
+				if from_lessons and $scope.Lessons
+					$.each $scope.Lessons, (index, lesson) ->
+						payments_sum += parseInt(payment.sum) for payment in lesson.payments
+				else
+					if $scope.payments
+						$.each $scope.payments, (index, value) ->
+							payments_sum += parseInt(value.sum)
+				return payments_sum
+
+			# солько нужно выплатить репетитору
+			$scope.toBePaid = (from_lessons)->
+				return if not ($scope.Lessons and $scope.Lessons.length)
+
+				lessons_sum  = $scope.lessonsTotalSum()
+				payments_sum = $scope.lessonsTotalPaid(from_lessons)
 
 				lessons_sum - payments_sum
 
@@ -150,6 +172,12 @@
 			  dateOut = new Date(date)
 			  dateOut
 
+			$scope.dateFromCustomFormat = (date) ->
+				date = date.split "."
+				date = date.reverse()
+				date = date.join "-"
+				D = new Date(date)
+				moment(D).format "D MMMM YYYY"
 
 			$scope.confirmPayment = (payment) ->
 			  bootbox.prompt
@@ -159,9 +187,12 @@
 			      if result is null
 			      else if hex_md5 result == payments_hash
 			        payment.confirmed = if payment.confirmed then 0 else 1
+			        ajaxStart()
 			        $.post 'ajax/confirmPayment',
 			          id: payment.id
 			          confirmed: payment.confirmed
+			        , ->
+			            ajaxEnd()
 			        $scope.$apply()
 			      else if result != null
 			        $('.bootbox-form').addClass('has-error').children().first().focus()
@@ -306,7 +337,7 @@
 			      $scope.new_payment.document_number = response.document_number
 			      # Инициализация если не установлено
 			      $scope.payments = initIfNotSet($scope.payments)
-			      $scope.payments.push $scope.new_payment
+			      $scope.payments.unshift $scope.new_payment
 			      $scope.new_payment = id_status: 0
 			      $scope.$apply()
 			      ajaxEnd()
@@ -320,8 +351,9 @@
 			  if !payment.confirmed
 			    bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
 			      if result == true
-			        console.log index
-			        $.post 'ajax/deletePayment', 'id_payment': payment.id
+			        ajaxStart()
+			        $.post 'ajax/deletePayment', 'id_payment': payment.id, ->
+			            ajaxEnd()
 			        $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
 			        $scope.$apply()
 			      return
@@ -350,8 +382,8 @@
 			        cancel: className: 'display-none'
 			  return
 
-			$scope.formatDateMonthName = (date) ->
-				moment(date).format "D MMMM YY"
+			$scope.formatDateMonthName = (date, full_year) ->
+				moment(date).format "D MMMM YY" + (if full_year then 'YY' else '')
 
 			$scope.formatDate = (date) ->
                 dateOut = new Date(date)
@@ -522,6 +554,10 @@
 			$scope.getGroupsYears = ->
 				if $scope.Groups
 					_.uniq _.pluck ang_scope.Groups, 'year'
+
+			$scope.getReviewsYears = ->
+				if $scope.Reviews
+					_.uniq _.pluck ang_scope.Reviews, 'year'
 
 		.controller "ListCtrl", ($scope, $timeout) ->
 			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0

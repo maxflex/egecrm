@@ -40,9 +40,10 @@
 			$this->setRights([Teacher::USER_TYPE]);
 			
 			$ang_init_data = angInit([
-				"Subjects" => Subjects::$all,
+				"Subjects" => Subjects::$three_letters,
 				"Branches" => Branches::$all,
 				"payment_statuses"	=> Payment::$all,
+                'payment_types'		=> PaymentTypes::$all,
 			]);
 			
 			$this->render("lk_teacher", [
@@ -107,24 +108,11 @@
 		
 		public function actionAjaxLkTeacher()
 		{
-			# Данные по занятиям/выплатам
-			$Data = VisitJournal::findAll([
-						"condition" => "id_entity=". User::fromSession()->id_entity ." AND type_entity='".Teacher::USER_TYPE."'",
-						"order"		=> "lesson_date DESC, lesson_time DESC",
-					]);
-			# Добавляем группы к инфе					
-			foreach ($Data as &$D) {
-				$D->Group = Group::findById($D->id_group);
-			}
-			
-			returnJsonAng([
-				# Платежи
-				'payments' 	=> 	Payment::findAll([
-									'condition' => "entity_id=" . User::fromSession()->id_entity." and entity_type='".Teacher::USER_TYPE."'"
-								]),
-				# Данные по занятиям/выплатам
-				'Data'		=> 	$Data,
-			]);
+            $id_teacher = User::fromSession()->id_entity;
+            $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['payments' => true]);
+            returnJsonAng([
+                'Lessons' => $Lessons,
+            ]);
 		}
 
 		public function actionAjaxNewDocumentNumber()
