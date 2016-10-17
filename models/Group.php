@@ -453,7 +453,7 @@
 		public static function getScheduleCountCachedStatic($id_group)
 		{
 			if (LOCAL_DEVELOPMENT) {
-				return (object)['paid' => 32, 'free' => 1];
+				return ['paid' => 32, 'free' => 1];
 			}
 
 
@@ -577,7 +577,7 @@
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.year, g.ready_to_start", " GROUP BY g.id");
+			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.year, g.ready_to_start");//, " GROUP BY g.id"
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
 
 			while ($row = $result->fetch_object()) {
