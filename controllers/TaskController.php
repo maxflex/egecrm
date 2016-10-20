@@ -38,6 +38,7 @@
 				$Tasks = Task::findAll([
 					"condition" => $condition,
 					"order"		=> "id DESC",
+					"limit"		=> 50,
 				]);
 			} else {
 				$condition =  "type=$type AND id_status!=" . TaskStatuses::CLOSED;

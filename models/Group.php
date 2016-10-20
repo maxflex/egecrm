@@ -620,7 +620,7 @@
 		}
 
 		// @time-refactored @time-checked
-		private static function _generateQuery($search, $select, $ending = '')
+		private static function _generateQuery($search, $select, $ending = ' GROUP BY g.id')
 		{
 			// " . ((! empty($search->time_ids) || !isBlank($search->id_branch) || $search->cabinet) ? " JOIN group_time gt ON (g.id = gt.id_group " . . ")" : "") . "
 			// 		AND (" . implode(' OR ', array_map(function($id_time) { return "gt.id_time=$id_time"; }, $search->time_ids)) . "))"
