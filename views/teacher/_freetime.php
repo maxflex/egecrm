@@ -8,7 +8,7 @@
 	            </div>
 	            <div class="col-sm-8" style="text-align: right">
 		            <span ng-repeat="(day, data) in Bars.Freetime" class="group-freetime-block">
-						<span ng-repeat="(id_time, bar) in data | toArray track by $index" ng-click="toggleFreetime(day, id_time)" class="pointer bar {{bar}}"></span>
+						<span ng-repeat="(id_time, bar) in data track by $index" ng-click="toggleFreetime(day, id_time)" class="pointer bar {{bar}}"></span>
 					</span>
 	            </div>
 	        </div>
@@ -18,7 +18,7 @@
 	            </div>
 	            <div class="col-sm-8" style="text-align: right">
 		            <span ng-repeat="(day, data) in Bars.Group" class="group-freetime-block">
-						<span ng-repeat="bar in data | toArray track by $index" class="bar {{bar}}"></span>
+						<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
 					</span>
 	            </div>
 	        </div>

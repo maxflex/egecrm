@@ -89,7 +89,7 @@
 		<tbody>
 			<tr ng-repeat-start="stat in sortByDate(stats)" ng-class="{
 				'pointer': days_mode, 
-				'visits-weekend': isWeekend(stat.date)
+				'visits-weekend': isWeekend(stat.date) && days_mode
 			}" ng-click="dateLoad(stat.date)">
 				<td ng-class="{'text-gray': isFuture(stat.date), 'bold-red': missing[stat.date] > 0}">
 					{{formatDate(stat.date)}} <span ng-show='isToday(stat.date)'>(сегодня)</span>

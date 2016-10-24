@@ -1239,7 +1239,7 @@
 				$.post("ajax/" + mode + "Freetime", {
 					'id_entity': $scope.student.id,
 					'type_entity': 'student',
-					'id_time': id_time,
+					'id_time': id_time
 				}, function() {
 					$scope.FreetimeBar[day][id_time] = mode == 'Add' ? 'green' : 'empty'
 					$scope.$apply()

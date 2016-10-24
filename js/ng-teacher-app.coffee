@@ -73,14 +73,13 @@
 					, "json"
 
 			$scope.yearDifference = (year) ->
-	            moment().format("YYYY") - year
-	        
-	        $scope.show_all_lessons = false
-	        $scope.getLessons = ->
-	        	return $scope.Lessons if $scope.show_all_lessons
-	        	_.filter $scope.Lessons, (Lesson) ->
-	        		Lesson.date > $scope.academic_year + "-07-15"
-	        	
+				moment().format("YYYY") - year
+
+			$scope.show_all_lessons = false
+			$scope.getLessons = ->
+				return $scope.Lessons if $scope.show_all_lessons
+				_.filter $scope.Lessons, (Lesson) ->
+					Lesson.date > $scope.academic_year + "-07-15"
 
 			# @time-refactored @time-checked
 			$scope.toggleFreetime = (day, id_time) ->
