@@ -73,26 +73,26 @@
 					, "json"
 
 			$scope.yearDifference = (year) ->
-	            moment().format("YYYY") - year
-	        
-	        $scope.show_all_lessons = false
-	        $scope.getLessons = ->
-	        	return $scope.Lessons if $scope.show_all_lessons
-	        	_.filter $scope.Lessons, (Lesson) ->
-	        		Lesson.date > $scope.academic_year + "-07-15"
-	        	
+				moment().format("YYYY") - year
+
+			$scope.show_all_lessons = false
+			$scope.getLessons = ->
+				return $scope.Lessons if $scope.show_all_lessons
+				_.filter $scope.Lessons, (Lesson) ->
+					Lesson.date > $scope.academic_year + "-07-15"
 
 			# @time-refactored @time-checked
 			$scope.toggleFreetime = (day, id_time) ->
-			  mode = if $scope.Bars.Freetime[day][id_time] == 'green' then 'Delete' else 'Add'
+			  time = 4*(day - 1) + id_time + 1
+			  mode = if $scope.Bars.Freetime[day][time] == 'green' then 'Delete' else 'Add'
 			  ajaxStart()
 			  $.post 'ajax/' + mode + 'Freetime', {
 			    'id_entity': $scope.Teacher.id
 			    'type_entity': 'teacher'
-			    'id_time': id_time
+			    'id_time': time
 			  }, ->
 			    ajaxEnd()
-			    $scope.Bars.Freetime[day][id_time] = if mode == 'Add' then 'green' else 'empty'
+			    $scope.Bars.Freetime[day][time] = if mode == 'Add' then 'green' else 'empty'
 			    $scope.$apply()
 			    return
 			  return
