@@ -46,6 +46,9 @@
 		{
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
+				    if ($id_time < 10) {
+                        $id_time = '0'.$id_time;
+                    }
 					$bar[$day][$id_time] = EntityFreetime::hasFreetime($id_entity, $type_entity, $id_time) ? 'green' : 'empty';
 				}
 			}

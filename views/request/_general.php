@@ -288,7 +288,7 @@
 				            <div class="col-sm-12">
 					            свободно:<br>
 					            <span ng-repeat="(day, data) in FreetimeBar" class="group-freetime-block">
-									<span ng-repeat="(id_time, bar) in data | toArray track by $index" ng-click="toggleStudentFreetime(day, id_time)" class="pointer bar {{bar}}"></span>
+									<span ng-repeat="(id_time, bar) in data track by $index" ng-click="toggleStudentFreetime(day, id_time)" class="pointer bar {{bar}}"></span>
 								</span>
 				            </div>
 			            </div>

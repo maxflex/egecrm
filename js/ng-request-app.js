@@ -1235,14 +1235,13 @@
 
 			// @time-refactored
 			$scope.toggleStudentFreetime = function(day, id_time) {
-				time = 4*(day - 1) + id_time + 1
-				mode = $scope.FreetimeBar[day][time] === 'green' ? 'Delete' : 'Add'
+				mode = $scope.FreetimeBar[day][id_time] === 'green' ? 'Delete' : 'Add'
 				$.post("ajax/" + mode + "Freetime", {
 					'id_entity': $scope.student.id,
 					'type_entity': 'student',
-					'id_time': time
+					'id_time': id_time
 				}, function() {
-					$scope.FreetimeBar[day][time] = mode == 'Add' ? 'green' : 'empty'
+					$scope.FreetimeBar[day][id_time] = mode == 'Add' ? 'green' : 'empty'
 					$scope.$apply()
 				})
 			}

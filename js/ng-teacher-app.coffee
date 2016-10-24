@@ -83,16 +83,15 @@
 
 			# @time-refactored @time-checked
 			$scope.toggleFreetime = (day, id_time) ->
-			  time = 4*(day - 1) + id_time + 1
-			  mode = if $scope.Bars.Freetime[day][time] == 'green' then 'Delete' else 'Add'
+			  mode = if $scope.Bars.Freetime[day][id_time] == 'green' then 'Delete' else 'Add'
 			  ajaxStart()
 			  $.post 'ajax/' + mode + 'Freetime', {
 			    'id_entity': $scope.Teacher.id
 			    'type_entity': 'teacher'
-			    'id_time': time
+			    'id_time': id_time
 			  }, ->
 			    ajaxEnd()
-			    $scope.Bars.Freetime[day][time] = if mode == 'Add' then 'green' else 'empty'
+			    $scope.Bars.Freetime[day][id_time] = if mode == 'Add' then 'green' else 'empty'
 			    $scope.$apply()
 			    return
 			  return

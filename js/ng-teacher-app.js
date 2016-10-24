@@ -105,17 +105,16 @@ angular.module("Teacher", ["ngMap"]).config([
     });
   };
   $scope.toggleFreetime = function(day, id_time) {
-    var mode, time;
-    time = 4 * (day - 1) + id_time + 1;
-    mode = $scope.Bars.Freetime[day][time] === 'green' ? 'Delete' : 'Add';
+    var mode;
+    mode = $scope.Bars.Freetime[day][id_time] === 'green' ? 'Delete' : 'Add';
     ajaxStart();
     $.post('ajax/' + mode + 'Freetime', {
       'id_entity': $scope.Teacher.id,
       'type_entity': 'teacher',
-      'id_time': time
+      'id_time': id_time
     }, function() {
       ajaxEnd();
-      $scope.Bars.Freetime[day][time] = mode === 'Add' ? 'green' : 'empty';
+      $scope.Bars.Freetime[day][id_time] = mode === 'Add' ? 'green' : 'empty';
       $scope.$apply();
     });
   };
