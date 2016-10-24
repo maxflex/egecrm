@@ -364,25 +364,25 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
         if (v !== void 0) {
           if (v.date === d) {
             if (!v.cancelled) {
-              v.title = false;
-              v.cancelled = 1;
               ajaxStart();
               return $.post("groups/ajax/CancelScheduleDate", {
                 date: d,
                 id_group: $scope.Group.id
               }, function() {
+                v.title = false;
+                v.cancelled = 1;
                 return ajaxEnd();
               });
             } else {
-              $scope.Group.Schedule.splice(i, 1);
               ajaxStart();
-              return $.post("groups/ajax/DeleteScheduleDate", {
+              $.post("groups/ajax/DeleteScheduleDate", {
                 date: d,
                 id_group: $scope.Group.id
               }, function() {
-                ajaxEnd();
-                return $scope.$apply();
+                return ajaxEnd();
               });
+              $scope.Group.Schedule.splice(i, 1);
+              return $scope.$apply();
             }
           }
         }
@@ -499,14 +499,16 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
         } else {
           old_id_group = $scope.Group && ($scope.Group.id !== id_group) ? $scope.Group.id : false;
           ajaxStart();
-          $.post("groups/ajax/AddStudentDnd", {
+          return $.post("groups/ajax/AddStudentDnd", {
             id_group: id_group,
             id_student: id_student,
             old_id_group: old_id_group
-          }, ajaxEnd());
-          Group.students.push(id_student);
-          $scope.removeStudent(id_student, true);
-          return $scope.$apply();
+          }, function() {
+            ajaxEnd();
+            Group.students.push(id_student);
+            $scope.removeStudent(id_student, true);
+            return $scope.$apply();
+          });
         }
       }
     });
@@ -1207,10 +1209,10 @@ angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', function() 
             id_group: id_group,
             id_student: id_student
           }, function() {
-            return ajaxEnd();
+            ajaxEnd();
+            Group.students.push(id_student);
+            return $scope.$apply();
           });
-          Group.students.push(id_student);
-          $scope.$apply();
           student_group_index = $(ui.draggable).data("group-index");
           ui.draggable.remove();
           table = $("#group-index-" + student_group_index);

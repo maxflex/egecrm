@@ -143,7 +143,8 @@ angular.module "Payments", ["ui.bootstrap"]
                             confirmed: payment.confirmed
                         , ->
                             ajaxEnd()
-                        $scope.$apply()
+                            $timeout ->
+                                $scope.$apply()
                     else if result != null
                         $('.bootbox-form').addClass('has-error').children().first().focus()
                         $('.bootbox-input-text').on 'keydown', ->
@@ -296,8 +297,9 @@ angular.module "Payments", ["ui.bootstrap"]
                             id_payment: payment.id
                         , ->
                             ajaxEnd()
-                        $scope.payments.splice index, 1
-                        $scope.$apply()
+                            $scope.payments.splice index, 1
+                            $timeout ->
+                                $scope.$apply()
             else
                 bootbox.prompt {
                     title: "Введите пароль",
@@ -312,8 +314,9 @@ angular.module "Payments", ["ui.bootstrap"]
                                         id_payment: payment.id
                                     , ->
                                         ajaxEnd()
-                                    $scope.payments.splice index, 1
-                                    $scope.$apply()
+                                        $scope.payments.splice index, 1
+                                        $timeout ->
+                                            $scope.$apply()
                         else if result != null
                             $('.bootbox-form').addClass('has-error').children().first().focus()
                             $('.bootbox-input-text').on 'keydown', ->

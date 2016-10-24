@@ -9,7 +9,15 @@ angular.module("Stats", ["ui.bootstrap"]).config([
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("ListCtrl", function($scope) {
+]).filter('hideZero', function() {
+  return function(item) {
+    if (item > 0) {
+      return item;
+    } else {
+      return null;
+    }
+  };
+}).controller("ListCtrl", function($scope) {
   $scope.round1 = function(n) {
     return Math.round(n);
   };

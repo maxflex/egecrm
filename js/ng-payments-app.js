@@ -172,13 +172,15 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
         } else if (hex_md5(result) === payments_hash) {
           payment.confirmed = (payment.confirmed + 1) % 2;
           ajaxStart();
-          $.post("ajax/confirmPayment", {
+          return $.post("ajax/confirmPayment", {
             id: payment.id,
             confirmed: payment.confirmed
           }, function() {
-            return ajaxEnd();
+            ajaxEnd();
+            return $timeout(function() {
+              return $scope.$apply();
+            });
           });
-          return $scope.$apply();
         } else if (result !== null) {
           $('.bootbox-form').addClass('has-error').children().first().focus();
           $('.bootbox-input-text').on('keydown', function() {
@@ -323,13 +325,15 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
       return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
         if (result === true) {
           ajaxStart();
-          $.post("ajax/deletePayment", {
+          return $.post("ajax/deletePayment", {
             id_payment: payment.id
           }, function() {
-            return ajaxEnd();
+            ajaxEnd();
+            $scope.payments.splice(index, 1);
+            return $timeout(function() {
+              return $scope.$apply();
+            });
           });
-          $scope.payments.splice(index, 1);
-          return $scope.$apply();
         }
       });
     } else {
@@ -343,13 +347,15 @@ angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
             return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
               if (result === true) {
                 ajaxStart();
-                $.post("ajax/deletePayment", {
+                return $.post("ajax/deletePayment", {
                   id_payment: payment.id
                 }, function() {
-                  return ajaxEnd();
+                  ajaxEnd();
+                  $scope.payments.splice(index, 1);
+                  return $timeout(function() {
+                    return $scope.$apply();
+                  });
                 });
-                $scope.payments.splice(index, 1);
-                return $scope.$apply();
               }
             });
           } else if (result !== null) {

@@ -19,11 +19,11 @@
     "pusher": "^3.0.0",
     "vue": "~1.0.26"
   },
-  "_release": "67ff49980d",
+  "_release": "0528ef09c0",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "67ff49980d06fba4e9fd861bf247eaf6826a1be6"
+    "commit": "0528ef09c05ed03ff61362849166f2d6806b221f"
   },
   "_source": "https://github.com/shamego/phoneapi.git",
   "_target": "*",

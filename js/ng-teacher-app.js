@@ -414,12 +414,14 @@ angular.module("Teacher", ["ngMap"]).config([
           $.post('ajax/deletePayment', {
             'id_payment': payment.id
           }, function() {
-            return ajaxEnd();
+            ajaxEnd();
+            $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
+              id: payment.id
+            }));
+            return $timeout(function() {
+              return $scope.$apply();
+            });
           });
-          $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
-            id: payment.id
-          }));
-          $scope.$apply();
         }
       });
     } else {
@@ -434,11 +436,14 @@ angular.module("Teacher", ["ngMap"]).config([
               if (result === true) {
                 $.post('ajax/deletePayment', {
                   'id_payment': payment.id
+                }, function() {
+                  $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
+                    id: payment.id
+                  }));
+                  return $timeout(function() {
+                    return $scope.$apply();
+                  });
                 });
-                $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
-                  id: payment.id
-                }));
-                $scope.$apply();
               }
             });
           } else if (result !== null) {

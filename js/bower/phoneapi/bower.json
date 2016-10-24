@@ -1,6 +1,7 @@
 {
   "name": "phoneapi",
   "homepage": "https://github.com/shamego/phoneapi",
+  "version": "1.0.2",
   "authors": [
     "egerep"
   ],

@@ -25,7 +25,7 @@
                     FROM (
                         SELECT entry_id, from_number, start
                         FROM `mango`
-                        WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0 {$excluded_sql}
+                        WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0 and line_number='" . self::EGECENTR_NUMBER . "' {$excluded_sql}
                         GROUP BY entry_id
                         HAVING sum(answer) = 0
                     ) missed 

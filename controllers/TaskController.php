@@ -22,7 +22,8 @@
 			
 			// dev only
 			$search = $_GET["search"];
-			
+			$limit = $_GET["limit"];
+
 			if ($type == 0 && User::fromSession()->type == User::SEO_TYPE) {
 				$this->renderRestricted();
 			}
@@ -48,6 +49,7 @@
 				$Tasks = Task::findAll([
 					"condition" => $condition,
 					"order"		=> "id DESC",
+                    "limit"     => $_GET["limit"] ? $_GET["limit"] : 1000,
 				]);
 			}
 			
