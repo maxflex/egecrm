@@ -11,7 +11,7 @@ vueInit = function() {
   Vue.config.debug = true;
   Vue.config.async = false;
   Vue.component('phone', {
-    props: ['user_id', 'type', 'key'],
+    props: ['user_id', 'type', 'key', 'cluster'],
     data: function() {
       return {
         show_element: false,
@@ -29,10 +29,10 @@ vueInit = function() {
     template: '#phone-template',
     methods: {
       time: function(seconds) {
-        return moment({}).seconds(seconds).format("mm:ss");
+        return moment.utc(seconds * 1000).format("mm:ss");
       },
       formatDateTime: function(date) {
-        return moment(date).format("DD.MM.YY в HH:mm");
+        return moment(new Date(date * 1000)).format("DD.MM.YY в HH:mm");
       },
       hangup: function() {
         $.post('mango/hangup', {
@@ -65,7 +65,7 @@ vueInit = function() {
         var channel, pusher;
         pusher = new Pusher(this.key, {
           encrypted: true,
-          cluster: 'eu'
+          cluster: this.cluster
         });
         channel = pusher.subscribe("user_" + this.user_id);
         channel.bind('incoming', (function(_this) {

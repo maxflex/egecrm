@@ -9,6 +9,7 @@
         }
     ],
     "require": {
-        "ege-shared":"dev-master"
+        "ege-shared":"dev-master",
+        "deployer/deployer": "^3.3"
     }
 }

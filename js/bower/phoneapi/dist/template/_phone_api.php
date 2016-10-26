@@ -25,7 +25,7 @@
                 'circle-red':   last_call_data.user_busy == true,
                 'circle-green': last_call_data.user_busy == false
             }"></span>
-                {{ last_call_data.user_login }} {{ formatDateTime(last_call_data.date_start) }},
+                {{ last_call_data.user_login }} {{ formatDateTime(last_call_data.start) }},
                 <span v-if='last_call_data.answer > 0'>разговор {{ time(last_call_data.finish - last_call_data.answer) }}</span>
                 <span v-else>безуспешный вызов</span>
             </div>

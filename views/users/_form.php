@@ -99,7 +99,7 @@
         <div class="form-group">
             <select class="form-control" ng-model="User.show_phone_calls">
                 <option value="0">нет оповещий</option>
-                <option value="1">звонки ЕГЭ-Центра</option>
+                <option value="1">уведомления о звонках</option>
             </select>
         </div>
 

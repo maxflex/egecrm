@@ -114,86 +114,16 @@
 		 */
 		public static function getCaller($phone, $to_number)
 		{
-            // Ищем учителя с таким номером
-            $teacher = dbEgerep()->query("
-            	select id, first_name, last_name, middle_name from teachers
-            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'  OR phone4='{$phone}'
-            ");
-            if ($teacher->num_rows) {
-	            $data = $teacher->fetch_object();
-				$return = [
-                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
-                    'type'	=> 'teacher',
-                    'id'	=> $data->id,
-                ];
-            } else {
-	            if (static::isEgecentr($to_number)) {
-		      		# Ищем представителя с таким же номером телефона
-	                $represetative = dbConnection()->query("
-					SELECT s.id, r.first_name, r.last_name, r.middle_name FROM ".Representative::$mysql_table." r
-					LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
-					WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
-	                );
-	                // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-	                if ($represetative->num_rows) {
-	                    $data = $represetative->fetch_object();
-	                    $return = [
-	                        'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
-	                        'type'	=> 'representative',
-	                        'id'	=> $data->id,
-	                    ];
-	                } else {
-	                    # Ищем ученика с таким же номером телефона
-	                    $student = dbConnection()->query("
-	                        select id, first_name, last_name, middle_name from students
-	                        WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
-	                    ");
-	                    // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-	                    if ($student->num_rows) {
-	                        $data = $student->fetch_object();
-	                        $return = [
-	                            'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
-	                            'type'	=> 'student',
-	                            'id'	=> $data->id
-	                        ];
-	                    } else {
-	                        # Ищем заявку с таким же номером телефона
-	                        $request = dbConnection()->query("
-	                            select id, name from requests
-	                            WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
-	                        ");
-	                        // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-	                        if ($request->num_rows) {
-	                            $data = $request->fetch_object();
-	                            $return = [
-	                                'name'	=> static::_nameOrEmpty($data->name),
-	                                'type'	=> 'request',
-	                                'id'	=> $data->id
-	                            ];
-	                        }
-	                    }
-	                }      
-	            }
-	            else {
-		            # ищем ученика в ЕГЭ-РЕПЕТИТОРЕ с таким номером
-                    $student = dbEgerep()->query("
-                        select id, first_name, last_name, middle_name from students
-                        WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}' OR phone4='{$phone}'
-                    ");
-                    // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
-                    if ($student->num_rows) {
-                        $data = $student->fetch_object();
-                        $return = [
-                            'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
-                            'type'	=> 'egerep_student',
-                            'id'	=> $data->id
-                        ];
-                    }
-	            }
+			if (static::isEgecentr($to_number)) {
+				$return = static::determineEgecrm($phone);
             }
+			
+			if (static::isEgerep($to_number)) {
+				$return = static::determineEgerep($phone);
+			}
 
             // возвращается, если номера нет в базе
-			if (! isset($return)) {
+			if (! is_array($return)) {
 				$return = ['type' => false];
 			}
 			
@@ -201,6 +131,107 @@
 		}
 		
 		
+		/**
+		 * Определить номер для ЕГЭ-Центра
+		 */
+		private static function determineEgecrm($phone)
+		{
+			# Ищем ученика с таким же номером телефона
+            $student = dbConnection()->query("
+                select id, first_name, last_name, middle_name from students
+                WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+            ");
+            // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+            if ($student->num_rows) {
+                $data = $student->fetch_object();
+				return [
+                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                    'type'	=> 'student',
+                    'id'	=> $data->id
+                ];
+            }
+            
+            # Ищем представителя с таким же номером телефона
+			$represetative = dbConnection()->query("
+				SELECT s.id, r.first_name, r.last_name, r.middle_name FROM ".Representative::$mysql_table." r
+				LEFT JOIN ".Student::$mysql_table." s on r.id = s.id_representative
+				WHERE r.phone='".$phone."' OR r.phone2='".$phone."' OR r.phone3='".$phone."'"
+			);
+            // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+            if ($represetative->num_rows) {
+                $data = $represetative->fetch_object();
+				return [
+                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                    'type'	=> 'representative',
+                    'id'	=> $data->id,
+                ];
+            }
+
+			# Ищем учителя с таким номером
+            $teacher = dbEgerep()->query("
+            	select id, first_name, last_name, middle_name from tutors
+            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}' OR phone4='{$phone}'
+            ");
+            if ($teacher->num_rows) {
+	            $data = $teacher->fetch_object();
+				return [
+                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                    'type'	=> 'teacher',
+                    'id'	=> $data->id,
+                ];
+            }
+
+	                    
+            # Ищем заявку с таким же номером телефона
+            $request = dbConnection()->query("
+                select id, name from requests
+                WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'
+            ");
+            // Если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+            if ($request->num_rows) {
+                $data = $request->fetch_object();
+				return [
+                    'name'	=> static::_nameOrEmpty($data->name),
+                    'type'	=> 'request',
+                    'id'	=> $data->id
+                ];
+            }
+		}
+		
+		/**
+		 * Определить номер для ЕГЭ-Репетитора
+		 */
+		private static function determineEgerep($phone)
+		{
+			# ищем клиента в ЕГЭ-РЕПЕТИТОРЕ с таким номером
+            $client = dbEgerep()->query("
+                select id, name from clients
+                WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}' OR phone4='{$phone}'
+            ");
+            # если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
+            if ($client->num_rows) {
+                $data = $client->fetch_object();
+				return [
+                    'name'	=> static::_nameOrEmpty(getName($data->name)),
+                    'type'	=> 'client',
+                    'id'	=> $data->id
+                ];
+            }
+            
+			# ищем учителя с таким номером
+            $teacher = dbEgerep()->query("
+            	select id, first_name, last_name, middle_name from tutors
+            	WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}'  OR phone4='{$phone}'
+            ");
+            if ($teacher->num_rows) {
+	            $data = $teacher->fetch_object();
+				return [
+                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                    'type'	=> 'tutor',
+                    'id'	=> $data->id,
+                ];
+            }
+		}
 		
 		/**
 		 * Уведомить всех пользователей об ответе на звонок

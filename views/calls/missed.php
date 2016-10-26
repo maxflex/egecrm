@@ -18,7 +18,7 @@
                 <span ng-if="!m.caller.type">неизвестный номер</span>
 			</td>
 			<td>
-				<span ng-click="deleteCall(m)" class="link-like text-danger" aria-hidden="true">удалить</span>
+				<span ng-click="deleteCall(m)" class="link-like red" aria-hidden="true">удалить</span>
 			</td>
 		</tr>
 	</table>
