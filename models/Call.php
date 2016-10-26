@@ -39,13 +39,13 @@
         /**
 		 * Выбираем пропущенные за сегодня звонки, на которые потом не перезвонили
 		 */
-		public static function missed($get_caller = true)
+		public static function missed($get_caller = true, $line = self::EGECENTR_NUMBER)
         {
             $result = dbEgerep()->query("SELECT *" . self::getMissedCallsSql());
 			$missed = [];
 			while ($row = $result->fetch_object()) {
 				if ($get_caller) {
-					$row->caller = self::getCaller($row->from_number);
+					$row->caller = self::getCaller($row->from_number, $line);
 				}
 				$row->phone_formatted = formatNumber($row->from_number);
 				$missed[] = $row;
