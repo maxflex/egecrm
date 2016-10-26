@@ -1,1 +1,0 @@
-ALTER TABLE `users` ADD COLUMN `photo_extension` VARCHAR(8) DEFAULT 'png';

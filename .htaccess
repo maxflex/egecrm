@@ -1,7 +1,5 @@
 RewriteEngine On
 
-RewriteBase /egecrm
-
 # На эти папки не использовать правила
 RewriteRule ^(css|js|img|fonts|compass)($|/) - [L]
 

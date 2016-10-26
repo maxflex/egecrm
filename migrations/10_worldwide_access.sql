@@ -1,1 +1,0 @@
-ALTER TABLE `users` CHANGE COLUMN `any_device_access` `worldwide_access` TINYINT(1) NOT NULL DEFAULT '0';

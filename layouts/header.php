@@ -8,7 +8,7 @@
 	    if (LOCAL_DEVELOPMENT) {
 		    echo '<base href="' . BASE_LOCAL . BASE_ADDON . '">';
 	    } else {
-		    echo '<base href="/egecrm/">';
+		    echo '<base href="/">';
 	    }
 	?>
 <!--     <link href="css/jquery.datetimepicker.css" rel="stylesheet"> -->

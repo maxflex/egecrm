@@ -1,1 +1,0 @@
-ALTER TABLE  `group_schedule` ADD `id_branch` INT DEFAULT NULL ;
