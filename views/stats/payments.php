@@ -31,8 +31,8 @@
 
 		<div class="pull-right">
 			<a href="stats">итоговые данные</a>
-			<span class="link-like <?= isset($_GET['teachers']) ?: 'active' ?>">детализация по платежам</span>
-			<span class="link-like <?= isset($_GET['teachers']) ? 'active' : '' ?>">детализация по платежам преподавателей</span>
+			<a href='stats/payments' class="<?= isset($_GET['teachers']) ?: 'active' ?>">детализация по платежам</a>
+			<a href='stats/payments/teachers' class="<?= isset($_GET['teachers']) ? 'active' : '' ?>">детализация по платежам преподавателей</a>
 		</div>
 
 	</div>

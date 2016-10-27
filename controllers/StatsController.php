@@ -850,7 +850,7 @@
 
 		public function actionPayments()
 		{
-			$this->setTabTitle(isset($_GET['teachers']) ? 'Детализация по платежам преподавателям' : 'Детализация по платежам');
+			$this->setTabTitle(isset($_GET['teachers']) ? 'Детализация по платежам преподавателей' : 'Детализация по платежам');
 
 			switch ($_GET["group"]) {
 				case "w": {
