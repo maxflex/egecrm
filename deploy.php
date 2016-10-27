@@ -9,7 +9,7 @@ require 'recipe/common.php';
 // Set configurations
 set('repository', 'https://github.com/maxflex/egecrm.git');
 set('shared_dirs', ['extentions']);
-set('shared_files', ['config.php']);
+set('shared_files', ['config.php', 'favicon.png']);
 set('writable_dirs', ['files']);
 
 // Configure servers
