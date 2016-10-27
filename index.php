@@ -57,13 +57,12 @@
 		preType($_SERVER);
 	}
 */
-    // временно. не забыть раскомментить
-	// if (!LOCAL_DEVELOPMENT) {
-	// 	if ($_SERVER['HTTP_HOST'] != 'lk.ege-centr.ru' && !in_array($_controllerName, $external_requests)) {
-	// 		header("Location: https://lk.ege-centr.ru" . $_SERVER['REQUEST_URI']);
-	// 		exit();
-	// 	}
-	// }
+	if (! LOCAL_DEVELOPMENT) {
+		if ($_SERVER['HTTP_HOST'] != 'lk.ege-centr.ru' && !in_array($_controllerName, $external_requests)) {
+			header("Location: https://lk.ege-centr.ru" . $_SERVER['REQUEST_URI']);
+			exit();
+		}
+	}
 
 	if ((!User::loggedIn() || !User::rememberMeLogin()) && !in_array($_controllerName, $bypass_login)) {
 	//	$this->redirect(BASE_ADDON . "login"); // Можно сделать так же редирект на страницу входа
