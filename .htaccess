@@ -6,6 +6,8 @@ RewriteRule ^(css|js|img|fonts|compass)($|/) - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
+RewriteRule ^egecrm/(.*) https://%{HTTP_HOST}/$1 [L,R=301]
+
 ###### Правила ######
 
 # Вход, регистрация
