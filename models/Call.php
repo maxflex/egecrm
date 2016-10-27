@@ -205,14 +205,20 @@
 		{
 			# ищем клиента в ЕГЭ-РЕПЕТИТОРЕ с таким номером
             $client = dbEgerep()->query("
-                select id, name from clients
+                select id, phone, phone2, phone3, phone4, phone_comment, phone2_comment, phone3_comment, phone4_comment from clients
                 WHERE phone='{$phone}' OR phone2='{$phone}' OR phone3='{$phone}' OR phone4='{$phone}'
             ");
             # если заявка с таким номером телефона уже есть, подхватываем ученика оттуда
             if ($client->num_rows) {
                 $data = $client->fetch_object();
+                // берем имя из комментария к телефону
+                foreach(['phone', 'phone2', 'phone3', 'phone4'] as $phone_field) {
+                    if ($data->{$phone_field} == $phone) {
+                        $name = $data->{$phone_field . '_comment'};
+                    }
+                }
 				return [
-                    'name'	=> static::_nameOrEmpty(getName($data->name)),
+                    'name'	=> static::_nameOrEmpty(getName($name)),
                     'type'	=> 'client',
                     'id'	=> $data->id
                 ];
