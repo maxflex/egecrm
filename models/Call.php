@@ -4,7 +4,7 @@
 		const TEST_NUMBER		= '74955653170';
 		const EGEREP_NUMBER 	= '74956461080';
 		const EGECENTR_NUMBER 	= '74956468592';
-		
+
 		/*
 			Алгоритм: сначала получаем все сегодняшние пропущенные, затем исключаем по условиям
 				* WHERE mango.start > missed.start									дата звонка > даты пропущенного звонка
@@ -28,11 +28,11 @@
                         WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0 and line_number='" . self::EGECENTR_NUMBER . "' {$excluded_sql}
                         GROUP BY entry_id
                         HAVING sum(answer) = 0
-                    ) missed 
-                    WHERE NOT EXISTS (SELECT 1 FROM mango WHERE mango.start > missed.start and 
+                    ) missed
+                    WHERE NOT EXISTS (SELECT 1 FROM mango WHERE mango.start > missed.start and
                         (mango.to_number = missed.from_number or (mango.from_number = missed.from_number and mango.answer != 0))
                     )
-                    GROUP BY from_number 
+                    GROUP BY from_number
                     ORDER BY start DESC";
         }
 
@@ -52,7 +52,7 @@
 			}
 			return $missed;
 		}
-		
+
 		/*
 		 * Кол-во пропущенных сегдоня звонков, на которые не ответили
 		 */
@@ -70,33 +70,33 @@
             }
             memcached()->set('excluded_missed', $excluded, tillNextDay());
         }
-		
+
 		/*
 		 * Номер ЕГЭ-Центра
 		 */
 		public static function isEgecentr($number) {
             return $number == self::EGECENTR_NUMBER;
         }
-        
+
         /*
 		 * Номер ЕГЭ-Репетитора
 		 */
 		public static function isEgerep($number) {
             return $number == self::EGEREP_NUMBER;
         }
-        
+
         /*
 		 * Данные по последнему разговору
 		 */
 		public static function lastData($phone)
 		{
 			$result = dbEgerep()->query("
-				SELECT * FROM mango 
+				SELECT * FROM mango
 				WHERE (from_number='{$phone}' AND answer!=0) OR to_number='{$phone}'
 				ORDER BY id DESC
 				LIMIT 1
 			");
-			
+
 			if ($result->num_rows) {
 				$return = $result->fetch_object();
 				$id_user = $return->from_extension ?: $return->to_extension;
@@ -107,8 +107,8 @@
 				return false;
 			}
 		}
-		
-		
+
+
 		/*
 		 * Определить звонящего
 		 */
@@ -117,7 +117,7 @@
 			if (static::isEgecentr($to_number)) {
 				$return = static::determineEgecrm($phone);
             }
-			
+
 			if (static::isEgerep($to_number)) {
 				$return = static::determineEgerep($phone);
 			}
@@ -126,11 +126,11 @@
 			if (! is_array($return)) {
 				$return = ['type' => false];
 			}
-			
+
 			return $return;
 		}
-		
-		
+
+
 		/**
 		 * Определить номер для ЕГЭ-Центра
 		 */
@@ -145,12 +145,12 @@
             if ($student->num_rows) {
                 $data = $student->fetch_object();
 				return [
-                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                    'name'	=> static::_nameOrEmpty(getName($data->last_name, $data->first_name, $data->middle_name)),
                     'type'	=> 'student',
                     'id'	=> $data->id
                 ];
             }
-            
+
             # Ищем представителя с таким же номером телефона
 			$represetative = dbConnection()->query("
 				SELECT s.id, r.first_name, r.last_name, r.middle_name FROM ".Representative::$mysql_table." r
@@ -161,7 +161,7 @@
             if ($represetative->num_rows) {
                 $data = $represetative->fetch_object();
 				return [
-                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                    'name'	=> static::_nameOrEmpty(getName($data->last_name, $data->first_name, $data->middle_name)),
                     'type'	=> 'representative',
                     'id'	=> $data->id,
                 ];
@@ -175,13 +175,13 @@
             if ($teacher->num_rows) {
 	            $data = $teacher->fetch_object();
 				return [
-                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                    'name'	=> static::_nameOrEmpty(getName($data->last_name, $data->first_name, $data->middle_name)),
                     'type'	=> 'teacher',
                     'id'	=> $data->id,
                 ];
             }
 
-	                    
+
             # Ищем заявку с таким же номером телефона
             $request = dbConnection()->query("
                 select id, name from requests
@@ -197,7 +197,7 @@
                 ];
             }
 		}
-		
+
 		/**
 		 * Определить номер для ЕГЭ-Репетитора
 		 */
@@ -217,7 +217,7 @@
                     'id'	=> $data->id
                 ];
             }
-            
+
 			# ищем учителя с таким номером
             $teacher = dbEgerep()->query("
             	select id, first_name, last_name, middle_name from tutors
@@ -226,22 +226,22 @@
             if ($teacher->num_rows) {
 	            $data = $teacher->fetch_object();
 				return [
-                    'name'	=> static::_nameOrEmpty(getName($data->first_name, $data->last_name, $data->middle_name)),
+                    'name'	=> static::_nameOrEmpty(getName($data->last_name, $data->first_name, $data->middle_name)),
                     'type'	=> 'tutor',
                     'id'	=> $data->id,
                 ];
             }
 		}
-		
+
 		/**
 		 * Уведомить всех пользователей об ответе на звонок
-		 */ 
+		 */
 		public static function notifyAnswered($id_user, $call_id, $number)
         {
 	        $user_ids = User::getIds([
 		       'condition' => 'banned=0 AND show_phone_calls=1'
 	        ]);
-	        
+
 	        foreach($user_ids as $id) {
 		    	Socket::trigger('user_' . $id, 'answered', [
 			    	'answered_user' => User::getLogin($id_user),
@@ -249,7 +249,7 @@
 		    	], static::_getCrmByNumber($number));
 	        }
         }
-        
+
         /**
 	     * Уведомить pusher о входящем звонке
 	     * $number – входящий номер нужен для определения crm
@@ -258,7 +258,7 @@
         {
 	        Socket::trigger('user_' . $id_user, 'incoming', $data, static::_getCrmByNumber($number));
         }
-		
+
 		private static function _getCrmByNumber($number)
 		{
 			if (static::isEgerep($number)) {
@@ -267,7 +267,7 @@
 				return 'egecrm';
 			}
 		}
-		
+
 		private static function _nameOrEmpty($name)
         {
 	        if (empty(trim($name))) {
