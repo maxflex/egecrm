@@ -86,7 +86,7 @@ vueInit = function() {
             if (_this.show_element) {
               console.log('setting answered user to', data.answered_user);
               _this.answered_user = data.answered_user;
-              return _this.setHideTimeout(20);
+              return _this.setHideTimeout(4);
             }
           };
         })(this));

@@ -67,7 +67,7 @@ vueInit = ->
 					if this.show_element
 						console.log 'setting answered user to', data.answered_user
 						this.answered_user = data.answered_user
-						this.setHideTimeout(20)
+						this.setHideTimeout(4)
 		computed:
 			call_length: ->
 				moment(parseInt(this.timer.diff) * 1000).format 'mm:ss'
