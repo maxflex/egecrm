@@ -16,7 +16,7 @@
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet">
     <link href="css/jquery.timepicker.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/hint.css"></link>
-    <link rel="stylesheet" href="css/phone.css"></link>
+    <link rel="stylesheet" href="js/bower/phoneapi/dist/css/phone.css"></link>
     <link href="css/bootstrap.css?ver=<?= settings()->version ?>" rel="stylesheet">
     <link href="css/animate.css?ver=<?= settings()->version ?>" rel="stylesheet">
 	<link href="css/nprogress.css" rel="stylesheet">
