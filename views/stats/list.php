@@ -11,31 +11,32 @@
 		<?php } else { ?>
 		<a href="stats/?group=d" style="margin-right: 15px">дни</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "w") { ?>
 		<span style="margin-right: 15px; font-weight: bold">недели</span>
 		<?php } else { ?>
 		<a href="stats/?group=w" style="margin-right: 15px">недели</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "m") { ?>
 		<span style="margin-right: 15px; font-weight: bold">месяцы</span>
 		<?php } else { ?>
 		<a href="stats/?group=m" style="margin-right: 15px">месяцы</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "y") { ?>
 		<span style="margin-right: 15px; font-weight: bold">годы</span>
 		<?php } else { ?>
 		<a href="stats/?group=y" style="margin-right: 15px">годы</a>
 		<?php } ?>
-		
+
 		<div class="pull-right">
 			<span class="link-like active">итоговые данные</span>
 			<a href="stats/payments">детализация по платежам</a>
+			<a href="stats/payments/teachers">детализация по платежам преподавателей</a>
 		</div>
 	</div>
-	
+
 	<table class="table table-hover">
 		<thead style="font-size: 10px" class="half-black">
 			<tr>
@@ -113,7 +114,7 @@
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-	
+
 	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
 	<pagination
 	  ng-model="currentPage"

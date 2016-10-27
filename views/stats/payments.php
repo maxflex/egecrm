@@ -10,32 +10,33 @@
 		<?php } else { ?>
 		<a href="stats/payments/?group=d" style="margin-right: 15px">по дням</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "w") { ?>
 		<span style="margin-right: 15px; font-weight: bold">по неделям</span>
 		<?php } else { ?>
 		<a href="stats/payments/?group=w" style="margin-right: 15px">по неделям</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "m") { ?>
 		<span style="margin-right: 15px; font-weight: bold">по месяцам</span>
 		<?php } else { ?>
 		<a href="stats/payments/?group=m" style="margin-right: 15px">по месяцам</a>
 		<?php } ?>
-		
+
 		<?php if ($_GET["group"] == "y") { ?>
 		<span style="margin-right: 15px; font-weight: bold">по годам</span>
 		<?php } else { ?>
 		<a href="stats/payments/?group=y" style="margin-right: 15px">по годам</a>
 		<?php } ?>
-		
+
 		<div class="pull-right">
 			<a href="stats">итоговые данные</a>
-			<span class="link-like active">детализация по платежам</span>
+			<span class="link-like <?= isset($_GET['teachers']) ?: 'active' ?>">детализация по платежам</span>
+			<span class="link-like <?= isset($_GET['teachers']) ? 'active' : '' ?>">детализация по платежам преподавателей</span>
 		</div>
-		
+
 	</div>
-	
+
 	<table class="table table-hover">
 		<thead style="font-size: 10px" class="half-black">
 			<tr>
@@ -117,7 +118,7 @@
 					<?php if ($stat[Payment::PAID_BILL]['payment_unconfirmed'] > 0) :?>
 						<span class="quater-black"><?= ($stat[Payment::PAID_BILL]['payment_confirmed'] > 0 ? ' + ' : '')?><?= $stat[Payment::PAID_BILL]['payment_unconfirmed'] ?></span>
 					<?php endif ?>
-				
+
 				</td>
 				<td>
 					<?= $stat[Payment::PAID_BILL]['return_confirmed'] ?>
@@ -153,7 +154,7 @@
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-	
+
 	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
 		<pagination
 		  ng-model="currentPage"

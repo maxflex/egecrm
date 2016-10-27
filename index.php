@@ -12,9 +12,9 @@
 	include_once("config.php");
 
 	// Если сессия уже когда-то была начата (если пользователь залогинен), то возобновляем ее
-	/*if(isset($_COOKIE["PHPSESSID"])) {
+	if(isset($_COOKIE["PHPSESSID"])) {
 	  session_start();
-	}*/
+	}
 	session_start();
 
 	// Получаем названия контроллеров и экшена

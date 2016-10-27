@@ -245,8 +245,8 @@
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
 					. " AND type_entity='TEACHER'"
 			]);
-			
-			// кол-во запланированных занятий	
+
+			// кол-во запланированных занятий
 			if ($date_start >= date('Y-m-d') && !$date_end) {
 				$return['planned_lesson_count'] = GroupSchedule::count([
 					"condition" => "date='$date_start' AND id_group>0"
@@ -269,7 +269,7 @@
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
 					. " AND type_entity='STUDENT' AND presence=2"
 			]);
-			
+
 			$return['unset_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
 					. " AND type_entity='STUDENT' AND (presence is null or presence=0)"
@@ -735,7 +735,7 @@
 			$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 
 			$Payments = Payment::findAll([
-				"condition" => "entity_type = '".Student::USER_TYPE."' and ".
+				"condition" => "entity_type = '" . (isset($_GET['teachers']) ? Teacher::USER_TYPE : Student::USER_TYPE) . "' and ".
 					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
 								: "date = '$date_start'")
 			]);
@@ -850,7 +850,7 @@
 
 		public function actionPayments()
 		{
-			$this->setTabTitle("Итоги");
+			$this->setTabTitle(isset($_GET['teachers']) ? 'Детализация по платежам преподавателям' : 'Детализация по платежам');
 
 			switch ($_GET["group"]) {
 				case "w": {
