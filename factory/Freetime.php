@@ -66,7 +66,10 @@
 
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
-                    $result = dbConnection()->query("
+                    if ($id_time < 10) {
+                        $id_time = '0'.$id_time;
+                    }
+				    $result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt, g.id as id_group FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
 						WHERE FIND_IN_SET({$id_student}, g.students) AND g.ended = 0 AND gt.id_time=$id_time AND g.year = ".Years::getAcademic()."
@@ -87,6 +90,9 @@
 			}
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
+                    if ($id_time < 10) {
+                        $id_time = '0'.$id_time;
+                    }
                     $result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt, g.id as id_group FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
@@ -151,6 +157,9 @@
 			foreach($cabinet_ids as $id_cabinet) {
 				foreach(Time::MAP as $day => $data) {
 					foreach ($data as $id_time) {
+                        if ($id_time < 10) {
+                            $id_time = '0'.$id_time;
+                        }
 						// подсчитываем кол-во групп в этом кабинете в это время
 						$result = dbConnection()->query("
 							SELECT COUNT(*) AS cnt FROM group_time gt
