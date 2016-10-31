@@ -224,6 +224,7 @@
 			}
 		?>
 	<?php endif ?>
+	<a href="logs/list" class="list-group-item">Логи</a>
 	<?php if (User::fromSession()->show_contract) :?>
 	    <a href="users/contract" class="list-group-item">Договор</a>
 	<?php endif ?>
@@ -231,7 +232,7 @@
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="templates" class="list-group-item">Шаблоны</a>
     <a href="teachers/html" class="list-group-item">FAQ</a>
-    <?php if (User::fromSession()->show_users) : ?>
+	    <?php if (User::fromSession()->show_users) : ?>
         <a href="users" class="list-group-item">Пользователи</a>
     <?php endif ?>
     <a href="logout" class="list-group-item">Выход</a>

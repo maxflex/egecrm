@@ -19,6 +19,13 @@
 
 		public static $online_list;
 
+        public $log_except = [
+            'last_action_time',
+            'last_action_link',
+            'token',
+            'login_count'
+
+        ];
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
 		public function __construct($array = [], $flag = null)
@@ -185,7 +192,10 @@
 		public static function getCached($with_system = false)
 		{
 			if (LOCAL_DEVELOPMENT) {
-				$Users = self::findAll();
+				$Users = self::findAll([
+				    'condition' => "type = 'USER"
+
+                ]);
 
 				foreach ($Users as $User) {
 					$return[$User->id] = $User->dbData();

@@ -243,9 +243,8 @@
 					drop: function(event, ui) {
 						id_request_status = $(this).data("id")
 						id_request = $(ui.draggable).data("id")
-
-						$scope.request_statuses_count[$scope.chosen_list]--
-						$scope.request_statuses_count[id_request_status]++
+						$scope.counts.requests[$scope.chosen_list]--
+						$scope.counts.requests[id_request_status]++
 						$scope.$apply()
 
 						$.post("requests/ajax/changeStatus", {id_request_status: id_request_status, id_request: id_request})
@@ -260,7 +259,7 @@
 					drop: function(event, ui) {
 						id_request = $(ui.draggable).data("id")
 						$scope.dragging = false
-						$scope.request_statuses_count[$scope.chosen_list]--
+						$scope.counts.requests[$scope.chosen_list]--
 						$scope.$apply()
 						$.post("ajax/deleteRequest", {"id_request": id_request})
 
@@ -389,10 +388,14 @@
 					return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
 				}
 
-                // первая версия последней цепи (выше chain – неправильно, это версии)
-                $scope.firstInLastChain = function() {
-                    return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
-                }
+				// первая версия последней цепи (выше chain – неправильно, это версии)
+				$scope.firstInLastChain = function() {
+						if ($scope.contracts) {
+							return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
+						} else {
+							return false
+						}
+				}
 
 				$scope.week_count = function (programm) {
 					c = parseInt(_.max(programm, function(v){ return v.count; }).count)

@@ -5,7 +5,7 @@
 			<ul class="request-list-nav nav nav-tabs nav-tabs-links" style="margin-bottom: 20px">
 				<li ng-repeat="request_status in request_statuses" data-id="{{request_status.id}}"
 					ng-class="{'active' : chosen_list == request_status.id, 'request-status-li': request_status.id != 8 && (chosen_list != request_status.id)}" 
-					ng-hide="request_status.id == <?= RequestStatuses::SPAM ?> && request_statuses_count[request_status.id] == 0"
+					ng-hide="request_status.id == <?= RequestStatuses::SPAM ?> && counts.requests[request_status.id] == 0"
 				>
 					<a class="list-link" href="#{{request_status.id}}" ng-click="changeList(request_status, true)" data-toggle="tab" aria-expanded="{{$index == 0}}">
 						{{request_status.name}}

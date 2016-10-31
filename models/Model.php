@@ -25,6 +25,16 @@
 		// Переменные
 		public $isNewRecord = true;			// Новая запись
 
+``		/**
+		 * Model should be loggable
+		 *
+		 * @var boolean
+		 * @custom
+		 */
+		protected $loggable = true;
+
+		public $log_except = [];
+
 		// Конструктор
 		public function __construct($array = false)
 		{
@@ -85,7 +95,7 @@
 				foreach ($this->_inline_data as $inline_data_field) {
 					// Читать описание выше, для сериализованных данных
 					if (!is_array($this->{$inline_data_field})) {
-						$this->{$inline_data_field} = explode(",", $this->{$inline_data_field});
+						$this->{$inline_data_field} = $this->{$inline_data_field} ? explode(",", $this->{$inline_data_field}) : [];
 					}
 				}
 			}
@@ -354,10 +364,11 @@
 		 public function save($single_field = false)
 		 {
 		 	// Перед сохранением
-		 	if (method_exists($this, "beforeSave")) {
-			 	$this->beforeSave();
-		 	}
+			if (method_exists($this, "beforeSave")) {
+				$this->beforeSave();
+			}
 
+			$this->log();
 
 		 	// Проверяем есть ли в бд шидзе с таким ID
 			if ($this->isNewRecord)
@@ -371,7 +382,7 @@
 			 		// Если значение установлено, будем его сохранять
 			 		if (isset($this->{$field}))
 			 		{
-				 		$into[]		= $field;
+				 		$into[]		= '`' . $field . '`';
 
 				 		// Если текущее поле в формате serialize
 				 		if (in_array($field, $this->_serialized)) {
@@ -465,9 +476,15 @@
 		  */
 		 public function beforeSave()
 		 {
-			 // Будет переопределяться в child-классах
 		 }
-		 
+
+		 public function log()
+		 {
+			 if ($this->loggable) {
+				Log::add($this);
+			 }
+		 }
+
 		 /*
 		  * Перед сохранением
 		  */
@@ -532,8 +549,8 @@
 			}
 
 			// Если в БД еще есть сериализованные данные
-			if (count($_serialized)) {
-				foreach ($_serialized as $var) {
+			if (count($this->_serialized)) {
+				foreach ($this->_serialized as $var) {
 					if ($select && !in_array($var, $select)) { 	// Если нужно выбрать конкретные поля
 						continue;								// то пропускаем ненужные
 					}
@@ -639,6 +656,11 @@
 		public function changeId($newId, $oldId)
 		{
 			return static::dbConnection()->query("UPDATE ".static::$mysql_table." SET id=$newId WHERE id=$oldId");
+		}
+
+		public function getTable()
+		{
+			return static::$mysql_table;
 		}
 	}
 
