@@ -44,7 +44,7 @@
                                 <li class='link-like' ng-click="printContractLicenced(contract)" ng-show='isFirstContractInChain(contract)'>печать договора ООО</li>
                                 <li class='link-like' ng-click="printContractAdditional(contract)" ng-show='!isFirstContractInChain(contract)'>печать доп.соглашения ИП</li>
                                 <li class='link-like' ng-click="printContractAdditionalOoo(contract)" ng-show='!isFirstContractInChain(contract)'>печать доп.соглашения ООО</li>
-								<li class='link-like' ng-click="printServiceActOoo(contract)">печать акта оказанных услуг</li>
+								<li class='link-like' ng-click="printServiceActOoo(contract)" ng-show='isLastContractInChain(contract)'>печать акта оказанных услуг</li>
                                 <li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContract(contract)'>удалить</li>
                             </ul>
                         </div>
