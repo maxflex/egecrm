@@ -93,7 +93,7 @@
 			$result = dbEgerep()->query("
 				SELECT * FROM mango
 				WHERE (from_number='{$phone}' AND answer!=0) OR to_number='{$phone}'
-				ORDER BY id DESC
+				ORDER BY start DESC
 				LIMIT 1
 			");
 
