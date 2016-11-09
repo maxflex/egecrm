@@ -23,7 +23,7 @@ server('production', 'lk.ege-centr.ru')
  */
 task('deploy:update_code', function () {
     run("git reset --hard");
-    run("git pull github master");
+    run("git pull origin master");
 })->desc('Updating code');
 
 /**
