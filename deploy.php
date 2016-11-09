@@ -22,13 +22,13 @@ server('production', 'lk.ege-centr.ru')
  * Main task
  */
 task('deploy', [
-    'deploy:prepare',
-    'deploy:release',
+    // 'deploy:prepare',
+    // 'deploy:release',
     'deploy:update_code',
-    'deploy:shared',
-    'deploy:writable',
-    'deploy:symlink',
-    'cleanup',
+    // 'deploy:shared',
+    // 'deploy:writable',
+    // 'deploy:symlink',
+    // 'cleanup',
 ])->desc('Deploy your project');
 
 after('deploy', 'success');
