@@ -8,9 +8,9 @@ require 'recipe/common.php';
 
 // Set configurations
 set('repository', 'https://github.com/maxflex/egecrm.git');
-set('shared_dirs', ['extentions']);
-set('shared_files', ['config.php', 'favicon.png']);
-set('writable_dirs', ['files']);
+set('shared_dirs', ['extentions', 'img/students', 'img/users']);
+set('shared_files', ['config.php', 'favicon.png', '_.php']);
+set('writable_dirs', ['files', 'img/students', 'img/users']);
 
 // Configure servers
 server('production', 'lk.ege-centr.ru')

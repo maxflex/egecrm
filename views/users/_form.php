@@ -71,6 +71,9 @@
         <div class="form-group">
             <input class="form-control" ng-model="User.middle_name" placeholder="Отчество">
         </div>
+        <div class="form-group">
+            <input class="form-control phone-masked" ng-model="User.phone" placeholder="телефон" ng-keyup='form_changed=true'>
+        </div>
     </div>
     <div class="col-sm-3">
         <div class="form-group" ng-class="{ 'has-error' : user_exists}">
