@@ -391,7 +391,10 @@
 
                 // первая версия последней цепи (выше chain – неправильно, это версии)
                 $scope.firstInLastChain = function() {
-                    return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
+                	if ($scope.contracts && $scope.contracts.length) {
+										return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
+									}
+									return false;
                 }
 
 				$scope.week_count = function (programm) {
