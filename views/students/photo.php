@@ -38,11 +38,11 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <button class="btn btn-primary full-width">Загрузить
+                                    <div class="btn btn-primary full-width">Загрузить
                                         <span class="btn-file">
-                                        <input name="photo" type="file" id="fileupload" data-url="upload/student">
-                                    </span>
-                                    </button>
+                                            <input name="photo" type="file" id="fileupload" data-url="upload/student">
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <button class="btn btn-primary full-width" ng-click='saveCropped()' ng-disabled='!Student.has_photo_original'>Сохранить</button>

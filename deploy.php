@@ -8,9 +8,9 @@ require 'recipe/common.php';
 
 // Set configurations
 set('repository', 'https://github.com/maxflex/egecrm.git');
-set('shared_dirs', ['extentions']);
-set('shared_files', ['config.php', 'favicon.png']);
-set('writable_dirs', ['files']);
+set('shared_dirs', ['extentions', 'img/students', 'img/users']);
+set('shared_files', ['config.php', 'favicon.png', '_.php']);
+set('writable_dirs', ['files', 'img/students', 'img/users']);
 
 // Configure servers
 server('production', 'lk.ege-centr.ru')
@@ -19,16 +19,24 @@ server('production', 'lk.ege-centr.ru')
     ->env('deploy_path', '/home/egecrm');
 
 /**
+ * Update project code
+ */
+task('deploy:update_code', function () {
+    run("git reset --hard");
+    run("git pull origin master");
+})->desc('Updating code');
+
+/**
  * Main task
  */
-task('deploy', [
-    'deploy:prepare',
-    'deploy:release',
-    'deploy:update_code',
-    'deploy:shared',
-    'deploy:writable',
-    'deploy:symlink',
-    'cleanup',
-])->desc('Deploy your project');
+// task('deploy', [
+//     'deploy:prepare',
+//     'deploy:release',
+//     'deploy:update_code',
+//     'deploy:shared',
+//     'deploy:writable',
+//     'deploy:symlink',
+//     'cleanup',
+// ])->desc('Deploy your project');
 
-after('deploy', 'success');
+// after('deploy', 'success');

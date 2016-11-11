@@ -668,6 +668,23 @@
 				return moment(date).format("D MMMM YYYY г.")
 			}
 
+			$scope.formatContractDate2 = function(date) {
+				if (date == null) {
+					return
+				}
+				date = date.split('.')
+
+				// был баг. месяц делал автоматически +1
+				month = date[1] - 1;
+				// console.log(date[2] + "-" + month + "-" + date[0])
+				date = new Date(date[2], month, date[0])
+				date_str = moment(date).format("D MMMM YYYY г.")
+				date = date_str.split(' ');
+				date[0] = '«' + date[0] + '»'
+				return date.join(' ')
+
+			}
+
 			$scope.objectLength = function(object) {
 				if (object !== undefined && object !== null) {
 					return Object.keys(object).length
@@ -790,6 +807,15 @@
 				$scope.contract_act = contract
 				$scope.id_contract_print = contract.id
 				html = $("#act-print-" + $scope.id_contract_print).html()
+				$scope.editBeforePrint(html)
+			}
+
+			$scope.printServiceActOoo = function(contract) {
+				$scope.print_mode = 'service-act'
+				$scope.service_contract_parent = $scope.firstContractInChain(contract)
+				$scope.service_contract = $scope.lastContractInChain(contract)
+				$scope.$apply()
+				html = $("#service-act-print").html()
 				$scope.editBeforePrint(html)
 			}
 
