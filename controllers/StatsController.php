@@ -487,7 +487,6 @@
 				}
 				default: {
 					$stats 	= self::getTotalVisitsByDays();
-// 					$errors = LOCAL_DEVELOPMENT ? CronController::actionUpdateJournalMiss() : memcached()->get("JournalErrors");
 					$days_mode = 1; // в режиме просмотра по дням доступно намного больше функций
 					break;
 				}
@@ -497,7 +496,6 @@
 				"currentPage" 	=> $_GET['page'],
 				"Subjects" 		=> Subjects::$three_letters,
 				"stats"			=> $stats,
-// 				"errors"		=> $errors,
 				"missing"		=> Group::getLastWeekMissing(),
 				"days_mode"		=> $days_mode,
 			]);

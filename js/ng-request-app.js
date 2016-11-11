@@ -350,7 +350,10 @@
 				/*** contex menu functions ***/
 				$scope.closeContexMenu = function() {
 						_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
-						$scope.$apply();
+						$timeout(function(){
+							$scope.$apply();
+						});
+
 				}
 				$(document).on('keyup', function(event){
 						if (event.keyCode == 27) {

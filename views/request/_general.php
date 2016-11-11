@@ -92,7 +92,7 @@
 						                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 		                				</button>
 										<button ng-show="phoneCorrect('student-phone-3') && isMobilePhone('student-phone-3')" ng-class="{
-												!phoneCorrect('student-phone-3')
+												'addon-bordered': !phoneCorrect('student-phone-3')
 											}" class="btn btn-default" type="button"  onclick="smsDialog('student-phone-3')">
 												<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
 										</button>
@@ -195,7 +195,7 @@
 						                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 		                				</button>
 										<button ng-show="phoneCorrect('representative-phone-3') && isMobilePhone('representative-phone-3')" ng-class="{
-												!phoneCorrect('representative-phone-3')
+												'addon-bordered': !phoneCorrect('representative-phone-3')
 											}" class="btn btn-default" type="button"  onclick="smsDialog('representative-phone-3')">
 												<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 										</button>

@@ -231,12 +231,6 @@
 			$Request = Request::findById($id_request);
 			$Request->id_user = $id_user_new;
 			$Request->save();
-
-/*
-			Request::updateById($id_request, [
-				"id_user" => $id_user_new,
-			]);
-*/
 		}
 
 		public function actionAjaxDeleteRequest()

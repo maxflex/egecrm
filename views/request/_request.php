@@ -173,7 +173,7 @@
 					                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 	                				</button>
 									<button ng-show="phoneCorrect('request-phone-3') && isMobilePhone('request-phone-3')" ng-class="{
-											!phoneCorrect('request-phone-3')
+											'addon-bordered': !phoneCorrect('request-phone-3')
 										}" class="btn btn-default" type="button"  onclick="smsDialog('request-phone-3')">
 											<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
 									</button>

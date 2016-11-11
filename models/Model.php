@@ -115,7 +115,7 @@
 
 				if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
 					$mysql_vars = self::_getMysqlVars();
-					memcached()->set(static::$mysql_table."Columns", $mysql_vars, 3600 * 24);
+					memcached()->set(static::$mysql_table."Columns", $mysql_vars, 3600 * 24 * 7);
 				}
 
 				return $mysql_vars;
@@ -126,15 +126,17 @@
 		 * Поулчить список полей MYSQL.
 		 *
 		 */
-		public static function _getMysqlVars()
+		public static function _getMysqlVars($table = false)
 		{
 			// Запрос к текущей БД на показ столбцов
-			$Query = static::dbConnection()->query("SHOW COLUMNS FROM ".static::$mysql_table);
+			$Query = static::dbConnection()->query("SHOW COLUMNS FROM " . ($table ? $table : static::$mysql_table));
 
 			// Динамически создаем переменные на основе таблицы
-			while ($data = $Query->fetch_assoc())
-			{
-				$mysql_vars[] = $data["Field"];
+			if ($Query->num_rows) {
+				while ($data = $Query->fetch_assoc())
+				{
+					$mysql_vars[] = $data["Field"];
+				}
 			}
 
 			return $mysql_vars;
@@ -388,7 +390,7 @@
 				 		if (in_array($field, $this->_serialized)) {
 					 		$values[]	= "'".serialize($this->{$field})."'";		// Сериализуем значение обратно
 					 	} else if (in_array($field, $this->_json)) {
-						 	$values[]	= "'".json_encode($this->{$field})."'";		// Сериализуем значение обратно
+					 		$values[]	= "'".json_encode($this->{$field})."'";		// Сериализуем значение обратно
 				 		} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
 					 		$values[]	= "'".implode(",", $this->{$field})."'";		// inline-данные назад в строку
 					 	} else {
@@ -397,8 +399,9 @@
 			 		}
 			 	}
 
+//				var_dump("INSERT INTO ".static::$mysql_table." (".implode(",", $into).") VALUES (".implode(",", $values).")");
 				$result = static::dbConnection()->query("INSERT INTO ".static::$mysql_table." (".implode(",", $into).") VALUES (".implode(",", $values).")");
-				// echo "The query was: "."INSERT INTO ".static::$mysql_table." (".implode(",", $into).") VALUES (".implode(",", $values).")";
+
 				if ($result) {
 					$this->id = static::dbConnection()->insert_id; 	// Получаем ID
 					$this->isNewRecord	= false;						// Уже не новая запись
@@ -412,6 +415,7 @@
 					if (method_exists($this, "afterSave")) {
 						$this->afterSave(); // После первого сохранения
 					}
+					$this->endLog();
 					return $this->id;
 				} else {
 					return false;
@@ -478,10 +482,32 @@
 		 {
 		 }
 
-		 public function log()
+		 public static function beforeDelete($ids)
+		 {
+		 	if (!is_array($ids)) {
+		 		$ids = [$ids];
+			}
+
+			foreach ($ids as $id) {
+				$entity = static::findById($id);
+				if ($entity) {
+					$entity->beforeSave(); // deleting model beforeSave fix;
+					$entity->log('delete');
+				}
+			}
+		 }
+
+		 public function log($action = false)
 		 {
 			 if ($this->loggable) {
-				Log::add($this);
+				Log::add($this, $action);
+			 }
+		 }
+
+		 public function endLog()
+		 {
+			 if ($this->loggable) {
+				Log::updateField(['row_id' => $this->id]);
 			 }
 		 }
 
@@ -508,6 +534,7 @@
 		  */
 		 public function delete()
 		 {
+		 	static::beforeDelete($this->id);
 		 	// Удаляем из БД
 			static::dbConnection()->query("DELETE FROM ".static::$mysql_table." WHERE id=".$this->id);
 
@@ -521,6 +548,7 @@
 		 */
 		public static function deleteById($id)
 		{
+			static::beforeDelete($id);
 			// Удаляем из БД
 			static::dbConnection()->query("DELETE FROM ".static::$mysql_table." WHERE id=".$id);
 		}
@@ -530,6 +558,7 @@
 		 */
 		public static function deleteAll($params)
 		{
+			static::beforeDelete(self::getIds($params));
 			// Удаляем из БД
 			static::dbConnection()->query("DELETE FROM ".static::$mysql_table. (isset($params["condition"]) ? " WHERE ".$params["condition"] : ""));
 		}

@@ -666,7 +666,6 @@
 				    memcached()->set("JournalErrors", $errors, 3600 * 24);
 				}
 			}
-			// CronController::actionUpdateJournalMiss();
 		}
 
 		/**
@@ -697,7 +696,6 @@
 						memcached()->set("JournalErrors", $errors, 3600 * 24);
 					}
 				}
-				// CronController::actionUpdateJournalMiss();
 			}
 		}
 
