@@ -1,5 +1,4 @@
 <?php
-	const EMPTY_DATETIME = '0000-00-00 00:00:00';
 	class Test extends Model
 	{
 		const PER_PAGE		= 30;

@@ -184,6 +184,7 @@
 	 */
 	function angInit($array)
 	{
+	    $return = '';
 		foreach ($array as $var_name => $var_value) {
 			// Если значение не установлено, то это пустой массив по умолчанию
 			if (!$var_value && !is_int($var_value)) {
@@ -747,4 +748,15 @@
 	{
 		return strtotime('tomorrow') - time() + 20;
 	}
-?>
+
+	function trim_strings($value)
+    {
+        if (is_array($value)) {
+            foreach ($value as &$item) {
+                $item = trim($item);
+            }
+        } else {
+            $value = trim($value);
+        }
+        return $value;
+    }

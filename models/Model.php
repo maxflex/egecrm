@@ -25,7 +25,7 @@
 		// Переменные
 		public $isNewRecord = true;			// Новая запись
 
-``		/**
+/**
 		 * Model should be loggable
 		 *
 		 * @var boolean
@@ -330,7 +330,7 @@
 					$this->{$key} = $value;
 				}
 			}
-			
+
 			// Если надо сразу сохранить
 			if ($save) {
 				return $this->save();

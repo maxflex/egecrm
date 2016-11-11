@@ -192,9 +192,10 @@
 		public static function getCached($with_system = false)
 		{
 			if (LOCAL_DEVELOPMENT) {
-				$Users = self::findAll([
-				    'condition' => "type = 'USER"
+                $return = [];
 
+			    $Users = self::findAll([
+				    'condition' => "type = 'USER' AND `banned` = 0"
                 ]);
 
 				foreach ($Users as $User) {
