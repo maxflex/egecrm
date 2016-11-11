@@ -118,8 +118,6 @@
                      "where r.adding = 0 ". (!isBlank($search->id_status) && $search->id_status != RequestStatuses::ALL ? " and r.id_status = {$search->id_status} " : "") .
                      "group by r.id_user ";
 
-            header('_q:'.$query);
-
             $result = self::dbConnection()->query($query);
             if ($result) {
                 while ($row = $result->fetch_object()) {

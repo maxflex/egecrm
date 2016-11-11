@@ -2032,10 +2032,12 @@
 							// Добавляем существующие метки
 							$scope.loadServerMarkers();
 
-							// События добавления меток
-							google.maps.event.addListener($scope.gmap, 'click', function(event) {
-								$scope.gmapAddMarker(event)
-							})
+							if ($scope.gmap) {
+								// События добавления меток
+								google.maps.event.addListener($scope.gmap, 'click', function(event) {
+									$scope.gmapAddMarker(event)
+								})
+							}
 							// photo edit
 							bindCropper();
 							bindPhotoUpload();
