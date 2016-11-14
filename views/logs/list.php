@@ -76,12 +76,9 @@
         <div class="col-sm-12">
             <table class="table reverse-borders" style="font-size: 12px">
                 <tr ng-repeat='log in logs'>
-                    <td>
-                        {{ log.table }}
-                    </td>
-                    <td>
-                        {{ LogTypes[log.type] }}
-                    </td>
+                    <td>{{ log.table }}</td>
+                    <td>{{ LogTypes[log.type] }}</td>
+                    <td>{{ log.row_id }}</td>
                     <td width="100">
                         <span style="color: {{ users[log.user_id].color || 'black' }}">{{ users[log.user_id].login }}</span>
                     </td>

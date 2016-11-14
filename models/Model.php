@@ -390,7 +390,7 @@
 				 		if (in_array($field, $this->_serialized)) {
 					 		$values[]	= "'".serialize($this->{$field})."'";		// Сериализуем значение обратно
 					 	} else if (in_array($field, $this->_json)) {
-					 		$values[]	= "'".json_encode($this->{$field})."'";		// Сериализуем значение обратно
+					 		$values[]	= "'".json_encode($this->{$field}, JSON_UNESCAPED_UNICODE)."'";		// Сериализуем значение обратно
 				 		} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
 					 		$values[]	= "'".implode(",", $this->{$field})."'";		// inline-данные назад в строку
 					 	} else {
@@ -399,7 +399,6 @@
 			 		}
 			 	}
 
-//				var_dump("INSERT INTO ".static::$mysql_table." (".implode(",", $into).") VALUES (".implode(",", $values).")");
 				$result = static::dbConnection()->query("INSERT INTO ".static::$mysql_table." (".implode(",", $into).") VALUES (".implode(",", $values).")");
 
 				if ($result) {
