@@ -47,7 +47,7 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 					angular.forEach($scope.success.data.search.students, function(v,k){
 						all++;
 						var classNameActive = (active == all)?'active':'';
-						$scope.links[all] = '/student/'+ v.id;
+						$scope.links[all] = 'student/'+ v.id;
 						resultHTML += '<div class="resultRow '+classNameActive+'"><a href="'+$scope.links[all]+'" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Ученик</div>';
 					});
 				}
@@ -57,7 +57,7 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 					angular.forEach($scope.success.data.search.representatives, function(v,k){
 						all++;
 						var classNameActive = (active == all)?'active':'';
-						$scope.links[all] = '/student/'+ v.student_id;
+						$scope.links[all] = 'student/'+ v.student_id;
 						resultHTML += '<div class="resultRow '+classNameActive+'"><a href="'+$scope.links[all]+'" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Ученик</div>';
 					});
 				}
@@ -67,7 +67,7 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 					angular.forEach($scope.success.data.search.teachers, function(v,k){
 						all++;
 						var classNameActive = (active == all)?'active':'';
-						$scope.links[all] = '/teachers/edit/'+ v.id;
+						$scope.links[all] = 'teachers/edit/'+ v.id;
 						resultHTML += '<div class="resultRow '+classNameActive+'"><a href="'+$scope.links[all]+'" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Преподаватель</div>';
 					});
 				}
@@ -77,7 +77,7 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 					angular.forEach($scope.success.data.search.requests, function(v,k){
 						all++;
 						var classNameActive = (active == all)?'active':'';
-						$scope.links[all] = '/requests/edit/' + v.id
+						$scope.links[all] = 'requests/edit/' + v.id
 						resultHTML += '<div class="resultRow '+classNameActive+'"><a href="'+$scope.links[all]+'" target="_blank">' + v.name + '</a> - Заявка </div>';
 					});
 				}
@@ -92,7 +92,7 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 			$scope.$watch('query',function(val){
 				if(!angular.isUndefined(val) && val != ''){
 
-					$http.post('/search',{
+					$http.post('search',{
 						query: val
 					}).then(function(success){
 						if(angular.isArray(success.data.search)){
@@ -157,4 +157,3 @@ $(document).ready(function(){
 
 
 })
-
