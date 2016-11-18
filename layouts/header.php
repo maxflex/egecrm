@@ -67,7 +67,7 @@
     <script type="text/javascript" src="//js.pusher.com/3.0/pusher.min.js"></script>
     <script type="text/javascript" src="js/pusher.js?ver=<?= settings()->version ?>"></script>
     <script type="text/javascript" src="js/bower/vue/dist/vue.js"></script>
-    <script type="text/javascript" src="/js/ng-search-app.js"></script>
+    <script type="text/javascript" src="js/ng-search-app.js"></script>
     <!-- <script src="js/bower/vue-resource/dist/vue-resource.js"></script> -->
 	  <script type="text/javascript" src="js/bower/phoneapi/dist/js/pusher.js"></script>
 
