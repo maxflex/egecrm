@@ -92,15 +92,9 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 				if($scope.success.data.search.students.length > 0){
 					angular.forEach($scope.success.data.search.students, function(v, k){
 						all++;
-<<<<<<< HEAD
-						var classNameActive = (active == all)?'active':'';
-						$scope.links[all] = 'student/'+ v.id;
-						resultHTML += '<div class="resultRow '+classNameActive+'"><a href="'+$scope.links[all]+'" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Ученик</div>';
-=======
 						var classNameActive = (active == all) ? 'active' : '';
 						$scope.links[all] = '/student/' + v.id;
 						resultHTML += '<div class="resultRow ' + classNameActive + '"><a href="' + $scope.links[all] + '" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Ученик</div>';
->>>>>>> 76f8145c31272fb8c87d3320e60565702d812a4a
 					});
 				}
 
@@ -108,15 +102,9 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 				if($scope.success.data.search.representatives.length > 0){
 					angular.forEach($scope.success.data.search.representatives, function(v, k){
 						all++;
-<<<<<<< HEAD
-						var classNameActive = (active == all)?'active':'';
-						$scope.links[all] = 'student/'+ v.student_id;
-						resultHTML += '<div class="resultRow '+classNameActive+'"><a href="'+$scope.links[all]+'" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Ученик</div>';
-=======
 						var classNameActive = (active == all) ? 'active' : '';
 						$scope.links[all] = '/student/' + v.student_id;
 						resultHTML += '<div class="resultRow ' + classNameActive+'"><a href="' + $scope.links[all] + '" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Ученик</div>';
->>>>>>> 76f8145c31272fb8c87d3320e60565702d812a4a
 					});
 				}
 
@@ -124,15 +112,9 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 				if($scope.success.data.search.teachers.length > 0){
 					angular.forEach($scope.success.data.search.teachers, function(v, k){
 						all++;
-<<<<<<< HEAD
-						var classNameActive = (active == all)?'active':'';
-						$scope.links[all] = 'teachers/edit/'+ v.id;
-						resultHTML += '<div class="resultRow '+classNameActive+'"><a href="'+$scope.links[all]+'" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Преподаватель</div>';
-=======
 						var classNameActive = (active == all) ? 'active' : '';
 						$scope.links[all] = '/teachers/edit/' + v.id;
 						resultHTML += '<div class="resultRow ' + classNameActive + '"><a href="' + $scope.links[all] + '" target="_blank">' + v.last_name + ' ' + v.first_name + ' ' + v.middle_name + '</a> - Преподаватель</div>';
->>>>>>> 76f8145c31272fb8c87d3320e60565702d812a4a
 					});
 				}
 
@@ -140,15 +122,9 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 				if($scope.success.data.search.requests.length > 0){
 					angular.forEach($scope.success.data.search.requests, function(v, k){
 						all++;
-<<<<<<< HEAD
-						var classNameActive = (active == all)?'active':'';
-						$scope.links[all] = 'requests/edit/' + v.id
-						resultHTML += '<div class="resultRow '+classNameActive+'"><a href="'+$scope.links[all]+'" target="_blank">' + v.name + '</a> - Заявка </div>';
-=======
 						var classNameActive = (active == all) ? 'active' : '';
 						$scope.links[all] = '/requests/edit/' + v.id
 						resultHTML += '<div class="resultRow ' + classNameActive + '"><a href="' + $scope.links[all] + '" target="_blank">' + v.name + '</a> - Заявка </div>';
->>>>>>> 76f8145c31272fb8c87d3320e60565702d812a4a
 					});
 				}
 
@@ -156,43 +132,6 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 
 				return resultHTML;
 			}
-<<<<<<< HEAD
-
-
-
-			$scope.$watch('query',function(val){
-				if(!angular.isUndefined(val) && val != ''){
-
-					$http.post('search',{
-						query: val
-					}).then(function(success){
-						if(angular.isArray(success.data.search)){
-							//пустой массив от поиска
-							console.log('search is clear')
-							active = 0;
-							angular.element("#searchResult").html('<div class="notFound">Совпадений нет</div>')
-							var height = $('#searchResult').height();
-							$('#searchResult .notFound').css('height',height-10).css('padding-top',parseInt(height/2)-20)
-							height = null
-						}else{
-							active = 0;
-							$scope.success = success;
-							build()
-						}
-					})
-					//console.log('query change','-'+val+'-')
-				}else{
-					$scope.result = []; //обнуляем если ничего не введено или стерли
-					angular.element("#searchResult").html('');
-
-				}
-
-			})
-
-
-
-=======
->>>>>>> 76f8145c31272fb8c87d3320e60565702d812a4a
 		})
 
 $(document).ready(function(){
