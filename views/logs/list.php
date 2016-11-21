@@ -21,14 +21,14 @@
             </select>
         </div>
         <div>
-            <select ng-model='search.type' class='selectpicker' ng-change='filter()'>
+            <select class='form-control selectpicker' ng-model='search.type' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.type[''] || '' }}">тип действия</option>
                 <option disabled>──────────────</option>
                 <option ng-repeat="(id, label) in LogTypes" data-subtext="{{ counts.type[id] || '' }}" value="{{ id }}">{{ label }}</option>
             </select>
         </div>
         <div>
-            <select ng-model='search.table' class='selectpicker' ng-change='filter()'>
+            <select class='form-control selectpicker' ng-model='search.table' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.table[''] || '' }}">таблица</option>
                 <option disabled>──────────────</option>
                 <option ng-repeat='table in tables' ng-show="counts.table[table]"
@@ -37,7 +37,7 @@
             </select>
         </div>
         <div>
-            <select ng-model='search.column' class='selectpicker' ng-change='filter()'>
+            <select class='form-control selectpicker' ng-model='search.column' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.column[''] || '' }}">ячейка</option>
                 <option disabled>──────────────</option>
                 <option ng-repeat='(column, count) in counts.column' ng-show="count && column"
