@@ -61,7 +61,9 @@ class Log extends Model
                     // у стрингов бывало пробелы добавлялись в конец автомаов ангуляром наверно, хотя хз.
                     if (trim_strings($model->$field) != trim_strings($originalModel->$field)) {
 
-                        var_dump($field, $model->$field, $originalModel->$field);
+                        if (Log::VERBOSE) {
+                            var_dump($field, $model->$field, $originalModel->$field);
+                        }
 
                         // сравнение [] с ''
                         if (!(empty($model->$field) && empty($originalModel->$field))) {
