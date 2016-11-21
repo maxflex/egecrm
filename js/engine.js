@@ -522,7 +522,7 @@
       $(".bs-date-clear").datepicker({
         language	: 'ru',
         autoclose	: true,
-        orientation	: 'bottom auto',
+        orientation	: 'top left',
         clearBtn    : true
       })
 

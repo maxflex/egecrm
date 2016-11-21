@@ -400,6 +400,7 @@
 				$this->password = self::password($this->password);
 			}
             $this->is_dev = $this->is_dev; // % 2;
+            $this->phone = cleanNumber($this->phone);
 		}
 
 		/*
@@ -488,5 +489,12 @@
 		{
 			return (memcached()->get("users:{$id_user}:busy") ? true : false);
 		}
-				
-	}
+
+		public static function getIds()
+        {
+            $user_ids = [];
+            foreach (static::getCached() as $user) $user_ids[] = $user['id'];
+
+            return $user_ids;
+        }
+    }

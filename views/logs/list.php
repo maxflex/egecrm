@@ -24,7 +24,7 @@
             <select ng-model='search.type' class='selectpicker' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.type[''] || '' }}">тип действия</option>
                 <option disabled>──────────────</option>
-                <option ng-repeat="(id, label) in LogTypes" data-subtext="{{ counts.type[id] || '' }}" value="id">{{ label }}</option>
+                <option ng-repeat="(id, label) in LogTypes" data-subtext="{{ counts.type[id] || '' }}" value="{{ id }}">{{ label }}</option>
             </select>
         </div>
         <div>
@@ -40,7 +40,7 @@
             <select ng-model='search.column' class='selectpicker' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.column[''] || '' }}">ячейка</option>
                 <option disabled>──────────────</option>
-                <option ng-repeat='column in LogColumns' ng-show="counts.column[column]"
+                <option ng-repeat='column in counts.column' ng-show="counts.column[column]"
                         data-subtext="{{ counts.column[column] || '' }}"
                         value="{{column}}">{{ column }}</option>
             </select>
@@ -73,6 +73,8 @@
         </div>
     </div>
     <div class="row">
+        <?= globalPartial('loading', ['model' => 'logs', 'message' => 'нет логов']) ?>
+
         <div class="col-sm-12">
             <table class="table reverse-borders" style="font-size: 12px">
                 <tr ng-repeat='log in logs'>
@@ -81,6 +83,9 @@
                     </td>
                     <td>
                         {{ LogTypes[log.type] }}
+                    </td>
+                    <td>
+                        {{ log.row_id }}
                     </td>
                     <td width="100">
                         <span style="color: {{ users[log.user_id].color || 'black' }}">{{ users[log.user_id].login }}</span>
@@ -98,10 +103,24 @@
                         </table>
                     </td>
                     <td>
-                        <span style="white-space: nowrap">{{ formatDateTime(log.created_at) }}</span>
+                        {{ formatDateTime(log.created_at) }}
                     </td>
                 </tr>
             </table>
         </div>
+
+        <pagination
+            ng-show='(logs && logs.length) && (counts.all > <?= Log::PER_PAGE ?>)'
+            ng-model="current_page"
+            ng-change="pageChanged()"
+            total-items="counts.all"
+            max-size="10"
+            items-per-page="<?= Log::PER_PAGE ?>"
+            first-text="«"
+            last-text="»"
+            previous-text="«"
+            next-text="»"
+        >
+        </pagination>
     </div>
 </div>

@@ -157,18 +157,6 @@
 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
 			);
 
-/*
-			echo ("
-				SELECT * FROM ".static::$mysql_table."
-				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
-				.(!empty($params["group"]) ? " GROUP BY ".$params["group"] : "")				// Если есть условие сортировки
-				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
-				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
-			)."<br>";
-
-			echo static::dbConnection()->error;
-*/
-
 			// Если успешно получили и что-то есть
 			if ($result && $result->num_rows) {
 				// Получаем имя текущего класса
@@ -252,15 +240,11 @@
 		public static function count($params = array())
 		{
 			// Получаем количество из условия
-			$result = static::dbConnection()->query("SELECT COUNT(*) as c FROM ".static::$mysql_table."
-				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
+			$result = static::dbConnection()->query(
+				"SELECT COUNT(*) as c FROM `".static::$mysql_table."` " .
+				"WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "")
 			);
-/*
-			echo ("SELECT COUNT(*) as c FROM ".static::$mysql_table."
-				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
-			);
-			echo "<br><br>";
-*/
+
 			// Возвращаем кол-во
 			return $result->fetch_object()->c;
 		}
@@ -500,13 +484,13 @@
 		 public function log($action = false)
 		 {
 			 if ($this->loggable) {
-				Log::add($this, $action);
+				$this->logId = Log::add($this, $action);
 			 }
 		 }
 
 		 public function endLog()
 		 {
-			 if ($this->loggable) {
+			 if ($this->loggable && $this->logId) {
 				Log::updateField(['row_id' => $this->id]);
 			 }
 		 }

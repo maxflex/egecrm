@@ -6,6 +6,7 @@ class Log extends Model
     public static $row_id  = null;
 
     protected $loggable = false;
+    protected static $types = ['create', 'update', 'delete'];
 
     protected $_json = ["data"];
 
@@ -32,12 +33,11 @@ class Log extends Model
                 'created_at'=> now()
             ]);
 
-            if ($model->isNewRecord) { // to update entity_id afted adding;
-                static::$row_id = $log->id;
-            }
-
+            return $log->id;
             if (Log::VERBOSE) var_dump('log ended in ' . (microtime(true) - $s));
         }
+
+        return false;
     }
 
     public static function _generateData($model)
@@ -113,56 +113,97 @@ class Log extends Model
         }
         // С какой записи начинать отображение, по формуле
         $start_from = ($page - 1) * Log::PER_PAGE;
-
         $search = isset($_COOKIE['logs']) ? json_decode($_COOKIE['logs']) : (object)[];
 
-//        $query = static::_generateQuery($search, ($page == -1 ? "s.id" : "s.id, s.first_name, s.last_name, s.middle_name "));
-//        $result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
-//
-//        while ($row = $result->fetch_object()) {
-//            $data[] = ($page == -1 ? $row->id : $row);
-//        }
+        $data = static::findAll([
+            'condition' => static::_generateQuery($search),
+            'order'     => 'created_at desc',
+            'limit'     => ($page == -1 ? static::PER_PAGE : "{$start_from}, " . static::PER_PAGE),
+        ]);
+        $counts = static::counts($search);
 
-//        if ($page > 0) {
-//            // counts
-//            $counts['all'] = static::_count($search);
-//
-//            foreach(array_merge([""], Years::$all) as $year) {
-//                $new_search = clone $search;
-//                $new_search->year = $year;
-//                $counts['year'][$year] = static::_count($new_search);
-//            }
-//            foreach(["", 0, 1] as $green) {
-//                $new_search = clone $search;
-//                $new_search->green = $green;
-//                $counts['green'][$green] = static::_count($new_search);
-//            }
-//            foreach(["", 0, 1] as $yellow) {
-//                $new_search = clone $search;
-//                $new_search->yellow = $yellow;
-//
-//                $counts['yellow'][$yellow] = static::_count($new_search);
-//            }
-//            foreach(["", 0, 1] as $red) {
-//                $new_search = clone $search;
-//                $new_search->red = $red;
-//                $counts['red'][$red] = static::_count($new_search);
-//            }
-//
-//            foreach(array_merge([''], range(0,3)) as $error) {
-//                $new_search = clone $search;
-//                $new_search->error = $error;
-//                $counts['error'][$error] = static::_count($new_search);
-//            }
-//        }
+        $query = static::_generateQuery($search);
+        return compact('data', 'counts', 'query');
+    }
 
+    private static function _generateQuery($search)
+    {
 
-        $data = static::findAll();
-        $counts = (object)[];
+        $search = filterParams($search);
+        $condition = [];
 
-        return [
-            'data' 	=> $data,
-            'counts' => $counts,
-        ];
+        if (isset($search->table)) {
+            $condition[] = "`table` = '{$search->table}'";
+        }
+
+        if (isset($search->row_id)) {
+            $condition[] = "row_id = {$search->row_id}";
+        }
+
+        if (isset($search->type)) {
+            $condition[] = "type = '{$search->type}'";
+        }
+
+        if (isset($search->user_id)) {
+            $condition[] = "user_id = {$search->user_id}";
+        }
+
+        if (isset($search->date_start)) {
+            $date = fromDotDate($search->date_start);
+            $condition[] = "created_at >= '{$date} 00:00:00'";
+        }
+
+        if (isset($search->date_end)) {
+            $date = fromDotDate($search->date_end);
+            $condition[] = "created_at <= '{$date} 23:59:59'";
+        }
+
+        if (isset($search->column)) {
+            $condition[] = "data like '%{$search->column}%'";
+        }
+
+        return empty($condition) ? '1' : implode(' and ', $condition);
+    }
+
+    private static function _count($search)
+    {
+        return static::count(['condition' => static::_generateQuery($search)]);
+//        return [
+//            'condition' => static::_generateQuery($search),
+//            'value' => static::count(['condition' => static::_generateQuery($search)])
+//        ];
+    }
+
+    private function counts($search)
+    {
+        $tables = static::getTables();
+        $counts['all'] = static::_count($search);
+
+        foreach(array_merge([''], static::$types) as $type) {
+            $new_search = clone $search;
+            $new_search->type = $type;
+            $counts['type'][$type] = static::_count($new_search);
+        }
+
+        foreach(array_merge(['', 0], User::getIds()) as $user_id) {
+            $new_search = clone $search;
+            $new_search->user_id = $user_id;
+            $counts['user'][$user_id] = static::_count($new_search);
+        }
+
+        foreach(array_merge([''], $tables) as $table) {
+            $new_search = clone $search;
+            $new_search->table = $table;
+
+            $counts['table'][$table] = static::_count($new_search);
+        }
+
+        foreach(array_merge([''], static::getTableColumns($tables)) as $column) {
+            $new_search = clone $search;
+            $new_search->column = $column;
+            $counts['column'][$column] = static::_count($new_search);
+        }
+
+        return $counts;
     }
 }

@@ -55,7 +55,10 @@ angular.module("Logs", ["ui.bootstrap"]).controller("ListCtrl", function($scope,
       return $scope.refreshCounts();
     }, 'json');
   };
-  return angular.element(document).ready(function() {
+  angular.element(document).ready(function() {
     return set_scope("Logs");
   });
+  return $scope.formatDateTime = function(date) {
+    return moment(date).format('DD.MM.YY в HH:mm');
+  };
 });

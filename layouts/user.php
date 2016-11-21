@@ -224,7 +224,7 @@
 			}
 		?>
 	<?php endif ?>
-	<a href="logs/list" class="list-group-item">Логи</a>
+	<a href="logs" class="list-group-item">Логи</a>
 	<?php if (User::fromSession()->show_contract) :?>
 	    <a href="users/contract" class="list-group-item">Договор</a>
 	<?php endif ?>
