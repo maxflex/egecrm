@@ -33,7 +33,10 @@ class Log extends Model
                 'created_at'=> now()
             ]);
 
-            return $log->id;
+            if ($model->isNewRecord) { // to update entity_id afted adding;
+                static::$row_id = $log->id;
+            }
+
             if (Log::VERBOSE) var_dump('log ended in ' . (microtime(true) - $s));
         }
 

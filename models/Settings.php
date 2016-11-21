@@ -2,8 +2,6 @@
 	class Settings extends Model
 	{
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
-
-// 		public static $mysql_table	= "teachers";
 		public static $mysql_table = "settings";
 		
 		private function _findByKey($key)

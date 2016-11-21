@@ -410,13 +410,13 @@
 				if ($single_field) {
 					// Если текущее поле в формате serialize
 				 	if (in_array($single_field, $this->_serialized)) {
-				 		$query[] = $single_field." = '".serialize($this->{$single_field})."'";	// Сериализуем значение
+				 		$query[] = "`{$single_field}` = '".serialize($this->{$single_field})."'";	// Сериализуем значение
 				 	} else if (in_array($single_field, $this->_json)) {
-					 	$query[] = $single_field." = '".json_encode($this->{$single_field})."'";	// Сериализуем значение
+					 	$query[] = "`{$single_field}` = '".json_encode($this->{$single_field}, JSON_UNESCAPED_UNICODE)."'";	// Сериализуем значение
 				 	} else if (in_array($single_field, $this->_inline_data) && is_array($this->{$single_field})) {
-				 		$query[] = $single_field." = '".implode(",", $this->{$single_field})."'";	// Превращаем в строку
+				 		$query[] = "`{$single_field}` = '".implode(",", $this->{$single_field})."'";	// Превращаем в строку
 				 	} else {
-					 	$query[] = $single_field." = '".$this->{$single_field}."'";
+					 	$query[] = "`{$single_field}` = '".$this->{$single_field}."'";
 				 	}
 				} else {
 				// Иначе сохраняем все
@@ -428,13 +428,13 @@
 
 				 		// Если текущее поле в формате serialize
 					 	if (in_array($field, $this->_serialized)) {
-					 		$query[] = $field." = '".serialize($this->{$field})."'";	// Сериализуем значение
+					 		$query[] = "`{$field}` = '".serialize($this->{$field})."'";	// Сериализуем значение
 					 	} else if (in_array($field, $this->_json)) {
-						 	$query[] = $field." = '".json_encode($this->{$field})."'";	// Сериализуем значение
+						 	$query[] = "`{$field}` = '" . json_encode($this->{$field}, JSON_UNESCAPED_UNICODE) . "'";	// Сериализуем значение
 					 	} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
-					 		$query[] = $field." = '".implode(",", $this->{$field})."'";	// Превращаем в строку
+					 		$query[] = "`{$field}` = '".implode(",", $this->{$field})."'";	// Превращаем в строку
 					 	} else {
-						 	$query[] = $field." = '".$this->{$field}."'";
+						 	$query[] = "`{$field}` = '".$this->{$field}."'";
 					 	}
 				 	}
 				}
@@ -489,7 +489,7 @@
 
 		 public function endLog()
 		 {
-			 if ($this->loggable && $this->logId) {
+		     if ($this->loggable) {
 				Log::updateField(['row_id' => $this->id]);
 			 }
 		 }

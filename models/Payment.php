@@ -169,6 +169,8 @@
         {
             if ($this->id_status == self::PAID_CARD) {
                 $this->card_first_number = in_array(intval($this->card_first_number), range(4,6)) ? intval($this->card_first_number) : '4';
+            } else {
+                $this->card_first_number = '';
             }
             // наличные и платеж и не имеет номера и клиент
            if ($this->isNewRecord && !$this->dont_assign_pko &&

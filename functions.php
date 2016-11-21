@@ -413,7 +413,6 @@
 	 */
 	function hasValues($array)
 	{
-	//	echo "HAS_VALS=".(count(array_filter($array)))."<br>";
 		return count(array_filter($array));
 	}
 

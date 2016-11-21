@@ -104,6 +104,8 @@
 	{
 		const PER_PAGE		= 30;
 
+        protected $loggable = false;
+
 		public static $mysql_table	= "test_students";
 		
 		protected $_json = ['answers'];

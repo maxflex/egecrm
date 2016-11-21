@@ -40,7 +40,7 @@
             <select ng-model='search.column' class='selectpicker' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.column[''] || '' }}">ячейка</option>
                 <option disabled>──────────────</option>
-                <option ng-repeat='column in counts.column' ng-show="counts.column[column]"
+                <option ng-repeat='(column, count) in counts.column' ng-show="count && column"
                         data-subtext="{{ counts.column[column] || '' }}"
                         value="{{column}}">{{ column }}</option>
             </select>
@@ -78,16 +78,16 @@
         <div class="col-sm-12">
             <table class="table reverse-borders" style="font-size: 12px">
                 <tr ng-repeat='log in logs'>
-                    <td>
+                    <td width="8%">
                         {{ log.table }}
                     </td>
-                    <td>
+                    <td width="8%">
                         {{ LogTypes[log.type] }}
                     </td>
-                    <td>
+                    <td width="6%">
                         {{ log.row_id }}
                     </td>
-                    <td width="100">
+                    <td width="120">
                         <span style="color: {{ users[log.user_id].color || 'black' }}">{{ users[log.user_id].login }}</span>
                     </td>
                     <td>
