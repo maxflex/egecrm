@@ -391,14 +391,13 @@
 					return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
 				}
 
-				// первая версия последней цепи (выше chain – неправильно, это версии)
-				$scope.firstInLastChain = function() {
-						if ($scope.contracts) {
-							return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
-						} else {
-							return false
-						}
-				}
+                // первая версия последней цепи (выше chain – неправильно, это версии)
+                $scope.firstInLastChain = function() {
+                	if ($scope.contracts && $scope.contracts.length) {
+										return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
+									}
+									return false;
+                }
 
 				$scope.week_count = function (programm) {
 					c = parseInt(_.max(programm, function(v){ return v.count; }).count)
@@ -2035,10 +2034,12 @@
 							// Добавляем существующие метки
 							$scope.loadServerMarkers();
 
-							// События добавления меток
-							google.maps.event.addListener($scope.gmap, 'click', function(event) {
-								$scope.gmapAddMarker(event)
-							})
+							if ($scope.gmap) {
+								// События добавления меток
+								google.maps.event.addListener($scope.gmap, 'click', function(event) {
+									$scope.gmapAddMarker(event)
+								})
+							}
 							// photo edit
 							bindCropper();
 							bindPhotoUpload();

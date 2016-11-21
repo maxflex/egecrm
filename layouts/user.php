@@ -121,10 +121,22 @@
 
 
 <?= globalPartial('phone_api'); ?>
+<div class="modal fade" id="searchModal" tabindex="-1" ng-controller="SearchCtrl">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<input type="text" ng-model="query" ng-keyup="key($event)" placeholder="искать" id="searchQueryInput">
+			<div id="searchResult">
+
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <div class="row">
   <div class="col-sm-2" style="margin-left: 10px">
 	  <div>
+		  <!--
 	  		<form id="global-search" action="search" method="post" style="margin-bottom: 10px">
 		<div class="input-group">
 		  <input id="global-search-text" type="text" class="form-control" placeholder="Поиск..." name="text" value="<?= $_POST["text"] ?>">
@@ -133,10 +145,10 @@
 		    <span class="glyphicon glyphicon-search no-margin-right"></span>
 		    </button>
 		  </span>
-		</div><!-- /input-group -->
-		</form>
+		</div>
+		</form> -->
 	<div class="list-group">
-    <a class="list-group-item active">Основное</a>
+    <a class="list-group-item active">Основное <span class="search_icon" id="searchModalOpen"><span class="glyphicon glyphicon-search no-margin-right"></span></span></a>
     <a href="requests" class="list-group-item">Заявки
 	    <?php
 			// Количество новых заявок

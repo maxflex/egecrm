@@ -4,7 +4,7 @@
         <style>
             p {
                 text-align: justify !important;
-                text-indent: 2cm;
+                text-indent: 1cm;
             }
             p.no-ident {
                 text-indent: initial;
@@ -57,12 +57,12 @@
         <div style='margin: 50px 0 0'>
             <div style="display: inline-block; width: 50%">
                 <div style='margin-top: 30px'>
-                    ___________________/____________________
+                    ________________/________________
                 </div>
             </div>
             <div style="display: inline-block; width: 50%">
                 <div style='margin-top: 30px'>
-                    ___________________/<span style="text-decoration: underline;">Капралов К. А.</span>
+                    ________________/<span style="text-decoration: underline;">Капралов К. А.</span>
                 </div>
             </div>
         </div>

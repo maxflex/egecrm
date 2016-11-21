@@ -790,10 +790,16 @@
 		}
 
 
-		public function getVisits()
+		public function getVisits($params = [])
 		{
-			$visits = VisitJournal::findAll([
-				"condition" => "id_entity={$this->id} AND type_entity='STUDENT'"
+		    $condition = "id_entity={$this->id} AND type_entity='STUDENT'";
+
+		    if (isset($params['id_teacher'])) {
+		        $condition .= ' AND id_teacher = ' . $params['id_teacher'];
+            }
+
+            $visits = VisitJournal::findAll([
+				"condition" => $condition
 			]);
 
 			return $visits;
