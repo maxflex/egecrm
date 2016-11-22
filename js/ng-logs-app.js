@@ -58,7 +58,12 @@ angular.module("Logs", ["ui.bootstrap"]).controller("ListCtrl", function($scope,
   angular.element(document).ready(function() {
     return set_scope("Logs");
   });
-  return $scope.formatDateTime = function(date) {
+  $scope.formatDateTime = function(date) {
     return moment(date).format('DD.MM.YY в HH:mm');
+  };
+  return $scope.getUser = function(user_id) {
+    return _.find($scope.users, {
+      id: user_id
+    });
   };
 });

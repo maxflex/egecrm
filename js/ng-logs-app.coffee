@@ -52,3 +52,6 @@ angular.module "Logs", ["ui.bootstrap"]
 
 		$scope.formatDateTime = (date) ->
 			return moment(date).format 'DD.MM.YY в HH:mm'
+
+		$scope.getUser = (user_id) ->
+			_.find $scope.users, {id: user_id}

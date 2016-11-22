@@ -199,7 +199,7 @@
                 ]);
 
 				foreach ($Users as $User) {
-					$return[$User->id] = $User->dbData();
+					$return[] = $User->dbData();
 				}
 
 				return $return;

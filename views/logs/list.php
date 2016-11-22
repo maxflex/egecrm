@@ -88,7 +88,7 @@
                         {{ log.row_id }}
                     </td>
                     <td width="120">
-                        <span style="color: {{ users[log.user_id].color || 'black' }}">{{ users[log.user_id].login }}</span>
+                        <span style="color: {{ users[log.user_id].color || 'black' }}">{{ getUser(log.user_id).login }}</span>
                     </td>
                     <td>
                         <table style="font-size: 12px">
