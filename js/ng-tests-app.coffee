@@ -1,4 +1,4 @@
-app = angular.module "Tests", ['ngSanitize', 'ui.bootstrap']
+	app = angular.module "Tests", ['ngSanitize', 'ui.bootstrap']
 		.filter 'unsafe', ($sce) -> 
 			$sce.trustAsHtml
 		.filter 'range', () ->
@@ -107,11 +107,11 @@ app = angular.module "Tests", ['ngSanitize', 'ui.bootstrap']
 
 			$scope.getStudentAnswerClass = (Problem, StudentTest) ->
 				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
-						if StudentTest.answers[Problem.id] == Problem.correct_answer
-							return ''
-						else
-							return 'circle-red'
-					return 'circle-gray'
+					if StudentTest.answers[Problem.id] == Problem.correct_answer
+						return ''
+					else
+						return 'circle-red'
+				return 'circle-gray'
 
 			$scope.getTestHint = (Problem, StudentTest) ->
 					answer = $scope.getStudentAnswer(Problem, StudentTest)
