@@ -124,7 +124,7 @@
 <div class="modal fade" id="searchModal" tabindex="-1" ng-controller="SearchCtrl">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<input type="text" ng-model="query" ng-keyup="key($event)" ng-keydown="($event.keyCode == 38) ? $event.preventDefault() : '' " placeholder="искать" id="searchQueryInput">
+			<input type="text" ng-model="query" ng-keyup="key($event)" ng-keydown="stoper($event)" placeholder="искать" id="searchQueryInput">
 			<div id="searchResult">
 
 			</div>

@@ -33,7 +33,7 @@
 	<div class="panel-body" style="position: relative">
 		<form id="group-edit" autocomplete='off'>
 		<div class="top-group-menu-thin">
-			<?php if (User::fromSession()->id != 77) :?>
+			<?php if (User::fromSession()->id != 77 && ! LOCAL_DEVELOPMENT) :?>
 			<div class='div-blocker'></div>
 			<?php endif ?>
             <div class="form-group">
