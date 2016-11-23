@@ -1,4 +1,4 @@
-angular.module "Clients", ["ui.bootstrap"]
+app = angular.module "Clients", ["ui.bootstrap"]
 	.filter 'to_trusted', ['$sce', ($sce) ->
         return (text) ->
             return $sce.trustAsHtml(text)

@@ -1,6 +1,6 @@
 testy = 1
 
-angular.module "Settings", ["ui.bootstrap", 'ngSanitize']
+app = angular.module "Settings", ["ui.bootstrap", 'ngSanitize']
 	.filter 'to_trusted', ['$sce', ($sce) ->
         return (text) ->
             return $sce.trustAsHtml(text)

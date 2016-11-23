@@ -1,4 +1,4 @@
-angular.module "Stats", ["ui.bootstrap"]
+app = angular.module "Stats", ["ui.bootstrap"]
 	.config [
 	  '$compileProvider'
 	  ($compileProvider) ->

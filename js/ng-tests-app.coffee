@@ -1,4 +1,4 @@
-	angular.module "Tests", ['ngSanitize', 'ui.bootstrap']
+app = angular.module "Tests", ['ngSanitize', 'ui.bootstrap']
 		.filter 'unsafe', ($sce) -> 
 			$sce.trustAsHtml
 		.filter 'range', () ->

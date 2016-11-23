@@ -1,4 +1,4 @@
-angular
+app = angular
 	.module "Print", []
 	.controller "UsersCtrl", ($scope) ->
 		$scope.changeStatus = (Task) ->

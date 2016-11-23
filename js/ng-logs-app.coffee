@@ -1,4 +1,4 @@
-angular.module "Logs", ["ui.bootstrap"]
+app = angular.module "Logs", ["ui.bootstrap"]
 	.controller "ListCtrl", ($scope, $timeout) ->
 		$scope.LogTypes =
 			create: 'создание'

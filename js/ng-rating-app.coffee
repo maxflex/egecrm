@@ -1,4 +1,4 @@
-	angular.module "Rating", ['ngSanitize']
+app = angular.module "Rating", ['ngSanitize']
 		.filter 'reverse', ->
 			(items) ->
 				if items

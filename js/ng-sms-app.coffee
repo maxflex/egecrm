@@ -1,4 +1,4 @@
-angular.module "Sms", ["ui.bootstrap"]
+app = angular.module "Sms", ["ui.bootstrap"]
 	.controller "Main", ($scope) ->
 		
 		$scope.pageChanged = ->
