@@ -26,6 +26,6 @@
 	</div>
 
 	<div class="col-sm-12" style="margin-top: 13px">
-		<?= Html::comments('Bars', Comment::PLACE_TEACHER) ?>
+		<comments entity-id="Teacher.id" entity-type="TEACHER" user="user"></comments>
 	</div>
 </div>

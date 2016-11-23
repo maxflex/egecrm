@@ -1,6 +1,6 @@
 	testy = false
 
-	angular.module "Group", ['ngAnimate', 'chart.js']
+	app = angular.module "Group", ['ngAnimate', 'chart.js']
 		.filter 'toArray', ->
 			(obj) ->
 				arr = []

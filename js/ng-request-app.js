@@ -1,7 +1,7 @@
-		var test;
-	var test2;
+var test;
+var test2;
 
-	angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
+app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		.filter('hideZero', function() {
 		  return function(item) {
 		    if (item > 0) {
@@ -63,165 +63,152 @@
 				return arr;
 			};
 		})
-		/*
-
-			Контроллер списка заявок
-
-		*/
 		.controller("ListCtrl", function($scope, $timeout, $log) {
-					system_user = {
-						color: '#999999',
-						login: 'system',
-						id: 0,
-						banned: 0
-					};
-					$scope.getUsersWithSystem = function(only_active) {
-						if (only_active == null) {
-							only_active = true;
-						}
-						users = _.toArray(_.filter($scope.users, function(u) { return u.type == 'USER'; }))
-						users.unshift(system_user);
-						if (only_active) {
-							return _.where(users, {
-								banned: 0
-							});
-						} else {
-							return users;
-						}
-					};
-					$scope.getBannedUsers = function() {
-						return _.where(_.filter($scope.users, function(u) { return u.type == 'USER'; }), {
-							banned: 1
-						});
+				system_user = {
+					color: '#999999',
+					login: 'system',
+					id: 0,
+					banned: 0
+				};
+				$scope.getUsersWithSystem = function(only_active) {
+					if (only_active == null) {
+						only_active = true;
 					}
-
-					$scope.bannedUsersToShow = function() {
-					  ids = Object.keys($scope.counts.users).map(function(v){return +(v)})
-						return _.filter($scope.users, function(u) {
-							return u.type == 'USER' && u.banned == 1 && ids.indexOf(u.id) != -1;
+					users = _.toArray(_.filter($scope.users, function(u) { return u.type == 'USER'; }))
+					users.unshift(system_user);
+					if (only_active) {
+						return _.where(users, {
+							banned: 0
 						});
-          }
-
-					$scope.getUser = function(user_id) {
+					} else {
+						return users;
+					}
+				};
+				$scope.getBannedUsers = function() {
+					return _.where(_.filter($scope.users, function(u) { return u.type == 'USER'; }), {
+						banned: 1
+					});
+				}
+				$scope.bannedUsersToShow = function() {
+					ids = Object.keys($scope.counts.users).map(function(v){return +(v)})
+					return _.filter($scope.users, function(u) {
+						return u.type == 'USER' && u.banned == 1 && ids.indexOf(u.id) != -1;
+					});
+				}
+				$scope.getUser = function(user_id) {
 						return _.findWhere($scope.users, {
 								id: parseInt(user_id)
 							}) || system_user;
 					};
-
-
-
-
-			// хэндл псевдо-истории
-			window.addEventListener("popstate", function(e) {
-				// анфокус
-				$(".list-link").blur()
-
-				// меняем список
-				if (e.state === null) {
-					$scope.changeList($scope.request_statuses[0], false)
-				} else {
-					$scope.changeList(e.state, false)
-				}
-			})
-
-			$scope.toggleUser = function() {
-	            new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
-	            $.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
-	                $scope.responsible_user = _.findWhere($scope.users, {id : new_user_id});
-	                $scope.$apply();
-	            });
-	        }
-
-			$scope.pickUser = function(request, id_user) {
-				if (request.id_user > 0) {
-					id_user_new = 0
-				} else {
-					id_user_new = id_user
-				}
-				$.post("ajax/changeRequestUser", {"id_request" : request.id, "id_user_new" : id_user_new}, function() {
-					request.id_user = id_user_new
-					$scope.$apply()
+				// хэндл псевдо-истории
+				window.addEventListener("popstate", function(e) {
+					// анфокус
+					$(".list-link").blur()
+					// меняем список
+					if (e.state === null) {
+						$scope.changeList($scope.request_statuses[0], false)
+					} else {
+						$scope.changeList(e.state, false)
+					}
 				})
-			}
 
-			selectNextUser = function(id_user) {
+				$scope.toggleUser = function() {
+						new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
+						$.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
+								$scope.responsible_user = _.findWhere($scope.users, {id : new_user_id});
+								$scope.$apply();
+						});
+				}
+
+				$scope.pickUser = function(request, id_user) {
+						if (request.id_user > 0) {
+								id_user_new = 0
+						} else {
+								id_user_new = id_user
+						}
+						$.post("ajax/changeRequestUser", {"id_request" : request.id, "id_user_new" : id_user_new}, function() {
+								request.id_user = id_user_new
+								$scope.$apply()
+						})
+				}
+
+				selectNextUser = function(id_user) {
 				user = _.find($scope.users, function(user) {
 					return user.id > id_user
 				})
 				return ((user && user.id <= 112) ? user.id : 0)
 			}
 
-			// проверить номер телефона
-		    $scope.isMobilePhone = function(phone) {
-			    // пустой номер телефона – это тоже правильный номер телефона
-			    if (!phone) {
-				    return false
-			    }
-
-				return !phone.indexOf("+7 (9")
-		    }
-
-			$scope.smsDialog = smsDialog;
-
-			$scope.sipNumber = function(number) {
-				return "sip:" + number.replace(/[^0-9]/g, '')
-			}
-
-			$scope.callSip = function(number) {
-				number = $scope.sipNumber(number)
-				location.href = number;
-			}
-
-			$scope.getTimeClass = function(request) {
-				// подсвечивать время нужно только в невыполненных
-				if (request.id_status != 0) {
-					return
+				// проверить номер телефона
+				$scope.isMobilePhone = function(phone) {
+						// пустой номер телефона – это тоже правильный номер телефона
+						if (!phone) {
+								return false
+						}
+						return !phone.indexOf("+7 (9")
 				}
 
-				timestamp = request.date_timestamp
+				$scope.smsDialog = smsDialog;
 
-				hour = 60 * 60 * 1000;
-
-				// если больше 2 часов
-				if (Date.now() - timestamp >= (hour * 2)) {
-					return 'label-red'
+				$scope.sipNumber = function(number) {
+					return "sip:" + number.replace(/[^0-9]/g, '')
 				}
 
-				if (Date.now() - timestamp >= hour) {
-					return 'label-yellow'
+				$scope.callSip = function(number) {
+					number = $scope.sipNumber(number)
+					location.href = number;
 				}
-			}
 
-			$scope.filter = function() {
-				$timeout(function(){
-					setRequestListUser(parseInt($scope.id_user_list))
-				}, 100)
-				console.log('filter ended')
-			}
+				$scope.getTimeClass = function(request) {
+						// подсвечивать время нужно только в невыполненных
+						if (request.id_status != 0) {
+								return
+						}
 
-			$scope.refreshCounts = function() {
-				return $timeout(function() {
-					$('.watch-select option').each(function(index, el) {
-						$(el).data('subtext', $(el).attr('data-subtext'));
-						return $(el).data('content', $(el).attr('data-content'));
-					});
-					return $('.watch-select').selectpicker('refresh');
-				}, 100);
-			};
+						timestamp = request.date_timestamp
 
-			$(document).ready(function() {
+						hour = 60 * 60 * 1000;
+
+						// если больше 2 часов
+						if (Date.now() - timestamp >= (hour * 2)) {
+								return 'label-red'
+						}
+
+						if (Date.now() - timestamp >= hour) {
+								return 'label-yellow'
+						}
+				}
+
+				$scope.filter = function() {
+						$timeout(function(){
+							setRequestListUser(parseInt($scope.id_user_list))
+						}, 100)
+						console.log('filter ended')
+				}
+
+				$scope.refreshCounts = function() {
+						return $timeout(function() {
+								$('.watch-select option').each(function(index, el) {
+										$(el).data('subtext', $(el).attr('data-subtext'));
+										return $(el).data('content', $(el).attr('data-content'));
+								});
+								return $('.watch-select').selectpicker('refresh');
+						}, 100);
+				};
+
+				$(document).ready(function() {
 				$scope.id_user_list = $.cookie("id_user_list") ? $.cookie("id_user_list") : '';
 				$scope.$apply()
 				// draggable only from main requests list (not relevant)
-				if ($scope.request_statuses_count) {
-					bindDraggable()
+				if ($scope.counts.requests) {
+						bindDraggable()
 				} else {
-					// relevant page
-					$("#user-filter").selectpicker('render')
+						// relevant page
+						$("#user-filter").selectpicker('render')
 				}
 			})
 
-			bindDraggable = function() {
+				bindDraggable = function() {
 				$scope.dragging = false
 
 				$(".request-main-list").draggable({
@@ -268,8 +255,8 @@
 				})
 			}
 
-			// Выбрать список
-			$scope.changeList = function(request_status, push_history) {
+				// Выбрать список
+				$scope.changeList = function(request_status, push_history) {
 				//  Если нажимаем на один и тот же список -- ничего не делаем
 				/*
 				if (request_status.id == $scope.chosen_list) {
@@ -287,64 +274,62 @@
 				$scope.getByPage(1)
 			}
 
-			// Страница изменилась
-			$scope.pageChanged = function() {
-				// request_status = $scope.request_statuses[$scope.chosen_list]
-				request_status = _.where($scope.request_statuses, {id: $scope.chosen_list})[0];
-				console.log($scope.chosen_list, request_status)
-				window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase() + '/' + $scope.currentPage)
+				// Страница изменилась
+				$scope.pageChanged = function() {
+					// request_status = $scope.request_statuses[$scope.chosen_list]
+					request_status = _.where($scope.request_statuses, {id: $scope.chosen_list})[0];
+					console.log($scope.chosen_list, request_status)
+					window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase() + '/' + $scope.currentPage)
+					// Получаем задачи, соответствующие странице и списку
+					$scope.getByPage($scope.currentPage)
+				}
+
 				// Получаем задачи, соответствующие странице и списку
-				$scope.getByPage($scope.currentPage)
-			}
+				$scope.getByPage = function(page) {
+					ajaxStart()
+					frontendLoadingStart()
+					$.get("requests/ajax/GetByPage", {
+						'page'		: page,
+						'id_status'	: $scope.chosen_list
+					}, function(response) {
+						ajaxEnd()
+						frontendLoadingEnd()
+						$scope.requests = response.requests
+						$scope.counts = response.counts
+						$scope.$apply()
+						$scope.refreshCounts()
+						bindUserColorControl()
+						bindDraggable()
+						// initComments()
+					}, "json")
+				}
 
-			// Получаем задачи, соответствующие странице и списку
-			$scope.getByPage = function(page) {
-				ajaxStart()
-				frontendLoadingStart()
-				$.get("requests/ajax/GetByPage", {
-					'page'		: page,
-					'id_status'	: $scope.chosen_list
-				}, function(response) {
-					ajaxEnd()
-					frontendLoadingEnd()
-					$scope.requests = response.requests
-					$scope.counts = response.counts
-					$scope.$apply()
-					$scope.refreshCounts()
-					bindUserColorControl()
-					bindDraggable()
-					initComments()
-				}, "json")
-			}
+				// Страница изменилась
+				$scope.pageChangedRelevant = function() {
+					// Получаем задачи, соответствующие странице и списку
+					$scope.getByPageRelevant($scope.currentPage)
+				}
 
-
-			// Страница изменилась
-			$scope.pageChangedRelevant = function() {
 				// Получаем задачи, соответствующие странице и списку
-				$scope.getByPageRelevant($scope.currentPage)
-			}
-
-			// Получаем задачи, соответствующие странице и списку
-			$scope.getByPageRelevant = function(page) {
-				ajaxStart()
-				frontendLoadingStart()
-				$.get("requests/ajax/GetByPageRelevant", {
-					'page'		: page,
-					'grade'		: $scope.search.grade,
-					'id_branch' : $scope.search.id_branch,
-					'id_subject': $scope.search.id_subject,
-				}, function(response) {
-					ajaxEnd()
-					frontendLoadingEnd()
-					console.log(response)
-					$scope.requests = response.requests
-					$scope.requests_count = response.requests_count
-					$scope.$apply()
-					bindUserColorControl()
-					initComments()
-				}, "json")
-			}
-
+				$scope.getByPageRelevant = function(page) {
+					ajaxStart()
+					frontendLoadingStart()
+					$.get("requests/ajax/GetByPageRelevant", {
+						'page'		: page,
+						'grade'		: $scope.search.grade,
+						'id_branch' : $scope.search.id_branch,
+						'id_subject': $scope.search.id_subject,
+					}, function(response) {
+						ajaxEnd()
+						frontendLoadingEnd()
+						console.log(response)
+						$scope.requests = response.requests
+						$scope.requests_count = response.requests_count
+						$scope.$apply()
+						bindUserColorControl()
+						initComments()
+					}, "json")
+				}
 		})
 		.controller("EditCtrl", function ($scope, $log, $timeout) {
 				/*** contex menu functions ***/

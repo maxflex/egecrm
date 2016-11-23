@@ -135,14 +135,7 @@
 		public function actionAjaxAddComment()
 		{
 			$Comment = Comment::add($_POST);
-
-			// Возвращаем форматированную дату и ник пользователя
-			toJson([
-				"date"			=> date("d.m.y в H:i", time()),
-				"User"			=> User::fromSession()->dbData(),
-				"id" 			=> $Comment->id,
-				"coordinates"	=> $Comment->getCoordinates(),
-			]);
+            returnJsonAng($Comment);
 		}
 
 		/**

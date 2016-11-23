@@ -103,7 +103,7 @@
 				
 				<div class="row" style="margin-top: 10px" ng-show='RatingInfo.id'>
 					<div class="col-sm-5">
-						<?= Html::comments('RatingInfo', TeacherReview::PLACE) ?>			
+						<comments entity-id="RatingInfo.id" entity-type="REVIEW" user="user"></comments>
 					</div>
 					<div class="col-sm-2">
 						ответственный: <span class="user-pick" ng-click="toggleReviewUser()" style="color: {{findUser(id_user_review).color || 'black' }}">{{ findUser(id_user_review).login || "system"}}</span>

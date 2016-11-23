@@ -332,7 +332,7 @@
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 		
 		// Перезаписываем функцию findAll
-		public static function findAll($params = [])
+		public static function findAll($params = [], $flag = false)
 		{
 			if (! isset($params['condition'])) {
 				$params['condition'] = 'in_egecentr >= 1';
@@ -340,7 +340,7 @@
 				$params['condition'] .= ' AND in_egecentr >= 1';
 			}
 
-			return parent::findAll($params);
+			return parent::findAll($params, $flag);
 		}
 		
 		public static function getByStatus($in_egecentr)

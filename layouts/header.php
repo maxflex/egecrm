@@ -30,13 +30,11 @@
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/jquery.cookie.js"></script>
-	<script type='text/javascript' src='js/comments-app-global.js?ver=<?= settings()->version ?>'></script>
 	<script type="text/javascript" src="js/metro_data.js"></script>
 	<script type="text/javascript" src="js/floatlabel.js"></script>
 	<script type="text/javascript" src="js/nprogress.js"></script>
 	<script type="text/javascript" src="js/mask.js"></script>
 	<script type="text/javascript" src="js/inputmask.js"></script>
-<!-- 	<script src="https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js" type="text/javascript"></script> -->
 	<script type="text/javascript" src="js/angular.js"></script>
 	<script type="text/javascript" src="js/angular-locale-ru.js"></script>
 	<script type="text/javascript" src="js/angular-animate.js"></script>
@@ -49,27 +47,20 @@
 	<script type="text/javascript" src="js/moment.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-datepicker.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
-
 	<script type="text/javascript" src="js/user-color-control.js"></script>
-<!-- 	<script type="text/javascript" src="js/jquery.datetimepicker.js"></script> -->
 	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
-
 	<script type="text/javascript" src="js/jquery.ui.widget.js"></script>
 	<script type="text/javascript" src="js/jquery.iframe-transport.js"></script>
 	<script type="text/javascript" src="js/jquery.fileupload.js"></script>
-
 	<script type="text/javascript" src="js/underscore.js"></script>
-
 	<script type="text/javascript" src="js/engine.js?ver=<?= settings()->version ?>"></script>
 	<script type="text/javascript" src="js/md5.js?"></script>
 	<script type="text/javascript" src="js/functions.js?ver=<?= settings()->version ?>"></script>
-
     <script type="text/javascript" src="//js.pusher.com/3.0/pusher.min.js"></script>
     <script type="text/javascript" src="js/pusher.js?ver=<?= settings()->version ?>"></script>
     <script type="text/javascript" src="js/bower/vue/dist/vue.js"></script>
     <script type="text/javascript" src="js/ng-search-app.js"></script>
-    <!-- <script src="js/bower/vue-resource/dist/vue-resource.js"></script> -->
-	  <script type="text/javascript" src="js/bower/phoneapi/dist/js/pusher.js"></script>
+    <script type="text/javascript" src="js/bower/phoneapi/dist/js/pusher.js"></script>
 
 	<script src="js/spin.js"></script>
 	<script src="js/ladda.js"></script>

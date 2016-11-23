@@ -496,4 +496,9 @@
 
             return $user_ids;
         }
+
+        public static function getJson()
+        {
+            return toJson(User::fromSession()->dbData());
+        }
     }

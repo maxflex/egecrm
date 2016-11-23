@@ -69,7 +69,7 @@
 								</div>
 							</div>
 							<div style="margin-top: 10px">
-								<?= Html::comments('Task', Task::PLACE) ?>
+								<comments entity-id="Task.id" entity-type="TASK" user="user"></comments>
 							</div>
 
 							<div class="task-status-div">

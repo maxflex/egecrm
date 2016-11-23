@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="js/bower/cropper/dist/cropper.min.css">
 <link media="all" rel="stylesheet" type="text/css" href="js/bower/simple-hint/dist/simple-hint.css" />
 
+
+<script type="text/javascript" src="js/directives.js"></script>
 <?php if (in_array(User::fromSession()->id, [-1])) :?>
 <div class="menu-wrap">
 	<nav class="menu">

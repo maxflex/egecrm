@@ -110,7 +110,7 @@
 					<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 				</button>
 				<button style='background: #EEE; color: black' disabled ng-show="phoneCorrect('teacher-phone-3') && isMobilePhone('teacher-phone-3')" ng-class="{
-						!phoneCorrect('teacher-phone-3')
+					'addon-bordered' : !phoneCorrect('teacher-phone-3')
 					}" class="btn btn-default" type="button"  onclick="smsDialog('teacher-phone-3')">
 						<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 				</button>

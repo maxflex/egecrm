@@ -78,29 +78,7 @@
 				        </div>
 				        <div class="row" style="margin-top: 10px">
 					        <div class="col-sm-12">
-					               <div class="comment-block">
-									<div id="existing-comments-{{id_request}}">
-										<div ng-repeat="comment in request_comments">
-											<div id="comment-block-{{comment.id}}">
-												<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
-												<div style="display: initial" id="comment-{{comment.id}}" onclick="editComment(this)" commentid="{{comment.id}}">
-													{{comment.comment}}</div>
-												<span class="save-coordinates">{{comment.coordinates}}</span>
-												<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px"
-													onclick="deleteComment(this)"></span>
-											</div>
-										</div>
-									</div>
-									<div style="height: 25px">
-										<span class="pointer no-margin-right comment-add" id="comment-add-{{id_request}}"
-									place="<?= Comment::PLACE_REQUEST ?>" id_place="{{id_request}}">комментировать</span>
-										<span class="comment-add-hidden">
-											<span class="comment-add-login comment-login" id="comment-add-login-{{id_request}}" style="color: <?= User::fromSession()->color ?>"><?= User::fromSession()->login ?>: </span>
-											<input class="comment-add-field" id="comment-add-field-{{id_request}}" type="text"
-												placeholder="введите комментарий..." request="{{id_request}}" data-place='REQUEST_EDIT_REQUEST' >
-										</span>
-									</div>
-								</div>
+								<comments entity-id="<?= $Request->id ?>" entity-type="REQUEST" user="user"></comments>
 					        </div>
 				        </div>
 			        </div>

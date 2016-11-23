@@ -1,4 +1,4 @@
-angular.module "Users", ['colorpicker.module', 'ngSanitize']
+app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 	.filter 'to_trusted', ['$sce', ($sce) ->
 		return (text) ->
 			return $sce.trustAsHtml(text)

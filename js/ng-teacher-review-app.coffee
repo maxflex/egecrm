@@ -1,4 +1,4 @@
-angular.module "TeacherReview", ["ui.bootstrap"]
+app = angular.module "TeacherReview", ["ui.bootstrap"]
 	.filter 'range', () ->
 		return (input, total) ->
 			total = parseInt total

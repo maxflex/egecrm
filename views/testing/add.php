@@ -150,7 +150,7 @@
 	
 	<div class="row" style="margin-top: 10px">
 		<div class="col-sm-12">
-			<?= Html::comments('Testing', Testing::PLACE) ?>			
+			<comments entity-id="Testing.id" entity-type="TESTING" user="user"></comments>
 		</div>
 	</div>
 
