@@ -17,7 +17,8 @@ app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('range', function
       return null;
     }
   };
-}).controller("Reviews", function($scope, $timeout) {
+}).controller("Reviews", function($scope, $timeout, UserService) {
+  $scope.UserService = UserService;
   $scope["enum"] = review_statuses;
   $scope.formatDateTime = function(date) {
     return moment(date).format("DD.MM.YY в HH:mm");
@@ -43,7 +44,6 @@ app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('range', function
     return $scope.getByPage($scope.current_page);
   };
   $scope.pageChanged = function() {
-    console.log($scope.currentPage);
     if ($scope.current_page > 1) {
       window.history.pushState({}, '', 'reviews/?page=' + $scope.current_page);
     }

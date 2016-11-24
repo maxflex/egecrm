@@ -76,7 +76,7 @@
 					<option value=""  data-subtext="{{ counts.user[''] || '' }}">все пользователи</option>
 					<option disabled>───────</option>
 					<option 
-						ng-repeat="user in users"
+						ng-repeat="user in UserService.getAll()"
 						value="{{ user.id }}" 
 						data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span><small class='text-muted'>{{ counts.user[user.id] || '' }}</small>"></option>
 				</select>
