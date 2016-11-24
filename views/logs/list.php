@@ -14,7 +14,7 @@
                 <option value="" data-subtext="{{ counts.user[''] || '' }}">пользователь</option>
                 <option disabled>──────────────</option>
                 <option
-                    ng-repeat="user in users"
+                    ng-repeat="user in UserService.getAll()"
                     value="{{ user.id }}"
                     data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span><small class='text-muted'>{{ counts.user[user.id] || '' }}</small>"
                 ></option>
@@ -88,7 +88,7 @@
                         {{ log.row_id }}
                     </td>
                     <td width="120">
-                        <span style="color: {{ getUser(log.user_id).color || 'black' }}">{{ getUser(log.user_id).login }}</span>
+                        <span style="color: {{ UserService.getColor(log.user_id) }}">{{ UserService.getLogin(log.user_id) }}</span>
                     </td>
                     <td>
                         <table style="font-size: 12px">

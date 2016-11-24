@@ -1,7 +1,8 @@
 var app;
 
-app = angular.module("Logs", ["ui.bootstrap"]).controller("ListCtrl", function($scope, $timeout) {
+app = angular.module("Logs", ["ui.bootstrap"]).controller("ListCtrl", function($scope, $timeout, UserService) {
   var load;
+  $scope.UserService = UserService;
   $scope.LogTypes = {
     create: 'создание',
     update: 'обновление',

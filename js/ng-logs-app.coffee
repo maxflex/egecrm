@@ -1,5 +1,6 @@
 app = angular.module "Logs", ["ui.bootstrap"]
-	.controller "ListCtrl", ($scope, $timeout) ->
+	.controller "ListCtrl", ($scope, $timeout, UserService) ->
+		$scope.UserService = UserService
 		$scope.LogTypes =
 			create: 'создание'
 			update: 'обновление'
