@@ -63,23 +63,19 @@
 				Напоминание:  {{notification_types[request.Notification.id_type]}} {{request.Notification.timestamp + "000" | date:'dd.MM.yy в HH:mm'}}
 			</div>
 			<div class="half-black">
-				Заявка №{{request.id}} создана {{request.id_user_created > 0 ? users[request.id_user_created].login : "system"}}
+				Заявка №{{ request.id }} создана {{ UserService.getLogin(request.id_user_created) }}
 				{{request.date_timestamp | date:'dd.MM.yy'}} в {{request.date_timestamp | date:'HH:mm'}}
 				<a class="link-reverse" style="margin-left: 5px" href="requests/edit/{{request.id}}">редактировать</a>
 			</div>
 		</div>
 		<div class="col-sm-6">
-			ответственный: <span id="request-user-display-{{request.id}}" ng-click="pickUser(request, <?= User::fromSession()->id ?>)" class="user-pick" style="color: {{request.id_user ? getUser(request.id_user).color : 'rgba(0, 0, 0, 0.5)'}}">{{request.id_user ? getUser(request.id_user).login : 'system'}}</span>
-<!--
-			<select class="user-list small" onchange="changeUserColor(this)" data-rid="{{request.id}}" style="display: none; background-color: {{users[request.id_user].color}}" id="request-user-select-{{request.id}}" ng-model="request.id_user">
-				<option selected="" value="">пользователь</option>
-				<option disabled="" value="">──────────────</option>
-
-				<option ng-repeat="user in users" ng-hide="!user.worktime" style="background-color: {{user.color}}" value="{{user.id}}" ng-selected="user.id == request.id_user">
-					{{user.login}}
-				</option>
-			</select>
--->
+			ответственный:
+            <span id="request-user-display-{{ request.id }}"
+                  class="user-pick"
+                  ng-click="pickUser(request, <?= User::fromSession()->id ?>)" style="color: {{ UserService.getColor(request.id_user, 'rgba(0, 0, 0, 0.5)') }}"
+            >
+                {{ UserService.getLogin(request.id_user) }}
+            </span>
 		</div>
 	</div>
 	<hr ng-hide="$last">

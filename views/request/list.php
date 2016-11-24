@@ -20,15 +20,16 @@
 				<option value=''>пользователь</option>
 				<option disabled>──────────────</option>
 				<option
+					ng-repeat="user in UserService.getWithSystem()"
 					ng-show='counts.users[user.id]'
-					ng-repeat="user in getUsersWithSystem()"
 					value="{{ user.id }}"
 					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }} {{ $var }}</span><small class='text-muted'>{{ counts.users[user.id] || '' }}</small>"
 				></option>
-				<option disabled ng-show="bannedUsersToShow().length">──────────────</option>
+				<option disabled ng-show="UserService.getBannedHaving(counts.users).length || UserService.getUser(id_user_list).banned">──────────────</option>
 				<option
-					ng-show='counts.users[user.id]'
-					ng-repeat="user in getBannedUsers()"
+					ng-show='id_user_list == user.id || counts.users[user.id]'
+					ng-selected="id_user_list == user.id"
+                    ng-repeat="user in UserService.getBannedUsers()"
 					value="{{ user.id }}"
 					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }} {{ $var }}</span><small class='text-muted'>{{ counts.users[user.id] || '' }}</small>"
 				></option>

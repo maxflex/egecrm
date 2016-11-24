@@ -195,7 +195,7 @@
                 $return = [];
 
 			    $Users = self::findAll([
-				    'condition' => "type = 'USER' AND `banned` = 0"
+				    'condition' => "type = 'USER' "
                 ]);
 
 				foreach ($Users as $User) {
@@ -224,7 +224,7 @@
 		public static function updateCache()
 		{
 			$Users = self::findAll([
-				"condition"=>"type = '".User::USER_TYPE."' and banned = 0"
+				"condition"=>"type = '".User::USER_TYPE."' "
 			]);
 
 			foreach ($Users as $User) {

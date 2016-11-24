@@ -171,14 +171,20 @@ app.service('UserService', function($rootScope, $http, $timeout) {
   };
   this.getUser = function(user_id) {
     return _.findWhere(this.users, {
-      id: user_id
+      id: parseInt(user_id)
     }) || system_user;
   };
   this.getLogin = function(user_id) {
     return this.getUser(parseInt(user_id)).login;
   };
-  this.getColor = function(user_id) {
-    return this.getUser(parseInt(user_id)).color;
+  this.getColor = function(user_id, system_color) {
+    var user;
+    user = this.getUser(parseInt(user_id));
+    if (user === system_user && system_color) {
+      return system_color;
+    } else {
+      return user.color;
+    }
   };
   this.getWithSystem = function(only_active) {
     var users;
@@ -204,6 +210,11 @@ app.service('UserService', function($rootScope, $http, $timeout) {
   this.getBannedUsers = function() {
     return _.where(this.users, {
       banned: 1
+    });
+  };
+  this.getBannedHaving = function(condition_obj) {
+    return _.filter(this.users, function(user) {
+      return user.banned === 1 && condition_obj[user.id];
     });
   };
   return this;
