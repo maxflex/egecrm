@@ -222,7 +222,6 @@
 				. (!isBlank($search->admin_rating_final) ? " AND r.admin_rating_final={$search->admin_rating_final}" : "")
 				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year"
 				. ($order ? " ORDER BY vj.lesson_date DESC" : "");
-			//exit("SELECT " . $select . $main_query . $ending);
 			return "SELECT " . $select . $main_query . $ending;
 		}
 	}

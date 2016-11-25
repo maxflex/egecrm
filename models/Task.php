@@ -3,9 +3,10 @@
 class Task extends Model
 {
 	public static $mysql_table	= "tasks";
+    protected     $loggable = false;
 
-	// путь хранения электронных версий договоров
-	const UPLOAD_DIR = "files/task/";
+    // путь хранения электронных версий договоров
+    const UPLOAD_DIR = "files/task/";
 
 	const PLACE = 'TASK';
 

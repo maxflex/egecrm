@@ -128,6 +128,7 @@
 			// @refactored
 			$result = dbConnection()->query("
 				SELECT id_teacher FROM groups
+				WHERE id_teacher > 0
 				GROUP BY id_teacher
 			");
 

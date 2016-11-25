@@ -25,6 +25,16 @@
 		// Переменные
 		public $isNewRecord = true;			// Новая запись
 
+/**
+		 * Model should be loggable
+		 *
+		 * @var boolean
+		 * @custom
+		 */
+		protected $loggable = true;
+
+		public $log_except = [];
+
 		// Конструктор
 		public function __construct($array = false)
 		{
@@ -85,7 +95,7 @@
 				foreach ($this->_inline_data as $inline_data_field) {
 					// Читать описание выше, для сериализованных данных
 					if (!is_array($this->{$inline_data_field})) {
-						$this->{$inline_data_field} = explode(",", $this->{$inline_data_field});
+						$this->{$inline_data_field} = $this->{$inline_data_field} ? explode(",", $this->{$inline_data_field}) : [];
 					}
 				}
 			}
@@ -105,7 +115,7 @@
 
 				if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
 					$mysql_vars = self::_getMysqlVars();
-					memcached()->set(static::$mysql_table."Columns", $mysql_vars, 3600 * 24);
+					memcached()->set(static::$mysql_table."Columns", $mysql_vars, 3600 * 24 * 7);
 				}
 
 				return $mysql_vars;
@@ -116,15 +126,17 @@
 		 * Поулчить список полей MYSQL.
 		 *
 		 */
-		public static function _getMysqlVars()
+		public static function _getMysqlVars($table = false)
 		{
 			// Запрос к текущей БД на показ столбцов
-			$Query = static::dbConnection()->query("SHOW COLUMNS FROM ".static::$mysql_table);
+			$Query = static::dbConnection()->query("SHOW COLUMNS FROM " . ($table ? $table : static::$mysql_table));
 
 			// Динамически создаем переменные на основе таблицы
-			while ($data = $Query->fetch_assoc())
-			{
-				$mysql_vars[] = $data["Field"];
+			if ($Query->num_rows) {
+				while ($data = $Query->fetch_assoc())
+				{
+					$mysql_vars[] = $data["Field"];
+				}
 			}
 
 			return $mysql_vars;
@@ -144,18 +156,6 @@
 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
 			);
-
-/*
-			echo ("
-				SELECT * FROM ".static::$mysql_table."
-				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
-				.(!empty($params["group"]) ? " GROUP BY ".$params["group"] : "")				// Если есть условие сортировки
-				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
-				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
-			)."<br>";
-
-			echo static::dbConnection()->error;
-*/
 
 			// Если успешно получили и что-то есть
 			if ($result && $result->num_rows) {
@@ -240,15 +240,11 @@
 		public static function count($params = array())
 		{
 			// Получаем количество из условия
-			$result = static::dbConnection()->query("SELECT COUNT(*) as c FROM ".static::$mysql_table."
-				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
+			$result = static::dbConnection()->query(
+				"SELECT COUNT(*) as c FROM `".static::$mysql_table."` " .
+				"WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "")
 			);
-/*
-			echo ("SELECT COUNT(*) as c FROM ".static::$mysql_table."
-				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
-			);
-			echo "<br><br>";
-*/
+
 			// Возвращаем кол-во
 			return $result->fetch_object()->c;
 		}
@@ -320,7 +316,7 @@
 					$this->{$key} = $value;
 				}
 			}
-			
+
 			// Если надо сразу сохранить
 			if ($save) {
 				return $this->save();
@@ -354,10 +350,11 @@
 		 public function save($single_field = false)
 		 {
 		 	// Перед сохранением
-		 	if (method_exists($this, "beforeSave")) {
-			 	$this->beforeSave();
-		 	}
+			if (method_exists($this, "beforeSave")) {
+				$this->beforeSave();
+			}
 
+			$this->log();
 
 		 	// Проверяем есть ли в бд шидзе с таким ID
 			if ($this->isNewRecord)
@@ -371,13 +368,13 @@
 			 		// Если значение установлено, будем его сохранять
 			 		if (isset($this->{$field}))
 			 		{
-				 		$into[]		= $field;
+				 		$into[]		= '`' . $field . '`';
 
 				 		// Если текущее поле в формате serialize
 				 		if (in_array($field, $this->_serialized)) {
 					 		$values[]	= "'".serialize($this->{$field})."'";		// Сериализуем значение обратно
 					 	} else if (in_array($field, $this->_json)) {
-						 	$values[]	= "'".json_encode($this->{$field})."'";		// Сериализуем значение обратно
+					 		$values[]	= "'".json_encode($this->{$field}, JSON_UNESCAPED_UNICODE)."'";		// Сериализуем значение обратно
 				 		} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
 					 		$values[]	= "'".implode(",", $this->{$field})."'";		// inline-данные назад в строку
 					 	} else {
@@ -387,7 +384,7 @@
 			 	}
 
 				$result = static::dbConnection()->query("INSERT INTO ".static::$mysql_table." (".implode(",", $into).") VALUES (".implode(",", $values).")");
-				// echo "The query was: "."INSERT INTO ".static::$mysql_table." (".implode(",", $into).") VALUES (".implode(",", $values).")";
+
 				if ($result) {
 					$this->id = static::dbConnection()->insert_id; 	// Получаем ID
 					$this->isNewRecord	= false;						// Уже не новая запись
@@ -401,6 +398,7 @@
 					if (method_exists($this, "afterSave")) {
 						$this->afterSave(); // После первого сохранения
 					}
+					$this->endLog();
 					return $this->id;
 				} else {
 					return false;
@@ -412,13 +410,13 @@
 				if ($single_field) {
 					// Если текущее поле в формате serialize
 				 	if (in_array($single_field, $this->_serialized)) {
-				 		$query[] = $single_field." = '".serialize($this->{$single_field})."'";	// Сериализуем значение
+				 		$query[] = "`{$single_field}` = '".serialize($this->{$single_field})."'";	// Сериализуем значение
 				 	} else if (in_array($single_field, $this->_json)) {
-					 	$query[] = $single_field." = '".json_encode($this->{$single_field})."'";	// Сериализуем значение
+					 	$query[] = "`{$single_field}` = '".json_encode($this->{$single_field}, JSON_UNESCAPED_UNICODE)."'";	// Сериализуем значение
 				 	} else if (in_array($single_field, $this->_inline_data) && is_array($this->{$single_field})) {
-				 		$query[] = $single_field." = '".implode(",", $this->{$single_field})."'";	// Превращаем в строку
+				 		$query[] = "`{$single_field}` = '".implode(",", $this->{$single_field})."'";	// Превращаем в строку
 				 	} else {
-					 	$query[] = $single_field." = '".$this->{$single_field}."'";
+					 	$query[] = "`{$single_field}` = '".$this->{$single_field}."'";
 				 	}
 				} else {
 				// Иначе сохраняем все
@@ -430,13 +428,13 @@
 
 				 		// Если текущее поле в формате serialize
 					 	if (in_array($field, $this->_serialized)) {
-					 		$query[] = $field." = '".serialize($this->{$field})."'";	// Сериализуем значение
+					 		$query[] = "`{$field}` = '".serialize($this->{$field})."'";	// Сериализуем значение
 					 	} else if (in_array($field, $this->_json)) {
-						 	$query[] = $field." = '".json_encode($this->{$field})."'";	// Сериализуем значение
+						 	$query[] = "`{$field}` = '" . json_encode($this->{$field}, JSON_UNESCAPED_UNICODE) . "'";	// Сериализуем значение
 					 	} else if (in_array($field, $this->_inline_data) && is_array($this->{$field})) {
-					 		$query[] = $field." = '".implode(",", $this->{$field})."'";	// Превращаем в строку
+					 		$query[] = "`{$field}` = '".implode(",", $this->{$field})."'";	// Превращаем в строку
 					 	} else {
-						 	$query[] = $field." = '".$this->{$field}."'";
+						 	$query[] = "`{$field}` = '".$this->{$field}."'";
 					 	}
 				 	}
 				}
@@ -465,9 +463,37 @@
 		  */
 		 public function beforeSave()
 		 {
-			 // Будет переопределяться в child-классах
 		 }
-		 
+
+		 public static function beforeDelete($ids)
+		 {
+		 	if (!is_array($ids)) {
+		 		$ids = [$ids];
+			}
+
+			foreach ($ids as $id) {
+				$entity = static::findById($id);
+				if ($entity) {
+					$entity->beforeSave(); // deleting model beforeSave fix;
+					$entity->log('delete');
+				}
+			}
+		 }
+
+		 public function log($action = false)
+		 {
+			 if ($this->loggable) {
+				$this->logId = Log::add($this, $action);
+			 }
+		 }
+
+		 public function endLog()
+		 {
+		     if ($this->loggable) {
+				Log::updateField(['row_id' => $this->id]);
+			 }
+		 }
+
 		 /*
 		  * Перед сохранением
 		  */
@@ -491,6 +517,7 @@
 		  */
 		 public function delete()
 		 {
+		 	static::beforeDelete($this->id);
 		 	// Удаляем из БД
 			static::dbConnection()->query("DELETE FROM ".static::$mysql_table." WHERE id=".$this->id);
 
@@ -504,6 +531,7 @@
 		 */
 		public static function deleteById($id)
 		{
+			static::beforeDelete($id);
 			// Удаляем из БД
 			static::dbConnection()->query("DELETE FROM ".static::$mysql_table." WHERE id=".$id);
 		}
@@ -513,6 +541,7 @@
 		 */
 		public static function deleteAll($params)
 		{
+			static::beforeDelete(self::getIds($params));
 			// Удаляем из БД
 			static::dbConnection()->query("DELETE FROM ".static::$mysql_table. (isset($params["condition"]) ? " WHERE ".$params["condition"] : ""));
 		}
@@ -532,8 +561,8 @@
 			}
 
 			// Если в БД еще есть сериализованные данные
-			if (count($_serialized)) {
-				foreach ($_serialized as $var) {
+			if (count($this->_serialized)) {
+				foreach ($this->_serialized as $var) {
 					if ($select && !in_array($var, $select)) { 	// Если нужно выбрать конкретные поля
 						continue;								// то пропускаем ненужные
 					}
@@ -639,6 +668,11 @@
 		public function changeId($newId, $oldId)
 		{
 			return static::dbConnection()->query("UPDATE ".static::$mysql_table." SET id=$newId WHERE id=$oldId");
+		}
+
+		public function getTable()
+		{
+			return static::$mysql_table;
 		}
 	}
 

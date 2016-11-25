@@ -3,7 +3,8 @@
 	{
 		// Экшн по умолчанию
 		public $defaultAction = "Main";
-		
+		protected $_curAction = false;
+
 		// Заголовок по умолчанию
 		protected $_html_title	= "ЕГЭ-Центр";
 		protected $_add_title	= " | "; // Будет добавляться к TITLE текущей страницы
@@ -21,24 +22,12 @@
 		protected $_css_additional = "";
 		
 		public static $allowed_users = [User::USER_TYPE];
-		
-		/*// Проверка на аякс запрос
-		private function _isAjaxRequest()
-		{
-			// Проверка на аякс-запрос
-			if (strtolower(mb_strimwidth($_action, 0, 4)) == "ajax") {
-				
-				$_ajax_request = true;
-				
-				// Это аякс-запрос, к скрипту можно обращаться только через AJAX
-				if (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest') {
-					die("SECURITY RESTRICTION: THIS PAGE ACCEPTS AJAX REQUESTS ONLY (poshel nahuj)");	// Выводим мега-сообщение
-				}
-			} else {
-				$_ajax_request = false;
-			}
-		} */
-		
+
+        public function __construct($action = false)
+        {
+            $this->_curAction = $action;
+        }
+
 		/*
 		 * Отобразить view
 		 * $layout – кастомный лэйаут, по умолчанию меню

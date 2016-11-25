@@ -40,6 +40,7 @@
         }
 
         private static function unsetCurrentVersionOfPrev($id_contract) {
+            # @todo logging
             self::dbConnection()->query(
                 "update contracts " .
                 "set current_version = 0 " .

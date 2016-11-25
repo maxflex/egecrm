@@ -1,4 +1,4 @@
-	angular.module "Task", ['ngSanitize']
+	app = angular.module "Task", ['ngSanitize']
 		.filter 'reverse', ->
 			(items) ->
 				if items

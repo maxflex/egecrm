@@ -136,46 +136,4 @@ echo <<<HTML
 </div>
 HTML;
 		}
-		
-		
-		
-		/**
-		 * Для комментариев.
-		 * 
-		 * $ng_model - название модели, содержащая комментарии (e.g. Group[.Comments], Testing[.Comments]
-		 * $place – название места для идентификации в БД и скрипте comments-app-global.js
-		   
-		   !!!	ДОБАВИТЬ case НА ЭТОТ $place В comments-app-global.js:43 !!!
-		   
-		 */
-		public static function comments($ng_model, $place)
-		{
-			$User = User::fromSession();
-echo <<<HTML
-<div class="comment-block">
-	<div id="existing-comments-{{{$ng_model}.id}}">
-		<div ng-repeat="comment in {$ng_model}.Comments">
-			<div id="comment-block-{{comment.id}}">
-				<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
-				<div style="display: initial" id="comment-{{comment.id}}" commentid="{{comment.id}}" onclick="editComment(this)">{{comment.comment}}</div>
-				<span class="save-coordinates">{{comment.coordinates}}</span>
-				<span ng-attr-data-id="{{comment.id}}" 
-					class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
-			</div>
-		</div>
-	</div>
-	<div style="height: 25px">
-		<span class="pointer no-margin-right comment-add" id="comment-add-{{{$ng_model}.id}}"
-			place="{$place}" id_place="{{{$ng_model}.id}}">комментировать</span>
-		
-		<span class="comment-add-hidden">
-			<span class="comment-add-login comment-login" id="comment-add-login-{{{$ng_model}.id}}" style="color: {$User->color}">
-			{$User->login}: </span>
-			<input class="comment-add-field" id="comment-add-field-{{{$ng_model}.id}}" type="text"
-				placeholder="введите комментарий..." request="{{{$ng_model}.id}}" data-place='{$place}' >
-		</span>
-	</div>
-</div>
-HTML;
-		}
 	}

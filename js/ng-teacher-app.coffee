@@ -1,4 +1,4 @@
-	angular.module "Teacher", ["ngMap"]
+	app = angular.module "Teacher", ["ngMap"]
 		.config [
 		  '$compileProvider'
 		  ($compileProvider) ->

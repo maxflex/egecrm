@@ -156,29 +156,7 @@
 			<?php if ($Group->id): ?>
 			<div class="row">
 				<div class="col-sm-12">
-					<div class="comment-block">
-						<div id="existing-comments-{{Group.id}}">
-							<div ng-repeat="comment in Group.Comments">
-								<div id="comment-block-{{comment.id}}">
-									<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
-									<div style="display: initial" id="comment-{{comment.id}}" commentid="{{comment.id}}" onclick="editComment(this)">{{comment.comment}}</div>
-									<span class="save-coordinates">{{comment.coordinates}}</span>
-									<span ng-attr-data-id="{{comment.id}}"
-										class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
-								</div>
-							</div>
-						</div>
-						<div style="height: 25px">
-							<span class="pointer no-margin-right comment-add" id="comment-add-{{Group.id}}"
-								place="<?= Comment::PLACE_GROUP ?>" id_place="{{Group.id}}">комментировать</span>
-
-							<span class="comment-add-hidden">
-								<span class="comment-add-login comment-login" id="comment-add-login-{{Group.id}}" style="color: <?= User::fromSession()->color ?>"><?= User::fromSession()->login ?>: </span>
-								<input class="comment-add-field" id="comment-add-field-{{Group.id}}" type="text"
-									placeholder="введите комментарий..." request="{{Group.id}}" data-place='GROUP_EDIT' >
-							</span>
-						</div>
-				    </div>
+					<comments entity-id="Group.id" entity-type="GROUP" user="user"></comments>
 				</div>
 			</div>
 			<?php endif ?>

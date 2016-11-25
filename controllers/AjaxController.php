@@ -135,14 +135,7 @@
 		public function actionAjaxAddComment()
 		{
 			$Comment = Comment::add($_POST);
-
-			// Возвращаем форматированную дату и ник пользователя
-			toJson([
-				"date"			=> date("d.m.y в H:i", time()),
-				"User"			=> User::fromSession()->dbData(),
-				"id" 			=> $Comment->id,
-				"coordinates"	=> $Comment->getCoordinates(),
-			]);
+            returnJsonAng($Comment);
 		}
 
 		/**
@@ -231,12 +224,6 @@
 			$Request = Request::findById($id_request);
 			$Request->id_user = $id_user_new;
 			$Request->save();
-
-/*
-			Request::updateById($id_request, [
-				"id_user" => $id_user_new,
-			]);
-*/
 		}
 
 		public function actionAjaxDeleteRequest()

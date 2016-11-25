@@ -3,7 +3,12 @@
 class SMS extends Model
 {
 	public static $mysql_table	= "sms";
-	
+
+    public $log_except = [
+        'id_smsru',
+        'id_status'
+    ];
+
 	const INLINE_SMS_LENGTH = 60;
 	const PER_PAGE = 50; // Сколько отображать на странице списка
 	

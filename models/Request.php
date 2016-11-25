@@ -2,6 +2,12 @@
 	class Request extends Model
 	{
 
+	    public $log_except = [
+	        'ip',
+            'user_agent',
+            'referer_url',
+            'referer'
+        ];
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		const PER_PAGE = 20; // Сколько заявок отображать на странице списка заявок
@@ -43,12 +49,16 @@
 			}
             // Включаем связи
             $this->Student  = $this->light ? Student::getLight($this->id_student) : Student::findById($this->id_student);
-            $this->Comments = Comment::findAll([
-                "condition" => "place='". Comment::PLACE_REQUEST ."' AND id_place=" . $this->id,
-            ]);
         }
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
+
+		public static function getComments($id)
+        {
+            return Comment::findAll([
+                "condition" => "place='". Comment::PLACE_REQUEST ."' AND id_place=" . $id,
+            ]);
+        }
 
 		/**
 		 * Получить статус задачи (список) из $_GET

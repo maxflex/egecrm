@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="js/bower/cropper/dist/cropper.min.css">
 <link media="all" rel="stylesheet" type="text/css" href="js/bower/simple-hint/dist/simple-hint.css" />
 
+
+<script type="text/javascript" src="js/directives.js"></script>
 <?php if (in_array(User::fromSession()->id, [-1])) :?>
 <div class="menu-wrap">
 	<nav class="menu">
@@ -236,6 +238,7 @@
 			}
 		?>
 	<?php endif ?>
+	<a href="logs" class="list-group-item">Логи</a>
 	<?php if (User::fromSession()->show_contract) :?>
 	    <a href="users/contract" class="list-group-item">Договор</a>
 	<?php endif ?>
@@ -243,7 +246,7 @@
     <a href="settings/vocations" class="list-group-item">Календарь</a>
     <a href="templates" class="list-group-item">Шаблоны</a>
     <a href="teachers/html" class="list-group-item">FAQ</a>
-    <?php if (User::fromSession()->show_users) : ?>
+	    <?php if (User::fromSession()->show_users) : ?>
         <a href="users" class="list-group-item">Пользователи</a>
     <?php endif ?>
     <a href="logout" class="list-group-item">Выход</a>

@@ -11,7 +11,7 @@
                                 <div class="row" style="height: 100%">
                                     <div class="col-sm-10 image-col-left" style="height: 100%">
                                         <div ng-if='student.has_photo_original' style="height: calc(100% - 10px);">
-                                            <img src="img/students/{{ student.id + '_original.' + student.photo_extension }}?ver={{ picture_version }}" id='photo-edit' style="height: 100%">
+                                            <img ng-src="img/students/{{ student.id + '_original.' + student.photo_extension }}?ver={{ picture_version }}" id='photo-edit' style="height: 100%">
                                         </div>
                                     </div>
                                     <div class="col-sm-2 center image-col-right">
@@ -58,7 +58,7 @@
                                 изменить фото
                             </div>
                             <span class="btn-file"></span>
-                            <img src="img/students/{{ student.id && student.has_photo_cropped ? student.id + '.' + student.photo_extension : 'no-profile-img.gif' }}?ver={{ picture_version }}">
+                            <img ng-src="img/students/{{ student.id && student.has_photo_cropped ? student.id + '.' + student.photo_extension : 'no-profile-img.gif' }}?ver={{ picture_version }}">
                         </div>
                     </div>
                 </div>

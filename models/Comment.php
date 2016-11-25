@@ -12,7 +12,17 @@
 		const PLACE_GROUP 	= 'GROUP';
 		const PLACE_TEACHER = 'TEACHER';
 
-		
+        public static $places = [
+            'STUDENT',
+            'REQUEST',
+            'REQUEST_EDIT',
+            'TESTING',
+            'GROUP',
+            'TEACHER',
+            'TASK',
+            'REVIEW',
+        ];
+
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
 		public function __construct($array)

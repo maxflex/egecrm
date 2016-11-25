@@ -71,7 +71,6 @@
 		public function actionTest()
 		{
 			$t = TestStudent::findById(30);
-			var_dump($t);
 		}
 
 		/**

@@ -184,6 +184,7 @@
 	 */
 	function angInit($array)
 	{
+	    $return = '';
 		foreach ($array as $var_name => $var_value) {
 			// Если значение не установлено, то это пустой массив по умолчанию
 			if (!$var_value && !is_int($var_value)) {
@@ -412,7 +413,6 @@
 	 */
 	function hasValues($array)
 	{
-	//	echo "HAS_VALS=".(count(array_filter($array)))."<br>";
 		return count(array_filter($array));
 	}
 
@@ -747,4 +747,37 @@
 	{
 		return strtotime('tomorrow') - time() + 20;
 	}
-?>
+
+	function trim_strings($value)
+    {
+        if (is_array($value)) {
+            foreach ($value as &$item) {
+                $item = trim($item);
+            }
+        } else {
+            $value = trim($value);
+        }
+        return $value;
+    }
+
+    /**
+     * Удалить пустые строки
+     */
+    function filterParams($values)
+    {
+        return (object)array_filter((array)$values, function($v) {
+            return $v !== '';
+        });
+    }
+
+    /**
+     * Деформатировать дату
+     */
+    function fromDotDate($date, $add_year = null)
+    {
+        $parts = explode('.', $date);
+        if ($add_year !== null) {
+            $parts[2] = $add_year . $parts[2];
+        }
+        return implode('-', array_reverse($parts));
+    }

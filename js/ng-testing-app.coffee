@@ -1,4 +1,4 @@
-	angular.module "Testing", ['angucomplete-alt']
+	app = angular.module "Testing", ['angucomplete-alt']
 		.filter 'range', () ->
 			return (input, total) ->
 				total = parseInt total

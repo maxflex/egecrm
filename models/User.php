@@ -19,6 +19,13 @@
 
 		public static $online_list;
 
+        public $log_except = [
+            'last_action_time',
+            'last_action_link',
+            'token',
+            'login_count'
+
+        ];
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 		
 		public function __construct($array = [], $flag = null)
@@ -185,10 +192,14 @@
 		public static function getCached($with_system = false)
 		{
 			if (LOCAL_DEVELOPMENT) {
-				$Users = self::findAll();
+                $return = [];
+
+			    $Users = self::findAll([
+				    'condition' => "type = 'USER' "
+                ]);
 
 				foreach ($Users as $User) {
-					$return[$User->id] = $User->dbData();
+					$return[] = $User->dbData();
 				}
 
 				return $return;
@@ -212,9 +223,8 @@
 
 		public static function updateCache()
 		{
-//			$Users = self::findAllReal();
 			$Users = self::findAll([
-				"condition"=>"type = '".User::USER_TYPE."' and banned = 0"
+				"condition"=>"type = '".User::USER_TYPE."' "
 			]);
 
 			foreach ($Users as $User) {
@@ -389,6 +399,7 @@
 				$this->password = self::password($this->password);
 			}
             $this->is_dev = $this->is_dev; // % 2;
+            $this->phone = cleanNumber($this->phone);
 		}
 
 		/*
@@ -477,5 +488,17 @@
 		{
 			return (memcached()->get("users:{$id_user}:busy") ? true : false);
 		}
-				
-	}
+
+		public static function getIds()
+        {
+            $user_ids = [];
+            foreach (static::getCached() as $user) $user_ids[] = $user['id'];
+
+            return $user_ids;
+        }
+
+        public static function getJson()
+        {
+            return toJson(User::fromSession()->dbData());
+        }
+    }

@@ -1,4 +1,4 @@
-	angular.module "Test", ["ngMap"]
+app = angular.module "Test", ["ngMap"]
 		.filter 'range', () ->
 			return (input, total) ->
 				total = parseInt total

@@ -42,28 +42,7 @@
 
 
 			<div style="margin-top: 10px">
-				<div class="comment-block">
-					<div id="existing-comments-{{request.id}}">
-						<div ng-repeat="comment in request.Comments">
-							<div id="comment-block-{{comment.id}}">
-								<span style="color: {{comment.User.color}}" class="comment-login">{{comment.User.login}}: </span>
-								<div style="display: initial" id="comment-{{comment.id}}" onclick="editComment(this)"  commentid="{{comment.id}}">
-									{{comment.comment}}</div>
-								<span class="save-coordinates">{{comment.coordinates}}</span>
-								<span ng-attr-data-id="{{comment.id}}" class="glyphicon opacity-pointer text-danger glyphicon-remove glyphicon-2px" onclick="deleteComment(this)"></span>
-							</div>
-						</div>
-					</div>
-					<div style="height: 25px">
-						<span class="pointer no-margin-right comment-add" id="comment-add-{{request.id}}"
-								place="<?= Comment::PLACE_REQUEST ?>" id_place="{{request.id}}">комментировать</span>
-						<span class="comment-add-hidden">
-							<span class="comment-add-login comment-login" id="comment-add-login-{{request.id}}" style="color: <?= User::fromSession()->color ?>"><?= User::fromSession()->login ?>: </span>
-							<input class="comment-add-field" id="comment-add-field-{{request.id}}" type="text"
-								placeholder="введите комментарий..." request="{{request.id}}" data-place='REQUEST_LIST'>
-						</span>
-					</div>
-				</div>
+				<comments entity-type='REQUEST' entity-id='request.id' user='user' track-loading="1"></comments>
 			</div>
 		</div>
 		
@@ -84,23 +63,19 @@
 				Напоминание:  {{notification_types[request.Notification.id_type]}} {{request.Notification.timestamp + "000" | date:'dd.MM.yy в HH:mm'}}
 			</div>
 			<div class="half-black">
-				Заявка №{{request.id}} создана {{request.id_user_created > 0 ? users[request.id_user_created].login : "system"}}
+				Заявка №{{ request.id }} создана {{ UserService.getLogin(request.id_user_created) }}
 				{{request.date_timestamp | date:'dd.MM.yy'}} в {{request.date_timestamp | date:'HH:mm'}}
 				<a class="link-reverse" style="margin-left: 5px" href="requests/edit/{{request.id}}">редактировать</a>
 			</div>
 		</div>
 		<div class="col-sm-6">
-			ответственный: <span id="request-user-display-{{request.id}}" ng-click="pickUser(request, <?= User::fromSession()->id ?>)" class="user-pick" style="color: {{request.id_user ? getUser(request.id_user).color : 'rgba(0, 0, 0, 0.5)'}}">{{request.id_user ? getUser(request.id_user).login : 'system'}}</span>
-<!--
-			<select class="user-list small" onchange="changeUserColor(this)" data-rid="{{request.id}}" style="display: none; background-color: {{users[request.id_user].color}}" id="request-user-select-{{request.id}}" ng-model="request.id_user">
-				<option selected="" value="">пользователь</option>
-				<option disabled="" value="">──────────────</option>
-
-				<option ng-repeat="user in users" ng-hide="!user.worktime" style="background-color: {{user.color}}" value="{{user.id}}" ng-selected="user.id == request.id_user">
-					{{user.login}}
-				</option>
-			</select>
--->
+			ответственный:
+            <span id="request-user-display-{{ request.id }}"
+                  class="user-pick"
+                  ng-click="pickUser(request, <?= User::fromSession()->id ?>)" style="color: {{ UserService.getColor(request.id_user, 'rgba(0, 0, 0, 0.5)') }}"
+            >
+                {{ UserService.getLogin(request.id_user) }}
+            </span>
 		</div>
 	</div>
 	<hr ng-hide="$last">

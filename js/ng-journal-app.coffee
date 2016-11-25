@@ -1,4 +1,4 @@
-angular.module "Journal", []
+app = angular.module "Journal", []
 	.controller "StudentsCtrl", ($scope) ->
 		$scope.getGroup = (id) ->
 		  _.findWhere $scope.Groups, id: parseInt(id)

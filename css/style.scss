@@ -340,7 +340,29 @@
 }
 
 .comment-login {
-	opacity: .6;
+	opacity: 1;
+}
+
+.comment-line {
+	display: initial;
+	outline: none;
+}
+.comment-div {
+  & .save-coordinates, & .glyphicon-remove {
+	-webkit-transition: all linear .25s;
+	opacity: 0;
+  }
+
+  &:hover {
+	& .save-coordinates, & .glyphicon-remove {
+	  opacity: 1;
+	}
+  }
+
+  & .save-coordinates {
+	margin-left: 3px;
+	font-style: normal;
+  }
 }
 
 [ng-app="Promo"] {
@@ -2250,15 +2272,12 @@ div[id^='comment-block'] {
 .comment-add-field {
   outline: none;
   border: 0;
-  // border-bottom: 1px solid $hr_gray;
-  // width: calc(100% - 20px);
   width: 50%;
-  display: none;
   background-color: transparent;
 }
 
 .comment-add-login {
-	display: none;
+	//display: none;
 }
 
 .comment-add {
@@ -2267,13 +2286,12 @@ div[id^='comment-block'] {
 	&:hover {
 		text-decoration: underline;
 	}
-/*
-	margin-top: 5px;
-	font-size: 12px;
-	margin-left: 2px;
-	font-weight: bold;
-*/
 }
+
+.comment-time {
+  color: $placeholder_gray;
+}
+
 
 .loaded-file {
 	font-size: 12px;
@@ -3241,3 +3259,21 @@ table.last-item-no-border tr:last-child td {
 	.table-with-padding tr td:first-child {
 		padding-left: 4px !important;
 	}
+
+	.pointer {
+	  cursor: pointer!important;
+	}
+
+	.drop-delete-pad {
+	  padding: 0px 4px;
+	  border-radius: 5px;
+	  background: transparent;
+	  color: #A94442;
+	  display: inline-block;
+	  &.hovered {
+		background: #A94442;
+		color: white;
+	  }
+	}
+	[role=button] {
+	  cursor: pointer; }

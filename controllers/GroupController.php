@@ -205,7 +205,6 @@
 
 		public function actionList()
 		{
-
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity, false);
@@ -421,12 +420,12 @@
 			}
 
 			if (! LOCAL_DEVELOPMENT) {
-				$Teachers = Teacher::findAll();
+				$Teachers = Teacher::findAll([], true);
 
 				if ($Group->id_teacher) {
 					foreach ($Teachers as &$Teacher) {
 						if ($Teacher->id == $Group->id_teacher) {
-							$Teacher->bar 		= $Teacher->getBar();
+							$Teacher->bar = $Teacher->getBar();
 						}
 					}
 				}
@@ -455,9 +454,6 @@
 				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
 				$Student->bar					= Freetime::getStudentBar($Student->id, true, $Group->id); // @refactored
 
-				# Статус доставки СМС
-				// $Student->delivery_data			= $Student->getAwaitingSmsStatuses($Group->id);
-
 				if (array_key_exists($Student->id, $Group->student_statuses)) {
 					$Student->id_status		= $Group->student_statuses[$Student->id]['id_status'];
 					$Student->notified		= $Group->student_statuses[$Student->id]['notified'];
@@ -467,21 +463,21 @@
 			}
 
 			$ang_init_data = angInit([
-				"Group" 	=> $Group,
-				"Teachers"	=> $Teachers,
-				"TmpStudents" => $Students,
-//				"Students"	=> $Students,
-				"Subjects"	=> Subjects::$three_letters,
-				"GroupLevels" => GroupLevels::$all,
+				"Group" 	     => $Group,
+				"Teachers"	     => $Teachers,
+				"TmpStudents"    => $Students,
+				"Subjects"	     => Subjects::$three_letters,
+				"GroupLevels"    => GroupLevels::$all,
 				"subjects_short" => Subjects::$short,
-				"duration"		=> Group::DURATION,
-				"all_cabinets"			=> Branches::allCabinets(),
-				"branches_brick"		=> Branches::getShortColored(),
-				"cabinet_bars"			=> Freetime::getCabinetBar($Group),
-				"time"			=> Time::get(),
-				"weekdays"		=> Time::WEEKDAYS,
-				"free_cabinets" => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
-                'FirstLesson' => Group::getFirstLesson($Group->id)
+				"duration"		 => Group::DURATION,
+				"all_cabinets"	 => Branches::allCabinets(),
+				"branches_brick" => Branches::getShortColored(),
+				"cabinet_bars"	 => Freetime::getCabinetBar($Group),
+				"time"			 => Time::get(),
+				"weekdays"		 => Time::WEEKDAYS,
+				"free_cabinets"  => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
+                "FirstLesson"    => Group::getFirstLesson($Group->id),
+                "user"					=> User::fromSession()->dbData()
 			]);
 
 			$this->render("edit", [
@@ -666,7 +662,6 @@
 				    memcached()->set("JournalErrors", $errors, 3600 * 24);
 				}
 			}
-			// CronController::actionUpdateJournalMiss();
 		}
 
 		/**
@@ -697,7 +692,6 @@
 						memcached()->set("JournalErrors", $errors, 3600 * 24);
 					}
 				}
-				// CronController::actionUpdateJournalMiss();
 			}
 		}
 

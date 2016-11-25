@@ -12,7 +12,7 @@
 		
 		public function beforeAction()
 		{
-			$this->addJs("ng-task-app");
+			$this->addJs("ng-task-app, dnd");
 		}
 		
 		public function actionList()
@@ -54,9 +54,10 @@
 			}
 			
 			$ang_init_data = angInit([
-				"type"	=> $type,
-				"Tasks" => $Tasks,
+				"type"	        => $type,
+				"Tasks"         => $Tasks,
 				"task_statuses" => TaskStatuses::$all,
+                "user"			=> User::fromSession()->dbData()
 			]);
 			
 			$this->render("list", [

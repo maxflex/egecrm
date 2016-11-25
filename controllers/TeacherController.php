@@ -10,7 +10,7 @@
 
 		public function beforeAction()
 		{
-			$this->addJs("ng-teacher-app");
+			$this->addJs("ng-teacher-app, dnd");
 		}
 
 		public function actionFaq()

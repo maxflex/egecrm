@@ -12,7 +12,7 @@
 
 		public function beforeAction()
 		{
-			$this->addJs("ng-teacher-review-app");
+			$this->addJs("ng-teacher-review-app, dnd-new");
 		}
 		
 		private function _studentId()
@@ -38,7 +38,7 @@
 				'user'			=> User::fromSession()->dbData(),
 				'users'			=> User::getCached(true),
 				'Teachers'		=> Teacher::getJournalTeachers(),
-				"Student"		=> Student::getLight($id_student),
+				'Student'		=> Student::getLight($id_student),
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 			]);
 
@@ -100,7 +100,7 @@
 				'Subjects' 		=> Subjects::$all,
 				'three_letters' => Subjects::$three_letters,
 				'id_student'	=> false,
-				'users'			=> User::getCached(true),
+                'user'			=> User::fromSession()->dbData(),
 				'Teachers'		=> Teacher::getJournalTeachers(),
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 			]);
