@@ -125,6 +125,7 @@ app.directive('comments', function() {
       };
       $scope.submitComment = function(event) {
         if (event.keyCode === 13) {
+          event.preventDefault();
           $.post('ajax/AddComment', {
             comment: $scope.comment,
             id_user: $scope.user.id,
