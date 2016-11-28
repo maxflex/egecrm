@@ -125,6 +125,7 @@ app.directive('comments', function() {
       };
       $scope.submitComment = function(event) {
         if (event.keyCode === 13) {
+          event.preventDefault();
           $.post('ajax/AddComment', {
             comment: $scope.comment,
             id_user: $scope.user.id,
@@ -152,12 +153,185 @@ app.directive('comments', function() {
   };
 });
 
-app.service('UserService', function($rootScope, $http, $timeout) {
+app.directive('sms', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'directives/sms',
+    scope: {
+      number: '=',
+      templates: '@',
+      mode: '@'
+    },
+    controller: function($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService, SmsTemplate) {
+      var scrollDown;
+      bindArguments($scope, arguments);
+      $scope.mass = false;
+      $scope.smsCount = function() {
+        return SmsCounter.count($scope.message || '').messages;
+      };
+      $scope.send = function() {
+        var promise;
+        ajaxStart();
+        $scope.sms_sending = true;
+        if ($scope.mode) {
+          $scope.SmsService.mode = $scope.mode;
+        }
+        if (promise = SmsService.send($scope.mode, $scope.number, $scope.message, $scope.mass)) {
+          promise.then(function(data) {
+            ajaxEnd();
+            $scope.sms_sending = false;
+            $scope.history.push(data);
+            return scrollDown();
+          });
+        } else {
+          ajaxEnd();
+        }
+        return $scope.message = '';
+      };
+      $scope.$watch('number', function(newVal, oldVal) {
+        $scope.history = SmsService.getHistory(newVal);
+        return scrollDown();
+      });
+      scrollDown = function() {
+        return $timeout(function() {
+          return $('#sms-history').animate({
+            scrollTop: $(window).height()
+          }, 'fast');
+        });
+      };
+      return $scope.setTemplate = function(id_template) {
+        return $http.post('templates/ajax/get', {
+          number: id_template
+        }).then(function(response) {
+          console.log(response);
+          return $scope.message = response;
+        });
+      };
+    }
+  };
+});
+
+app.service('PhoneService', function($rootScope) {
+  this.call = function(number) {
+    return location.href = "sip:" + number.replace(/[^0-9]/g, '');
+  };
+  this.isMobile = function(number) {
+    return number && (parseInt(number[4]) === 9 || parseInt(number[1]) === 9);
+  };
+  this.clean = function(number) {
+    return number.replace(/[^0-9]/gim, "");
+  };
+  this.format = function(number) {
+    if (!number) {
+      return;
+    }
+    number = this.clean(number);
+    return '+' + number.substr(0, 1) + ' (' + number.substr(1, 3) + ') ' + number.substr(4, 3) + '-' + number.substr(7, 2) + '-' + number.substr(9, 2);
+  };
+  this.sms = function(number) {
+    $rootScope.sms_number = this.clean(number);
+    return lightBoxShow('sms');
+  };
+  return this;
+});
+
+app.service('PusherService', function($http, $q, UserService) {
+  var init;
+  this.inited = $q.defer();
+  this.bind = function(channel, callback) {
+    if (this.pusher === void 0) {
+      init();
+    }
+    return this.inited.promise.then((function(_this) {
+      return function() {
+        return _this.channel.bind("" + channel, callback);
+      };
+    })(this));
+  };
+  init = (function(_this) {
+    return function() {
+      _this.pusher = new Pusher('a9e10be653547b7106c0', {
+        encrypted: true
+      });
+      return UserService.current_loaded.promise.then(function() {
+        _this.channel = _this.pusher.subscribe('user_' + UserService.current_user.id);
+        return _this.inited.resolve(true);
+      });
+    };
+  })(this);
+  return this;
+});
+
+app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
+  this.updates = [];
+  this.mode = DEFUAULT_SMS_MODE;
+  PusherService.bind('sms', (function(_this) {
+    return function(data) {
+      _this.updates[data.id] = data.status;
+      return $rootScope.$apply();
+    };
+  })(this));
+  this.getStatus = function(sms) {
+    var status_class;
+    switch (this.updates[sms.id] || sms.id_status) {
+      case 103:
+        status_class = 'delivered';
+        break;
+      case 102:
+        status_class = 'inway';
+        break;
+      default:
+        status_class = 'not-delivered';
+    }
+    return status_class;
+  };
+  this.getHistory = function(number) {
+    if (number) {
+      return Sms.query({
+        number: number
+      });
+    }
+  };
+  this.send = function(mode, number, message, mass) {
+    var action;
+    if (message) {
+      switch (this.mode) {
+        case 2:
+          action = 'sendGroupSms';
+          break;
+        case 3:
+          action = 'sendGroupSmsClients';
+          break;
+        case 4:
+          action = 'sendGroupSmsTeachers';
+          break;
+        default:
+          action = 'sendSms';
+      }
+      console.log(action);
+      return $http.post('ajax/sendSms', {
+        message: message,
+        number: number,
+        mass: mass
+      }, 'json');
+    }
+  };
+  return this;
+});
+
+app.service('UserService', function($rootScope, $q, $http, $timeout, User) {
   var system_user;
-  this.current_user = $rootScope.$$childTail.user;
-  $http.get('get/users', {}).then((function(_this) {
-    return function(response) {
-      return _this.users = response.data;
+  this.loaded = $q.defer();
+  this.current_loaded = $q.defer();
+  this.users = User.query((function(_this) {
+    return function() {
+      return _this.loaded.resolve(true);
+    };
+  })(this));
+  $timeout((function(_this) {
+    return function() {
+      _this.current_user = $rootScope.$$childTail.user;
+      return _this.current_loaded.resolve(true);
     };
   })(this));
   system_user = {
@@ -218,4 +392,33 @@ app.service('UserService', function($rootScope, $http, $timeout) {
     });
   };
   return this;
+});
+
+app.factory('Sms', function($resource) {
+  return $resource(':url', {
+    id: '@id'
+  }, {
+    query: {
+      method: 'GET',
+      url: 'get/sms/:number',
+      isArray: true
+    }
+  });
+}).factory('SmsTemplate', function($resource) {
+  return $resource('templates/ajax/get', {}, {
+    get: {
+      method: 'POST',
+      params: {
+        id_template: ':id_template'
+      }
+    }
+  });
+}).factory('User', function($resource) {
+  return $resource('get/users', {
+    id: '@id'
+  }, {
+    create: {
+      method: 'POST'
+    }
+  });
 });

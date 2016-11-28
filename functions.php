@@ -46,12 +46,13 @@
 		global $db_egerep;
 		return $db_egerep;
 	}
-
+class a{public function get(){return false;}};
 	/*
 	 * Возвращает соединение DB_SETTINGS
 	 */
 	function memcached()
 	{
+	    return new a();
 		global $memcached;
 		return $memcached;
 	}

@@ -185,4 +185,5 @@ RewriteRule ^logs[?page=(0-9)]?[/]?$ index.php?controller=logs&action=$1 [QSA,L]
 
 RewriteRule ^get/comments/([a-zA-Z]+)/([0-9]+)[/]?$ index.php?controller=comments&action=get&place=$1&id=$2 [QSA,L]
 RewriteRule ^get/users[/]?([0-9]+)?[/]?$ index.php?controller=users&action=get&id=$1 [QSA,L]
+RewriteRule ^get/sms/([0-9]+)?[/]?$ index.php?controller=sms&action=get&number=$1 [QSA,L]
 RewriteRule ^directives/([a-zA-Z]+)[/]?$ views/directives/$1.html [QSA,L]

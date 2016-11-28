@@ -178,6 +178,7 @@
 		/*
 		 * Получаем одну запись
 		 * $params - дополнительные параметры (condition - дополнительное условие, order - параметры сортировки)
+		 * @return static|boolean
 		 */
 		public static function find($params = array(), $flag = null)
 		{

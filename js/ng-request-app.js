@@ -2,217 +2,196 @@ var test;
 var test2;
 
 app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
-		.filter('hideZero', function() {
-		  return function(item) {
-		    if (item > 0) {
-		      return item;
-		    } else {
-		      return null;
-		    }
-		  };
-		})
-		.filter('yearFilter', function() {
-		  return function(items, year) {
-		    return _.where(items, {
-		      'year': year
-		    });
-		  };
-		})
-		.config( [
-		    '$compileProvider',
-		    function( $compileProvider )
-		    {
-		        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip):/);
-		        // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
-		    }
-		])
-		.filter('range', function() {
-		  return function(input, total) {
-		    total = parseInt(total);
-		    for (var i=0; i<total; i++)
-		      input.push(i);
-		    return input;
-		  };
-		})
-		.filter('reverse', function() {
-			return function(items) {
-				if (items) {
-					return items.slice().reverse();
-				}
-			};
-		})
-		.filter('to_trusted', ['$sce', function($sce){
-	        return function(text) {
-	            return $sce.trustAsHtml(text);
-	        };
-		}])
-		.filter('group_by_id_contract', function() {
-			return function(items, id_contract) {
-					return _.filter(items, function (item) {
-						return item.id_contract == id_contract;
-					});
-			};
-		})
-		.filter('toArray', function() {
-			return function(obj) {
-				var arr;
-				arr = [];
-				$.each(obj, function(index, value) {
-					return arr.push(value);
+	.filter('hideZero', function() {
+		return function(item) {
+			if (item > 0) {
+				return item;
+			} else {
+				return null;
+			}
+		};
+	})
+	.filter('yearFilter', function() {
+		return function(items, year) {
+			return _.where(items, {
+				'year': year
+			});
+		};
+	})
+	.config( [
+		'$compileProvider', function($compileProvider) {
+			$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip):/);
+		}
+	])
+	.filter('range', function() {
+	    return function(input, total) {
+            total = parseInt(total);
+            for (var i=0; i<total; i++)
+                input.push(i);
+            return input;
+	  };
+	})
+	.filter('reverse', function() {
+		return function(items) {
+			if (items) {
+				return items.slice().reverse();
+			}
+		};
+	})
+	.filter('to_trusted', ['$sce', function($sce){
+		return function(text) {
+			return $sce.trustAsHtml(text);
+		};
+	}])
+	.filter('group_by_id_contract', function() {
+		return function(items, id_contract) {
+				return _.filter(items, function (item) {
+					return item.id_contract == id_contract;
 				});
-				return arr;
-			};
-		})
-		.controller("ListCtrl", function($scope, $timeout, $log, UserService) {
-				$scope.UserService = UserService;
+		};
+	})
+	.filter('toArray', function() {
+		return function(obj) {
+			var arr;
+			arr = [];
+			$.each(obj, function(index, value) {
+				return arr.push(value);
+			});
+			return arr;
+		};
+	})
+	.controller("ListCtrl", function($scope, $timeout, $log, UserService, PhoneService) {
+			$scope.UserService = UserService;
+			$scope.PhoneService = PhoneService;
 
-				system_user = {
-						color: '#999999',
-						login: 'system',
-						id: 0,
-						banned: 0
-				};
-
-				$scope.getUser = function(user_id) {
-						return _.findWhere($scope.users, {
-								id: parseInt(user_id)
-							}) || system_user;
-					};
-				// хэндл псевдо-истории
-				window.addEventListener("popstate", function(e) {
-					// анфокус
-					$(".list-link").blur()
-					// меняем список
-					if (e.state === null) {
-						$scope.changeList($scope.request_statuses[0], false)
-					} else {
-						$scope.changeList(e.state, false)
-					}
-				})
-
-				$scope.toggleUser = function() {
-						new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
-						$.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
-								$scope.responsible_user = _.findWhere($scope.users, {id : new_user_id});
-								$scope.$apply();
-						});
+			// хэндл псевдо-истории
+			window.addEventListener("popstate", function(e) {
+				// анфокус
+				$(".list-link").blur()
+				// меняем список
+				if (e.state === null) {
+					$scope.changeList($scope.request_statuses[0], false)
+				} else {
+					$scope.changeList(e.state, false)
 				}
+			})
 
-				$scope.pickUser = function(request, id_user) {
-						if (request.id_user > 0) {
-								id_user_new = 0
-						} else {
-								id_user_new = id_user
-						}
-						$.post("ajax/changeRequestUser", {"id_request" : request.id, "id_user_new" : id_user_new}, function() {
-								request.id_user = id_user_new
-								$scope.$apply()
-						})
-				}
-
-				selectNextUser = function(id_user) {
-				user = _.find($scope.users, function(user) {
-					return user.id > id_user
-				})
-				return ((user && user.id <= 112) ? user.id : 0)
+			$scope.toggleUser = function() {
+				new_user_id = $scope.responsible_user.id == $scope.user.id ? 0 : $scope.user.id;
+				$.post("ajax/changeRequestUser", {'id_request' : $scope.id_request, 'id_user_new' : new_user_id}, function(){
+					$scope.responsible_user = _.findWhere($scope.users, {id : new_user_id});
+					$scope.$apply();
+				});
 			}
 
-				// проверить номер телефона
-				$scope.isMobilePhone = function(phone) {
-						// пустой номер телефона – это тоже правильный номер телефона
-						if (!phone) {
-								return false
-						}
-						return !phone.indexOf("+7 (9")
+			$scope.pickUser = function(request, id_user) {
+				if (request.id_user > 0) {
+					id_user_new = 0
+				} else {
+					id_user_new = id_user
 				}
-
-				$scope.smsDialog = smsDialog;
-
-				$scope.sipNumber = function(number) {
-					return "sip:" + number.replace(/[^0-9]/g, '')
-				}
-
-				$scope.callSip = function(number) {
-					number = $scope.sipNumber(number)
-					location.href = number;
-				}
-
-				$scope.getTimeClass = function(request) {
-						// подсвечивать время нужно только в невыполненных
-						if (request.id_status != 0) {
-								return
-						}
-
-						timestamp = request.date_timestamp
-
-						hour = 60 * 60 * 1000;
-
-						// если больше 2 часов
-						if (Date.now() - timestamp >= (hour * 2)) {
-								return 'label-red'
-						}
-
-						if (Date.now() - timestamp >= hour) {
-								return 'label-yellow'
-						}
-				}
-
-				$scope.filter = function() {
-						$timeout(function(){
-							setRequestListUser(parseInt($scope.id_user_list))
-						}, 100)
-						console.log('filter ended')
-				}
-
-				$scope.refreshCounts = function() {
-						return $timeout(function() {
-								$('.watch-select option').each(function(index, el) {
-										$(el).data('subtext', $(el).attr('data-subtext'));
-										return $(el).data('content', $(el).attr('data-content'));
-								});
-								return $('.watch-select').selectpicker('refresh');
-						}, 100);
-				};
-
-				$(document).ready(function() {
-						$scope.id_user_list = $.cookie("id_user_list") ? $.cookie("id_user_list") : '';
-						$scope.$apply()
-						// draggable only from main requests list (not relevant)
-						if ($scope.counts.requests) {
-							bindDraggable()
-						}
-						$timeout(function(){
-							$("#user-filter").selectpicker('render')
-						},500);
+				$.post("ajax/changeRequestUser", {"id_request" : request.id, "id_user_new" : id_user_new}, function() {
+					request.id_user = id_user_new
+					$scope.$apply()
 				})
+			}
 
-				bindDraggable = function() {
+			// проверить номер телефона
+			$scope.isMobilePhone = function(phone) {
+				// пустой номер телефона – это тоже правильный номер телефона
+				if (!phone) {
+					return false
+				}
+				return !phone.indexOf("+7 (9")
+			}
+
+			$scope.smsDialog = smsDialog;
+
+			$scope.sipNumber = function(number) {
+				return "sip:" + number.replace(/[^0-9]/g, '')
+			}
+
+			$scope.callSip = function(number) {
+				number = $scope.sipNumber(number)
+				location.href = number;
+			}
+
+			$scope.getTimeClass = function(request) {
+				// подсвечивать время нужно только в невыполненных
+				if (request.id_status != 0) {
+						return
+				}
+
+				timestamp = request.date_timestamp
+
+				hour = 60 * 60 * 1000;
+
+				// если больше 2 часов
+				if (Date.now() - timestamp >= (hour * 2)) {
+						return 'label-red'
+				}
+
+				if (Date.now() - timestamp >= hour) {
+						return 'label-yellow'
+				}
+			}
+
+			$scope.filter = function() {
+				$timeout(function(){
+					setRequestListUser(parseInt($scope.id_user_list))
+				}, 100)
+				console.log('filter ended')
+			}
+
+			$scope.refreshCounts = function() {
+				return $timeout(function() {
+					$('.watch-select option').each(function(index, el) {
+						$(el).data('subtext', $(el).attr('data-subtext'));
+						return $(el).data('content', $(el).attr('data-content'));
+					});
+					return $('.watch-select').selectpicker('refresh');
+				}, 100);
+			};
+
+			$(document).ready(function() {
+				$scope.id_user_list = $.cookie("id_user_list") ? $.cookie("id_user_list") : '';
+				$scope.$apply()
+				// draggable only from main requests list (not relevant)
+				if ($scope.counts.requests) {
+					bindDraggable()
+				}
+				$timeout(function(){
+					$("#user-filter").selectpicker('render')
+				},500);
+			})
+
+			bindDraggable = function() {
 				$scope.dragging = false
 
 				$(".request-main-list").draggable({
-						connectToSortable: ".request-main-list",
-						start: function() {
-								$scope.dragging = true
-								$scope.$apply()
-						},
-						stop: function() {
-								$scope.dragging = false
-								$scope.$apply()
-						},
-						revert: 'invalid',
+					connectToSortable: ".request-main-list",
+					start: function() {
+						$scope.dragging = true
+						$scope.$apply()
+					},
+					stop: function() {
+						$scope.dragging = false
+						$scope.$apply()
+					},
+					revert: 'invalid',
 				})
 
 				$(".request-status-li").droppable({
-						tolerance: 'pointer',
-						hoverClass: "request-status-drop-hover",
-						drop: function(event, ui) {
-								id_request_status = $(this).data("id")
-								id_request = $(ui.draggable).data("id")
-								$scope.counts.requests[$scope.chosen_list]--
-								$scope.counts.requests[id_request_status]++
-								$scope.$apply()
-								$.post("requests/ajax/changeStatus", {id_request_status: id_request_status, id_request: id_request})
-								ui.draggable.remove()
+					tolerance: 'pointer',
+					hoverClass: "request-status-drop-hover",
+					drop: function(event, ui) {
+						id_request_status = $(this).data("id")
+						id_request = $(ui.draggable).data("id")
+						$scope.counts.requests[$scope.chosen_list]--
+						$scope.counts.requests[id_request_status]++
+						$scope.$apply()
+						$.post("requests/ajax/changeStatus", {id_request_status: id_request_status, id_request: id_request})
+						ui.draggable.remove()
 					}
 				})
 
@@ -233,68 +212,68 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			// Выбрать список
 			$scope.changeList = function(request_status, push_history) {
-                $scope.chosen_list = request_status.id
-                if (push_history) {
-                        window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase());
-                }
-                // Получаем первую страницу задач списка
-                $scope.getByPage(1)
+				$scope.chosen_list = request_status.id
+				if (push_history) {
+						window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase());
+				}
+				// Получаем первую страницу задач списка
+				$scope.getByPage(1)
 			}
 
 			// Страница изменилась
 			$scope.pageChanged = function() {
-                // request_status = $scope.request_statuses[$scope.chosen_list]
-                request_status = _.where($scope.request_statuses, {id: $scope.chosen_list})[0];
-                window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase() + '/' + $scope.currentPage)
-                // Получаем задачи, соответствующие странице и списку
-                $scope.getByPage($scope.currentPage)
+				// request_status = $scope.request_statuses[$scope.chosen_list]
+				request_status = _.where($scope.request_statuses, {id: $scope.chosen_list})[0];
+				window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase() + '/' + $scope.currentPage)
+				// Получаем задачи, соответствующие странице и списку
+				$scope.getByPage($scope.currentPage)
 			}
 
 			// Получаем задачи, соответствующие странице и списку
 			$scope.getByPage = function(page) {
-                ajaxStart()
-                frontendLoadingStart()
-                $.get("requests/ajax/GetByPage", {
-                    'page'		: page,
-                    'id_status'	: $scope.chosen_list
-                }, function(response) {
-                    ajaxEnd()
-                    frontendLoadingEnd()
-                    $scope.requests = response.requests
-                    $scope.counts = response.counts
-                    $scope.$apply()
-                    $scope.refreshCounts()
-                    bindUserColorControl()
-                    bindDraggable()
-                }, "json")
+				ajaxStart()
+				frontendLoadingStart()
+				$.get("requests/ajax/GetByPage", {
+					'page'		: page,
+					'id_status'	: $scope.chosen_list
+				}, function(response) {
+					ajaxEnd()
+					frontendLoadingEnd()
+					$scope.requests = response.requests
+					$scope.counts = response.counts
+					$scope.$apply()
+					$scope.refreshCounts()
+					bindUserColorControl()
+					bindDraggable()
+				}, "json")
 			}
 
-				// Страница изменилась
-				$scope.pageChangedRelevant = function() {
-						// Получаем задачи, соответствующие странице и списку
-						$scope.getByPageRelevant($scope.currentPage)
-				}
-
+			// Страница изменилась
+			$scope.pageChangedRelevant = function() {
 				// Получаем задачи, соответствующие странице и списку
-				$scope.getByPageRelevant = function(page) {
-						ajaxStart()
-						frontendLoadingStart()
-						$.get("requests/ajax/GetByPageRelevant", {
-								'page'		: page,
-								'grade'		: $scope.search.grade,
-								'id_branch' : $scope.search.id_branch,
-								'id_subject': $scope.search.id_subject,
-						}, function(response) {
-						ajaxEnd()
-						frontendLoadingEnd()
-						$scope.requests = response.requests
-						$scope.requests_count = response.requests_count
-						$scope.$apply()
-						bindUserColorControl()
-					}, "json")
-				}
-		})
-		.controller("EditCtrl", function ($scope, $log, $timeout) {
+				$scope.getByPageRelevant($scope.currentPage)
+			}
+
+			// Получаем задачи, соответствующие странице и списку
+			$scope.getByPageRelevant = function(page) {
+				ajaxStart()
+				frontendLoadingStart()
+				$.get("requests/ajax/GetByPageRelevant", {
+						'page'		: page,
+						'grade'		: $scope.search.grade,
+						'id_branch' : $scope.search.id_branch,
+						'id_subject': $scope.search.id_subject,
+				}, function(response) {
+				ajaxEnd()
+				frontendLoadingEnd()
+				$scope.requests = response.requests
+				$scope.requests_count = response.requests_count
+				$scope.$apply()
+				bindUserColorControl()
+			}, "json")
+		}
+	})
+	.controller("EditCtrl", function ($scope, $log, $timeout) {
 				/*** contex menu functions ***/
 				$scope.closeContexMenu = function() {
 						_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
@@ -339,13 +318,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
 				}
 
-                // первая версия последней цепи (выше chain – неправильно, это версии)
-                $scope.firstInLastChain = function() {
-                	if ($scope.contracts && $scope.contracts.length) {
+				// первая версия последней цепи (выше chain – неправильно, это версии)
+				$scope.firstInLastChain = function() {
+					if ($scope.contracts && $scope.contracts.length) {
 										return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
 									}
 									return false;
-                }
+				}
 
 				$scope.week_count = function (programm) {
 					c = parseInt(_.max(programm, function(v){ return v.count; }).count)
@@ -592,7 +571,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 										<div class="from-them">		\
 											' + v.message + ' 		\
 											<div class="sms-coordinates">' + v.coordinates + '</div>' + files_html + '\
-									    </div>						\
+										</div>						\
 									</div>';
 							})
 						$("#email-history").html(html)
@@ -647,7 +626,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.setMenu($scope.current_menu)
 				}
 				if ($scope.request_comments === undefined && mode == 'request') {
-				    $.post("requests/ajax/LoadRequest", {id_request: $scope.id_request}, function(response) {
+					$.post("requests/ajax/LoadRequest", {id_request: $scope.id_request}, function(response) {
 						['request_comments', 'responsible_user', 'user', 'users', 'request_duplicates', 'request_phone_level'].forEach(function(field) {
 							$scope[field] = response[field]
 						})
@@ -657,7 +636,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 						}, 100)
 					}, "json")
 
-			    }
+				}
 			}
 
 			/**
@@ -717,7 +696,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.contract = $scope.firstContractInChain(contract)
 				$scope.$apply();
 
-        $scope.print_mode = 'contract'
+		$scope.print_mode = 'contract'
 				$scope.id_user_print = 0
 				html = $("#contract-print").html()
 				$scope.editBeforePrint(html)
@@ -725,17 +704,17 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			$scope.printContractLicenced = function(contract) {
 				$scope.contract = $scope.firstContractInChain(contract)
-        $scope.$apply();
+		$scope.$apply();
 
-        $scope.print_mode = 'contract-licenced'
+		$scope.print_mode = 'contract-licenced'
 				$scope.id_user_print = 0
 				html = $("#contract-licenced-print").html()
 				$scope.editBeforePrint(html)
 			}
 
 			$scope.printContractAdditional = function(contract) {
-        $scope.contract = contract
-        $scope.$apply();
+		$scope.contract = contract
+		$scope.$apply();
 
 			  $scope.print_mode = 'agreement'
 				$scope.contract_additional = contract
@@ -746,7 +725,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			$scope.printContractAdditionalOoo = function(contract) {
 				$scope.contract = contract
-		        $scope.$apply();
+				$scope.$apply();
 				$scope.print_mode = 'agreement-ooo'
 				html = $("#agreement-ooo-print-" + contract.id).html()
 				$scope.editBeforePrint(html)
@@ -770,26 +749,26 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 
 			$scope.getLastLessonDate = function() {
-        date = '0000-00-00'
-        // если есть активные группы
-        if ($scope.Groups && $scope.Groups.length) {
-          $.each($scope.Groups, function(index, Group) {
-            new_date = _.last(Group.Schedule).date
-            if (new_date > date) {
-              date = new_date
-            }
-          })
-        } else {
-          // иначе берем группы которые были посещены
-          $.each($scope.getStudentGroups(), function(index, id_group) {
-            var last_lesson = _.last($scope.getVisitsByGroup(id_group));
-            new_date = last_lesson.lesson_date
-            if (new_date > date) {
-              date = new_date;
-            }
-          })
-        }
-        return $scope.textDate(date)
+		date = '0000-00-00'
+		// если есть активные группы
+		if ($scope.Groups && $scope.Groups.length) {
+		  $.each($scope.Groups, function(index, Group) {
+			new_date = _.last(Group.Schedule).date
+			if (new_date > date) {
+			  date = new_date
+			}
+		  })
+		} else {
+		  // иначе берем группы которые были посещены
+		  $.each($scope.getStudentGroups(), function(index, id_group) {
+			var last_lesson = _.last($scope.getVisitsByGroup(id_group));
+			new_date = last_lesson.lesson_date
+			if (new_date > date) {
+			  date = new_date;
+			}
+		  })
+		}
+		return $scope.textDate(date)
 			}
 
 			$scope.todayDate = function() {
@@ -828,7 +807,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				printDiv($scope.print_mode + "-print")
 			}
 
-      $scope.printLlcBill = function(payment) {
+	  $scope.printLlcBill = function(payment) {
 				$scope.print_mode = 'llc-bill'
 				$scope.PrintPayment = payment
 				$scope.$apply()
@@ -1017,14 +996,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				// generate recommended search bounds
 				INIT_COORDS = {lat: 55.7387, lng: 37.6032};
 				$scope.RECOM_BOUNDS = new google.maps.LatLngBounds(
-		            new google.maps.LatLng(INIT_COORDS.lat-0.5, INIT_COORDS.lng-0.5),
-		            new google.maps.LatLng(INIT_COORDS.lat+0.5, INIT_COORDS.lng+0.5)
-		        );
+					new google.maps.LatLng(INIT_COORDS.lat-0.5, INIT_COORDS.lng-0.5),
+					new google.maps.LatLng(INIT_COORDS.lat+0.5, INIT_COORDS.lng+0.5)
+				);
 				$scope.geocoder = new google.maps.Geocoder();
-		    });
+			});
 
-		    // Поиск по карте
-		    $scope.searchMap = function(address) {
+			// Поиск по карте
+			$scope.searchMap = function(address) {
 				$scope.geocoder.geocode({
 					address: address + ", московская область",
 //					componentRestrictions: {
@@ -1032,25 +1011,25 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 //				    },
 					bounds: $scope.RECOM_BOUNDS,
 				}, function(results, status) {
-				    if (status == google.maps.GeocoderStatus.OK) {
+					if (status == google.maps.GeocoderStatus.OK) {
 
-					    // максимальное кол-во результатов
-					    max_results = 3
+						// максимальное кол-во результатов
+						max_results = 3
 
-					    // масштаб поиска
+						// масштаб поиска
 						search_result_bounds = new google.maps.LatLngBounds()
 
-					    $.each(results, function(i, result) {
-						    if (i >= max_results) {
-							    return
-						    }
+						$.each(results, function(i, result) {
+							if (i >= max_results) {
+								return
+							}
 
 							search_result_bounds.extend(result.geometry.location) // границы карты в зависимости от поставленных меток
 
 							search_marker = new google.maps.Marker({
-							    map: $scope.map,
-							    position: result.geometry.location,
-							    icon: ICON_SEARCH,
+								map: $scope.map,
+								position: result.geometry.location,
+								icon: ICON_SEARCH,
 							});
 
 							google.maps.event.addListener(search_marker, 'click', function(event) {
@@ -1061,9 +1040,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 							$scope.search_markers = initIfNotSet($scope.search_markers)
 //							$log.log($scope.search_markers)
 							$scope.search_markers.push(search_marker)
-					    })
+						})
 
-					    // если отображаемые маркеры есть, делаем зум на них
+						// если отображаемые маркеры есть, делаем зум на них
 						if (results.length > 0) {
 							$scope.gmap.fitBounds(search_result_bounds)
 							$scope.gmap.panToBounds(search_result_bounds)
@@ -1072,9 +1051,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 							}
 
 						}
-				    } else {
+					} else {
 						$("#map-search").addClass("has-error").focus()
-				    }
+					}
 				});
 			}
 
@@ -1390,17 +1369,17 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					return
 				}
 
-        pushAndSetCurrentVersion = function (contract) {
-          $scope.lastContractInChain(contract).current_version = 0
-          _.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) {
-            $scope.current_contract.current_version = 1
-            c = $scope.current_contract
-          })
-        }
+		pushAndSetCurrentVersion = function (contract) {
+		  $scope.lastContractInChain(contract).current_version = 0
+		  _.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) {
+			$scope.current_contract.current_version = 1
+			c = $scope.current_contract
+		  })
+		}
 				if ($scope.current_contract.id) {
 					ajaxStart('contract')
 					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
-            pushAndSetCurrentVersion($scope.current_contract)
+			pushAndSetCurrentVersion($scope.current_contract)
 						ajaxEnd('contract')
 						lightBoxHide()
 						$scope.lateApply()
@@ -1524,7 +1503,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			// $scope.editHistoryContract = function(contract) {
 			// 	contract.no_version_control = 1
 			// 	contract.history_edit = 1
-      //
+	  //
 			// 	$scope.callContractEdit(contract)
 			// }
 
@@ -1565,8 +1544,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 						$scope.contracts = _.without($scope.contracts, contract);
 						if ($scope.lastContractInChain(contract) && contract.current_version) {
-              $scope.lastContractInChain(contract).current_version = 1
-            }
+			  $scope.lastContractInChain(contract).current_version = 1
+			}
 						$scope.$apply()
 					}
 				})
@@ -1655,7 +1634,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					title: "Введите пароль",
 					className: "modal-password",
 					callback: function(result) {
-            if (result === null) {}
+			if (result === null) {}
 						else if (hex_md5(result) === payments_hash) {
 							$scope.new_payment = angular.copy(payment)
 							$scope.$apply()
@@ -1802,7 +1781,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 						title: "Введите пароль",
 						className: "modal-password",
 						callback: function(result) {
-              if (result === null) {}
+			  if (result === null) {}
 							else if (hex_md5(result) === payments_hash) {
 								bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
 									if (result === true) {
@@ -1842,27 +1821,27 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			// форматировать дату
 			$scope.formatDate = function(date){
-		        var dateOut = new Date(date);
-		        return dateOut;
-		    };
+				var dateOut = new Date(date);
+				return dateOut;
+			};
 
-		    // Удалить файл из догавара
-		    $scope.deleteContractFile = function (contract, id) {
-			    contract.files.splice(id, 1)
-			    $.post("ajax/UploadFiles", {
+			// Удалить файл из догавара
+			$scope.deleteContractFile = function (contract, id) {
+				contract.files.splice(id, 1)
+				$.post("ajax/UploadFiles", {
 					"id_contract":	contract.id,
 					"files":		contract.files
 				});
-		    }
-
-		    // проверить номер телефона
-		    $scope.phoneCorrect = phoneCorrect
+			}
 
 			// проверить номер телефона
-		    $scope.isMobilePhone = isMobilePhone
+			$scope.phoneCorrect = phoneCorrect
 
-		    // Превратить в файлаплоад
-		    $scope.bindFileUpload = function(contract) {
+			// проверить номер телефона
+			$scope.isMobilePhone = isMobilePhone
+
+			// Превратить в файлаплоад
+			$scope.bindFileUpload = function(contract) {
 				// загрузка файла договора
 				$('#fileupload' + contract.id).fileupload({
 					dataType: 'json',
@@ -1873,14 +1852,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					},
 					// во время загрузки
 					progress: function (e, data) {
-			            NProgress.set(data.loaded / data.total)
-			        },
-			        // всегда по окончании загрузки (неважно, ошибка или успех)
-			        always: function() {
-				        NProgress.configure({ showSpinner: false })
-				        ajaxEnd()
-			        },
-			        done: function (i, response) {
+						NProgress.set(data.loaded / data.total)
+					},
+					// всегда по окончании загрузки (неважно, ошибка или успех)
+					always: function() {
+						NProgress.configure({ showSpinner: false })
+						ajaxEnd()
+					},
+					done: function (i, response) {
 						if (response.result !== "ERROR") {
 							contract.files = initIfNotSet(contract.files)
 							contract.files.push(response.result)
@@ -1892,22 +1871,22 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 						} else {
 							notifyError("Ошибка загрузки")
 						}
-			        },
-			        fail: function (e, data) {
+					},
+					fail: function (e, data) {
 						$.each(data.messages, function (index, error) {
 							notifyError(error)
 						})
-			        }
-			    })
-		    }
+					}
+				})
+			}
 
-		    $scope.groupsFilter = function(Group) {
-			    if ($scope.academic_year > 0) {
-				    return Group.year == $scope.academic_year
+			$scope.groupsFilter = function(Group) {
+				if ($scope.academic_year > 0) {
+					return Group.year == $scope.academic_year
 				} else {
 					return true
 				}
-		    }
+			}
 
 			$scope.hasHiddenGroups = function() {
 				if ($scope.Groups) {
@@ -1953,9 +1932,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				})
 			}
 
-		    $scope.setMenu = function(menu) {
-			    if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
-				    $.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
+			$scope.setMenu = function(menu) {
+				if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
+					$.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
 						['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level',
 							'branches_brick', 'representative_phone_level', 'representative'].forEach(function(field) {
 							$scope[field] = response[field]
@@ -1988,25 +1967,25 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 							bindPhotoUpload();
 						}, 100)
 					}, "json")
-			    }
-			    if ($scope.payments === undefined && menu == 1) {
+				}
+				if ($scope.payments === undefined && menu == 1) {
 					$.post("requests/ajax/LoadPayments", {id_student: $scope.id_student}, function(response) {
 						['user', 'payments', 'payment_types', 'payment_statuses'].forEach(function(field) {
 							$scope[field] = response[field]
 						})
 						$scope.$apply()
 					}, "json")
-			    }
-			    if ($scope.Journal === undefined && menu == 2) {
+				}
+				if ($scope.Journal === undefined && menu == 2) {
 					$.post("requests/ajax/LoadJournal", {id_student: $scope.id_student}, function(response) {
 						['Subjects', 'Journal', 'Groups'].forEach(function(field) {
 							$scope[field] = response[field]
 						})
 						$scope.$apply()
 					}, "json")
-			    }
-			    if ($scope.Reviews === undefined && menu == 3) {
-				    $scope.enum = review_statuses
+				}
+				if ($scope.Reviews === undefined && menu == 3) {
+					$scope.enum = review_statuses
 
 					$.post("requests/ajax/LoadReviews", {id_student: $scope.id_student}, function(response) {
 						['Reviews', 'id_user_review', 'user', 'users'].forEach(function(field) {
@@ -2014,19 +1993,19 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 						})
 						$scope.$apply()
 					}, "json")
-			    }
-			    if ($scope.Reports === undefined && menu == 4) {
+				}
+				if ($scope.Reports === undefined && menu == 4) {
 					$.post("requests/ajax/LoadReports", {id_student: $scope.id_student}, function(response) {
 						$scope.Reports = response
 						$scope.$apply()
 					}, "json")
-			    }
-			    if ($scope.student_comments === undefined && menu == 5) {
+				}
+				if ($scope.student_comments === undefined && menu == 5) {
 					$.post("requests/ajax/LoadStudentComments", {id_student: $scope.id_student}, function(response) {
 						$scope.student_comments = response
 						$scope.$apply()
 					}, "json")
-			    }
+				}
 				if ($scope.Tests === undefined && menu == 6) {
 					$.post("requests/ajax/LoadStudentTests", {id_student: $scope.id_student}, function(response) {
 						['Tests', 'StudentTests'].forEach(function(field) {
@@ -2037,11 +2016,11 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.tests_interval = setInterval(function() {
 						$scope.$apply()
 					}, 1000)
-			    } else {
-				    clearInterval($scope.tests_interval)
-			    }
-			    $scope.current_menu = menu
-		    }
+				} else {
+					clearInterval($scope.tests_interval)
+				}
+				$scope.current_menu = menu
+			}
 
 			$(document).ready(function() {
 				switch(window.location.hash) {
@@ -2080,9 +2059,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("#request-subjects").selectpicker({noneSelectedText: "предметы", multipleSeparator: "+"})
 
 				$("#request-edit").on('keyup change', 'input, select, textarea', function(){
-			        $scope.form_changed = true
-			        $scope.$apply()
-			    })
+					$scope.form_changed = true
+					$scope.$apply()
+				})
 
 				// код подразделения
 				$("#code-podr").mask("999-999");
@@ -2107,14 +2086,16 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			  // promo-code-loading
 				$(".map-save-button, .bs-datetime").on("click", function() {
-				    $scope.form_changed = true
-			        $scope.$apply()
-			    })
-
-				// Биндим загрузку к уже имеющимся дагаварам
-				$.each($scope.contracts, function(index, contract) {
-					$scope.bindFileUpload(contract)
+					$scope.form_changed = true
+					$scope.$apply()
 				})
+
+				if ($scope.contracts) {
+					// Биндим загрузку к уже имеющимся дагаварам
+					$.each($scope.contracts, function(index, contract) {
+						$scope.bindFileUpload(contract)
+					})
+				}
 
 				// дополнительный apply on document.ready
 				$scope.$apply()

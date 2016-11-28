@@ -519,6 +519,7 @@
 					if ($SMS) {
 						$SMS->id_status = $sms_status;
 						$SMS->save("id_status");
+						SMS::notifyStatus($SMS);
 					}
 					// "Изменение статуса. Сообщение: $sms_id. Новый статус: $sms_status";
 					// Здесь вы можете уже выполнять любые действия над этими данными.

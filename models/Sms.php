@@ -13,12 +13,14 @@ class SMS extends Model
 	const PER_PAGE = 50; // Сколько отображать на странице списка
 	
 	
-	public function __construct($array)
+	public function __construct($array, $light = false)
 	{
 		parent::__construct($array);
-		
-		$this->getCoordinates();
-		
+
+        if (!$light) {
+            $this->getCoordinates();
+        }
+
 		if (mb_strlen($this->message) > self::INLINE_SMS_LENGTH) {
 			$this->message_short = mb_strimwidth($this->message, 0, self::INLINE_SMS_LENGTH, '...', 'utf-8');
 		}
@@ -170,4 +172,18 @@ class SMS extends Model
 			default:  return "неизвестно";
 		}
 	}
+
+	public static function notifyStatus($SMS = false)
+    {
+        foreach(User::getIds() as $user_id) {
+            Socket::trigger(
+                'sms' . $user_id,
+                'status', [
+                    'id' => $SMS->id,
+                    'status' => $SMS->id_status
+                ],
+                'egecrm'
+            );
+        }
+    }
 }

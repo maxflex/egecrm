@@ -995,3 +995,38 @@ function ExpandSelect(select, maxOptionsVisible)
 	$(document).ready(function() {
 		$("#open-button").on("click", toggleMenu)
 	});
+
+	/**
+	 * Биндит аргументы контроллера ангуляра в $scope
+	 */
+	function bindArguments(scope, arguments) {
+		function_arguments = getArguments(arguments.callee)
+
+		for (i = 1; i < arguments.length; i++) {
+			function_name = function_arguments[i]
+			if (function_name[0] === '$') {
+				continue
+			}
+			scope[function_name] = arguments[i]
+		}
+	}
+
+	/**
+	 * Получить аргументы функции в виде строки
+	 * @link: http://stackoverflow.com/a/9924463/2274406
+	 */
+	var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+	var ARGUMENT_NAMES = /([^\s,]+)/g;
+	function getArguments(func) {
+		var fnStr = func.toString().replace(STRIP_COMMENTS, '');
+		var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+		if(result === null)
+			result = [];
+		return result;
+	}
+
+	DEFUAULT_SMS_MODE   = 1
+	GROUP_SMS_MODE   = 2
+	CLIENT_SMS_MODE  = 3
+	TEMLATES_FULL    = 'full'
+	TEMLATES_LIGHT   = 'light'

@@ -65,4 +65,5 @@
 			</div>
 		</div>
 	</div>
+	<sms number='sms_number' templates="short"></sms>
 </div>

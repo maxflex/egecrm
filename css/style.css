@@ -1435,6 +1435,9 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     .sms-template-list span:hover {
       border-color: #23527c;
       color: #23527c; }
+    .sms-template-list span.fake {
+      border: none;
+      cursor: default; }
 
 button:disabled, select:disabled {
   cursor: default !important; }
@@ -2666,5 +2669,14 @@ h4.row-header.default-case {
 
 [role=button] {
   cursor: pointer; }
+
+#sms-counter {
+  position: absolute;
+  right: 16px;
+  bottom: 7px;
+  color: #999;
+  background: white;
+  z-index: 9;
+  border-radius: 5px; }
 
 /*# sourceMappingURL=style.css.map */

@@ -102,6 +102,8 @@ app.directive 'comments', ->
             return
         $scope.submitComment = (event) ->
             if event.keyCode is 13
+                event.preventDefault()
+
                 $.post 'ajax/AddComment',
                     comment: $scope.comment
                     id_user: $scope.user.id

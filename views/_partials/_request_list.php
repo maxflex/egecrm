@@ -21,7 +21,18 @@
 						{{request.grade}} класс,
 					</span>
 					
-					<span ng-show="request.phone"><span ng-class="{'label-red': request.phone_duplicate}" class="underline-hover inline-block" ng-click="callSip(request.phone_formatted)">{{request.phone_formatted}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone_formatted)" ng-show="isMobilePhone(request.phone_formatted)"></span></span><span ng-show="request.phone2">, <span ng-class="{'label-red': request.phone2_duplicate}" class="underline-hover inline-block" ng-click="callSip(request.phone2_formatted)">{{request.phone2_formatted}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone2_formatted)" ng-show="isMobilePhone(request.phone2_formatted)"></span></span><span ng-show="request.phone3">, <span ng-class="{'label-red': request.phone3_duplicate}" class="underline-hover inline-block" ng-click="callSip(request.phone3_formatted)">{{request.phone3_formatted}}</span><span class="glyphicon glyphicon-envelope sms-in-list" ng-click="smsDialog(request.phone3_formatted)" ng-show="isMobilePhone(request.phone3_formatted)"></span></span>
+					<span ng-show="request.phone">
+						<span ng-class="{'label-red': request.phone_duplicate}" class="underline-hover inline-block" ng-click="callSip(request.phone_formatted)">{{request.phone_formatted}}</span>
+						<span class="glyphicon glyphicon-envelope sms-in-list" ng-click="PhoneService.sms(request.phone_formatted)" ng-show="PhoneService.isMobile(request.phone_formatted)"></span>
+					</span>
+					<span ng-show="request.phone2">,
+						<span ng-class="{'label-red': request.phone2_duplicate}" class="underline-hover inline-block" ng-click="callSip(request.phone2_formatted)">{{request.phone2_formatted}}</span>
+						<span class="glyphicon glyphicon-envelope sms-in-list" ng-click="PhoneService.sms(request.phone2_formatted)" ng-show="PhoneService.isMobile(request.phone2_formatted)"></span>
+					</span>
+					<span ng-show="request.phone3">,
+						<span ng-class="{'label-red': request.phone3_duplicate}" class="underline-hover inline-block" ng-click="callSip(request.phone3_formatted)">{{request.phone3_formatted}}</span>
+						<span class="glyphicon glyphicon-envelope sms-in-list" ng-click="PhoneService.sms(request.phone3_formatted)" ng-show="PhoneService.isMobile(request.phone3_formatted)"></span>
+					</span>
 
 				</span>
 

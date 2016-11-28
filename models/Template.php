@@ -12,6 +12,7 @@
 		
 		public static function get($number, $params)
 		{
+            /* @var $Template Template */
 			$Template = self::find([
 				"condition" => "number=$number"
 			]);

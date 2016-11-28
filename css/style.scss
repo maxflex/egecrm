@@ -1674,7 +1674,11 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			border-color: $hover_blue;
 			color: $hover_blue;
 		}
-	}	
+	  	&.fake {
+		  border: none;
+		  cursor: default;
+		}
+	}
 }
 
 button:disabled, select:disabled {
@@ -3276,4 +3280,16 @@ table.last-item-no-border tr:last-child td {
 	  }
 	}
 	[role=button] {
-	  cursor: pointer; }
+	  cursor: pointer;
+	}
+
+	//sms styles
+	#sms-counter {
+	  position: absolute;
+	  right: 16px;
+	  bottom: 7px;
+	  color: #999;
+	  background: white;
+	  z-index: 9;
+	  border-radius: 5px;
+	}
