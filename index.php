@@ -90,7 +90,7 @@
 		}
 	}
 
-	$IndexController = new $_controllerName;	// Создаем объект контроллера
+	$IndexController = new $_controllerName($_actionName);	// Создаем объект контроллера
 
 // 	preType([$_GET, $_controller, $_action, $_controllerName, $_actionName], true);
 

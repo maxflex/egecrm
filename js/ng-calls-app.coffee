@@ -1,4 +1,4 @@
-	angular.module "Calls", []
+	app = angular.module "Calls", []
 		.config [
 		  '$compileProvider'
 		  ($compileProvider) ->

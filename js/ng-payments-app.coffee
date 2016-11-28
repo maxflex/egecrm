@@ -1,4 +1,4 @@
-angular.module "Payments", ["ui.bootstrap"]
+app = angular.module "Payments", ["ui.bootstrap"]
     .filter 'reverse', () ->
         (items) ->
             if items

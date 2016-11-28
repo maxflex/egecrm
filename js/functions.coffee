@@ -1,4 +1,3 @@
-
 	logout_interval = false
 	
 	# интервал для проверки логина
@@ -16,7 +15,7 @@
 		if $('[ng-app=Login]').length
 		#	location.reload()
 		else
-			$.post "ajax/CheckLogout", {}, 
+			$.post "ajax/CheckLogout", {},
 				(response) ->
 					if response is 1
 						location.reload()

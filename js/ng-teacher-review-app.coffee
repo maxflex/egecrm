@@ -6,9 +6,10 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 				input.push i
 			input
 	.filter 'hideZero', ->
-        (item) ->
-            if item > 0 then item else null
-	.controller "Reviews", ($scope, $timeout) ->
+		(item) ->
+			if item > 0 then item else null
+	.controller "Reviews", ($scope, $timeout, UserService) ->
+		$scope.UserService = UserService
 		$scope.enum = review_statuses
 		
 		$scope.formatDateTime = (date) ->
@@ -32,7 +33,6 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 		
 		# Страница изменилась
 		$scope.pageChanged = ->
-			console.log $scope.currentPage
 			window.history.pushState {}, '', 'reviews/?page=' + $scope.current_page if $scope.current_page > 1
 			# Получаем задачи, соответствующие странице и списку
 			$scope.getByPage($scope.current_page)

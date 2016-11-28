@@ -1,4 +1,4 @@
-angular.module "Templates", []
+app = angular.module "Templates", []
 	.controller "ListCtrl", ($scope) ->
 		$scope.mode = 1
 		

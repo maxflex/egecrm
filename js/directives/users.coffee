@@ -14,13 +14,17 @@ app.service 'UserService', ($rootScope, $http, $timeout)->
         this.getUser(user_id)
 
     this.getUser = (user_id) ->
-        _.findWhere(this.users, {id:user_id}) or system_user
+        _.findWhere(this.users, {id:parseInt(user_id)}) or system_user
 
     this.getLogin = (user_id) ->
         this.getUser(parseInt(user_id)).login
 
-    this.getColor = (user_id) ->
-        this.getUser(parseInt(user_id)).color
+    this.getColor = (user_id, system_color) ->
+        user = this.getUser(parseInt(user_id))
+        if user is system_user and system_color
+            system_color
+        else
+            user.color
 
     this.getWithSystem = (only_active = true) ->
         users = this.getAll(only_active)
@@ -36,5 +40,9 @@ app.service 'UserService', ($rootScope, $http, $timeout)->
 
     this.getBannedUsers = ->
         _.where this.users, {banned : 1}
+
+    this.getBannedHaving = (condition_obj) ->
+        _.filter this.users, (user) ->
+            user.banned is 1 and condition_obj[user.id]
 
     this

@@ -63,38 +63,16 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				return arr;
 			};
 		})
-		.controller("ListCtrl", function($scope, $timeout, $log) {
+		.controller("ListCtrl", function($scope, $timeout, $log, UserService) {
+				$scope.UserService = UserService;
+
 				system_user = {
-					color: '#999999',
-					login: 'system',
-					id: 0,
-					banned: 0
+						color: '#999999',
+						login: 'system',
+						id: 0,
+						banned: 0
 				};
-				$scope.getUsersWithSystem = function(only_active) {
-					if (only_active == null) {
-						only_active = true;
-					}
-					users = _.toArray(_.filter($scope.users, function(u) { return u.type == 'USER'; }))
-					users.unshift(system_user);
-					if (only_active) {
-						return _.where(users, {
-							banned: 0
-						});
-					} else {
-						return users;
-					}
-				};
-				$scope.getBannedUsers = function() {
-					return _.where(_.filter($scope.users, function(u) { return u.type == 'USER'; }), {
-						banned: 1
-					});
-				}
-				$scope.bannedUsersToShow = function() {
-					ids = Object.keys($scope.counts.users).map(function(v){return +(v)})
-					return _.filter($scope.users, function(u) {
-						return u.type == 'USER' && u.banned == 1 && ids.indexOf(u.id) != -1;
-					});
-				}
+
 				$scope.getUser = function(user_id) {
 						return _.findWhere($scope.users, {
 								id: parseInt(user_id)
@@ -197,46 +175,44 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				};
 
 				$(document).ready(function() {
-				$scope.id_user_list = $.cookie("id_user_list") ? $.cookie("id_user_list") : '';
-				$scope.$apply()
-				// draggable only from main requests list (not relevant)
-				if ($scope.counts.requests) {
-						bindDraggable()
-				} else {
-						// relevant page
-						$("#user-filter").selectpicker('render')
-				}
-			})
+						$scope.id_user_list = $.cookie("id_user_list") ? $.cookie("id_user_list") : '';
+						$scope.$apply()
+						// draggable only from main requests list (not relevant)
+						if ($scope.counts.requests) {
+							bindDraggable()
+						}
+						$timeout(function(){
+							$("#user-filter").selectpicker('render')
+						},500);
+				})
 
 				bindDraggable = function() {
 				$scope.dragging = false
 
 				$(".request-main-list").draggable({
-					connectToSortable: ".request-main-list",
-					start: function() {
-						$scope.dragging = true
-						$scope.$apply()
-					},
-					stop: function() {
-						$scope.dragging = false
-						$scope.$apply()
-					},
-					revert: 'invalid',
+						connectToSortable: ".request-main-list",
+						start: function() {
+								$scope.dragging = true
+								$scope.$apply()
+						},
+						stop: function() {
+								$scope.dragging = false
+								$scope.$apply()
+						},
+						revert: 'invalid',
 				})
 
 				$(".request-status-li").droppable({
-					tolerance: 'pointer',
-					hoverClass: "request-status-drop-hover",
-					drop: function(event, ui) {
-						id_request_status = $(this).data("id")
-						id_request = $(ui.draggable).data("id")
-						$scope.counts.requests[$scope.chosen_list]--
-						$scope.counts.requests[id_request_status]++
-						$scope.$apply()
-
-						$.post("requests/ajax/changeStatus", {id_request_status: id_request_status, id_request: id_request})
-
-						ui.draggable.remove()
+						tolerance: 'pointer',
+						hoverClass: "request-status-drop-hover",
+						drop: function(event, ui) {
+								id_request_status = $(this).data("id")
+								id_request = $(ui.draggable).data("id")
+								$scope.counts.requests[$scope.chosen_list]--
+								$scope.counts.requests[id_request_status]++
+								$scope.$apply()
+								$.post("requests/ajax/changeStatus", {id_request_status: id_request_status, id_request: id_request})
+								ui.draggable.remove()
 					}
 				})
 
@@ -255,79 +231,66 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				})
 			}
 
-				// Выбрать список
-				$scope.changeList = function(request_status, push_history) {
-				//  Если нажимаем на один и тот же список -- ничего не делаем
-				/*
-				if (request_status.id == $scope.chosen_list) {
-					return
-				}*/
+			// Выбрать список
+			$scope.changeList = function(request_status, push_history) {
+                $scope.chosen_list = request_status.id
+                if (push_history) {
+                        window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase());
+                }
+                // Получаем первую страницу задач списка
+                $scope.getByPage(1)
+			}
 
-				// Устанавливаем список
-				$scope.chosen_list = request_status.id
+			// Страница изменилась
+			$scope.pageChanged = function() {
+                // request_status = $scope.request_statuses[$scope.chosen_list]
+                request_status = _.where($scope.request_statuses, {id: $scope.chosen_list})[0];
+                window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase() + '/' + $scope.currentPage)
+                // Получаем задачи, соответствующие странице и списку
+                $scope.getByPage($scope.currentPage)
+			}
 
-				if (push_history) {
-					window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase());
-				}
-
-				// Получаем первую страницу задач списка
-				$scope.getByPage(1)
+			// Получаем задачи, соответствующие странице и списку
+			$scope.getByPage = function(page) {
+                ajaxStart()
+                frontendLoadingStart()
+                $.get("requests/ajax/GetByPage", {
+                    'page'		: page,
+                    'id_status'	: $scope.chosen_list
+                }, function(response) {
+                    ajaxEnd()
+                    frontendLoadingEnd()
+                    $scope.requests = response.requests
+                    $scope.counts = response.counts
+                    $scope.$apply()
+                    $scope.refreshCounts()
+                    bindUserColorControl()
+                    bindDraggable()
+                }, "json")
 			}
 
 				// Страница изменилась
-				$scope.pageChanged = function() {
-					// request_status = $scope.request_statuses[$scope.chosen_list]
-					request_status = _.where($scope.request_statuses, {id: $scope.chosen_list})[0];
-					console.log($scope.chosen_list, request_status)
-					window.history.pushState(request_status, '', 'requests/' + request_status.constant.toLowerCase() + '/' + $scope.currentPage)
-					// Получаем задачи, соответствующие странице и списку
-					$scope.getByPage($scope.currentPage)
-				}
-
-				// Получаем задачи, соответствующие странице и списку
-				$scope.getByPage = function(page) {
-					ajaxStart()
-					frontendLoadingStart()
-					$.get("requests/ajax/GetByPage", {
-						'page'		: page,
-						'id_status'	: $scope.chosen_list
-					}, function(response) {
-						ajaxEnd()
-						frontendLoadingEnd()
-						$scope.requests = response.requests
-						$scope.counts = response.counts
-						$scope.$apply()
-						$scope.refreshCounts()
-						bindUserColorControl()
-						bindDraggable()
-						// initComments()
-					}, "json")
-				}
-
-				// Страница изменилась
 				$scope.pageChangedRelevant = function() {
-					// Получаем задачи, соответствующие странице и списку
-					$scope.getByPageRelevant($scope.currentPage)
+						// Получаем задачи, соответствующие странице и списку
+						$scope.getByPageRelevant($scope.currentPage)
 				}
 
 				// Получаем задачи, соответствующие странице и списку
 				$scope.getByPageRelevant = function(page) {
-					ajaxStart()
-					frontendLoadingStart()
-					$.get("requests/ajax/GetByPageRelevant", {
-						'page'		: page,
-						'grade'		: $scope.search.grade,
-						'id_branch' : $scope.search.id_branch,
-						'id_subject': $scope.search.id_subject,
-					}, function(response) {
+						ajaxStart()
+						frontendLoadingStart()
+						$.get("requests/ajax/GetByPageRelevant", {
+								'page'		: page,
+								'grade'		: $scope.search.grade,
+								'id_branch' : $scope.search.id_branch,
+								'id_subject': $scope.search.id_subject,
+						}, function(response) {
 						ajaxEnd()
 						frontendLoadingEnd()
-						console.log(response)
 						$scope.requests = response.requests
 						$scope.requests_count = response.requests_count
 						$scope.$apply()
 						bindUserColorControl()
-						initComments()
 					}, "json")
 				}
 		})
@@ -1526,11 +1489,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.lateApply()
 
 				setTimeout(function() {
-// 					$('.triple-switch').slider('reset')
 					$('.triple-switch').each(function(index, e) {
 						val = $(e).attr('data-slider-value');
-// 						console.log(val);
-						$(e).slider('setValue', parseInt(val));
+						$(e).slider('value', parseInt(val));
 					})
 				}, 100)
 			}
@@ -1572,7 +1533,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.current_contract = {subjects : [], info: {year: $scope.academic_year}}
 				$scope.current_contract.date = moment().format("DD.MM.YYYY")
 
-				$('.triple-switch').slider('setValue', 0)
+				$('.triple-switch').slider('value', 0)
 
 				lightBoxShow('addcontract')
 				$("select[name='grades']").removeClass("has-error")
@@ -2005,15 +1966,12 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 						});
 
 						$scope.$apply()
-
-						console.log('BEFORE ITMEOUT BIND SWITCH')
 						$timeout(function() {
 							// ios-like triple switch
 							$('.triple-switch').slider({
 								tooltip: 'hide',
 							});
 
-							console.log('BIND SWITCH')
 							rebindMasks()
 
 							// Добавляем существующие метки
@@ -2086,9 +2044,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		    }
 
 			$(document).ready(function() {
-				console.log('here')
-
-				// $('.bs-date input, input.bs-date').inputmask({ alias: 'date'});
 				switch(window.location.hash) {
 					case '#payments': {
 						$scope.setMenu(1)

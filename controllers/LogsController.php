@@ -24,8 +24,7 @@
             $ang_init_data = angInit([
                 'page'      => $page,
                 'tables' => ($tables = Log::getTables()),
-                'columns' => Log::getTableColumns($tables),
-                'users' => User::getCached(true)
+                'columns' => Log::getTableColumns($tables)
             ]);
 
 

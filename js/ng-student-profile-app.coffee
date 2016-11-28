@@ -1,4 +1,4 @@
-angular.module "StudentProfile", []
+app = angular.module "StudentProfile", []
     .controller "PhotoCtrl", ($scope, $timeout) ->
         $scope.picture_version = 1
 
