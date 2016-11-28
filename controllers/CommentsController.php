@@ -7,11 +7,12 @@ class CommentsController extends Controller
 
     public function actionGet()
     {
-        if ($params = $this->validate()) {
-            returnJsonAng(Comment::getByPlace($params->place, $params->id));
+        $return = [];
+        if ($params = $this->validate() && ($data = Comment::getByPlace($params->place, $params->id))) {
+            $return = $data;
         }
 
-        return false;
+        returnJsonAng($return);
     }
 
     private function validate()
