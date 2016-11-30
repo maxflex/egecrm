@@ -64,7 +64,7 @@
         <div style='margin: 10px 0 0'>
             <div style="display: inline-block; width: 50%">
                 <div style='margin-top: 30px'>
-                    ________________/________________
+                    ________________/<span style="text-decoration: underline;">{{ representative.last_name }} {{ representative.first_name[0] }}. {{ representative.middle_name[0] }}.</span>
                 </div>
                 <div style="padding-left: 100px;">
                     М. П.
