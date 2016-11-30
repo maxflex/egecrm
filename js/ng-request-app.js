@@ -734,10 +734,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 
 			$scope.printContractAdditional = function(contract) {
-        $scope.contract = contract
-        $scope.$apply();
+				$scope.contract = contract
+				$scope.$apply();
 
-			  $scope.print_mode = 'agreement'
+				$scope.print_mode = 'agreement'
 				$scope.contract_additional = contract
 				$scope.id_contract_print = contract.id
 				html = $("#agreement-print-" + $scope.id_contract_print).html()
@@ -764,9 +764,33 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.print_mode = 'service-act'
 				$scope.service_contract_parent = $scope.firstContractInChain(contract)
 				$scope.service_contract = $scope.lastContractInChain(contract)
-				$scope.$apply()
-				html = $("#service-act-print").html()
-				$scope.editBeforePrint(html)
+				$timeout(function(){
+					$scope.$apply();
+					html = $("#service-act-print").html()
+					$scope.editBeforePrint(html)
+				});
+			}
+
+			$scope.printServiceActIp = function(contract) {
+				$scope.print_mode = 'service-act-ip'
+				$scope.service_contract_parent = $scope.firstContractInChain(contract)
+				$scope.service_contract = $scope.lastContractInChain(contract)
+				$timeout(function(){
+					$scope.$apply();
+					html = $("#service-act-ip-print").html()
+					$scope.editBeforePrint(html);
+				});
+			}
+
+			$scope.printActTerminationIp = function(contract) {
+				$scope.print_mode = 'termination-act-ip'
+				$scope.term_contract_parent = $scope.firstContractInChain(contract)
+				$scope.term_contract = $scope.lastContractInChain(contract)
+				$timeout(function(){
+					$scope.$apply();
+					html = $("#termination-act-ip-print").html()
+					$scope.editBeforePrint(html);
+				});
 			}
 
 			$scope.getLastLessonDate = function() {
@@ -828,7 +852,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				printDiv($scope.print_mode + "-print")
 			}
 
-      $scope.printLlcBill = function(payment) {
+      		$scope.printLlcBill = function(payment) {
 				$scope.print_mode = 'llc-bill'
 				$scope.PrintPayment = payment
 				$scope.$apply()
@@ -839,8 +863,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.print_mode = 'pko'
 				$scope.PrintPayment = payment
 				$scope.Representative = $scope.representative
-				$scope.$apply()
-				printDiv($scope.print_mode + "-print")
+				$timeout(function() {
+					$scope.$apply()
+					printDiv($scope.print_mode + "-print")
+				})
 			}
 
 			/**
