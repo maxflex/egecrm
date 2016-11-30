@@ -11,6 +11,14 @@
 		
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
+			<div class="top-links">
+				<a class="link-like"
+					ng-repeat="year in <?= Years::json() ?>"
+					ng-href="{{ year != active_year ? 'teachers/salary/' + year : '' }}"
+					ng-class="{ 'active': year == active_year }"
+				>{{ year + '-' + (year + 1) }}</a>
+			</div>
+
 			<table class="table table-hover">
 				<thead>
 					<tr style="height: 35px">
