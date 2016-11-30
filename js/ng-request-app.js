@@ -775,6 +775,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.print_mode = 'service-act-ip'
 				$scope.service_contract_parent = $scope.firstContractInChain(contract)
 				$scope.service_contract = $scope.lastContractInChain(contract)
+				$scope.term_contract_parent = $scope.firstContractInChain(contract)
+				$scope.term_contract = $scope.lastContractInChain(contract)
+
 				$timeout(function(){
 					$scope.$apply();
 					html = $("#service-act-ip-print").html()
@@ -782,38 +785,27 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				});
 			}
 
-			$scope.printActTerminationIp = function(contract) {
-				$scope.print_mode = 'termination-act-ip'
-				$scope.term_contract_parent = $scope.firstContractInChain(contract)
-				$scope.term_contract = $scope.lastContractInChain(contract)
-				$timeout(function(){
-					$scope.$apply();
-					html = $("#termination-act-ip-print").html()
-					$scope.editBeforePrint(html);
-				});
-			}
-
 			$scope.getLastLessonDate = function() {
-        date = '0000-00-00'
-        // если есть активные группы
-        if ($scope.Groups && $scope.Groups.length) {
-          $.each($scope.Groups, function(index, Group) {
-            new_date = _.last(Group.Schedule).date
-            if (new_date > date) {
-              date = new_date
-            }
-          })
-        } else {
-          // иначе берем группы которые были посещены
-          $.each($scope.getStudentGroups(), function(index, id_group) {
-            var last_lesson = _.last($scope.getVisitsByGroup(id_group));
-            new_date = last_lesson.lesson_date
-            if (new_date > date) {
-              date = new_date;
-            }
-          })
-        }
-        return $scope.textDate(date)
+				date = '0000-00-00'
+				// если есть активные группы
+				if ($scope.Groups && $scope.Groups.length) {
+				  $.each($scope.Groups, function(index, Group) {
+					new_date = _.last(Group.Schedule).date
+					if (new_date > date) {
+					  date = new_date
+					}
+				  })
+				} else {
+				  // иначе берем группы которые были посещены
+				  $.each($scope.getStudentGroups(), function(index, id_group) {
+					var last_lesson = _.last($scope.getVisitsByGroup(id_group));
+					new_date = last_lesson.lesson_date
+					if (new_date > date) {
+					  date = new_date;
+					}
+				  })
+				}
+				return $scope.textDate(date)
 			}
 
 			$scope.todayDate = function() {
