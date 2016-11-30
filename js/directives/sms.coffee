@@ -5,7 +5,7 @@ app.directive 'sms', ->
         number:     '='
         templates:  '@'
         mode:       '@'
-    controller: ($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService, SmsTemplate) ->
+    controller: ($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService) ->
         bindArguments $scope, arguments
         $scope.mass = false
 
@@ -19,27 +19,27 @@ app.directive 'sms', ->
 
             $scope.SmsService.mode = $scope.mode if $scope.mode
             if promise = SmsService.send $scope.mode, $scope.number, $scope.message, $scope.mass
-                promise.then (data) ->
+                promise.then (response) ->
                     ajaxEnd()
                     $scope.sms_sending = false
-                    $scope.history.push(data)
-                    scrollDown()
+                    $scope.history.unshift response.data
+                    $timeout ->
+                        $scope.$apply()
+                    scrollUp()
             else
                 ajaxEnd()
             $scope.message = ''
 
 
         $scope.$watch 'number', (newVal, oldVal) ->
-            $scope.history = SmsService.getHistory(newVal)
-            scrollDown()
+            $scope.history = SmsService.getHistory newVal
+            scrollUp()
 
-        scrollDown = ->
+        scrollUp = ->
             $timeout ->
-                $('#sms-history').animate({ scrollTop: $(window).height() }, 'fast');
+                $('#sms-history').animate({ scrollTop: 0 }, 'fast');
 
         $scope.setTemplate = (id_template) ->
-            $http.post 'templates/ajax/get',
-                number: id_template
+            SmsService.getTemplate id_template, $scope.$parent.student || $scope.$parent.Teacher
             .then (response) ->
-                console.log response
-                $scope.message = response
+                $scope.message = response.data

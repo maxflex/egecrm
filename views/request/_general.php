@@ -40,65 +40,92 @@
 		            </div>
 
 					<div>
-			        	<div class="form-group">
-				            <div class="input-group"
-					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone')  || (!isMobilePhone('student-phone') && student_phone_level >= 2) }">
-			                	<input ng-keyup id="student-phone" type="text"
-			                		placeholder="телефон" class="form-control phone-masked"  name="Student[phone]" ng-model="student.phone">
-			                	<div class="input-group-btn">
-					                	<button class="btn btn-default" ng-show="phoneCorrect('student-phone') && isMobilePhone('student-phone')" ng-click="callSip('student-phone')">
-						                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
-		                				</button>
-										<button ng-show="phoneCorrect('student-phone') && isMobilePhone('student-phone')" ng-class="{
-												'addon-bordered' : student_phone_level >= 2 || !phoneCorrect('student-phone')
-											}" class="btn btn-default" type="button" onclick="smsDialog('student-phone')">
-												<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
-										</button>
-							        	<button ng-hide="student_phone_level >= 2 || !phoneCorrect('student-phone')" class="btn btn-default" type="button" ng-click="student_phone_level = student_phone_level + 1">
-							        		<span class="glyphicon glyphicon-plus no-margin-right small"></span>
-							        	</button>
-						            </div>
-							</div>
-						</div>
-
-						<div class="form-group" ng-show="student_phone_level >= 2">
-				            <div class="input-group"
-					            ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-2')  || (!isMobilePhone('student-phone-2') && student_phone_level >= 3) }">
-			                	<input ng-keyup id="student-phone-2" type="text"
-			                		placeholder="телефон 2" class="form-control phone-masked"  name="Student[phone2]" ng-model="student.phone2">
-			                	<div class="input-group-btn">
-				                	<button class="btn btn-default" ng-show="phoneCorrect('student-phone-2') && isMobilePhone('student-phone-2')" ng-click="callSip('student-phone-2')">
-					                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
-	                				</button>
-									<button ng-show="phoneCorrect('student-phone-2') && isMobilePhone('student-phone-2')" ng-class="{
-											'addon-bordered' : student_phone_level >= 3 || !phoneCorrect('student-phone-2')
-										}" class="btn btn-default" type="button"  onclick="smsDialog('student-phone-2')">
-											<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+						<div class="form-group">
+							<div class="input-group"
+								 ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(student.phone) || (!PhoneService.isMobile(student.phone) && student_phone_level >= 2) }">
+								<input id="student-phone" type="text" placeholder="телефон" class="form-control phone-masked"  name="Student[phone]"
+									   ng-model="student.phone"
+									   ng-value="PhoneService.format(student.phone)"
+								>
+								<div class="input-group-btn">
+									<button class="btn btn-default"
+											ng-show="PhoneService.isFull(student.phone) && PhoneService.isMobile(student.phone)"
+											ng-click="PhoneService.call(student.phone)"
+									>
+										<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 									</button>
-						        	<button ng-hide="student_phone_level >= 3 || !phoneCorrect('student-phone-2')" class="btn btn-default" type="button" ng-click="student_phone_level = student_phone_level + 1">
-						        		<span class="glyphicon glyphicon-plus no-margin-right small"></span>
-						        	</button>
-					            </div>
+									<button class="btn btn-default" type="button"
+											ng-show="PhoneService.isFull(student.phone) && PhoneService.isMobile(student.phone)"
+											ng-class="{'addon-bordered' : student_phone_level >= 2 || !PhoneService.isFull(student.phone)}"
+											ng-click="PhoneService.sms(student.phone)"
+									>
+										<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+									</button>
+									<button class="btn btn-default" type="button"
+											ng-hide="student_phone_level >= 2 || !PhoneService.isFull(student.phone)"
+											ng-click="student_phone_level = student_phone_level + 1"
+									>
+										<span class="glyphicon glyphicon-plus no-margin-right small"></span>
+									</button>
+								</div>
 							</div>
 						</div>
+						<div class="form-group" ng-show="student_phone_level >= 2">
+							<div class="input-group"
+								 ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(student.phone2)  || (!PhoneSerice.isMobile(student.phone2) && student_phone_level >= 3) }">
+								<input id="student-phone-2" type="text" placeholder="телефон 2" class="form-control phone-masked"  name="Student[phone2]"
+									   ng-model="student.phone2"
+									   ng-value="PhoneService.format(student.phone2)"
+								>
+								<div class="input-group-btn">
+									<button class="btn btn-default"
+											ng-show="PhoneService.isFull(student.phone2) && PhoneService.isMobile(student.phone2)"
+											ng-click="PhoneService.call(student.phone2)"
+									>
+										<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+									</button>
 
-
-						<div class="form-group" ng-show="student_phone_level >= 3">
-							<div class="input-group" ng-class="{'input-group-with-hidden-span' : !phoneCorrect('student-phone-3') || !isMobilePhone('student-phone-3') }">
-				                <input type="text" id="student-phone-3" placeholder="телефон 3"
-				                	class="form-control phone-masked"  name="Student[phone3]" ng-model="student.phone3">
-				                	<div class="input-group-btn">
-					                	<button class="btn btn-default" ng-show="phoneCorrect('student-phone-3') && isMobilePhone('student-phone-3')" ng-click="callSip('student-phone-3')">
-						                	<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
-		                				</button>
-										<button ng-show="phoneCorrect('student-phone-3') && isMobilePhone('student-phone-3')" ng-class="{
-												'addon-bordered': !phoneCorrect('student-phone-3')
-											}" class="btn btn-default" type="button"  onclick="smsDialog('student-phone-3')">
-												<span class="glyphicon glyphicon-envelope no-margin-right" style="font-size: 12px"></span>
-										</button>
-						            </div>
+									<button class="btn btn-default" type="button"
+											ng-show="PhoneService.isFull(student.phone2) && PhoneService.isMobile(student.phone2)"
+											ng-class="{'addon-bordered' : request_phone_level >= 3 || !PhoneService.isFull(student.phone2)}"
+											ng-click="PhoneService.sms(student.phone2)"
+									>
+										<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+									</button>
+									<button class="btn btn-default" type="button"
+											ng-hide="student_phone_level >= 3 || !PhoneService.isFull(student.phone2)"
+											ng-click="student_phone_level = student_phone_level + 1"
+									>
+										<span class="glyphicon glyphicon-plus no-margin-right small"></span>
+									</button>
+								</div>
 							</div>
-			            </div>
+						</div>
+						<div class="form-group" ng-show="student_phone_level >= 3">
+							<div class="input-group"
+								 ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(student.phone3)  || (!PhoneSerice.isMobile(student.phone3) && student_phone_level >= 4) }">
+								<input id="student-phone-3" type="text" placeholder="телефон 3" class="form-control phone-masked"  name="Student[phone3]"
+									   ng-model="Student.phone3"
+									   ng-value="PhoneService.format(Student.phone3)"
+								>
+								<div class="input-group-btn">
+									<button class="btn btn-default"
+											ng-show="PhoneService.isFull(Student.phone3) && PhoneService.isMobile(Student.phone3)"
+											ng-click="PhoneService.call(Student.phone3)"
+									>
+										<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+									</button>
+
+									<button class="btn btn-default" type="button"
+											ng-show="PhoneService.isFull(Student.phone3) && PhoneService.isMobile(Student.phone3)"
+											ng-class="{'addon-bordered' : student_phone_level >= 3 || !PhoneService.isFull(Student.phone3)}"
+											ng-click="PhoneService.sms(Student.phone3)"
+									>
+										<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+									</button>
+								</div>
+							</div>
+						</div>
 					</div>
 
 					 <div class="form-group">

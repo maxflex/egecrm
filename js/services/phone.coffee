@@ -3,9 +3,11 @@ app.service 'PhoneService', ($rootScope) ->
         location.href = "sip:" + number.replace(/[^0-9]/g, '')
 
     @isMobile = (number) ->
+        number = '' + number if typeof number isnt 'string'
         number and (parseInt(number[4]) is 9 or parseInt(number[1]) is 9)
 
     @clean = (number) ->
+        number = '' + number if typeof number isnt 'string'
         number.replace /[^0-9]/gim, "";
 
     @format = (number) ->
@@ -17,4 +19,6 @@ app.service 'PhoneService', ($rootScope) ->
         $rootScope.sms_number = @clean(number)
         lightBoxShow 'sms'
 
+    @isFull = (number) ->
+        @clean(number).length is 11
     @

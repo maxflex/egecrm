@@ -162,8 +162,8 @@ app.directive('sms', function() {
       templates: '@',
       mode: '@'
     },
-    controller: function($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService, SmsTemplate) {
-      var scrollDown;
+    controller: function($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService) {
+      var scrollUp;
       bindArguments($scope, arguments);
       $scope.mass = false;
       $scope.smsCount = function() {
@@ -177,11 +177,14 @@ app.directive('sms', function() {
           $scope.SmsService.mode = $scope.mode;
         }
         if (promise = SmsService.send($scope.mode, $scope.number, $scope.message, $scope.mass)) {
-          promise.then(function(data) {
+          promise.then(function(response) {
             ajaxEnd();
             $scope.sms_sending = false;
-            $scope.history.push(data);
-            return scrollDown();
+            $scope.history.unshift(response.data);
+            $timeout(function() {
+              return $scope.$apply();
+            });
+            return scrollUp();
           });
         } else {
           ajaxEnd();
@@ -190,21 +193,18 @@ app.directive('sms', function() {
       };
       $scope.$watch('number', function(newVal, oldVal) {
         $scope.history = SmsService.getHistory(newVal);
-        return scrollDown();
+        return scrollUp();
       });
-      scrollDown = function() {
+      scrollUp = function() {
         return $timeout(function() {
           return $('#sms-history').animate({
-            scrollTop: $(window).height()
+            scrollTop: 0
           }, 'fast');
         });
       };
       return $scope.setTemplate = function(id_template) {
-        return $http.post('templates/ajax/get', {
-          number: id_template
-        }).then(function(response) {
-          console.log(response);
-          return $scope.message = response;
+        return SmsService.getTemplate(id_template, $scope.$parent.student || $scope.$parent.Teacher).then(function(response) {
+          return $scope.message = response.data;
         });
       };
     }
@@ -216,9 +216,15 @@ app.service('PhoneService', function($rootScope) {
     return location.href = "sip:" + number.replace(/[^0-9]/g, '');
   };
   this.isMobile = function(number) {
+    if (typeof number !== 'string') {
+      number = '' + number;
+    }
     return number && (parseInt(number[4]) === 9 || parseInt(number[1]) === 9);
   };
   this.clean = function(number) {
+    if (typeof number !== 'string') {
+      number = '' + number;
+    }
     return number.replace(/[^0-9]/gim, "");
   };
   this.format = function(number) {
@@ -231,6 +237,9 @@ app.service('PhoneService', function($rootScope) {
   this.sms = function(number) {
     $rootScope.sms_number = this.clean(number);
     return lightBoxShow('sms');
+  };
+  this.isFull = function(number) {
+    return this.clean(number).length === 11;
   };
   return this;
 });
@@ -265,6 +274,11 @@ app.service('PusherService', function($http, $q, UserService) {
 app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
   this.updates = [];
   this.mode = DEFUAULT_SMS_MODE;
+  this.post_config = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  };
   PusherService.bind('sms', (function(_this) {
     return function(data) {
       _this.updates[data.id] = data.status;
@@ -293,7 +307,7 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
     }
   };
   this.send = function(mode, number, message, mass) {
-    var action;
+    var action, data;
     if (message) {
       switch (this.mode) {
         case 2:
@@ -308,13 +322,33 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
         default:
           action = 'sendSms';
       }
-      console.log(action);
-      return $http.post('ajax/sendSms', {
+      data = $.param({
         message: message,
         number: number,
         mass: mass
-      }, 'json');
+      });
+      return $http.post('ajax/' + action, data, this.post_config, 'json');
     }
+  };
+  this.getTemplate = function(id_template, entity) {
+    var data, params;
+    params = {};
+    if (entity) {
+      if (entity.login) {
+        params['entity_login'] = entity.login;
+      }
+      if (entity.password) {
+        params['entity_password'] = entity.password;
+      }
+      if (entity.phone) {
+        params['phone'] = entity.phone;
+      }
+    }
+    data = $.param({
+      number: id_template,
+      params: params
+    });
+    return $http.post('templates/ajax/get', data, this.post_config);
   };
   return this;
 });
@@ -402,15 +436,6 @@ app.factory('Sms', function($resource) {
       method: 'GET',
       url: 'get/sms/:number',
       isArray: true
-    }
-  });
-}).factory('SmsTemplate', function($resource) {
-  return $resource('templates/ajax/get', {}, {
-    get: {
-      method: 'POST',
-      params: {
-        id_template: ':id_template'
-      }
     }
   });
 }).factory('User', function($resource) {

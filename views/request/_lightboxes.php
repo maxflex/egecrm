@@ -95,3 +95,7 @@
 		</center>
 	</div>
 	<!-- /СКЛЕЙКА КЛИЕНТОВ -->
+
+	<!-- СМС -->
+	<sms number='sms_number' templates="full"></sms>
+	<!-- /СМС -->

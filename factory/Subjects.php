@@ -224,7 +224,6 @@
 			}
 						
 			foreach ($options as $id_subject => $name) {
-				echo "<script>console.log($id_subject)</script>";
 				// если это массив выбранных элементов (при $multiple = true)
 				$option_selected = in_array($id_subject, $selected);
 				

@@ -34,9 +34,9 @@
                 <span ng-click="setTemplate(1)">подтверждение договоренности</span>
                 <span ng-click="setTemplate(2)">нет связи с клиентом</span>
                 <span ng-click="setTemplate(3)">нет связи с ожидающими и не решившими</span>
-                <span class="fake" ng-show="templates == TEMPLATES_FULL">
-                    <span onclick="loginPasswordTemplate()">логин/пароль</span>
-                    <span onclick="newTestTemplate()">новый тест</span>
+                <span class="fake" ng-show="templates == 'full'">
+                    <span ng-click="setTemplate(4)">логин/пароль</span>
+                    <span ng-click="setTemplate(13)">новый тест</span>
                 </span>
 
                 <div class="sms-group-controls pull-right" ng-show="mode">

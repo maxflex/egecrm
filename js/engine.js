@@ -1025,8 +1025,6 @@ function ExpandSelect(select, maxOptionsVisible)
 		return result;
 	}
 
-	DEFUAULT_SMS_MODE   = 1
-	GROUP_SMS_MODE   = 2
-	CLIENT_SMS_MODE  = 3
-	TEMLATES_FULL    = 'full'
-	TEMLATES_LIGHT   = 'light'
+	DEFUAULT_SMS_MODE = 1
+	GROUP_SMS_MODE    = 2
+	CLIENT_SMS_MODE   = 3

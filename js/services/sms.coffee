@@ -1,6 +1,9 @@
 app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
     @updates = []
     @mode    = DEFUAULT_SMS_MODE
+    @post_config =
+        headers:
+            'Content-Type': 'application/x-www-form-urlencoded'
 
     PusherService.bind 'sms', (data) =>
         @updates[data.id] = data.status
@@ -30,11 +33,23 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
                 else
                     action = 'sendSms'
 
-            console.log action
-            $http.post 'ajax/sendSms',
+            data = $.param
                 message: message
                 number:  number
                 mass:    mass
-            , 'json'
+            $http.post 'ajax/' + action, data, @post_config, 'json'
+
+    @getTemplate = (id_template, entity) ->
+        params = {}
+        if entity
+            params['entity_login'] = entity.login if entity.login
+            params['entity_password'] = entity.password if entity.password
+            params['phone'] = entity.phone if entity.phone
+
+        data = $.param
+            number: id_template
+            params: params
+
+        $http.post 'templates/ajax/get', data, @post_config
 
     @
