@@ -45,13 +45,13 @@
 							{{d.count | number}} 
 						</td>
 						<td class="center">
-							{{d.sum | number}} 
+							<span ng-hide="!d.sum">{{d.sum | number}}</span>
 						</td>
 						<td class="center">
 							<span ng-hide="!d.payment_sum">{{d.payment_sum | number}}</span>
 						</td>
 						<td class="center">
-							<span ng-hide="(d.sum - d.payment_sum) == 0">{{(d.sum - d.payment_sum) | number}}</span>
+							<span ng-hide="(d.real_sum - d.payment_sum) == 0">{{(d.real_sum - d.payment_sum) | number}}</span>
 						</td>
 					</tr>
 
@@ -69,7 +69,7 @@
 							<b>{{total_payment_sum | number}}</b>
 						</td>
 						<td class="center">
-							<b>{{(total_sum - total_payment_sum) | number}}</b>
+							<b>{{(real_total_sum - total_payment_sum) | number}}</b>
 						</td>
 					</tr>
 				</tbody>

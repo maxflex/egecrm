@@ -38,6 +38,7 @@
                                         )->fetch_object()->teacher_ids
                            );
 
+			$real_total_sum = 0;
 			$total_sum = 0;
 			$total_payment_sum = 0;
 			$lesson_count = 0;
@@ -60,24 +61,28 @@
 				]);
 
 				$sum = 0;
+                $real_sum = 0;
 				foreach ($Data as $OneData) {
                     if ($year) {
                         if ($year == $OneData->year) {
                             $sum += $OneData->teacher_price;
+                            $total_sum += $OneData->teacher_price;
                         }
                     } else {
                         $sum += $OneData->teacher_price;
+                        $total_sum += $OneData->teacher_price;
                     }
-
-                    $total_sum += $OneData->teacher_price;
-				}
+                    $real_sum += $OneData->teacher_price;
+                    $real_total_sum += $OneData->teacher_price;
+                }
 
 				$lesson_count += count($Data);
 
 				$return[] = [
 					"Teacher" 	=> $Teacher,
 					"sum"		=> $sum,
-					"payment_sum" => $payment_sum,
+                    "real_sum"  => $real_sum,
+                    "payment_sum" => $payment_sum,
 					"count"		=> count($Data),
 				];
 			}
@@ -114,6 +119,7 @@
 			$ang_init_data = angInit([
 				"Data" 		        => $return,
 				"total_sum"			=> $total_sum,
+				"real_total_sum"			=> $real_total_sum,
 				"total_payment_sum"	=> $total_payment_sum,
 				"lesson_count"		=> $lesson_count,
 				"subjects"	        => Subjects::$short,
@@ -121,7 +127,7 @@
 			]);
 
 			$this->setTabTitle('Дебет преподавателей');
-            $this->setRightTabTitle('Планируемый дебет ' . str_replace(',', ' ', $tobe_paid) . ' р.');
+            $this->setRightTabTitle('Планируемый дебет: ' . str_replace(',', ' ', $tobe_paid) . ' руб.');
 
 			$this->render("salary", [
 				"ang_init_data" => $ang_init_data,
