@@ -54,9 +54,10 @@
             </td>
         </tr>
         <?php if ($student_page || $teacher_page) :?>
-        <tr ng-show='payments !== undefined'>
+        <tr ng-show='payments !== undefined' ng-init="teacher_page = <?= $teacher_page ? 1 : 0 ?>">
 	        <td colspan="10">
 		        <a class="link-like link-reverse" ng-click="addPaymentDialog()">добавить</a>
+                <span class="payment-hint" ng-show="teacher_page">рекомендуемая сумма {{ tobe_paid | number }} руб.</span>
 	        </td>
         </tr>
         <?php endif ?>

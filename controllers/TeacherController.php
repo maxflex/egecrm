@@ -193,11 +193,14 @@
 					returnJsonAng(Teacher::getReviews($id_teacher));
 				}
 				case 2: {
-                    $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['login' => true, 'payments' => true]);
+                    $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['login', 'payments']);
                     returnJsonAng($Lessons);
 				}
 				case 3: {
-					returnJsonAng(Payment::findAll(["condition" => "entity_id=$id_teacher and entity_type='".Teacher::USER_TYPE."'", 'order'=>'first_save_date desc']));
+					returnJsonAng([
+                        'payments' => Payment::findAll(['condition' => "entity_id = $id_teacher and entity_type = '" . Teacher::USER_TYPE . "'", 'order'=>'first_save_date asc']),
+                        'tobe_paid' => Payment::tobePaid($id_teacher, Teacher::USER_TYPE)
+                    ]);
 				}
 				case 4: {
 					returnJsonAng(Teacher::getReportsStatic($id_teacher));

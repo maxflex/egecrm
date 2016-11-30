@@ -56,19 +56,23 @@
 
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars']
 
-			$scope.setMenu = (menu) ->
+			$scope.setMenu = (menu, complex_data) ->
 				$.each menus, (index, value) ->
-					_loadData(index, menu, value)
+					_loadData(index, menu, value, complex_data)
 				$scope.current_menu = menu
 
 			_postData = (menu) ->
 				id_teacher: $scope.Teacher.id
 				menu: menu
 
-			_loadData = (menu, selected_menu, ngModel) ->
+			_loadData = (menu, selected_menu, ngModel, complex_data) ->
 				if $scope[ngModel] is undefined and menu is selected_menu
 					$.post "teachers/ajax/menu", _postData(menu), (response) ->
-						$scope[ngModel] = response
+						if complex_data
+							_.each response, (value, field) ->
+								$scope[field] = value
+						else
+							$scope[ngModel] = response
 						$scope.$apply()
 					, "json"
 

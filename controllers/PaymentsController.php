@@ -109,7 +109,7 @@
 		public function actionAjaxLkTeacher()
 		{
             $id_teacher = User::fromSession()->id_entity;
-            $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['payments' => true]);
+            $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['payments']);
             returnJsonAng([
                 'Lessons' => $Lessons,
             ]);

@@ -73,9 +73,9 @@ app = angular.module("Teacher", ["ngMap"]).config([
   var _loadData, _postData, bindFileUpload, menus;
   $scope["enum"] = review_statuses;
   menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars'];
-  $scope.setMenu = function(menu) {
+  $scope.setMenu = function(menu, complex_data) {
     $.each(menus, function(index, value) {
-      return _loadData(index, menu, value);
+      return _loadData(index, menu, value, complex_data);
     });
     return $scope.current_menu = menu;
   };
@@ -85,10 +85,16 @@ app = angular.module("Teacher", ["ngMap"]).config([
       menu: menu
     };
   };
-  _loadData = function(menu, selected_menu, ngModel) {
+  _loadData = function(menu, selected_menu, ngModel, complex_data) {
     if ($scope[ngModel] === void 0 && menu === selected_menu) {
       return $.post("teachers/ajax/menu", _postData(menu), function(response) {
-        $scope[ngModel] = response;
+        if (complex_data) {
+          _.each(response, function(value, field) {
+            return $scope[field] = value;
+          });
+        } else {
+          $scope[ngModel] = response;
+        }
         return $scope.$apply();
       }, "json");
     }

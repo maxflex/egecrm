@@ -2667,4 +2667,9 @@ h4.row-header.default-case {
 [role=button] {
   cursor: pointer; }
 
+.payment-hint {
+  display: inline-block;
+  margin-left: 10px;
+  color: #999999; }
+
 /*# sourceMappingURL=style.css.map */
