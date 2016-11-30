@@ -70,7 +70,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
     return set_scope("Teacher");
   });
 }).controller("EditCtrl", function($scope, $timeout, $http) {
-  var _loadData, _postData, bindFileUpload, menus;
+  var _loadData, _postData, bindFileUpload, deletePayment, menus;
   $scope["enum"] = review_statuses;
   menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars'];
   $scope.setMenu = function(menu, complex_data) {
@@ -266,7 +266,9 @@ app = angular.module("Teacher", ["ngMap"]).config([
   $scope.editPayment = function(payment) {
     if (!payment.confirmed) {
       $scope.new_payment = angular.copy(payment);
-      $scope.$apply();
+      $timeout(function() {
+        return $scope.$apply();
+      });
       lightBoxShow('addpayment');
       return;
     }
@@ -403,7 +405,10 @@ app = angular.module("Teacher", ["ngMap"]).config([
         $scope.new_payment.id = response.id;
         $scope.new_payment.document_number = response.document_number;
         $scope.payments = initIfNotSet($scope.payments);
-        $scope.payments.unshift($scope.new_payment);
+        $scope.payments.push($scope.new_payment);
+        if ($scope.tobe_paid) {
+          $scope.tobe_paid -= $scope.new_payment.sum;
+        }
         $scope.new_payment = {
           id_status: 0
         };
@@ -413,24 +418,28 @@ app = angular.module("Teacher", ["ngMap"]).config([
       }, 'json');
     }
   };
+  deletePayment = function(payment) {
+    return bootbox.confirm('Вы уверены, что хотите удалить платеж?', function(result) {
+      if (result === true) {
+        return $.post('ajax/deletePayment', {
+          'id_payment': payment.id
+        }, function() {
+          $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
+            id: payment.id
+          }));
+          if ($scope.tobe_paid) {
+            $scope.tobe_paid += parseInt(payment.sum);
+          }
+          return $timeout(function() {
+            return $scope.$apply();
+          });
+        });
+      }
+    });
+  };
   $scope.deletePayment = function(index, payment) {
     if (!payment.confirmed) {
-      bootbox.confirm('Вы уверены, что хотите удалить платеж?', function(result) {
-        if (result === true) {
-          ajaxStart();
-          $.post('ajax/deletePayment', {
-            'id_payment': payment.id
-          }, function() {
-            ajaxEnd();
-            $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
-              id: payment.id
-            }));
-            return $timeout(function() {
-              return $scope.$apply();
-            });
-          });
-        }
-      });
+      deletePayment(payment);
     } else {
       bootbox.prompt({
         title: 'Введите пароль',
@@ -439,20 +448,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
           if (result === null) {
 
           } else if (hex_md5(result === payments_hash)) {
-            bootbox.confirm('Вы уверены, что хотите удалить платеж?', function(result) {
-              if (result === true) {
-                $.post('ajax/deletePayment', {
-                  'id_payment': payment.id
-                }, function() {
-                  $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
-                    id: payment.id
-                  }));
-                  return $timeout(function() {
-                    return $scope.$apply();
-                  });
-                });
-              }
-            });
+            deletePayment(payment);
           } else if (result !== null) {
             $('.bootbox-form').addClass('has-error').children().first().focus();
             $('.bootbox-input-text').on('keydown', function() {
