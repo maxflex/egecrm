@@ -1667,6 +1667,11 @@ h4.row-header {
     border-bottom-right-radius: 10px;
     -webkit-transform: translate(-30px, -2px); }
 
+.sms-group-controls input {
+  vertical-align: sub; }
+.sms-group-controls label {
+  font-weight: normal; }
+
 .lightbox-addpayment {
   width: 670px;
   left: calc(50% - 335px);

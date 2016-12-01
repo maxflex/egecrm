@@ -160,12 +160,12 @@ app.directive('sms', function() {
     scope: {
       number: '=',
       templates: '@',
-      mode: '@'
+      mode: '@',
+      counts: '='
     },
     controller: function($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService) {
-      var scrollUp;
+      var init, scrollUp;
       bindArguments($scope, arguments);
-      $scope.mass = false;
       $scope.smsCount = function() {
         return SmsCounter.count($scope.message || '').messages;
       };
@@ -173,9 +173,6 @@ app.directive('sms', function() {
         var promise;
         ajaxStart();
         $scope.sms_sending = true;
-        if ($scope.mode) {
-          $scope.SmsService.mode = $scope.mode;
-        }
         if (promise = SmsService.send($scope.mode, $scope.number, $scope.message, $scope.mass)) {
           promise.then(function(response) {
             ajaxEnd();
@@ -202,11 +199,21 @@ app.directive('sms', function() {
           }, 'fast');
         });
       };
-      return $scope.setTemplate = function(id_template) {
+      $scope.setTemplate = function(id_template) {
         return SmsService.getTemplate(id_template, $scope.$parent.student || $scope.$parent.Teacher).then(function(response) {
           return $scope.message = response.data;
         });
       };
+      init = function() {
+        $scope.SmsService.mass = false;
+        $scope.SmsService.to_students = true;
+        $scope.SmsService.to_representatives = false;
+        $scope.SmsService.to_teachers = true;
+        if ($scope.mode) {
+          return $scope.SmsService.mode = $scope.mode;
+        }
+      };
+      return init();
     }
   };
 });
@@ -273,7 +280,7 @@ app.service('PusherService', function($http, $q, UserService) {
 
 app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
   this.updates = [];
-  this.mode = DEFUAULT_SMS_MODE;
+  this.mode = 'default';
   this.post_config = {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -310,13 +317,13 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
     var action, data;
     if (message) {
       switch (this.mode) {
-        case 2:
+        case 'group':
           action = 'sendGroupSms';
           break;
-        case 3:
+        case 'client':
           action = 'sendGroupSmsClients';
           break;
-        case 4:
+        case 'teacher':
           action = 'sendGroupSmsTeachers';
           break;
         default:
@@ -364,7 +371,10 @@ app.service('UserService', function($rootScope, $q, $http, $timeout, User) {
   })(this));
   $timeout((function(_this) {
     return function() {
-      _this.current_user = $rootScope.$$childTail.user;
+      var user;
+      if (user = $rootScope.$$childTail.user) {
+        _this.current_user = user;
+      }
       return _this.current_loaded.resolve(true);
     };
   })(this));

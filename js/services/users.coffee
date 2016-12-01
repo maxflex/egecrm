@@ -6,7 +6,7 @@ app.service 'UserService', ($rootScope, $q, $http, $timeout, User)->
         @loaded.resolve true
 
     $timeout =>
-        @current_user = $rootScope.$$childTail.user
+        @current_user = user if user = $rootScope.$$childTail.user
         @current_loaded.resolve true
 
     system_user =

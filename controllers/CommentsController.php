@@ -8,7 +8,7 @@ class CommentsController extends Controller
     public function actionGet()
     {
         $return = [];
-        if ($params = $this->validate() && ($data = Comment::getByPlace($params->place, $params->id))) {
+        if (($params = $this->validate()) && ($data = Comment::getByPlace($params->place, $params->id))) {
             $return = $data;
         }
 

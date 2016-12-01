@@ -23,7 +23,8 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
     });
     return arr;
   };
-}).controller("ListCtrl", function($scope, $timeout) {
+}).controller("ListCtrl", function($scope, $timeout, PhoneService) {
+  bindArguments($scope, arguments);
   $scope.yearLabel = function(year) {
     return 'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год';
   };
@@ -48,7 +49,6 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
     return $scope.getByPage($scope.current_page);
   };
   $scope.pageChanged = function() {
-    console.log($scope.currentPage);
     if ($scope.current_page > 1) {
       window.history.pushState({}, '', 'clients/?page=' + $scope.current_page);
     }

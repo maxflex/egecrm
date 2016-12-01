@@ -6,7 +6,7 @@
 <div class="panel panel-primary" ng-app="Clients" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="panel-heading">Клиенты с договорами
 		<div class="pull-right">
-			<span class="link-like link-reverse link-white" ng-click="smsDialog3()">
+			<span class="link-like link-reverse link-white" ng-click="PhoneService.sms()">
 					групповое SMS</span>
 		</div>
 	</div>
@@ -93,4 +93,5 @@
 			нет клиентов
 		</div>
 	</div>
+	<sms templates="full" mode="client" counts="counts.all"></sms>
 </div>

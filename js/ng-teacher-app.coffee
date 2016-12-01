@@ -51,7 +51,8 @@
 		.controller "SalaryCtrl", ($scope) ->
 			angular.element(document).ready ->
 				set_scope "Teacher"
-		.controller "EditCtrl", ($scope, $timeout, $http) ->
+		.controller "EditCtrl", ($scope, $timeout, PhoneService) ->
+			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars']

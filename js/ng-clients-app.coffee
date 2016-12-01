@@ -12,7 +12,8 @@ app = angular.module "Clients", ["ui.bootstrap"]
 			$.each obj, (index, value) ->
 				arr.push(value)
 			return arr
-	.controller "ListCtrl", ($scope, $timeout) ->
+	.controller "ListCtrl", ($scope, $timeout, PhoneService) ->
+		bindArguments $scope, arguments
 		$scope.yearLabel = (year) ->
 			'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год'
 		
@@ -34,7 +35,6 @@ app = angular.module "Clients", ["ui.bootstrap"]
 		
 		# Страница изменилась
 		$scope.pageChanged = ->
-			console.log $scope.currentPage
 			window.history.pushState {}, '', 'clients/?page=' + $scope.current_page if $scope.current_page > 1
 			# Получаем задачи, соответствующие странице и списку
 			$scope.getByPage($scope.current_page)

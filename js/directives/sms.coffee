@@ -5,9 +5,9 @@ app.directive 'sms', ->
         number:     '='
         templates:  '@'
         mode:       '@'
+        counts:     '='
     controller: ($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService) ->
         bindArguments $scope, arguments
-        $scope.mass = false
 
         $scope.smsCount = ->
             SmsCounter.count($scope.message || '').messages
@@ -17,7 +17,6 @@ app.directive 'sms', ->
             ajaxStart()
             $scope.sms_sending = true
 
-            $scope.SmsService.mode = $scope.mode if $scope.mode
             if promise = SmsService.send $scope.mode, $scope.number, $scope.message, $scope.mass
                 promise.then (response) ->
                     ajaxEnd()
@@ -43,3 +42,12 @@ app.directive 'sms', ->
             SmsService.getTemplate id_template, $scope.$parent.student || $scope.$parent.Teacher
             .then (response) ->
                 $scope.message = response.data
+
+        init = ->
+            $scope.SmsService.mass = false
+            $scope.SmsService.to_students = true
+            $scope.SmsService.to_representatives = false
+            $scope.SmsService.to_teachers = true
+            $scope.SmsService.mode = $scope.mode if $scope.mode
+
+        init()

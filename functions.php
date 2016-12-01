@@ -46,7 +46,7 @@
 		global $db_egerep;
 		return $db_egerep;
 	}
-class a{public function get(){return false;}};
+
 	/*
 	 * Возвращает соединение DB_SETTINGS
 	 */

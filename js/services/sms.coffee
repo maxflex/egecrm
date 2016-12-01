@@ -1,6 +1,6 @@
 app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
     @updates = []
-    @mode    = DEFUAULT_SMS_MODE
+    @mode    = 'default'
     @post_config =
         headers:
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -24,11 +24,11 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
     @send = (mode, number, message, mass) ->
         if message
             switch @mode
-                when 2
+                when 'group'
                     action = 'sendGroupSms'
-                when 3
+                when 'client'
                     action = 'sendGroupSmsClients'
-                when 4
+                when 'teacher'
                     action = 'sendGroupSmsTeachers'
                 else
                     action = 'sendSms'

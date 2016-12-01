@@ -1966,6 +1966,14 @@ white-space: nowrap;
 		-webkit-transform:translate(-30px, -2px);
 	}
 }
+.sms-group-controls {
+  & input {
+	vertical-align: sub;
+  }
+  & label {
+	font-weight: normal;
+  }
+}
 
 .lightbox-addpayment {
 	width: 670px;

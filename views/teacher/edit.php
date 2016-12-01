@@ -35,89 +35,104 @@
 
 
 <div class="form-group">
-    <div class="input-group" 
-        ng-class="{'input-group-with-hidden-span' : !phoneCorrect('teacher-phone') || (!isMobilePhone('teacher-phone') && teacher_phone_level >= 2) }">
-    	<input ng-keyup id="teacher-phone" type="text" disabled
-    		placeholder="телефон" class="form-control phone-masked"  ng-model="Teacher.phone">
-    		
+	<div class="input-group"
+		 ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(Teacher.phone) || (!PhoneService.isMobile('teacher-phone') && teacher_phone_level >= 2) }">
+		<input id="teacher-phone" type="text" disabled placeholder="телефон" class="form-control phone-masked"
+			   ng-model="Teacher.phone"
+			   ng-value="PhoneService.format(Teacher.phone)"
+		>
     	<div class='comment-inside-input'>
 			<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.phone_comment'></span>
 			<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.phone_comment' disabled="">
     	</div>
-    	
+
     	<div class="input-group-btn">
-	    	<button class="btn btn-default" ng-show="phoneCorrect('teacher-phone')" ng-click="callSip('teacher-phone')" ng-class="{
-					'addon-bordered' : teacher_phone_level >= 2  && !isMobilePhone('teacher-phone')
-				}">
+	    	<button class="btn btn-default" ng-show="PhoneService.isFull(Teacher.phone)"
+					ng-click="PhoneService.call('teacher-phone')"
+					ng-class="{'addon-bordered' : teacher_phone_level >= 2  && !PhoneService.isMobile(Teacher.phone)}"
+			>
 				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 			</button>
-			<button ng-show="phoneCorrect('teacher-phone') && isMobilePhone('teacher-phone')" ng-class="{
-					'addon-bordered' : teacher_phone_level >= 2 || !phoneCorrect('teacher-phone')
-				}" class="btn btn-default" type="button" onclick="smsDialog('teacher-phone')">
-					<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+			<button class="btn btn-default" type="button"
+					ng-show="PhoneService.isFull(Teacher.phone) && PhoneService.isMobile(Teacher.phone)"
+					ng-class="{'addon-bordered' : teacher_phone_level >= 2 || !PhoneService.isFull(Teacher.phone)}"
+					ng-click="PhoneService.sms(Teacher.phone)"
+			>
+				<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 			</button>
-	    	<button disabled ng-hide="teacher_phone_level >= 2 || !phoneCorrect('teacher-phone')" class="btn btn-default" style='background: #EEE; color: black' type="button" ng-click="teacher_phone_level = teacher_phone_level + 1">
-	    		<span class="glyphicon glyphicon-plus no-margin-right small"></span>
-	    	</button>
-        </div>
+			<button disabled class="btn btn-default" style='background: #EEE; color: black' type="button"
+					ng-hide="teacher_phone_level >= 2 || !PhoneService.isFull(Teacher.phone)"
+					ng-click="teacher_phone_level = teacher_phone_level + 1">
+				<span class="glyphicon glyphicon-plus no-margin-right small"></span>
+			</button>
+		</div>
 	</div>
 </div>
 <div class="form-group" ng-show="teacher_phone_level >= 2">
-    <div class="input-group" 
-        ng-class="{'input-group-with-hidden-span' : !phoneCorrect('teacher-phone-2')  || (!isMobilePhone('teacher-phone') && teacher_phone_level >= 3) }">
-    	<input ng-keyup id="teacher-phone-2" type="text" disabled
-    		placeholder="телефон 2" class="form-control phone-masked" ng-model="Teacher.phone2">
-    		
-    	<div class='comment-inside-input'>
+	<div class="input-group"
+        ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(Teacher.phone2)  || (!PhoneService.isMobile(Teacher.phone2) && teacher_phone_level >= 3) }">
+		<input id="teacher-phone-2" type="text" disabled placeholder="телефон 2" class="form-control phone-masked"
+			   ng-model="Teacher.phone2"
+			   ng-value="PhoneService.format(Teacher.phone2)"
+		>
+		<div class='comment-inside-input'>
 			<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.phone2_comment'></span>
 			<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.phone2_comment' disabled="">
-    	</div>
-
-			
-    	<div class="input-group-btn">
-    		<button class="btn btn-default" ng-show="phoneCorrect('teacher-phone-2')" ng-click="callSip('teacher-phone-2')"  ng-class="{
-					'addon-bordered' : teacher_phone_level >= 3  && !isMobilePhone('teacher-phone-2')
-				}">
+		</div>
+		<div class="input-group-btn">
+			<button class="btn btn-default"
+					ng-show="PhoneService.isFull(Teacher.phone2)"
+					ng-click="PhoneService.call(Teacher.phone2)"
+					ng-class="{'addon-bordered' : teacher_phone_level >= 3  && !PhoneService.isMobile(Teacher.phone2)}"
+			>
 				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
 			</button>
-			<button ng-show="phoneCorrect('teacher-phone-2') && isMobilePhone('teacher-phone-2')" ng-class="{
-					'addon-bordered' : teacher_phone_level >= 3 || !phoneCorrect('teacher-phone-2')
-				}" class="btn btn-default" type="button"  onclick="smsDialog('teacher-phone-2')">
-					<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+			<button class="btn btn-default" type="button"
+					ng-show="PhoneService.isFull(Teacher.phone2) && PhoneService.isMobile(Teacher.phone2)"
+					ng-class="{'addon-bordered' : teacher_phone_level >= 3 || !phoneCorrect(Teacher.phone2)}"
+					ng-click="PhoneService.sms(Teacher.phone2)"
+			>
+				<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 			</button>
-        	<button style='background: #EEE; color: black' disabled ng-hide="teacher_phone_level >= 3 || !phoneCorrect('teacher-phone-2')" class="btn btn-default" type="button" ng-click="teacher_phone_level = teacher_phone_level + 1">
-        		<span class="glyphicon glyphicon-plus no-margin-right small"></span>
-        	</button>
-        </div>
+			<button style='background: #EEE; color: black;' disabled class="btn btn-default" type="button"
+					ng-hide="teacher_phone_level >= 3 || !PhoneService.isFull(Teacher.phone2)"
+					ng-click="teacher_phone_level = teacher_phone_level + 1"
+			>
+				<span class="glyphicon glyphicon-plus no-margin-right small"></span>
+			</button>
+		</div>
 	</div>
 </div>
 <div class="form-group" ng-show="teacher_phone_level >= 3">
 	<div class="input-group" 
-		ng-class="{'input-group-with-hidden-span' : !phoneCorrect('teacher-phone-3')  || !isMobilePhone('teacher-phone-3') }">
-        <input type="text" id="teacher-phone-3" placeholder="телефон 3"  disabled
-        	class="form-control phone-masked" ng-model="Teacher.phone3">
-        	
-        	<div class='comment-inside-input'>
-				<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.phone3_comment'></span>
-				<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.phone3_comment' disabled="">
-	    	</div>
-
-        	
-        	<div class="input-group-btn">
-	        	<button class="btn btn-default" ng-show="phoneCorrect('teacher-phone-3')" ng-click="callSip('teacher-phone-3')"  ng-class="{
-					'addon-bordered' : !isMobilePhone('teacher-phone-3')
-				}">
-					<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
-				</button>
-				<button style='background: #EEE; color: black' disabled ng-show="phoneCorrect('teacher-phone-3') && isMobilePhone('teacher-phone-3')" ng-class="{
-					'addon-bordered' : !phoneCorrect('teacher-phone-3')
-					}" class="btn btn-default" type="button"  onclick="smsDialog('teacher-phone-3')">
-						<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
-				</button>
-            </div>
+		ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(Teacher.phone3)  || !PhoneService.isMobile(Teacher.phone3) }">
+		<input type="text" id="teacher-phone-3" placeholder="телефон 3"  disabled class="form-control phone-masked"
+			   ng-model="Teacher.phone3"
+			   ng-value="PhoneService.format(Teacher.phone3)"
+		>
+		<div class='comment-inside-input'>
+			<span class="glyphicon glyphicon-pencil text-gray" ng-show='!Teacher.phone3_comment'></span>
+			<input type="text" class='no-border-outline phone-comment' ng-model='Teacher.phone3_comment' disabled="">
+		</div>
+		<div class="input-group-btn">
+			<button class="btn btn-default"
+					ng-show="PhoneService.isFull(Teacher.phone3)"
+					ng-click="PhoneService.call(Teacher.phone3)"
+					ng-class="{'addon-bordered' : !PhoneService.isMobile(Teacher.phone3)}"
+			>
+				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+			</button>
+			<button style='background: #EEE; color: black' disabled class="btn btn-default" type="button"
+					ng-show="PhoneService.isFull(Teacher.phone3) && PhoneService.isMobile(Teacher.phone3)"
+					ng-class="{'addon-bordered' : !PhoneService.isFull(Teacher.phone3)}"
+					ng-click="PhoneService.sms(Teacher.phone3)"
+			>
+				<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+			</button>
+		</div>
 	</div>
 </div>
-            <div class="input-group fakeInput">
+			<div class="input-group fakeInput">
                 <input placeholder="email" ng-model="Teacher.email" disabled class="form-control no-border-outline">
 
                 <div class='comment-inside-input'>
@@ -217,8 +232,8 @@
 	<?= partial('reports') ?>
 	<?= partial('stats') ?>
 	<?= partial("freetime") ?>
-
-
-
 	<?php endif ?>
+	<!-- СМС -->
+	<sms number='sms_number' templates="full"></sms>
+	<!-- /СМС -->
 </form>

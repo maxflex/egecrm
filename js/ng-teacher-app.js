@@ -69,8 +69,9 @@ app = angular.module("Teacher", ["ngMap"]).config([
   return angular.element(document).ready(function() {
     return set_scope("Teacher");
   });
-}).controller("EditCtrl", function($scope, $timeout, $http) {
+}).controller("EditCtrl", function($scope, $timeout, PhoneService) {
   var _loadData, _postData, bindFileUpload, menus;
+  bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
   menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars'];
   $scope.setMenu = function(menu) {
