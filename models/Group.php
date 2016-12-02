@@ -26,9 +26,10 @@
             // @notice  порядок first_schedule - notified_students важен.
             // @todo    перенести heavy данные под if.
             if (!$light) {
-//                if ($this->ready_to_start) {
-                    $this->notified_students_count = static::getNotifiedStudentsCount($this);
-//                }
+                $this->notified_students_count = static::getNotifiedStudentsCount($this);
+                $this->Comments	= Comment::findAll([
+                    "condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
+                ]);
             }
 
 
@@ -53,10 +54,6 @@
 			}
 
 			$this->day_and_time 		= $this->getDayAndTime($this->id);
-
-			$this->Comments	= Comment::findAll([
-				"condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
-			]);
 		}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -683,6 +680,10 @@
 				return $GroupTime;
 			}
 		}
+
+		public function inGroup($id_student) {
+		    return in_array($id_student, $this->students);
+        }
 	}
 
 	class GroupSchedule extends Model

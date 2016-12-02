@@ -51,7 +51,7 @@
 				$this->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
 			}
 		}
-		
+
 		public static function dbConnection()
 		{
 			return dbEgerep();
@@ -79,7 +79,7 @@
 				'condition' => "description != ''"
 			]);
 		}
-		
+
 		/*
 		 * Проверить, есть ли фото у преподавателя
 		 */
@@ -95,17 +95,18 @@
 		}
 
 		// 	количество красных меток "требуется создание отчета"
-		public static function redReportCountStatic($id_teacher, $year = false)
-		{
-			return dbConnection()->query("
-				SELECT COUNT(*) AS cnt FROM reports_helper rh
-				LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
-				WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL " . ($year ? "AND rh.year={$year}" : "")
-			)->fetch_object()->cnt;
+        public static function redReportCountStatic($id_teacher, $year = false)
+        {
+            return dbConnection()->query("
+                SELECT COUNT(*) AS cnt FROM reports_helper rh
+                LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
+                WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL " . ($year ? "AND rh.year={$year}" : "")
+            )->fetch_object()->cnt;
 		}
 
 		public static function redReportCountAll()
 		{
+            $red_count = 0;
 			$search = json_decode($_COOKIE['reports']);
 			
 			foreach (self::getIds(['condition' => 'in_egecentr >= 1']) as $id_teacher) {
@@ -180,7 +181,7 @@
 			$search = json_decode($_COOKIE['reports']);
 			
 			// получаем данные
-			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, rh.lesson_count");
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.email_sent, r.available_for_parents, rh.lesson_count");
 
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
 			
@@ -295,7 +296,7 @@
 			
 			return Group::findAll([
 				"condition" => "id_teacher=$id_teacher" . ($only_ended ? " AND ended=0" : ""),
-			]);
+			], true);
 		}
 
 		public static function countGroups($id_teacher = false)

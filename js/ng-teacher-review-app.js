@@ -17,7 +17,51 @@ app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('range', function
       return null;
     }
   };
+}).controller('StudentReviews', function($scope, $timeout) {
+  $scope["enum"] = review_statuses;
+  $scope.formatDateTime = function(date) {
+    return moment(date).format("DD.MM.YY в HH:mm");
+  };
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
+  $scope.filter = function() {
+    $.cookie("reviews", JSON.stringify($scope.search), {
+      expires: 365,
+      path: '/'
+    });
+    $scope.current_page = 1;
+    return $scope.getByPage($scope.current_page);
+  };
+  $scope.pageChanged = function() {
+    if ($scope.current_page > 1) {
+      window.history.pushState({}, '', 'reviews/?page=' + $scope.current_page);
+    }
+    return $scope.getByPage($scope.current_page);
+  };
+  $scope.getByPage = function(page) {
+    frontendLoadingStart();
+    return $.post("ajax/GetReviews", {
+      page: page,
+      teachers: $scope.Teachers,
+      id_student: $scope.id_student
+    }, function(response) {
+      frontendLoadingEnd();
+      $scope.Reviews = response.data;
+      $scope.counts = response.counts;
+      $scope.$apply();
+      return $scope.refreshCounts();
+    }, "json");
+  };
+  return angular.element(document).ready(function() {
+    set_scope("TeacherReview");
+    $scope.search = $.cookie("reviews") ? JSON.parse($.cookie("reviews")) : {};
+    $scope.current_page = $scope.currentPage;
+    $scope.pageChanged();
+    return $(".single-select").selectpicker();
+  });
 }).controller("Reviews", function($scope, $timeout, UserService) {
+  bindArguments($scope, arguments);
   $scope.UserService = UserService;
   $scope["enum"] = review_statuses;
   $scope.formatDateTime = function(date) {

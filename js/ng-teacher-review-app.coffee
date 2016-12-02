@@ -8,7 +8,49 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 	.filter 'hideZero', ->
 		(item) ->
 			if item > 0 then item else null
+	.controller 'StudentReviews', ($scope, $timeout) ->
+		$scope.enum = review_statuses
+
+		$scope.formatDateTime = (date) ->
+			moment(date).format "DD.MM.YY в HH:mm"
+
+		$scope.yearLabel = (year) ->
+			year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
+		$scope.filter = ->
+			$.cookie("reviews", JSON.stringify($scope.search), { expires: 365, path: '/' });
+			$scope.current_page = 1
+			$scope.getByPage($scope.current_page)
+
+		# Страница изменилась
+		$scope.pageChanged = ->
+			window.history.pushState {}, '', 'reviews/?page=' + $scope.current_page if $scope.current_page > 1
+			# Получаем задачи, соответствующие странице и списку
+			$scope.getByPage($scope.current_page)
+
+		$scope.getByPage = (page) ->
+			frontendLoadingStart()
+			$.post "ajax/GetReviews",
+				page: page
+				teachers: $scope.Teachers
+				id_student: $scope.id_student
+			, (response) ->
+				frontendLoadingEnd()
+				$scope.Reviews  = response.data
+				$scope.counts = response.counts
+				$scope.$apply()
+				$scope.refreshCounts()
+			, "json"
+
+		angular.element(document).ready ->
+			set_scope "TeacherReview"
+			$scope.search = if $.cookie("reviews") then JSON.parse($.cookie("reviews")) else {}
+			$scope.current_page = $scope.currentPage
+			$scope.pageChanged()
+			$(".single-select").selectpicker()
+
 	.controller "Reviews", ($scope, $timeout, UserService) ->
+		bindArguments($scope, arguments)
 		$scope.UserService = UserService
 		$scope.enum = review_statuses
 		

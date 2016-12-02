@@ -207,25 +207,20 @@
 			return $teacher_ids;
 		}
 
-        /**
-         * Получить id всех групп ученика, уроки которой он посещал по определенному предмету.
-         *
-         * @param int $id_student   ID студента
-         * @param int $id_subject   ID gредмета
-         * @param int $grade        Класс
-         *
-         * @return VisitJournal[]   Посещения
-         */
         public static function getGroupIdsBySubject($id_student, $id_subject, $grade) {
+            return self::getGroupIds($id_student, $id_subject, $grade);
+        }
+
+        public static function getGroupIds($id_student, $id_subject = false, $grade = false) {
             $Visits = self::findAll([
-                            "condition" =>
-                                "id_entity = ".$id_student." AND ".
-                                "type_entity = 'STUDENT' AND ".
-                                "id_subject = ".$id_subject." AND ".
-                                "grade = ".$grade,
-                            "order" => "lesson_date",
-                            "group" => "id_group"
-                      ]);
+                "condition" =>
+                    "id_entity = ".$id_student." AND ".
+                    "type_entity = 'STUDENT' " .
+                    ($id_subject ? "AND id_subject = {$id_subject} " : "") .
+                    ($grade ? "AND grade = {$id_subject} " : ""),
+                "order" => "lesson_date",
+                "group" => "id_group"
+            ]);
 
             $group_ids = [];
             foreach ($Visits as $v) {

@@ -63,7 +63,6 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
     return $scope.getByPage($scope.current_page);
   };
   $scope.pageChanged = function() {
-    console.log($scope.currentPage);
     if ($scope.current_page > 1) {
       window.history.pushState({}, '', 'reports/?page=' + $scope.current_page);
     }

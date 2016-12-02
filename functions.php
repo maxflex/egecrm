@@ -711,9 +711,11 @@
 			'o' => 2,
 		];
 
-		$name_ordered[] = $name[$order_values[$order[0]]];
-		$name_ordered[] = $name[$order_values[$order[1]]];
-		$name_ordered[] = $name[$order_values[$order[2]]];
+        foreach ([0, 1, 2] as $part) {
+            if (isset($order[$part])) {
+                $name_ordered[] = $name[$order_values[$order[$part]]];
+            }
+        }
 
 		return trim(implode(" ", $name_ordered));
 	}
@@ -794,4 +796,19 @@
             $parts[2] = $add_year . $parts[2];
         }
         return implode('-', array_reverse($parts));
+    }
+
+    function findObjectInArray($array, $params) {
+        foreach ($array as $item) {
+            $found = true;
+            foreach ($params as $field => $value) {
+                if ($item->$field != $value) {
+                    $found = false;
+                }
+            }
+
+            if ($found) return $item;
+        }
+
+        return false;
     }
