@@ -781,3 +781,29 @@
         }
         return implode('-', array_reverse($parts));
     }
+
+    function getFIO($object) {
+        return $object->last_name . ' ' . $object->first_name;
+    }
+
+    /**
+     * @param Object[]      $array
+     * @param string        $field
+     * @param string        $value
+     * @param bool|callable $compare_function
+     * @return bool|Object
+     */
+    function findObjectInArray($array, $params) {
+        foreach ($array as $item) {
+            $found = true;
+            foreach ($params as $field => $value) {
+                if ($item->$field != $value) {
+                    $found = false;
+                }
+            }
+
+            if ($found) return $item;
+        }
+
+        return false;
+    }

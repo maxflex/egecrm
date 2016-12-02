@@ -54,7 +54,6 @@ app = angular.module "Reports", ["ui.bootstrap"]
 
 		# Страница изменилась
 		$scope.pageChanged = ->
-			console.log $scope.currentPage
 			window.history.pushState {}, '', 'reports/?page=' + $scope.current_page if $scope.current_page > 1
 			# Получаем задачи, соответствующие странице и списку
 			$scope.getByPage($scope.current_page)

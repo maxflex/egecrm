@@ -10,7 +10,7 @@
 		height: 20px;
 	}
 </style>
-<div ng-app="TeacherReview" ng-controller="Reviews" ng-init="<?= $ang_init_data ?>" >
+<div ng-app="TeacherReview" ng-controller="StudentReviews" ng-init="<?= $ang_init_data ?>" >
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			{{ Student.last_name + ' ' + Student.first_name }} | Оценка преподавателей
