@@ -794,12 +794,15 @@
 		{
 		    $condition = "id_entity={$this->id} AND type_entity='STUDENT'";
 
-		    if (isset($params['id_teacher'])) {
-		        $condition .= ' AND id_teacher = ' . $params['id_teacher'];
+            if (count($params)) {
+                $condition .= ' AND ' . implode(' AND ', array_map(function($key, $value) {
+                    return "$key='$value'";
+                }, array_keys($params), $params));
             }
 
             $visits = VisitJournal::findAll([
-				"condition" => $condition
+				"condition" => $condition,
+                "order" => "lesson_date ASC, lesson_time ASC"
 			]);
 
 			return $visits;

@@ -2,22 +2,22 @@
 	$placeholder_gray 	: #999999;
 	$blue				: #337AB7;
 	$hover_blue			: #23527c;
-	
+
 	$promo				: #3A6487;
-	
+
 	//$red				: #ff0039;
 	$red                : #c40000;
     $pink				: #ffcccc;
 	$orange				: #fbaa33;
 	$metro_orange		: rgb(251, 170, 51);
-	
-	
-	$green				: #5cb85c; 
+
+
+	$green				: #5cb85c;
 	$metro_green		: #029A55;
 	$bright_green		: #5cb85c;
-	
+
 	$dark_red			: #A94442;
-	
+
 	$hr_gray 			: #eee;
 	$half_black			: rgba(0, 0, 0, .5);
 	$quater_black 		: rgba(0, 0, 0, .25);
@@ -42,7 +42,7 @@
 	& img {
 		border-radius: 5px;
 		height: 150px;
-	    width: 120px;	
+	    width: 120px;
 	}
 }
 
@@ -143,7 +143,7 @@
     height: 20px;
     text-align: center;
     &.gray {
-	   background: $placeholder_gray !important; 
+	   background: $placeholder_gray !important;
     }
 }
 
@@ -192,7 +192,7 @@
 	padding: 0;
 	margin-right: 25px;
 }
-    
+
 .border-transparent {
 	border-color: transparent !important;
 }
@@ -221,6 +221,17 @@
 	border: 1px solid #ddd;
 }
 
+.user-img {
+    display: inline-block;
+    float: left;
+    margin-right: 10px;
+    & img {
+        height: 150px;
+        width: 120px;
+        border-radius: 5px;
+    }
+}
+
 .tutor-img {
 	border: 3px dashed #DEDEDE;
 	cursor: pointer;
@@ -237,9 +248,9 @@
 		}
 	}
 	& img {
-		height: 150px;
-		width: 120px;
-		border-radius: 5px;
+        height: 150px;
+        width: 120px;
+        border-radius: 5px;
 	}
 	& div {
 		transition: all linear .3s;
@@ -250,7 +261,7 @@
 	    text-align: center;
 	    padding: 60px 0;
 // 	    display: none;
-		opacity: 0; 
+		opacity: 0;
 		color: #337ab7;
 	}
 	& .btn-file {
@@ -273,7 +284,7 @@
 .no-hover {
 	&:hover {
 		background: white !important;
-	}		
+	}
 }
 
 .glyphicon-big {
@@ -299,7 +310,7 @@
 	}
 	& input:nth-of-type(2) {
 		border-radius: 0 4px 4px 0;
-	    border-left: 0;	
+	    border-left: 0;
 	    width: 50px;
 	    padding-left: 0;
 	}
@@ -327,7 +338,7 @@
 	white-space: nowrap;
 }
 
-.bootstrap-select.btn-group .dropdown-menu li.disabled a { 
+.bootstrap-select.btn-group .dropdown-menu li.disabled a {
 	cursor: default !important
 }
 
@@ -380,7 +391,7 @@
 	& .flip-clock-wrapper {
 		display: inline-block;
 	    width: 70px;
-	} 
+	}
 	& .promo-images {
 		text-align: center;
 		& label {
@@ -476,7 +487,7 @@ body {
 
 .badge-danger {
 	background-color: $dark_red;
-} 
+}
 
 .visit-div {
 	display: inline-block;
@@ -520,7 +531,7 @@ body {
     width: 100%;
     background-color: rgba(51, 122, 184, 0.7);
     color: white;
-	padding: 6px; 
+	padding: 6px;
 	text-align: center;
 	font-size: 12px;
 	& .btn {
@@ -545,7 +556,7 @@ body {
 	& > div {
 		width: 12.5%;
 		display: inline-block;
-		margin-right: 5px;	
+		margin-right: 5px;
 	}
 }
 
@@ -855,7 +866,7 @@ body {
 		&.red {
 			background: $red !important;
 		}
-	}	
+	}
 }
 
 
@@ -911,7 +922,7 @@ body {
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b1b1b1', endColorstr='#5cb85c',GradientType=0 ); /* IE6-9 */
 		}
 
-	}	
+	}
 
 /* @group Blink */
 .double-blink {
@@ -962,13 +973,13 @@ body {
 /* @end */
 
 .group-list-2 {
-	border: 3px dashed transparent !important; 
+	border: 3px dashed transparent !important;
 	padding: 0 10px !important;
 	&.last {
 		padding: 12px !important;
 	}
 	& table {
-		margin-bottom: 0;		
+		margin-bottom: 0;
 	}
 }
 
@@ -989,7 +1000,7 @@ body {
 
 .border-dashed-droppable-hover {
 	border: 3px dashed $green !important;
-} 
+}
 
 .center-label {
 	position: relative;
@@ -1277,7 +1288,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	    background-color: $red !important;
     }
     &.circle-orange {
-	   background-color: $orange !important; 
+	   background-color: $orange !important;
     }
     &.first-and-was {
 		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fbaa33+0,fbaa33+50,337ab7+51,337ab7+100 */
@@ -1326,20 +1337,20 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			}
 		}
 	}
-	
+
 	& .calendar-row {
 	//	height: 185px;
 	//    overflow: hidden;
 	}
-	
+
 	& .day:nth-child(2n + 6), .day:nth-child(2n + 7) {
 		color: #999;
 	}
-	
+
 	& .table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td {
 		padding: 0;
 	}
-	
+
 	& .day {
 		border-radius: 50% !important;
 		height: 28px;
@@ -1349,12 +1360,12 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	    margin-right: 3px;
 	    margin-bottom: 3px;
 	}
-	
+
 	& .day.active {
 		background: #5cb85c;
 		color: white !important;
 	}
-	
+
 	& .dow {
 		color: #999 !important;
 		font-weight: normal;
@@ -1362,17 +1373,17 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 		margin-right: 1px;
 		display: inline-block;
 	}
-	
+
 	& .table-condensed {
 		width: 300px;
 	}
-	
+
 	& .month-name {
 		text-transform: capitalize;
-//		line-height: 226px;	
+//		line-height: 226px;
 		line-height: 175px;
 	}
-	
+
 	& .lessons-table {
 	    & input {
 		    width: 38px;
@@ -1381,11 +1392,11 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 		    left: -1px;
 	    }
 	}
-	
+
 	& .lessons-count {
 	    position: fixed;
 //	    top: 9.6%;
-		top: 11.5%; 
+		top: 11.5%;
 	    right: 19%;
 	    font-weight: bold;
 	}
@@ -1403,7 +1414,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			background: -moz-linear-gradient(top,  #00b700 0%, #00b700 50%, #ffa700 51%, #ffa700 100%) !important; /* FF3.6-15 */
 			background: -webkit-linear-gradient(top,  #00b700 0%,#00b700 50%,#ffa700 51%,#ffa700 100%) !important; /* Chrome10-25,Safari5.1-6 */
 			background: linear-gradient(to bottom,  #00b700 0%,#00b700 50%,#ffa700 51%,#ffa700 100%) !important; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#ffa700',GradientType=0 ) !important; /* IE6-9 */   
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#ffa700',GradientType=0 ) !important; /* IE6-9 */
 	    }
 	    &.was-lesson {
 		   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#337ab7+0,337ab7+50,ffa700+51,ffa700+100 */
@@ -1427,7 +1438,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			background: -moz-linear-gradient(top,  #00b700 0%, #00b700 50%, #9954bb 51%, #9954bb 100%) !important; /* FF3.6-15 */
 			background: -webkit-linear-gradient(top,  #00b700 0%,#00b700 50%,#9954bb 51%,#9954bb 100%) !important; /* Chrome10-25,Safari5.1-6 */
 			background: linear-gradient(to bottom,  #00b700 0%,#00b700 50%,#9954bb 51%,#9954bb 100%) !important; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#9954bb',GradientType=0 ) !important; /* IE6-9 */  
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b700', endColorstr='#9954bb',GradientType=0 ) !important; /* IE6-9 */
 	    }
 	    &.was-lesson {
 		    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#337ab7+0,337ab7+50,9954bb+51,9954bb+100 */
@@ -1473,7 +1484,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#337ab7', endColorstr='#ff0039',GradientType=0 ) !important; /* IE6-9 */
 	  	}
 	}
-	
+
 	& .old, & .new {
 		visibility: hidden !important;
 	}
@@ -1508,20 +1519,20 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 		background-color: $green;
 		margin-bottom: 3px;
 	}
-	
+
 	& p {
 		word-wrap: break-word;
 	}
-	
+
 	& .task-line {
 	//	border-top: 1px dashed rgba(0, 0, 0, 0.05);
 		margin-top: 30px;
 		position: relative;
 	}
-	
+
 	& .controls-buttons {
-		text-align: right; 
-		display: inline-block; 
+		text-align: right;
+		display: inline-block;
 		width: 100%;
 		margin-top: 10px;
 		& button {
@@ -1529,7 +1540,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			margin-left: 20px;
 		}
 	}
-	
+
 	& .task-status-toggle {
 //		height: 64px !important;
 //		height: 50px !important;
@@ -1544,7 +1555,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 			opacity: 1;
 		}
 	}
-	
+
 	& .task-status-div {
 		position: absolute;
 	    bottom: 4px;
@@ -1621,7 +1632,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	& a {
 		color: white;
 		text-decoration: underline;
-		
+
 		&:hover {
 			text-decoration: none;
 		}
@@ -1875,7 +1886,7 @@ white-space: nowrap;
 }
 
 .clear-sms {
-//	clear: both; 
+//	clear: both;
 //	margin-bottom: 10px
 	width: 100%;
 	display: inline-block;
@@ -1902,11 +1913,11 @@ white-space: nowrap;
 .from-me {
 	position:relative;
 	padding:10px 20px;
-	color:white; 
+	color:white;
 	background:#0B93F6;
 	border-radius:25px;
 	float: right;
-		
+
 	&:before {
 		content:"";
 		position:absolute;
@@ -1940,7 +1951,7 @@ white-space: nowrap;
 	color: black;
 	max-width: 90%;
   float: left;
-		
+
 	&:before {
 		content:"";
 		position:absolute;
@@ -2092,20 +2103,20 @@ white-space: nowrap;
 			width: 100px;
 		//	visibility: hidden;
 		}
-		
+
 		& .dogavar-label {
 		    position: absolute;
 		    color: gray;
 		    font-size: 12px;
 		    top: 9px;
 		    &.zero {
-				right: 220px;   
+				right: 220px;
 		    }
 		    &.first {
-				right: 115px;   
+				right: 115px;
 		    }
 		    &.second {
-				right: 10px;   
+				right: 10px;
 		    }
 		}
 	}
@@ -2131,13 +2142,13 @@ div[id^='comment-block'] {
 		-webkit-transition: all linear .25s;
 		opacity: 0;
 	}
-	
+
 	&:hover {
 		& .save-coordinates, & .glyphicon-remove {
 			opacity: 1;
 		}
 	}
-	
+
 	& .save-coordinates {
 		margin-left: 3px;
 		font-style: normal;
@@ -2215,7 +2226,7 @@ div[id^='comment-block'] {
 	    color: #23527c;
 	    text-decoration: underline;
 	}
-	
+
 	&.red {
 		color: #a94442;
 	}
@@ -2487,20 +2498,20 @@ h4 {
 
 .request-main-list {
 //	border: 1px solid transparent;
-	margin-bottom: 10px; 
+	margin-bottom: 10px;
 	background-color: rgba(255, 255, 255, 0.1);
 	& hr {
 		border-top: 1px solid rgba(0,  0,  0, 0.4);
 		margin-top: 5px;
 	}
-	
+
 	&.ui-draggable-dragging {
 		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 	}
 }
 
 .is-draggable {
-	margin-bottom: 10px; 
+	margin-bottom: 10px;
 	background-color: rgba(255, 255, 255, 0.1);
 	& hr {
 		border-top: 1px solid rgba(0,  0,  0, 0.4);
@@ -3098,12 +3109,12 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 	}
 	&.correct-answer {
 		background-color: $green;
-		color: white;		
+		color: white;
 	}
 }
 .vertical-align-table {
 	& tr td {
-		vertical-align: middle !important;	
+		vertical-align: middle !important;
 	}
 }
 
@@ -3256,18 +3267,18 @@ table.last-item-no-border tr:last-child td {
 	.no-border, .no-border td{
 	  border:none!important;
 	}
-	
+
 	.visits-weekend {
 		& td {
 			background: rgba(black, 0.05);
 		}
 	}
-	
+
 	.bold-red {
 		color: $red !important;
 		font-weight: bold;
 	}
-	
+
 	.table-with-padding tr td:first-child {
 		padding-left: 4px !important;
 	}
@@ -3306,3 +3317,7 @@ table.last-item-no-border tr:last-child td {
 	  z-index: 9;
 	  border-radius: 5px;
 	}
+
+.text-danger {
+    color: $red !important; 
+}

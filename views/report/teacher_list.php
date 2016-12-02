@@ -13,73 +13,38 @@
 		<div class="alert alert-info" role="alert">
 			Каждый ученик, заключающий договор с ЕГЭ-Центром оплачивает обучение двумя платежами. Первый платеж производится при заключении договора, второй - в январе 2016 года. Отчет преподавателя - один из главных факторов, влияющих на долю родителей, желающих продолжать обучение, дающий родителям понимание за что он заплатил и стоит ли ему платить дальше. Пожалуйста, заполняйте отчет каждого ученика внимательно и подробно.
 		</div>
-
-
-				<table class="table table-divlike">
-					<tr ng-repeat="Student in Students">
-						<td style="width: 20%">
-							<a href="teachers/reports/add/{{Student.id}}">{{Student.last_name}} {{Student.first_name}}</a>
-						</td>
-						<td style="width: 50%">
-							<span ng-repeat="(id_subject, count) in Student.visit_count">
-							{{count}} <ng-pluralize count="count" when="{
-							'one': 'занятие',
-							'few': 'занятия',
-							'many': 'занятий'
-						}"></ng-pluralize> по {{Subjects[id_subject]}}{{$last ? '' : ' + '}}
-							</span>
-						</td>
-						<td style="width: 15%">
-							<span ng-show="Student.Reports.length > 0">{{Student.Reports.length}} <ng-pluralize count="Student.Reports.length" when="{
-							'one': 'отчет',
-							'few': 'отчета',
-							'many': 'отчетов'
-						}"></ng-pluralize></span>
-							<span ng-show="!Student.Reports.length">отчетов нет</span>
-						</td>
-						<td style="width: 15%">
-							<span class="label label-danger-red" ng-show="Student.ReportRequired">требуется создание отчета</span>
-						</td>
-					</tr>
-				</table>
-			<!-- </span>
-		</span> -->
-
-
-<!-- БЕЗ ГРУПП -->
-
-		<!-- <span ng-repeat="grade in [9, 10, 11]" ng-show="getByGrade(grade, false).length">
-			<h4>{{grade}} класс</h4>
-			<table class="table table-divlike">
-				<tr ng-repeat="Student in getByGrade(grade, false)">
-					<td style="width: 20%">
-						<a href="teachers/reports/add/{{Student.id}}">{{Student.last_name}} {{Student.first_name}}</a>
-					</td>
-					<td style="width: 50%">
-						<span ng-repeat="(id_subject, count) in Student.visit_count">
-						{{count}} <ng-pluralize count="count" when="{
+        <div class="top-links pull-left">
+			<a ng-class="{'active': year == <?= $year ?>}" href='teachers/reports/{{ year }}'
+                ng-repeat='year in <?= Years::json() ?>'>{{ year + '-' + (year + 1)  }}</a>
+		</div>
+		<table class="table table-divlike">
+			<tr ng-repeat="d in data">
+				<td style="width: 20%">
+					<a href="teachers/reports/student/{{ d.Student.id }}/{{ d.id_subject }}">{{d.Student.last_name}} {{d.Student.first_name}}</a>
+				</td>
+				<td style="width: 50%">
+					{{ d.lessons_count }} <ng-pluralize count="d.lessons_count" when="{
 						'one': 'занятие',
 						'few': 'занятия',
 						'many': 'занятий'
-					}"></ng-pluralize> по {{Subjects[id_subject]}}{{$last ? '' : ' + '}}
-						</span>
-					</td>
-					<td style="width: 15%">
-						<span ng-show="Student.Reports.length > 0">{{Student.Reports.length}} <ng-pluralize count="Student.Reports.length" when="{
-						'one': 'отчет',
-						'few': 'отчета',
-						'many': 'отчетов'
-					}"></ng-pluralize></span>
-						<span ng-show="!Student.Reports.length">отчетов нет</span>
-					</td>
-					<td style="width: 15%">
-						<span class="label label-danger-red" ng-show="Student.ReportRequired">требуется создание отчета</span>
-					</td>
-				</tr>
-			</table>
-		</span> -->
-
-
+					}"></ng-pluralize> по {{ Subjects[d.id_subject]}}
+				</td>
+				<td style="width: 15%">
+					<span ng-show="d.reports_count">
+                        {{ d.reports_count }}
+                        <ng-pluralize count="d.reports_count" when="{
+							'one': 'отчет',
+							'few': 'отчета',
+							'many': 'отчетов'
+						}"></ng-pluralize>
+                    </span>
+					<span ng-show="!d.reports_count">отчетов нет</span>
+				</td>
+				<td style="width: 15%">
+					<span class="text-danger" ng-show="d.report_required">требуется отчет</span>
+				</td>
+			</tr>
+		</table>
 	</div>
 </div>
 

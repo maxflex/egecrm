@@ -1,0 +1,40 @@
+{
+  "browsersync": {
+    "options": {
+      "proxy": "egecrm.dev",
+      "host": "egecrm.dev",
+      "open":  "external"
+    }
+  },
+  "sass": {
+      "src": "./css/*.scss",
+      "dest": "./css/"
+  },
+  "coffee": {
+    "task" : {
+      "options": {
+        "bare": true
+      }
+    },
+    "ngapp": {
+      "src": "js/*.coffee",
+      "dest": "js/"
+    },
+    "assets": {
+      "src": [
+        "js/directives/*.coffee",
+        "js/services/*.coffee",
+        "js/resources/*.coffee"
+      ],
+      "bundle": "assets.js",
+      "dest": "js/"
+    }
+  },
+  "bower": {
+    "dest": "js/",
+    "bundle": "vendor.js"
+  },
+  "app": {
+    "files": "**/*.php"
+  }
+}

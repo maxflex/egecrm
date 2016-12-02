@@ -32,6 +32,20 @@
 			}
 		}
 	}
+
+    function dd($objects)
+    {
+        if (User::isDev() || IS_LOCAL_DEVELOPMENT) {
+            $objects = is_array($objects) ? $objects : func_get_args();
+            echo "<pre>";
+            foreach($objects as $o) {
+                print_r($o);
+            }
+			echo "</pre>";
+            echo "<hr>";
+        }
+    }
+
 	/*
 	 * Возвращает соединение DB_SETTINGS
 	 */

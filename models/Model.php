@@ -11,7 +11,7 @@
 
 		// Переменные из таблицы MySQL, которые сохранять не надо
 		protected $_exclude_vars = array("id");
-		
+
 		protected $_additional_vars = array();
 
 		// Если есть сериализованные данные в БД, то указать здесь для авто сериализации/ансериализации
@@ -77,7 +77,7 @@
 					}
 				}
 			}
-			
+
 			// Если есть json
 			if (count($this->_json)) {
 				foreach ($this->_json as $json_field) {
@@ -275,8 +275,8 @@
 				.(!empty($params["group"]) ? " GROUP BY ".$params["group"] : "")				// Если есть условие сортировки
 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
-				);
-			
+			);
+
 			// Если запрос без ошибок и что-то нашлось
 			if ($result->num_rows) {
 				// Создаем массив айдишников
@@ -334,7 +334,7 @@
 		public static function updateById($id, $data)
 		{
 			$Object = self::findById($id); // находим объект
-			
+
 			// если найден, сохраняем
 			if ($Object) {
 				$Object->update($data);
@@ -648,7 +648,7 @@
 			}
 		}
 
-		
+
 		/**
 		 * Найти и добавить связь с другой таблицей, если она не указана.
 		 *
@@ -665,7 +665,7 @@
 				$this->{$id_string} = $result->fetch_row()[0];
 			}
 		}
-		
+
 		public function changeId($newId, $oldId)
 		{
 			return static::dbConnection()->query("UPDATE ".static::$mysql_table." SET id=$newId WHERE id=$oldId");

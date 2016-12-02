@@ -69,7 +69,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
   return angular.element(document).ready(function() {
     return set_scope("Teacher");
   });
-}).controller("EditCtrl", function($scope, $timeout, $http, PhoneService) {
+}).controller("EditCtrl", function($scope, $timeout, PhoneService) {
   var _loadData, _postData, bindFileUpload, deletePayment, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;

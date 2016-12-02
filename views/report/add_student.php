@@ -1,60 +1,65 @@
 <div ng-app="Reports" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row mb">
 		<div class="col-sm-12">
-			<b>{{Student.last_name}} {{Student.first_name}}</b> (в данный момент ученик учится в {{Student.grade}} классе)
+            <div class='user-img'>
+                <img ng-if='Student.has_photo_cropped' src="img/students/{{ Student.id + '_original.' + Student.photo_extension }}">
+                <img ng-if='!Student.has_photo_cropped' src='img/teachers/no-profile-img.gif'>
+            </div>
+            <div style='margin-bottom: 5px'>
+                <b>{{Student.last_name}} {{Student.first_name}}</b>
+            </div>
+            <div style='margin-bottom: 5px'>
+                В данный момент ученик учится в {{Student.grade}} классе и
+            </div>
+            <div style='margin-bottom: 5px'>
+                <span ng-if='!group_ids.length'>прекратил обучение</span>
+                <span ng-if='group_ids.length'>
+                    присутствует в группе <a href='teachers/groups/edit/{{ group_ids[0] }}/schedule'>группе №{{ group_ids[0] }}</a>
+                    ({{ Subject.title }})
+                </span>
+            </div>
 		</div>
 	</div>
 
-	<div class="row mb" ng-repeat="id_subject in getSubjects(Student.Visits)">
-		<div class="col-sm-12">
-			<div class="row mb">
-				<div class="col-sm-12">
-					<b class="m_title">{{Subjects[id_subject]}}</b> (<span ng-bind-html="Messages[id_subject] | to_trusted"></span>)
-				</div>
-			</div>
-
-			<span class="link-padding">
-				<div class="row" ng-repeat="Visit in Student.Visits[id_subject]">
-					<div class="col-sm-12" ng-show="!isReport(Visit)">
-
-						<span style="width: 200px" class="inline-block">
-							{{formatDate(Visit.lesson_date)}} в {{formatTime(Visit.lesson_time)}} ({{getDay(Visit.lesson_date)}})
-
-						</span>
-
-						<span style="width: 100px" class="inline-block">
-							группа {{Visit.id_group}}
-						</span>
-
-						<span style="width: 100px" class="inline-block">
-							{{Visit.grade}} класс
-						</span>
-
-						<span style="width: 200px" class="inline-block">
-							<span ng-show="Visit.presence == 2">не был</span>
-							<span ng-show="Visit.presence == 1 && !Visit.late">был</span>
-							<span ng-show="Visit.presence == 1 && Visit.late">опоздал на {{Visit.late}} <ng-pluralize count="Visit.late" when="{
-								'one': 'минута',
-								'few': 'минуты',
-								'many': 'минут',
-							}"></ng-pluralize></span>
-						</span>
-
-					</div>
-					<div class="col-sm-12" ng-show="isReport(Visit)">
-						<a href="teachers/reports/edit/{{Visit.id}}">отчет по {{SubjectsDative[id_subject]}} от {{formatDate(Visit.lesson_date)}}</a>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-12">
-						<a href="teachers/reports/add/{{Student.id}}/{{id_subject}}">создать отчет по {{SubjectsDative[id_subject]}}</a>
-						<span class="label label-danger-red" ng-show="ReportRequired[id_subject]"
-							style="margin-left: 5px">требуется создание отчета</span>
-					</div>
-				</div>
-			</span>
-		</div>
-	</div>
+    <div class="row">
+        <div ng-repeat="Visit in Visits" class="col-sm-12" style='margin-bottom: 5px'>
+            <div ng-if='!isReport(Visit)'>
+                <span class='inline-block' style='width: 200px'>
+                    {{ formatDate(Visit.lesson_date)}} в {{formatTime(Visit.lesson_time) }}
+                </span>
+                <span class='inline-block' style='width: 150px'>
+                    {{ getDay(Visit.lesson_date) }}
+                </span>
+                <span class='inline-block' style='width: 150px'>
+                    кабинет {{ Visit.cabinet_number }}
+                </span>
+                <span class='inline-block' style='width: 150px'>
+                    группа {{ Visit.id_group }}
+                </span>
+                <span class='inline-block' style='width: 150px'>
+                    {{ Visit.grade }} класс
+                </span>
+                <span class='inline-block' style='width: 150px'>
+                    <span ng-show="Visit.presence == 2">не был</span>
+                    <span ng-show="Visit.presence == 1 && !Visit.late">был</span>
+                    <span ng-show="Visit.presence == 1 && Visit.late">опоздал на {{Visit.late}} <ng-pluralize count="Visit.late" when="{
+                        'one': 'минута',
+                        'few': 'минуты',
+                        'many': 'минут',
+                    }"></ng-pluralize></span>
+                </span>
+            </div>
+            <div ng-if='isReport(Visit)' class='link-padding'>
+                <a href="teachers/reports/edit/{{Visit.id}}">отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if='report_required'>
+        <div class="col-sm-12 link-padding">
+            <a href="teachers/reports/add/{{ Student.id }}/{{ Subject.id }}">создать отчет по {{ Subject.dative }}</a>
+            <span class="text-danger" ng-show="true" style="margin-left: 20px">требуется создание отчета</span>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -76,7 +81,7 @@
 		margin-bottom: 20px;
 	}
 	.link-padding a {
-		margin: 6px 0;
+		margin: 20px 0;
 		display: inline-block;
 	}
 </style>
