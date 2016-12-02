@@ -97,14 +97,13 @@ class SMS extends Model
 	
 	protected static function exec($url, $params)
 	{
-//		$ch = curl_init($url);
-//		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-//		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-//		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-//		$result = curl_exec($ch);
-//		curl_close($ch);
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+		$result = curl_exec($ch);
+		curl_close($ch);
 
-        $result = "100\n1234\n14500";
 		// Сохраняем отправленную смс
 		$info = explode("\n", $result);
 

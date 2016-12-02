@@ -52,7 +52,6 @@
 	 */
 	function memcached()
 	{
-	    return new a();
 		global $memcached;
 		return $memcached;
 	}
