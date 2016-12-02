@@ -319,7 +319,7 @@
             $GroupSchedule = GroupSchedule::findAll([
                 "condition" => "date='$date' AND id_group > 0 AND cancelled=0"
             ]);
-            
+
             foreach ($GroupSchedule as $Schedule) {
 	            if (! $Schedule->was_lesson) {
 					$Group = Group::findById($Schedule->id_group);
@@ -527,4 +527,12 @@
 			}
 			exit("100"); /* Важно наличие этого блока, иначе наша система посчитает, что в вашем обработчике сбой */
 		}
+
+        /**
+         * Обновить таблицу reports_helper
+         */
+        public function actionReportsHelper()
+        {
+            ReportHelper::recalc();
+        }
 	}

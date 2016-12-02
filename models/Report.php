@@ -118,7 +118,7 @@
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 		public static $mysql_table	= "reports_helper";
 
-		public function recalc()
+		public static function recalc()
 		{
 			dbConnection()->query("TRUNCATE TABLE " . ReportHelper::$mysql_table);
 
