@@ -102,7 +102,8 @@
 			$NewContract = self::add($Contract);
 			// логин пользователя
 			if ($NewContract->id_user) {
-				$NewContract->user_login = User::getCached()[$NewContract->id_user]['login'];
+				$user = findObjectInArray(User::getCached(), ['id' => $NewContract->id_user]);
+				$NewContract->user_login = $user['login'];
 			}
 
 			// Создаем логин-пароль пользователя

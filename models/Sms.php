@@ -132,7 +132,8 @@ class SMS extends Model
 			if ($this->id_user > User::LAST_REAL_USER_ID) {
 				$this->user_login = User::findById($this->id_user)->login;
 			} else {
-				$this->user_login = User::getCached()[$this->id_user]['login'];
+                $user = findObjectInArray(User::getCached(), ['id' => $this->id_user]);
+                $this->user_login = $user['login'];
 			}
 		} else {
 			$this->user_login = "system";
