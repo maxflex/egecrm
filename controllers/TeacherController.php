@@ -28,29 +28,27 @@
 
 		public function actionSalary()
 		{
-			$Data = VisitJournal::findAll([
-				"condition" => "type_entity='TEACHER'"
-			]);
+            $year = intval($_GET['year']);
 
-			$teacher_ids = [];
-			foreach ($Data as $OneData) {
-				if (!$OneData->id_entity) {
-					continue;
-				}
-				if (!in_array($OneData->id_entity, $teacher_ids)) {
-					$teacher_ids[] = $OneData->id_entity;
-				}
-			}
 
+            $teacher_ids = explode(',', dbConnection()->query(
+                                            "select group_concat(distinct id_entity) as teacher_ids " .
+                                            "from visit_journal " .
+                                            "where type_entity='" . Teacher::USER_TYPE . "'"
+                                        )->fetch_object()->teacher_ids
+                           );
+
+			$real_total_sum = 0;
 			$total_sum = 0;
 			$total_payment_sum = 0;
 			$lesson_count = 0;
 			foreach ($teacher_ids as $id_teacher) {
-				$Teacher = Teacher::findById($id_teacher);
+				$Teacher = Teacher::getLight($id_teacher);
 
+                /* @var Payment[] $Payments */
 				$Payments = Payment::findAll([
 					"condition" => "entity_id=$id_teacher and entity_type = '".Teacher::USER_TYPE."'"
-				]);
+				], true);
 
 				$payment_sum = 0;
 				foreach ($Payments as $Payment) {
@@ -63,17 +61,28 @@
 				]);
 
 				$sum = 0;
+                $real_sum = 0;
 				foreach ($Data as $OneData) {
-					$sum += $OneData->teacher_price;
-					$total_sum += $OneData->teacher_price;
-				}
+                    if ($year) {
+                        if ($year == $OneData->year) {
+                            $sum += $OneData->teacher_price;
+                            $total_sum += $OneData->teacher_price;
+                        }
+                    } else {
+                        $sum += $OneData->teacher_price;
+                        $total_sum += $OneData->teacher_price;
+                    }
+                    $real_sum += $OneData->teacher_price;
+                    $real_total_sum += $OneData->teacher_price;
+                }
 
 				$lesson_count += count($Data);
 
 				$return[] = [
 					"Teacher" 	=> $Teacher,
 					"sum"		=> $sum,
-					"payment_sum" => $payment_sum,
+                    "real_sum"  => $real_sum,
+                    "payment_sum" => $payment_sum,
 					"count"		=> count($Data),
 				];
 			}
@@ -101,15 +110,24 @@
 				}
 			});
 
+            $tobe_paid = dbConnection()->query(
+                "select format(sum(teacher_price), 0) as tobe_paid from group_schedule gs " .
+                "join groups g on g.id = gs.id_group " .
+                "where date > now() and gs.cancelled = 0 and gs.is_free = 0 and gs.id_group <> 0 "
+            )->fetch_object()->tobe_paid;
+
 			$ang_init_data = angInit([
-				"Data" 		=> $return,
+				"Data" 		        => $return,
 				"total_sum"			=> $total_sum,
+				"real_total_sum"			=> $real_total_sum,
 				"total_payment_sum"	=> $total_payment_sum,
 				"lesson_count"		=> $lesson_count,
-				"subjects"	=> Subjects::$short,
+				"subjects"	        => Subjects::$short,
+				"active_year"       => $year,
 			]);
 
-			$this->setTabTitle("Дебет преподавателей");
+			$this->setTabTitle('Дебет преподавателей');
+            $this->setRightTabTitle('Планируемый дебет: ' . str_replace(',', ' ', $tobe_paid) . ' руб.');
 
 			$this->render("salary", [
 				"ang_init_data" => $ang_init_data,
@@ -193,11 +211,14 @@
 					returnJsonAng(Teacher::getReviews($id_teacher));
 				}
 				case 2: {
-                    $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['login' => true, 'payments' => true]);
+                    $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['login', 'payments']);
                     returnJsonAng($Lessons);
 				}
 				case 3: {
-					returnJsonAng(Payment::findAll(["condition" => "entity_id=$id_teacher and entity_type='".Teacher::USER_TYPE."'", 'order'=>'first_save_date desc']));
+					returnJsonAng([
+                        'payments' => Payment::findAll(['condition' => "entity_id = $id_teacher and entity_type = '" . Teacher::USER_TYPE . "'", 'order'=>'first_save_date asc']),
+                        'tobe_paid' => Payment::tobePaid($id_teacher, Teacher::USER_TYPE)
+                    ]);
 				}
 				case 4: {
 					returnJsonAng(Teacher::getReportsStatic($id_teacher));

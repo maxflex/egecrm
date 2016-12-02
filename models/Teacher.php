@@ -181,7 +181,7 @@
 			
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, rh.lesson_count");
-			
+
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
 			
 			while ($row = $result->fetch_object()) {

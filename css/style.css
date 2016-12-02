@@ -2684,4 +2684,9 @@ h4.row-header.default-case {
   z-index: 9;
   border-radius: 5px; }
 
+.payment-hint {
+  display: inline-block;
+  margin-left: 10px;
+  color: #999999; }
+
 /*# sourceMappingURL=style.css.map */

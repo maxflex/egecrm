@@ -211,7 +211,7 @@
 	    <span class="link-like" ng-click="setMenu(2)" ng-class="{'active': current_menu == 2}">
 			ПРОВЕДЕННЫЕ ЗАНЯТИЯ
 	    </span>
-	    <span class="link-like" ng-click="setMenu(3)" ng-class="{'active': current_menu == 3}">
+	    <span class="link-like" ng-click="setMenu(3, true)" ng-class="{'active': current_menu == 3}">
 	    	ПЛАТЕЖИ
 	    </span>
 	    <span class="link-like" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}">

@@ -3291,6 +3291,11 @@ table.last-item-no-border tr:last-child td {
 	  cursor: pointer;
 	}
 
+	.payment-hint {
+	  display: inline-block;
+	  margin-left: 10px;
+	  color: $placeholder_gray;
+	}
 	//sms styles
 	#sms-counter {
 	  position: absolute;

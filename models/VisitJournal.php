@@ -262,14 +262,14 @@
                 $Lesson->cabinet = Cabinet::getBlock($Lesson->cabinet, $Lesson->id_branch);
                 $Lesson->group_level = dbConnection()->query("SELECT level FROM groups WHERE id= {$Lesson->id_group}")->fetch_object()->level;
 
-                if (isset($with['payments'])) {
+                if (in_array('payments', $with)) {
                     $Lesson->payments = Payment::findAll([
                         "condition" => "entity_id={$id_teacher} and entity_type='" . Teacher::USER_TYPE . "' " .
                             "and str_to_date(date, '%d.%m.%Y') >= '{$Lesson->lesson_date}' " . ($NextLesson ? " and str_to_date(date, '%d.%m.%Y') < '" . $NextLesson->lesson_date . "' " : "")
                     ]);
                 }
 
-                if (isset($with['login'])) {
+                if (in_array('login', $with)) {
                     $Lesson->login_user_saved = dbConnection()->query("select login from users where id = {$Lesson->id_user_saved}")->fetch_object()->login;
                 }
             }

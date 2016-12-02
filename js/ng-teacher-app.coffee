@@ -57,19 +57,23 @@
 
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars']
 
-			$scope.setMenu = (menu) ->
+			$scope.setMenu = (menu, complex_data) ->
 				$.each menus, (index, value) ->
-					_loadData(index, menu, value)
+					_loadData(index, menu, value, complex_data)
 				$scope.current_menu = menu
 
 			_postData = (menu) ->
 				id_teacher: $scope.Teacher.id
 				menu: menu
 
-			_loadData = (menu, selected_menu, ngModel) ->
+			_loadData = (menu, selected_menu, ngModel, complex_data) ->
 				if $scope[ngModel] is undefined and menu is selected_menu
 					$.post "teachers/ajax/menu", _postData(menu), (response) ->
-						$scope[ngModel] = response
+						if complex_data
+							_.each response, (value, field) ->
+								$scope[field] = value
+						else
+							$scope[ngModel] = response
 						$scope.$apply()
 					, "json"
 
@@ -210,7 +214,8 @@
 			$scope.editPayment = (payment) ->
 			  if !payment.confirmed
 			    $scope.new_payment = angular.copy payment
-			    $scope.$apply()
+			    $timeout ->
+			        $scope.$apply()
 			    lightBoxShow 'addpayment'
 			    return
 			  bootbox.prompt
@@ -323,7 +328,7 @@
 			      lightBoxHide()
 			      return
 			  else
-			    # иначе сохранение плтежа
+			    # иначе сохранение платежа
 			    # Добавляем дополнительные данные в new_payment
 			    $scope.new_payment.user_login = $scope.user.login
 			    $scope.new_payment.first_save_date = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -337,7 +342,8 @@
 			      $scope.new_payment.document_number = response.document_number
 			      # Инициализация если не установлено
 			      $scope.payments = initIfNotSet($scope.payments)
-			      $scope.payments.unshift $scope.new_payment
+			      $scope.payments.push $scope.new_payment
+			      $scope.tobe_paid -= $scope.new_payment.sum if $scope.tobe_paid
 			      $scope.new_payment = id_status: 0
 			      $scope.$apply()
 			      ajaxEnd()
@@ -346,18 +352,18 @@
 			    , 'json'
 			  return
 
+			deletePayment = (payment) ->
+				bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
+					if result == true
+						$.post 'ajax/deletePayment', 'id_payment': payment.id, ->
+							$scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
+							$scope.tobe_paid += parseInt(payment.sum) if $scope.tobe_paid
+							$timeout ->
+								$scope.$apply()
 			# Удалить платеж
 			$scope.deletePayment = (index, payment) ->
 			  if !payment.confirmed
-			    bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
-			      if result == true
-			        ajaxStart()
-			        $.post 'ajax/deletePayment', 'id_payment': payment.id, ->
-			            ajaxEnd()
-			            $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
-			            $timeout ->
-				            $scope.$apply()
-			      return
+			    deletePayment payment
 			  else
 			    bootbox.prompt
 			      title: 'Введите пароль'
@@ -365,14 +371,7 @@
 			      callback: (result) ->
 			        if result is null
 			        else if hex_md5 result == payments_hash
-			          bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
-			            if result == true
-			              $.post 'ajax/deletePayment', 'id_payment': payment.id
-			              , ->
-			                $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
-			                $timeout ->
-			                    $scope.$apply()
-			            return
+			          deletePayment payment
 			        else if result != null
 			          $('.bootbox-form').addClass('has-error').children().first().focus()
 			          $('.bootbox-input-text').on 'keydown', ->

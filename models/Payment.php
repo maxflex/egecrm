@@ -10,6 +10,7 @@
 		const PAID_BILL		= 4;
 		const CARD_ONLINE	= 5;
 		const MUTUAL_DEBTS	= 6;
+		const NDFL	        = 7;
 
 		# Все
 		static $all  = [			
@@ -18,6 +19,7 @@
 			self::PAID_BILL		=> "счет",
 			self::CARD_ONLINE	=> "карта онлайн",
 			self::MUTUAL_DEBTS	=> "взаимозачет",
+			self::NDFL	        => "НДФЛ",
 		];
 
 		const PER_PAGE = 30;
@@ -179,5 +181,15 @@
                    $this->document_number = self::dbConnection()->query('select max(document_number) + 1 as last_doc_num from payments')->fetch_object()->last_doc_num;
                }
            }
+        }
+
+        public static function tobePaid($entity_id, $entity_type)
+        {
+            return self::dbConnection()->query("select ".
+                "(select sum(v.teacher_price) from visit_journal v where v.id_entity = {$entity_id} and v.type_entity = '{$entity_type}') " .
+                " - " .
+                "(select sum(if(p.id_type = 1, p.sum, -1*p.sum)) from payments p where p.entity_id = {$entity_id} and p.entity_type = '{$entity_type}') " .
+                "as tobe_paid"
+            )->fetch_object()->tobe_paid;
         }
     }

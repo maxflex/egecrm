@@ -20,8 +20,15 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 				$('#searchResult').scrollTop((active - 4) * 30)
 			}
 
+			$scope.stoper = function($event){
+				if($event.keyCode == 38 || $event.keyCode == 40){
+					$event.preventDefault()
+				}
+			}
+
 			//обрабатываем событие по нажатию на стрелочки клавиатуры
 			$scope.key = function($event){
+
 				if ($event.keyCode == 38){ //клавиша стрелка вверх
 					if(angular.isUndefined($scope.success.data)){ //проверка на наличе данных
 						return false
@@ -33,6 +40,7 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 
 					build()
 					scroll()
+					$event.preventDefault()
 
 				}else if($event.keyCode == 40){//клавиша стрелка вниз
 					if(angular.isUndefined($scope.success.data)){ //проверка на наличе данных
