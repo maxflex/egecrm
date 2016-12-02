@@ -95,31 +95,13 @@
 		}
 
 		// 	количество красных меток "требуется создание отчета"
-        /**
-         * @param $id_teacher
-         * @param bool|int $year
-         * @return int
-         */
         public static function redReportCountStatic($id_teacher, $year = false)
         {
-            if (LOCAL_DEVELOPMENT) {
-                return dbConnection()->query("
-                    SELECT COUNT(*) AS cnt FROM reports_helper rh
-                    LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
-                    WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL " . ($year ? "AND rh.year={$year}" : "")
-                )->fetch_object()->cnt;
-            } else {
-                $red_report_count = memcached()->get('red_report_count');
-                if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-                    $red_report_count =  dbConnection()->query("
-                    SELECT COUNT(*) AS cnt FROM reports_helper rh
-                    LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
-                    WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL " . ($year ? "AND rh.year={$year}" : "")
-                    )->fetch_object()->cnt;
-                    memcached()->set('red_report_count', $red_report_count, 60 * 5);
-                }
-                return $red_report_count;
-            }
+            return dbConnection()->query("
+                SELECT COUNT(*) AS cnt FROM reports_helper rh
+                LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
+                WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL " . ($year ? "AND rh.year={$year}" : "")
+            )->fetch_object()->cnt;
 		}
 
 		public static function redReportCountAll()

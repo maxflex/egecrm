@@ -207,15 +207,6 @@
 			return $teacher_ids;
 		}
 
-        /**
-         * Получить id всех групп ученика, уроки которой он посещал по определенному предмету.
-         *
-         * @param int $id_student   ID студента
-         * @param int $id_subject   ID gредмета
-         * @param int $grade        Класс
-         *
-         * @return VisitJournal[]   Посещения
-         */
         public static function getGroupIdsBySubject($id_student, $id_subject, $grade) {
             return self::getGroupIds($id_student, $id_subject, $grade);
         }
