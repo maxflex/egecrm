@@ -176,15 +176,17 @@ class SMS extends Model
 
 	public static function notifyStatus($SMS = false)
     {
-        foreach(User::getIds() as $user_id) {
+        foreach(User::getIds(true) as $user_id) {
             Socket::trigger(
-                'sms' . $user_id,
-                'status', [
+                'user_' . $user_id,
+                'sms', [
                     'id' => $SMS->id,
                     'status' => $SMS->id_status
                 ],
                 'egecrm'
             );
         }
+
+        return true;
     }
 }

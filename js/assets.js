@@ -288,7 +288,7 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
   };
   PusherService.bind('sms', (function(_this) {
     return function(data) {
-      _this.updates[data.id] = data.status;
+      _this.updates[parseInt(data.id)] = parseInt(data.status);
       return $rootScope.$apply();
     };
   })(this));
