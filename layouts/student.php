@@ -37,7 +37,6 @@
 			}
 		?>
 	</a>
-    <a href="students/journal" class="list-group-item">Журнал посещаемости</a>
     <a href="students/reviews" class="list-group-item">Оставить отзыв
 	    <?php
 			$reviews_count = Student::reviewsNeeded();
