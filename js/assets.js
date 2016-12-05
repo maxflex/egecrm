@@ -220,6 +220,9 @@ app.directive('sms', function() {
 
 app.service('PhoneService', function($rootScope) {
   this.call = function(number) {
+    if (typeof number !== 'string') {
+      number = '' + number;
+    }
     return location.href = "sip:" + number.replace(/[^0-9]/g, '');
   };
   this.isMobile = function(number) {
