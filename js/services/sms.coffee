@@ -6,7 +6,7 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
             'Content-Type': 'application/x-www-form-urlencoded'
 
     PusherService.bind 'sms', (data) =>
-        @updates[data.id] = data.status
+        @updates[parseInt data.id] = parseInt data.status
         $rootScope.$apply()
 
     @getStatus = (sms) ->

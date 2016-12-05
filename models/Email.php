@@ -88,7 +88,8 @@ class Email extends Model
 	public function getCoordinates()
 	{
 		if ($this->id_user) {
-			$this->user_login = User::getCached()[$this->id_user]['login'];
+            $user = findObjectInArray(User::getCached(), ['id' => $this->id_user]);
+			$this->user_login = $user['login'];
 			
 			$this->coordinates = $this->user_login. " ". dateFormat($this->date);
 		} else {

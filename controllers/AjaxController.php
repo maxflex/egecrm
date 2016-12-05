@@ -564,7 +564,7 @@
 			$Users = User::findAll();
 
 			foreach ($Users as $User) {
-				$return[$User->id] = $User->dbData();
+				$return[] = $User->dbData();
 			}
 
 			$Users = $return;

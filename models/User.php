@@ -228,7 +228,7 @@
 			]);
 
 			foreach ($Users as $User) {
-				$return[$User->id] = $User->dbData();
+				$return[] = $User->dbData();
 			}
 
 			$Users = $return;
@@ -489,10 +489,18 @@
 			return (memcached()->get("users:{$id_user}:busy") ? true : false);
 		}
 
-		public static function getIds()
+		public static function getIds($real = false)
         {
             $user_ids = [];
-            foreach (static::getCached() as $user) $user_ids[] = $user['id'];
+            foreach (static::getCached() as $user) {
+                if ($real) {
+                    if ($user['banned'] == 0) {
+                        $user_ids[] = $user['id'];
+                    }
+                } else {
+                    $user_ids[] = $user['id'];
+                }
+            }
 
             return $user_ids;
         }
