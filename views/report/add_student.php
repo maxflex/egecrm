@@ -59,7 +59,7 @@
         </div>
         <div class="col-sm-12 link-padding">
             <a href="teachers/reports/add/{{ Student.id }}/{{ Subject.id }}">создать отчет по {{ Subject.dative }}</a>
-            <span class="text-danger" ng-show="report_required" style="margin-left: 20px">требуется создание отчета</span>
+            <span class="text-danger" ng-show="<?= $report_required ?>" style="margin-left: 20px">требуется создание отчета</span>
         </div>
     </div>
     <div class="row">
