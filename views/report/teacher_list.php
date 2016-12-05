@@ -10,26 +10,35 @@
 		</div>
 	</div>
 	<div class="panel-body">
-		<div class="alert alert-info" role="alert">
-			Каждый ученик, заключающий договор с ЕГЭ-Центром оплачивает обучение двумя платежами. Первый платеж производится при заключении договора, второй - в январе 2016 года. Отчет преподавателя - один из главных факторов, влияющих на долю родителей, желающих продолжать обучение, дающий родителям понимание за что он заплатил и стоит ли ему платить дальше. Пожалуйста, заполняйте отчет каждого ученика внимательно и подробно.
+		<div class="alert alert-danger" role="alert">
+			Каждый ученик, обучающийся в ЕГЭ-Центре оплачивает обучение двумя платежами. Первый платеж производится при заключении договора, второй - в январе 2017 года. Отчет преподавателя - один из главных факторов, влияющий на желание родителей продолжать обучение, дающий родителям понимание за что он заплатил и стоит ли ему оплачивать дальнейшее обучение. Пожалуйста, заполняйте отчет каждого ученика тщательно и подробно.
 		</div>
         <div class="top-links pull-left">
 			<a ng-class="{'active': year == <?= $year ?>}" href='teachers/reports/{{ year }}'
                 ng-repeat='year in <?= Years::json() ?>'>{{ year + '-' + (year + 1)  }}</a>
 		</div>
-		<table class="table table-divlike">
+		<table class="table table-hover">
 			<tr ng-repeat="d in data">
 				<td style="width: 20%">
 					<a href="teachers/reports/student/{{ d.Student.id }}/{{ d.id_subject }}">{{d.Student.last_name}} {{d.Student.first_name}}</a>
 				</td>
-				<td style="width: 50%">
+				<td style="width: 15%">
 					{{ d.lessons_count }} <ng-pluralize count="d.lessons_count" when="{
 						'one': 'занятие',
 						'few': 'занятия',
 						'many': 'занятий'
-					}"></ng-pluralize> по {{ Subjects[d.id_subject]}}
+					}"></ng-pluralize>
 				</td>
-				<td style="width: 15%">
+                <td style="width: 10%">
+                    {{ Subjects[d.id_subject]}}
+                </td>
+                <td style="width: 15%">
+                    {{ d.Student.grade }} класс
+                </td>
+                <td style="width: 15%">
+                    <span ng-if='d.id_group'>группа {{ d.id_group }}</span>
+                </td>
+				<td style="width: 10%">
 					<span ng-show="d.reports_count">
                         {{ d.reports_count }}
                         <ng-pluralize count="d.reports_count" when="{
@@ -47,14 +56,3 @@
 		</table>
 	</div>
 </div>
-
-<style>
-	tr.inner td {
-		border-top: none !important;
-		padding-top: 0 !important;
-	//	padding-bottom: 0 !important;
-	}
-	tr.inner:hover {
-		background: none !important;
-	}
-</style>

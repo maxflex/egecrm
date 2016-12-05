@@ -2,14 +2,13 @@
 	<div class="row mb">
 		<div class="col-sm-12">
             <div class='user-img'>
-                <img ng-if='Student.has_photo_cropped' src="img/students/{{ Student.id + '_original.' + Student.photo_extension }}">
-                <img ng-if='!Student.has_photo_cropped' src='img/teachers/no-profile-img.gif'>
+                <img src="{{Teacher.has_photo ? 'http://static.a-perspektiva.ru/img/tutors/' + Teacher.id + '.' + Teacher.photo_extension : 'img/teachers/no-profile-img.gif'}}">
             </div>
             <div style='margin-bottom: 5px'>
-                <b>{{Student.last_name}} {{Student.first_name}}</b>
+                <b>{{ Teacher.last_name }} {{ Teacher.first_name }} {{ Teacher.middle_name }}</b>
             </div>
             <div style='margin-bottom: 5px'>
-                В данный момент ученик учится в {{Student.grade}} классе
+                Преподаватель по <span ng-repeat='id_subject in Teacher.subjects'>{{ AllSubjects[id_subject] }}{{ !$last ? ' и ' : ''}}</span>
             </div>
 		</div>
 	</div>
@@ -49,17 +48,13 @@
                 </span>
             </div>
             <div ng-if='isReport(Visit)' class='link-padding'>
-                <a href="teachers/reports/edit/{{Visit.id}}">отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}</a>
+                <a href="students/reports/view/{{ Visit.id }}">отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}</a>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-12 link-padding" ng-if='!id_group'>
-            <span style='margin-bottom: 0'>Ученик прекратил обучение в группе</span>
-        </div>
-        <div class="col-sm-12 link-padding">
-            <a href="teachers/reports/add/{{ Student.id }}/{{ Subject.id }}">создать отчет по {{ Subject.dative }}</a>
-            <span class="text-danger" ng-show="<?= $report_required ?>" style="margin-left: 20px">требуется создание отчета</span>
+            <span>Ученик прекратил обучение в группе</span>
         </div>
     </div>
     <div class="row">

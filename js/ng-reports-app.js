@@ -110,6 +110,18 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
     });
     return !has_reports;
   };
+  $scope.getYears = function() {
+    var years;
+    years = _.uniq($scope.Visits, function(Visit) {
+      return Visit.year;
+    });
+    return _.pluck(years, 'year');
+  };
+  $scope.getByYears = function(year) {
+    return _.where($scope.Visits, {
+      year: year
+    });
+  };
   $scope.formatDate = function(date) {
     return moment(date).format("DD.MM.YY");
   };

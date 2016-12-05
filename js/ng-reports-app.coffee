@@ -88,13 +88,21 @@ app = angular.module "Reports", ["ui.bootstrap"]
 
 		$scope.noReports = (Visits) ->
 			return true if Visits is false or not Visits.length
-
 			has_reports = false
 			$.each Visits, (index, Visit) ->
 				if Visit.hasOwnProperty('id_student')
 					has_reports = true
 					return
 			!has_reports
+
+		$scope.getYears = ->
+			years = _.uniq $scope.Visits, (Visit) ->
+				Visit.year
+			_.pluck(years, 'year')
+
+		$scope.getByYears = (year) ->
+			_.where $scope.Visits,
+				year: year
 
 		$scope.formatDate = (date) ->
 			moment(date).format "DD.MM.YY"

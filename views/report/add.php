@@ -20,24 +20,23 @@
 			</div>
 		</div>
 		<?php endif ?>
-		
-		
+
+
 		<?php if (User::fromSession()->type == Teacher::USER_TYPE) :?>
 		<div class="row mb">
 			<div class="col-sm-12">
 				Рекомендации к созданию отчетов:
 				<ul>
 					<li>пишите конкретно и по делу. Родители плохо переносят воду в отчетах</li>
-					<li>старайтесь писать правду. Если у ученика очень низкий уровень знаний по предмету, оставляйте родителям больше рекомендаций, сообщите им, что нужно делать, чтобы достигнуть желаемого результата, старайтесь смягчать углы, чтобы не допустить расторжения договора</li>
-					<li>пишите подробнее. В каждой группе прошло от 10 до 20 занятий и родители хотят и заслуживают получить развернутый комментарий</li>
-					<li>пишите в свободной манере и от своего имени, будто общаетесь с родителем</li>
-					<li>после заполнения этот отчет будет направлен родителям по e-mail, а также будет доступен родителям в личном кабинете ученика</li>
-					<li>в идеале отчет по каждому ученику заполняется каждые 8-10 занятий</li>
+					<li>если у ученика низкий уровень способностей и знаний по предмету, оставляйте родителям больше рекомендаций по достижению желаемого результата. Пишите правду, но смягчайте углы, чтобы избежать расторжений договоров</li>
+					<li>пишите подробнее. Родители хотят и заслуживают развернутый отчет</li>
+					<li>пишите в свободной манере и от своего имени, будто говорите с родителем</li>
+					<li>после заполнения этот отчет будет доступен родителям в личном кабинете ученика</li>
 			</div>
 		</div>
 		<?php endif ?>
-		
-		
+
+
 		<div class="row mb">
 			<div class="col-sm-6">
 				<b>Выполнение домашнего задания</b>
@@ -57,9 +56,9 @@
 			</div>
 		</div>
 
-		
-		
-		
+
+
+
 		<div class="row mb">
 			<div class="col-sm-6">
 				<b>Работоспособность и активность на уроках</b>
@@ -79,8 +78,8 @@
 			</div>
 		</div>
 
-		
-		
+
+
 		<div class="row mb">
 			<div class="col-sm-6">
 				<b>Поведение на уроках</b>
@@ -99,8 +98,8 @@
 				</div>
 			</div>
 		</div>
-		
-		
+
+
 		<div class="row mb">
 			<div class="col-sm-6">
 				<b>Способность усваивать новый материал</b>
@@ -119,8 +118,8 @@
 				</div>
 			</div>
 		</div>
-		
-		
+
+
 		<div class="row mb">
 			<div class="col-sm-6">
 				<b>Выполнение контрольных работ, текущий уровень знаний</b>
@@ -139,8 +138,8 @@
 				</div>
 			</div>
 		</div>
-		
-		
+
+
 		<div class="row mb">
 			<div class="col-sm-6">
 				<b>Рекомендации родителям</b>
@@ -153,14 +152,14 @@
 				</div>
 			</div>
 		</div>
-		
-		
+
+
 		<div class="row mb attention">
 			<div class="col-sm-6">
 				<b>Прогноз баллов на экзамене (информация доступна только администраторам)</b>
 				<div class="form-group payment-line">
-					от <input class="form-control" ng-model="Report.expected_score_from"> 
-					до <input class="form-control" ng-model="Report.expected_score_to"> 
+					от <input class="form-control" ng-model="Report.expected_score_from">
+					до <input class="form-control" ng-model="Report.expected_score_to">
 					из возможных <input class="form-control" ng-model="Report.expected_score_total"> баллов
 				</div>
 			</div>
@@ -170,9 +169,9 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="row mb">
-			<div class="col-sm-12">
+			<div class="col-sm-6">
 				<div class="row mb">
 					<div class="col-sm-12">
 						<div class="label-inside">
@@ -181,22 +180,20 @@
 						</div>
 					</div>
 				</div>
-				<?php if (User::fromSession()->type == User::USER_TYPE) :?>
-				<div class="row mb">
-					<div class="col-sm-12">
-						<label class="ios7-switch transition-control" style="font-size: 24px; top: 1px">
-						    <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Report.available_for_parents">
-						    <span class="switch"></span>
-						</label>
-						<span class='label-text'>сделать отчет доступным для родителя (если отчет заполнен полностью и верно, передвиньте бегунок)</span>
-					</div>
-				</div>
-				<?php endif ?>
+            </div>
+			<?php if (User::fromSession()->type == User::USER_TYPE) :?>
+			<div class="col-sm-6">
+				<label class="ios7-switch transition-control" style="font-size: 24px; top: 1px">
+				    <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Report.available_for_parents">
+				    <span class="switch"></span>
+				</label>
+				<span class='label-text'>сделать отчет доступным для родителя</span>
 			</div>
+			<?php endif ?>
 		</div>
-		
+
 		<div class="row center mb" ng-show="!Report.id">
-			<button class="btn btn-primary" ng-click="addReport(false)" ng-disabled="adding">добавить отчёт</button> 
+			<button class="btn btn-primary" ng-click="addReport(false)" ng-disabled="adding">добавить отчёт</button>
 <!-- 			<button class="btn btn-primary" ng-click="addReport(true)" ng-disabled="adding">добавить отчет и отправить родителям по e-mail</button> -->
 		</div>
 		<div class="row center" ng-show="Report.id">
@@ -205,7 +202,7 @@
 				<span ng-show="!saving && !form_changed">сохранено</span>
 				<span ng-show="saving">сохранение</span>
 			</button>
-		</div>		
+		</div>
 	</div>
 </div>
 
@@ -213,7 +210,7 @@
 	.row.mb {
 		margin-bottom: 20px;
 	}
-	
+
 	.count-symbols {
 		position: absolute;
 	    right: 4%;
@@ -238,7 +235,7 @@
 		width: 100%;
 		max-width: 100%;
 		margin-top: 5px;
-		min-height: 117px;		
+		min-height: 117px;
 	}
 	.from-them.red {
 		background: #ffb5b5 !important;
