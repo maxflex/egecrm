@@ -675,6 +675,13 @@
 		{
 			return static::$mysql_table;
 		}
+
+        public function getOriginal($field)
+        {
+            return static::dbConnection()->query("
+                select {$field} as `field` from " . static::$mysql_table . " where id=" . $this->id
+            )->fetch_object()->field;
+        }
 	}
 
 ?>

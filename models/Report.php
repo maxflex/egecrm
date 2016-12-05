@@ -21,11 +21,11 @@
 			}
 		}
 
-		public function getEmail()
-		{
-			$Student = Student::findById($this->id_student);
-			return $Student->Representative->email;
-		}
+        public static function add($array)
+        {
+            $array['year'] = academicYear();
+            parent::add($array);
+        }
 
 		public function countByYear()
 		{
@@ -39,6 +39,23 @@
 
 			return Report::count($data);
 		}
+
+        public function beforeSave()
+        {
+            if ($this->available_for_parents && $this->available_for_parents != $this->getOriginal('available_for_parents')) {
+                $Student = Student::findById($this->id_student);
+                $sms_message = Template::get(11, [
+					'representative_name'	=> $Student->Representative->first_name . " " . $Student->Representative->middle_name,
+					'subject'				=> Subjects::$dative[$Report->id_subject],
+				]);
+				foreach (Student::$_phone_fields as $phone_field) {
+					$representative_number = $Student->Representative->{$phone_field};
+					if (!empty($representative_number)) {
+						SMS::send($representative_number, $sms_message);
+					}
+				}
+            }
+        }
 
         /**
          * Check if report is needed
