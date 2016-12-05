@@ -29,11 +29,11 @@
                 <td style="width: 10%">
                     {{ Subjects[d.id_subject]}}
                 </td>
-                <!-- <td style="width: 15%">
-                    <span ng-if='d.id_group'>группа {{ d.id_group }}</span>
-                </td> -->
                 <td style="width: 15%">
-                    <span ng-if='d.id_group'>группа {{ d.id_group }}</span>
+                    <span ng-if='d.Group'>{{ d.Group.grade }} класс</span>
+                </td>
+                <td style="width: 15%">
+                    <span ng-if='d.Group'>группа {{ d.Group.id }}</span>
                 </td>
 				<td style="width: 10%">
 					<span ng-show="d.reports_count">
