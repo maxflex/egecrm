@@ -187,7 +187,7 @@
 						<label class="ios7-switch transition-control" style="font-size: 24px; top: 1px">
 						    <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Report.available_for_parents">
 						    <span class="switch"></span>
-						</label> 
+						</label>
 						<span class='label-text'>сделать отчет доступным для родителя (если отчет заполнен полностью и верно, передвиньте бегунок)</span>
 					</div>
 				</div>

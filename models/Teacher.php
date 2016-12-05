@@ -181,7 +181,7 @@
 			$search = json_decode($_COOKIE['reports']);
 			
 			// получаем данные
-			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.available_for_parents, rh.lesson_count");
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.date, r.available_for_parents, rh.lesson_count");
 
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
 			
