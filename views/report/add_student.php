@@ -9,20 +9,16 @@
                 <b>{{Student.last_name}} {{Student.first_name}}</b>
             </div>
             <div style='margin-bottom: 5px'>
-                В данный момент ученик учится в {{Student.grade}} классе и
-            </div>
-            <div style='margin-bottom: 5px'>
-                <span ng-if='!group_ids.length'>прекратил обучение</span>
-                <span ng-if='group_ids.length'>
-                    присутствует в группе <a href='teachers/groups/edit/{{ group_ids[0] }}/schedule'>группе №{{ group_ids[0] }}</a>
-                    ({{ Subject.title }})
-                </span>
+                В данный момент ученик учится в {{Student.grade}} классе
             </div>
 		</div>
 	</div>
 
-    <div class="row">
-        <div ng-repeat="Visit in Visits" class="col-sm-12" style='margin-bottom: 5px'>
+    <div class="row" ng-repeat='year in getYears()'>
+        <div class="col-sm-12 link-padding">
+            <b>Занятия {{ year }}–{{ year + 1}} учебного года</b>
+        </div>
+        <div ng-repeat="Visit in getByYears(year)" class="col-sm-12" style='margin-bottom: 5px'>
             <div ng-if='!isReport(Visit)'>
                 <span class='inline-block' style='width: 200px'>
                     {{ formatDate(Visit.lesson_date)}} в {{formatTime(Visit.lesson_time) }}
@@ -35,6 +31,9 @@
                 </span>
                 <span class='inline-block' style='width: 150px'>
                     группа {{ Visit.id_group }}
+                </span>
+                <span class='inline-block' style='width: 100px'>
+                    {{ Subject.three_letters }}
                 </span>
                 <span class='inline-block' style='width: 150px'>
                     {{ Visit.grade }} класс
@@ -54,10 +53,38 @@
             </div>
         </div>
     </div>
-    <div class="row" ng-if='report_required'>
+    <div class="row">
+        <div class="col-sm-12 link-padding" ng-if='!id_group'>
+            <span style='margin-bottom: 0'>Ученик прекратил обучение в группе</span>
+        </div>
         <div class="col-sm-12 link-padding">
             <a href="teachers/reports/add/{{ Student.id }}/{{ Subject.id }}">создать отчет по {{ Subject.dative }}</a>
-            <span class="text-danger" ng-show="true" style="margin-left: 20px">требуется создание отчета</span>
+            <span class="text-danger" ng-show="report_required" style="margin-left: 20px">требуется создание отчета</span>
+        </div>
+    </div>
+    <div class="row">
+        <div ng-repeat="Lesson in FutureLessons" class="col-sm-12 text-gray" style='margin-bottom: 5px'>
+            <span class='inline-block' style='width: 200px'>
+                {{ formatDate(Lesson.date)}} в {{formatTime(Lesson.time) }}
+            </span>
+            <span class='inline-block' style='width: 150px'>
+                {{ getDay(Lesson.date) }}
+            </span>
+            <span class='inline-block' style='width: 150px'>
+                кабинет {{ Lesson.cabinet_number }}
+            </span>
+            <span class='inline-block' style='width: 150px'>
+                группа {{ Lesson.id_group }}
+            </span>
+            <span class='inline-block' style='width: 100px'>
+                {{ Subject.three_letters }}
+            </span>
+            <span class='inline-block' style='width: 150px'>
+                {{ Student.grade }} класс
+            </span>
+            <span class='inline-block' style='width: 150px'>
+                планируется
+            </span>
         </div>
     </div>
 </div>
@@ -80,8 +107,11 @@
 	.row.mb {
 		margin-bottom: 20px;
 	}
-	.link-padding a {
+	.link-padding * {
 		margin: 20px 0;
 		display: inline-block;
 	}
+    .text-danger {
+        font-size: 12px;
+    }
 </style>

@@ -66,7 +66,7 @@
 				return 0;
 			}
 			return dbConnection()->query("
-				SELECT COUNT(DISTINCT id_student) AS c FROM group_sms 
+				SELECT COUNT(DISTINCT id_student) AS c FROM group_sms
 				WHERE id_student IN (" . implode(",", $Group->students) . ") AND id_subject = {$Group->id_subject}
 					AND first_schedule = '{$Group->first_schedule}' AND cabinet={$FirstLesson->cabinet}
 			")->fetch_object()->c;
@@ -301,13 +301,19 @@
 
 		}
 
-		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
-		public function getFutureSchedule()
+		// Получить будущее расписание
+		public function getFutureSchedule($with_cabinets = false)
 		{
-			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW())",
+			$GroupSchedule = GroupSchedule::findAll([
+				"condition" => "id_group=" . $this->id . " AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW())",
 				"order"		=> "date ASC, time ASC",
 			]);
+            if ($with_cabinets) {
+                foreach($GroupSchedule as $GS) {
+                    $GS->cabinet_number = Cabinet::getField($GS->cabinet, 'number');
+                }
+            }
+            return $GroupSchedule;
 		}
 
 		// @refactored
@@ -706,7 +712,7 @@
 			}
 
 			$this->isUnplanned = $this->isUnplanned();
-			
+
 			$this->was_lesson = VisitJournal::count(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
 		}
 

@@ -956,7 +956,7 @@
 		public static function getLight($id)
 		{
 			return dbConnection()->query("
-				SELECT s.id, s.first_name, s.last_name, s.middle_name, s.id_user_review, u.login as user_login, u.color
+				SELECT s.id, s.first_name, s.last_name, s.middle_name, s.id_user_review, s.grade, u.login as user_login, u.color
 				FROM " . static::$mysql_table . " s
 				LEFT JOIN users u ON u.id = s.id_user_review
 				WHERE s.id = " . $id . "
