@@ -70,21 +70,21 @@
             if (ReportForce::check($id_student, $id_teacher, $id_subject, $year)) {
                 return false;
             }
-            // get last report id
-            $query = dbConnection()->query("
-                SELECT id FROM reports
-                WHERE " . self::conditionString($id_student, $id_teacher, $id_subject, $year) . "
-                ORDER BY STR_TO_DATE(date, '%d.%m.%Y') DESC
-                LIMIT 1
-            ");
-            if ($query->num_rows) {
-                $last_report_id = $query->fetch_object()->id;
+            // получаем кол-во занятий с последнего отчета по предмету
+            $LatestReport = Report::find(self::condition($id_student, $id_teacher, $id_subject, $year));
+
+            if ($LatestReport) {
+                $latest_report_date = date("Y-m-d", strtotime($LatestReport->date));
+            } else {
+                $latest_report_date = "0000-00-00";
             }
-            // lessons since last report or since first lesson
-            return ReportHelper::find([
-                'condition' => self::conditionString($id_student, $id_teacher, $id_subject, $year)
-                    . ($last_report_id ? " AND id_report={$last_report_id}" : " AND id_report IS NULL")
-            ])->lesson_count >= self::LESSON_COUNT;
+
+            $lessons_count = VisitJournal::count([
+                "condition" => "id_subject={$id_subject} AND id_entity={$id_student} AND id_teacher={$id_teacher}
+                    AND lesson_date > '$latest_report_date' AND year={$year}"
+            ]);
+
+            return $lessons_count >= self::LESSON_COUNT;
         }
 
         /**
