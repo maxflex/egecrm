@@ -181,7 +181,7 @@
 			$search = json_decode($_COOKIE['reports']);
 			
 			// получаем данные
-			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.email_sent, r.available_for_parents, rh.lesson_count");
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.available_for_parents, rh.lesson_count");
 
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
 			
@@ -214,12 +214,6 @@
 				$new_search = clone $search;
 				$new_search->available_for_parents = $available_for_parents;
 				$counts['available_for_parents'][$available_for_parents] = static::_count($new_search);
-			}
-			
-			foreach(["", 0, 1] as $email_sent) {
-				$new_search = clone $search;
-				$new_search->email_sent = $email_sent;
-				$counts['email_sent'][$email_sent] = static::_count($new_search);
 			}
 			
 			foreach(([''=>''] + Subjects::$all) as $id_subject => $name) {
@@ -262,8 +256,7 @@
 				WHERE vj.type_entity='STUDENT' "
 				. (($search->mode == 1 || !isBlank($search->available_for_parents) || !isBlank($search->email_sent)) ? " AND r.id IS NOT NULL" : "")
 				. (!isBlank($search->available_for_parents) ? " AND r.available_for_parents={$search->available_for_parents}" : "")
-				. (!isBlank($search->email_sent) ? " AND r.email_sent={$search->email_sent}" : "")
-				. ($search->year ? " AND vj.year={$search->year}" : "") 
+				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
 				. (($search->mode > 1 && $search->mode < 4) ? " AND (r.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? ">=8 AND rf.id IS NULL" : "<8") . ")" : "")

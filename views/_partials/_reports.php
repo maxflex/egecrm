@@ -9,13 +9,13 @@
 				{{Report.force_noreport ? 'отчет не требуется' : 'требуется создание отчета' }}
 			</span>
 		</td>
-		<td style="width: 20%" ng-init="_Teacher = (Report.Teacher || Teacher)">
+		<td style="width: 24%" ng-init="_Teacher = (Report.Teacher || Teacher)">
 			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
 		</td>
 		<td style='width: 7%'>
 			{{three_letters[Report.id_subject]}}
 		</td>
-		<td style='width: 20%'>
+		<td style='width: 24%'>
 			<a href="student/{{Report.Student.id}}">
 				<span ng-show='Report.Student.last_name'>{{Report.Student.last_name}} {{Report.Student.first_name}}</span>
 				<span ng-hide='Report.Student.last_name'>имя не указано</span>
@@ -28,11 +28,8 @@
 				'many': 'занятий',
 			}"></ng-pluralize>
 		</td>
-		<td width="10%">
+		<td width="15%">
 			<span class="text-danger" ng-hide="!Report.id || Report.available_for_parents">не доступен в ЛК</span>
-		</td>
-		<td width="13%">
-			<span class="text-danger" ng-hide="!Report.id || Report.email_sent">e-mail не отправлен</span>
 		</td>
 	</tr>
 </table>

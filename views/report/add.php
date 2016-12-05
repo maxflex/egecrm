@@ -191,21 +191,6 @@
 						<span class='label-text'>сделать отчет доступным для родителя (если отчет заполнен полностью и верно, передвиньте бегунок)</span>
 					</div>
 				</div>
-				<div class="row mb" ng-show="Report.id">
-					<div class="col-sm-12">
-						<span ng-show="Report.email">
-							<span ng-show="!Report.email_sent">
-								Этот отчет никогда не был отправлен родителю на <span class="bold">{{Report.email}} <span ng-click="sendReport()" class="link-like" style="margin-left: 10px">отправить</span></span>
-							</span>
-							<span ng-show="Report.email_sent">
-								Этот отчет был отправлен родителю на <span class="bold">{{Report.email}}</span> {{formatDate(Report.date_sent)}}
-							</span>
-						</span>
-						<span ng-show="!Report.email" class="text-danger">
-							<span class="glyphicon glyphicon-exclamation-sign glyphicon-big"></span>Перед отправкой отчета необходимо указать e-mail представителя
-						</span>
-					</div>
-				</div>
 				<?php endif ?>
 			</div>
 		</div>

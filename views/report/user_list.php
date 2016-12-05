@@ -57,14 +57,6 @@
 				</select>
 			</div>
 			<div>
-				<select class="watch-select single-select form-control" ng-model="search.email_sent"  ng-change='filter()'>
-					<option value="" data-subtext="{{ counts.email_sent[''] || '' }}">все статусы</option>
-					<option disabled>──────────────</option>
-					<option value="1" data-subtext="{{ counts.email_sent[1] || '' }}">отправленные на e-mail</option>
-					<option value="0" data-subtext="{{ counts.email_sent[0] || '' }}">не отправленные на e-mail</option>
-				</select>
-			</div>
-			<div>
 				<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.year[''] || '' }}">все годы</option>
 					<option disabled>────────</option>

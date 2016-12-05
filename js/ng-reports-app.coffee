@@ -138,33 +138,17 @@ app = angular.module "Reports", ["ui.bootstrap"]
 						$.post "reports/ajaxDelete", {id_report: $scope.Report.id}, ->
 							history.back()
 
-		$scope.with_email = true
-
-		$scope.addReport = (with_email) ->
+		$scope.addReport = ->
 			return if textareasHaveErrors()
 			ajaxStart()
 			$scope.adding = true
 			$.post "reports/ajaxAdd",
 				Report: $scope.Report
-				with_email: with_email
 			, (response) ->
 				console.log response
 				history.back()
 				#redirect "teachers/reports"
 			, "json"
-
-		$scope.sendReport = ->
-			bootbox.confirm "Отправить отчет родителю?", (result) ->
-				if result is true
-					ajaxStart()
-					$.post "reports/ajaxSendEmail",
-						Report: $scope.Report
-					, (response) ->
-						ajaxEnd()
-						$scope.Report.email_sent= true
-						$scope.Report.date_sent = response
-						$scope.$apply()
-					, "json"
 
 		$scope.formatDate = (date) ->
 			moment(date).format "DD.MM.YY"

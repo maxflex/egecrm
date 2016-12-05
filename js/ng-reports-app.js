@@ -162,35 +162,18 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
       }
     });
   };
-  $scope.with_email = true;
-  $scope.addReport = function(with_email) {
+  $scope.addReport = function() {
     if (textareasHaveErrors()) {
       return;
     }
     ajaxStart();
     $scope.adding = true;
     return $.post("reports/ajaxAdd", {
-      Report: $scope.Report,
-      with_email: with_email
+      Report: $scope.Report
     }, function(response) {
       console.log(response);
       return history.back();
     }, "json");
-  };
-  $scope.sendReport = function() {
-    return bootbox.confirm("Отправить отчет родителю?", function(result) {
-      if (result === true) {
-        ajaxStart();
-        return $.post("reports/ajaxSendEmail", {
-          Report: $scope.Report
-        }, function(response) {
-          ajaxEnd();
-          $scope.Report.email_sent = true;
-          $scope.Report.date_sent = response;
-          return $scope.$apply();
-        }, "json");
-      }
-    });
   };
   $scope.formatDate = function(date) {
     return moment(date).format("DD.MM.YY");

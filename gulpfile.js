@@ -2,7 +2,7 @@ var config      = require('./.gulpconfig.json');
 var gulp 		= require('gulp');
 var coffee 		= require('gulp-coffee');
 var concat 		= require('gulp-concat');
-var sass        = require('gulp-sass');
+// var sass        = require('gulp-sass');
 
 var browserSync = require('browser-sync').create();
 var coffee_cnf  = config.coffee;
@@ -17,11 +17,11 @@ gulp.task('build-vendor', function() {
 		.pipe(gulp.dest(config.bower.dest));
 });
 
-gulp.task('sass', function () {
-    gulp.src(config.sass.src)
-        .pipe(sass())
-        .pipe(gulp.dest(config.sass.dest));
-});
+// gulp.task('sass', function () {
+//     gulp.src(config.sass.src)
+//         .pipe(sass())
+//         .pipe(gulp.dest(config.sass.dest));
+// });
 
 gulp.task('assets', function() {
 	gulp.src(coffee_cnf.assets.src)
