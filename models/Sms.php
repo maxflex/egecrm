@@ -122,8 +122,10 @@ class SMS extends Model
 
 	public function beforeSave()
 	{
-		$this->date = now();
-		$this->id_user = User::fromSession() ? User::fromSession()->id : 0; // если смс отправлено системой (без сесссии), то 0
+		if ($this->isNewRecord) {
+			$this->date = now();
+			$this->id_user = User::fromSession() ? User::fromSession()->id : 0; // если смс отправлено системой (без сесссии), то 0
+		}
 	}
 
 	public function getCoordinates()
@@ -174,7 +176,7 @@ class SMS extends Model
 		}
 	}
 
-	public static function notifyStatus($SMS = false)
+	public static function notifyStatus($SMS)
     {
         // если групповая смс, не отсылать событие
         if (! $SMS->id_user) {
@@ -195,7 +197,6 @@ class SMS extends Model
             ],
             'egecrm'
         );
-
         return true;
     }
 }
