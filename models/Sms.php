@@ -176,15 +176,26 @@ class SMS extends Model
 
 	public static function notifyStatus($SMS = false)
     {
-        foreach(User::getIds(true) as $user_id) {
-            Socket::trigger(
-                'user_' . $user_id,
-                'sms', [
-                    'id' => $SMS->id,
-                    'status' => $SMS->id_status
-                ],
-                'egecrm'
-            );
+        // если групповая смс, не отсылать событие
+        if (! $SMS->id_user) {
+            return false;
         }
+
+        // если прошло более минуты – не отсылать
+        if (time() - strtotime($SMS->date) > 60) {
+            return false;
+        }
+
+        // Отправлять только пользователю, который отправил СМС
+        Socket::trigger(
+            'user_' . $SMS->id_user,
+            'sms', [
+                'id' => $SMS->id,
+                'status' => $SMS->id_status
+            ],
+            'egecrm'
+        );
+
+        return true;
     }
 }
