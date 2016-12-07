@@ -11,8 +11,8 @@ class SMS extends Model
 
 	const INLINE_SMS_LENGTH = 60;
 	const PER_PAGE = 50; // Сколько отображать на странице списка
-	
-	
+
+
 	public function __construct($array, $light = false)
 	{
 		parent::__construct($array);
@@ -30,13 +30,13 @@ class SMS extends Model
 	{
 		$phone   = isset($filter['phone']) ? cleanNumberForSearch($filter['phone']) : '';
 		$search = isset($filter['search']) ? $filter['search'] : '';
-		
+
 		if ($phone || $search) {
 			return "number LIKE '%$phone%' AND message LIKE '%$search%'";
 		}
 		return '';
 	}
-	
+
 	/**
 	 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
 	 *
@@ -48,31 +48,31 @@ class SMS extends Model
 		}
 		// С какой записи начинать отображение, по формуле
 		$start_from = ($page - 1) * self::PER_PAGE;
-		
+
 		$condition = [
 			"order" 	=> "id DESC",
 			"limit" 	=> $start_from. ", " .self::PER_PAGE
 		];
-		
+
 		$condition['condition'] = self::applySearchFilters($filter);
 
 		$SMS = self::findAll($condition);
 
 		return $SMS;
 	}
-	
+
 	public static function pagesCount($search)
 	{
 		return SMS::count(["condition" => self::applySearchFilters($search)]);
 	}
-	
+
 	public static function sendToNumbers($numbers, $message) {
 		foreach ($numbers as $number) {
 			self::send($number, $message);
-		}	
+		}
 	}
-	
-	
+
+
 	public static function send($to, $message)
 	{
 		$to = explode(",", $to);
@@ -87,14 +87,14 @@ class SMS extends Model
 				"to"		=>	$number,
 				"text"		=>	$message,
 				"from"      =>  "EGE-Centr",
-			);		
+			);
 			$result = self::exec("http://sms.ru/sms/send", $params);
 		}
-		
-		
+
+
 		return $result;
 	}
-	
+
 	protected static function exec($url, $params)
 	{
 		$ch = curl_init($url);
@@ -111,21 +111,23 @@ class SMS extends Model
 			"id_status" => $info[0],
 			"id_smsru"	=> $info[1],
 			"balance"	=> $info[2],
-			
+
 			"message"	=> $params["text"],
 			"number"	=> $params["to"],
 		];
-		
+
 		// создаем объект для истории
 		return SMS::add($info);
 	}
-	
+
 	public function beforeSave()
 	{
-		$this->date = now();
-		$this->id_user = User::fromSession() ? User::fromSession()->id : 0; // если смс отправлено системой (без сесссии), то 0
+		if ($this->isNewRecord) {
+			$this->date = now();
+			$this->id_user = User::fromSession() ? User::fromSession()->id : 0; // если смс отправлено системой (без сесссии), то 0
+		}
 	}
-	
+
 	public function getCoordinates()
 	{
 		if ($this->id_user) {
@@ -139,21 +141,21 @@ class SMS extends Model
 			$this->user_login = "system";
 		}
 		$this->coordinates = $this->user_login. " ". dateFormat($this->date);
-		
+
 		$this->coordinates .= '
 		<svg class="sms-status ' . ($this->id_status == 103 ? 'delivered' : ($this->id_status == 102 ? 'inway' : 'not-delivered') ) .'">
 			<circle r="3" cx="7" cy="7"></circle>
 		</svg>';
 	}
-	
+
 	public function getStatus()
 	{
 		return static::textStatus($this->id_status);
 	}
-	
+
 	/**
 	 * Получить текстовый статус в зависимости от когда СМС.
-	 * 
+	 *
 	 */
 	public static function textStatus($sms_status)
 	{
@@ -174,19 +176,27 @@ class SMS extends Model
 		}
 	}
 
-	public static function notifyStatus($SMS = false)
+	public static function notifyStatus($SMS)
     {
-        foreach(User::getIds(true) as $user_id) {
-            Socket::trigger(
-                'user_' . $user_id,
-                'sms', [
-                    'id' => $SMS->id,
-                    'status' => $SMS->id_status
-                ],
-                'egecrm'
-            );
+        // если групповая смс, не отсылать событие
+        if (! $SMS->id_user) {
+            return false;
         }
 
+        // если прошло более минуты – не отсылать
+        if (time() - strtotime($SMS->date) > 60) {
+            return false;
+        }
+
+        // Отправлять только пользователю, который отправил СМС
+        Socket::trigger(
+            'user_' . $SMS->id_user,
+            'sms', [
+                'id' => $SMS->id,
+                'status' => $SMS->id_status
+            ],
+            'egecrm'
+        );
         return true;
     }
 }

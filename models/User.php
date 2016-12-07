@@ -27,7 +27,7 @@
 
         ];
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
-		
+
 		public function __construct($array = [], $flag = null)
         {
             parent::__construct($array);
@@ -37,14 +37,14 @@
 	            $this->photo_original_size = $this->photoOriginalSize();
 	            $this->photo_cropped_size = $this->photoCroppedSize();
 	            $this->photo_url = $this->photoUrl();
-	            
+
 	            // цвет черный, если пользователя забанили
 	            if ($this->banned) {
 		        	$this->color = 'black';
-	            }	
+	            }
 			}
         }
-        
+
         public function photoPath($addon = '')
         {
             return static::UPLOAD_DIR . $this->id . $addon . '.' . $this->photo_extension;
@@ -206,10 +206,10 @@
 			} else {
 				$Users = memcached()->get("Users");
 
-				if (!$Users) {
-					self::updateCache();
+				if (! $Users) {
+					$Users = self::updateCache();
 				}
-				
+
 				if ($with_system) {
 					array_unshift($Users, [
 						'id' 	=> 0,
@@ -233,6 +233,7 @@
 
 			$Users = $return;
 			memcached()->set("Users", $Users, 2 * 24 * 3600); // кеш на 2 дня
+            return $Users;
 		}
 
 		public static function findAllReal()
@@ -435,7 +436,7 @@
 			$cookie_time = time() + 3600 * 24 * 30 * 3; 						// час - сутки - месяц * 3 = КУКА на 3 месяца
 			setcookie("egecrm_token", $this->token . $this->id, $cookie_time);	// КУКА ТОКЕНА (первые 16 символов - токен, последние - id_user)
 		}
-		
+
 		/*
 		 * Режим просмотра
 		 */
@@ -447,7 +448,7 @@
 				"condition" => "type='$type' AND id_entity=$id"
 			]);
 		}
-		
+
 		/*
 		 * Выйти из режима просмотра
 		 */
@@ -456,7 +457,7 @@
 			$_SESSION["user"] = User::findById($_SESSION["view_mode_user_id"]);
 			unset($_SESSION["view_mode_user_id"]);
 		}
-		
+
 		/*
 		 * Находимся в режиме просмотра?
 		 */
@@ -464,7 +465,7 @@
 		{
 			return isset($_SESSION["view_mode_user_id"]);
 		}
-		
+
 		/**
 		 * Пользователь начал разговаривать (занят)
 		 */
@@ -475,12 +476,12 @@
 
 		/**
 		 * Пользователь закончил разговаривать
-		 */		
+		 */
 		public static function setCallFree($id_user)
 		{
 			memcached()->delete("users:{$id_user}:busy");
 		}
-		
+
 		/*
 		 * Пользователь сейчас разговаривает
 		 */
