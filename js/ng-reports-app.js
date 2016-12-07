@@ -55,6 +55,7 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
     }, "json");
   };
   $scope.filter = function() {
+    delete $scope.Reports;
     $.cookie("reports", JSON.stringify($scope.search), {
       expires: 365,
       path: '/'

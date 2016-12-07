@@ -36,7 +36,7 @@
 
 <div class="form-group">
 	<div class="input-group"
-		 ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(Teacher.phone) || (!PhoneService.isMobile('teacher-phone') && teacher_phone_level >= 2) }">
+		 ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(Teacher.phone) || (!PhoneService.isMobile(Teacher.phone) && teacher_phone_level >= 2) }">
 		<input id="teacher-phone" type="text" disabled placeholder="телефон" class="form-control phone-masked"
 			   ng-model="Teacher.phone"
 			   ng-value="PhoneService.format(Teacher.phone)"
@@ -48,7 +48,7 @@
 
     	<div class="input-group-btn">
 	    	<button class="btn btn-default" ng-show="PhoneService.isFull(Teacher.phone)"
-					ng-click="PhoneService.call('teacher-phone')"
+					ng-click="PhoneService.call(Teacher.phone)"
 					ng-class="{'addon-bordered' : teacher_phone_level >= 2  && !PhoneService.isMobile(Teacher.phone)}"
 			>
 				<span class="glyphicon glyphicon-earphone no-margin-right small"></span>
