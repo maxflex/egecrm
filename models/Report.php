@@ -114,10 +114,37 @@
         /**
          * Get reports in configuration
          */
-        public static function get($id_student, $id_teacher, $id_subject)
+        public static function get($id_student, $id_teacher, $id_subject, $params = false)
         {
-            return self::findAll(self::condition($id_student, $id_teacher, $id_subject));
+            return self::findAll([
+            	'condition' => self::conditionString($id_student, $id_teacher, $id_subject) . ($params ? ' and ' . implode(' and ', array_map(function($key, $value) {
+						return "$key='$value'";
+					}, array_keys($params), $params)) : '')
+            ]);
         }
+        
+        /*
+	     * Get reports in configuration [available for parents only]
+	     */
+	    public static function getAvailableForParents($params)
+	    {
+		    $query = dbConnection()->query("
+				select rh.* from reports_helper rh
+				join reports r on rh.id_report = r.id
+				where " 
+					. implode(' and ', array_map(function($key, $value) {
+						return "rh.$key='$value'";
+					}, array_keys($params), $params))
+					. " and r.available_for_parents=1
+					group by rh.id_student, rh.id_subject, rh.id_teacher, rh.year
+			");
+			
+			while ($row = $query->fetch_object()) {
+				$data[] = $row;
+			}
+			
+			return $data;
+	    }
 
         public static function condition($id_student, $id_teacher, $id_subject, $year = null)
 		{

@@ -2,12 +2,12 @@
 	var ang_scope;
 	var email_uploaded_files = [];
 	var email_uploaded_file_id = 1;
-	
+
 	var review_statuses = ['не опубликован', 'опубликован']
 	var test_statuses 	= ['вступительный', 'промежуточный']
 	var payments_hash	= 'cbcb58ac2e496207586df2854b17995f';
 // 	var payments_hash = '202cb962ac59075b964b07152d234b70';
-	
+
 	// Основной скрипт
 	$(document).ready(function() {
 		// ангуляровский scope по умолчанию
@@ -22,7 +22,7 @@
 			if (isOpen) {
 				toggleMenu()
 			}
-		}) 
+		})
 
 		$(".question").children("span").on("click", function() {
 			$(this).parent().children("div").slideToggle();
@@ -116,7 +116,7 @@
 	function loginPasswordTemplate() {
 		login = '{entity_login}'
 		password = '{entity_password}'
-		
+
 		// учитель/ученик?
 		if ($('[ng-app="Request"]').length) {
 			if ($('[ng-controller="EditCtrl"]').length) {
@@ -138,11 +138,11 @@
 		//text = "Ваш логин: " + ang_scope.Teacher.login + "\nВаш пароль: " + ang_scope.Teacher.password
 		//$("#sms-message").val(text).keyup()
 	}
-	
+
 	function newTestTemplate() {
 		login = '{entity_login}'
 		password = '{entity_password}'
-		
+
 		// учитель/ученик?
 		if ($('[ng-app="Request"]').length) {
 			if ($('[ng-controller="EditCtrl"]').length) {
@@ -456,12 +456,12 @@
 	function delayedCall(function_name) {
 		setTimeout(function_name(), 100)
 	}
-	
+
 	function validateEmail(email) {
 	    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	    return re.test(email);
 	}
-	
+
 	/**
 	 * Переназначает маски для всех элементов, включая новые
 	 *
@@ -1023,6 +1023,17 @@ function ExpandSelect(select, maxOptionsVisible)
 		if(result === null)
 			result = [];
 		return result;
+	}
+
+    /**
+	 * Remove by id
+	 */
+	function removeById(array, value) {
+		index = array.indexOf(value)
+        if (index > -1) {
+            return array.splice(index, 1)
+        }
+        return array
 	}
 
 	DEFUAULT_SMS_MODE = 1

@@ -1,18 +1,18 @@
 <table class="table table-hover border-reverse">
 	<tr ng-repeat="Report in Reports">
-		<td style='width: 15%'>
+		<td style='width: 12%'>
 			<a ng-if='Report.id' href="reports/edit/{{Report.id}}">Отчёт №{{Report.id}}</a>
-			<span class="link-like-nocolor {{Report.force_noreport ? 'text-gray' : 'text-danger'}}" 
+			<span class="link-like-nocolor {{Report.force_noreport ? 'text-gray' : 'text-danger'}}"
 				ng-show="Report.lesson_count >= 8 && !Report.id"
 				ng-click="forceNoreport(Report)"
 			>
-				{{Report.force_noreport ? 'отчет не требуется' : 'требуется создание отчета' }}
+				{{Report.force_noreport ? 'отчет не требуется' : 'требуется отчет' }}
 			</span>
 		</td>
-		<td style="width: 20%" ng-init="_Teacher = (Report.Teacher || Teacher)">
+		<td style="width: 23%" ng-init="_Teacher = (Report.Teacher || Teacher)">
 			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
 		</td>
-		<td style='width: 7%'>
+		<td style='width: 10%'>
 			{{three_letters[Report.id_subject]}}
 		</td>
 		<td style='width: 20%'>
@@ -28,10 +28,10 @@
 				'many': 'занятий',
 			}"></ng-pluralize>
 		</td>
-		<td width="10%">
+		<td width="15%">
 			<span class="text-danger" ng-hide="!Report.id || Report.available_for_parents">не доступен в ЛК</span>
 		</td>
-		<td width="13%">
+		<td width="10%; text-align: right">
 			{{ Report.date }}
 		</td>
 	</tr>

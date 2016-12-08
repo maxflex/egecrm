@@ -6,35 +6,75 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
       return $sce.trustAsHtml(text);
     };
   }
-]).controller("ListCtrl", function($scope) {
-  $scope.is_banned = function(user) {
-    return user.banned || user.banned_egerep;
-  };
-  $scope.isnot_banned = function(user) {
-    return !$scope.is_banned(user);
-  };
-  $scope.save = function() {
-    ajaxStart();
-    return $.post("users/ajax/save", {
-      Users: $scope.Users
-    }, function(response) {
-      ajaxEnd();
-      $scope.form_changed = false;
-      return $scope.$apply();
+]).controller("ListCtrl", function($scope, $http, $timeout) {
+  var refreshCounts;
+  $timeout(function() {
+    return $('.watch-select').selectpicker();
+  });
+  refreshCounts = function() {
+    return $timeout(function() {
+      $('.watch-select option').each(function(index, el) {
+        $(el).data('subtext', $(el).attr('data-subtext'));
+        return $(el).data('content', $(el).attr('data-content'));
+      });
+      return $('.watch-select').selectpicker('refresh', 100);
     });
+  };
+  $scope.toggleRights = function(User, right) {
+    var data, new_rights;
+    new_rights = angular.copy(User.rights);
+    right = parseInt(right);
+    if ($scope.allowed(User, right)) {
+      new_rights = _.reject(new_rights, function(val) {
+        return val === right;
+      });
+    } else {
+      new_rights.push(right);
+    }
+    data = {};
+    data[User.id] = User;
+    return $.post("users/ajax/save", {
+      Users: data
+    }, function() {
+      User.rights = new_rights;
+      $scope.$apply();
+      return refreshCounts();
+    });
+  };
+  $scope.getCounts = function(right) {
+    if (right == null) {
+      right = false;
+    }
+    if (right === false) {
+      return $scope.Users.length;
+    }
+    return _.reject($scope.Users, function(User) {
+      return User.rights.indexOf(parseInt(right)) === -1;
+    }).length || '';
+  };
+  $scope.allowed = function(User, right) {
+    return User.rights.indexOf(parseInt(right)) !== -1;
   };
   return angular.element(document).ready(function() {
-    set_scope("Users");
-    return $("table").on('keyup change', 'input, select, textarea', function() {
-      $scope.form_changed = true;
-      return $scope.$apply();
-    });
+    return set_scope('Users');
   });
 }).controller("EditCtrl", function($scope, $timeout) {
   var bindCropper, bindFileUpload;
   $scope.has_pswd_error = false;
   $scope.psw_filled = false;
   $scope.picture_version = 1;
+  $scope.toggleRights = function(right) {
+    if ($scope.allowed(right)) {
+      return $scope.User.rights = _.reject($scope.User.rights, function(val) {
+        return val === right;
+      });
+    } else {
+      return $scope.User.rights.push(right);
+    }
+  };
+  $scope.allowed = function(right) {
+    return $scope.User.rights.indexOf(right) !== -1;
+  };
   $scope.clone_user = function() {
     return $scope.old_data = angular.copy($.extend($scope.User, {
       new_password: '',

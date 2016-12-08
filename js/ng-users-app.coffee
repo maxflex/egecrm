@@ -3,30 +3,56 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 		return (text) ->
 			return $sce.trustAsHtml(text)
 	]
-	.controller "ListCtrl", ($scope) ->
-		$scope.is_banned = (user) ->
-			return user.banned || user.banned_egerep
-		$scope.isnot_banned = (user) ->
-			return !$scope.is_banned user
+	.controller "ListCtrl", ($scope, $http, $timeout) ->
+		$timeout -> $('.watch-select').selectpicker()
 
-		$scope.save = ->
-			ajaxStart()
-			$.post "users/ajax/save", 
-				Users: $scope.Users
-			, (response) ->
-				ajaxEnd()
-				$scope.form_changed = false
-				$scope.$apply()
-		angular.element(document).ready ->
-			set_scope "Users"
-			$("table").on 'keyup change', 'input, select, textarea', ->
-				$scope.form_changed = true
-				$scope.$apply()
+		refreshCounts = ->
+			$timeout ->
+				$('.watch-select option').each (index, el) ->
+	                $(el).data 'subtext', $(el).attr 'data-subtext'
+	                $(el).data 'content', $(el).attr 'data-content'
+	            $('.watch-select').selectpicker 'refresh'
+	        , 100
 
+		$scope.toggleRights = (User, right) ->
+			new_rights = angular.copy(User.rights)
+			right = parseInt(right)
+			if $scope.allowed(User, right)
+				new_rights = _.reject new_rights, (val) -> val is right
+			else
+				new_rights.push(right)
+			data = {}
+			data[User.id] = User
+			$.post "users/ajax/save",
+				Users: data
+			, ->
+				User.rights = new_rights
+				$scope.$apply()
+				refreshCounts()
+
+		$scope.getCounts = (right = false) ->
+			return $scope.Users.length if right is false
+			_.reject($scope.Users, (User) ->
+				return User.rights.indexOf(parseInt(right)) is -1
+			).length or ''
+
+		$scope.allowed = (User, right) ->
+			User.rights.indexOf(parseInt(right)) isnt -1
+
+		angular.element(document).ready -> set_scope 'Users'
 	.controller "EditCtrl", ($scope, $timeout) ->
 		$scope.has_pswd_error = false
 		$scope.psw_filled = false
 		$scope.picture_version = 1
+
+		$scope.toggleRights = (right) ->
+			if $scope.allowed(right)
+				$scope.User.rights = _.reject $scope.User.rights, (val) -> val is right
+			else
+				$scope.User.rights.push(right)
+
+		$scope.allowed = (right) ->
+			$scope.User.rights.indexOf(right) isnt -1
 
 		$scope.clone_user = ->
 			$scope.old_data = angular.copy $.extend $scope.User, { new_password:'', new_password_repeat:''}
