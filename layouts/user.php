@@ -1,11 +1,10 @@
+<!-- @rights-refactored -->
 <link rel="stylesheet" href="js/bower/angular-bootstrap-colorpicker/css/colorpicker.min.css">
 <script type="text/javascript" src="js/bower/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js"></script>
 <script type="text/javascript" src="js/bower/cropper/dist/cropper.js"></script>
 <script src="//cdn.jsdelivr.net/jquery.color-animation/1/mainfile"></script>
 <link rel="stylesheet" href="js/bower/cropper/dist/cropper.min.css">
 <link media="all" rel="stylesheet" type="text/css" href="js/bower/simple-hint/dist/simple-hint.css" />
-
-
 <script type="text/javascript" src="js/vendor.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/assets.js"></script>
@@ -155,22 +154,33 @@
 				?>
 			</a>
 			<a href="contracts" class="list-group-item">Версии договоров</a>
-			<a class="list-group-item active">Финансы</a>
-			<a href="payments" class="list-group-item">Платежи
-				<?php
-					$unconfirmed_payment_count = Payment::countUnconfirmed();
+            <?php if (
+                User::fromSession()->allowed(Shared\Rights::SHOW_PAYMENTS) ||
+                User::fromSession()->allowed(Shared\Rights::SHOW_TEACHER_PAYMENTS) ||
+                User::fromSession()->allowed(Shared\Rights::SHOW_STATS)
+            ) :?>
+    			<a class="list-group-item active">Финансы</a>
+                <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_PAYMENTS)) :?>
+    			<a href="payments" class="list-group-item">Платежи
+    				<?php
+    					$unconfirmed_payment_count = Payment::countUnconfirmed();
 
-					if ($unconfirmed_payment_count && User::fromSession()->id != 1) {
-						echo '<span class="badge pull-right">'. $unconfirmed_payment_count .'</span>';
-					}
-				?>
-			</a>
-			<a href="stats" class="list-group-item">Итоги</a>
-			<a href="teachers/salary" class="list-group-item">Оплата преподавателей</a>
-
-
+    					if ($unconfirmed_payment_count && User::fromSession()->id != 1) {
+    						echo '<span class="badge pull-right">'. $unconfirmed_payment_count .'</span>';
+    					}
+    				?>
+    			</a>
+                <?php endif ?>
+                <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_STATS)) :?>
+    			         <a href="stats" class="list-group-item">Итоги</a>
+                <?php endif ?>
+                <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_TEACHER_PAYMENTS)) :?>
+        			<a href="teachers/salary" class="list-group-item">Оплата преподавателей</a>
+                <?php endif ?>
+            <?php endif ?>
+            
 			<a class="list-group-item active">Настройки</a>
-			<?php if (User::fromSession()->allowedToSeeTasks()) :?>
+			<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_TASKS)) :?>
 				<a href="tasks" class="list-group-item">Задачи
 				<?php
 					// Количество новых заявок
@@ -183,14 +193,20 @@
 				?>
 			<?php endif ?>
 			<a href="logs" class="list-group-item">Логи</a>
-			<?php if (User::fromSession()->show_contract) :?>
+			<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_CONTRACT)) :?>
 				<a href="users/contract" class="list-group-item">Договор</a>
 			<?php endif ?>
 			<a href="settings/cabinet" class="list-group-item">Загрузка кабинетов</a>
-			<a href="settings/vocations" class="list-group-item">Календарь</a>
-			<a href="templates" class="list-group-item">Шаблоны</a>
-			<a href="teachers/html" class="list-group-item">FAQ</a>
-				<?php if (User::fromSession()->show_users) : ?>
+            <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_CALENDAR)) :?>
+		         <a href="settings/vocations" class="list-group-item">Календарь</a>
+            <?php endif ?>
+            <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_TEMPLATES)) :?>
+		         <a href="templates" class="list-group-item">Шаблоны</a>
+            <?php endif ?>
+            <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_FAQ)) :?>
+		         <a href="teachers/html" class="list-group-item">FAQ</a>
+            <?php endif ?>
+            <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_USERS)) :?>
 				<a href="users" class="list-group-item">Пользователи</a>
 			<?php endif ?>
 			<a href="logout" class="list-group-item">Выход</a>

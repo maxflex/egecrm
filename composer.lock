@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c646031561e369f751e3cf58cfb2fcfa",
+    "hash": "ce044a67b50af8fe0813af4bcb9b7158",
     "content-hash": "7f7e1d648024aa9296e001106ded9f71",
     "packages": [
         {
@@ -122,7 +122,7 @@
             "source": {
                 "type": "git",
                 "url": "https://mkolyadin@bitbucket.org/mkolyadin/ege-shared.git",
-                "reference": "844381e3a1b7f0c1390f1e75dfb5681f03149fcd"
+                "reference": "8446c4adb0aaf5628380ea0822d87229e873f8a4"
             },
             "type": "library",
             "autoload": {
@@ -130,7 +130,7 @@
                     "Shared\\": "src/"
                 }
             },
-            "time": "2016-09-09 11:27:41"
+            "time": "2016-12-07 11:14:59"
         },
         {
             "name": "elfet/pure",

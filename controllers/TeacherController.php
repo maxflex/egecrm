@@ -15,6 +15,8 @@
 
 		public function actionFaq()
 		{
+            # @rights-refactored
+            $this->checkRights(Shared\Rights::SHOW_FAQ);
 			$this->setTabTitle("Редактирование FAQ преподавателя");
 
 			$ang_init_data = angInit([
@@ -28,6 +30,8 @@
 
 		public function actionSalary()
 		{
+            # @rights-refactored
+            $this->checkRights(Shared\Rights::SHOW_TEACHER_PAYMENTS);
             $year = intval($_GET['year']);
 
 
@@ -259,7 +263,7 @@
 			        }
 
 			        $Stats['er_review_avg'] = (4* (($Teacher->lk + $Teacher->tb + $js) / 3) + $review_score_sum)/(4 + $Stats['er_review_count']);
-			        
+
 			        // Доля пропусков
 					$total_student_visits = VisitJournal::count([
 						"condition" => "type_entity='STUDENT' AND id_teacher=" . $Teacher->id
@@ -270,7 +274,7 @@
 						]);
 						$Stats['abscent_percent'] = round($abscent_count / $total_student_visits * 100);
 					}
-			        
+
 					returnJsonAng($Stats);
 				}
 				case 6: {

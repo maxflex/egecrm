@@ -12,6 +12,8 @@
 
 		public function beforeAction()
 		{
+            # @rights-refactored
+            $this->checkRights(Shared\Rights::SHOW_STATS);
 			$this->addJs("ng-stats-app");
 		}
 

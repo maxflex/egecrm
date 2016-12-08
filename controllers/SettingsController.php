@@ -16,6 +16,9 @@
 
 		public function actionVocations()
 		{
+            # @rights-refactored
+            $this->checkRights(Shared\Rights::SHOW_CALENDAR);
+
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 

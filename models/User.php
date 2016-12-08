@@ -19,6 +19,8 @@
 
 		public static $online_list;
 
+        protected $_inline_data = ['rights'];
+
         public $log_except = [
             'last_action_time',
             'last_action_link',
@@ -372,15 +374,11 @@
 		}
 
 		public static function isDev() {
-            return User::fromSession()->is_dev == 1;
+            return User::fromSession()->allowed(Shared\Rights::IS_DEVELOPER);
 		}
 
 		public static function isRoot() {
             return User::fromSession()->id == 1;
-		}
-
-		public static function allowedToSeeTasks() {
-			return User::fromSession()->show_tasks;
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
@@ -399,7 +397,6 @@
 			if ($this->isNewRecord) {
 				$this->password = self::password($this->password);
 			}
-            $this->is_dev = $this->is_dev; // % 2;
             $this->phone = cleanNumber($this->phone);
 		}
 
@@ -509,5 +506,10 @@
         public static function getJson()
         {
             return toJson(User::fromSession()->dbData());
+        }
+
+        public function allowed($right)
+        {
+            return in_array($right, $this->rights);
         }
     }

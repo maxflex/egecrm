@@ -244,8 +244,9 @@
 		 */
 		public static function notifyAnswered($id_user, $call_id, $number)
         {
+            // @rights-refactored
 	        $user_ids = User::getIds([
-		       'condition' => 'banned=0 AND show_phone_calls=1'
+		       'condition' => 'banned=0 AND FIND_IN_SET(' . Shared\Rights::PHONE_NOTIFICATIONS . ', rights)'
 	        ]);
 
 	        foreach($user_ids as $id) {

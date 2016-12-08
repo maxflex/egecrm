@@ -97,14 +97,6 @@
                    ng-model="User.new_password_repeat"
                    placeholder="Повторите пароль">
         </div>
-    </div>
-    <div class="col-sm-2">
-        <div class="form-group">
-            <select class="form-control" ng-model="User.show_phone_calls">
-                <option value="0">нет оповещий</option>
-                <option value="1">уведомления о звонках</option>
-            </select>
-        </div>
 
         <div class="form-group">
             <input class="form-control"
@@ -114,16 +106,8 @@
                    colorpicker-size="200"
                    placeholder="цвет">
         </div>
-
-        <div class="form-group">
-            <select class="form-control" ng-model="User.is_dev" ng-change="User.is_dev == 2 ? User.type = 'SEO' : User.type = 'USER' ">
-                <option value="0">менеджер</option>
-                <option value="1">разработчик</option>
-                <option value="2">seo</option>
-            </select>
-            <input type="hidden" ng-model="User.type" value="User.type"/>
-        </div>
     </div>
+    <!-- @rights-need-to-refactor -->
     <?php if (User::isDev() || User::isRoot() || User::fromSession()->id == 65) :?>
     <div class="col-sm-2">
         <div class="form-group">
@@ -135,7 +119,7 @@
 <!--/user data-->
 <!--access settings -->
 <div class="row panel-body">
-    <div class="col-sm-12">
+    <div class="col-sm-6">
         <div class="row">
             <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
                 <input type="checkbox" ng-model="User.worktime" ng-true-value="1" ng-false-value="0">
@@ -149,13 +133,6 @@
                 <span class="switch"></span>
             </label>
             одобрение репетиторов
-        </div>
-        <div class="row">
-            <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
-                <input type="checkbox" ng-model="User.edit_payment" ng-true-value="1">
-                <span class="switch"></span>
-            </label>
-            просмотр и редактирование остаточного платежа
         </div>
         <div class="row">
             <label class="ios7-switch" style="font-size: 24px; top: 1px; margin: 0">
@@ -237,6 +214,11 @@
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button {
         -webkit-appearance: none;
+        margin: 0;
+    }
+    .ios7-switch {
+        font-size: 24px;
+        top: 1px;
         margin: 0;
     }
 </style>

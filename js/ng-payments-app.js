@@ -164,77 +164,26 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     return $(".single-select").selectpicker();
   });
   $scope.confirmPayment = function(payment) {
-    return bootbox.prompt({
-      title: "Введите пароль",
-      className: "modal-password",
-      callback: function(result) {
-        if (result === null) {
-
-        } else if (hex_md5(result) === payments_hash) {
-          payment.confirmed = (payment.confirmed + 1) % 2;
-          ajaxStart();
-          return $.post("ajax/confirmPayment", {
-            id: payment.id,
-            confirmed: payment.confirmed
-          }, function() {
-            ajaxEnd();
-            return $timeout(function() {
-              return $scope.$apply();
-            });
-          });
-        } else if (result !== null) {
-          $('.bootbox-form').addClass('has-error').children().first().focus();
-          $('.bootbox-input-text').on('keydown', function() {
-            return $(this).parent().removeClass('has-error');
-          });
-          return false;
-        }
-      },
-      buttons: {
-        confirm: {
-          label: "Подтвердить"
-        },
-        cancel: {
-          className: "display-none"
-        }
-      },
-      onEscape: true
+    if ($scope.user_rights.indexOf(11) === -1) {
+      return;
+    }
+    payment.confirmed = (payment.confirmed + 1) % 2;
+    return $.post("ajax/confirmPayment", {
+      id: payment.id,
+      confirmed: payment.confirmed
+    }, function() {
+      return $timeout(function() {
+        return $scope.$apply();
+      });
     });
   };
   $scope.editPayment = function(payment) {
-    if (!payment.confirmed) {
-      $scope.new_payment = angular.copy(payment);
-      $scope.$apply();
-      lightBoxShow('addpayment');
+    if (payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
       return;
     }
-    return bootbox.prompt({
-      title: "Введите пароль",
-      className: "modal-password",
-      callback: function(result) {
-        if (result === null) {
-
-        } else if (hex_md5(result) === payments_hash) {
-          $scope.new_payment = angular.copy(payment);
-          $scope.$apply();
-          return lightBoxShow('addpayment');
-        } else if (result !== null) {
-          $('.bootbox-form').addClass('has-error').children().first().focus();
-          $('.bootbox-input-text').on('keydown', function() {
-            return $(this).parent().removeClass('has-error');
-          });
-          return false;
-        }
-      },
-      buttons: {
-        confirm: {
-          label: "Подтвердить"
-        },
-        cancel: {
-          className: "display-none"
-        }
-      }
-    });
+    $scope.new_payment = angular.copy(payment);
+    $scope.$apply();
+    return lightBoxShow('addpayment');
   };
   $scope.addPaymentDialog = function() {
     $scope.new_payment = {
@@ -322,61 +271,23 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     }
   };
   $scope.deletePayment = function(index, payment) {
-    if (!payment.confirmed) {
-      return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
-        if (result === true) {
-          ajaxStart();
-          return $.post("ajax/deletePayment", {
-            id_payment: payment.id
-          }, function() {
-            ajaxEnd();
-            $scope.payments.splice(index, 1);
-            return $timeout(function() {
-              return $scope.$apply();
-            });
-          });
-        }
-      });
-    } else {
-      return bootbox.prompt({
-        title: "Введите пароль",
-        className: "modal-password",
-        callback: function(result) {
-          if (result === null) {
-
-          } else if (hex_md5(result) === payments_hash) {
-            return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
-              if (result === true) {
-                ajaxStart();
-                return $.post("ajax/deletePayment", {
-                  id_payment: payment.id
-                }, function() {
-                  ajaxEnd();
-                  $scope.payments.splice(index, 1);
-                  return $timeout(function() {
-                    return $scope.$apply();
-                  });
-                });
-              }
-            });
-          } else if (result !== null) {
-            $('.bootbox-form').addClass('has-error').children().first().focus();
-            $('.bootbox-input-text').on('keydown', function() {
-              return $(this).parent().removeClass('has-error');
-            });
-            return false;
-          }
-        },
-        buttons: {
-          confirm: {
-            label: "Подтвердить"
-          },
-          cancel: {
-            className: "display-none"
-          }
-        }
-      });
+    if (payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
+      return;
     }
+    return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
+      if (result === true) {
+        ajaxStart();
+        return $.post("ajax/deletePayment", {
+          id_payment: payment.id
+        }, function() {
+          ajaxEnd();
+          $scope.payments.splice(index, 1);
+          return $timeout(function() {
+            return $scope.$apply();
+          });
+        });
+      }
+    });
   };
   $scope.printPKO = function(payment) {
     $scope.print_mode = 'pko';

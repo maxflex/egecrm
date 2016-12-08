@@ -17,11 +17,11 @@ gulp.task('build-vendor', function() {
 		.pipe(gulp.dest(config.bower.dest));
 });
 
-// gulp.task('sass', function () {
-//     gulp.src(config.sass.src)
-//         .pipe(sass())
-//         .pipe(gulp.dest(config.sass.dest));
-// });
+gulp.task('sass', function () {
+    gulp.src(config.sass.src)
+        .pipe(sass())
+        .pipe(gulp.dest(config.sass.dest));
+});
 
 gulp.task('assets', function() {
 	gulp.src(coffee_cnf.assets.src)

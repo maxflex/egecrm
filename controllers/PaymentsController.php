@@ -4,17 +4,17 @@
 	class PaymentsController extends Controller
 	{
 		public $defaultAction = "list";
-		
+
 		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE];
-		
+
 		// Папка вьюх
 		protected $_viewsFolder	= "payments";
-		
+
 		public function beforeAction()
 		{
 			$this->addJs("ng-payments-app");
 		}
-		
+
 		public function actionList()
 		{
 			$this->setRights([User::USER_TYPE]);
@@ -26,32 +26,33 @@
 			$ang_init_data = angInit([
 				'payment_types'		=> PaymentTypes::$all,
 				'payment_statuses'	=> Payment::$all,
+                'user_rights'       => User::fromSession()->rights,
 				'current_page'		=> $_GET['page'] ? $_GET['page'] : 1
 			]);
-			
+
 			$this->render("list", [
 				"ang_init_data" => $ang_init_data
 			]);
 		}
-		
+
 		public function actionTeacher()
 		{
 			$this->setTabTitle("Оплата");
 			$this->setRights([Teacher::USER_TYPE]);
-			
+
 			$ang_init_data = angInit([
 				"Subjects" => Subjects::$three_letters,
 				"Branches" => Branches::$all,
 				"payment_statuses"	=> Payment::$all,
                 'payment_types'		=> PaymentTypes::$all,
 			]);
-			
+
 			$this->render("lk_teacher", [
 				"ang_init_data" => $ang_init_data
 			]);
 		}
-		
-		
+
+
 		public function actionAjaxGetPayments()
 		{
 			extract($_POST);
@@ -98,14 +99,14 @@
 				$counts['type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
 			}
 			$counts['type']['all'] = array_sum($counts['type']);
-			/* каунтеры */ 
+			/* каунтеры */
 
 			returnJsonAng([
 				'payments'	=> $Payments,
 				'counts'	=> $counts
 			]);
 		}
-		
+
 		public function actionAjaxLkTeacher()
 		{
             $id_teacher = User::fromSession()->id_entity;

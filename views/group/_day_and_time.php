@@ -30,7 +30,9 @@
 				</tr>
 			</tbody>
 		</table>
+    <?php if (User::fromSession()->allowed(Shared\Rights::EDIT_GROUPS)) :?>
 	<div class="center" style="margin-top: 10px">
 		<button class="btn btn-primary" ng-click="saveDayAndTime()">Сохранить</button>
 	</div>
+    <?php endif ?>
 </div>

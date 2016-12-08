@@ -3,7 +3,6 @@ app = angular.module "Payments", ["ui.bootstrap"]
         (items) ->
             if items
                 items.slice().reverse()
-
     .controller "LkTeacherCtrl", ($scope, $http) ->
         $scope.lessonsTotalSum = ->
             lessons_sum = 0
@@ -78,7 +77,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
                     }
                 }
             }
-
+    # @rights-refactored
     .controller "ListCtrl", ($scope, $timeout) ->
         $scope.initSearch = ->
             $scope.search = mode : 'STUDENT', payment_type : '', confirmed : '', type : '' if not $scope.search
@@ -91,7 +90,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
             $.cookie 'payments', JSON.stringify($scope.search), { expires: 365, path: '/' }
 
             $scope.getByPage()
-        
+
         $scope.pageChanged = ->
             console.log 'page changed ' + $scope.search.current_page
             $scope.initSearch()
@@ -130,66 +129,20 @@ app = angular.module "Payments", ["ui.bootstrap"]
 
         # done
         $scope.confirmPayment = (payment) ->
-            bootbox.prompt {
-                title: "Введите пароль",
-                className: "modal-password",
-                callback: (result) ->
-                    if result is null
-                    else if hex_md5(result) is payments_hash
-                        payment.confirmed = (payment.confirmed + 1) % 2
-                        ajaxStart()
-                        $.post "ajax/confirmPayment",
-                            id:        payment.id
-                            confirmed: payment.confirmed
-                        , ->
-                            ajaxEnd()
-                            $timeout ->
-                                $scope.$apply()
-                    else if result != null
-                        $('.bootbox-form').addClass('has-error').children().first().focus()
-                        $('.bootbox-input-text').on 'keydown', ->
-                            $(this).parent().removeClass 'has-error'
-
-                        return false
-                ,
-                buttons: {
-                    confirm: {
-                        label: "Подтвердить"
-                    },
-                    cancel: {
-                        className: "display-none"
-                    },
-                }
-                onEscape: true
-            }
+	        return if $scope.user_rights.indexOf(11) is -1
+	        payment.confirmed = (payment.confirmed + 1) % 2
+	        $.post "ajax/confirmPayment",
+	            id:        payment.id
+	            confirmed: payment.confirmed
+	        , ->
+	            $timeout -> $scope.$apply()
 
         # Окно редактирования платежа
         $scope.editPayment = (payment) ->
-            if not payment.confirmed
-                $scope.new_payment = angular.copy payment
-                $scope.$apply()
-                lightBoxShow 'addpayment'
-                return
-
-            bootbox.prompt
-                title: "Введите пароль"
-                className: "modal-password"
-                callback: (result) ->
-                    if result is null
-                    else if hex_md5(result) is payments_hash
-                        $scope.new_payment = angular.copy payment
-                        $scope.$apply()
-                        lightBoxShow 'addpayment'
-                    else if result != null
-                        $('.bootbox-form').addClass('has-error').children().first().focus()
-                        $('.bootbox-input-text').on 'keydown', ->
-                            $(this).parent().removeClass 'has-error'
-                        return false
-                buttons:
-                    confirm:
-                        label: "Подтвердить"
-                    cancel:
-                        className: "display-none"
+            return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
+            $scope.new_payment = angular.copy payment
+            $scope.$apply()
+            lightBoxShow 'addpayment'
 
         # Показать окно добавления платежа
         $scope.addPaymentDialog = ->
@@ -289,48 +242,17 @@ app = angular.module "Payments", ["ui.bootstrap"]
 
         # Удалить платеж
         $scope.deletePayment = (index, payment) ->
-            if not payment.confirmed
-                bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
-                    if result is true
-                        ajaxStart()
-                        $.post "ajax/deletePayment",
-                            id_payment: payment.id
-                        , ->
-                            ajaxEnd()
-                            $scope.payments.splice index, 1
-                            $timeout ->
-                                $scope.$apply()
-            else
-                bootbox.prompt {
-                    title: "Введите пароль",
-                    className: "modal-password",
-                    callback: (result) ->
-                        if result is null
-                        else if hex_md5(result) is payments_hash
-                            bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
-                                if result is true
-                                    ajaxStart()
-                                    $.post "ajax/deletePayment",
-                                        id_payment: payment.id
-                                    , ->
-                                        ajaxEnd()
-                                        $scope.payments.splice index, 1
-                                        $timeout ->
-                                            $scope.$apply()
-                        else if result != null
-                            $('.bootbox-form').addClass('has-error').children().first().focus()
-                            $('.bootbox-input-text').on 'keydown', ->
-                                $(this).parent().removeClass 'has-error'
-                            return false
-                    buttons: {
-                        confirm: {
-                            label: "Подтвердить"
-                        },
-                        cancel: {
-                            className: "display-none"
-                        }
-                    }
-                }
+            return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
+            bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
+                if result is true
+                    ajaxStart()
+                    $.post "ajax/deletePayment",
+                        id_payment: payment.id
+                    , ->
+                        ajaxEnd()
+                        $scope.payments.splice index, 1
+                        $timeout ->
+                            $scope.$apply()
 
         $scope.printPKO = (payment) ->
             $scope.print_mode = 'pko'
@@ -341,7 +263,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
 
 #         $scope.printBill = (payment) ->
 #             $scope.print_mode = 'bill'
-#             $scope.PrintPayment = payment 
+#             $scope.PrintPayment = payment
 #             $scope.$apply()
 #             printDiv $scope.print_mode + "-print"
 

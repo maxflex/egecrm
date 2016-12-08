@@ -125,7 +125,7 @@
 	// Конец выполнения скрипта
 	$time_end = microtime(true);
 
-	if (!$_ajax_request && (User::isDev() || isset($_GET['execution_time'])) || strpos($_SERVER['HTTP_REFERER'], '3000')) {
+	if (!$_ajax_request && ((User::loggedIn() && User::isDev()) || isset($_GET['execution_time'])) || strpos($_SERVER['HTTP_REFERER'], '3000')) {
 		$time = $time_end - $time_start;
 	    echo "<span class='pull-right small text-gray' style='margin-right: 15px'>время выполнения: " . round($time, 2) . " сек</span>";
 	}

@@ -27,13 +27,15 @@
 					похожие группы</span>
 			<span class="link-like link-reverse link-white" ng-click="smsDialog2(Group.id)">групповое SMS</span>
 
+            <?php if (User::fromSession()->allowed(Shared\Rights::EDIT_GROUPS)) :?>
 			<span style="margin-left: 12px" class="link-reverse pointer" ng-click="deleteGroup(Group.id)" ng-show="Group.id">удалить группу</span>
+            <?php endif ?>
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
 		<form id="group-edit" autocomplete='off'>
 		<div class="top-group-menu-thin">
-			<?php if (User::fromSession()->id != 77 && ! LOCAL_DEVELOPMENT) :?>
+			<?php if (! User::fromSession()->allowed(Shared\Rights::EDIT_GROUPS)) :?>
 			<div class='div-blocker'></div>
 			<?php endif ?>
             <div class="form-group">

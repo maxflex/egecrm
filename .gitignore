@@ -7,4 +7,5 @@
 deploy.php
 .idea*/
 .idea/workspace.xml
+.editorconfig
 controllers/TestController.php
