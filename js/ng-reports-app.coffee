@@ -48,6 +48,7 @@ app = angular.module "Reports", ["ui.bootstrap"]
 			, "json"
 
 		$scope.filter = ->
+			delete $scope.Reports
 			$.cookie("reports", JSON.stringify($scope.search), { expires: 365, path: '/' });
 			$scope.current_page = 1
 			$scope.getByPage($scope.current_page)
