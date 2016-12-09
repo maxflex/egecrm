@@ -30,23 +30,24 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
     }
   };
   $scope.toggleRights = function(User, right) {
-    var data, new_rights;
-    new_rights = angular.copy(User.rights);
+    var NewUser, data;
+    NewUser = angular.copy(User);
     right = parseInt(right);
-    if ($scope.allowed(User, right)) {
-      new_rights = _.reject(new_rights, function(val) {
+    if ($scope.allowed(NewUser, right)) {
+      NewUser.rights = _.reject(NewUser.rights, function(val) {
         return val === right;
       });
     } else {
-      new_rights.push(right);
+      NewUser.rights.push(right);
     }
     data = {};
-    data[User.id] = User;
+    data[NewUser.id] = NewUser;
+    data[NewUser.id].rights = NewUser.rights.length ? NewUser.rights : [''];
     return $.post("users/ajax/save", {
       Users: data
     }, function(response) {
       if (response === 'success') {
-        User.rights = new_rights;
+        User.rights = NewUser.rights;
         $scope.$apply();
         return refreshCounts();
       }
