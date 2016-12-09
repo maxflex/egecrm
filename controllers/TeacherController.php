@@ -32,7 +32,8 @@
 		{
             # @rights-refactored
             $this->checkRights(Shared\Rights::SHOW_TEACHER_PAYMENTS);
-            $year = isset($_GET['year']) ? intval($_GET['year']) : academicYear();
+
+            $year = ! empty($_GET['year']) ? intval($_GET['year']) : academicYear();
 
 
             $teacher_ids = explode(',', dbConnection()->query(
@@ -66,15 +67,8 @@
 				$sum = 0;
                 $real_sum = 0;
 				foreach ($Data as $OneData) {
-                    if ($year) {
-                        if ($year == $OneData->year) {
-                            $sum += $OneData->teacher_price;
-                            $total_sum += $OneData->teacher_price;
-                        }
-                    } else {
-                        $sum += $OneData->teacher_price;
-                        $total_sum += $OneData->teacher_price;
-                    }
+                    $sum += $OneData->teacher_price;
+                    $total_sum += $OneData->teacher_price;
                     $real_sum += $OneData->teacher_price;
                     $real_total_sum += $OneData->teacher_price;
                 }
