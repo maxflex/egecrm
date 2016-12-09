@@ -27,7 +27,7 @@
                     {{ payment.document_number ? 'ПКО ' + payment.document_number :  '' }}
                 <?php endif ?>
             </td>
-            <td class="col-sm-1">
+            <td>
                 {{payment.sum | number}}
             </td>
             <td>

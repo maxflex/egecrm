@@ -81,6 +81,15 @@
 					<option data-subtext="{{ counts.type[2] || '' }}" value="2">возврат</option>
 				</select>
 			</div>
+			<div class="col-sm-2">
+				<select id='years-select' class="watch-select form-control single-select" ng-model="search.year" ng-change='filter()'>
+					<option value="" data-subtext="{{ counts.year.all || ''}}" >все годы</option>
+					<option disabled>──────────────</option>
+                    <option ng-repeat="year in <?= Years::json() ?>"
+                        data-subtext="{{ counts.year[year] || '' }}"
+                        value="{{year}}">{{ yearLabel(year) }}</option>
+				</select>
+			</div>
 		</div>
 		<div id="frontend-loading"></div>
 	    <div class="loading-ajax" ng-show="payments === undefined">загрузка...</div>
