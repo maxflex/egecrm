@@ -80,7 +80,7 @@
 					"sum"		=> $sum,
                     "real_sum"  => $real_sum,
                     "payment_sum" => $payment_sum,
-					"count"		=> count($Data),
+					"count"		=> ($Data ? count($Data) : 0),
 				];
 			}
 
