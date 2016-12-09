@@ -52,7 +52,6 @@
 			]);
 		}
 
-
 		public function actionAjaxGetPayments()
 		{
 			extract($_POST);

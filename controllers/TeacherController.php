@@ -32,7 +32,7 @@
 		{
             # @rights-refactored
             $this->checkRights(Shared\Rights::SHOW_TEACHER_PAYMENTS);
-            $year = intval($_GET['year']);
+            $year = isset($_GET['year']) ? intval($_GET['year']) : academicYear();
 
 
             $teacher_ids = explode(',', dbConnection()->query(
@@ -49,9 +49,8 @@
 			foreach ($teacher_ids as $id_teacher) {
 				$Teacher = Teacher::getLight($id_teacher);
 
-                /* @var Payment[] $Payments */
 				$Payments = Payment::findAll([
-					"condition" => "entity_id=$id_teacher and entity_type = '".Teacher::USER_TYPE."'"
+					"condition" => "entity_id=$id_teacher and entity_type = '".Teacher::USER_TYPE."' and year={$year}"
 				], true);
 
 				$payment_sum = 0;
@@ -61,7 +60,7 @@
 				}
 
 				$Data = VisitJournal::findAll([
-					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'"
+					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER' and year={$year}"
 				]);
 
 				$sum = 0;
