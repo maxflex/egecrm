@@ -220,8 +220,9 @@
 				}
 				case 3: {
 					returnJsonAng([
-                        'payments' => Payment::findAll(['condition' => "entity_id = $id_teacher and entity_type = '" . Teacher::USER_TYPE . "'", 'order'=>'first_save_date asc']),
-                        'tobe_paid' => Payment::tobePaid($id_teacher, Teacher::USER_TYPE)
+                        'payments'      => Payment::findAll(['condition' => "entity_id = $id_teacher and entity_type = '" . Teacher::USER_TYPE . "'", 'order' =>'first_save_date asc']),
+                        'tobe_paid' => Payment::tobePaid($id_teacher, Teacher::USER_TYPE),
+                        'academic_year' => academicYear(),
                     ]);
 				}
 				case 4: {

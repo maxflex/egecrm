@@ -73,6 +73,9 @@ app = angular.module("Teacher", ["ngMap"]).config([
   var _loadData, _postData, bindFileUpload, deletePayment, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
   menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars'];
   $scope.setMenu = function(menu, complex_data) {
     $.each(menus, function(index, value) {
@@ -303,7 +306,8 @@ app = angular.module("Teacher", ["ngMap"]).config([
   };
   $scope.addPaymentDialog = function() {
     $scope.new_payment = {
-      id_status: 0
+      id_status: 0,
+      year: $scope.academic_year
     };
     lightBoxShow('addpayment');
     $scope.handleKeyPress();
@@ -355,12 +359,6 @@ app = angular.module("Teacher", ["ngMap"]).config([
     } else {
       payment_select.parent().removeClass('has-error');
       if (parseInt($scope.new_payment.id_status) === 1) {
-        if (!$scope.new_payment.card_first_number) {
-          payment_card_first_number.focus().addClass('has-error');
-          return;
-        } else {
-          payment_card_first_number.removeClass('has-error');
-        }
         if (!$scope.new_payment.card_number) {
           payment_card.focus().addClass('has-error');
           return;

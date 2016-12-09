@@ -55,6 +55,9 @@
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
+			$scope.yearLabel = (year) ->
+				year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars']
 
 			$scope.setMenu = (menu, complex_data) ->
@@ -241,7 +244,9 @@
 
 			# Показать окно добавления платежа
 			$scope.addPaymentDialog = ->
-			  $scope.new_payment = id_status: 0
+			  $scope.new_payment =
+			    id_status: 0
+			    year: $scope.academic_year
 			  lightBoxShow 'addpayment'
 
 			  $scope.handleKeyPress()
@@ -290,11 +295,11 @@
 			  else
 			    payment_select.parent().removeClass 'has-error'
 			    if parseInt($scope.new_payment.id_status) is 1
-				    if not $scope.new_payment.card_first_number
-				        payment_card_first_number.focus().addClass 'has-error'
-				        return
-				    else
-				        payment_card_first_number.removeClass 'has-error'
+				    # if not $scope.new_payment.card_first_number
+				    #     payment_card_first_number.focus().addClass 'has-error'
+				    #     return
+				    # else
+				    #     payment_card_first_number.removeClass 'has-error'
 				    if not $scope.new_payment.card_number
 				        payment_card.focus().addClass 'has-error'
 				        return

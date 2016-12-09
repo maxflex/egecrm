@@ -275,6 +275,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 	.controller("EditCtrl", function ($scope, $log, $timeout, PhoneService) {
 		bindArguments($scope, arguments);
 
+        $scope.yearLabel = function(year) {
+            return year + '-' + (parseInt(year) + 1) + ' уч. г.'
+        }
+
 		/*** contex menu functions ***/
 		$scope.closeContexMenu = function() {
 				_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
@@ -1648,7 +1652,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Показать окно добавления платежа
 		$scope.addPaymentDialog = function() {
-			$scope.new_payment = {id_status : 0}
+			$scope.new_payment = {id_status : 0, year: $scope.academic_year}
 			lightBoxShow('addpayment')
 		}
 
@@ -1670,12 +1674,12 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			} else {
 				payment_select.parent().removeClass("has-error")
 				if ($scope.new_payment.id_status == 1) {
-					if (!$scope.new_payment.card_first_number) {
-						payment_card_first_num.focus().addClass("has-error")
-						return
-					} else {
-						payment_card_first_num.removeClass("has-error")
-					}
+					// if (!$scope.new_payment.card_first_number) {
+					// 	payment_card_first_num.focus().addClass("has-error")
+					// 	return
+					// } else {
+					// 	payment_card_first_num.removeClass("has-error")
+					// }
 					if (!$scope.new_payment.card_number) {
 						payment_card.focus().addClass("has-error")
 						return
@@ -1951,7 +1955,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.payments === undefined && menu == 1) {
 				$.post("requests/ajax/LoadPayments", {id_student: $scope.id_student}, function(response) {
-					['user', 'payments', 'payment_types', 'payment_statuses'].forEach(function(field) {
+					['user', 'payments', 'payment_types', 'payment_statuses', 'academic_year'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()
