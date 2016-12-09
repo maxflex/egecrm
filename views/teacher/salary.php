@@ -8,7 +8,7 @@
 </style>
 <div ng-app="Teacher" ng-controller="SalaryCtrl"
 	ng-init="<?= $ang_init_data ?>">
-		
+
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
 			<div class="top-links">
@@ -42,7 +42,7 @@
 							</a>
 						</td>
 						<td class="center">
-							{{d.count | number}} 
+							<span ng-show='d.count'>{{d.count | number}}</span>
 						</td>
 						<td class="center">
 							<span ng-hide="!d.sum">{{d.sum | number}}</span>
@@ -57,7 +57,7 @@
 
 					<tr>
 						<td class="half-black">
-							
+
 						</td>
 						<td class="center">
 							<b>{{lesson_count}}</b>
