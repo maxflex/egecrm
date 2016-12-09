@@ -138,15 +138,7 @@
             ) :?>
     			<a class="list-group-item active">Финансы</a>
                 <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_PAYMENTS)) :?>
-    			<a href="payments" class="list-group-item">Платежи
-    				<?php
-    					$unconfirmed_payment_count = Payment::countUnconfirmed();
-
-    					if ($unconfirmed_payment_count && User::fromSession()->id != 1) {
-    						echo '<span class="badge pull-right">'. $unconfirmed_payment_count .'</span>';
-    					}
-    				?>
-    			</a>
+    			<a href="payments" class="list-group-item">Платежи</a>
                 <?php endif ?>
                 <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_STATS)) :?>
     			         <a href="stats" class="list-group-item">Итоги</a>
