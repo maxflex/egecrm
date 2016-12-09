@@ -14,6 +14,13 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 	            $('.watch-select').selectpicker 'refresh'
 	        , 100
 
+		$scope.getUsers = ->
+			if $scope.right
+				_.sortBy $scope.Users, (User) ->
+					not $scope.allowed(User, $scope.right)
+			else
+				$scope.Users
+
 		$scope.toggleRights = (User, right) ->
 			new_rights = angular.copy(User.rights)
 			right = parseInt(right)
@@ -25,10 +32,11 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 			data[User.id] = User
 			$.post "users/ajax/save",
 				Users: data
-			, ->
-				User.rights = new_rights
-				$scope.$apply()
-				refreshCounts()
+			, (response) ->
+				if response is 'success'
+					User.rights = new_rights
+					$scope.$apply()
+					refreshCounts()
 
 		$scope.getCounts = (right = false) ->
 			return $scope.Users.length if right is false
