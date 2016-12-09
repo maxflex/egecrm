@@ -1,5 +1,5 @@
 <!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
-<div id="addpayment" class="lightbox-new lightbox-addpayment" style="width: 551px; left: calc(50% - 275px)">
+<div id="addpayment" class="lightbox-new lightbox-addpayment">
 	<h4>{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
 	<div class="form-group payment-line">
 		<div class="form-group inline-block">
