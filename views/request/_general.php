@@ -212,7 +212,7 @@
 									<button class="btn btn-default" type="button"
 											ng-show="PhoneService.isFull(representative.phone2) && PhoneService.isMobile(representative.phone2)"
 											ng-class="{'addon-bordered' : representative_phone_level >= 3 || !PhoneService.isFull(representative.phone2)}"
-											ng-click="PhonService.sms(representative.phone2)"
+											ng-click="PhoneService.sms(representative.phone2)"
 									>
 										<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 									</button>
