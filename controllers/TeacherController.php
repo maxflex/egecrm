@@ -209,7 +209,14 @@
 				}
 				case 2: {
                     $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['login', 'payments']);
-                    returnJsonAng($Lessons);
+                    returnJsonAng([
+                        'Lessons' => $Lessons,
+                        'current_year_lessons_count' => VisitJournal::count([
+                            'condition' => "type_entity='TEACHER' AND year=" . academicYear()
+                        ]),
+                        'current_year_paid' => dbConnection()->query("select sum(sum) as s from payments where entity_type='TEACHER' and year=" . academicYear())->fetch_object()->s,
+                        'current_year_to_be_paid' => dbConnection()->query("select sum(teacher_price) as s from visit_journal type_entity='TEACHER' and year=" . academicYear())->fetch_object()->s
+                    ]);
 				}
 				case 3: {
 					returnJsonAng([
