@@ -9,6 +9,7 @@ angular.module("Search", ["ngAnimate"]).filter('reverse', function() {
 		}).controller('SearchCtrl', function($scope, $http) {
 			$scope.result = [];
 
+
 			var active = 0;
 
 			$scope.links = {}; //храним ссылки
@@ -160,19 +161,25 @@ $(document).ready(function(){
 		$('#searchModal .modal-dialog').css('margin-top',topPadding).css('margin-left',leftPadding)
 		$('#searchResult').css('height',windowHeigh50-70)
 
+
+
 		$('#searchModal').modal({
 			keyboard: true,
 		})
 
+		$('body.modal-open .row').addClass('blur')
+
 		setTimeout(function() {
 			$('#searchQueryInput').focus();
 		}, 500);
-
-
-
-
 		return false;
 	})
+
+	$('#searchModal').on('hidden.bs.modal', function(w){
+		$('.blur').removeClass('blur')
+	})
+
+
 
 
 

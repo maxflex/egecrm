@@ -3,7 +3,7 @@
     cursor: pointer;
 }
 
-body.modal-open .row{
+.blur{
     -webkit-filter: blur(4px);
 }
 
