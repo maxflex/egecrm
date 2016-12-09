@@ -21,7 +21,7 @@
 	 */
 	function preType($anything, $exit = NULL)
 	{
-		if (User::isDev()) {
+		if (allowed(Shared\Rights::IS_DEVELOPER)) {
 			echo "<pre>";
 			print_r($anything);
 			echo "</pre>";
@@ -35,7 +35,7 @@
 
     function dd($objects)
     {
-        if (User::isDev() || IS_LOCAL_DEVELOPMENT) {
+        if (allowed(Shared\Rights::IS_DEVELOPER) || IS_LOCAL_DEVELOPMENT) {
             $objects = is_array($objects) ? $objects : func_get_args();
             echo "<pre>";
             foreach($objects as $o) {
@@ -68,11 +68,6 @@
 	{
 		global $memcached;
 		return $memcached;
-	}
-
-	function isAdmin()
-	{
-		return User::isDev();
 	}
 
 	/*
@@ -811,4 +806,10 @@
         }
 
         return false;
+    }
+
+    function allowed($right, $return_int = false)
+    {
+        $allowed = User::fromSession()->allowed($right);
+        return $return_int ? (int)$allowed : $allowed;
     }

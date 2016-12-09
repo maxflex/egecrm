@@ -37,17 +37,18 @@ app.service 'UserService', ($rootScope, $q, $http, $timeout, User)->
         users
 
     @getAll = (only_active = true) ->
-
         if only_active
-            _.where @users, {banned: 0}
-        else
+            _.filter @users, (user) ->
+                user.rights.indexOf(34) is -1
+        else 
             @users
 
     @getBannedUsers = ->
-        _.where @users, {banned : 1}
+        _.filter @users, (user) ->
+            user.rights.indexOf(34) isnt -1
 
     @getBannedHaving = (condition_obj) ->
         _.filter @users, (user) ->
-            user.banned is 1 and condition_obj[user.id]
+            user.rights.indexOf(34) isnt -1 and condition_obj[user.id]
 
     @

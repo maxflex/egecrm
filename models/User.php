@@ -41,7 +41,7 @@
 	            $this->photo_url = $this->photoUrl();
 
 	            // цвет черный, если пользователя забанили
-	            if ($this->banned) {
+	            if ($this->allowed(Shared\Rights::EC_BANNED)) {
 		        	$this->color = 'black';
 	            }
 			}
@@ -102,29 +102,6 @@
 				return 'system';
 			}
 		 }
-
-		public static function getOnlineList()
-		{
-			if (!static::$online_list) {
-				$online = User::findAll([
-					"condition" => "id <= " . self::LAST_REAL_USER_ID . " AND banned=0
-						AND (UNIX_TIMESTAMP(NOW()) - last_action_time) / 60 < " . self::ONLINE_TIME_MINUTES . " AND id != " . User::fromSession()->id,
-					"order" => "last_action_time DESC"
-				]);
-
-				$offline = User::findAll([
-					"condition" => "id <= " . self::LAST_REAL_USER_ID . " AND banned=0
-						AND (UNIX_TIMESTAMP(NOW()) - last_action_time) / 60 >= " . self::ONLINE_TIME_MINUTES . " AND id != " . User::fromSession()->id,
-					"order" => "last_action_time DESC"
-				]);
-
-				static::$online_list = (object)[
-					'online'	=> $online,
-					'offline'	=> $offline,
-				];
-			}
-			return static::$online_list;
-		}
 
 		/**
 		 * Обновить время последнего действия.
@@ -258,31 +235,6 @@
 		}
 
 
-		/**
-		 * Список пользователей.
-		 * $selected – ID пользователя (!НЕ ПОРЯДКОВЫЙ НОМЕР В МАССИВЕ), выбранный по умолчанию
-		 * $all -- получить всех пользователей (или только работающих)?
-		 */
-		public static function buildSelector($selected = false, $name = "id_user", $all = false)
-		{
-			$Users = $all ? self::findAll() : self::findAll(["condition" => "worktime=1"]);
-
-			// Находим выбранного пользователя
-			if ($selected) {
-				$SelectedUser = array_pop(array_filter($Users, function($e) use ($selected) {
-					return $e->id == $selected;
-				}));
-			}
-
-			echo "<select class='form-control user-list' name='$name' ".($selected ? "style='background-color: {$SelectedUser->color}'" : "").">";
-				echo "<option selected value=''>пользователь</option>";
-				echo "<option disabled value=''>──────────────</option>";
-			foreach ($Users as $User) {
-				echo "<option ".($User->id == $selected ? "selected" : "")." style='background-color: {$User->color}' value='{$User->id}'>{$User->login}</option>";
-			}
-			echo "</select>";
-		}
-
 		/*
 		 * Автовход по Remember-me
 		 */
@@ -294,48 +246,6 @@
 
 			// ОТКЛЮЧАЕМ ВХОД ПО REMEMBER-ME. УДАЛИТЬ СТРОЧКУ НИЖЕ, ЕСЛИ ОПЯТЬ ПОНАДОБИТСЯ
 			return false;
-
-			if (!isset($_COOKIE["egecrm_token"])) {
-				return false;
-			}
-
-			// Кука токена хранится в виде:
-			// 1) Первые 16 символов MD5-хэш
-			// 2) Остальные символы – id_user (код пользователя)
-			// $cookie_hash = mb_strimwidth($_COOKIE["ratie_token"], 0, 32); // Нам не надо получать хэш из кук -- мы создаем новый здесь для сравнения
-			$cookie_user = substr($_COOKIE["egecrm_token"], 32);
-
-			// Получаем пользователя по ID (чтобы из его параметров генерировать хэш)
-			$User = User::findById($cookie_user);
-
-			// Если пользователь найден и он не заблокирован
-			if ($User && !$User->banned) {
-				// Генерируем хэш для сравнения с хешем в БД
-				$hash = md5(self::SALT . $User->id . $User->password . self::SALT);
-
-				// Пытаемся найти пользователя
-				$RememberMeUser = self::find(array(
-					"condition"	=> "id=".$cookie_user." AND token='{$hash}'",
-				));
-
-				// Если пользователь найден
-				if ($RememberMeUser) {
-
-					// Логинимся (не обновляем токен, создаем сессию)
-					$RememberMeUser->toSession(false, true);
-
-					if ($RememberMeUser->isStudent() || $RememberMeUser->isTeacher()) {
-						$RememberMeUser->login_count++;
-						$RememberMeUser->save("login_count");
-					}
-
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
 		}
 
 		/*
@@ -371,14 +281,6 @@
 			return self::find([
 				"condition" => "id_entity=$id_teacher AND type='" . Teacher::USER_TYPE . "'"
 			]);
-		}
-
-		public static function isDev() {
-            return User::fromSession()->allowed(Shared\Rights::IS_DEVELOPER);
-		}
-
-		public static function isRoot() {
-            return User::fromSession()->id == 1;
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
@@ -492,7 +394,7 @@
             $user_ids = [];
             foreach (static::getCached() as $user) {
                 if ($real) {
-                    if ($user['banned'] == 0) {
+                    if (! in_array($user['rights'], Shared\Rights::EC_BANNED) == 0) {
                         $user_ids[] = $user['id'];
                     }
                 } else {
@@ -506,6 +408,11 @@
         public static function getJson()
         {
             return toJson(User::fromSession()->dbData());
+        }
+
+        public static function isAdmin()
+        {
+            return User::fromSession()->type == self::USER_TYPE;
         }
 
         public function allowed($right)

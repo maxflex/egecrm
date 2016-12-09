@@ -21,7 +21,7 @@
 		const UPLOAD_DIR = "img/teachers/";
 		const EXTERNAL_PHOTO_PATH = 'http://static.a-perspektiva.ru/img/tutors/';
 		const PLACE = 'teacher';
-		
+
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
 		public function __construct($array)
@@ -35,12 +35,12 @@
 			// Было ли занятие?
 			if (!$this->isNewRecord) {
 				$this->had_lesson = $this->hadLesson();
-				
-				
+
+
 				$this->has_photo = $this->photoExists();
 
-				$this->banned = User::findTeacher($this->id)->banned;
-				
+				$this->banned = User::findTeacher($this->id)->allowed(Shared\Rights::EC_BANNED);
+
 				$this->comment_extended = nl2br($this->comment_extended);
 			}
 
@@ -108,33 +108,33 @@
 		{
             $red_count = 0;
 			$search = json_decode($_COOKIE['reports']);
-			
+
 			foreach (self::getIds(['condition' => 'in_egecentr >= 1']) as $id_teacher) {
 				$red_count += Teacher::redReportCountStatic($id_teacher, $search->year);
 			}
 			return $red_count ? $red_count : null;
 		}
-		
+
 		/*
 		 * Получить преподавателей для отчета
 		 */
 		public static function getJournalTeachers()
 		{
 			$result = dbConnection()->query("
-				SELECT id_entity 
-				FROM visit_journal 
+				SELECT id_entity
+				FROM visit_journal
 				WHERE type_entity = 'TEACHER'
 				GROUP BY id_entity
 			");
-			
-			
+
+
 			while ($row = $result->fetch_object()) {
 				$tutor_ids[] = $row->id_entity;
 			}
-			
+
 			return static::getLightArray($tutor_ids);
 		}
-		
+
 		/*
 		 * Получить легкую версию (имя + id)
 		 */
@@ -142,30 +142,30 @@
 		{
 			return dbEgerep()->query("
 				SELECT id, first_name, last_name, middle_name " . (count($additional) ? ', ' . implode(',', $additional) : '') .
-                " FROM " . static::$mysql_table . " 
-				WHERE id = " . $id . " 
+                " FROM " . static::$mysql_table . "
+				WHERE id = " . $id . "
 				ORDER BY last_name, first_name, middle_name ASC")
-			->fetch_object(); 
+			->fetch_object();
 		}
-		
+
 				/*
 		 * Получить легкую версию (имя + id)
 		 */
 		public static function getLightArray($teacher_ids)
 		{
 			$result = dbEgerep()->query("
-				SELECT id, first_name, last_name, middle_name 
-				FROM " . static::$mysql_table . " 
-				WHERE id IN (" . implode(',', $teacher_ids) . ") 
+				SELECT id, first_name, last_name, middle_name
+				FROM " . static::$mysql_table . "
+				WHERE id IN (" . implode(',', $teacher_ids) . ")
 				ORDER BY last_name, first_name, middle_name ASC");
-				
+
 			$Teachers = [];
 			while($row = $result->fetch_object()) {
-				$Teachers[] = $row;		
+				$Teachers[] = $row;
 			}
 			return $Teachers;
 		}
-		
+
 		/*
 		 * Получить данные для отчета
 		 * $Teachers – нужен для counts, чтобы не получать заново
@@ -177,75 +177,75 @@
 			}
 			// С какой записи начинать отображение, по формуле
 			$start_from = ($page - 1) * Report::PER_PAGE;
-			
+
 			$search = json_decode($_COOKIE['reports']);
-			
+
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.date, r.available_for_parents, rh.lesson_count");
 
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
-			
+
 			while ($row = $result->fetch_object()) {
 				$student_subject[] = $row;
 			}
-			
+
 			foreach ($student_subject as &$ss) {
 				$ss->Student = Student::getLight($ss->id_entity);
 				$ss->Teacher = Teacher::getLight($ss->id_teacher);
 				$ss->force_noreport = ReportForce::check($ss->id_entity, $ss->id_teacher, $ss->id_subject, $ss->year);
 			}
-			
+
 			// counts
 			$counts['all'] = static::_count($search);
-			
+
 			foreach(array_merge([""], Years::$all) as $year) {
 				$new_search = clone $search;
 				$new_search->year = $year;
 				$counts['year'][$year] = static::_count($new_search);
 			}
-			
+
 			foreach(["", 1, 2, 3, 4] as $mode) {
 				$new_search = clone $search;
 				$new_search->mode = $mode;
 				$counts['mode'][$mode] = static::_count($new_search);
 			}
-			
+
 			foreach(["", 0, 1] as $available_for_parents) {
 				$new_search = clone $search;
 				$new_search->available_for_parents = $available_for_parents;
 				$counts['available_for_parents'][$available_for_parents] = static::_count($new_search);
 			}
-			
+
 			foreach(([''=>''] + Subjects::$all) as $id_subject => $name) {
 				$new_search = clone $search;
 				$new_search->id_subject = $id_subject;
 				$counts['subject'][$id_subject] = static::_count($new_search);
 			}
-			
+
 			foreach(array_merge(['id' => ''], $Teachers) as $Teacher) {
 				$new_search = clone $search;
 				$new_search->id_teacher = $Teacher['id'];
 				$counts['teacher'][$Teacher['id']] = static::_count($new_search);
 			}
-			
-			
+
+
 			return [
 				'data' 	=> $student_subject,
 				'counts' => $counts,
 			];
 		}
-		
+
 		private static function _count($search) {
 			return dbConnection()
 					->query(static::_generateQuery($search, "COUNT(*) AS cnt FROM (SELECT vj.id", false, ") AS X"))
 					->fetch_object()
 					->cnt;
 		}
-		
+
 		private static function _connectTables($t, $addon) {
 			return " {$t} ON ({$t}.id_student = vj.id_entity AND {$t}.id_teacher = vj.id_teacher AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year {$addon})";
-		} 
-		
+		}
+
 		private static function _generateQuery($search, $select, $order = true, $ending)
 		{
 			$main_query = "
@@ -286,7 +286,7 @@
 		{
 			// @refactored
 			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
-			
+
 			return Group::findAll([
 				"condition" => "id_teacher=$id_teacher" . ($only_ended ? " AND ended=0" : ""),
 			], true);
@@ -295,7 +295,7 @@
 		public static function countGroups($id_teacher = false)
 		{
 			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
-			
+
 			// @refactored
 			return Group::count([
 				"condition" => "id_teacher=$id_teacher AND ended = 0"
@@ -315,7 +315,7 @@
 
 			return $Reviews;
 		}
-		
+
 		public function getPublishedReviews()
 		{
 			return TeacherReview::findAll([
@@ -324,7 +324,7 @@
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-		
+
 		// Перезаписываем функцию findAll
 		public static function findAll($params = [], $flag = false)
 		{
@@ -336,7 +336,7 @@
 
 			return parent::findAll($params, $flag);
 		}
-		
+
 		public static function getByStatus($in_egecentr)
 		{
 			return Teacher::findAll([
@@ -344,7 +344,7 @@
 				"order"		=> "last_name, first_name, middle_name ASC"
 			]);
 		}
-		
+
 		public function beforeSave()
 		{
 			// Очищаем номера телефонов
@@ -369,7 +369,7 @@
 				if ($User) {
 					$User->login 	= $this->login;
 					$User->password = User::password($this->password);
-					$User->banned = $this->banned === "true" ? 1 : 0;
+					$User->banned = $this->allowed(Shared\Rights::EC_BANNED) === "true" ? 1 : 0;
 					$User->save();
 				}
 			}
@@ -430,7 +430,7 @@
 		{
 			return static::getReportsStatic($this->id);
 		}
-		
+
 		public function getReportsStatic($id_teacher)
 		{
 			$Reports = Report::findAll([
@@ -450,7 +450,7 @@
 				"condition" => "type_entity='TEACHER' AND id_entity={$this->id}"
 			]);
 		}
-		
+
 		/*
 		 * Вернуть учителей для API
 		 */
@@ -462,28 +462,28 @@
 			} else {
 				$single = false;
 			}
-			foreach ($Teachers as $Teacher) { 
+			foreach ($Teachers as $Teacher) {
 				$object = [];
 				foreach (Teacher::$api_fields as $field) {
 					$object[$field] = $Teacher->{$field};
 				}
-				$object['photo_url'] = $Teacher->has_photo ? static::EXTERNAL_PHOTO_PATH . $Teacher->id . '.' . $Teacher->photo_extension : static::EXTERNAL_PHOTO_PATH . 'no-profile-img.gif'; 
+				$object['photo_url'] = $Teacher->has_photo ? static::EXTERNAL_PHOTO_PATH . $Teacher->id . '.' . $Teacher->photo_extension : static::EXTERNAL_PHOTO_PATH . 'no-profile-img.gif';
 				$object['full_name'] = $Teacher->getFullName();
 				$object['grades_interval'] = $object['public_grades'][0] . (count($object['public_grades']) > 1 ? '-' . end($object['public_grades']) : '');
 				$object['public_seniority'] = date('Y') - $Teacher->start_career_year;
 				$subject_string = [];
 				foreach ($Teacher->subjects as $index => $id_subject) {
 					$subject_string[] = Subjects::$dative[$id_subject];
-				} 
+				}
 				$object['subjects_dative'] = implode(', ', $subject_string);
-				
+
 				if ($single) {
 					$object['reviews'] = $Teacher->getPublishedReviews();
 				}
-				
+
 				$return[] = $object;
 			}
-			
+
 			if ($single) {
 				return $return[0];
 			} else {
@@ -497,7 +497,7 @@
 				'condition' => ''
 			]);
 		}
-		
+
 		/**
 		 * Получить статистику преподавателя
 		 */

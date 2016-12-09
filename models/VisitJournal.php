@@ -32,7 +32,7 @@
 				$Student = Student::findById($id_student);
 
 				// если админ, не отправлять смски
-				if (!isAdmin()) {
+				if (User::isAdmin()) {
 					// если отсутствовал на занятии
 					if ($data[$id_student]['presence'] == 2) {
                         // @sms-checked

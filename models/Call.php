@@ -246,7 +246,7 @@
         {
             // @rights-refactored
 	        $user_ids = User::getIds([
-		       'condition' => 'banned=0 AND FIND_IN_SET(' . Shared\Rights::PHONE_NOTIFICATIONS . ', rights)'
+		       'condition' => 'NOT FIND_IN_SET(' . Shared\Rights::EC_BANNED . ', rights) AND FIND_IN_SET(' . Shared\Rights::PHONE_NOTIFICATIONS . ', rights)'
 	        ]);
 
 	        foreach($user_ids as $id) {

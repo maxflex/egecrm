@@ -4,7 +4,7 @@
 		<div class="col-sm-10" style="padding-right: 0">
 			<ul class="request-list-nav nav nav-tabs nav-tabs-links" style="margin-bottom: 20px">
 				<li ng-repeat="request_status in request_statuses" data-id="{{request_status.id}}"
-					ng-class="{'active' : chosen_list == request_status.id, 'request-status-li': request_status.id != 8 && (chosen_list != request_status.id)}" 
+					ng-class="{'active' : chosen_list == request_status.id, 'request-status-li': request_status.id != 8 && (chosen_list != request_status.id)}"
 					ng-hide="request_status.id == <?= RequestStatuses::SPAM ?> && counts.requests[request_status.id] == 0"
 				>
 					<a class="list-link" href="#{{request_status.id}}" ng-click="changeList(request_status, true)" data-toggle="tab" aria-expanded="{{$index == 0}}">
@@ -23,9 +23,9 @@
 					ng-repeat="user in UserService.getWithSystem()"
 					ng-show='counts.users[user.id]'
 					value="{{ user.id }}"
-					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }} {{ $var }}</span><small class='text-muted'>{{ counts.users[user.id] || '' }}</small>"
+					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span><small class='text-muted'>{{ counts.users[user.id] || '' }}</small>"
 				></option>
-				<option disabled ng-show="UserService.getBannedHaving(counts.users).length || UserService.getUser(id_user_list).banned">──────────────</option>
+				<option disabled ng-show="UserService.getBannedHaving(counts.users).length || UserService.getUser(id_user_list).indexOf(34) !== -1">──────────────</option>
 				<option
 					ng-show='id_user_list == user.id || counts.users[user.id]'
 					ng-selected="id_user_list == user.id"

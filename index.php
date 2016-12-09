@@ -52,11 +52,6 @@
 	// Пытаемся войти
 	User::rememberMeLogin();
 
-/*
-	if (User::loggedIn() && User::fromSession()->id == 69) {
-		preType($_SERVER);
-	}
-*/
 	if (! LOCAL_DEVELOPMENT) {
 		if ($_SERVER['HTTP_HOST'] != 'lk.ege-centr.ru' && !in_array($_controllerName, $external_requests)) {
 			header("Location: https://lk.ege-centr.ru" . $_SERVER['REQUEST_URI']);
@@ -125,7 +120,7 @@
 	// Конец выполнения скрипта
 	$time_end = microtime(true);
 
-	if (!$_ajax_request && ((User::loggedIn() && User::isDev()) || isset($_GET['execution_time'])) || strpos($_SERVER['HTTP_REFERER'], '3000')) {
+	if (!$_ajax_request && ((User::loggedIn() && allowed(Shared\Rights::IS_DEVELOPER)) || isset($_GET['execution_time'])) || strpos($_SERVER['HTTP_REFERER'], '3000')) {
 		$time = $time_end - $time_start;
 	    echo "<span class='pull-right small text-gray' style='margin-right: 15px'>время выполнения: " . round($time, 2) . " сек</span>";
 	}

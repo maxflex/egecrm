@@ -9,7 +9,7 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "";
 
-		public static $allowed_users = [User::USER_TYPE, User::SEO_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		##################################################
 		###################### AJAX ######################
@@ -614,18 +614,18 @@
 				$S->total_lessons = GroupSchedule::count([
 					"condition" => "id_group={$S->id_group} AND cancelled = 0"
 				]);
-				
+
 				// данные по прошедшему занятию из журнала
 				if ($S->was_lesson) {
 					$S->Lesson = VisitJournal::find(["condition" => "id_group={$S->id_group} AND lesson_date='{$S->date}'"]);
-					if ($S->Lesson->cabinet) { 
+					if ($S->Lesson->cabinet) {
 	                    $S->Lesson->cabinet = Cabinet::getBlock($S->Lesson->cabinet);
 	                }
 	                $S->Lesson->Teacher = Teacher::getLight($S->Lesson->id_teacher, ['phone']);
 				}
-				
+
 				// @time-refactored @time-checked
-				if ($S->cabinet) { 
+				if ($S->cabinet) {
                     $S->cabinet = Cabinet::getBlock($S->cabinet);
                 }
 			}

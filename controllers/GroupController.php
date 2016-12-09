@@ -174,8 +174,6 @@
 						$Group->Students = $Group->getStudents();
 					}
 
-					$isAdmin = User::fromSession()->type == User::USER_TYPE;
-
 					$ang_init_data = angInit([
 						"Group" 	=> $Group,
 						"LessonData"=> (object)$OrderedLessonData,
@@ -183,12 +181,12 @@
 						"lesson_statuses" => VisitJournal::$statuses,
 						"id_group"		=> $id_group,
 						"date"			=> $date,
-						"isAdmin"		=> $isAdmin,
+						"isAdmin"		=> User::isAdmin(),
 						"registered_in_journal" => $Group->registeredInJournal($date),
 					]);
 
 					//изменение исторических данных: доступен только админам
-					if ($isAdmin) {
+					if (User::isAdmin()) {
 						$this->render("lesson_admin", [
 							"ang_init_data" => $ang_init_data,
 						]);

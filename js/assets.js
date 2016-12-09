@@ -421,21 +421,21 @@ app.service('UserService', function($rootScope, $q, $http, $timeout, User) {
       only_active = true;
     }
     if (only_active) {
-      return _.where(this.users, {
-        banned: 0
+      return _.filter(this.users, function(user) {
+        return user.rights.indexOf(34) === -1;
       });
     } else {
       return this.users;
     }
   };
   this.getBannedUsers = function() {
-    return _.where(this.users, {
-      banned: 1
+    return _.filter(this.users, function(user) {
+      return user.rights.indexOf(34) !== -1;
     });
   };
   this.getBannedHaving = function(condition_obj) {
     return _.filter(this.users, function(user) {
-      return user.banned === 1 && condition_obj[user.id];
+      return user.rights.indexOf(34) !== -1 && condition_obj[user.id];
     });
   };
   return this;

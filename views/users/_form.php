@@ -107,7 +107,8 @@
                    placeholder="цвет">
         </div>
         <!-- @rights-need-to-refactor -->
-        <?php if (User::isDev() || User::isRoot() || User::fromSession()->id == 65) :?>
+        <!-- SHOW_SALARY -->
+        <?php if (allowed(Shared\Rights::SHOW_SALARY)) :?>
         <div class="form-group">
             <input class="form-control" type="number" placeholder="зарплата" ng-model="User.salary">
         </div>
@@ -121,240 +122,56 @@
         <div class="row">
             <h4 class="row-header">ЕГЭ-Центр</h4>
         </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::EDIT_GROUPS ?>)' ng-checked='allowed(<?= Shared\Rights::EDIT_GROUPS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>редактирование групп</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::EDIT_PAYMENTS ?>)' ng-checked='allowed(<?= Shared\Rights::EDIT_PAYMENTS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>редактирование платежей</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_TASKS ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_TASKS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>задачи</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_CALENDAR ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_CALENDAR ?>)'>
-                <span class="switch"></span>
-                <span class='title'>календарь</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_FAQ ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_FAQ ?>)'>
-                <span class="switch"></span>
-                <span class='title'>FAQ</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_TEMPLATES ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_TEMPLATES ?>)'>
-                <span class="switch"></span>
-                <span class='title'>шаблоны</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_USERS ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_USERS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>пользователи</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_PAYMENTS ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_PAYMENTS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>платежи</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_TEACHER_PAYMENTS ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_TEACHER_PAYMENTS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>оплата преподавателей</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_STATS ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_STATS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>итоги</span>
-            </label>
-        </div>
+        <?= partial('right', ['right' => Shared\Rights::EDIT_GROUPS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EDIT_PAYMENTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_TASKS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_CALENDAR]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_FAQ]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_TEMPLATES]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_USERS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_PAYMENTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_TEACHER_PAYMENTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_STATS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EDIT_CONTRACT]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_SALARY]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
             <h4 class="row-header">ЕГЭ-Репетитор</h4>
         </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_REQUEST_DATA ?>)' ng-checked='allowed(<?= Shared\Rights::ER_REQUEST_DATA ?>)'>
-                <span class="switch"></span>
-                <span class='title'>редактирование клиентов</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_EDIT_ACCOUNTS ?>)' ng-checked='allowed(<?= Shared\Rights::ER_EDIT_ACCOUNTS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>редактирование отчетности</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_DELETE_TUTOR ?>)' ng-checked='allowed(<?= Shared\Rights::ER_DELETE_TUTOR ?>)'>
-                <span class="switch"></span>
-                <span class='title'>удаление преподавателей</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_MERGE_TUTOR ?>)' ng-checked='allowed(<?= Shared\Rights::ER_MERGE_TUTOR ?>)'>
-                <span class="switch"></span>
-                <span class='title'>склейка преподавателей</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_TUTOR_ACCOUNTS ?>)' ng-checked='allowed(<?= Shared\Rights::ER_TUTOR_ACCOUNTS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>отчетность</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_PERIODS ?>)' ng-checked='allowed(<?= Shared\Rights::ER_PERIODS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>совершенные расчеты</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_PERIODS_PLANNED ?>)' ng-checked='allowed(<?= Shared\Rights::ER_PERIODS_PLANNED ?>)'>
-                <span class="switch"></span>
-                <span class='title'>планируемые расчеты</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_DEBT ?>)' ng-checked='allowed(<?= Shared\Rights::ER_DEBT ?>)'>
-                <span class="switch"></span>
-                <span class='title'>дебет</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_SHOW_TUTOR_DEBT ?>)' ng-checked='allowed(<?= Shared\Rights::ER_SHOW_TUTOR_DEBT ?>)'>
-                <span class="switch"></span>
-                <span class='title'>показать дебет</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_ATTACHMENT_STATS ?>)' ng-checked='allowed(<?= Shared\Rights::ER_ATTACHMENT_STATS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>статистика</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_SUMMARY_USERS ?>)' ng-checked='allowed(<?= Shared\Rights::ER_SUMMARY_USERS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>эффективность</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_LOGS ?>)' ng-checked='allowed(<?= Shared\Rights::ER_LOGS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>логи</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_SUMMARY ?>)' ng-checked='allowed(<?= Shared\Rights::ER_SUMMARY ?>)'>
-                <span class="switch"></span>
-                <span class='title'>итоги</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_TUTOR_STATUSES ?>)' ng-checked='allowed(<?= Shared\Rights::ER_TUTOR_STATUSES ?>)'>
-                <span class="switch"></span>
-                <span class='title'>переключение статусов преподавателя</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_REQUEST_STATUSES ?>)' ng-checked='allowed(<?= Shared\Rights::ER_REQUEST_STATUSES ?>)'>
-                <span class="switch"></span>
-                <span class='title'>переключение статусов заявки</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::ER_ACCEPT_ACCOUNTS ?>)' ng-checked='allowed(<?= Shared\Rights::ER_ACCEPT_ACCOUNTS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>одобрение встреч</span>
-            </label>
-        </div>
+        <?= partial('right', ['right' => Shared\Rights::ER_DELETE_REQUESTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_DELETE_LISTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_DELETE_ATTACHMENTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_DELETE_ARCHIVES]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_DELETE_REVIEWS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_SUMMARY_FIELDS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_EDIT_ACCOUNTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_DELETE_TUTOR]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_MERGE_TUTOR]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_TUTOR_ACCOUNTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_PERIODS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_PERIODS_PLANNED]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_DEBT]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_SHOW_TUTOR_DEBT]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_ATTACHMENT_STATS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_SUMMARY_USERS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_LOGS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_SUMMARY]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_TUTOR_STATUSES]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_REQUEST_STATUSES]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_ACCEPT_ACCOUNTS]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
             <h4 class="row-header">Общее</h4>
         </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::PHONE_NOTIFICATIONS ?>)' ng-checked='allowed(<?= Shared\Rights::PHONE_NOTIFICATIONS ?>)'>
-                <span class="switch"></span>
-                <span class='title'>уведомления о звонках</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::IS_DEVELOPER ?>)' ng-checked='allowed(<?= Shared\Rights::IS_DEVELOPER ?>)'>
-                <span class="switch"></span>
-                <span class='title'>разработчик</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-click='toggleRights(<?= Shared\Rights::SHOW_CONTRACT ?>)' ng-checked='allowed(<?= Shared\Rights::SHOW_CONTRACT ?>)'>
-                <span class="switch"></span>
-                <span class='title'>договор</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-model="User.banned_egerep" ng-true-value="1">
-                <span class="switch"></span>
-                <span class="title">заблокирован в ЕГЭ-Центре</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-model="User.banned_egerep" ng-true-value="1">
-                <span class="switch"></span>
-                <span class="title">заблокирован в ЕГЭ-Репетиторе</span>
-            </label>
-        </div>
-        <div class="row">
-            <label class="ios7-switch">
-                <input type="checkbox" ng-model="User.banned_egecms" ng-true-value="1">
-                <span class="switch"></span>
-                <span class="title">заблокирован в CMS ЕГЭ-Репетитора</span>
-            </label>
-        </div>
+        <?= partial('right', ['right' => Shared\Rights::PHONE_NOTIFICATIONS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::IS_DEVELOPER]) ?>
+        <?= partial('right', ['right' => Shared\Rights::SHOW_CONTRACT]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EC_BANNED]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_BANNED]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ERC_BANNED]) ?>
+        <?= partial('right', ['right' => Shared\Rights::WORLDWIDE_ACCESS]) ?>
     </div>
 </div>
 <!--/access settings -->

@@ -8,29 +8,6 @@
 <script type="text/javascript" src="js/vendor.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/assets.js"></script>
-<?php if (in_array(User::fromSession()->id, [-1])) :?>
-<div class="menu-wrap">
-	<nav class="menu">
-		<div class="profile">
-			<span class="circle-default"></span><span style="margin-left: 5px"><?= User::fromSession()->login ?></span>
-		</div>
-		<div class="link-list">
-			<?php foreach (User::getOnlineList()->online as $User) :?>
-				<div>
-					<span class="circle-default"></span><a href="<?= $User->last_action_link?>" target="_blank"><span><?= $User->login?></span></a>
-				</div>
-			<?php endforeach ?>
-			<?php foreach (User::getOnlineList()->offline as $User) :?>
-				<div>
-					<span class="circle-default circle-offline"></span><a href="<?= $User->last_action_link?>" target="_blank"><span><?= $User->login?></span></a>
-					<i><script>document.write( moment(<?= $User->last_action_time?> * 1000).fromNow() )</script></i>
-				</div>
-			<?php endforeach ?>
-		</div>
-	</nav>
-</div>
-<button class="menu-button" id="open-button"><?= count(User::getOnlineList()->online) + 1 ?> <span class="circle-default"></span></button>
-<?php endif ?>
 
 <!-- ЛАЙТБОКС ОТПРАВКА EMAIL -->
 <div class="lightbox-new lightbox-email">
@@ -178,7 +155,7 @@
         			<a href="teachers/salary" class="list-group-item">Оплата преподавателей</a>
                 <?php endif ?>
             <?php endif ?>
-            
+
 			<a class="list-group-item active">Настройки</a>
 			<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_TASKS)) :?>
 				<a href="tasks" class="list-group-item">Задачи
