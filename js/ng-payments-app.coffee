@@ -81,6 +81,10 @@ app = angular.module "Payments", ["ui.bootstrap"]
     .controller "ListCtrl", ($scope, $timeout) ->
         $scope.initSearch = ->
             $scope.search = mode : 'STUDENT', payment_type : '', confirmed : '', type : '' if not $scope.search
+
+        $scope.yearLabel = (year) ->
+            year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
         $scope.filter = (current_page)->
             console.log 'filter' # инициализируем фильтры если еще не были установлены
             $scope.initSearch()

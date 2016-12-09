@@ -112,6 +112,9 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
       };
     }
   };
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
   $scope.filter = function(current_page) {
     console.log('filter');
     $scope.initSearch();

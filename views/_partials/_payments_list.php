@@ -34,6 +34,9 @@
                 {{payment.date}}
             </td>
             <td>
+                {{ yearLabel(payment.year) }}
+            </td>
+            <td>
                 <a class="text-danger pointer"
                    ng-click="confirmPayment(payment)"
                    ng-show="!payment.confirmed">подтвердить</a>
