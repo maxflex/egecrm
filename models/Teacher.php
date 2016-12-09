@@ -33,13 +33,15 @@
 			}
 
 			// Было ли занятие?
-			if (!$this->isNewRecord) {
+			if (! $this->isNewRecord) {
 				$this->had_lesson = $this->hadLesson();
 
 
 				$this->has_photo = $this->photoExists();
 
-				$this->banned = User::findTeacher($this->id)->allowed(Shared\Rights::EC_BANNED);
+                // @rights-need-to-refactor
+                $User = User::findTeacher($this->id);
+				$this->banned = $User ? $User->allowed(Shared\Rights::EC_BANNED) : false;
 
 				$this->comment_extended = nl2br($this->comment_extended);
 			}
