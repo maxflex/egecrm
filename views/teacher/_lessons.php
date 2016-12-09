@@ -36,11 +36,11 @@
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Всего проведено за <?= academicYear() . '-' . (academicYear() + 1) . ' уч. г. '  ?> {{ current_year_lessons_count }} занятий на сумму</td>
-					<td colspan="2">{{ current_year_to_be_paid }} руб.</td>
+					<td colspan="2">{{ current_year_to_be_paid | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Всего выплачено</td>
-					<td colspan="2">{{ current_year_paid }} руб.</td>
+					<td colspan="2">{{ current_year_paid | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Итого к выплате</td>

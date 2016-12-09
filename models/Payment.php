@@ -3,7 +3,7 @@
 	{
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 		public static $mysql_table	= "payments";
-		
+
 		# Список статусов
 		const PAID_CARD		= 1;
 		const PAID_CASH		= 2;
@@ -13,7 +13,7 @@
 		const NDFL	        = 7;
 
 		# Все
-		static $all  = [			
+		static $all  = [
 			self::PAID_CARD		=> "карта",
 			self::PAID_CASH		=> "наличные",
 			self::PAID_BILL		=> "счет",
@@ -28,31 +28,31 @@
 		static $deleted = [
 //			self::NOT_PAID_BILL,
 		];
-		
+
 		# Заголовок
 		static $title = "способ оплаты";
-		
+
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
 		public function __construct($array, $flag = false) {
 			parent::__construct($array);
-			
+
 			if ($this->card_number) {
 				$this->card_number .= ' ';
 			}
 			if ($this->card_first_number) {
 				$this->card_first_number .= 'XXX';
 			}
-			
+
 			// Добавляем данные
             if (!$flag) {
                 $this->user_login = User::findById($this->id_user)->login;
             }
 		}
-		
-		
+
+
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
-		
+
 		/**
 		 * Найти все платежи студента (клиента).
 		 *
@@ -63,13 +63,13 @@
 				"condition" => "entity_id=" . $id_student." and entity_type='".Student::USER_TYPE."' "
 			]);
 		}
-		
+
 		/**
 		 * Построить селектор из всех записей.
 		 * $selcted - что выбрать по умолчанию
 		 * $name 	– имя селектора, по умолчанию имя класса
 		 * $attrs	– остальные атрибуты
-		 * 
+		 *
 		 */
 		public static function buildSelector($selcted = false, $name = false, $attrs = false, $skip = [])
 		{
@@ -90,14 +90,14 @@
 			}
 			echo "</select>";
 		}
-		
+
 		public static function countUnconfirmed()
 		{
 			return self::count([
 				"condition" => "confirmed = 0 and entity_type = '".Student::USER_TYPE."' "
 			]);
 		}
-				
+
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 
 		public function getEntity()
@@ -114,10 +114,10 @@
 
 		/**
 		 * Добавить платежи
-		 * 
+		 *
 		 */
 		public static function addData($payments_array, $entity_id, $entity_type = 'STUDENT')
-		{	
+		{
 			// Сохраняем данные
 			foreach ($payments_array as $id => $one_payment) {
 				// если у платежа есть ID, то обновляем его
@@ -135,20 +135,20 @@
 				}
 			}
 		}
-		
-		
+
+
 		/**
 		 * Коливество дней/недель/месяцев/лет с момента первой оплаты
-		 * 
+		 *
 		 * @param string $mode (default: 'days')
 		 * $mode = days | weeks | months | years
 		 */
 		public static function timeFromFirst($mode = 'days')
 		{
 			$today = time(); // or your date as well
-			
+
 		    $first_payment_date = 1431932400; // #hardcoded first payment timestamp
-		    
+
 		    $datediff = $today - $first_payment_date;
 
 			switch ($mode) {
@@ -186,9 +186,9 @@
         public static function tobePaid($entity_id, $entity_type)
         {
             return self::dbConnection()->query("select ".
-                "(select ifnull(sum(v.teacher_price), 0) from visit_journal v where v.id_entity = {$entity_id} and v.type_entity = '{$entity_type}') " .
+                "(select ifnull(sum(v.teacher_price), 0) from visit_journal v where v.id_entity = {$entity_id} and year=" . academicYear() . " and v.type_entity = '{$entity_type}') " .
                 " - " .
-                "(select ifnull(sum(if(p.id_type = 1, p.sum, -1*p.sum)), 0) from payments p where p.entity_id = {$entity_id} and p.entity_type = '{$entity_type}') " .
+                "(select ifnull(sum(if(p.id_type = 1, p.sum, -1*p.sum)), 0) from payments p where p.entity_id = {$entity_id} and year=" . academicYear() . " and p.entity_type = '{$entity_type}') " .
                 "as tobe_paid"
             )->fetch_object()->tobe_paid;
         }
