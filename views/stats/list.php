@@ -31,9 +31,9 @@
 		<?php } ?>
 
 		<div class="pull-right">
-			<span class="link-like active">итоговые данные</span>
-			<a href="stats/payments">детализация по платежам</a>
-			<a href="stats/payments/teachers">детализация по платежам преподавателей</a>
+			<span class="link-like active">итоги</span>
+			<a href="stats/payments">платежи клиентов</a>
+			<a href="stats/payments/teachers">платежи преподавателям</a>
 		</div>
 	</div>
 
