@@ -609,7 +609,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			// был баг. месяц делал автоматически +1
 			month = date[1] - 1;
 			date = new Date(date[2], month, date[0])
-			date_str = moment(date).format("D MMMM YYYY г.")
+			date_str = moment(date).format("D MMMM YYYYг.")
 			date = date_str.split(' ');
 			date[0] = '«' + date[0] + '»'
 			return date.join(' ')
@@ -747,6 +747,20 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$scope.$apply()
 			html = $("#service-act-print").html()
 			$scope.editBeforePrint(html)
+		}
+
+		$scope.printServiceActIp = function(contract) {
+			$scope.print_mode = 'service-act-ip'
+			$scope.service_contract_parent = $scope.firstContractInChain(contract)
+			$scope.service_contract = $scope.lastContractInChain(contract)
+			$scope.term_contract_parent = $scope.firstContractInChain(contract)
+			$scope.term_contract = $scope.lastContractInChain(contract)
+
+			$timeout(function(){
+				$scope.$apply();
+				html = $("#service-act-ip-print").html()
+				$scope.editBeforePrint(html);
+			});
 		}
 
 		$scope.getLastLessonDate = function() {
@@ -1955,7 +1969,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.payments === undefined && menu == 1) {
 				$.post("requests/ajax/LoadPayments", {id_student: $scope.id_student}, function(response) {
-					['user', 'payments', 'payment_types', 'payment_statuses', 'academic_year'].forEach(function(field) {
+					['user', 'payments', 'payment_types', 'payment_statuses', 'academic_year', 'tobe_paid'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()
