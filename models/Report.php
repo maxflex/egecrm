@@ -122,7 +122,7 @@
 					}, array_keys($params), $params)) : '')
             ]);
         }
-        
+
         /*
 	     * Get reports in configuration [available for parents only]
 	     */
@@ -130,19 +130,19 @@
 	    {
 		    $query = dbConnection()->query("
 				select rh.* from reports_helper rh
-				join reports r on rh.id_report = r.id
-				where " 
+				left join reports r on rh.id_report = r.id
+				where "
 					. implode(' and ', array_map(function($key, $value) {
 						return "rh.$key='$value'";
 					}, array_keys($params), $params))
-					. " and r.available_for_parents=1
+					. " and (r.id is null or r.available_for_parents=1)
 					group by rh.id_student, rh.id_subject, rh.id_teacher, rh.year
 			");
-			
+
 			while ($row = $query->fetch_object()) {
 				$data[] = $row;
 			}
-			
+
 			return $data;
 	    }
 
