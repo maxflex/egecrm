@@ -2,7 +2,7 @@
 	<div class="row mb">
 		<div class="col-sm-12">
             <div class='user-img'>
-                <img ng-if='Student.has_photo_cropped' src="img/students/{{ Student.id + '_original.' + Student.photo_extension }}">
+                <img ng-if='Student.has_photo_cropped' src="img/students/{{ Student.id + '_cropped.' + Student.photo_extension }}">
                 <img ng-if='!Student.has_photo_cropped' src='img/teachers/no-profile-img.gif'>
             </div>
             <div style='margin-bottom: 5px'>
