@@ -15,7 +15,7 @@
             <table class='table table-hover border-reverse'>
                 <tr ng-repeat='User in Users'>
                     <td width='300'>
-                        <a href="users/edit/{{ User.id }}" ng-class="{'comment-time':(allowed(User, 34) && allowed(User, 35))}">{{ User.login }}</a>
+                        <a href="users/edit/{{ User.id }}" ng-class="{'comment-time': allowed(User, 34) && allowed(User, 35)}">{{ User.login }}</a>
                     </td>
                     <td>
                         <label class="ios7-switch" ng-show='right'>
