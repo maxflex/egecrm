@@ -1045,17 +1045,32 @@
 			return "SELECT " . $select . $main_query;
 		}
 
-        public static function getDebt($id_student = false)
+        public static function getDebt($id_student)
         {
             $query =
-                "select ifnull(c.sum, 0) - ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0) as debt " .
-                "from payments p " .
-                "join contract_info ci on ci.year = p.year and ci.id_student = p.entity_id " .
-                "join contracts c on c.id_contract = ci.id_contract AND c.current_version = 1 " .
-                "where p.entity_type = '" . Student::USER_TYPE . "' and p.year = " . Years::getAcademic() .
-                    ($id_student ? " and p.entity_id = {$id_student} " : "");
+                "select (ifnull(c.sum, 0) - ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0))) as debt " .
+                "from contract_info ci " .
+                "join contracts c on c.id_contract = ci.id_contract and c.current_version = 1 " .
+                "join payments p on p.year = ci.year and p.entity_id = ci.id_student " .
+                "where p.entity_type = '" . Student::USER_TYPE . "' and p.year = " . Years::getAcademic() .  " and p.entity_id = {$id_student} ";
 
-            return self::dbConnection()->query($query)->fetch_object()->debt;
+            return static::dbConnection()->query($query)->fetch_object()->debt;
         }
 
-	}
+        public static function getTotalDebt()
+        {
+            $query =
+                "select " .
+                    "(select ifnull(sum(c.sum), 0) " .
+                    "from contract_info ci " .
+                    "join contracts c on c.id_contract = ci.id_contract " .
+                    "where ci.year = " . Years::getAcademic() .  " and c.current_version = 1 )" .
+                    " - " .
+                    "(select ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0)" .
+                    "from payments p " .
+                    "where p.entity_type = '" . Student::USER_TYPE . "' and p.year = " . Years::getAcademic() . ") " .
+                " as debt";
+
+            return static::dbConnection()->query($query)->fetch_object()->debt;
+        }
+    }

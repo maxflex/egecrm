@@ -272,7 +272,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}, "json")
 		}
 	})
-	.controller("EditCtrl", function ($scope, $log, $timeout, PhoneService) {
+	.controller("EditCtrl", function ($scope, $log, $timeout, PhoneService, UserService) {
 		bindArguments($scope, arguments);
 
         $scope.yearLabel = function(year) {

@@ -23,7 +23,7 @@
 
 			$ang_init_data = angInit([
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
-				'total_debt'	=> Student::getDebt(),
+				'total_debt'	=> Student::getTotalDebt(),
 				'user'	        => User::fromSession(),
 			]);
 
