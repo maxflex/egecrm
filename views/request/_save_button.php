@@ -1,7 +1,7 @@
 <div class="row" style="margin-top: 10px">
 	<div class="col-sm-4">
 		<div class="half-black pull-left" ng-show="mode=='request'" style="margin-left: 15px; margin-top: 7px">
-			создана {{users[<?= $Request->id_user_created ? $Request->id_user_created : 0 ?>].login || "system"}} <?= date("d.m.y в H:i", strtotime($Request->date)) ?>
+			создана {{ UserService.getLogin(<?= $Request->id_user_created ?>) }} <?= date("d.m.y в H:i", strtotime($Request->date)) ?>
 		</div>
 	</div>
 	<div class="col-sm-4 center">

@@ -985,9 +985,17 @@
 			$query = static::_generateQuery($search, ($page == -1 ? "s.id" : "s.id, s.first_name, s.last_name, s.middle_name "));
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
-			while ($row = $result->fetch_object()) {
-				$data[] = ($page == -1 ? $row->id : $row);
-			}
+            $data = [];
+            if ($result->num_rows) {
+                while ($row = $result->fetch_object()) {
+                    if ($page == -1) {
+                        $data[] = $row->id;
+                    } else {
+                        $row->debt = Student::getDebt($row->id);
+                        $data[] = $row;
+                    }
+                }
+            }
 
 			if ($page > 0) {
 				// counts
@@ -997,22 +1005,6 @@
 					$new_search = clone $search;
 					$new_search->year = $year;
 					$counts['year'][$year] = static::_count($new_search);
-				}
-				foreach(["", 0, 1] as $green) {
-					$new_search = clone $search;
-					$new_search->green = $green;
-					$counts['green'][$green] = static::_count($new_search);
-				}
-				foreach(["", 0, 1] as $yellow) {
-					$new_search = clone $search;
-					$new_search->yellow = $yellow;
-
-					$counts['yellow'][$yellow] = static::_count($new_search);
-				}
-				foreach(["", 0, 1] as $red) {
-					$new_search = clone $search;
-					$new_search->red = $red;
-					$counts['red'][$red] = static::_count($new_search);
 				}
 
 				foreach(array_merge([''], range(0,3)) as $error) {
@@ -1046,9 +1038,6 @@
 				( ! isBlank($search->error) && $search->error == 0 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension = '' " : "") .
 				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension <> '' AND u.has_photo_cropped = 0 " : "") . "
 				JOIN contracts c ON (c.id_contract = ci.id_contract AND c.current_version = 1) WHERE true "
-				. (!isBlank($search->green) ? " AND " . ($search->green ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 3)" : "")
-				. (!isBlank($search->yellow) ? " AND " . ($search->yellow ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 2)" : "")
-				. (!isBlank($search->red) ? " AND " . ($search->red ? "" : "NOT") . " EXISTS (SELECT 1 FROM contract_subjects cs WHERE cs.id_contract = c.id AND cs.status = 1)" : "")
 				. (!isBlank($search->error) && $search->error == 2 ? " AND NOT EXISTS (SELECT 1 FROM freetime f WHERE f.id_entity = s.id AND f.type_entity = '".Student::USER_TYPE."')" : "")
 				. (!isBlank($search->error) && $search->error == 3 ? " AND c.external = 1 " : "")
 				. " ORDER BY s.last_name, s.first_name, s.middle_name
@@ -1056,4 +1045,25 @@
 			return "SELECT " . $select . $main_query;
 		}
 
-	}
+        public static function getDebt($id_student = false)
+        {
+            $query =
+                "select " .
+                "(select ifnull(sum(c.sum), 0) " .
+                "from contract_info ci " .
+                "join contracts c on c.id_contract = ci.id_contract " .
+                "where ci.year = " . Years::getAcademic() .  " and c.current_version = 1 " . ($id_student ? " and ci.id_student = {$id_student} " : "") . ")" .
+                " - " .
+                "(select ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0)" .
+                "from payments p " .
+                "where p.entity_type = '" . Student::USER_TYPE . "' " . ($id_student ? " and p.entity_id = {$id_student} " : "") . " and p.year = " . Years::getAcademic() . ") " .
+                " as debt";
+
+            return static::dbConnection()->query($query)->fetch_object()->debt;
+        }
+
+        public static function getTotalDebt()
+        {
+            return static::getDebt();
+        }
+    }

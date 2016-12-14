@@ -8,44 +8,21 @@
 		<div class="pull-right">
 			<span class="link-like link-reverse link-white" ng-click="PhoneService.sms()">
 					групповое SMS</span>
+			<span style="display: inline; margin-left: 10px;">{{ total_debt | number }} руб.</span>
 		</div>
 	</div>
 	<div class="panel-body">
-		<div class="row flex-list" style="margin-bottom: 15px">
-	        <div>
+		<div class="row" style="margin-bottom: 15px">
+			<div class="col-sm-2">
 				<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.year[''] || '' }}">все годы</option>
 					<option disabled>────────</option>
-					<option ng-repeat="year in <?= Years::json() ?>" 
-						data-subtext="{{ counts.year[year] || '' }}"
-						value="{{year}}">{{ yearLabel(year) }}</option>
+					<option ng-repeat="year in <?= Years::json() ?>"
+							data-subtext="{{ counts.year[year] || '' }}"
+							value="{{year}}">{{ yearLabel(year) }}</option>
 				</select>
 			</div>
-			<div>
-				<select class="watch-select single-select form-control" ng-model="search.green" ng-change='filter()'>
-					<option value=""  data-subtext="{{ counts.green[''] || '' }}">все зеленые процессы</option>
-					<option disabled>───────</option>
-					<option value="1"  data-subtext="{{ counts.green[1] || '' }}">зеленые процессы есть</option>
-					<option value="0"  data-subtext="{{ counts.green[0] || '' }}">зеленых процессов нет</option>
-				</select>
-	        </div>
-	        <div>
-				<select class="watch-select single-select form-control" ng-model="search.yellow" ng-change='filter()'>
-					<option value=""  data-subtext="{{ counts.yellow[''] || '' }}">все желтые процессы</option>
-					<option disabled>───────</option>
-					<option value="1"  data-subtext="{{ counts.yellow[1] || '' }}">желтые процессы есть</option>
-					<option value="0"  data-subtext="{{ counts.yellow[0] || '' }}">желтых процессов нет</option>
-				</select>
-	        </div>
-	        <div>
-				<select class="watch-select single-select form-control" ng-model="search.red" ng-change='filter()'>
-					<option value=""  data-subtext="{{ counts.red[''] || '' }}">все красные процессы</option>
-					<option disabled>───────</option>
-					<option value="1"  data-subtext="{{ counts.red[1] || '' }}">красные процессы есть</option>
-					<option value="0"  data-subtext="{{ counts.red[0] || '' }}">красных процессов нет</option>
-				</select>
-	        </div>
-			<div>
+			<div class="col-sm-2">
 				<select class="watch-select single-select form-control" ng-model="search.error" ng-change='filter()'>
 					<option value=""  data-subtext="{{ counts.error[''] || '' }}">все</option>
 					<option disabled>───────</option>
@@ -66,6 +43,9 @@
 							<span ng-show='Student.last_name'>{{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}</span>
 							<span ng-hide='Student.last_name'>имя не указано</span>
 						</a>
+					</td>
+					<td width="10%" class="text-right">
+						{{ Student.debt | hideZero | number }}
 					</td>
 				</tr>
 			</table>
