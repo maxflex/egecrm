@@ -97,25 +97,25 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="row mb" style="margin-bottom: 40px">
 			<div class="col-sm-12">
-				<?= Html::teacherImg('Report.Teacher', 'pull-left', [
-						'style' => 'margin-right: 15px'
-				]) ?>
+                <div class='user-img'>
+                    <img src="{{ Report.Teacher.has_photo ? 'http://static.a-perspektiva.ru/img/tutors/' + Report.Teacher.id + '.' + Report.Teacher.photo_extension : 'img/teachers/no-profile-img.gif'}}">
+                </div>
 				<i>Преподаватель по {{Subjects[Report.id_subject]}}<br>
 					{{Report.Teacher.last_name}} {{Report.Teacher.first_name}} {{Report.Teacher.middle_name}}<br>
 					Дата составления данного отчета: {{formatDate2(Report.date)}}<br>
 				</i>
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<div class="col-sm-12">
 				<span class="glyphicon glyphicon-info-sign glyphicon-big"></span>Если у Вас есть вопросы, пожалуйста, звоните по единому номеру ЕГЭ-Центра (495) 646-85-92
 			</div>
 		</div>
-		
+
 	</div>
 </div>
 
@@ -123,7 +123,7 @@
 	.row.mb {
 		margin-bottom: 20px;
 	}
-	
+
 	.count-symbols {
 		position: absolute;
 	    right: 2.5%;
