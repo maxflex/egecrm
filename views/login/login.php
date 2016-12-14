@@ -1,8 +1,8 @@
 <center ng-app="Login" ng-controller="LoginCtrl">
 	<div class="form-signin" autocomplete="off">
 <!-- 		<h2 class="form-signin-heading">Вход в систему</h2> -->
-		<input type="text" id="inputLogin" class="form-control" placeholder="Логин" autofocus name="login" ng-model="login" autocomplete="off" enter="checkFields()">
-		<input type="password" id="inputPassword" class="form-control" placeholder="Пароль" name="password" ng-model="password" autocomplete="off" enter="checkFields()">
+		<input type="text" id="inputLogin" class="form-control" placeholder="Логин" autofocus name="login" ng-model="login" autocomplete="off" ng-keyup="enter($event)">
+		<input type="password" id="inputPassword" class="form-control" placeholder="Пароль" name="password" ng-model="password" autocomplete="off" ng-keyup="enter($event)">
 		<input type="password" autocomplete="passoword" style="display:none" />
 <!--
 		<div class="checkbox pull-left">

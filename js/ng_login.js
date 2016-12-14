@@ -31,28 +31,19 @@
 				})
 			}
 		})*/
-		.directive('enter', function() {
-			 return {
-				 restrict: 'A',
-				 link: function(scope, element, attrs) {
-					 return element.bind("keydown keypress", function(event) {
-						 if (event.which === 13) {
-							scope.$apply(function() {
-								return scope.$eval(attrs.enter);
-						 	});
-						 }
-
-					 	 return event.preventDefault();
-					 });
-				 }
-			 };
-		 })
 
 		.controller("LoginCtrl", function($scope) {
 			angular.element(document).ready(function() {
 				set_scope("Login")
 				l = Ladda.create(document.querySelector('#login-submit'));
 			});
+
+			//обработка события по enter в форме логина
+			$scope.enter = function($event){
+				if($event.keyCode == 13){
+					$scope.checkFields()
+				}
+			}
 			
 			// Отправка формы
 			$scope.checkFields = function() {
