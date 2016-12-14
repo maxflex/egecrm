@@ -1048,7 +1048,7 @@
         public static function getDebt($id_student)
         {
             $query =
-                "select (ifnull(c.sum, 0) - ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0))) as debt " .
+                "select (ifnull(c.sum, 0) - ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0)) as debt " .
                 "from contract_info ci " .
                 "join contracts c on c.id_contract = ci.id_contract and c.current_version = 1 " .
                 "join payments p on p.year = ci.year and p.entity_id = ci.id_student " .
