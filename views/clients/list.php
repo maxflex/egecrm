@@ -8,7 +8,7 @@
 		<div class="pull-right">
 			<span class="link-like link-reverse link-white" ng-click="PhoneService.sms()">
 					групповое SMS</span>
-			<span style="display: inline; margin-left: 10px;">{{ total_debt | number }} руб.</span>
+			<span style="display: inline; margin-left: 10px;">общая сумма задолженностей: {{ total_debt | number }} руб.</span>
 		</div>
 	</div>
 	<div class="panel-body">
@@ -45,7 +45,8 @@
 						</a>
 					</td>
 					<td width="10%" class="text-right">
-						{{ Student.debt | hideZero | number }}
+						<span ng-show="Student.debt">{{ Student.debt | number }} руб.</span>
+
 					</td>
 				</tr>
 			</table>
