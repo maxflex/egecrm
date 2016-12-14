@@ -187,60 +187,17 @@
 				moment(D).format "D MMMM YYYY"
 
 			$scope.confirmPayment = (payment) ->
-			  bootbox.prompt
-			    title: 'Введите пароль'
-			    className: 'modal-password'
-			    callback: (result) ->
-			      if result is null
-			      else if hex_md5 result == payments_hash
-			        payment.confirmed = if payment.confirmed then 0 else 1
-			        ajaxStart()
-			        $.post 'ajax/confirmPayment',
-			          id: payment.id
-			          confirmed: payment.confirmed
-			        , ->
-			            ajaxEnd()
-			        $scope.$apply()
-			      else if result != null
-			        $('.bootbox-form').addClass('has-error').children().first().focus()
-			        $('.bootbox-input-text').on 'keydown', ->
-			          $(this).parent().removeClass 'has-error'
-			          return
-			        return false
-			      return
-			    buttons:
-			      confirm: label: 'Подтвердить'
-			      cancel: className: 'display-none'
-			  return
+                return if $scope.user_rights.indexOf(11) is -1
+    	        payment.confirmed = if payment.confirmed then 0 else 1
+    	        $.post 'ajax/confirmPayment',
+    	          id: payment.id
+    	          confirmed: payment.confirmed
 
 			# Окно редактирования платежа
 			$scope.editPayment = (payment) ->
-			  if !payment.confirmed
-			    $scope.new_payment = angular.copy payment
-			    $timeout ->
-			        $scope.$apply()
-			    lightBoxShow 'addpayment'
-			    return
-			  bootbox.prompt
-			    title: 'Введите пароль'
-			    className: 'modal-password'
-			    callback: (result) ->
-			      if result is null
-			      else if hex_md5 result == payments_hash
-			        $scope.new_payment = angular.copy payment
-			        $scope.$apply()
-			        lightBoxShow 'addpayment'
-			      else if result != null
-			        $('.bootbox-form').addClass('has-error').children().first().focus()
-			        $('.bootbox-input-text').on 'keydown', ->
-			          $(this).parent().removeClass 'has-error'
-			          return
-			        return false
-			      return
-			    buttons:
-			      confirm: label: 'Подтвердить'
-			      cancel: className: 'display-none'
-			  return
+                return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
+                $scope.new_payment = angular.copy payment
+                lightBoxShow 'addpayment'
 
 			# Показать окно добавления платежа
 			$scope.addPaymentDialog = ->
@@ -359,35 +316,16 @@
 
 			deletePayment = (payment) ->
 				bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
-					if result == true
+					if result is true
 						$.post 'ajax/deletePayment', 'id_payment': payment.id, ->
 							$scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
 							$scope.tobe_paid += parseInt(payment.sum) if $scope.tobe_paid
-							$timeout ->
-								$scope.$apply()
-			# Удалить платеж
+							$timeout -> $scope.$apply()
+
+            # Удалить платеж
 			$scope.deletePayment = (index, payment) ->
-			  if !payment.confirmed
-			    deletePayment payment
-			  else
-			    bootbox.prompt
-			      title: 'Введите пароль'
-			      className: 'modal-password'
-			      callback: (result) ->
-			        if result is null
-			        else if hex_md5 result == payments_hash
-			          deletePayment payment
-			        else if result != null
-			          $('.bootbox-form').addClass('has-error').children().first().focus()
-			          $('.bootbox-input-text').on 'keydown', ->
-			            $(this).parent().removeClass 'has-error'
-			            return
-			          return false
-			        return
-			      buttons:
-			        confirm: label: 'Подтвердить'
-			        cancel: className: 'display-none'
-			  return
+                return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
+                deletePayment payment
 
 			$scope.formatDateMonthName = (date, full_year) ->
 				moment(date).format "D MMMM YY" + (if full_year then 'YY' else '')

@@ -174,10 +174,6 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     return $.post("ajax/confirmPayment", {
       id: payment.id,
       confirmed: payment.confirmed
-    }, function() {
-      return $timeout(function() {
-        return $scope.$apply();
-      });
     });
   };
   $scope.editPayment = function(payment) {
@@ -185,12 +181,12 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
       return;
     }
     $scope.new_payment = angular.copy(payment);
-    $scope.$apply();
     return lightBoxShow('addpayment');
   };
   $scope.addPaymentDialog = function() {
     $scope.new_payment = {
-      id_status: 0
+      id_status: 0,
+      year: $scope.academic_year
     };
     return lightBoxShow('addpayment');
   };

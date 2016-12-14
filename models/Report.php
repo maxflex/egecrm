@@ -92,13 +92,11 @@
         /**
          * Get reports count in configuration
          */
-        public static function getCount($id_student, $id_teacher, $id_subject, $year)
+        public static function getCount($id_student, $id_teacher, $id_subject, $year, $available_for_parents = false)
         {
-            return dbConnection()->query('
-                SELECT COUNT(*) AS `cnt`
-                FROM reports_helper
-                WHERE id_report IS NOT NULL AND ' . self::conditionString($id_student, $id_teacher, $id_subject, $year)
-            )->fetch_object()->cnt;
+            return Report::count([
+                'condition' => self::conditionString($id_student, $id_teacher, $id_subject, $year) . ($available_for_parents ? ' and available_for_parents=1' : '')
+            ]);
         }
 
         /**

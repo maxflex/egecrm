@@ -138,19 +138,16 @@ app = angular.module "Payments", ["ui.bootstrap"]
 	        $.post "ajax/confirmPayment",
 	            id:        payment.id
 	            confirmed: payment.confirmed
-	        , ->
-	            $timeout -> $scope.$apply()
 
         # Окно редактирования платежа
         $scope.editPayment = (payment) ->
             return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
             $scope.new_payment = angular.copy payment
-            $scope.$apply()
             lightBoxShow 'addpayment'
 
         # Показать окно добавления платежа
         $scope.addPaymentDialog = ->
-            $scope.new_payment = {id_status : 0}
+            $scope.new_payment = {id_status : 0, year: $scope.academic_year}
             lightBoxShow 'addpayment'
 
         # Добавить платеж
@@ -255,8 +252,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
                     , ->
                         ajaxEnd()
                         $scope.payments.splice index, 1
-                        $timeout ->
-                            $scope.$apply()
+                        $timeout -> $scope.$apply()
 
         $scope.printPKO = (payment) ->
             $scope.print_mode = 'pko'

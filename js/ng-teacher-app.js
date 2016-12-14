@@ -233,76 +233,21 @@ app = angular.module("Teacher", ["ngMap"]).config([
     return moment(D).format("D MMMM YYYY");
   };
   $scope.confirmPayment = function(payment) {
-    bootbox.prompt({
-      title: 'Введите пароль',
-      className: 'modal-password',
-      callback: function(result) {
-        if (result === null) {
+    if ($scope.user_rights.indexOf(11) === -1) {
 
-        } else if (hex_md5(result === payments_hash)) {
-          payment.confirmed = payment.confirmed ? 0 : 1;
-          ajaxStart();
-          $.post('ajax/confirmPayment', {
-            id: payment.id,
-            confirmed: payment.confirmed
-          }, function() {
-            return ajaxEnd();
-          });
-          $scope.$apply();
-        } else if (result !== null) {
-          $('.bootbox-form').addClass('has-error').children().first().focus();
-          $('.bootbox-input-text').on('keydown', function() {
-            $(this).parent().removeClass('has-error');
-          });
-          return false;
-        }
-      },
-      buttons: {
-        confirm: {
-          label: 'Подтвердить'
-        },
-        cancel: {
-          className: 'display-none'
-        }
-      }
-    });
+    }
   };
+  payment.confirmed = payment.confirmed ? 0 : 1;
+  $.post('ajax/confirmPayment', {
+    id: payment.id,
+    confirmed: payment.confirmed
+  });
   $scope.editPayment = function(payment) {
-    if (!payment.confirmed) {
-      $scope.new_payment = angular.copy(payment);
-      $timeout(function() {
-        return $scope.$apply();
-      });
-      lightBoxShow('addpayment');
+    if (payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
       return;
     }
-    bootbox.prompt({
-      title: 'Введите пароль',
-      className: 'modal-password',
-      callback: function(result) {
-        if (result === null) {
-
-        } else if (hex_md5(result === payments_hash)) {
-          $scope.new_payment = angular.copy(payment);
-          $scope.$apply();
-          lightBoxShow('addpayment');
-        } else if (result !== null) {
-          $('.bootbox-form').addClass('has-error').children().first().focus();
-          $('.bootbox-input-text').on('keydown', function() {
-            $(this).parent().removeClass('has-error');
-          });
-          return false;
-        }
-      },
-      buttons: {
-        confirm: {
-          label: 'Подтвердить'
-        },
-        cancel: {
-          className: 'display-none'
-        }
-      }
-    });
+    $scope.new_payment = angular.copy(payment);
+    return lightBoxShow('addpayment');
   };
   $scope.addPaymentDialog = function() {
     $scope.new_payment = {
@@ -437,35 +382,10 @@ app = angular.module("Teacher", ["ngMap"]).config([
     });
   };
   $scope.deletePayment = function(index, payment) {
-    if (!payment.confirmed) {
-      deletePayment(payment);
-    } else {
-      bootbox.prompt({
-        title: 'Введите пароль',
-        className: 'modal-password',
-        callback: function(result) {
-          if (result === null) {
-
-          } else if (hex_md5(result === payments_hash)) {
-            deletePayment(payment);
-          } else if (result !== null) {
-            $('.bootbox-form').addClass('has-error').children().first().focus();
-            $('.bootbox-input-text').on('keydown', function() {
-              $(this).parent().removeClass('has-error');
-            });
-            return false;
-          }
-        },
-        buttons: {
-          confirm: {
-            label: 'Подтвердить'
-          },
-          cancel: {
-            className: 'display-none'
-          }
-        }
-      });
+    if (payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
+      return;
     }
+    return deletePayment(payment);
   };
   $scope.formatDateMonthName = function(date, full_year) {
     return moment(date).format("D MMMM YY" + (full_year ? 'YY' : ''));

@@ -1564,32 +1564,11 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		$scope.confirmPayment = function(payment) {
-			bootbox.prompt({
-				title: "Введите пароль",
-				className: "modal-password",
-				callback: function(result) {
-				  if (result === null) {}
-					else if (hex_md5(result) === payments_hash) {
-						payment.confirmed = payment.confirmed ? 0 : 1
-						$.post("ajax/confirmPayment", {id: payment.id, confirmed: payment.confirmed})
-						$scope.$apply()
-					} else if (result != null) {
-						$('.bootbox-form').addClass('has-error').children().first().focus()
-						$('.bootbox-input-text').on('keydown', function() {
-							$(this).parent().removeClass('has-error')
-						})
-						return false
-					}
-				},
-				buttons: {
-					confirm: {
-						label: "Подтвердить"
-					},
-					cancel: {
-						className: "display-none"
-					}
-				}
-			})
+            if ($scope.user.rights.indexOf(11) === -1) {
+              return;
+            }
+    		payment.confirmed = payment.confirmed ? 0 : 1
+    		$.post("ajax/confirmPayment", {id: payment.id, confirmed: payment.confirmed})
 		}
 
 		// @todo: удалить вместе с AJAX
@@ -1616,38 +1595,11 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Окно редактирования платежа
 		$scope.editPayment = function(payment) {
-			if (!payment.confirmed) {
-				$scope.new_payment = angular.copy(payment)
-				$scope.$apply()
-				lightBoxShow('addpayment')
-				return
-			}
-			bootbox.prompt({
-				title: "Введите пароль",
-				className: "modal-password",
-				callback: function(result) {
-		if (result === null) {}
-					else if (hex_md5(result) === payments_hash) {
-						$scope.new_payment = angular.copy(payment)
-						$scope.$apply()
-						lightBoxShow('addpayment')
-					} else if (result != null) {
-						$('.bootbox-form').addClass('has-error').children().first().focus()
-						$('.bootbox-input-text').on('keydown', function() {
-							$(this).parent().removeClass('has-error')
-						})
-						return false
-					}
-				},
-				buttons: {
-					confirm: {
-						label: "Подтвердить"
-					},
-					cancel: {
-						className: "display-none"
-					}
-				}
-			})
+            if (payment.confirmed && $scope.user.rights.indexOf(11) === -1) {
+              return;
+            }
+			$scope.new_payment = angular.copy(payment)
+			lightBoxShow('addpayment')
 		}
 
 		// Показать окно добавления платежа
@@ -1760,46 +1712,16 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Удалить платеж
 		$scope.deletePayment = function(index, payment) {
-			if (!payment.confirmed) {
-				bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
-					if (result === true) {
-						$.post("ajax/deletePayment", {"id_payment": payment.id})
-						$scope.payments.splice(index, 1)
-						$scope.$apply()
-					}
-				})
-			} else {
-				bootbox.prompt({
-					title: "Введите пароль",
-					className: "modal-password",
-					callback: function(result) {
-		  if (result === null) {}
-						else if (hex_md5(result) === payments_hash) {
-							bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
-								if (result === true) {
-									$.post("ajax/deletePayment", {"id_payment": payment.id})
-									$scope.payments.splice(index, 1)
-									$scope.$apply()
-								}
-							})
-						} else if (result != null) {
-							$('.bootbox-form').addClass('has-error').children().first().focus()
-							$('.bootbox-input-text').on('keydown', function() {
-								$(this).parent().removeClass('has-error')
-							})
-							return false
-						}
-					},
-					buttons: {
-						confirm: {
-							label: "Подтвердить"
-						},
-						cancel: {
-							className: "display-none"
-						}
-					}
-				})
-			}
+            if (payment.confirmed && $scope.user.rights.indexOf(11) === -1) {
+              return;
+            }
+    		bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
+    			if (result === true) {
+    				$.post("ajax/deletePayment", {"id_payment": payment.id})
+    				$scope.payments.splice(index, 1)
+    				$scope.$apply()
+    			}
+    		})
 		}
 
 		$scope.dateToStart = function(date) {
