@@ -187,31 +187,29 @@
 				moment(D).format "D MMMM YYYY"
 
 			$scope.confirmPayment = (payment) ->
-                return if $scope.user_rights.indexOf(11) is -1
-    	        payment.confirmed = if payment.confirmed then 0 else 1
-    	        $.post 'ajax/confirmPayment',
-    	          id: payment.id
-    	          confirmed: payment.confirmed
+				return if $scope.user_rights.indexOf(11) is -1
+				payment.confirmed = if payment.confirmed then 0 else 1
+				$.post 'ajax/confirmPayment',
+					id: payment.id
+					confirmed: payment.confirmed
 
 			# Окно редактирования платежа
 			$scope.editPayment = (payment) ->
-                return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
-                $scope.new_payment = angular.copy payment
-                lightBoxShow 'addpayment'
+				return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
+				$scope.new_payment = angular.copy payment
+				lightBoxShow 'addpayment'
 
 			# Показать окно добавления платежа
 			$scope.addPaymentDialog = ->
-			  $scope.new_payment =
-			    id_status: 0
-			    year: $scope.academic_year
-			  lightBoxShow 'addpayment'
+				$scope.new_payment =
+					id_status: 0
+					year: $scope.academic_year
+				lightBoxShow 'addpayment'
+				$scope.handleKeyPress()
+				setTimeout ->
+					$($("#addpayment select")[0]).focus()
+				, 200
 
-			  $scope.handleKeyPress()
-			  setTimeout ->
-				  $($("#addpayment select")[0]).focus()
-			  , 200
-
-			  return
 			$scope.handleKeyPress = ->
 				$('#addpayment').on 'keydown', (e) ->
 					if e.keyCode == 13
