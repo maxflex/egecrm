@@ -39,7 +39,8 @@
             $teacher_ids = explode(',', dbConnection()->query(
                                             "select group_concat(distinct id_entity) as teacher_ids " .
                                             "from visit_journal " .
-                                            "where type_entity='" . Teacher::USER_TYPE . "'"
+                                            "where type_entity='" . Teacher::USER_TYPE . "'" .
+											" and year={$year}"
                                         )->fetch_object()->teacher_ids
                            );
 
@@ -78,10 +79,11 @@
 				$return[] = [
 					"Teacher" 	=> $Teacher,
 					"sum"		=> $sum,
-                    "real_sum"  => $real_sum,
-                    "payment_sum" => $payment_sum,
+					"real_sum"  => $real_sum,
+					"payment_sum" => $payment_sum,
 					"count"		=> ($Data ? count($Data) : 0),
 				];
+
 			}
 
 			// Сортировка по ФИО
