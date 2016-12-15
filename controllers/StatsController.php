@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		const PER_PAGE 	= 30;
+		const PER_PAGE 	= 500;
 
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
@@ -119,9 +119,9 @@
 				$page = 1;
 			}
 
-			$start = ($page - 1) * self::PER_PAGE_STUDENTS;
+			$start = ($page - 1) * self::PER_PAGE;
 
-			for ($i = (self::PER_PAGE_STUDENTS * $page); $i >= $start + ($page > 1 ? 1 : 0); $i--) {
+			for ($i = (self::PER_PAGE * $page); $i >= $start + ($page > 1 ? 1 : 0); $i--) {
 				$date = date("d.m.Y", strtotime("today -$i day"));
 				$stats[$date] = self::_getStats($date);
 			}
