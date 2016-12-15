@@ -18,7 +18,7 @@
                         <a href="users/edit/{{ User.id }}" ng-class="{'comment-time' : (allowed(User, 34) && allowed(User, 35))}">{{ User.login }}</a>
                     </td>
                     <td class="switch-td">
-                        <label class="ios7-switch" ng-show='right' style="font-size: 24px">
+                        <label class="ios7-switch" ng-show='right'>
                             <input type="checkbox" ng-click='toggleRights(User, right)' ng-checked='allowed(User, right)'>
                             <span class="switch"></span>
                         </label>
