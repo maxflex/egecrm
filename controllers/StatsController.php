@@ -831,11 +831,24 @@
 			return $stats;
 		}
 
+		/**
+		 * Возвращает данные по годам, с даты первого платежа по текущий год
+		 * @return array
+		 */
 		private function getPaymentsByYears()
 		{
 			for ($i = 0; $i < Payment::timeFromFirst('years'); $i++) {
+				# начальная дата года
 				$date_start = date("d.m.Y", mktime(0, 0, 0, 1, 1, date('Y') - $i));
-				$date_end = date("d.m.Y", mktime(23, 59, 59, 12, 31, date('Y') - $i));
+
+				if($i == 0){
+					# если текущий год, то дата окончания ставится сегодняшним днем
+					$date_end = date("d.m.Y", time());
+				}else{
+					# другие года формируются, по последним минутам года
+					$date_end = date("d.m.Y", mktime(23, 59, 59, 12, 31, date('Y') - $i));
+				}
+
 				$stats[$date_end] = self::_getPayments($date_start, $date_end);
 				$date_end = $date_start;
 			}
