@@ -3321,3 +3321,23 @@ table.last-item-no-border tr:last-child td {
 .text-danger {
     color: $red !important;
 }
+
+
+.users-tr-list{
+
+	td{
+		height: 39px;
+		margin-top: 0;
+		margin-bottom: 0;
+		padding-top: 0px;
+		padding-bottom: 0px;
+	}
+
+	td.switch-td{
+		margin-top: 0;
+		margin-bottom: 0;
+		padding-top: 0px;
+		padding-bottom: 0px;
+		font-size: 24px !important;
+	}
+}

@@ -13,12 +13,12 @@
     <div class="row">
         <div class="col-sm-12">
             <table class='table table-hover border-reverse'>
-                <tr ng-repeat='User in Users'>
+                <tr ng-repeat='User in Users' class="users-tr-list">
                     <td width='300'>
-                        <a href="users/edit/{{ User.id }}" ng-class="{'comment-time':(allowed(User, 34) && allowed(User, 35))}">{{ User.login }}</a>
+                        <a href="users/edit/{{ User.id }}" ng-class="{'comment-time' : (allowed(User, 34) && allowed(User, 35))}">{{ User.login }}</a>
                     </td>
-                    <td>
-                        <label class="ios7-switch" ng-show='right'>
+                    <td class="switch-td">
+                        <label class="ios7-switch" ng-show='right' style="font-size: 24px">
                             <input type="checkbox" ng-click='toggleRights(User, right)' ng-checked='allowed(User, right)'>
                             <span class="switch"></span>
                         </label>
