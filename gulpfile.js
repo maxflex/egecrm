@@ -2,7 +2,7 @@ var config      = require('./.gulpconfig.json');
 var gulp 		= require('gulp');
 var coffee 		= require('gulp-coffee');
 var concat 		= require('gulp-concat');
-// var sass        = require('gulp-sass');
+var sass        = require('gulp-sass');
 
 var browserSync = require('browser-sync').create();
 var coffee_cnf  = config.coffee;
