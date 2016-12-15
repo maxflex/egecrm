@@ -234,14 +234,14 @@ app = angular.module("Teacher", ["ngMap"]).config([
   };
   $scope.confirmPayment = function(payment) {
     if ($scope.user_rights.indexOf(11) === -1) {
-
+      return;
     }
+    payment.confirmed = payment.confirmed ? 0 : 1;
+    return $.post('ajax/confirmPayment', {
+      id: payment.id,
+      confirmed: payment.confirmed
+    });
   };
-  payment.confirmed = payment.confirmed ? 0 : 1;
-  $.post('ajax/confirmPayment', {
-    id: payment.id,
-    confirmed: payment.confirmed
-  });
   $scope.editPayment = function(payment) {
     if (payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
       return;
@@ -256,7 +256,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
     };
     lightBoxShow('addpayment');
     $scope.handleKeyPress();
-    setTimeout(function() {
+    return setTimeout(function() {
       return $($("#addpayment select")[0]).focus();
     }, 200);
   };
