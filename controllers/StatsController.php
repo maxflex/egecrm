@@ -833,17 +833,12 @@
 
 		private function getPaymentsByYears()
 		{
-			$date_end = date("d.m.Y", time());
-
-			for ($i = 1; $i <= Payment::timeFromFirst('years'); $i++) {
-				$last_day_of_july = strtotime("last day of july -$i year");
-				$date_start = date("d.m.Y", $last_day_of_july);
-
+			for ($i = 0; $i < Payment::timeFromFirst('years'); $i++) {
+				$date_start = date("d.m.Y", mktime(0, 0, 0, 1, 1, date('Y') - $i));
+				$date_end = date("d.m.Y", mktime(23, 59, 59, 12, 31, date('Y') - $i));
 				$stats[$date_end] = self::_getPayments($date_start, $date_end);
-
 				$date_end = $date_start;
 			}
-
 			return $stats;
 		}
 
