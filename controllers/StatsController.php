@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		const PER_PAGE 	= 500;
+		const PER_PAGE 	= 30;
 
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
@@ -831,19 +831,27 @@
 			return $stats;
 		}
 
+		/**
+		 * Возвращает данные по годам, с даты первого платежа по текущий год
+		 * @return array
+		 */
 		private function getPaymentsByYears()
 		{
-			$date_end = date("d.m.Y", time());
+			for ($i = 0; $i < Payment::timeFromFirst('years'); $i++) {
+				# начальная дата года
+				$date_start = date("d.m.Y", mktime(0, 0, 0, 1, 1, date('Y') - $i));
 
-			for ($i = 1; $i <= Payment::timeFromFirst('years'); $i++) {
-				$last_day_of_july = strtotime("last day of july -$i year");
-				$date_start = date("d.m.Y", $last_day_of_july);
+				if($i == 0){
+					# если текущий год, то дата окончания ставится сегодняшним днем
+					$date_end = date("d.m.Y", time());
+				}else{
+					# другие года формируются, по последним минутам года
+					$date_end = date("d.m.Y", mktime(23, 59, 59, 12, 31, date('Y') - $i));
+				}
 
 				$stats[$date_end] = self::_getPayments($date_start, $date_end);
-
 				$date_end = $date_start;
 			}
-
 			return $stats;
 		}
 
