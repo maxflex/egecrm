@@ -2751,3 +2751,5 @@ h4.row-header.default-case {
   padding-top: 0px;
   padding-bottom: 0px;
   font-size: 24px !important; }
+  .users-tr-list td.switch-td .ios7-switch {
+    margin-bottom: 0px !important; }
