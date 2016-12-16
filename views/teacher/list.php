@@ -3,7 +3,7 @@
 	<div class="panel-heading">
 		Преподаватели
 		<div class="pull-right">
-			<span class="link-like link-reverse link-white" ng-click="smsDialog()" style="margin-right: 7px">
+			<span class="link-like link-reverse link-white" ng-click="PhoneService.sms()" style="margin-right: 7px">
 					групповое SMS</span>
 		</div>
 	</div>
@@ -57,4 +57,5 @@
 			</div>
 		</div>
 	</div>
+	<sms mode="teacher" mass="1" counts="getCount(in_egecentr, id_subject)"></sms>
 </div>

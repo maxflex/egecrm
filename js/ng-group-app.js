@@ -21,7 +21,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
 ]).filter('orderByDayNumber', function() {
   return function(items, field, reverse) {
     var filtered;
-    console.log(items, field, reverse);
     filtered = [];
     angular.forEach(items, function(item) {
       return filtered.push(item);
@@ -422,8 +421,9 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   return hideRows = function() {
     return $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide();
   };
-}).controller("EditCtrl", function($scope, $timeout) {
+}).controller("EditCtrl", function($scope, $timeout, PhoneService) {
   var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, rebindBlinking;
+  bindArguments($scope, arguments);
   $timeout(function() {
     return ajaxEnd();
   });

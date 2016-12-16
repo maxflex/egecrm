@@ -12,7 +12,6 @@
 		]
 		.filter 'orderByDayNumber', () ->
 			return (items, field, reverse) ->
-				console.log items, field, reverse
 				filtered = []
 				angular.forEach items, (item) ->
 					filtered.push(item)
@@ -344,7 +343,9 @@
 		        # hack пустые строки
 		        $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide()
 
-		.controller "EditCtrl", ($scope, $timeout) ->
+		.controller "EditCtrl", ($scope, $timeout, PhoneService) ->
+			bindArguments $scope, arguments
+
 			$timeout ->
 				ajaxEnd()
 

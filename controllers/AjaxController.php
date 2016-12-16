@@ -343,7 +343,7 @@
 		{
 			extract($_POST);
 
-			$Group = Group::findById($id_place);
+			$Group = Group::findById($groupId);
 
 			$Students = $Group->getStudents();
 
@@ -424,7 +424,6 @@
 					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
 				}
 			}
-			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
 			returnJSON(count($sent_to));
 		}
 
@@ -494,8 +493,6 @@
 					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
 				}
 			}
-
-			Email::send("makcyxa-k@yandex.ru", "Групповое СМС", $body);
 
 			returnJSON(count($sent_to));
 		}

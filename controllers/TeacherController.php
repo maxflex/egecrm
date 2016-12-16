@@ -150,6 +150,7 @@
 				"Teachers" 		=> $Teachers,
 				"three_letters"	=> Subjects::$three_letters,
 				"subjects" 		=> Subjects::$short,
+                "user"          => User::fromSession()->dbData()
 			]);
 
 			$this->render("list", [

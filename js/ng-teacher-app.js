@@ -578,7 +578,8 @@ app = angular.module("Teacher", ["ngMap"]).config([
       return _.uniq(_.pluck(ang_scope.Reviews, 'year'));
     }
   };
-}).controller("ListCtrl", function($scope, $timeout) {
+}).controller("ListCtrl", function($scope, $timeout, PhoneService) {
+  bindArguments($scope, arguments);
   $scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') || 0;
   $scope.id_subject = localStorage.getItem('teachers_id_subject') || 0;
   $scope.othersCount = function() {

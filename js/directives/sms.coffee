@@ -6,6 +6,8 @@ app.directive 'sms', ->
         templates:  '@'
         mode:       '@'
         counts:     '='
+        groupId:    '='
+        mass:       '='
     controller: ($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService) ->
         bindArguments $scope, arguments
 
@@ -17,14 +19,19 @@ app.directive 'sms', ->
             ajaxStart()
             $scope.sms_sending = true
 
-            if promise = SmsService.send $scope.mode, $scope.number, $scope.message, $scope.mass
+            if promise = SmsService.send $scope.number, $scope.message
                 promise.then (response) ->
                     ajaxEnd()
                     $scope.sms_sending = false
-                    $scope.history.unshift response.data
-                    $timeout ->
-                        $scope.$apply()
-                    scrollUp()
+
+                    if $scope.mass
+                        notifySuccess 'Отправлено ' + response.data + ' СМС'
+                        lightBoxHide()
+                    else
+                        $scope.history.unshift response.data
+                        $timeout ->
+                            $scope.$apply()
+                        scrollUp()
             else
                 ajaxEnd()
             $scope.message = ''
@@ -44,10 +51,11 @@ app.directive 'sms', ->
                 $scope.message = response.data
 
         init = ->
-            $scope.SmsService.mass = false
-            $scope.SmsService.to_students = true
-            $scope.SmsService.to_representatives = false
-            $scope.SmsService.to_teachers = true
-            $scope.SmsService.mode = $scope.mode if $scope.mode
+            _.extend $scope.SmsService.params,
+                to_students: true
+                to_representatives: false
+                to_teachers: true
+                mode: $scope.mode
+                groupId: $scope.groupId
 
         init()

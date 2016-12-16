@@ -2,7 +2,9 @@
     <input type="hidden" id="sms-mode" value="1">
     <h4 class="text-center" id="sms-number">
         <span ng-show="number">{{ PhoneService.format(number) }}</span>
-        <span ng-show="mode == 'client'">Групповое сообщение клиентам ({{ counts }}) </span>
+        <span ng-show="mode == 'client'">Групповое сообщение клиентам ({{ counts }})</span>
+        <span ng-show="mode == 'teacher'">Групповое сообщение преподавателям</span>
+        <span ng-show="mode == 'group'">Группа №{{ groupId }}</span>
     </h4>
     <div class="row">
         <div class="col-sm-12" id="sms-history">
@@ -32,25 +34,27 @@
             </div>
 
             <div class="sms-template-list">
-                <span ng-click="setTemplate(1)">подтверждение договоренности</span>
-                <span ng-click="setTemplate(2)">нет связи с клиентом</span>
-                <span ng-click="setTemplate(3)">нет связи с ожидающими и не решившими</span>
-                <span class="fake" ng-show="templates == 'full'">
-                    <span ng-click="setTemplate(4)">логин/пароль</span>
-                    <span ng-click="setTemplate(13)">новый тест</span>
+                <span ng-hide="!mode || mode != 'client'">
+                    <span ng-click="setTemplate(1)">подтверждение договоренности</span>
+                    <span ng-click="setTemplate(2)">нет связи с клиентом</span>
+                    <span ng-click="setTemplate(3)">нет связи с ожидающими и не решившими</span>
+                    <span class="fake" ng-show="templates == 'full'">
+                        <span ng-click="setTemplate(4)">логин/пароль</span>
+                        <span ng-click="setTemplate(13)">новый тест</span>
+                    </span>
                 </span>
 
-                <div class="sms-group-controls pull-right" ng-show="mode">
+                <div class="sms-group-controls pull-right" ng-show="!mode || mode=='client'">
                     <span style="margin-right: 7px; color: black; border-bottom: none">
-                        <input id="to-students" type="checkbox" ng-model="to_students" onclick="ang_scope.to_students = !ang_scope.to_students; ang_scope.$apply()">
+                        <input id="to-students" type="checkbox" ng-model="SmsService.params.to_students">
                         <label for="to-students">ученикам</label>
                     </span>
                     <span style="color: black; border-bottom: none">
-                        <input id="to-representatives" type="checkbox" ng-model="to_representatives" onclick="ang_scope.to_representatives = !ang_scope.to_representatives; ang_scope.$apply()">
+                        <input id="to-representatives" type="checkbox" ng-model="SmsService.params.to_representatives">
                         <label for="to-representatives">представителям</label>
                     </span>
                     <span style="color: black; border-bottom: none" ng-show="mode == 'group'">
-                        <input id="to-tutors" type="checkbox" ng-model="to_students" onclick="ang_scope.to_teacher = !ang_scope.to_teacher; ang_scope.$apply()">
+                        <input id="to-tutors" type="checkbox" ng-model="SmsService.params.to_students">
                         <label for="to-tutors">преподавателю</label>
                     </span>
                 </div>
@@ -58,6 +62,7 @@
 
             <div style="clear: both">
                 <button class="btn btn-primary ajax-sms-button"
+                        ng-disabled="!message.length || sms_sending"
                         ng-click="send()"
                 >Отправить</button>
             </div>

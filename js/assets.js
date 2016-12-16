@@ -161,7 +161,9 @@ app.directive('sms', function() {
       number: '=',
       templates: '@',
       mode: '@',
-      counts: '='
+      counts: '=',
+      groupId: '=',
+      mass: '='
     },
     controller: function($scope, $http, $timeout, Sms, SmsService, UserService, PhoneService) {
       var init, scrollUp;
@@ -173,15 +175,20 @@ app.directive('sms', function() {
         var promise;
         ajaxStart();
         $scope.sms_sending = true;
-        if (promise = SmsService.send($scope.mode, $scope.number, $scope.message, $scope.mass)) {
+        if (promise = SmsService.send($scope.number, $scope.message)) {
           promise.then(function(response) {
             ajaxEnd();
             $scope.sms_sending = false;
-            $scope.history.unshift(response.data);
-            $timeout(function() {
-              return $scope.$apply();
-            });
-            return scrollUp();
+            if ($scope.mass) {
+              notifySuccess('Отправлено ' + response.data + ' СМС');
+              return lightBoxHide();
+            } else {
+              $scope.history.unshift(response.data);
+              $timeout(function() {
+                return $scope.$apply();
+              });
+              return scrollUp();
+            }
           });
         } else {
           ajaxEnd();
@@ -205,13 +212,13 @@ app.directive('sms', function() {
         });
       };
       init = function() {
-        $scope.SmsService.mass = false;
-        $scope.SmsService.to_students = true;
-        $scope.SmsService.to_representatives = false;
-        $scope.SmsService.to_teachers = true;
-        if ($scope.mode) {
-          return $scope.SmsService.mode = $scope.mode;
-        }
+        return _.extend($scope.SmsService.params, {
+          to_students: true,
+          to_representatives: false,
+          to_teachers: true,
+          mode: $scope.mode,
+          groupId: $scope.groupId
+        });
       };
       return init();
     }
@@ -284,6 +291,7 @@ app.service('PusherService', function($http, $q, UserService) {
 app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
   this.updates = [];
   this.mode = 'default';
+  this.params = {};
   this.post_config = {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -316,10 +324,10 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
       });
     }
   };
-  this.send = function(mode, number, message, mass) {
+  this.send = function(number, message) {
     var action, data;
     if (message) {
-      switch (this.mode) {
+      switch (this.params.mode) {
         case 'group':
           action = 'sendGroupSms';
           break;
@@ -332,11 +340,11 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
         default:
           action = 'sendSms';
       }
-      data = $.param({
+      _.extend(this.params, {
         message: message,
-        number: number,
-        mass: mass
+        number: number
       });
+      data = $.param(this.params);
       return $http.post('ajax/' + action, data, this.post_config, 'json');
     }
   };

@@ -1,13 +1,7 @@
-<style>
-	.table tr td {
-//		padding-top: 20px !important;
-	}
-</style>
 <div class="panel panel-primary" ng-app="Clients" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="panel-heading">Клиенты с договорами
 		<div class="pull-right">
-			<span class="link-like link-reverse link-white" ng-click="PhoneService.sms()">
-					групповое SMS</span>
+			<span class="link-like link-reverse link-white" ng-click="PhoneService.sms()">групповое SMS</span>
 			<span style="display: inline; margin-left: 10px;">общая сумма задолженностей: {{ total_debt | number }} руб.</span>
 		</div>
 	</div>
@@ -74,5 +68,5 @@
 			нет клиентов
 		</div>
 	</div>
-	<sms templates="full" mode="client" counts="counts.all"></sms>
+	<sms templates="full" mode="client" mass="1" counts="counts.all"></sms>
 </div>

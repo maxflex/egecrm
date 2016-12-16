@@ -1,7 +1,8 @@
 app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
-    @updates = []
-    @mode    = 'default'
-    @post_config =
+    @updates        = []
+    @mode           = 'default'
+    @params         = {}
+    @post_config    =
         headers:
             'Content-Type': 'application/x-www-form-urlencoded'
 
@@ -21,9 +22,9 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
             Sms.query
                 number: number
 
-    @send = (mode, number, message, mass) ->
+    @send = (number, message) ->
         if message
-            switch @mode
+            switch @params.mode
                 when 'group'
                     action = 'sendGroupSms'
                 when 'client'
@@ -33,10 +34,12 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
                 else
                     action = 'sendSms'
 
-            data = $.param
+            _.extend @params,
                 message: message
                 number:  number
-                mass:    mass
+
+            data = $.param @params
+
             $http.post 'ajax/' + action, data, @post_config, 'json'
 
     @getTemplate = (id_template, entity) ->
