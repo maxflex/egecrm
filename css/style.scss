@@ -1675,7 +1675,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 .sms-template-list {
 	text-align: left;
 	margin-bottom: 10px;
-	& span {
+	& span > span {
 		font-size: 12px;
 		color: $blue;
 		border-bottom: 1px dotted $blue;
