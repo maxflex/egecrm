@@ -34,7 +34,7 @@
             </div>
 
             <div class="sms-template-list">
-                <span ng-hide="!mode || mode != 'client'">
+                <span ng-show="templates">
                     <span ng-click="setTemplate(1)">подтверждение договоренности</span>
                     <span ng-click="setTemplate(2)">нет связи с клиентом</span>
                     <span ng-click="setTemplate(3)">нет связи с ожидающими и не решившими</span>
@@ -44,7 +44,7 @@
                     </span>
                 </span>
 
-                <div class="sms-group-controls pull-right" ng-show="!mode || mode=='client'">
+                <div class="sms-group-controls pull-right" ng-show="mode && mode == 'client'">
                     <span style="margin-right: 7px; color: black; border-bottom: none">
                         <input id="to-students" type="checkbox" ng-model="SmsService.params.to_students">
                         <label for="to-students">ученикам</label>
@@ -54,7 +54,7 @@
                         <label for="to-representatives">представителям</label>
                     </span>
                     <span style="color: black; border-bottom: none" ng-show="mode == 'group'">
-                        <input id="to-tutors" type="checkbox" ng-model="SmsService.params.to_students">
+                        <input id="to-tutors" type="checkbox" ng-model="SmsService.params.to_teachers">
                         <label for="to-tutors">преподавателю</label>
                     </span>
                 </div>
