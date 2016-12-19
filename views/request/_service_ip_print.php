@@ -105,7 +105,7 @@
             <div style="display: inline-block; width: 50%">
                 <div style="width: 70%; text-align: right;">
                     <div style="border-bottom: 1px solid black;">
-                        ИП Эрдман К. А.
+                        ИП Капралов К. А.
                     </div>
                     <div class="sign-hint">
                         (наименование организации)
@@ -181,7 +181,7 @@
             </div>
             <div style="display: inline-block; width: 50%">
                 <div style='margin-top: 30px'>
-                    ________________/<span style="text-decoration: underline;">ИП Эрдман К. А.</span>
+                    ________________/<span style="text-decoration: underline;">ИП Капралов К. А.</span>
                 </div>
                 <div style="padding-left: 100px;">
                     М. П.

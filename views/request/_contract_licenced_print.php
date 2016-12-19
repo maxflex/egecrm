@@ -219,6 +219,7 @@
 			</div>
 		</div>
 
+
 		<div style='margin: 50px 0 0 0'>
 			<div style="display: inline-block; float: left; width: 50%">
 				Генеральный директор  ООО «ЕГЭ-Центр»<br>
