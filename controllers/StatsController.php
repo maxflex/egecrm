@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		const PER_PAGE 	= 500;
+		const PER_PAGE = 30;
 
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
@@ -181,7 +181,7 @@
 			$date_end = date("d.m.Y", time());
 
 			for ($i = 1; $i <= Request::timeFromFirst('years'); $i++) {
-				$last_day_of_july = strtotime("-$i year last day of july");
+				$last_day_of_july = strtotime("may 1 -$i year");
 				$date_start = date("d.m.Y", $last_day_of_july);
 
 				$stats[$date_end] = self::_getStats($date_start, $date_end);
@@ -846,7 +846,7 @@
 					$date_end = date("d.m.Y", time());
 				}else{
 					# другие года формируются, по последним минутам года
-					$date_end = date("d.m.Y", mktime(23, 59, 59, 12, 31, date('Y') - $i));
+					$date_end = date("d.m.Y", strtotime("may 1 -$i year"));
 				}
 
 				$stats[$date_end] = self::_getPayments($date_start, $date_end);
