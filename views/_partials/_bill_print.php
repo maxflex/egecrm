@@ -129,7 +129,7 @@
                         <tr>
                             <td valign="top">
                                 <div>
-                                    ИП Капралов Константин Александрович
+                                    ИП Эрдман Константин Александрович
                                 </div>
                             </td>
                         </tr>
@@ -160,7 +160,7 @@
 
                 <td>
                     <div style="font-weight:bold;  padding-left:2px;">
-                        ИП Капралов Константин Александрович, ИНН 622709802649, КПП 0, 390044, Россия, Рязанская обл., г.Рязань, ул. Костычева, д.11, кв.33, тел.: 8 (495) 646-85-92
+                        ИП Эрдман Константин Александрович, ИНН 622709802649, КПП 0, 390044, Россия, Рязанская обл., г.Рязань, ул. Костычева, д.11, кв.33, тел.: 8 (495) 646-85-92
                     </div>
                 </td>
             </tr>
@@ -252,12 +252,12 @@
         </div>
 
         <div style="margin-top: 10px">
-            <b style="font-size: 13px">ИП Капралов К. А.</b> 
+            <b style="font-size: 13px">ИП Эрдман К. А.</b>
             <span style="font-size: 12px; display: inline-block; width: 300px; border-bottom: 1px solid black">
             </span>
             
             <span style="float: right; font-size: 12px; display: inline-block; width: 200px; border-bottom: 1px solid black; text-align: center">
-	            К. А. Капралов
+	            К. А. Эрдман
             </span>
         </div>
         
@@ -360,7 +360,7 @@
                         <tr>
                             <td valign="top">
                                 <div>
-                                    ИП Капралов Константин Александрович
+                                    ИП Эрдман Константин Александрович
                                 </div>
                             </td>
                         </tr>
@@ -391,7 +391,7 @@
 
                 <td>
                     <div style="font-weight:bold;  padding-left:2px;">
-                        ИП Капралов Константин Александрович, ИНН 622709802649, КПП 0, 390044, Россия, Рязанская обл., г.Рязань, ул. Костычева, д.11, кв.33, тел.: 8 (495) 646-85-92
+                        ИП Эрдман Константин Александрович, ИНН 622709802649, КПП 0, 390044, Россия, Рязанская обл., г.Рязань, ул. Костычева, д.11, кв.33, тел.: 8 (495) 646-85-92
                     </div>
                 </td>
             </tr>
@@ -483,12 +483,12 @@
         </div>
 
         <div style="margin-top: 10px">
-            <b style="font-size: 13px">ИП Капралов К. А.</b> 
+            <b style="font-size: 13px">ИП Эрдман К. А.</b>
             <span style="font-size: 12px; display: inline-block; width: 300px; border-bottom: 1px solid black">
             </span>
             
             <span style="float: right; font-size: 12px; display: inline-block; width: 200px; border-bottom: 1px solid black; text-align: center">
-	            К. А. Капралов
+	            К. А. Эрдман
             </span>
         </div>
         

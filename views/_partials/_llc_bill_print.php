@@ -232,13 +232,13 @@
             <span style="display:inline-block; width:49%">
                 <b>Руководитель</b>
                 <span style="margin-left:20px; font-size: 12px; display: inline-block; width: 200px; border-bottom: 1px solid black; text-align: right">
-                    К. А. Капралов
+                    К. А. Эрдман
                 </span>
             </span>
             <span style="display:inline-block; width:49%;text-align:right;">
                 <b>Бухгалтер</b>
                 <span style="margin-left:20px; font-size: 12px; display: inline-block; width: 200px; border-bottom: 1px solid black; text-align: right">
-                    К. А. Капралов
+                    К. А. Эрдман
                 </span>
             </span>
         </div>
@@ -465,13 +465,13 @@
             <span style="display:inline-block; width:49%">
                 <b>Руководитель</b>
                 <span style="margin-left:20px; font-size: 12px; display: inline-block; width: 200px; border-bottom: 1px solid black; text-align: right">
-                    К. А. Капралов
+                    К. А. Эрдман
                 </span>
             </span>
             <span style="display:inline-block; width:49%;text-align:right;">
                 <b>Бухгалтер</b>
                 <span style="margin-left:20px; font-size: 12px; display: inline-block; width: 200px; border-bottom: 1px solid black; text-align: right">
-                    К. А. Капралов
+                    К. А. Эрдман
                 </span>
             </span>
         </div>

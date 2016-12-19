@@ -27,7 +27,7 @@
 
         <p>
             От имени Заказчика: {{representative.last_name}} {{representative.first_name}} {{representative.middle_name}},
-            и от имени Исполнителя Генеральный директор ООО «ЕГЭ-ЦЕНТР» Капралов Константин Александрович,
+            и от имени Исполнителя Генеральный директор ООО «ЕГЭ-ЦЕНТР» Эрдман Константин Александрович,
             действующий на основании Устава, составили акт о том,
             что в соответствии с обязательствами, предусмотренными
             Договором от {{formatContractDate2(service_contract_parent.date)}} №{{service_contract_parent.id}}
@@ -62,7 +62,7 @@
             </div>
             <div style="display: inline-block; width: 50%">
                 <div style='margin-top: 30px'>
-                    ________________/<span style="text-decoration: underline;">Капралов К. А.</span>
+                    ________________/<span style="text-decoration: underline;">Эрдман К. А.</span>
                 </div>
             </div>
         </div>
