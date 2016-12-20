@@ -8,7 +8,9 @@ var browserSync = require('browser-sync').create();
 var coffee_cnf  = config.coffee;
 
 bower_packages = [
-	'js/bower/angular-resource/angular-resource.min.js'
+	'js/bower/angular-resource/angular-resource.min.js',
+	'js/bower/vue/dist/vue.min.js',
+	'js/bower/vue-resource/dist/vue-resource.min.js'
 ];
 
 gulp.task('build-vendor', function() {
