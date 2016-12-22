@@ -46,7 +46,9 @@
                 $Student = Student::findById($this->id_student);
                 $sms_message = Template::get(11, [
 					'representative_name'	=> $Student->Representative->first_name . " " . $Student->Representative->middle_name,
-					'subject'				=> Subjects::$dative[$Report->id_subject],
+					'subject'				=> Subjects::$dative[$this->id_subject],
+                    'entity_login'          => $Student->login,
+                    'entity_password'       => $Student->password
 				]);
 				foreach (Student::$_phone_fields as $phone_field) {
 					$representative_number = $Student->Representative->{$phone_field};
