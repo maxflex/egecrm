@@ -22,19 +22,20 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 				$scope.Users
 
 		$scope.toggleRights = (User, right) ->
-			new_rights = angular.copy(User.rights)
+			NewUser = angular.copy(User)
 			right = parseInt(right)
-			if $scope.allowed(User, right)
-				new_rights = _.reject new_rights, (val) -> val is right
+			if $scope.allowed(NewUser, right)
+				NewUser.rights = _.reject NewUser.rights, (val) -> val is right
 			else
-				new_rights.push(right)
+				NewUser.rights.push(right)
 			data = {}
-			data[User.id] = User
+			data[NewUser.id] = NewUser
+			data[NewUser.id].rights = if NewUser.rights.length then NewUser.rights else ['']
 			$.post "users/ajax/save",
 				Users: data
 			, (response) ->
 				if response is 'success'
-					User.rights = new_rights
+					User.rights = NewUser.rights
 					$scope.$apply()
 					refreshCounts()
 

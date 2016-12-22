@@ -32,7 +32,8 @@
 		{
             # @rights-refactored
             $this->checkRights(Shared\Rights::SHOW_TEACHER_PAYMENTS);
-            $year = intval($_GET['year']);
+
+            $year = ! empty($_GET['year']) ? intval($_GET['year']) : academicYear();
 
 
             $teacher_ids = explode(',', dbConnection()->query(
@@ -49,9 +50,8 @@
 			foreach ($teacher_ids as $id_teacher) {
 				$Teacher = Teacher::getLight($id_teacher);
 
-                /* @var Payment[] $Payments */
 				$Payments = Payment::findAll([
-					"condition" => "entity_id=$id_teacher and entity_type = '".Teacher::USER_TYPE."'"
+					"condition" => "entity_id=$id_teacher and entity_type = '".Teacher::USER_TYPE."' and year={$year}"
 				], true);
 
 				$payment_sum = 0;
@@ -61,21 +61,14 @@
 				}
 
 				$Data = VisitJournal::findAll([
-					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER'"
+					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER' and year={$year}"
 				]);
 
 				$sum = 0;
                 $real_sum = 0;
 				foreach ($Data as $OneData) {
-                    if ($year) {
-                        if ($year == $OneData->year) {
-                            $sum += $OneData->teacher_price;
-                            $total_sum += $OneData->teacher_price;
-                        }
-                    } else {
-                        $sum += $OneData->teacher_price;
-                        $total_sum += $OneData->teacher_price;
-                    }
+                    $sum += $OneData->teacher_price;
+                    $total_sum += $OneData->teacher_price;
                     $real_sum += $OneData->teacher_price;
                     $real_total_sum += $OneData->teacher_price;
                 }
@@ -87,7 +80,7 @@
 					"sum"		=> $sum,
                     "real_sum"  => $real_sum,
                     "payment_sum" => $payment_sum,
-					"count"		=> count($Data),
+					"count"		=> ($Data ? count($Data) : 0),
 				];
 			}
 
@@ -216,12 +209,20 @@
 				}
 				case 2: {
                     $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['login', 'payments']);
-                    returnJsonAng($Lessons);
+                    returnJsonAng([
+                        'Lessons' => $Lessons,
+                        'current_year_lessons_count' => VisitJournal::count([
+                            'condition' => "type_entity='TEACHER' AND id_entity={$id_teacher} AND year=" . academicYear()
+                        ]),
+                        'current_year_paid' => dbConnection()->query("select sum(sum) as s from payments where entity_type='TEACHER' and entity_id={$id_teacher} and year=" . academicYear())->fetch_object()->s,
+                        'current_year_to_be_paid' => dbConnection()->query("select sum(teacher_price) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher} and year=" . academicYear())->fetch_object()->s
+                    ]);
 				}
 				case 3: {
 					returnJsonAng([
-                        'payments' => Payment::findAll(['condition' => "entity_id = $id_teacher and entity_type = '" . Teacher::USER_TYPE . "'", 'order'=>'first_save_date asc']),
-                        'tobe_paid' => Payment::tobePaid($id_teacher, Teacher::USER_TYPE)
+                        'payments'      => Payment::findAll(['condition' => "entity_id = $id_teacher and entity_type = '" . Teacher::USER_TYPE . "'", 'order' =>'first_save_date asc']),
+                        'tobe_paid' => Payment::tobePaid($id_teacher, Teacher::USER_TYPE),
+                        'academic_year' => academicYear(),
                     ]);
 				}
 				case 4: {

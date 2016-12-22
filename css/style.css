@@ -165,7 +165,7 @@
   cursor: pointer;
   display: inline-block;
   position: relative;
-  transition: all linear .3s;
+  transition: all linear 0.3s;
   border-radius: 5px;
   margin-top: 5px; }
   .tutor-img:hover {
@@ -177,7 +177,7 @@
     width: 120px;
     border-radius: 5px; }
   .tutor-img div {
-    transition: all linear .3s;
+    transition: all linear 0.3s;
     position: absolute;
     height: 100%;
     width: 100%;
@@ -262,7 +262,7 @@
   outline: none; }
 
 .comment-div .save-coordinates, .comment-div .glyphicon-remove {
-  -webkit-transition: all linear .25s;
+  -webkit-transition: all linear 0.25s;
   opacity: 0; }
 
 .comment-div:hover .save-coordinates, .comment-div:hover .glyphicon-remove {
@@ -811,18 +811,18 @@ body {
 
 /* @group Blink */
 .double-blink {
-  -webkit-animation: blink .37s linear infinite !important;
-  -moz-animation: blink .37s linear infinite !important;
-  -ms-animation: blink .37s linear infinite !important;
-  -o-animation: blink .37s linear infinite !important;
-  animation: blink .37s linear infinite !important; }
+  -webkit-animation: blink 0.37s linear infinite !important;
+  -moz-animation: blink 0.37s linear infinite !important;
+  -ms-animation: blink 0.37s linear infinite !important;
+  -o-animation: blink 0.37s linear infinite !important;
+  animation: blink 0.37s linear infinite !important; }
 
 .blink {
-  -webkit-animation: blink .75s linear infinite;
-  -moz-animation: blink .75s linear infinite;
-  -ms-animation: blink .75s linear infinite;
-  -o-animation: blink .75s linear infinite;
-  animation: blink .75s linear infinite; }
+  -webkit-animation: blink 0.75s linear infinite;
+  -moz-animation: blink 0.75s linear infinite;
+  -ms-animation: blink 0.75s linear infinite;
+  -o-animation: blink 0.75s linear infinite;
+  animation: blink 0.75s linear infinite; }
 
 @-webkit-keyframes blink {
   0% {
@@ -978,7 +978,7 @@ body {
 
 .label-metro-short {
   border-radius: 3px;
-  padding: .2em 0.4em .3em; }
+  padding: 0.2em 0.4em 0.3em; }
 
 .no-border-outline {
   border: none !important;
@@ -1163,7 +1163,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 #calendar-app thead {
   display: none; }
 
-#calendar-app .day:nth-child(2n + 6), #calendar-app .day:nth-child(2n + 7) {
+#calendar-app .day:nth-child(2n+6), #calendar-app .day:nth-child(2n+7) {
   color: #999; }
 
 #calendar-app .table-condensed > thead > tr > th, #calendar-app .table-condensed > tbody > tr > th, #calendar-app .table-condensed > tfoot > tr > th, #calendar-app .table-condensed > thead > tr > td, #calendar-app .table-condensed > tbody > tr > td, #calendar-app .table-condensed > tfoot > tr > td {
@@ -1446,12 +1446,12 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
   color: #FFF;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  padding: .5em 1em;
+  padding: 0.5em 1em;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
   text-shadow: 0 -1px #000000;
-  -webkit-box-shadow: 0 0  8px #000;
+  -webkit-box-shadow: 0 0 8px #000;
   box-shadow: 0 0 8px #000; }
 
 #frontend-loading {
@@ -1717,8 +1717,8 @@ h4.row-header {
   font-weight: normal; }
 
 .lightbox-addpayment {
-  width: 670px;
-  left: calc(50% - 335px);
+  width: 834px;
+  left: calc(50% - 417px);
   top: 25%; }
 
 .lightbox-edit-student {
@@ -1824,7 +1824,7 @@ h4.row-header {
   font-size: 12px; }
 
 div[id^='comment-block'] .save-coordinates, div[id^='comment-block'] .glyphicon-remove {
-  -webkit-transition: all linear .25s;
+  -webkit-transition: all linear 0.25s;
   opacity: 0; }
 
 div[id^='comment-block']:hover .save-coordinates, div[id^='comment-block']:hover .glyphicon-remove {
@@ -2292,7 +2292,7 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .has-error-bold {
   border-color: #843534 !important;
   box-shadow: 0 0 10px 2px #ce8483 !important;
-  transition: all linear .5s; }
+  transition: all linear 0.5s; }
 
 .timepair span {
   float: left;

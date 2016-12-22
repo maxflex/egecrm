@@ -19,6 +19,13 @@
 		</div>
 		<div class="form-group inline-block">
 			<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
+		</div> за
+        <div class="form-group inline-block">
+            <select class="form-control" ng-model="new_payment.year" style='width: 130px'>
+                <option ng-repeat="year in <?= Years::json() ?>"
+                    data-subtext="{{ counts.year[year] || '' }}"
+                    value="{{year}}">{{ yearLabel(year) }}</option>
+            </select>
 		</div>
 	</div>
 	<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
@@ -65,13 +72,22 @@
 					<option data-subtext="{{ counts.confirmed[1] || ''}}" value="1">подтвержденные</option>
 					<option data-subtext="{{ counts.confirmed[0] || '' }}" value="0">не подтвержденные</option>
 				</select>
-			</div> 
+			</div>
 			<div class="col-sm-2">
 				<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.type" ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.type.all || ''}}" >все операции</option>
 					<option disabled>──────────────</option>
 					<option data-subtext="{{ counts.type[1] || ''}}" value="1">платеж</option>
 					<option data-subtext="{{ counts.type[2] || '' }}" value="2">возврат</option>
+				</select>
+			</div>
+			<div class="col-sm-2">
+				<select id='years-select' class="watch-select form-control single-select" ng-model="search.year" ng-change='filter()'>
+					<option value="" data-subtext="{{ counts.year.all || ''}}" >все годы</option>
+					<option disabled>──────────────</option>
+                    <option ng-repeat="year in <?= Years::json() ?>"
+                        data-subtext="{{ counts.year[year] || '' }}"
+                        value="{{year}}">{{ yearLabel(year) }}</option>
 				</select>
 			</div>
 		</div>

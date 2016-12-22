@@ -1,9 +1,9 @@
 <div class="row" style="position: relative" ng-show="current_menu == 2">
 	<div class="col-sm-12">
 		<?= globalPartial('loading', ['model' => 'Lessons', 'message' => 'занятий нет']) ?>
-		
+
 		<div ng-show="Lessons && Lessons.length">
-			<span class="link-like" ng-show="getLessons().length != Lessons.length" ng-click="show_all_lessons = true" 
+			<span class="link-like" ng-show="getLessons().length != Lessons.length" ng-click="show_all_lessons = true"
 				style='-webkit-font-smoothing: antialiased; margin-bottom: 10px; display: inline-block'>
 				показать занятия и платежи предыдущих учебных лет
 			</span>
@@ -35,16 +35,16 @@
 					<td>{{ payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}</td>
 				</tr>
 				<tr class="text-gray no-border">
-					<td colspan="4">Всего проведено {{ Lessons.length }} занятий на сумму</td>
-					<td colspan="2">{{ lessonsTotalSum() }} руб.</td>
+					<td colspan="4">Всего проведено за {{ academicYear(<?= academicYear() ?>) }} {{ current_year_lessons_count }} занятий на сумму</td>
+					<td colspan="2">{{ current_year_to_be_paid | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Всего выплачено</td>
-					<td colspan="2">{{ lessonsTotalPaid(true) }} руб.</td>
+					<td colspan="2">{{ current_year_paid | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Итого к выплате</td>
-					<td colspan="2">{{toBePaid(true) | number}} рублей</td>
+					<td colspan="2">{{ (current_year_to_be_paid - current_year_paid) | number}} рублей</td>
 				</tr>
 			</table>
 		</div>

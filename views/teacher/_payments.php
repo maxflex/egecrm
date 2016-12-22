@@ -1,5 +1,5 @@
 <!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
-<div id="addpayment" class="lightbox-new lightbox-addpayment" style="width: 551px; left: calc(50% - 275px)">
+<div id="addpayment" class="lightbox-new lightbox-addpayment">
 	<h4>{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
 	<div class="form-group payment-line">
 		<div class="form-group inline-block">
@@ -13,6 +13,13 @@
 		</div>
 		<div class="form-group inline-block">
 			<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
+		</div> за
+        <div class="form-group inline-block">
+            <select class="form-control" ng-model="new_payment.year" style='width: 130px'>
+                <option ng-repeat="year in <?= Years::json() ?>"
+                    data-subtext="{{ counts.year[year] || '' }}"
+                    value="{{year}}">{{ yearLabel(year) }}</option>
+            </select>
 		</div>
 	</div>
 	<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">

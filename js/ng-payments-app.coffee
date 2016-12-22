@@ -81,6 +81,10 @@ app = angular.module "Payments", ["ui.bootstrap"]
     .controller "ListCtrl", ($scope, $timeout) ->
         $scope.initSearch = ->
             $scope.search = mode : 'STUDENT', payment_type : '', confirmed : '', type : '' if not $scope.search
+
+        $scope.yearLabel = (year) ->
+            year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
         $scope.filter = (current_page)->
             console.log 'filter' # инициализируем фильтры если еще не были установлены
             $scope.initSearch()
@@ -167,11 +171,11 @@ app = angular.module "Payments", ["ui.bootstrap"]
             else
                 payment_select.parent().removeClass "has-error"
                 if parseInt($scope.new_payment.id_status) is 1
-                    if not $scope.new_payment.card_first_number
-                        payment_card_first_number.focus().addClass 'has-error'
-                        return
-                    else
-                        payment_card_first_number.removeClass 'has-error'
+                    # if not $scope.new_payment.card_first_number
+                    #     payment_card_first_number.focus().addClass 'has-error'
+                    #     return
+                    # else
+                    #     payment_card_first_number.removeClass 'has-error'
 
                     if not $scope.new_payment.card_number
                         payment_card.focus().addClass 'has-error'

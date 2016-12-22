@@ -104,7 +104,7 @@
 	</div>
 </div>
 <div class="form-group" ng-show="teacher_phone_level >= 3">
-	<div class="input-group" 
+	<div class="input-group"
 		ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(Teacher.phone3)  || !PhoneService.isMobile(Teacher.phone3) }">
 		<input type="text" id="teacher-phone-3" placeholder="телефон 3"  disabled class="form-control phone-masked"
 			   ng-model="Teacher.phone3"
@@ -157,7 +157,7 @@
 					<option value='1'>работает в ЕГЭ-Центре</option>
 				</select>
 			</div>
-			
+
 			<div class="form-group">
 				<div class="input-group">
 			      <input placeholder="логин" disabled ng-model="Teacher.login" class="form-control">
@@ -172,7 +172,7 @@
 			<div class="form-group">
 				<input placeholder="пароль" disabled type="text" ng-model="Teacher.password" class="form-control">
 			</div>
-			
+
 			<div class="form-group">
 				<?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches", 'disabled' => 'disabled']) ?>
 			</div>
@@ -208,7 +208,7 @@
 	    <span class="link-like" ng-click="setMenu(1)" ng-class="{'active': current_menu == 1}">
 	    	ОТЗЫВЫ
 	    </span>
-	    <span class="link-like" ng-click="setMenu(2)" ng-class="{'active': current_menu == 2}">
+	    <span class="link-like" ng-click="setMenu(2, true)" ng-class="{'active': current_menu == 2}">
 			ПРОВЕДЕННЫЕ ЗАНЯТИЯ
 	    </span>
 	    <span class="link-like" ng-click="setMenu(3, true)" ng-class="{'active': current_menu == 3}">
@@ -224,7 +224,7 @@
 	    	ГРАФИК
 	    </span>
     </div>
-    
+
 	<?= partial('groups') ?>
 	<?= partial('reviews') ?>
 	<?= partial('lessons') ?>

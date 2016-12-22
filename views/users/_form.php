@@ -144,6 +144,7 @@
         <?= partial('right', ['right' => Shared\Rights::ER_DELETE_ATTACHMENTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_DELETE_ARCHIVES]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_DELETE_REVIEWS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_ATTACHMENT_VISIBILITY]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_SUMMARY_FIELDS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_EDIT_ACCOUNTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_DELETE_TUTOR]) ?>

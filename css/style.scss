@@ -1987,12 +1987,12 @@ white-space: nowrap;
 }
 
 .lightbox-addpayment {
-	width: 670px;
-	left: calc(50% - 335px);
-	top: 25%;
+	width: 834px;
+    left: calc(50% - 417px);
+    top: 25%;
 }
 
-.lightbox-edit-student {
+.lightbox-edit-student { 
 	width: 364px;
 	left: calc(50% - 182px);
 	top: 25%;
@@ -3319,5 +3319,5 @@ table.last-item-no-border tr:last-child td {
 	}
 
 .text-danger {
-    color: $red !important; 
+    color: $red !important;
 }

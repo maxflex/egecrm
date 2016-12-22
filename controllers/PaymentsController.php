@@ -52,7 +52,6 @@
 			]);
 		}
 
-
 		public function actionAjaxGetPayments()
 		{
 			extract($_POST);
@@ -60,6 +59,7 @@
 			$condition['confirmed'] = $search['confirmed'] != '' ? "confirmed = {$search['confirmed']}" : '1';
 			$condition['id_status'] = $search['payment_type'] ? "id_status = {$search['payment_type']}" : '1';
 			$condition['id_type'] = $search['type'] ? "id_type = {$search['type']}" : '1';
+			$condition['year'] = $search['year'] ? "year = {$search['year']}" : '1';
 			$condition['entity_type'] = $search['mode'] ? "entity_type = '{$search['mode']}'" : '1';
 
 			$query['limit'] = ($search['current_page'] - 1)*Payment::PER_PAGE.',30';
@@ -99,6 +99,13 @@
 				$counts['type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
 			}
 			$counts['type']['all'] = array_sum($counts['type']);
+
+			foreach(Years::$all as $year) {
+				$count_cond = $condition;
+				$count_cond['year'] = "year = {$year}";
+				$counts['year'][$year] = Payment::count(["condition" => implode(' and ', $count_cond)]);
+			}
+			$counts['year']['all'] = array_sum($counts['year']);
 			/* каунтеры */
 
 			returnJsonAng([

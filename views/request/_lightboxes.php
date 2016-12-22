@@ -20,9 +20,9 @@
 				<span ng-show="new_payment.document_number">присвоен номер ПКО: {{ new_payment.document_number }}</span>
 				<span ng-show="!new_payment.document_number">номер ПКО не присвоен</span>
 			</span>
-			
+
 			<span ng-show="!new_payment.id">
-				номер ПКО: 
+				номер ПКО:
 				<span class="link-like" ng-class="{
 					'red': new_payment.dont_assign_pko
 				}" ng-click="dontAssignPko(new_payment)">{{ new_payment.dont_assign_pko ? 'номер не присваевать' : 'будет присвоен номер' }}</span>
@@ -41,7 +41,13 @@
 			</div>
 			<div class="form-group inline-block">
 				<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
-			</div>
+			</div> за
+            <div class="form-group inline-block">
+                <select class="form-control" ng-model="new_payment.year" style='width: 130px'>
+                    <option ng-repeat="year in <?= Years::json() ?>"
+                        value="{{year}}">{{ yearLabel(year) }}</option>
+                </select>
+    		</div>
 		</div>
 		<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
 			<h4>Номер карты</h4>
@@ -77,7 +83,7 @@
 		<button class="btn btn-default map-save-button" ng-click="saveMarkersToServer()">Сохранить</button>
 	</div>
 	<!-- КОНЕЦ /КАРТА И ЛАЙТБОКС -->
-	
+
 	<!-- СКЛЕЙКА КЛИЕНТОВ -->
 	<div class="lightbox-new lightbox-glue">
 		<div style="height: 75px">
