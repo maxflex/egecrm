@@ -325,6 +325,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// первая версия последней цепи (выше chain – неправильно, это версии)
 		$scope.firstInLastChain = function() {
+			$scope.contracts = _.sortBy($scope.contracts, function(contract) {
+				return contract.id_contract;
+			});
 			if ($scope.contracts && $scope.contracts.length) {
 								return $scope.firstContractInChainById($scope.contracts[$scope.contracts.length - 1].id_contract)
 							}

@@ -161,6 +161,7 @@
         <?= partial('right', ['right' => Shared\Rights::ER_TUTOR_STATUSES]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_REQUEST_STATUSES]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_ACCEPT_ACCOUNTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_STREAM]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
