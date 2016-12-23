@@ -58,7 +58,7 @@
 			self::CHEMISTRY	=> "химии",
 			self::BIOLOGY	=> "биологии",
 			self::COMPUTER	=> "информатике",
-			self::GEOGRAPHY	=> "геограйии",
+			self::GEOGRAPHY	=> "географии",
 		];
 		
 		static $short = [
