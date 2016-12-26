@@ -32,7 +32,6 @@ $(document).ready ->
     methods:
       showResponder: (e)-> #пустой метод для остановки события по стрелке вверх
       loadData:  _.debounce ->
-          console.log 'debounce'
           this.$http.post '/search', {query: this.query}
           .then (success) =>
             this.loading = false
@@ -40,6 +39,7 @@ $(document).ready ->
             this.all = 0
             this.lists = []
             this.links = {}
+            console.log 'data', success
             if success.data.result > 0
               this.results = success.data.result
               # Cтуденты
@@ -59,9 +59,9 @@ $(document).ready ->
                   item.link = this.links[this.all]
                   this.lists.push(item)
               # Преподавтели
-              if success.data.search.teachers.length > 0
-                for item, i in success.data.search.teachers
-                  item.type = 'teachers'
+              if success.data.search.tutors.length > 0
+                for item, i in success.data.search.tutors
+                  item.type = 'tutors'
                   this.all++
                   this.links[this.all] = 'teachers/edit/' + item.id
                   item.link = this.links[this.all]
@@ -70,6 +70,14 @@ $(document).ready ->
               if success.data.search.requests.length > 0
                 for item, i in success.data.search.requests
                   item.type = 'requests'
+                  this.all++
+                  this.links[this.all] = 'requests/edit/' + item.id
+                  item.link = this.links[this.all]
+                  this.lists.push(item)
+              # Договора
+              if success.data.search.contracts.length > 0
+                for item, i in success.data.search.contracts
+                  item.type = 'contracts'
                   this.all++
                   this.links[this.all] = 'requests/edit/' + item.id
                   item.link = this.links[this.all]
@@ -84,7 +92,7 @@ $(document).ready ->
             this.all = 0
             this.lists = []
             this.results = 0
-        ,500
+        ,250
 
       scroll: -> #метод скролит по необходимости до нужной части результата поиска
         totalObject = Object.keys this.links
@@ -92,7 +100,6 @@ $(document).ready ->
         $('#searchResult')
         .scrollTop((this.active - 4) * 30)
       keyup: (e) -> #обработка события набора текста
-        this.loadData()
         if e.code == 'ArrowUp'
           e.preventDefault();
           if this.active > 0
