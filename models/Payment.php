@@ -162,7 +162,28 @@
 					return ceil($datediff / (60 * 60 * 24 * 30));
 				}
 				case 'years': {
-					return ceil($datediff / (60 * 60 * 24 * 365));
+					//определяем учебный год, первого платежа
+					if(date("j", $first_payment_date) > 1 && date("n", $first_payment_date) >= 5) {
+						$first_request_year = date("Y", $first_payment_date);
+					} else {
+						$first_request_year = date("Y", $first_payment_date) - 1;
+					}
+
+					//определяем текущий учебный год
+					if(date("j", $today) > 1 && date("n", $today) >= 5) {
+						$current_year = date("Y", $today);
+					} else {
+						$current_year = date("Y", $today) - 1;
+					}
+
+					$count_years = 0;
+
+					for($i = $first_request_year; $i<= $current_year; $i++){
+						$count_years++;
+					}
+
+
+					return $count_years;
 				}
 			}
 		}
