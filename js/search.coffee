@@ -1,4 +1,4 @@
-Vue.config.devtools = true
+#Vue.config.devtools = true
 $(document).ready ->
 #вешеаем событие по клику по кнопке
   $('#searchModalOpen').click ->
@@ -9,13 +9,10 @@ $(document).ready ->
     $('body.modal-open .row').addClass('blur')
     false
 
-  $('#searchModal')
-  .on 'hidden.bs.modal', ->
+  $('#searchModal').on 'hidden.bs.modal', ->
     delayFnc = ->
-      $('.blur')
-      .removeClass 'blur'
+      $('.blur').removeClass 'blur'
     setTimeout delayFnc, 500
-
 
   # компонент поиска
   viewVue = new Vue
@@ -30,16 +27,14 @@ $(document).ready ->
       all: 0
       loading: false
     methods:
-      showResponder: (e)-> #пустой метод для остановки события по стрелке вверх
       loadData:  _.debounce ->
-          this.$http.post '/search', {query: this.query}
+          this.$http.post '/search', {query: this.query}, emulateJSON: true
           .then (success) =>
             this.loading = false
             this.active = 0
             this.all = 0
             this.lists = []
             this.links = {}
-            console.log 'data', success
             if success.data.result > 0
               this.results = success.data.result
               # Cтуденты
@@ -93,12 +88,9 @@ $(document).ready ->
             this.lists = []
             this.results = 0
         ,250
-
       scroll: -> #метод скролит по необходимости до нужной части результата поиска
-        totalObject = Object.keys this.links
-        .length
-        $('#searchResult')
-        .scrollTop((this.active - 4) * 30)
+        totalObject = Object.keys this.links.length
+        $('#searchResult').scrollTop((this.active - 4) * 30)
       keyup: (e) -> #обработка события набора текста
         if e.code == 'ArrowUp'
           e.preventDefault();
@@ -125,5 +117,4 @@ $(document).ready ->
             this.all = 0
             this.lists = []
             this.results = -1
-        #console.log this.lists
         null
