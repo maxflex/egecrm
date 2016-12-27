@@ -87,7 +87,7 @@
 
 		public function afterSave()
 		{
-			$this->updateSearchData();
+
 		}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -881,61 +881,6 @@
 			return false;
 		}
 
-		/**
-		 * Обновить данные по поиску.
-		 *
-		 */
-		public function updateSearchData()
-		{
-			$text = "";
-			$Requests = $this->getRequests();
-			foreach ($Requests as $Request) {
-				$text .= $Request->name;
-				$text .= self::_getPhoneNumbers($Request);
-			}
-			// Имя, телефоны ученика и представителя
-			$text .= $this->name();
-			$text .= self::_getPhoneNumbers($this);
-			$text .= $this->email;
-
-			if ($this->Passport) {
-				$text .= $this->Passport->series;
-				$text .= $this->Passport->number;
-			}
-
-			if ($this->Representative) {
-				$text .= $this->Representative->name();
-				$text .= self::_getPhoneNumbers($this->Representative);
-				$text .= $this->Representative->email;
-				$text .= $this->Representative->address;
-
-				if ($this->Representative->Passport) {
-					$text .= $this->Representative->Passport->series;
-					$text .= $this->Representative->Passport->number;
-					$text .= $this->Representative->Passport->issued_by;
-					$text .= $this->Representative->Passport->address;
-				}
-			}
-
-			// Последние 4 цифры номер карты
-			$Payments = Payment::findAll([
-				"condition" => "id_status=" . Payment::PAID_CARD . " AND entity_id=" . $this->id . " AND entity_type='".Student::USER_TYPE."' AND card_number!=''"
-			]);
-			foreach ($Payments as $Payment) {
-				$text .= $Payment->card_number;
-			}
-
-			$exists = dbConnection()->query("
-				SELECT id_student FROM search_students
-				WHERE id_student = {$this->id}
-			")->num_rows;
-
-			if ($exists) {
-				dbConnection()->query("UPDATE search_students SET search_text = '{$text}' WHERE id_student = {$this->id}");
-			} else {
-				dbConnection()->query("INSERT INTO search_students (search_text, id_student) VALUES ('{$text}', {$this->id})");
-			}
-		}
 
 		private static function _getPhoneNumbers($Object)
 		{

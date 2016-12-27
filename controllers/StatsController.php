@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		const PER_PAGE 	= 30;
+		const PER_PAGE = 30;
 
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
@@ -176,33 +176,33 @@
 			return $stats;
 		}
 
-		protected function getByYears()
-		{
-			$date_end = date("d.m.Y", time());
+        protected function getByYears()
+        {
+            $date_end = date("d.m.Y", time());
 
-			//определяем текущий учебный год
-			if(date("j", time()) > 1 && date("n", time()) >= 5) {
-				$current_year = date("Y", time());
-			} else {
-				$current_year = date("Y", time()) - 1;
-			}
- 			for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
-				$year = $current_year - $i;
-				$date_start = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year));
-				if(i == 0) {
-					$date_end = date("d.m.Y");
-				} else {
-					$date_end = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year) + (60 * 60 * 24 * 365));
-				}
+            //определяем текущий учебный год
+            if (date("j", time()) > 1 && date("n", time()) >= 5) {
+                $current_year = date("Y", time());
+            } else {
+                $current_year = date("Y", time()) - 1;
+            }
 
-				$stats[$date_end] = self::_getStats($date_start, $date_end);
-			}
+            for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
+                $year = $current_year - $i;
+                $date_start = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year));
+                if ($i == 0) {
+                    $date_end = date("d.m.Y");
+                } else {
+                    $date_end = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year) + (60 * 60 * 24 * 365));
+                }
 
+                $stats[$date_end] = self::_getStats($date_start, $date_end);
 
+                $date_end = $date_start;
+            }
 
-			return $stats;
-		}
-
+            return $stats;
+        }
 
 		public function actionList()
 		{
@@ -846,31 +846,32 @@
 		 * Возвращает данные по годам, с даты первого платежа по текущий год
 		 * @return array
 		 */
-		private function getPaymentsByYears()
-		{
-			$date_end = date("d.m.Y", time());
+        private function getPaymentsByYears()
+        {
+            $date_end = date("d.m.Y", time());
 
-			//определяем текущий учебный год
-			if(date("j", time()) > 1 && date("n", time()) >= 5) {
-				$current_year = date("Y", time());
-			} else {
-				$current_year = date("Y", time()) - 1;
-			}
+            //определяем текущий учебный год
+            if (date("j", time()) > 1 && date("n", time()) >= 5) {
+                $current_year = date("Y", time());
+            } else {
+                $current_year = date("Y", time()) - 1;
+            }
 
-			for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
-				$year = $current_year - $i;
-				$date_start = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year));
+            for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
+                $year = $current_year - $i;
+                $date_start = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year));
 
-				if($i == 0) {
-					$date_end = date("d.m.Y");
-				} else {
-					$date_end = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year) + (60 * 60 * 24 * 365));
-				}
+                if ($i == 0) {
+                    $date_end = date("d.m.Y");
+                } else {
+                    $date_end = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year) + (60 * 60 * 24 * 365));
+                }
 
-				$stats[$date_end] = self::_getPayments($date_start, $date_end);
-			}
+                $stats[$date_end] = self::_getPayments($date_start, $date_end);
+                $date_end = $date_start;
+            }
 
-			return $stats;
+            return $stats;
 		}
 
 
