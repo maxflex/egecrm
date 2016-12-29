@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		const PER_PAGE = 30;
+		const PER_PAGE = 30; # указтель по скольку выводить на страницу
 
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
@@ -144,27 +144,60 @@
 			return $stats;
 		}
 
-		protected function getByWeeks()
-		{
-			$date_end = date("d.m.Y", time());
+        protected function getByWeeks()
+        {
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
 
-			for ($i = 0; $i <= Request::timeFromFirst('weeks'); $i++) {
-				$last_sunday = strtotime("last sunday -$i weeks");
-				$date_start = date("d.m.Y", $last_sunday);
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
 
-				$stats[$date_end] = self::_getStats($date_start, $date_end);
+            if ($page == 1) { # текущая неделя
+                $date_end = date("d.m.Y", time());
+            } else { # первая дата для текущего набора данных
+                $date_end = date("d.m.Y", strtotime("last sunday -" . ($start - 1) . " weeks"));
+            }
 
-				$date_end = $date_start;
-			}
+            for ($i = 0; $i <= Request::timeFromFirst('weeks'); $i++) {
+                if ($i < $start) {
+                    continue;
+                }
+                if ($i >= $end) {
+                    continue;
+                }
 
-			// добавляем расторгнутые
-			return $stats;
-		}
+                $last_sunday = strtotime("last sunday -$i weeks");
+                $date_start = date("d.m.Y", $last_sunday);
+
+                $stats[$date_end] = self::_getStats($date_start, $date_end);
+
+                $date_end = $date_start;
+            }
+
+            // добавляем расторгнутые
+            return $stats;
+        }
 
 		protected function getByMonths()
 		{
-			$date_end = date("d.m.Y", time());
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
+
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
+
+            if ($page == 1) { # текущий месяц
+                $date_end = date("d.m.Y", time());
+            } else { # первая дата для текущего набора данных
+                $date_end = date("d.m.Y", strtotime("last day of -" . ($start - 1) . " months"));
+            }
+
 			for ($i = 1; $i <= Request::timeFromFirst('months'); $i++) {
+                if($i < $start) continue;
+                if($i >= $end) continue;
+
 				$last_day_of_month = strtotime("last day of -$i months");
 				$date_start = date("d.m.Y", $last_day_of_month);
 
@@ -193,7 +226,7 @@
                 if ($i == 0) {
                     $date_end = date("d.m.Y");
                 } else {
-                    $date_end = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year) + (60 * 60 * 24 * 365));
+                    $date_end = date("d.m.Y", mktime(0, 0, 0, 4, 30, $year + 1));
                 }
 
                 $stats[$date_end] = self::_getStats($date_start, $date_end);
@@ -212,18 +245,22 @@
 			switch ($_GET["group"]) {
 				case "w": {
 					$stats = self::getByWeeks();
+					$timeFromFirstText = 'weeks'; # текстовый казатель недели для Request::timeFromFirst
 					break;
 				}
 				case "m": {
 					$stats = self::getByMonths();
+                    $timeFromFirstText = 'months'; # текстовый казатель месяца для Request::timeFromFirst
 					break;
 				}
 				case "y": {
 					$stats = self::getByYears();
+                    $timeFromFirstText = 'years'; # текстовый казатель года для Request::timeFromFirst
 					break;
 				}
 				default: {
 					$stats = self::getByDays();
+                    $timeFromFirstText = 'days'; # текстовый казатель дня для Request::timeFromFirst
 					break;
 				}
 			}
@@ -236,6 +273,8 @@
 			$this->render("list", [
 				"ang_init_data" 	=> $ang_init_data,
 				"stats" => $stats,
+                "group" => (empty($_GET["group"])) ? 'd' : $_GET["group"], # указатель группировки
+                "total_items" => Request::timeFromFirst($timeFromFirstText) # всего элементов
 			]);
 		}
 

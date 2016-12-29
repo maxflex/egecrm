@@ -29,9 +29,9 @@ app = angular.module "Stats", ["ui.bootstrap"]
 			date_end	= $("#date-end").val()
 			redirect "stats/users?date_start=#{date_start}&date_end=#{date_end}"
 
-		$scope.pageChanged = ->
+		$scope.pageChanged = (group)->
 			ajaxStart()
-			redirect "stats/?page=#{$scope.currentPage}"
+			redirect "stats/?group=#{group}&page=#{$scope.currentPage}"
 
 		$scope.pageStudentChanged = ->
 			ajaxStart()
