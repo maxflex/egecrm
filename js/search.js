@@ -1,5 +1,3 @@
-Vue.config.devtools = true;
-
 $(document).ready(function() {
   var viewVue;
   $('#searchModalOpen').click(function() {
@@ -34,10 +32,11 @@ $(document).ready(function() {
       loading: false
     },
     methods: {
-      showResponder: function(e) {},
       loadData: _.debounce(function() {
-        return this.$http.post('search', {
+        return this.$http.post('/search', {
           query: this.query
+        }, {
+          emulateJSON: true
         }).then((function(_this) {
           return function(success) {
             var i, item, j, k, l, len, len1, len2, len3, len4, m, n, ref, ref1, ref2, ref3, ref4, results;
@@ -46,7 +45,6 @@ $(document).ready(function() {
             _this.all = 0;
             _this.lists = [];
             _this.links = {};
-            console.log('data', success);
             if (success.data.result > 0) {
               _this.results = success.data.result;
               if (success.data.search.students.length > 0) {
@@ -124,7 +122,7 @@ $(document).ready(function() {
       }, 100),
       scroll: function() {
         var totalObject;
-        totalObject = Object.keys(this.links).length;
+        totalObject = Object.keys(this.links.length);
         return $('#searchResult').scrollTop((this.active - 4) * 30);
       },
       keyup: function(e) {
