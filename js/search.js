@@ -36,7 +36,7 @@ $(document).ready(function() {
     methods: {
       showResponder: function(e) {},
       loadData: _.debounce(function() {
-        return this.$http.post('/search', {
+        return this.$http.post('search', {
           query: this.query
         }).then((function(_this) {
           return function(success) {
@@ -121,7 +121,7 @@ $(document).ready(function() {
             return _this.results = 0;
           };
         })(this));
-      }, 250),
+      }, 100),
       scroll: function() {
         var totalObject;
         totalObject = Object.keys(this.links).length;
