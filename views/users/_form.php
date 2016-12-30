@@ -132,7 +132,6 @@
         <?= partial('right', ['right' => Shared\Rights::SHOW_PAYMENTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_TEACHER_PAYMENTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_STATS]) ?>
-        <?= partial('right', ['right' => Shared\Rights::EDIT_CONTRACT]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_SALARY]) ?>
     </div>
     <div class="col-sm-4">
@@ -163,6 +162,7 @@
         <?= partial('right', ['right' => Shared\Rights::ER_ACCEPT_ACCOUNTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_STREAM]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_TEMPLATES]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EDIT_CONTRACT]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">

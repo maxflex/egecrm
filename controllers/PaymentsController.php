@@ -17,6 +17,7 @@
 
 		public function actionList()
 		{
+            $this->checkRights(Shared\Rights::SHOW_PAYMENTS);
 			$this->setRights([User::USER_TYPE]);
 			$this->setTabTitle("Платежи");
 

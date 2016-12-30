@@ -1,6 +1,9 @@
 <div class="lightbox-new lightbox-freetime">
     <!-- @time-refactored @time-checked -->
 	<h4 style="text-transform: uppercase; margin-bottom: 25px">ДАТА И ВРЕМЯ ЗАНЯТИЙ</h4>
+        <?php if (! allowed(Shared\Rights::EDIT_GROUPS)) :?>
+        <div class='div-blocker'></div>
+        <?php endif ?>
 		<table class="table table-divlike">
 			<tbody>
 				<tr ng-repeat='(day, data) in time'>

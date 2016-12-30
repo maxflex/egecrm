@@ -186,7 +186,9 @@
 					}
 				?>
 			<?php endif ?>
-			<a href="logs" class="list-group-item">Логи</a>
+            <?php if (User::fromSession()->allowed(Shared\Rights::LOGS)) :?>
+			    <a href="logs" class="list-group-item">Логи</a>
+            <?php endif ?>
 			<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_CONTRACT)) :?>
 				<a href="users/contract" class="list-group-item">Договор</a>
 			<?php endif ?>
