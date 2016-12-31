@@ -123,6 +123,7 @@
             <h4 class="row-header">ЕГЭ-Центр</h4>
         </div>
         <?= partial('right', ['right' => Shared\Rights::EDIT_GROUPS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EDIT_GROUP_SCHEDULE]) ?>
         <?= partial('right', ['right' => Shared\Rights::EDIT_PAYMENTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_TASKS]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_CALENDAR]) ?>
@@ -133,6 +134,7 @@
         <?= partial('right', ['right' => Shared\Rights::SHOW_TEACHER_PAYMENTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_STATS]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_SALARY]) ?>
+        <?= partial('right', ['right' => Shared\Rights::LOGS]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
@@ -155,6 +157,7 @@
         <?= partial('right', ['right' => Shared\Rights::ER_SHOW_TUTOR_DEBT]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_ATTACHMENT_STATS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_SUMMARY_USERS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_SUMMARY_USERS_ALL]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_LOGS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_SUMMARY]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_TUTOR_STATUSES]) ?>
