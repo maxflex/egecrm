@@ -429,6 +429,9 @@
          */
         public static function worldwideAccess()
         {
+            if (in_array(User::fromSession()->type, [Teacher::USER_TYPE, Student::USER_TYPE])) {
+                return true;
+            }
             // WORLDWIDE_ACCESS check
             $worldwide_access = dbConnection()->query('
                 SELECT 1 FROM users
