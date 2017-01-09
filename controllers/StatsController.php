@@ -195,9 +195,12 @@
             }
 
 			for ($i = 1; $i <= Request::timeFromFirst('months'); $i++) {
-                if($i < $start) continue;
-                if($i >= $end) continue;
-
+                if ($i < $start) {
+                    continue;
+                }
+                if ($i >= $end) {
+                    continue;
+                }
 				$last_day_of_month = strtotime("last day of -$i months");
 				$date_start = date("d.m.Y", $last_day_of_month);
 
@@ -787,7 +790,7 @@
 			$Payments = Payment::findAll([
 				"condition" => "entity_type = '" . (isset($_GET['teachers']) ? Teacher::USER_TYPE : Student::USER_TYPE) . "' and ".
 					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
-								: "date = '$date_start'")
+								: "date = '$date_start'"),
 			]);
 
 			foreach ($Payments as $Payment) {
@@ -850,9 +853,26 @@
 
 		private function getPaymentsByWeeks()
 		{
-			$date_end = date("d.m.Y", time());
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
+
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
+
+            if ($page == 1) { # текущая неделя
+                $date_end = date("d.m.Y", time());
+            } else { # первая дата для текущего набора данных
+                $date_end = date("d.m.Y", strtotime("last sunday -" . ($start - 1) . " weeks"));
+            }
 
 			for ($i = 0; $i <= Payment::timeFromFirst('weeks'); $i++) {
+                if ($i < $start) {
+                    continue;
+                }
+                if ($i >= $end) {
+                    continue;
+                }
 				$last_sunday = strtotime("last sunday -$i weeks");
 				$date_start = date("d.m.Y", $last_sunday);
 
@@ -867,9 +887,26 @@
 
 		private function getPaymentsByMonths()
 		{
-			$date_end = date("d.m.Y", time());
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
+
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
+
+            if ($page == 1) { # текущий месяц
+                $date_end = date("d.m.Y", time());
+            } else { # первая дата для текущего набора данных
+                $date_end = date("d.m.Y", strtotime("last day of -" . ($start - 1) . " months"));
+            }
 
 			for ($i = 1; $i <= Payment::timeFromFirst('months'); $i++) {
+                if ($i < $start) {
+                    continue;
+                }
+                if ($i >= $end) {
+                    continue;
+                }
 				$last_day_of_month = strtotime("last day of -$i months");
 				$date_start = date("d.m.Y", $last_day_of_month);
 

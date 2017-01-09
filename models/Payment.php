@@ -143,7 +143,7 @@
 		 * @param string $mode (default: 'days')
 		 * $mode = days | weeks | months | years
 		 */
-		public static function timeFromFirst($mode = 'days')
+		public static function timeFromFirst($mode = 'd')
 		{
 			$today = time(); // or your date as well
 
@@ -152,16 +152,13 @@
 		    $datediff = $today - $first_payment_date;
 
 			switch ($mode) {
-				case 'days': {
-					return ceil($datediff / (60 * 60 * 24));
-				}
-				case 'weeks': {
+				case 'w': {
 					return floor($datediff / (60 * 60 * 24 * 7));
 				}
-				case 'months': {
+				case 'm': {
 					return ceil($datediff / (60 * 60 * 24 * 30));
 				}
-				case 'years': {
+				case 'y': {
 					//определяем учебный год, первого платежа
 					if(date("j", $first_payment_date) > 1 && date("n", $first_payment_date) >= 5) {
 						$first_request_year = date("Y", $first_payment_date);
@@ -184,6 +181,9 @@
 
 
 					return $count_years;
+				}
+                default: {
+					return ceil($datediff / (60 * 60 * 24));
 				}
 			}
 		}
