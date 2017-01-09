@@ -32,9 +32,9 @@ app = angular.module("Stats", ["ui.bootstrap"]).config([
     date_end = $("#date-end").val();
     return redirect("stats/users?date_start=" + date_start + "&date_end=" + date_end);
   };
-  $scope.pageChanged = function() {
+  $scope.pageChanged = function(group) {
     ajaxStart();
-    return redirect("stats/?page=" + $scope.currentPage);
+    return redirect("stats/?group=" + group + "&page=" + $scope.currentPage);
   };
   $scope.pageStudentChanged = function() {
     ajaxStart();
