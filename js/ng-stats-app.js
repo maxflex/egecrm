@@ -40,9 +40,9 @@ app = angular.module("Stats", ["ui.bootstrap"]).config([
     ajaxStart();
     return redirect("stats/visits/total?page=" + $scope.currentPage);
   };
-  $scope.pagePaymentChanged = function() {
+  $scope.pagePaymentChanged = function(group) {
     ajaxStart();
-    return redirect("stats/payments?page=" + $scope.currentPage);
+    return redirect("stats/payments?group=" + group + "&page=" + $scope.currentPage);
   };
   $scope.Schedules = {};
   $scope.dateLoad = function(date) {

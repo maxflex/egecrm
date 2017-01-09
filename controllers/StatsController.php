@@ -781,6 +781,13 @@
 
 		private function _getPayments($date_start, $date_end = false)
 		{
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
+
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
+
 			$date_start_formatted 	= date("Y-m-d", strtotime($date_start));
 			$date_end_formatted		= date("Y-m-d", strtotime($date_end));
 
@@ -788,6 +795,7 @@
 				"condition" => "entity_type = '" . (isset($_GET['teachers']) ? Teacher::USER_TYPE : Student::USER_TYPE) . "' and ".
 					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
 								: "date = '$date_start'")
+                "limit" => "{$start}, {$end}"
 			]);
 
 			foreach ($Payments as $Payment) {

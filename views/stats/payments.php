@@ -158,7 +158,7 @@
 	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
 		<pagination
 		  ng-model="currentPage"
-		  ng-change="pagePaymentChanged()"
+		  ng-change="pagePaymentChanged(<?= $_GET["group"] ?>)"
 		  total-items="<?= Payment::timeFromFirst() ?>"
 		  max-size="10"
 		  items-per-page="<?= StatsController::PER_PAGE ?>"
