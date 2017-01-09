@@ -118,7 +118,7 @@
 	<?php if (($total_items / StatsController::PER_PAGE) > 1) :?>
 	<pagination
 	  ng-model="currentPage"
-	  ng-change="pageChanged('<?= $group ?>')"
+	  ng-change="pageChanged('<?= $_GET["group"] ?>')"
 	  total-items="<?= $total_items ?>"
 	  max-size="10"
 	  items-per-page="<?= StatsController::PER_PAGE ?>"
