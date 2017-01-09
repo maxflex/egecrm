@@ -2738,18 +2738,5 @@ h4.row-header.default-case {
 .text-danger {
   color: #c40000 !important; }
 
-.users-tr-list td {
-  height: 39px;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: 0px;
-  padding-bottom: 0px; }
-
-.users-tr-list td.switch-td {
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  font-size: 24px !important; }
-  .users-tr-list td.switch-td .ios7-switch {
-    margin-bottom: 0px !important; }
+.table-small {
+  font-size: 12px; }

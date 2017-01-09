@@ -1992,7 +1992,7 @@ white-space: nowrap;
     top: 25%;
 }
 
-.lightbox-edit-student { 
+.lightbox-edit-student {
 	width: 364px;
 	left: calc(50% - 182px);
 	top: 25%;
@@ -3322,26 +3322,6 @@ table.last-item-no-border tr:last-child td {
     color: $red !important;
 }
 
-
-.users-tr-list{
-
-	td{
-		height: 39px;
-		margin-top: 0;
-		margin-bottom: 0;
-		padding-top: 0px;
-		padding-bottom: 0px;
-	}
-
-	td.switch-td{
-		margin-top: 0;
-		margin-bottom: 0;
-		padding-top: 0px;
-		padding-bottom: 0px;
-		font-size: 24px !important;
-
-		.ios7-switch{
-			margin-bottom: 0px !important;
-		}
-	}
+.table-small {
+	font-size: 12px;
 }
