@@ -28,7 +28,7 @@ $(document).ready ->
       loading: false
     methods:
       loadData:  _.debounce ->
-          this.$http.post '/search', {query: this.query}, emulateJSON: true
+          this.$http.post 'search', {query: this.query}, emulateJSON: true
           .then (success) =>
             this.loading = false
             this.active = 0
@@ -50,7 +50,7 @@ $(document).ready ->
                 for item, i in success.data.search.representatives
                   item.type = 'representatives'
                   this.all++
-                  this.links[this.all] = 'student/' + item.student_id
+                  this.links[this.all] = 'student/' + item.id_student
                   item.link = this.links[this.all]
                   this.lists.push(item)
               # Преподавтели
@@ -74,7 +74,7 @@ $(document).ready ->
                 for item, i in success.data.search.contracts
                   item.type = 'contracts'
                   this.all++
-                  this.links[this.all] = 'requests/edit/' + item.id
+                  this.links[this.all] = 'student/' + item.id_student
                   item.link = this.links[this.all]
                   this.lists.push(item)
             else
@@ -87,9 +87,8 @@ $(document).ready ->
             this.all = 0
             this.lists = []
             this.results = 0
-        , 100
+        , 150
       scroll: -> # метод скролит по необходимости до нужной части результата поиска
-        totalObject = Object.keys this.links.length
         $('#searchResult').scrollTop((this.active - 4) * 30)
       keyup: (e) -> #обработка события набора текста
         if e.code == 'ArrowUp'
@@ -104,12 +103,11 @@ $(document).ready ->
           if this.active > 4
             this.scroll()
         else if e.code == 'Enter'
-          if this.active > 0
-            window.open this.links[this.active]
+          window.open this.links[this.active] if this.active > 0
         else
-          if this.query != '' or this.query != ' '
-            if this.oldQuery != this.query and this.query.length > 2
-              this.loading = true
+          if this.query isnt ''
+            if this.oldquery != this.query and this.query.length > 2
+              # this.loading = true
               this.loadData()
             this.oldquery = this.query
           else

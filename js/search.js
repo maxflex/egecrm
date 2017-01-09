@@ -33,7 +33,7 @@ $(document).ready(function() {
     },
     methods: {
       loadData: _.debounce(function() {
-        return this.$http.post('/search', {
+        return this.$http.post('search', {
           query: this.query
         }, {
           emulateJSON: true
@@ -64,7 +64,7 @@ $(document).ready(function() {
                   item = ref1[i];
                   item.type = 'representatives';
                   _this.all++;
-                  _this.links[_this.all] = 'student/' + item.student_id;
+                  _this.links[_this.all] = 'student/' + item.id_student;
                   item.link = _this.links[_this.all];
                   _this.lists.push(item);
                 }
@@ -98,7 +98,7 @@ $(document).ready(function() {
                   item = ref4[i];
                   item.type = 'contracts';
                   _this.all++;
-                  _this.links[_this.all] = 'requests/edit/' + item.id;
+                  _this.links[_this.all] = 'student/' + item.id_student;
                   item.link = _this.links[_this.all];
                   results.push(_this.lists.push(item));
                 }
@@ -119,10 +119,8 @@ $(document).ready(function() {
             return _this.results = 0;
           };
         })(this));
-      }, 100),
+      }, 150),
       scroll: function() {
-        var totalObject;
-        totalObject = Object.keys(this.links.length);
         return $('#searchResult').scrollTop((this.active - 4) * 30);
       },
       keyup: function(e) {
@@ -145,9 +143,8 @@ $(document).ready(function() {
             window.open(this.links[this.active]);
           }
         } else {
-          if (this.query !== '' || this.query !== ' ') {
-            if (this.oldQuery !== this.query && this.query.length > 2) {
-              this.loading = true;
+          if (this.query !== '') {
+            if (this.oldquery !== this.query && this.query.length > 2) {
               this.loadData();
             }
             this.oldquery = this.query;
