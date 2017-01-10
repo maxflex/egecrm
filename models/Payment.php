@@ -199,7 +199,7 @@
            if ($this->isNewRecord && !$this->dont_assign_pko &&
            $this->id_status == self::PAID_CASH && $this->id_type == PaymentTypes::PAYMENT && $this->entity_type == Student::USER_TYPE) {
                if (!$this->document_number) {
-                   $this->document_number = self::dbConnection()->query('select max(document_number) + 1 as last_doc_num from payments')->fetch_object()->last_doc_num;
+                   $this->document_number = self::dbConnection()->query("select max(document_number) + 1 as last_doc_num from payments where YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = YEAR(NOW())")->fetch_object()->last_doc_num;
                }
            }
         }
