@@ -429,15 +429,15 @@
          */
         public static function worldwideAccess()
         {
-            if (in_array(User::fromSession()->type, [Teacher::USER_TYPE, Student::USER_TYPE])) {
+            if (in_array(User::fromSession()->type, [Teacher::USER_TYPE, Student::USER_TYPE]) || User::fromOffice()) {
                 return true;
             }
+
             // WORLDWIDE_ACCESS check
-            $worldwide_access = dbConnection()->query('
+            return dbConnection()->query('
                 SELECT 1 FROM users
                 WHERE id=' . User::fromSession()->id . ' AND FIND_IN_SET(' . Shared\Rights::WORLDWIDE_ACCESS . ', rights)
-            ')->num_rows;
-            return $worldwide_access || User::fromOffice();
+            ')->num_rows > 0;
         }
 
         public function allowed($right)
