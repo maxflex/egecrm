@@ -36,13 +36,13 @@
 			]);
 
 			$Payments = Payment::findAll([
-				"condition" => "entity_type='".Student::USER_TYPE."' and ".
+				"condition" => "entity_type='" . Student::USER_TYPE . "' and ".
 					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
 								: "date = '$date_start'")
 			]);
 
 			foreach ($Contracts as $index => $Contract) {
-				if ($Contract->isOriginal()) {
+				if ($Contract->isFirstInYear()) {
 					if ($Contract->external) {
 						$stats['contract_new']['external']++;
 						$stats['subjects_new']['external'] += count($Contract->subjects);
@@ -57,7 +57,7 @@
 				}
 
 				// если есть версия договора
-				$PreviousContract = $Contract->getPreviousVersion();
+				$PreviousContract = $Contract->getPreviousVersionInYear();
 				if ($PreviousContract) {
 					// если сумма увеличилась
 					if ($Contract->sum > $PreviousContract->sum) {
