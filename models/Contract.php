@@ -230,16 +230,11 @@
         public function isFirstInYear()
         {
             // получаем первый договор ученика в году, равному году текущей сущности договора
-            $query = dbConnection()->query("
+            return dbConnection()->query("
                 SELECT MIN(id) as min_id FROM contracts c
                 JOIN contract_info ci ON ci.id_contract = c.id_contract
                 WHERE ci.id_student={$this->info->id_student} AND ci.year={$this->info->year}
-            ");
-            if ($query->num_rows) {
-                return $query->fetch_object()->min_id == $this->id;
-            } else {
-                return false;
-            }
+            ")->fetch_object()->min_id == $this->id;
         }
 
 
