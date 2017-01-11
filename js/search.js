@@ -140,7 +140,7 @@ $(document).ready(function() {
           }
         } else if (e.code === 'Enter') {
           if (this.active > 0) {
-            window.open(this.links[this.active]);
+            window.location = this.links[this.active];
           }
         } else {
           if (this.query !== '') {

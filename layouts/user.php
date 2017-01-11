@@ -66,23 +66,23 @@
 				</div>
 				<div v-if="results > 0" v-for="(index, row) in lists" class="resultRow" v-bind:class="{active : ((index+1) ==  active)}">
 					<div v-if="row.type == 'students'">
-						<a v-bind:href="row.link" target="_blank">{{ row.last_name }} {{ row.first_name }} {{ row.middle_name }}</a>  - ученик
+						<a v-bind:href="row.link">{{ row.last_name }} {{ row.first_name }} {{ row.middle_name }}</a>  - ученик
 					</div>
 
 					<div v-if="row.type == 'representatives'">
-						<a v-bind:href="row.link" target="_blank">{{ row.last_name }} {{ row.first_name }} {{ row.middle_name }}</a>  - представитель
+						<a v-bind:href="row.link">{{ row.last_name }} {{ row.first_name }} {{ row.middle_name }}</a>  - представитель
 					</div>
 
 					<div v-if="row.type == 'tutors'">
-						<a v-bind:href="row.link" target="_blank">{{ row.last_name }} {{ row.first_name }} {{ row.middle_name }}</a>  - преподаватель
+						<a v-bind:href="row.link">{{ row.last_name }} {{ row.first_name }} {{ row.middle_name }}</a>  - преподаватель
 					</div>
 
 					<div v-if="row.type == 'requests'">
-						<a v-bind:href="row.link" target="_blank">{{ row.name }}</a>  - заявка
+						<a v-bind:href="row.link">{{ row.name || 'имя не указано' }}</a>  - заявка
 					</div>
 
                     <div v-if="row.type == 'contracts'">
-                        <a v-bind:href="row.link" target="_blank">№{{ row.id_contract }}</a>  - договор
+                        <a v-bind:href="row.link">№{{ row.id_contract }}</a>  - договор
                     </div>
 				</div>
 			</div>
