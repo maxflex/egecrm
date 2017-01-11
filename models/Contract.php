@@ -203,6 +203,7 @@
                 SELECT id FROM contracts c
                 JOIN contract_info ci ON ci.id_contract = c.id_contract
                 WHERE ci.id_student={$this->info->id_student} AND ci.year={$this->info->year} AND c.id < {$this->id}
+                ORDER BY id DESC
                 LIMIT 1
             ");
             if ($query->num_rows) {
