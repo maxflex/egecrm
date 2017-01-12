@@ -115,11 +115,11 @@
 		</tbody>
 	</table>
 
-	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
+	<?php if (($total_items / StatsController::PER_PAGE) > 1) :?>
 	<pagination
 	  ng-model="currentPage"
-	  ng-change="pageChanged()"
-	  total-items="<?= Request::timeFromFirst() ?>"
+	  ng-change="pageChanged('<?= $_GET["group"] ?>')"
+	  total-items="<?= $total_items ?>"
 	  max-size="10"
 	  items-per-page="<?= StatsController::PER_PAGE ?>"
 	  first-text="«"

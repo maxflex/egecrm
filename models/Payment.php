@@ -143,7 +143,7 @@
 		 * @param string $mode (default: 'days')
 		 * $mode = days | weeks | months | years
 		 */
-		public static function timeFromFirst($mode = 'days')
+		public static function timeFromFirst($mode = 'd')
 		{
 			$today = time(); // or your date as well
 
@@ -152,17 +152,38 @@
 		    $datediff = $today - $first_payment_date;
 
 			switch ($mode) {
-				case 'days': {
-					return ceil($datediff / (60 * 60 * 24));
-				}
-				case 'weeks': {
+				case 'w': {
 					return floor($datediff / (60 * 60 * 24 * 7));
 				}
-				case 'months': {
+				case 'm': {
 					return ceil($datediff / (60 * 60 * 24 * 30));
 				}
-				case 'years': {
-					return ceil($datediff / (60 * 60 * 24 * 365));
+				case 'y': {
+					//определяем учебный год, первого платежа
+					if(date("j", $first_payment_date) > 1 && date("n", $first_payment_date) >= 5) {
+						$first_request_year = date("Y", $first_payment_date);
+					} else {
+						$first_request_year = date("Y", $first_payment_date) - 1;
+					}
+
+					//определяем текущий учебный год
+					if(date("j", $today) > 1 && date("n", $today) >= 5) {
+						$current_year = date("Y", $today);
+					} else {
+						$current_year = date("Y", $today) - 1;
+					}
+
+					$count_years = 0;
+
+					for($i = $first_request_year; $i<= $current_year; $i++){
+						$count_years++;
+					}
+
+
+					return $count_years;
+				}
+                default: {
+					return ceil($datediff / (60 * 60 * 24));
 				}
 			}
 		}
@@ -178,7 +199,7 @@
            if ($this->isNewRecord && !$this->dont_assign_pko &&
            $this->id_status == self::PAID_CASH && $this->id_type == PaymentTypes::PAYMENT && $this->entity_type == Student::USER_TYPE) {
                if (!$this->document_number) {
-                   $this->document_number = self::dbConnection()->query('select max(document_number) + 1 as last_doc_num from payments')->fetch_object()->last_doc_num;
+                   $this->document_number = self::dbConnection()->query("select max(document_number) + 1 as last_doc_num from payments where YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = YEAR(NOW())")->fetch_object()->last_doc_num;
                }
            }
         }

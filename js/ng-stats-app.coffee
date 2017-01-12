@@ -22,24 +22,24 @@ app = angular.module "Stats", ["ui.bootstrap"]
 
 		$scope.round2 = (n) ->
 			return Math.round(n / 1000) * 1000
-		
+
 		$scope.goDates = ->
 			ajaxStart()
 			date_start 	= $("#date-start").val()
 			date_end	= $("#date-end").val()
 			redirect "stats/users?date_start=#{date_start}&date_end=#{date_end}"
 
-		$scope.pageChanged = ->
+		$scope.pageChanged = (group)->
 			ajaxStart()
-			redirect "stats/?page=#{$scope.currentPage}"
+			redirect "stats/?group=#{group}&page=#{$scope.currentPage}"
 
 		$scope.pageStudentChanged = ->
 			ajaxStart()
 			redirect "stats/visits/total?page=#{$scope.currentPage}"
 
-		$scope.pagePaymentChanged = ->
+		$scope.pagePaymentChanged = (group)->
 			ajaxStart()
-			redirect "stats/payments?page=#{$scope.currentPage}"
+			redirect "stats/payments?group=#{group}&page=#{$scope.currentPage}"
 
 		$scope.Schedules = {}
 
@@ -89,13 +89,13 @@ app = angular.module "Stats", ["ui.bootstrap"]
 
 		$scope.formatDate = (date)->
 			moment(date).format "D MMM. YYYY"
-		
+
 		$scope.isToday = (date)->
 			date is moment().format "YYYY-MM-DD"
-		
+
 		$scope.isFuture = (date) ->
 			date >= moment().format "YYYY-MM-DD"
-		
+
 		$scope.isWeekend = (date) ->
 			moment(date).isoWeekday() in [6, 7]
 

@@ -253,7 +253,9 @@
 		 */
 		public static function loggedIn()
 		{
-			return isset($_SESSION["user"]);
+			return isset($_SESSION["user"]) // пользователь залогинен
+                && ! User::isBlocked()      // и не заблокирован
+                && User::worldwideAccess(); // и можно входить
 		}
 
 		/*
@@ -284,15 +286,6 @@
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-
-		public function promoVisit()
-		{
-			if ($this->type == Student::USER_TYPE && $this->id > 112) {
-				$Student = Student::findById($this->id_entity);
-				$Student->promo_visit_count++;
-				$Student->save("promo_visit_count");
-			}
-		}
 
 		public function beforeSave()
 		{
@@ -413,6 +406,38 @@
         public static function isAdmin()
         {
             return User::fromSession()->type == self::USER_TYPE;
+        }
+
+        public static function isBlocked()
+        {
+            return dbConnection()->query('
+                SELECT 1 FROM users
+                WHERE id=' . User::fromSession()->id . ' AND FIND_IN_SET(' . Shared\Rights::EC_BANNED . ', rights)
+            ')->num_rows;
+        }
+
+        /**
+         * Логин из офиса
+         */
+        public static function fromOffice()
+        {
+            return strpos($_SERVER['HTTP_X_REAL_IP'], '213.184.130.') === 0;
+        }
+
+        /**
+         * Вход из офиса или включена настройка «доступ отовсюду»
+         */
+        public static function worldwideAccess()
+        {
+            if (in_array(User::fromSession()->type, [Teacher::USER_TYPE, Student::USER_TYPE]) || User::fromOffice()) {
+                return true;
+            }
+
+            // WORLDWIDE_ACCESS check
+            return dbConnection()->query('
+                SELECT 1 FROM users
+                WHERE id=' . User::fromSession()->id . ' AND FIND_IN_SET(' . Shared\Rights::WORLDWIDE_ACCESS . ', rights)
+            ')->num_rows > 0;
         }
 
         public function allowed($right)

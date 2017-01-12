@@ -20,15 +20,6 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
       return $('.watch-select').selectpicker('refresh', 100);
     });
   };
-  $scope.getUsers = function() {
-    if ($scope.right) {
-      return _.sortBy($scope.Users, function(User) {
-        return !$scope.allowed(User, $scope.right);
-      });
-    } else {
-      return $scope.Users;
-    }
-  };
   $scope.toggleRights = function(User, right) {
     var NewUser, data;
     NewUser = angular.copy(User);
@@ -54,15 +45,20 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
     });
   };
   $scope.getCounts = function(right) {
+    var count;
     if (right == null) {
       right = false;
     }
     if (right === false) {
-      return $scope.Users.length;
+      return $scope.ActiveUsers.length + $scope.BannedUsers.length;
     }
-    return _.reject($scope.Users, function(User) {
+    count = _.reject($scope.ActiveUsers, function(User) {
       return User.rights.indexOf(parseInt(right)) === -1;
-    }).length || '';
+    }).length;
+    count += _.reject($scope.BannedUsers, function(User) {
+      return User.rights.indexOf(parseInt(right)) === -1;
+    }).length;
+    return count || '';
   };
   $scope.allowed = function(User, right) {
     return User.rights.indexOf(parseInt(right)) !== -1;

@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		const PER_PAGE = 30;
+		const PER_PAGE = 30; # указтель по скольку выводить на страницу
 
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
@@ -36,13 +36,13 @@
 			]);
 
 			$Payments = Payment::findAll([
-				"condition" => "entity_type='".Student::USER_TYPE."' and ".
+				"condition" => "entity_type='" . Student::USER_TYPE . "' and ".
 					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
 								: "date = '$date_start'")
 			]);
 
 			foreach ($Contracts as $index => $Contract) {
-				if ($Contract->isOriginal()) {
+				if ($Contract->isFirstInYear()) {
 					if ($Contract->external) {
 						$stats['contract_new']['external']++;
 						$stats['subjects_new']['external'] += count($Contract->subjects);
@@ -57,7 +57,7 @@
 				}
 
 				// если есть версия договора
-				$PreviousContract = $Contract->getPreviousVersion();
+				$PreviousContract = $Contract->getPreviousVersionInYear();
 				if ($PreviousContract) {
 					// если сумма увеличилась
 					if ($Contract->sum > $PreviousContract->sum) {
@@ -144,27 +144,63 @@
 			return $stats;
 		}
 
-		protected function getByWeeks()
-		{
-			$date_end = date("d.m.Y", time());
+        protected function getByWeeks()
+        {
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
 
-			for ($i = 0; $i <= Request::timeFromFirst('weeks'); $i++) {
-				$last_sunday = strtotime("last sunday -$i weeks");
-				$date_start = date("d.m.Y", $last_sunday);
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
 
-				$stats[$date_end] = self::_getStats($date_start, $date_end);
+            if ($page == 1) { # текущая неделя
+                $date_end = date("d.m.Y", time());
+            } else { # первая дата для текущего набора данных
+                $date_end = date("d.m.Y", strtotime("last sunday -" . ($start - 1) . " weeks"));
+            }
 
-				$date_end = $date_start;
-			}
+            for ($i = 0; $i <= Request::timeFromFirst('weeks'); $i++) {
+                if ($i < $start) {
+                    continue;
+                }
+                if ($i >= $end) {
+                    continue;
+                }
 
-			// добавляем расторгнутые
-			return $stats;
-		}
+                $last_sunday = strtotime("last sunday -$i weeks");
+                $date_start = date("d.m.Y", $last_sunday);
+
+                $stats[$date_end] = self::_getStats($date_start, $date_end);
+
+                $date_end = $date_start;
+            }
+
+            // добавляем расторгнутые
+            return $stats;
+        }
 
 		protected function getByMonths()
 		{
-			$date_end = date("d.m.Y", time());
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
+
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
+
+            if ($page == 1) { # текущий месяц
+                $date_end = date("d.m.Y", time());
+            } else { # первая дата для текущего набора данных
+                $date_end = date("d.m.Y", strtotime("last day of -" . ($start - 1) . " months"));
+            }
+
 			for ($i = 1; $i <= Request::timeFromFirst('months'); $i++) {
+                if ($i < $start) {
+                    continue;
+                }
+                if ($i >= $end) {
+                    continue;
+                }
 				$last_day_of_month = strtotime("last day of -$i months");
 				$date_start = date("d.m.Y", $last_day_of_month);
 
@@ -176,22 +212,33 @@
 			return $stats;
 		}
 
-		protected function getByYears()
-		{
-			$date_end = date("d.m.Y", time());
+        protected function getByYears()
+        {
+            $date_end = date("d.m.Y", time());
 
-			for ($i = 1; $i <= Request::timeFromFirst('years'); $i++) {
-				$last_day_of_july = strtotime("may 1 -$i year");
-				$date_start = date("d.m.Y", $last_day_of_july);
+            //определяем текущий учебный год
+            if (date("j", time()) > 1 && date("n", time()) >= 5) {
+                $current_year = date("Y", time());
+            } else {
+                $current_year = date("Y", time()) - 1;
+            }
 
-				$stats[$date_end] = self::_getStats($date_start, $date_end);
+            for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
+                $year = $current_year - $i;
+                $date_start = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year));
+                if ($i == 0) {
+                    $date_end = date("d.m.Y");
+                } else {
+                    $date_end = date("d.m.Y", mktime(0, 0, 0, 4, 30, $year + 1));
+                }
 
-				$date_end = $date_start;
-			}
+                $stats[$date_end] = self::_getStats($date_start, $date_end);
 
-			return $stats;
-		}
+                $date_end = $date_start;
+            }
 
+            return $stats;
+        }
 
 		public function actionList()
 		{
@@ -200,18 +247,22 @@
 			switch ($_GET["group"]) {
 				case "w": {
 					$stats = self::getByWeeks();
+					$timeFromFirstText = 'weeks'; # текстовый казатель недели для Request::timeFromFirst
 					break;
 				}
 				case "m": {
 					$stats = self::getByMonths();
+                    $timeFromFirstText = 'months'; # текстовый казатель месяца для Request::timeFromFirst
 					break;
 				}
 				case "y": {
 					$stats = self::getByYears();
+                    $timeFromFirstText = 'years'; # текстовый казатель года для Request::timeFromFirst
 					break;
 				}
 				default: {
 					$stats = self::getByDays();
+                    $timeFromFirstText = 'days'; # текстовый казатель дня для Request::timeFromFirst
 					break;
 				}
 			}
@@ -224,6 +275,8 @@
 			$this->render("list", [
 				"ang_init_data" 	=> $ang_init_data,
 				"stats" => $stats,
+                "group" => (empty($_GET["group"])) ? 'd' : $_GET["group"], # указатель группировки
+                "total_items" => Request::timeFromFirst($timeFromFirstText) # всего элементов
 			]);
 		}
 
@@ -737,7 +790,7 @@
 			$Payments = Payment::findAll([
 				"condition" => "entity_type = '" . (isset($_GET['teachers']) ? Teacher::USER_TYPE : Student::USER_TYPE) . "' and ".
 					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
-								: "date = '$date_start'")
+								: "date = '$date_start'"),
 			]);
 
 			foreach ($Payments as $Payment) {
@@ -800,9 +853,26 @@
 
 		private function getPaymentsByWeeks()
 		{
-			$date_end = date("d.m.Y", time());
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
+
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
+
+            if ($page == 1) { # текущая неделя
+                $date_end = date("d.m.Y", time());
+            } else { # первая дата для текущего набора данных
+                $date_end = date("d.m.Y", strtotime("last sunday -" . ($start - 1) . " weeks"));
+            }
 
 			for ($i = 0; $i <= Payment::timeFromFirst('weeks'); $i++) {
+                if ($i < $start) {
+                    continue;
+                }
+                if ($i >= $end) {
+                    continue;
+                }
 				$last_sunday = strtotime("last sunday -$i weeks");
 				$date_start = date("d.m.Y", $last_sunday);
 
@@ -817,9 +887,26 @@
 
 		private function getPaymentsByMonths()
 		{
-			$date_end = date("d.m.Y", time());
+            # получаем значение текущей страницы
+            $page = (!empty($_GET['page'])) ? intval($_GET['page']) : 1;
+
+            # получаем указатель с какого по какое загружать
+            $start = ($page - 1) * self::PER_PAGE;
+            $end = $start + self::PER_PAGE;
+
+            if ($page == 1) { # текущий месяц
+                $date_end = date("d.m.Y", time());
+            } else { # первая дата для текущего набора данных
+                $date_end = date("d.m.Y", strtotime("last day of -" . ($start - 1) . " months"));
+            }
 
 			for ($i = 1; $i <= Payment::timeFromFirst('months'); $i++) {
+                if ($i < $start) {
+                    continue;
+                }
+                if ($i >= $end) {
+                    continue;
+                }
 				$last_day_of_month = strtotime("last day of -$i months");
 				$date_start = date("d.m.Y", $last_day_of_month);
 
@@ -835,24 +922,32 @@
 		 * Возвращает данные по годам, с даты первого платежа по текущий год
 		 * @return array
 		 */
-		private function getPaymentsByYears()
-		{
-			for ($i = 0; $i < Payment::timeFromFirst('years'); $i++) {
-				# начальная дата года
-				$date_start = date("d.m.Y", mktime(0, 0, 0, 1, 1, date('Y') - $i));
+        private function getPaymentsByYears()
+        {
+            $date_end = date("d.m.Y", time());
 
-				if($i == 0){
-					# если текущий год, то дата окончания ставится сегодняшним днем
-					$date_end = date("d.m.Y", time());
-				}else{
-					# другие года формируются, по последним минутам года
-					$date_end = date("d.m.Y", strtotime("may 1 -$i year"));
-				}
+            //определяем текущий учебный год
+            if (date("j", time()) > 1 && date("n", time()) >= 5) {
+                $current_year = date("Y", time());
+            } else {
+                $current_year = date("Y", time()) - 1;
+            }
 
-				$stats[$date_end] = self::_getPayments($date_start, $date_end);
-				$date_end = $date_start;
-			}
-			return $stats;
+            for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
+                $year = $current_year - $i;
+                $date_start = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year));
+
+                if ($i == 0) {
+                    $date_end = date("d.m.Y");
+                } else {
+                    $date_end = date("d.m.Y", mktime(0, 0, 0, 5, 1, $year) + (60 * 60 * 24 * 365));
+                }
+
+                $stats[$date_end] = self::_getPayments($date_start, $date_end);
+                $date_end = $date_start;
+            }
+
+            return $stats;
 		}
 
 

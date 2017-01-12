@@ -14,23 +14,23 @@
 		{
 			$this->addJs("ng-teacher-review-app, dnd-new");
 		}
-		
+
 		private function _studentId()
 		{
 			return User::fromSession()->type == Student::USER_TYPE ? User::fromSession()->id_entity : $_GET['id_student'];
 		}
-		
+
 		/**
 		 * Список для ученика
 		 */
 		public function actionList()
 		{
 			$id_student = self::_studentId();
-			
+
 			$this->_custom_panel = true;
 			$this->addJs("bootstrap-select");
 			$this->addCss("bootstrap-select");
-			
+
 			$ang_init_data = angInit([
 				'Subjects' 		=> Subjects::$all,
 				'three_letters' => Subjects::$three_letters,
@@ -46,28 +46,28 @@
 				"ang_init_data" => $ang_init_data,
 			]);
 		}
-        
+
         /**
 		 * Для админов
 		 */
 		public function actionView()
 		{
     		$Review = TeacherReview::findById($_GET['id']);
-    		
+
             $id_student = $Review->id_student;
 			$id_teacher = $Review->id_teacher;
 			$id_subject = $Review->id_subject;
 			$year 		= $Review->year;
-			
-			$this->_custom_panel = true; 
-			
+
+			$this->_custom_panel = true;
+
 			$this->setTabTitle("Оценка преподавателей");
 
 			$this->render("edit", [
 				"ang_init_data" => static::_generateAngInit($id_student, $id_teacher, $id_subject, $year),
 			]);
 		}
-        
+
 		/**
 		 * Для админов
 		 */
@@ -77,9 +77,9 @@
 			$id_teacher = $_GET['id_teacher'];
 			$id_subject = $_GET['id_subject'];
 			$year 		= $_GET['year'];
-			
-			$this->_custom_panel = true; 
-			
+
+			$this->_custom_panel = true;
+
 			$this->setTabTitle("Оценка преподавателей");
 
 			$this->render("edit", [
@@ -95,7 +95,7 @@
 			$this->_custom_panel = true;
 			$this->addJs("bootstrap-select");
 			$this->addCss("bootstrap-select");
-			
+
 			$ang_init_data = angInit([
 				'Subjects' 		=> Subjects::$all,
 				'three_letters' => Subjects::$three_letters,

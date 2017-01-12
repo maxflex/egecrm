@@ -32,17 +32,17 @@ app = angular.module("Stats", ["ui.bootstrap"]).config([
     date_end = $("#date-end").val();
     return redirect("stats/users?date_start=" + date_start + "&date_end=" + date_end);
   };
-  $scope.pageChanged = function() {
+  $scope.pageChanged = function(group) {
     ajaxStart();
-    return redirect("stats/?page=" + $scope.currentPage);
+    return redirect("stats/?group=" + group + "&page=" + $scope.currentPage);
   };
   $scope.pageStudentChanged = function() {
     ajaxStart();
     return redirect("stats/visits/total?page=" + $scope.currentPage);
   };
-  $scope.pagePaymentChanged = function() {
+  $scope.pagePaymentChanged = function(group) {
     ajaxStart();
-    return redirect("stats/payments?page=" + $scope.currentPage);
+    return redirect("stats/payments?group=" + group + "&page=" + $scope.currentPage);
   };
   $scope.Schedules = {};
   $scope.dateLoad = function(date) {

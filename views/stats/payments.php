@@ -155,11 +155,11 @@
 		</tbody>
 	</table>
 
-	<?php if ($_GET["group"] == "d" || empty($_GET["group"])) :?>
+	<?php if ((Payment::timeFromFirst($_GET["group"]) / StatsController::PER_PAGE) > 1) :?>
 		<pagination
 		  ng-model="currentPage"
-		  ng-change="pagePaymentChanged()"
-		  total-items="<?= Payment::timeFromFirst() ?>"
+		  ng-change="pagePaymentChanged('<?= $_GET['group'] ?>')"
+		  total-items="<?= Payment::timeFromFirst($_GET['group']) ?>"
 		  max-size="10"
 		  items-per-page="<?= StatsController::PER_PAGE ?>"
 		  first-text="«"

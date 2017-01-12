@@ -185,7 +185,7 @@
 
         /**
          * Получить предыдущую версию договора, используется в статистике
-         * @contract-refactored
+         * @depricated
          */
 		public function getPreviousVersion()
 		{
@@ -194,10 +194,28 @@
                 "order"		=> "id DESC",
             ]);
 		}
+        /**
+         * Получить предыдущую версию договора в рамках года сущности договора, используется в статистике
+         */
+		public function getPreviousVersionInYear()
+		{
+            $query = dbConnection()->query("
+                SELECT id FROM contracts c
+                JOIN contract_info ci ON ci.id_contract = c.id_contract
+                WHERE ci.id_student={$this->info->id_student} AND ci.year={$this->info->year} AND c.id < {$this->id}
+                ORDER BY id DESC
+                LIMIT 1
+            ");
+            if ($query->num_rows) {
+                return self::findById($query->fetch_object()->id);
+            } else {
+                return false;
+            }
+		}
 
 
 		/**
-		 * Является ли договор оригинальным? (Либо активный без версий, либо самая старая версия)
+		 * Является ли договор оригинальным?
 		 *
 		 */
 		public function isOriginal()
@@ -205,6 +223,19 @@
             // @contract-refactored
 			return $this->id == $this->id_contract;
 		}
+
+        /**
+         * Первый договор в учебном году
+         */
+        public function isFirstInYear()
+        {
+            // получаем первый договор ученика в году, равному году текущей сущности договора
+            return dbConnection()->query("
+                SELECT MIN(id) as min_id FROM contracts c
+                JOIN contract_info ci ON ci.id_contract = c.id_contract
+                WHERE ci.id_student={$this->info->id_student} AND ci.year={$this->info->year}
+            ")->fetch_object()->min_id == $this->id;
+        }
 
 
 		/**
@@ -290,7 +321,7 @@
             $main_query = "
                          from contracts c
                          join  contract_info ci on ci.id_contract = c.id_contract
-                         join  students s on ci.id_student = s.id 
+                         join  students s on ci.id_student = s.id
                          where 1 ".
                          (!isBlank($search->start_date) ? " and str_to_date(c.date, '%d.%m.%Y') >= str_to_date('" . $search->start_date . "', '%d.%m.%Y') " : "") .
                          (!isBlank($search->end_date) ? " and str_to_date(c.date, '%d.%m.%Y') <= str_to_date('" . $search->end_date . "', '%d.%m.%Y') " : "") .

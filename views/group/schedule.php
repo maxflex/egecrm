@@ -11,10 +11,9 @@
 					'many': 'занятий'
 				}"></ng-pluralize>)</span>
 
-		<span ng-hide="<?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>" class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
+		<span class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
 		<div class="pull-right">
-			<span class="link-reverse pointer" ng-click="setParamsFromGroup(Group)" ng-show="Group.Schedule.length && Group.start"
-				ng-hide="<?= (User::isTeacher() || User::isStudent() ? 'true' : 'false') ?>">
+			<span class="link-reverse pointer" ng-click="setParamsFromGroup(Group)" ng-show="Group.Schedule.length">
 				установить время занятий, филиал и кабинет из настроек группы
 			</span>
 		</div>
@@ -23,7 +22,9 @@
 		<div class="row calendar">
 			<div class="col-sm-5" style="position: relative">
 				<!-- 		CALENDAR BLOCKER		 -->
-				<div style="position: absolute; height: 100%; width: 100%; z-index: 20" ng-show="false"></div>
+                <?php if (! allowed(Shared\Rights::EDIT_GROUP_SCHEDULE)) :?>
+                <div class='div-blocker'></div>
+                <?php endif ?>
 				<div class="row calendar-row" ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]">
 					<div class="col-sm-4 month-name text-primary">
 						{{monthName(month)}} {{month == 1 ? Group.year + 1 : ""}}
@@ -52,7 +53,11 @@
 						<td>
 							<div class="lessons-table" ng-show="!inPastLessons(Schedule.date)">
 								<input type="text" style="display: none" class="timemask no-border-outline" ng-value="Schedule.time">
-								<span  <?= (User::isTeacher() || User::isStudent() ? '' : 'ng-click="setTime(Schedule, $event)"') ?>>
+                                <?php if (User::fromSession()->allowed(Shared\Rights::EDIT_GROUP_SCHEDULE)) :?>
+								    <span ng-click="setTime(Schedule, $event)">
+                                <?php else :?>
+                                    <span>
+                                <?php endif ?>
 									{{Schedule.time ? Schedule.time : 'не установлено'}}
 								</span>
 							</div>
@@ -61,14 +66,14 @@
 							</div>
 						</td>
 						<td>
-							<select ng-disabled="inPastLessons(Schedule.date)" class='branch-cabinet' ng-model='Schedule.cabinet' ng-change='changeCabinet(Schedule)'>
+							<select ng-disabled="inPastLessons(Schedule.date) || !<?= allowed(Shared\Rights::EDIT_GROUP_SCHEDULE, true) ?>" class='branch-cabinet' ng-model='Schedule.cabinet' ng-change='changeCabinet(Schedule)'>
 								<option selected value=''>кабинет</option>
 								<option disabled>──────────────</option>
 							  	<option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}" ng-selected="(inPastLessons(Schedule.date) ? getPastLesson(Schedule.date).cabinet : Schedule.cabinet) == cabinet.id">{{ cabinet.label}}</option>
 							</select>
 						</td>
 						<td>
-							<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Schedule.is_free" ng-change="changeFree(Schedule)">
+							<input ng-disabled="!<?= allowed(Shared\Rights::EDIT_GROUP_SCHEDULE, true) ?>" type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="Schedule.is_free" ng-change="changeFree(Schedule)">
 							бесплатное занятие
 						</td>
 					</tr>

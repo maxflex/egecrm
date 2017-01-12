@@ -14,13 +14,6 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 	            $('.watch-select').selectpicker 'refresh'
 	        , 100
 
-		$scope.getUsers = ->
-			if $scope.right
-				_.sortBy $scope.Users, (User) ->
-					not $scope.allowed(User, $scope.right)
-			else
-				$scope.Users
-
 		$scope.toggleRights = (User, right) ->
 			NewUser = angular.copy(User)
 			right = parseInt(right)
@@ -40,10 +33,14 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 					refreshCounts()
 
 		$scope.getCounts = (right = false) ->
-			return $scope.Users.length if right is false
-			_.reject($scope.Users, (User) ->
+			return ($scope.ActiveUsers.length + $scope.BannedUsers.length) if right is false
+			count = _.reject($scope.ActiveUsers, (User) ->
 				return User.rights.indexOf(parseInt(right)) is -1
-			).length or ''
+			).length
+			count += _.reject($scope.BannedUsers, (User) ->
+				return User.rights.indexOf(parseInt(right)) is -1
+			).length
+			count or ''
 
 		$scope.allowed = (User, right) ->
 			User.rights.indexOf(parseInt(right)) isnt -1

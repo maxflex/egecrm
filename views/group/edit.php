@@ -28,7 +28,7 @@
 		<div class="panel-body" style="position: relative">
 			<form id="group-edit" autocomplete='off'>
 				<div class="top-group-menu-thin">
-					<?php if (! User::fromSession()->allowed(Shared\Rights::EDIT_GROUPS)) :?>
+					<?php if (! allowed(Shared\Rights::EDIT_GROUPS)) :?>
 					<div class='div-blocker'></div>
 					<?php endif ?>
 					<div class="form-group">

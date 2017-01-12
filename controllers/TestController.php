@@ -500,61 +500,6 @@
 			Email::send("makcyxa-k@yandex.ru", "СМС о тестировании", $body);
 		}
 
-		public function actionUpdateSearchData()
-		{
-			$Students = Student::getWithContract();
-
-			foreach ($Students as $Student) {
-				$text = "";
-				$Requests = $Student->getRequests();
-				foreach ($Requests as $Request) {
-					$text .= $Request->name;
-					$text .= self::_getPhoneNumbers($Request);
-				}
-				// Имя, телефоны ученика и представителя
-				$text .= $Student->name();
-				$text .= self::_getPhoneNumbers($Student);
-				$text .= $Student->email;
-
-				if ($Student->Passport) {
-					$text .= $Student->Passport->series;
-					$text .= $Student->Passport->number;
-				}
-
-				if ($Student->Representative) {
-					$text .= $Student->Representative->name();
-					$text .= self::_getPhoneNumbers($Student->Representative);
-					$text .= $Student->Representative->email;
-					$text .= $Student->Representative->address;
-
-					if ($Student->Representative->Passport) {
-						$text .= $Student->Representative->Passport->series;
-						$text .= $Student->Representative->Passport->number;
-						$text .= $Student->Representative->Passport->issued_by;
-						$text .= $Student->Representative->Passport->address;
-					}
-				}
-
-				// Последние 4 цифры номер карты
-				$Payments = Payment::findAll([
-					"condition" => "id_status=" . Payment::PAID_CARD . " AND entity_id=" . $Student->id . " and entity_type='".Student::USER_TYPE."' AND card_number!=''"
-				]);
-				foreach ($Payments as $Payment) {
-					$text .= $Payment->card_number;
-				}
-
-				$return[$Student->id] = $text;
-			}
-
-			dbConnection()->query("TRUNCATE TABLE search_students");
-
-			foreach ($return as $id_student => $text) {
-				$values[] = "($id_student, '" . $text . "')";
-			}
-
-			dbConnection()->query("INSERT INTO search_students (id_student, search_text) VALUES " . implode(",", $values));
-		}
-
 		private static function _getPhoneNumbers($Object)
 		{
 			$text = "";

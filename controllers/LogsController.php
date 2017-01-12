@@ -11,6 +11,7 @@
 
         public function beforeAction()
         {
+            $this->checkRights(Shared\Rights::LOGS);
             $this->addJs('ng-logs-app');
         }
 

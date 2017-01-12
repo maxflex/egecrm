@@ -34,9 +34,9 @@
 				<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.id_subject" ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.subject[''] || '' }}">все предметы</option>
 					<option disabled>──────────────</option>
-					<option 
+					<option
 						data-subtext="{{ counts.subject[id_subject] || '' }}"
-						ng-repeat="(id_subject, name) in three_letters" 
+						ng-repeat="(id_subject, name) in three_letters"
 						value="{{id_subject}}">{{ name }}</option>
 				</select>
 			</div>
@@ -71,21 +71,30 @@
 					<option value="0"  data-subtext="{{ counts.mode[0] || '' }}">требуется создать</option>
 				</select>
 	        </div>
-	        	<div>
+	        <div>
 				<select class="watch-select single-select form-control" ng-model="search.id_user" ng-change='filter()'>
-					<option value=""  data-subtext="{{ counts.user[''] || '' }}">все пользователи</option>
-					<option disabled>───────</option>
-					<option 
-						ng-repeat="user in UserService.getWithSystem()"
-						value="{{ user.id }}" 
-						data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span><small class='text-muted'>{{ counts.user[user.id] || '' }}</small>"></option>
+                    <option value=''>пользователь</option>
+    				<option disabled>──────────────</option>
+    				<option
+    					ng-repeat="user in UserService.getWithSystem()"
+    					ng-show='counts.user[user.id]'
+    					value="{{ user.id }}"
+    					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span><small class='text-muted'>{{ counts.user[user.id] || '' }}</small>"
+    				></option>
+    				<option disabled ng-show="UserService.getBannedHaving(counts.user).length">──────────────</option>
+    				<option
+    					ng-show='counts.user[user.id]'
+                        ng-repeat="user in UserService.getBannedUsers()"
+    					value="{{ user.id }}"
+    					data-content="<span style='color: black;'>{{ user.login }}</span><small class='text-muted'>{{ counts.user[user.id] || '' }}</small>"
+    				></option>
 				</select>
 	        </div>
 	        <div id='year-fix'>
 				<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.year[''] || '' }}">все годы</option>
 					<option disabled>────────</option>
-					<option ng-repeat="year in <?= Years::json() ?>" 
+					<option ng-repeat="year in <?= Years::json() ?>"
 						data-subtext="{{ counts.year[year] || '' }}"
 						value="{{year}}">{{ yearLabel(year) }}</option>
 				</select>
