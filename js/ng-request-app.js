@@ -766,6 +766,18 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			});
 		}
 
+		$scope.printTerminationOoo = function(contract) {
+			$scope.print_mode = 'termination-ooo'
+			$scope.term_contract_parent = $scope.firstContractInChain(contract)
+			$scope.term_contract = $scope.lastContractInChain(contract)
+
+			$timeout(function(){
+				$scope.$apply();
+				html = $("#termination-ooo-print").html()
+				$scope.editBeforePrint(html);
+			});
+		}
+
 		$scope.getLastLessonDate = function() {
 			date = '0000-00-00'
 			// если есть активные группы
