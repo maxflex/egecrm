@@ -473,12 +473,18 @@
 		 */
 		public function getLastContract($year = false)
 		{
-            // @contract-refactored
-			return Contract::find([
-				"condition"	=> "id_contract IN (" . Contract::getIdsByStudent($this->id) . ") AND current_version=1 " . ($year ? " AND year={$year}" : ""),
-				"order"		=> "id DESC",
-				"limit"		=> "1",
-			]);
+            $query = dbConnection()->query("
+                SELECT id FROM contracts c
+                JOIN contract_info ci ON ci.id_contract = c.id_contract
+                WHERE ci.id_student={$this->id} AND c.current_version=1" . ($year ? " AND ci.year={$year}" : '') . "
+                ORDER BY id DESC
+                LIMIT 1
+            ");
+            if ($query->num_rows) {
+                return Contract::findById($query->fetch_object()->id);
+            } else {
+                return false;
+            }
 		}
 
 		/**
