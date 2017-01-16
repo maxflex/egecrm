@@ -49,6 +49,6 @@ app.service 'UserService', ($rootScope, $q, $http, $timeout, User)->
 
     @getBannedHaving = (condition_obj) ->
         _.filter @users, (user) ->
-            user.rights.indexOf(34) isnt -1 and condition_obj[user.id]
+            user.rights.indexOf(34) isnt -1 and condition_obj and condition_obj[user.id]
 
     @

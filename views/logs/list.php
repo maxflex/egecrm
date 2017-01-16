@@ -117,18 +117,20 @@
             </table>
         </div>
 
-        <pagination
-            ng-show='(logs && logs.length) && (counts.all > <?= Log::PER_PAGE ?>)'
-            ng-model="current_page"
-            ng-change="pageChanged()"
-            total-items="counts.all"
-            max-size="10"
-            items-per-page="<?= Log::PER_PAGE ?>"
-            first-text="«"
-            last-text="»"
-            previous-text="«"
-            next-text="»"
-        >
-        </pagination>
+        <div class="col-sm-12">
+            <pagination
+                ng-show='(logs && logs.length) && (counts.all > <?= Log::PER_PAGE ?>)'
+                ng-model="current_page"
+                ng-change="pageChanged()"
+                total-items="counts.all"
+                max-size="10"
+                items-per-page="<?= Log::PER_PAGE ?>"
+                first-text="«"
+                last-text="»"
+                previous-text="«"
+                next-text="»"
+            >
+            </pagination>
+        </div>
     </div>
 </div>
