@@ -153,6 +153,179 @@ app.directive('comments', function() {
   };
 });
 
+app.directive('phones', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'directives/phone',
+    scope: {
+      entity: '=',
+      entityType: '@'
+    },
+    controller: function($scope, $timeout, $attrs, $interval, $element, PhoneService, UserService) {
+      var addMask, getFieldName, infoTemplate, init, recodringLink;
+      bindArguments($scope, arguments);
+      $scope.$watch('entity', function(newVal) {
+        return init();
+      });
+      init = function() {
+        $scope.level = PhoneService.level($scope.entity);
+        return $timeout(function() {
+          return addMask();
+        });
+      };
+      $scope.max_level = PhoneService.fields.length;
+      if ($attrs.hasOwnProperty('disabled')) {
+        $scope.is_disabled = true;
+      }
+      if ($attrs.hasOwnProperty('withComment')) {
+        $scope.with_comment = true;
+      }
+      $scope.nextLevel = function() {
+        return $scope.level++;
+      };
+      $scope.info = function(number) {
+        $scope.api_number = number;
+        $scope.mango_info = null;
+        infoTemplate().modal('show');
+        if ($scope.isOpened === false) {
+          infoTemplate().on('hidden.bs.modal', function() {
+            $scope.isOpened = true;
+            if ($scope.audio) {
+              $scope.audio.pause();
+              $scope.audio = null;
+              $scope.is_playing_stage = 'stop';
+              return $scope.is_playing = null;
+            }
+          });
+        }
+        return PhoneService.info(number).then(function(result) {
+          $scope.mango_info = result;
+          return $timeout(function() {
+            return $scope.$apply();
+          });
+        });
+      };
+      $scope.time = function(seconds) {
+        return moment(0).seconds(seconds).format("mm:ss");
+      };
+      $scope.getNumberTitle = function(number) {
+        if (number === PhoneService.clean($scope.api_number)) {
+          return 'текущий номер';
+        }
+        return number;
+      };
+      $scope.is_playing_stage = 'stop';
+      $scope.isOpened = false;
+      recodringLink = function(recording_id) {
+        var api_key, api_salt, sha256, sign, timestamp;
+        api_key = 'goea67jyo7i63nf4xdtjn59npnfcee5l';
+        api_salt = 't9mp7vdltmhn0nhnq0x4vwha9ncdr8pa';
+        timestamp = moment().add(5, 'minute').unix();
+        sha256 = new jsSHA('SHA-256', 'TEXT');
+        sha256.update(api_key + timestamp + recording_id + api_salt);
+        sign = sha256.getHash('HEX');
+        return "https://app.mango-office.ru/vpbx/queries/recording/link/" + recording_id + "/play/" + api_key + "/" + timestamp + "/" + sign;
+      };
+      $scope.intervalStart = function() {
+        return $scope.interval = $interval(function() {
+          if ($scope.audio) {
+            $scope.current_time = angular.copy($scope.audio.currentTime);
+            $scope.prc = (($scope.current_time * 100) / $scope.audio.duration).toFixed(2);
+            if (parseInt($scope.prc) === 100) {
+              return $scope.stop();
+            }
+          }
+        }, 10);
+      };
+      $scope.intervalCancel = function() {
+        return $interval.cancel($scope.interval);
+      };
+      $scope.initAudio = function(recording_id) {
+        if ($scope.is_playing) {
+          $scope.stop();
+        }
+        $scope.audio = new Audio(recodringLink(recording_id));
+        $scope.current_time = 0;
+        $scope.prc = 0;
+        $scope.is_playing_stage = 'start';
+        return $scope.is_playing = recording_id;
+      };
+      $scope.pause = function() {
+        $scope.intervalCancel();
+        if ($scope.audio) {
+          $scope.audio.pause();
+        }
+        return $scope.is_playing_stage = 'pause';
+      };
+      $scope.play = function(recording_id) {
+        if (!$scope.isPlaying(recording_id)) {
+          $scope.initAudio(recording_id);
+        }
+        if ($scope.is_playing_stage === 'play') {
+          return $scope.pause();
+        } else {
+          $scope.audio.play();
+          $scope.is_playing_stage = 'play';
+          return $scope.intervalStart();
+        }
+      };
+      $scope.isPlaying = function(recording_id) {
+        return $scope.is_playing === recording_id;
+      };
+      $scope.stop = function() {
+        $scope.prc = 0;
+        $scope.is_playing = null;
+        $scope.audio.pause();
+        $scope.audio = null;
+        $scope.is_playing_stage = 'stop';
+        return $scope.intervalCancel();
+      };
+      $scope.setCurentTime = function(e) {
+        var time, width;
+        width = angular.element(e.target).width();
+        $scope.prc = (e.offsetX * 100) / width;
+        time = ($scope.audio.duration * $scope.prc) / 100;
+        return $scope.audio.currentTime = time;
+      };
+      $scope.phoneMaskControl = function(event) {
+        var checkDublicate, filled, input;
+        input = $(event.target);
+        if (PhoneService.isSame(input.val(), $scope.entity[getFieldName(input)])) {
+          return;
+        }
+        filled = input.val() && !input.val().match(/_/);
+        checkDublicate = !input.attr('untrack-dublicate');
+        if (filled && checkDublicate) {
+          return PhoneService.checkDublicate().then(function(result) {
+            if (result === 'true') {
+              ang_scope && (ang_scope.phone_duplicate = result);
+              input.addClass('has-error-bold');
+            } else {
+              ang_scope && (ang_scope.phone_duplicate = null);
+              input.removeClass('has-error-bold');
+            }
+            return input.trigger('blur');
+          });
+        } else {
+          input.removeClass('has-error-bold');
+          return ang_scope && (ang_scope.phone_duplicate = null);
+        }
+      };
+      getFieldName = function(el) {
+        return el.attr('id').replace('entity-phone-', '');
+      };
+      infoTemplate = function() {
+        return $("#api-phone-info-" + $scope.entityType, $element);
+      };
+      return addMask = function() {
+        return $(".phone-masked", $element).mask('+7 (999) 999-99-99', {
+          autoclear: false
+        });
+      };
+    }
+  };
+});
+
 app.directive('sms', function() {
   return {
     restrict: 'E',
@@ -196,8 +369,14 @@ app.directive('sms', function() {
         return $scope.message = '';
       };
       $scope.$watch('number', function(newVal, oldVal) {
-        $scope.history = SmsService.getHistory(newVal);
-        return scrollUp();
+        if (newVal) {
+          $scope.history_loading = true;
+          return SmsService.getHistory(newVal).$promise.then(function(response) {
+            $scope.history = response;
+            $scope.history_loading = false;
+            return scrollUp();
+          });
+        }
       });
       scrollUp = function() {
         return $timeout(function() {
@@ -226,6 +405,7 @@ app.directive('sms', function() {
 });
 
 app.service('PhoneService', function($rootScope) {
+  this.fields = ['phone', 'phone2', 'phone3'];
   this.call = function(number) {
     if (typeof number !== 'string') {
       number = '' + number;
@@ -257,6 +437,38 @@ app.service('PhoneService', function($rootScope) {
   };
   this.isFull = function(number) {
     return this.clean(number).length === 11;
+  };
+  this.level = function(entity) {
+    var field, i, len, level, ref;
+    level = 0;
+    if (entity) {
+      ref = this.fields;
+      for (i = 0, len = ref.length; i < len; i++) {
+        field = ref[i];
+        if (entity[field]) {
+          level++;
+        }
+      }
+    }
+    return level;
+  };
+  this.info = function(number) {
+    return $.post('mango/stats', {
+      number: this.clean(number)
+    }, function(result) {
+      return result;
+    }, 'json');
+  };
+  this.isSame = function(a, b) {
+    return this.clean(a) === this.clean(b);
+  };
+  this.checkDublicate = function(number, id_request) {
+    return $.post('ajax/checkPhone', {
+      phone: number,
+      id_request: id_request
+    }, function(result) {
+      return result;
+    });
   };
   return this;
 });
@@ -318,11 +530,9 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
     return status_class;
   };
   this.getHistory = function(number) {
-    if (number) {
-      return Sms.query({
-        number: number
-      });
-    }
+    return Sms.query({
+      number: number
+    });
   };
   this.send = function(number, message) {
     var action, data;

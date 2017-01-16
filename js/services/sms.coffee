@@ -18,9 +18,8 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
         status_class
 
     @getHistory = (number) ->
-        if number
-            Sms.query
-                number: number
+        Sms.query
+            number: number
 
     @send = (number, message) ->
         if message

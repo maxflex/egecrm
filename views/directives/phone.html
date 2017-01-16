@@ -1,0 +1,90 @@
+<div class='form-group'
+     ng-repeat='phone in PhoneService.fields'
+     ng-show='!$index || level > $index'
+     ng-if='entity'
+>
+    <div class="input-group"
+         ng-class="{'input-group-with-hidden-span' : !PhoneService.isFull(entity[phone]) || (!PhoneService.isMobile(entity[phone]) && level > $index + 1) }">
+        <input id="entity-phone-{{phone}}" type="text" class="form-control phone-masked"
+               name="{{entityType}}[{{phone}}]"
+               ng-attr-placeholder="телефон{{$index ? ' ' + ($index + 1) : ''}}"
+               ng-model="entity[phone]"
+               ng-value="PhoneService.format(entity[phone])"
+               ng-disabled="is_disabled"
+               ng-keyup="phoneMaskControl($event)"
+        >
+        <div ng-if="with_comment" class='comment-inside-input'>
+            <span class="glyphicon glyphicon-pencil text-gray" ng-show="!entity[phone + '_comment']"></span>
+            <input type="text" class='no-border-outline phone-comment' ng-model="entity[phone + '_comment']" ng-disabled="is_disabled">
+        </div>
+        <div class="input-group-btn">
+            <button class="btn btn-default"
+                ng-if="PhoneService.isFull(entity[phone])" ng-click='info(entity[phone])'>
+                <span class="glyphicon glyphicon-transfer small no-margin-right"></span>
+            </button>
+            <button class="btn btn-default"
+                ng-if="PhoneService.isFull(entity[phone]) && PhoneService.isMobile(entity[phone])"
+                ng-click="PhoneService.call(entity[phone])"
+            >
+                <span class="glyphicon glyphicon-earphone no-margin-right small"></span>
+            </button>
+            <button class="btn btn-default" type="button"
+                ng-if="PhoneService.isFull(entity[phone]) && PhoneService.isMobile(entity[phone])"
+                ng-class="{'addon-bordered' : level > $index + 1 || !PhoneService.isFull(entity[phone])}"
+                ng-click="PhoneService.sms(entity[phone])"
+            >
+                <span class="glyphicon glyphicon-envelope no-margin-right small"></span>
+            </button>
+            <button class="btn btn-default" type="button"
+                ng-if="!is_disabled && (level < max_level && (level == $index + 1) && PhoneService.isFull(entity[phone]))"
+                ng-click="nextLevel()"
+            >
+                <span class="glyphicon glyphicon-plus no-margin-right small"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!--MANGO API-->
+<div class="modal modal-rounded" id='api-phone-info-{{ entityType }}' tabindex="-1">
+    <div class="modal-dialog" style="width: 60%; margin: 10% auto">
+        <div class="modal-content" style="height: 50%">
+            <div class="div-loading" ng-show='mango_info === null'>
+                <span>загрузка...</span>
+            </div>
+            <div class='modal-body' style='height: 500px; overflow: scroll; max-height: 100%'>
+                <div ng-show='mango_info !== null && !mango_info.length' class='vertical-center'>нет данных</div>
+                <h4 ng-show='mango_info.length' class='modal-title' style='margin-bottom: 10px'>Детализация по номеру {{ api_number }}</h4>
+                <table class='table table-divlike'>
+                    <tr ng-repeat='data in mango_info'>
+                        <td width='300'>
+                            <span ng-show='data.from_extension' style='color: {{ UserService.getColor(data.from_extension) }}'>{{ UserService.getLogin(data.from_extension) }}</span>
+                            <span ng-hide='data.from_extension'>{{ getNumberTitle(data.from_number) }}</span>
+                            {{ data.date_start | formatDateTime }}
+                            <span class="glyphicon glyphicon-arrow-right"></span>
+                            <span ng-show='data.to_extension' style='color: @{{ UserService.getColor(data.to_extension) }}'>{{ UserService.getLogin(data.to_extension) }}</span>
+                            <span ng-hide='data.to_extension'>{{ getNumberTitle(data.to_number) }}</span>
+                        </td>
+                        <td width='100'>
+                            {{ time(data.seconds) }}
+                        </td>
+                        <td width='20'>
+                            <span ng-show='data.recording_id' ng-click='play(data.recording_id)'
+                                  style='text-decoration: none' class="glyphicon no-margin-right link-like glyphicon-play" ng-class="{
+                                    'glyphicon-pause': isPlaying(data.recording_id) && is_playing_stage == 'play'
+                                }"></span>
+                        </td>
+                        <td width='250'>
+                            <div class="progress_bar" ng-show='isPlaying(data.recording_id)'>
+                                <div class="wraperPGBR">
+                                    <div class="line" style="width:{{prc}}%;"></div>
+                                </div>
+                                <div class="clicker" ng-click="setCurentTime($event)"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

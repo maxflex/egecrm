@@ -532,47 +532,6 @@
 		    $.mask.definitions['m'] = "[0-9]";
 			$(".timemask").mask("Hh:Mm", {clearIfNotMatch: true});
 
-			// Маска телефонов
-			$(".phone-masked")
-				.mask("+7 (999) 999-99-99", { autoclear: false })
-				.on("keyup", function() {
-					t = $(this)
-
-					// если номер не заполнен -- выйти
-					if (!t.val()) {
-						return
-					}
-
-					// если есть нижнее подчеркивание, то номер заполнен не полностью
-					not_filled = t.val().match(/_/)
-
-					checkDublicate = !t.attr('untrack-dublicate');
-
-					// если номер полностью заполнен
-					if (!not_filled && checkDublicate) {
-						$.ajax({
-							type: "POST",
-							url: "ajax/checkPhone",
-							data: {'phone': t.val(), 'id_request': ang_scope.id_request},
-							success: function(response) {
-									if (response == "true") {
-										ang_scope.phone_duplicate = response
-										t.addClass("has-error-bold")
-									} else {
-										ang_scope.phone_duplicate = null
-										t.removeClass("has-error-bold")
-									}
-									ang_scope.$apply()
-								},
-							async: false
-						})
-					} else {
-						t.removeClass("has-error-bold")
-						ang_scope.phone_duplicate = null
-						ang_scope.$apply()
-					}
-				})
-
 			// FLOAT-LABEL
 			$(".floatlabel").floatlabel();
 		}, 100)

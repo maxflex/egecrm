@@ -38,8 +38,13 @@ app.directive 'sms', ->
 
 
         $scope.$watch 'number', (newVal, oldVal) ->
-            $scope.history = SmsService.getHistory newVal
-            scrollUp()
+            if newVal
+                $scope.history_loading = true
+                SmsService.getHistory newVal
+                          .$promise.then (response) ->
+                                $scope.history = response
+                                $scope.history_loading = false
+                                scrollUp()
 
         scrollUp = ->
             $timeout ->

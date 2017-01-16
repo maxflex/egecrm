@@ -2,6 +2,7 @@
 	// Контроллер
 	class MangoController extends Controller
 	{
+	    const EGEREP_MANGO_API = 'http://egerep.dev/api/external/mangoStats';
 		// Папка вьюх
 		protected $_viewsFolder	= "mango";
 		
@@ -54,4 +55,23 @@
 			extract($_POST);
 			Mango::hangup($call_id);
 		}
+
+        public function actionStats()
+        {
+            extract($_POST);
+            echo static::exec(self::EGEREP_MANGO_API, compact('number'));
+        }
+
+        protected static function exec($url, $params)
+        {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json']);
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            return $result;
+        }
 	}

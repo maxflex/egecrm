@@ -10,7 +10,8 @@ var coffee_cnf  = config.coffee;
 bower_packages = [
 	'js/bower/angular-resource/angular-resource.min.js',
 	'js/bower/vue/dist/vue.min.js',
-	'js/bower/vue-resource/dist/vue-resource.min.js'
+	'js/bower/vue-resource/dist/vue-resource.min.js',
+	'js/bower/jsSHA/src/sha256.js'
 ];
 
 gulp.task('build-vendor', function() {
@@ -42,7 +43,7 @@ gulp.task('ng-apps', function() {
 	browserSync.reload();
 });
 
-gulp.task('watch', ['build-vendor'], function() {
+gulp.task('watch', ['default'], function() {
 	browserSync.init(config.browsersync.options);
 
 	gulp.watch(coffee_cnf.assets.src, ['assets']);
