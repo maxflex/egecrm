@@ -2,7 +2,7 @@
 	// Контроллер
 	class MangoController extends Controller
 	{
-	    const EGEREP_MANGO_API = 'http://egerep.dev/api/external/mangoStats';
+	    const EGEREP_MANGO_API = 'https://lk.ege-repetitor.ru/api/external/mangoStats';
 		// Папка вьюх
 		protected $_viewsFolder	= "mango";
 		
