@@ -458,9 +458,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		// анимация загрузки RENDER ANGULAR
 		angular.element(document).ready(function() {
 			$scope.setMode($scope.mode)
-			setTimeout(function() {
-				$(".phone-masked").keyup()
-			}, 100)
 		})
 
 		$scope.getGroup = function(id) {

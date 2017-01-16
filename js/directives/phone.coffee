@@ -120,15 +120,15 @@ app.directive 'phones', ->
 
 		$scope.phoneMaskControl = (event) ->
 			input = $ event.target
-
+			number = input.val()
 			# @strange-behavior
 			# keyup fired on value init
-			return if PhoneService.isSame input.val(), $scope.entity[getFieldName input]
-			filled = input.val() && not input.val().match /_/
+			return if PhoneService.isSame number, $scope.entity[getFieldName input]
+			filled = input.val() && not number.match /_/
 			checkDublicate = !input.attr 'untrack-dublicate'
 
 			if filled and checkDublicate
-				PhoneService.checkDublicate()
+				PhoneService.checkDublicate number, $scope.$parent.id_request
 				.then (result) ->
 					if result is  'true'
 						ang_scope and ang_scope.phone_duplicate = result

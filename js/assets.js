@@ -288,15 +288,16 @@ app.directive('phones', function() {
         return $scope.audio.currentTime = time;
       };
       $scope.phoneMaskControl = function(event) {
-        var checkDublicate, filled, input;
+        var checkDublicate, filled, input, number;
         input = $(event.target);
-        if (PhoneService.isSame(input.val(), $scope.entity[getFieldName(input)])) {
+        number = input.val();
+        if (PhoneService.isSame(number, $scope.entity[getFieldName(input)])) {
           return;
         }
-        filled = input.val() && !input.val().match(/_/);
+        filled = input.val() && !number.match(/_/);
         checkDublicate = !input.attr('untrack-dublicate');
         if (filled && checkDublicate) {
-          return PhoneService.checkDublicate().then(function(result) {
+          return PhoneService.checkDublicate(number, $scope.$parent.id_request).then(function(result) {
             if (result === 'true') {
               ang_scope && (ang_scope.phone_duplicate = result);
               input.addClass('has-error-bold');
@@ -653,7 +654,7 @@ app.service('UserService', function($rootScope, $q, $http, $timeout, User) {
   };
   this.getBannedHaving = function(condition_obj) {
     return _.filter(this.users, function(user) {
-      return user.rights.indexOf(34) !== -1 && condition_obj[user.id];
+      return user.rights.indexOf(34) !== -1 && condition_obj && condition_obj[user.id];
     });
   };
   return this;
