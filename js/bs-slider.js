@@ -982,7 +982,6 @@
 				
 				// goto
 				rounded_per = Math.round(per);
-				console.log('per', Math.round(per));
 				
 				if (rounded_per == 33) {
 					this.trackSelection.style.background = 'red';
@@ -1009,7 +1008,7 @@
 				}
 */
 // 				console.log('per', per);
-				
+
 				this.handle1.style[this.stylePos] = per + '%';
 				
 				

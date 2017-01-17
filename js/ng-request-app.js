@@ -322,6 +322,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.lastContractInChain = function(contract) {
 			return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
 		}
+		$scope.lastNonCurrentContractInChain = function(contract) {
+            contract_id = _.max(_.pluck($scope.contractsChain(contract.id_contract), 'id'));
+            return _.find($scope.contracts,{id: contract_id});
+		}
 
 		// первая версия последней цепи (выше chain – неправильно, это версии)
 		$scope.firstInLastChain = function() {
@@ -1243,8 +1247,12 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				middle	: person.middle_name,
 			};
 
-			// склоняем в дательный падеж
-			person = petrovich(person, padej);
+			try {
+                person = petrovich(person, padej);
+            } catch (exception) {
+                console.log(exception.message)
+            }
+
 
 			// возвращаем ФИО
 			return person.last + " " + person.first + " " + person.middle;
@@ -1396,45 +1404,44 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				return
 			}
 
-		pushAndSetCurrentVersion = function (contract) {
-		  $scope.lastContractInChain(contract).current_version = 0
-		  _.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) {
-			$scope.current_contract.current_version = 1
-			c = $scope.current_contract
-		  })
-		}
-				if ($scope.current_contract.id) {
-					ajaxStart('contract')
-					$.post("ajax/contractEdit", $scope.current_contract, function(response) {
-			pushAndSetCurrentVersion($scope.current_contract)
-						ajaxEnd('contract')
-						lightBoxHide()
-						$scope.lateApply()
-					}, "json")
-				} else {
-					$scope.current_contract.info.id_student = $scope.student.id
-					// сохраняем догавар
-					ajaxStart('contract')
-					$.post("ajax/contractSave", $scope.current_contract, function(response) {
-						ajaxEnd('contract')
-						lightBoxHide()
-						$scope.current_contract.id = response.id
-						$scope.current_contract.id_contract = response.id_contract
-						$scope.current_contract.user_login 	= response.user_login
-						$scope.current_contract.date_changed= response.date_changed
-						$scope.current_contract.current_version = 1
-
-						new_contract = $.extend(true, {}, $scope.current_contract)
-						new_contract.subjects = _.filter(new_contract.subjects, function(e){return e})
-						new_contract.subjects.sort(function(a, b) {
-							return a.id_subject - b.id_subject
-						})
-						$scope.contracts = initIfNotSet($scope.contracts)
-						$scope.contracts.push(new_contract)
-						$scope.$apply()
-					}, "json");
-				}
+			pushAndSetCurrentVersion = function (contract) {
+				$scope.lastContractInChain(contract).current_version = 0
+				_.where($scope.contracts, { id : $scope.current_contract.id}).map(function(c) {
+				$scope.current_contract.current_version = 1
+				c = $scope.current_contract
+			  })
 			}
+			if ($scope.current_contract.id) {
+				ajaxStart('contract')
+				$.post("ajax/contractEdit", $scope.current_contract, function(response) {
+					ajaxEnd('contract')
+					lightBoxHide()
+					$scope.lateApply()
+				}, "json")
+			} else {
+				$scope.current_contract.info.id_student = $scope.student.id
+				ajaxStart('contract')
+				$.post("ajax/contractSave", $scope.current_contract, function(response) {
+					if ($scope.current_contract.id_contract) {
+					    pushAndSetCurrentVersion($scope.current_contract)
+                    }
+					ajaxEnd('contract')
+					lightBoxHide()
+					$scope.current_contract.id = response.id
+					$scope.current_contract.id_contract = response.id_contract
+					$scope.current_contract.user_login 	= response.user_login
+					$scope.current_contract.date_changed= response.date_changed
+					$scope.current_contract.current_version = 1
+					$scope.current_contract.subjects = response.subjects;
+
+					new_contract = $.extend(true, {}, $scope.current_contract)
+
+					$scope.contracts = initIfNotSet($scope.contracts)
+					$scope.contracts.push(new_contract)
+					$scope.lateApply()
+				}, "json");
+			}
+		}
 
 		$scope.subjectChecked = function(id_subject) {
 			checked = false
@@ -1492,12 +1499,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$("select[name='grades']").removeClass("has-error")
 			$scope.lateApply()
 
-			setTimeout(function() {
+			$timeout(function(){
+				$scope.$apply();
 				$('.triple-switch').each(function(index, e) {
 					val = $(e).attr('data-slider-value');
 					$(e).slider('setValue', parseInt(val));
 				})
-			}, 100)
+			});
 		}
 
 		disableContractFields = function(contract) {
@@ -1529,8 +1537,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.addContractDialog = function() {
 			$scope.current_contract = {subjects : [], info: {year: $scope.academic_year}}
 			$scope.current_contract.date = moment().format("DD.MM.YYYY")
-
-			$('.triple-switch').slider('value', 0)
+            $timeout(function(){
+                $scope.$apply();
+            });
+			$('.triple-switch').slider('setValue', 0)
 
 			lightBoxShow('addcontract')
 			$("select[name='grades']").removeClass("has-error")
@@ -1559,11 +1569,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			bootbox.confirm("Вы уверены, что хотите удалить договор?", function(result) {
 				if (result === true) {
 					$.post("ajax/contractDelete", {"id_contract": contract.id})
-
 					$scope.contracts = _.without($scope.contracts, contract);
-					if ($scope.lastContractInChain(contract) && contract.current_version) {
-		  $scope.lastContractInChain(contract).current_version = 1
-		}
+					if ((c = $scope.lastNonCurrentContractInChain(contract)) && contract.current_version) {
+					    c.current_version = 1
+		            }
 					$scope.$apply()
 				}
 			})

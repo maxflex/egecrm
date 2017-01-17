@@ -31,7 +31,7 @@
 						</span>
 					</td>
 					<td width="20%">
-						создал {{contract.user_login}} {{formatDate(contract.date_changed) | date:'dd.MM.yyyy'}}
+						создал {{UserService.getLogin(contract.id_user)}} {{formatDate(contract.date_changed) | date:'dd.MM.yyyy'}}
 					</td>
 					<td align="right" width="3%" class="no-padding-right">
 						<span class="link-like" ng-click="contract.show_actions = !contract.show_actions">действия</span>
