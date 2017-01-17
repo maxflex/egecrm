@@ -581,7 +581,7 @@
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.year, g.ready_to_start");//, " GROUP BY g.id"
+			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.year, g.ready_to_start");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
 
 			while ($row = $result->fetch_object()) {
@@ -624,7 +624,7 @@
 		}
 
 		// @time-refactored @time-checked
-		private static function _generateQuery($search, $select, $ending = ' GROUP BY g.id')
+		private static function _generateQuery($search, $select, $ending = '')
 		{
 			// " . ((! empty($search->time_ids) || !isBlank($search->id_branch) || $search->cabinet) ? " JOIN group_time gt ON (g.id = gt.id_group " . . ")" : "") . "
 			// 		AND (" . implode(' OR ', array_map(function($id_time) { return "gt.id_time=$id_time"; }, $search->time_ids)) . "))"
