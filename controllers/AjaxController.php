@@ -99,16 +99,31 @@
 		        $start = $start_date->modify('+1 day')->format('Y-m-d'); // переход на новую неделю
 	            $end   = $start_date->format('Y-m-d');
 	            $return_date = $end;
-				$query = "
-	            	SELECT COUNT(*) AS cnt FROM contracts c
-                    JOIN contract_info ON contract_info.id_contract = c.id_contract
-	            	LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-	            	WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND c.id=c.id_contract AND cs.status=3 AND c.external=0
-	            	" . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
-	            	" . ($grade ? " AND contract_info.grade = {$grade} " : "") . "
-	            	" . ($year ? " AND contract_info.year = {$year} " : "") . "
-	            ";
-	            $return[date('d.m.y', strtotime($return_date))] = dbConnection()->query($query)->fetch_object()->cnt;
+                $cnt = 0;
+                if ($subjects) {
+                    foreach($subject_ids as $id_subject) {
+                        $query = "
+                            SELECT COUNT(DISTINCT contract_info.id_student) AS cnt FROM contracts c
+                            JOIN contract_info ON contract_info.id_contract = c.id_contract
+                            LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+                            WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND c.id=c.id_contract AND cs.status=3 AND c.external=0
+                            AND cs.id_subject = {$id_subject}
+                            " . ($grade ? " AND contract_info.grade = {$grade} " : "") . "
+                            " . ($year ? " AND contract_info.year = {$year} " : "");
+                        $cnt += dbConnection()->query($query)->fetch_object()->cnt;
+                    }
+                } else {
+                    $query = "
+                        SELECT COUNT(*) AS cnt FROM contracts c
+                        JOIN contract_info ON contract_info.id_contract = c.id_contract
+                        LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+                        WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND c.id=c.id_contract AND cs.status=3 AND c.external=0
+                        " . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
+                        " . ($grade ? " AND contract_info.grade = {$grade} " : "") . "
+                        " . ($year ? " AND contract_info.year = {$year} " : "");
+                    $cnt = dbConnection()->query($query)->fetch_object()->cnt;
+                }
+	            $return[date('d.m.y', strtotime($return_date))] = $cnt;
 
 	        }
 
