@@ -59,7 +59,7 @@
         public function actionStats()
         {
             extract($_POST);
-            echo static::exec(self::EGEREP_MANGO_API, compact('number'));
+            exit(static::exec(self::EGEREP_MANGO_API, compact('number')));
         }
 
         protected static function exec($url, $params)
