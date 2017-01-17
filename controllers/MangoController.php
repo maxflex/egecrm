@@ -2,17 +2,17 @@
 	// Контроллер
 	class MangoController extends Controller
 	{
-	    const EGEREP_MANGO_API = 'https://lk.ege-repetitor.ru/api/external/mangoStats';
+	    const EGEREP_MANGO_API = 'http://lk.ege-repetitor.ru:8085/api/external/mangoStats';
 		// Папка вьюх
 		protected $_viewsFolder	= "mango";
-		
+
 		/**
 		 * Поступил входящий звонок
 		 */
 		public function actionEventCall()
 		{
 			$data = json_decode($_POST['json']);
-			
+
 			// исходящий звонок
 			if ($data->from->extension) {
 				switch ($data->call_state) {
@@ -24,7 +24,7 @@
 						break;
 				}
 			}
-			
+
 			// входящий звонок в ЕГЭ-Центр или ЕГЭ-Репетитор
 			if (in_array($data->to->line_number, [Call::EGEREP_NUMBER, Call::EGECENTR_NUMBER])) {
 				// @рассмотреть добавление определения в appeared
@@ -46,7 +46,7 @@
 				Call::notifyIncoming($data->to->extension, $data, $data->to->line_number);
 			}
 		}
-		
+
 		/*
 		 * Положили трубку (не используется)
 		 */
@@ -59,7 +59,7 @@
         public function actionStats()
         {
             extract($_POST);
-            echo static::exec(self::EGEREP_MANGO_API, compact('number'));
+            exit(static::exec(self::EGEREP_MANGO_API, compact('number')));
         }
 
         protected static function exec($url, $params)

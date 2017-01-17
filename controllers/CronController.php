@@ -159,7 +159,7 @@
 					if ($Teacher) {
 						foreach (Student::$_phone_fields as $phone_field) {
 							$teacher_number = $Teacher->{$phone_field};
-							if (!empty($teacher_number)) {
+							if (! empty($teacher_number)) {
 								$messages[] = [
 									"type"      => "Учителю #" . $Teacher->id,
 									"number" 	=> $teacher_number,
@@ -171,13 +171,13 @@
 				}
 				foreach ($Group->students as $id_student) {
 					$Student = Student::findById($id_student);
-					if (!$Student) {
+					if (! $Student) {
 						continue;
 					}
 
 					foreach (Student::$_phone_fields as $phone_field) {
 						$student_number = $Student->{$phone_field};
-						if (!empty($student_number)) {
+						if (! empty($student_number)) {
 							$messages[] = [
 								"type"      => "Ученику #" . $Student->id,
 								"number" 	=> $student_number,
@@ -187,7 +187,7 @@
 
 						if ($Student->Representative) {
 							$representative_number = $Student->Representative->{$phone_field};
-							if (!empty($representative_number)) {
+							if (! empty($representative_number)) {
 								$messages[] = [
 									"type"      => "Представителю #" . $Student->Representative->id,
 									"number" 	=> $representative_number,
@@ -201,14 +201,13 @@
 
 			$sent_to = [];
 			foreach ($messages as $message) {
-				if (!in_array($message['number'], $sent_to)) {
+				if (! in_array($message['number'], $sent_to)) {
 					SMS::send($message['number'], $message['message']);
-//					$sent_to[] = $message['number'];
-
+					$sent_to[] = $message['number'];
 					// debug
-					$body .= "<h3>" . $message["type"] . "</h3>";
-					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
-					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+					// $body .= "<h3>" . $message["type"] . "</h3>";
+					// $body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					// $body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
 				}
 			}
 
