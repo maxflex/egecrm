@@ -99,32 +99,22 @@
 		        $start = $start_date->modify('+1 day')->format('Y-m-d'); // переход на новую неделю
 	            $end   = $start_date->format('Y-m-d');
 	            $return_date = $end;
-                $cnt = 0;
-                if ($subjects) {
-                    foreach($subject_ids as $id_subject) {
-                        $query = "
-                            SELECT COUNT(DISTINCT contract_info.id_student) AS cnt FROM contracts c
-                            JOIN contract_info ON contract_info.id_contract = c.id_contract
-                            LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-                            WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND c.id=c.id_contract AND cs.status=3 AND c.external=0
-                            AND cs.id_subject = {$id_subject}
-                            " . ($grade ? " AND contract_info.grade = {$grade} " : "") . "
-                            " . ($year ? " AND contract_info.year = {$year} " : "");
-                        $cnt += dbConnection()->query($query)->fetch_object()->cnt;
-                    }
-                } else {
-                    $query = "
-                        SELECT COUNT(*) AS cnt FROM contracts c
-                        JOIN contract_info ON contract_info.id_contract = c.id_contract
-                        LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-                        WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND c.id=c.id_contract AND cs.status=3 AND c.external=0
-                        " . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
-                        " . ($grade ? " AND contract_info.grade = {$grade} " : "") . "
-                        " . ($year ? " AND contract_info.year = {$year} " : "");
-                    $cnt = dbConnection()->query($query)->fetch_object()->cnt;
-                }
-	            $return[date('d.m.y', strtotime($return_date))] = $cnt;
-
+                // mt = min_table – подключает таблицу вида id_student, year, id_subject, id_contract, min_date
+                // другими словами, говорит когда (в каком именно договоре) предмет первый раз появился в рамках года для ученика
+                $query = "SELECT COUNT(*) AS cnt FROM contracts c
+                    JOIN contract_info ON contract_info.id_contract = c.id_contract
+                    LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+                    JOIN (SELECT ci.id_student, ci.year, cs2.id_subject, c2.id, MIN(STR_TO_DATE(c2.date, '%d.%m.%Y')) FROM contracts c2
+                            JOIN contract_info ci ON ci.id_contract = c2.id_contract
+                            LEFT JOIN contract_subjects cs2 on cs2.id_contract = c2.id
+                            WHERE cs2.status=3 AND c2.external=0
+                            GROUP BY ci.id_student, ci.year, cs2.id_subject
+                    ) mt ON mt.id_student = contract_info.id_student AND mt.year = contract_info.year AND mt.id_subject = cs.id_subject
+                    WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND cs.status=3 AND c.external=0 AND c.id = mt.id
+                    " . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
+                    " . ($grade ? " AND contract_info.grade = {$grade} " : "") . "
+                    " . ($year ? " AND contract_info.year = {$year} " : "");
+	            $return[date('d.m.y', strtotime($return_date))] = dbConnection()->query($query)->fetch_object()->cnt;
 	        }
 
 			returnJsonAng($return);
