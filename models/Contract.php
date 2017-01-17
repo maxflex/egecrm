@@ -68,7 +68,13 @@
         {
             self::unsetCurrentVersionOfPrev($data['id_contract']);
             $newContract = parent::add($data);
-            $newContract->info = ContractInfo::add(array_merge($data['info'], ['id_contract' => $newContract->id]));
+
+            // если нет соответствующее ContractInfo, то добавим его.
+            if (! ContractInfo::count(['condition' => 'id_contract = ' . $newContract->id_contract])) {
+                $newContract->info = ContractInfo::add(array_merge($data['info'], ['id_contract' => $newContract->id]));
+            } else {
+                $newContract->info = new ContractInfo(array_merge($data['info'], ['id_contract' => $newContract->id]));
+            }
             return $newContract;
         }
 
@@ -126,7 +132,7 @@
 			}
 
 			// Добавляем предметы договора
-			ContractSubject::addData($Contract["subjects"], $NewContract->id);
+            $NewContract->subjects = ContractSubject::addData($Contract["subjects"], $NewContract->id);
 
 			return $NewContract;
 		}

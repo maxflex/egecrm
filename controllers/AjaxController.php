@@ -199,7 +199,7 @@
 
 		public function actionAjaxContractSave()
 		{
-			returnJson(Contract::addNew($_POST));
+			returnJsonAng(Contract::addNew($_POST));
 		}
 
 		public function actionAjaxContractEdit()

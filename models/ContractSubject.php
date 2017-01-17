@@ -48,8 +48,8 @@
 		 */
 		public static function addData($subjects_data, $id_contract) 
 		{
-			$subjects_data = array_filter($subjects_data);
-
+            $add_subjects = [];
+            $subjects_data = array_filter($subjects_data);
 			// Если никаких данных нет
 			if (!count($subjects_data)) {
 				return false;
@@ -60,7 +60,7 @@
 			self::deleteAll([
 				"condition"	=> "id_contract=$id_contract",
 			]);
-			
+
 			// Сохраняем данные
 			foreach ($subjects_data as $subject_data) {
 				// обнуляем ID и ID контракта, это обязательно,
@@ -68,8 +68,10 @@
 				// потому что у них уже установлены ID. 
 				unset($subject_data["id"]);
 				unset($subject_data["id_contract"]);
-				self::add($subject_data + ["id_contract" => $id_contract]);
+                $add_subjects[$subject_data['id_subject']] = self::add($subject_data + ["id_contract" => $id_contract]);
 			}
+
+			return $add_subjects;
 		}
 				
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
