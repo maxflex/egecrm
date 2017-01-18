@@ -207,6 +207,11 @@
             User::updateCache();
         }
 
+        public function actionTimeCache()
+        {
+            Time::updateCache();
+        }
+
 		/**
 		 * Обновление кеша полей таблиц.
 		 */

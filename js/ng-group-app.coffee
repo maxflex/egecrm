@@ -26,10 +26,6 @@
 					input.push i
 				input
 
-		.filter 'yearFilter', ->
-			(items, year) ->
-				_.where items, 'year': year
-
 		.controller "JournalCtrl", ($scope) ->
 			$scope.grayMonth = (date) ->
 				d = moment(date).format("M")
@@ -343,7 +339,7 @@
 		        # hack пустые строки
 		        $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide()
 
-		.controller "EditCtrl", ($scope, $timeout, PhoneService) ->
+		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService) ->
 			bindArguments $scope, arguments
 
 			$timeout ->
@@ -390,8 +386,6 @@
 				setTimeout ->
 					blinking.addClass "blink"
 					, 50
-
-			$scope.smsDialog2 = smsDialog2
 
 			$scope.getSubject = (subjects, id_subject) ->
 				_.findWhere subjects, {id_subject: id_subject}
@@ -766,7 +760,6 @@
 			$scope.saving = false
 			$(document).ready ->
 				emailMode 2
-				smsMode 2
 				bindDraggable()
 				$(".branch-cabinet").selectpicker()
 				set_scope "Group"
@@ -796,7 +789,6 @@
 						redirect "groups/edit/#{response}"
 			$scope.getGroup = (id_group) ->
 				Group = (i for i in $scope.Groups when i.id is id_group)[0]
-
 
 		.controller "ListCtrl", ($scope, $timeout) ->
 			$scope.updateCache = ->
@@ -1106,7 +1098,6 @@
 
 			# Страница изменилась
 			$scope.pageChanged = ->
-				console.log $scope.currentPage
 				window.history.pushState {}, '', 'groups/?page=' + $scope.current_page if $scope.current_page > 1
 				# Получаем задачи, соответствующие странице и списку
 				$scope.getByPage($scope.current_page)
@@ -1130,10 +1121,6 @@
 				return true if $scope.teacher_ids is undefined
 				return true if (Teacher.id in $scope.teacher_ids or Teacher.id is parseInt($scope.search.id_teacher))
 				return false
-
-			$scope.getGrades = (Grades) ->
-				console.log 'grades', Grades
-				return Grades
 
 			$(document).ready ->
 				try
@@ -1164,16 +1151,8 @@
 					$scope.$apply()
 				, 25
 				frontendLoadingEnd()
-		.controller "StudentListCtrl", ($scope) ->
-			# @todo объединить все getGroupsYears в сервис/факторй
-			$scope.getGroupsYears = ->
-				if $scope.Groups
-					return _.uniq _.pluck $scope.Groups, 'year'
-				return []
-		.controller "TeacherListCtrl", ($scope) ->
-			set_scope "Group"
-			# @todo объединить все getGroupsYears в сервис/факторй
-			$scope.getGroupsYears = ->
-				if $scope.Groups
-					return _.uniq _.pluck $scope.Groups, 'year'
-				return []
+		.controller "StudentListCtrl", ($scope, GroupService) ->
+			bindArguments $scope, arguments
+
+		.controller "TeacherListCtrl", ($scope, GroupService) ->
+			bindArguments $scope, arguments

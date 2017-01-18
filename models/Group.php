@@ -24,12 +24,8 @@
             $this->first_schedule 		= $this->getFirstSchedule();
 
             // @notice  порядок first_schedule - notified_students важен.
-            // @todo    перенести heavy данные под if.
             if (!$light) {
                 $this->notified_students_count = static::getNotifiedStudentsCount($this);
-                $this->Comments	= Comment::findAll([
-                    "condition" => "place='". Comment::PLACE_GROUP ."' AND id_place=" . $this->id,
-                ]);
             }
 
 

@@ -24,9 +24,6 @@
 			(item) ->
 				if item > 0 then item else null
 
-		.filter 'yearFilter', () ->
-			(items, year) ->
-				_.where items, {'year': year }
 		.filter 'toArray', ->
 			(obj) ->
 				arr = []
@@ -51,7 +48,7 @@
 		.controller "SalaryCtrl", ($scope) ->
 			angular.element(document).ready ->
 				set_scope "Teacher"
-		.controller "EditCtrl", ($scope, $timeout, PhoneService) ->
+		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService) ->
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
@@ -164,15 +161,6 @@
 				payments_sum = $scope.lessonsTotalPaid(from_lessons)
 
 				lessons_sum - payments_sum
-
-			$scope.sipNumber = (number) ->
-				number = number.toString()
-				return "sip:" + number.replace(/[^0-9]/g, '')
-
-			$scope.callSip = (element) ->
-				number = $("#" + element).val()
-				number = $scope.sipNumber(number)
-				location.href = number
 
 			# форматировать дату
 			$scope.formatDate2 = (date) ->
@@ -549,8 +537,6 @@
 					multipleSeparator: "+"
 
 				$("#state-select").selectpicker()
-
-				smsMode 4
 
 			$scope.totalHold = (grade) ->
 				numerator = 0

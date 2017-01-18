@@ -11,13 +11,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 		};
 	})
-	.filter('yearFilter', function() {
-		return function(items, year) {
-			return _.where(items, {
-				'year': year
-			});
-		};
-	})
 	.config( [
 		'$compileProvider', function($compileProvider) {
 			$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip):/);
@@ -105,15 +98,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 
 			$scope.smsDialog = smsDialog;
-
-			$scope.sipNumber = function(number) {
-				return "sip:" + number.replace(/[^0-9]/g, '')
-			}
-
-			$scope.callSip = function(number) {
-				number = $scope.sipNumber(number)
-				location.href = number;
-			}
 
 			$scope.getTimeClass = function(request) {
 				// подсвечивать время нужно только в невыполненных
@@ -272,7 +256,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}, "json")
 		}
 	})
-	.controller("EditCtrl", function ($scope, $log, $timeout, PhoneService, UserService) {
+	.controller("EditCtrl", function ($scope, $log, $timeout, PhoneService, UserService, GroupService) {
 		bindArguments($scope, arguments);
 
         $scope.yearLabel = function(year) {
@@ -294,12 +278,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		})
 
 		/*** contract functions ***/
-		$scope.getGroupsYears = function() {
-			if ($scope.Groups) {
-				return _.uniq(_.pluck(ang_scope.Groups, 'year'));
-			}
-		};
-
 		$scope.getContractIds = function () {
 			return _.uniq(_.pluck($scope.contracts, 'id_contract'));
 		}
@@ -444,16 +422,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.markers 	= [];
 		// ID маркера
 		$scope.marker_id= 1;
-
-		$scope.sipNumber = function(number) {
-			return "sip:" + number.replace(/[^0-9]/g, '')
-		}
-
-		$scope.callSip = function(element) {
-			number = $("#" + element).val()
-			number = $scope.sipNumber(number)
-			location.href = number;
-		}
 
 		// OUTDATED: ID свежеиспеченного договора (у новых отрицательный ID,  потом на серваке
 		// отрицательные IDшники создаются, а положительные обновляются (положительные -- уже существующие)
@@ -631,9 +599,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if (mode == 'student') {
 				$scope.setMenu($scope.current_menu)
 			}
-			if ($scope.request_comments === undefined && mode == 'request') {
+			if ($scope.request_comments_loaded === undefined && mode == 'request') {
 				$.post("requests/ajax/LoadRequest", {id_request: $scope.id_request}, function(response) {
-					['request_comments', 'responsible_user', 'user', 'users', 'request_duplicates', 'request_phone_level'].forEach(function(field) {
+					['responsible_user', 'user', 'users', 'request_duplicates', 'request_phone_level'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()
@@ -1249,9 +1217,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			try {
                 person = petrovich(person, padej);
-            } catch (exception) {
-                console.log(exception.message)
-            }
+            } catch (exception) {}
 
 
 			// возвращаем ФИО
@@ -1939,12 +1905,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if ($scope.Reports === undefined && menu == 4) {
 				$.post("requests/ajax/LoadReports", {id_student: $scope.id_student}, function(response) {
 					$scope.Reports = response
-					$scope.$apply()
-				}, "json")
-			}
-			if ($scope.student_comments === undefined && menu == 5) {
-				$.post("requests/ajax/LoadStudentComments", {id_student: $scope.id_student}, function(response) {
-					$scope.student_comments = response
 					$scope.$apply()
 				}, "json")
 			}

@@ -18,7 +18,8 @@ app = angular.module("Stats", ["ui.bootstrap"]).config([
       return null;
     }
   };
-}).controller("ListCtrl", function($scope) {
+}).controller("ListCtrl", function($scope, PhoneService) {
+  bindArguments($scope, arguments);
   $scope.round1 = function(n) {
     return Math.round(n);
   };
@@ -72,17 +73,9 @@ app = angular.module("Stats", ["ui.bootstrap"]).config([
       }, "json");
     }
   };
-  $scope.sipNumber = function(number) {
-    number = number.toString();
-    return "sip:" + number.replace(/[^0-9]/g, '');
-  };
-  $scope.callSip = function(number) {
-    number = $scope.sipNumber(number);
-    return location.href = number;
-  };
   $scope.clickControl = function(Teacher, event) {
     if (event.shiftKey) {
-      return $scope.callSip(Teacher.phone);
+      return PhoneService.call(Teacher.phone);
     } else {
       return redirect("teachers/edit/" + Teacher.id);
     }

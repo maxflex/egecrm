@@ -23,11 +23,11 @@
 		<input type="hidden" id="subjects_json" name="subjects_json">
 		<input type="hidden" id="payments_json" name="payments_json">
 		<input type="hidden" ng-value="markerData() | json"  name="marker_data">
-		<input type="hidden" name="save_request" value="{{request_comments === undefined ? 0 : 1}}">
+		<input type="hidden" name="save_request" value="{{request_comments_loaded === undefined ? 0 : 1}}">
 		<input type="hidden" name="save_student" value="{{student === undefined ? 0 : 1}}">
 		<!-- Конец /скрытые поля -->
-		<?= globalPartial('loading', ['model' => 'request_comments']) ?>
-		<div class="ng-hide" ng-hide="request_comments === undefined">
+		<?= globalPartial('loading', ['model' => 'request_comments_loaded']) ?>
+		<div class="ng-hide" ng-hide="request_comments_loaded === undefined">
 			<!-- ВКЛАДКИ ЗАЯВОК -->
 			<div class="row" style="margin-bottom: 20px" ng-hide="<?= ($Request->adding && !$_GET["id_student"]) ?>">
 				<div class="col-sm-12">

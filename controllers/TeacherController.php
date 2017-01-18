@@ -283,11 +283,9 @@
 					returnJsonAng($Stats);
 				}
 				case 6: {
-					$Comments = Comment::getByPlace(Comment::PLACE_TEACHER, $id_teacher);
 					$Bars = [
 						'Group' 	=> Freetime::getTeacherBar($id_teacher),
-						'Freetime'	=> Freetime::getFreetimeBar($id_teacher, EntityFreetime::TEACHER),
-						'Comments'	=> $Comments ? $Comments : [],
+						'Freetime'	=> Freetime::getFreetimeBar($id_teacher, EntityFreetime::TEACHER)
 					];
 					returnJsonAng($Bars);
 				}

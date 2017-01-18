@@ -46,12 +46,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     }
     return input;
   };
-}).filter('yearFilter', function() {
-  return function(items, year) {
-    return _.where(items, {
-      'year': year
-    });
-  };
 }).controller("JournalCtrl", function($scope) {
   $scope.grayMonth = function(date) {
     var d;
@@ -421,7 +415,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   return hideRows = function() {
     return $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide();
   };
-}).controller("EditCtrl", function($scope, $timeout, PhoneService) {
+}).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService) {
   var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, rebindBlinking;
   bindArguments($scope, arguments);
   $timeout(function() {
@@ -478,7 +472,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       return blinking.addClass("blink", 50);
     });
   };
-  $scope.smsDialog2 = smsDialog2;
   $scope.getSubject = function(subjects, id_subject) {
     return _.findWhere(subjects, {
       id_subject: id_subject
@@ -936,7 +929,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $scope.saving = false;
   $(document).ready(function() {
     emailMode(2);
-    smsMode(2);
     bindDraggable();
     $(".branch-cabinet").selectpicker();
     return set_scope("Group");
@@ -1328,7 +1320,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return $scope.getByPage($scope.current_page);
   };
   $scope.pageChanged = function() {
-    console.log($scope.currentPage);
     if ($scope.current_page > 1) {
       window.history.pushState({}, '', 'groups/?page=' + $scope.current_page);
     }
@@ -1360,10 +1351,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       return true;
     }
     return false;
-  };
-  $scope.getGrades = function(Grades) {
-    console.log('grades', Grades);
-    return Grades;
   };
   $(document).ready(function() {
     var error;
@@ -1401,19 +1388,8 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     }, 25);
     return frontendLoadingEnd();
   });
-}).controller("StudentListCtrl", function($scope) {
-  return $scope.getGroupsYears = function() {
-    if ($scope.Groups) {
-      return _.uniq(_.pluck($scope.Groups, 'year'));
-    }
-    return [];
-  };
-}).controller("TeacherListCtrl", function($scope) {
-  set_scope("Group");
-  return $scope.getGroupsYears = function() {
-    if ($scope.Groups) {
-      return _.uniq(_.pluck($scope.Groups, 'year'));
-    }
-    return [];
-  };
+}).controller("StudentListCtrl", function($scope, GroupService) {
+  return bindArguments($scope, arguments);
+}).controller("TeacherListCtrl", function($scope, GroupService) {
+  return bindArguments($scope, arguments);
 });

@@ -21,7 +21,6 @@ class Task extends Model
 		}
 
 		if (!$this->isNewRecord) {
-			$this->Comments = Comment::getByPlace(self::PLACE, $this->id);
 			$this->User = User::findById($this->id_user);
 		}
 	}

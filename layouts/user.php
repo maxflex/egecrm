@@ -5,9 +5,6 @@
 <script src="//cdn.jsdelivr.net/jquery.color-animation/1/mainfile"></script>
 <link rel="stylesheet" href="js/bower/cropper/dist/cropper.min.css">
 <link media="all" rel="stylesheet" type="text/css" href="js/bower/simple-hint/dist/simple-hint.css" />
-<script type="text/javascript" src="js/vendor.js"></script>
-<script type="text/javascript" src="js/app.js"></script>
-<script type="text/javascript" src="js/assets.js"></script>
 
 <!-- ЛАЙТБОКС ОТПРАВКА EMAIL -->
 <div class="lightbox-new lightbox-email">

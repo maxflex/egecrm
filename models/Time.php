@@ -48,8 +48,18 @@
 		 */
 		public static function get()
 		{
-			// @todo: надо кешировать, очерь редко меняется
-			$Time = static::findAll();
+			if (LOCAL_DEVELOPMENT) {
+				$Time = static::findAll();
+			} else {
+				$Time = memcached()->get('groups:times');
+
+				if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
+					$Time = static::findAll();
+					memcached()->set('groups:times', $Time, 3600 * 24 * 7);
+				}
+
+				return $Time;
+			}
 
 			$return = [];
 
@@ -63,6 +73,11 @@
 
 			return $return;
 		}
+
+		public static function updateCache()
+        {
+            memcached()->delete('groups:times');
+        }
 
 		/**
 		 * Без дней и сортировки

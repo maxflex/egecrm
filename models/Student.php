@@ -366,20 +366,6 @@
 			}
 		}
 
-		public function getComments()
-		{
-			return Comment::findAll([
-				"condition"	=> "place='". Comment::PLACE_STUDENT ."' AND id_place=". $this->id
-			]);
-		}
-
-		public static function getCommentsStatic($id_student)
-		{
-			return Comment::findAll([
-				"condition"	=> "place='". Comment::PLACE_STUDENT ."' AND id_place=". $id_student
-			]);
-		}
-
 		public function getReports()
 		{
 			$Reports = Report::findAll([

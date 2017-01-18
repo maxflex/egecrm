@@ -15,8 +15,8 @@ app = angular.module "Stats", ["ui.bootstrap"]
 		(item) ->
 			if item > 0 then item else null
 
-	.controller "ListCtrl", ($scope) ->
-
+	.controller "ListCtrl", ($scope, PhoneService) ->
+		bindArguments $scope, arguments
 		$scope.round1 = (n) ->
 			Math.round(n)
 
@@ -61,20 +61,9 @@ app = angular.module "Stats", ["ui.bootstrap"]
 					$scope.$apply()
 				, "json"
 
-
-		$scope.sipNumber = (number) ->
-			number = number.toString()
-			return "sip:" + number.replace(/[^0-9]/g, '')
-
-		$scope.callSip = (number) ->
-			number = $scope.sipNumber(number)
-			location.href = number
-
-
-
 		$scope.clickControl = (Teacher, event) ->
 			if event.shiftKey
-				$scope.callSip(Teacher.phone)
+				PhoneService.call(Teacher.phone)
 			else
 				redirect "teachers/edit/#{Teacher.id}"
 

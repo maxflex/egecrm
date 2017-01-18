@@ -67,6 +67,7 @@ app.directive('comments', function() {
             if ($scope.trackLoading) {
               $rootScope.loaded_comments++;
             }
+            $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true;
             return $timeout(function() {
               return bindDraggableAll();
             });
@@ -104,7 +105,6 @@ app.directive('comments', function() {
         element = $(event.target);
         element.unbind('keydown').unbind('blur');
         element.attr('contenteditable', 'true').focus().on('keydown', function(e) {
-          console.log(old_text);
           if (e.keyCode === 13) {
             $(this).removeAttr('contenteditable').blur();
             comment.comment = $(this).text();
@@ -118,7 +118,6 @@ app.directive('comments', function() {
           }
         }).on('blur', function(e) {
           if (element.attr('contenteditable')) {
-            console.log(old_text);
             return element.removeAttr('contenteditable').html(old_text);
           }
         });
@@ -403,6 +402,16 @@ app.directive('sms', function() {
       return init();
     }
   };
+});
+
+app.service('GroupService', function() {
+  this.getYears = function(groups) {
+    if (groups) {
+      return _.uniq(_.pluck(groups, 'year'));
+    }
+    return [];
+  };
+  return this;
 });
 
 app.service('PhoneService', function($rootScope) {

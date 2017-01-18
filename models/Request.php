@@ -53,13 +53,6 @@
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
-		public static function getComments($id)
-        {
-            return Comment::findAll([
-                "condition" => "place='". Comment::PLACE_REQUEST ."' AND id_place=" . $id,
-            ]);
-        }
-
 		/**
 		 * Получить статус задачи (список) из $_GET
 		 *
@@ -467,19 +460,6 @@
 			return self::getIds([
 				"condition"	=> "adding=0 AND id_student=".$this->id_student.($get_self ? "" : " AND id!=".$this->id)
 			]);
-		}
-
-		public function getDuplicateComments($get_self = false)
-		{
-			$ids = self::getIds([
-				"condition"	=> "adding=0 AND id_student=".$this->id_student.($get_self ? "" : " AND id!=".$this->id)
-			]);
-
-			foreach ($ids as $id) {
-				$return[$id] = Comment::count(["condition" => "place='REQUEST' AND id_place=$id"]) > 0;
-			}
-
-			return $return;
 		}
 
 		/**

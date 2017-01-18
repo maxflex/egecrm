@@ -53,6 +53,7 @@ app.directive 'comments', ->
                 , (response) ->
                     $scope.comments = response
                     $rootScope.loaded_comments++ if $scope.trackLoading
+                    $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true
                     $timeout ->
                         bindDraggableAll()
                 , 'json'
@@ -84,7 +85,6 @@ app.directive 'comments', ->
 
             element.attr('contenteditable', 'true').focus()
             .on 'keydown', (e) ->
-                console.log old_text
                 if e.keyCode is 13
                     $(@).removeAttr('contenteditable').blur()
                     comment.comment = $(@).text()
@@ -97,7 +97,6 @@ app.directive 'comments', ->
 
             .on 'blur', (e) ->
                 if element.attr 'contenteditable'
-                    console.log old_text
                     element.removeAttr('contenteditable').html old_text
             return
         $scope.submitComment = (event) ->

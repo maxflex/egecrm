@@ -210,17 +210,6 @@
 		$("#email-message").val(body)
 	}
 
-
-	function smsDialog2(id_group) {
-		$("#sms-number").text("Группа №" + id_group);
-		lightBoxShow('sms')
-	}
-
-	function smsDialog3() {
-		$("#sms-number").text("Групповое сообщение клиентам (" + ang_scope.counts.all + ")");
-		lightBoxShow('sms')
-	}
-
 	function smsDialogTeachers() {
 		$("#sms-number").text("Групповое сообщение преподавателям");
 		lightBoxShow('sms')
