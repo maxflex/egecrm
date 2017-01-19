@@ -10,8 +10,7 @@
 
 		public function beforeAction()
 		{
-			$this->addCss("bootstrap-select");
-			$this->addJs("ng-settings-app, bootstrap-select");
+			$this->addJs("ng-settings-app");
 		}
 
 		public function actionVocations()

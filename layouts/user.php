@@ -1,11 +1,4 @@
 <!-- @rights-refactored -->
-<link rel="stylesheet" href="js/bower/angular-bootstrap-colorpicker/css/colorpicker.min.css">
-<script type="text/javascript" src="js/bower/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js"></script>
-<script type="text/javascript" src="js/bower/cropper/dist/cropper.js"></script>
-<script src="//cdn.jsdelivr.net/jquery.color-animation/1/mainfile"></script>
-<link rel="stylesheet" href="js/bower/cropper/dist/cropper.min.css">
-<link media="all" rel="stylesheet" type="text/css" href="js/bower/simple-hint/dist/simple-hint.css" />
-
 <!-- ЛАЙТБОКС ОТПРАВКА EMAIL -->
 <div class="lightbox-new lightbox-email">
 	<input type="hidden" id="email-mode" value="1">

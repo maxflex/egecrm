@@ -116,7 +116,6 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };
   $scope.filter = function(current_page) {
-    console.log('filter');
     $scope.initSearch();
     $scope.search.current_page = current_page ? current_page : 1;
     window.history.pushState({}, '', 'payments' + ($scope.search.current_page > 1 ? '/?page=' + $scope.search.current_page : ''));
@@ -127,13 +126,11 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     return $scope.getByPage();
   };
   $scope.pageChanged = function() {
-    console.log('page changed ' + $scope.search.current_page);
     $scope.initSearch();
     window.history.pushState({}, '', 'payments' + ($scope.search.current_page > 1 ? '/?page=' + $scope.search.current_page : ''));
     return $scope.getByPage();
   };
   $scope.getByPage = function() {
-    console.log('get by page');
     if (!$scope.loading) {
       frontendLoadingStart() && ($scope.loading = true);
     }
@@ -148,7 +145,6 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     }, "json");
   };
   $scope.refreshCounts = function() {
-    console.log('refresh counts');
     return $timeout(function() {
       $('.watch-select option').each(function(index, el) {
         $(el).data('subtext', $(el).attr('data-subtext'));
@@ -158,7 +154,6 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     });
   };
   angular.element(document).ready(function() {
-    console.log('ready');
     set_scope("Payments");
     if ($.cookie('payments')) {
       $scope.search = JSON.parse($.cookie('payments'));

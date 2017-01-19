@@ -987,3 +987,33 @@ function ExpandSelect(select, maxOptionsVisible)
 	DEFUAULT_SMS_MODE = 1
 	GROUP_SMS_MODE    = 2
 	CLIENT_SMS_MODE   = 3
+
+	$(document).ready(function() {
+		bindUserColorControl();
+	})
+
+	function bindUserColorControl() {
+		$(".user-list").on("change", function() {
+			console.log(123);
+			selected = $(this).children(":selected")
+			if (!selected.val()) {
+				$(this).removeAttr("style")
+			} else {
+				$(this).attr("style", $(this).children(":selected").attr("style"));
+			}
+		});
+	}
+
+	function setRequestListUser(elem) {
+		if (Number.isInteger(elem))
+			id_user = elem
+		else
+			id_user = $(elem).val();
+
+		if (id_user == undefined) id_user = '';
+
+		console.log("here", id_user);
+		$.cookie("id_user_list", id_user, { expires: 365, path: '/' });
+
+		$("li.active").first().children().first().click();
+	}

@@ -1,6 +1,6 @@
 app = angular.module "Sms", ["ui.bootstrap"]
-	.controller "Main", ($scope) ->
-		
+	.controller "Main", ($scope, $element, PhoneService) ->
+		bindArguments $scope, arguments
 		$scope.pageChanged = ->
 			ajaxStart()
 			redirect_string = "sms/#{$scope.currentPage}"

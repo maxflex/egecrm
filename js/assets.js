@@ -161,7 +161,7 @@ app.directive('phones', function() {
       entityType: '@'
     },
     controller: function($scope, $timeout, $attrs, $interval, $element, PhoneService, UserService) {
-      var addMask, getFieldName, infoTemplate, init, recodringLink;
+      var getFieldName, infoTemplate, init, recodringLink;
       bindArguments($scope, arguments);
       $scope.$watch('entity', function(newVal) {
         return init();
@@ -169,7 +169,7 @@ app.directive('phones', function() {
       init = function() {
         $scope.level = PhoneService.level($scope.entity);
         return $timeout(function() {
-          return addMask();
+          return PhoneService.addMask($element);
         });
       };
       $scope.max_level = PhoneService.fields.length;
@@ -178,6 +178,9 @@ app.directive('phones', function() {
       }
       if ($attrs.hasOwnProperty('withComment')) {
         $scope.with_comment = true;
+      }
+      if ($attrs.hasOwnProperty('withoutButtons')) {
+        $scope.without_buttons = true;
       }
       $scope.nextLevel = function() {
         return $scope.level++;
@@ -294,18 +297,20 @@ app.directive('phones', function() {
           return;
         }
         filled = input.val() && !number.match(/_/);
-        checkDublicate = !input.attr('untrack-dublicate');
-        if (filled && checkDublicate) {
-          return PhoneService.checkDublicate(number, $scope.$parent.id_request).then(function(result) {
-            if (result === 'true') {
-              ang_scope && (ang_scope.phone_duplicate = result);
-              input.addClass('has-error-bold');
-            } else {
-              ang_scope && (ang_scope.phone_duplicate = null);
-              input.removeClass('has-error-bold');
-            }
-            return input.trigger('blur');
-          });
+        checkDublicate = !$attrs.hasOwnProperty('untrackDuplicate');
+        if (filled) {
+          input.trigger('blur');
+          if (checkDublicate) {
+            return PhoneService.checkDublicate(number, $scope.$parent.id_request).then(function(result) {
+              if (result === 'true') {
+                ang_scope && (ang_scope.phone_duplicate = result);
+                return input.addClass('has-error-bold');
+              } else {
+                ang_scope && (ang_scope.phone_duplicate = null);
+                return input.removeClass('has-error-bold');
+              }
+            });
+          }
         } else {
           input.removeClass('has-error-bold');
           return ang_scope && (ang_scope.phone_duplicate = null);
@@ -314,13 +319,8 @@ app.directive('phones', function() {
       getFieldName = function(el) {
         return el.attr('id').replace('entity-phone-', '');
       };
-      infoTemplate = function() {
+      return infoTemplate = function() {
         return $("#api-phone-info-" + $scope.entityType, $element);
-      };
-      return addMask = function() {
-        return $(".phone-masked", $element).mask('+7 (999) 999-99-99', {
-          autoclear: false
-        });
       };
     }
   };
@@ -478,6 +478,11 @@ app.service('PhoneService', function($rootScope) {
       id_request: id_request
     }, function(result) {
       return result;
+    });
+  };
+  this.addMask = function(context) {
+    return $(".phone-masked", context).mask('+7 (999) 999-99-99', {
+      autoclear: false
     });
   };
   return this;

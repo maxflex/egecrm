@@ -2,7 +2,7 @@
 	<form method="get" action="sms" style="margin-bottom: 20px">
 		<div class="row">
 			<div class="col-sm-2">
-				<input type="text" placeholder="телефон" untrack-dublicate="true" class="form-control phone-masked" name="phone" value="<?= $_GET['phone'] ?>"">
+				<input ng-init="PhoneService.addMask()" type="text" placeholder="телефон" class="form-control phone-masked" name="phone" value="<?= $_GET['phone'] ?>"">
 			</div>
 			<div class="col-sm-6">
 				<input class="form-control" placeholder="поиск" name="search" value="<?= $_GET['search'] ?>">
@@ -11,25 +11,6 @@
 		</div>
 	</form>
 	<table class="table table-hover">
-		<!-- <thead style="font-weight: bold">
-			<tr>
-				<td style="width: 16%">
-					номер
-				</td>
-				<td style="width: 50%">
-					сообщение
-				</td>
-				<td>
-					пользователь
-				</td>
-				<td style="width: 137px">
-					дата
-				</td>
-				<td>
-					статус
-				</td>
-			</tr>
-		</thead> -->
 		<tbody>
 		<?php foreach($History as $SMS): ?>
 			<tr>

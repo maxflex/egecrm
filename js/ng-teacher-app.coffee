@@ -468,7 +468,6 @@
 				$.post 'ajax/emailHistory'
 				,  'email': email
 				, (response) ->
-					console.log response
 					if response
 						$.each response, (i, v) ->
 							files_html = ''

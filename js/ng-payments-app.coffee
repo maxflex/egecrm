@@ -86,7 +86,6 @@ app = angular.module "Payments", ["ui.bootstrap"]
             year + '-' + (parseInt(year) + 1) + ' уч. г.'
 
         $scope.filter = (current_page)->
-            console.log 'filter' # инициализируем фильтры если еще не были установлены
             $scope.initSearch()
             $scope.search.current_page = if current_page then current_page else 1
 
@@ -96,13 +95,11 @@ app = angular.module "Payments", ["ui.bootstrap"]
             $scope.getByPage()
 
         $scope.pageChanged = ->
-            console.log 'page changed ' + $scope.search.current_page
             $scope.initSearch()
             window.history.pushState {}, '', 'payments' + (if $scope.search.current_page > 1 then '/?page=' + $scope.search.current_page else '')
             $scope.getByPage()
 
         $scope.getByPage = ->
-            console.log 'get by page'
             frontendLoadingStart() and $scope.loading = true if not $scope.loading
 
             $.post "payments/AjaxGetPayments",
@@ -116,7 +113,6 @@ app = angular.module "Payments", ["ui.bootstrap"]
             , "json"
 
         $scope.refreshCounts = ->
-            console.log 'refresh counts'
             $timeout ->
                 $('.watch-select option').each (index, el) ->
                     $(el).data 'subtext', $(el).attr 'data-subtext'
@@ -125,7 +121,6 @@ app = angular.module "Payments", ["ui.bootstrap"]
                 , 100
 
         angular.element(document).ready ->
-            console.log 'ready'
             set_scope "Payments"
             $scope.search = JSON.parse $.cookie 'payments' if $.cookie 'payments'
             $scope.filter $scope.current_page

@@ -46,10 +46,11 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 			User.rights.indexOf(parseInt(right)) isnt -1
 
 		angular.element(document).ready -> set_scope 'Users'
-	.controller "EditCtrl", ($scope, $timeout) ->
-		$scope.has_pswd_error = false
-		$scope.psw_filled = false
-		$scope.picture_version = 1
+	.controller "EditCtrl", ($scope, $timeout, PhoneService) ->
+		$scope.PhoneService     = PhoneService
+		$scope.has_pswd_error   = false
+		$scope.psw_filled       = false
+		$scope.picture_version  = 1
 
 		$scope.toggleRights = (right) ->
 			if $scope.allowed(right)

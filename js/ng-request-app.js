@@ -1954,7 +1954,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			$("#request-edit").on('keyup change', 'input, select, textarea', function(){
 				$scope.form_changed = true
-				$scope.$apply()
+				$timeout(function() {
+					$scope.$apply()
+				})
 			})
 
 			// код подразделения

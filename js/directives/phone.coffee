@@ -3,18 +3,19 @@ app.directive 'phones', ->
 	templateUrl: 'directives/phone'
 	scope:
 		entity:      '='
-		entityType: '@'
+		entityType:  '@'
 	controller: ($scope, $timeout, $attrs, $interval, $element, PhoneService, UserService) ->
 		bindArguments $scope, arguments
 		$scope.$watch 'entity', (newVal) -> init()
 
 		init = ->
 			$scope.level = PhoneService.level $scope.entity
-			$timeout -> addMask()
+			$timeout -> PhoneService.addMask $element
 
-		$scope.max_level    = PhoneService.fields.length
-		$scope.is_disabled  = true if $attrs.hasOwnProperty 'disabled'
-		$scope.with_comment = true if $attrs.hasOwnProperty 'withComment'
+		$scope.max_level         = PhoneService.fields.length
+		$scope.is_disabled       = true if $attrs.hasOwnProperty 'disabled'
+		$scope.with_comment      = true if $attrs.hasOwnProperty 'withComment'
+		$scope.without_buttons   = true if $attrs.hasOwnProperty 'withoutButtons'
 
 		$scope.nextLevel = ->
 			$scope.level++
@@ -125,20 +126,19 @@ app.directive 'phones', ->
 			# keyup fired on value init
 			return if PhoneService.isSame number, $scope.entity[getFieldName input]
 			filled = input.val() && not number.match /_/
-			checkDublicate = !input.attr 'untrack-dublicate'
+			checkDublicate = ! $attrs.hasOwnProperty 'untrackDuplicate'
 
-			if filled and checkDublicate
-				PhoneService.checkDublicate number, $scope.$parent.id_request
-				.then (result) ->
-					if result is  'true'
-						ang_scope and ang_scope.phone_duplicate = result
-						input.addClass 'has-error-bold'
-					else
-						ang_scope and ang_scope.phone_duplicate = null
-						input.removeClass 'has-error-bold'
-					input.trigger 'blur'
-
-
+			if filled
+				input.trigger 'blur'
+				if checkDublicate
+					PhoneService.checkDublicate number, $scope.$parent.id_request
+					.then (result) ->
+						if result is  'true'
+							ang_scope and ang_scope.phone_duplicate = result
+							input.addClass 'has-error-bold'
+						else
+							ang_scope and ang_scope.phone_duplicate = null
+							input.removeClass 'has-error-bold'
 			else
 				input.removeClass 'has-error-bold'
 				ang_scope && ang_scope.phone_duplicate = null
@@ -148,8 +148,3 @@ app.directive 'phones', ->
 
 		infoTemplate = ->
 			$ "#api-phone-info-#{$scope.entityType}", $element
-
-		addMask = ->
-			$ ".phone-masked", $element
-			.mask '+7 (999) 999-99-99',
-				autoclear: false

@@ -4,5 +4,6 @@
 <?php } ?>
   	</div>
   </div>
+  <script src="js/vendor/ga.js"></script>
  </body>
 </html>

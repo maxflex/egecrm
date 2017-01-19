@@ -138,9 +138,6 @@
 		{
 			$this->_custom_panel = true;
 
-			$this->addJs("bootstrap-select");
-			$this->addCss("bootstrap-select");
-
 			$Teachers = Teacher::findAll([
 				"condition" => "in_egecentr > 0",
 				"order" => "last_name ASC",
@@ -170,10 +167,6 @@
 				<a class='link-white' href='as/teacher/{$id_teacher}'>режим просмотра</a>
 			");
 			$Teacher = Teacher::findById($id_teacher);
-
-
-			$this->addJs("bootstrap-select");
-			$this->addCss("bootstrap-select");
 
 			$ang_init_data = angInit([
 				"Teacher" => $Teacher,

@@ -17,7 +17,7 @@
             <span class="glyphicon glyphicon-pencil text-gray" ng-show="!entity[phone + '_comment']"></span>
             <input type="text" class='no-border-outline phone-comment' ng-model="entity[phone + '_comment']" ng-disabled="is_disabled">
         </div>
-        <div class="input-group-btn">
+        <div ng-if="!without_buttons" class="input-group-btn">
             <button class="btn btn-default"
                 ng-if="PhoneService.isFull(entity[phone])" ng-click='info(entity[phone])'>
                 <span class="glyphicon glyphicon-transfer small no-margin-right"></span>

@@ -534,7 +534,6 @@ app = angular.module("Teacher", ["ngMap"]).config([
     $.post('ajax/emailHistory', {
       'email': email
     }, function(response) {
-      console.log(response);
       if (response) {
         $.each(response, function(i, v) {
           var files_html;

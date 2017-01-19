@@ -486,7 +486,6 @@
 					ajaxEnd()
 					console.log 'teacher changed', response
 					$.each response.teacher_like_statuses, (id_student, id_status)->
-						console.log 'hiiaa'
 						$scope.getStudent(id_student).teacher_like_status = id_status
 					$scope.getTeacher($scope.Group.id_teacher).agreement = response.agreement if $scope.Group.id_teacher
 					$scope.$apply()

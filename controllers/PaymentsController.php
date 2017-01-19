@@ -21,9 +21,6 @@
 			$this->setRights([User::USER_TYPE]);
 			$this->setTabTitle("Платежи");
 
-			$this->addJs("bootstrap-select");
-			$this->addCss("bootstrap-select");
-
 			$ang_init_data = angInit([
 				'payment_types'		=> PaymentTypes::$all,
 				'payment_statuses'	=> Payment::$all,

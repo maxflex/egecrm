@@ -17,10 +17,6 @@
 		{
 			// не надо панель рисовать
 			$this->_custom_panel = true;
-
-			$this->addJs("bootstrap-select");
-			$this->addCss("bootstrap-select");
-
 			$ang_init_data = angInit([
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 				'total_debt'	=> Student::getTotalDebt(),

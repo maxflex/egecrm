@@ -585,7 +585,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       ajaxEnd();
       console.log('teacher changed', response);
       $.each(response.teacher_like_statuses, function(id_student, id_status) {
-        console.log('hiiaa');
         return $scope.getStudent(id_student).teacher_like_status = id_status;
       });
       if ($scope.Group.id_teacher) {

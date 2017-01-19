@@ -3392,3 +3392,12 @@ table.last-item-no-border tr:last-child td {
   justify-content: center;
   color: $half_black;
 }
+
+.user-phone {
+  .input-group {
+	width: 100%;
+	& > input {
+	  border-radius: 4px!important;
+	}
+  }
+}

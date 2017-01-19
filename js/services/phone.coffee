@@ -49,4 +49,9 @@ app.service 'PhoneService', ($rootScope) ->
 		, (result) ->
 			result
 
+	@addMask = (context) ->
+		$ ".phone-masked", context
+			.mask '+7 (999) 999-99-99',
+				autoclear: false
+
 	@

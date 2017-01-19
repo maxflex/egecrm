@@ -1,6 +1,7 @@
 var app;
 
-app = angular.module("Sms", ["ui.bootstrap"]).controller("Main", function($scope) {
+app = angular.module("Sms", ["ui.bootstrap"]).controller("Main", function($scope, $element, PhoneService) {
+  bindArguments($scope, arguments);
   $scope.pageChanged = function() {
     var redirect_string;
     ajaxStart();

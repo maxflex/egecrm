@@ -28,8 +28,6 @@
 			$id_student = self::_studentId();
 
 			$this->_custom_panel = true;
-			$this->addJs("bootstrap-select");
-			$this->addCss("bootstrap-select");
 
 			$ang_init_data = angInit([
 				'Subjects' 		=> Subjects::$all,
@@ -93,8 +91,6 @@
 		public function actionReviews()
 		{
 			$this->_custom_panel = true;
-			$this->addJs("bootstrap-select");
-			$this->addCss("bootstrap-select");
 
 			$ang_init_data = angInit([
 				'Subjects' 		=> Subjects::$all,

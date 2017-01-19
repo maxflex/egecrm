@@ -66,8 +66,9 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
   return angular.element(document).ready(function() {
     return set_scope('Users');
   });
-}).controller("EditCtrl", function($scope, $timeout) {
+}).controller("EditCtrl", function($scope, $timeout, PhoneService) {
   var bindCropper, bindFileUpload;
+  $scope.PhoneService = PhoneService;
   $scope.has_pswd_error = false;
   $scope.psw_filled = false;
   $scope.picture_version = 1;

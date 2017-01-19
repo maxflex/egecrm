@@ -17,8 +17,6 @@
 
         public function actionList()
         {
-            $this->addJs("bootstrap-select");
-            $this->addCss("bootstrap-select");
             $this->setTabTitle("Логи");
 
             $page = $_GET['page'] ? $_GET['page'] : 1;

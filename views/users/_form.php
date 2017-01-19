@@ -6,7 +6,7 @@
                 <div class="row" style="height: 100%">
                     <div class="col-sm-10 image-col-left" style="height: 100%">
                         <div ng-show='User.has_photo_original' style="height: calc(100% - 10px);">
-                            <img src="img/users/{{ User.id + '_original.' + User.photo_extension }}?ver={{ picture_version }}" id='photo-edit' style="height: 100%">
+                            <img ng-src="img/users/{{ User.id + '_original.' + User.photo_extension }}?ver={{ picture_version }}" id='photo-edit' style="height: 100%">
                         </div>
                     </div>
                     <div class="col-sm-2 center image-col-right">
@@ -54,7 +54,7 @@
                     изменить фото
                 </div>
                 <span class="btn-file"></span>
-                <img src="img/users/{{ User.id && User.has_photo_cropped ? User.id + '.' + User.photo_extension : 'no-profile-img.gif' }}?ver={{ picture_version }}">
+                <img ng-src="img/users/{{ User.id && User.has_photo_cropped ? User.id + '.' + User.photo_extension : 'no-profile-img.gif' }}?ver={{ picture_version }}">
             </div>
             <div class="user-photo-hint" ng-show="User.isNewRecord">
                 установка фото доступна после создания пользователя
@@ -96,7 +96,7 @@
     </div>
     <div class="col-sm-3">
         <div class="form-group">
-            <input class="form-control phone-masked" ng-model="User.phone" placeholder="телефон" ng-keyup='form_changed=true'>
+            <phones class="user-phone" entity="User" entity-type="User" without-buttons untrack-duplicate></phones>
         </div>
         <div class="form-group">
             <input class="form-control"

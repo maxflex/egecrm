@@ -13,12 +13,6 @@
 		public function beforeAction()
 		{
 			$this->addJs("ng-group-app");
-			$this->addJs("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.js", true);
-			$this->addJs("https://cdn.jsdelivr.net/angular.chartjs/1.0.2/angular-chart.js", true);
-/*
-			ini_set("display_errors", 1);
-			error_reporting(E_ALL);
-*/
 		}
 
 		public function actionJournal()
@@ -253,9 +247,7 @@
 			} else {
 				// не надо панель рисовать
 				$this->_custom_panel = true;
-
-				$this->addCss("bootstrap-select");
-				$this->addJs("bootstrap-select, dnd");
+				$this->addJs("dnd");
 
 				$Teachers = Teacher::getLightArray(Group::getTeacherIds());
 
@@ -407,8 +399,6 @@
 		public function actionEdit($Group = false)
 		{
 			$this->setRights();
-			$this->addCss("bootstrap-select");
-			$this->addJs("bootstrap-select, jquery.simulate");
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 
@@ -431,7 +421,7 @@
 
 			$Students = [];
 			foreach ($Group->students as $id_student) {
-				$Student = Student::findById($id_student);
+				$Student = Student::findById($id_student, true);
 				$Student->Contract 	= $Student->getLastContract($Group->year);
 
 				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject, $Group->year);
