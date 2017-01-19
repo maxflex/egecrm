@@ -32,10 +32,10 @@
 				$Student = Student::findById($id_student);
 
 				// если админ, не отправлять смски
-				if (User::isAdmin()) {
+				if (! User::isAdmin()) {
 					// если отсутствовал на занятии
 					if ($data[$id_student]['presence'] == 2) {
-                        // @sms-checked
+						// @sms-checked
 						$message = Template::get(7, [
 							"date" 			=> today_text(),
 							"student_name"	=> $Student->last_name . " " . $Student->first_name,
@@ -48,21 +48,22 @@
 								SMS::send($representative_number, $message);
 							}
 						}
-					} else
-					// если отсутствовал на занятии
-					if ($data[$id_student]['late'] >= 5) {
-                        // @sms-checked
-						$message = Template::get(6, [
-							"date" 			=> today_text($Schedule->date),
-							"student_name"	=> $Student->last_name . " " . $Student->first_name,
-							"late_word"		=> ($Student->getGender() == 1 ? "опоздал" : "опоздала"),
-							"subject"		=> Subjects::$dative[$Group->id_subject],
-							"late_minutes"	=> $data[$id_student]['late'] . " " . pluralize('минуту', 'минуты', 'минут', $data[$id_student]['late']),
-						]);
-						foreach (Student::$_phone_fields as $phone_field) {
-							$representative_number = $Student->Representative->{$phone_field};
-							if (!empty($representative_number)) {
-								SMS::send($representative_number, $message);
+					} else {
+						// если отсутствовал на занятии
+						if ($data[$id_student]['late'] >= 5) {
+							// @sms-checked
+							$message = Template::get(6, [
+								"date" 			=> today_text($Schedule->date),
+								"student_name"	=> $Student->last_name . " " . $Student->first_name,
+								"late_word"		=> ($Student->getGender() == 1 ? "опоздал" : "опоздала"),
+								"subject"		=> Subjects::$dative[$Group->id_subject],
+								"late_minutes"	=> $data[$id_student]['late'] . " " . pluralize('минуту', 'минуты', 'минут', $data[$id_student]['late']),
+							]);
+							foreach (Student::$_phone_fields as $phone_field) {
+								$representative_number = $Student->Representative->{$phone_field};
+								if (!empty($representative_number)) {
+									SMS::send($representative_number, $message);
+								}
 							}
 						}
 					}

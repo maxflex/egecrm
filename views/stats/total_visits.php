@@ -143,7 +143,7 @@
 								<a class="pointer" target="_blank" href="teachers/edit/{{ _Teacher.id }}">
 									{{ _Teacher.last_name }} {{ _Teacher.first_name }} {{ _Teacher.middle_name }}
 								</a>
-								<span class="label label-danger pointer label-transparent" ng-click="callSip(_Teacher.phone)"
+								<span class="label label-danger pointer label-transparent" ng-click="PhoneService.call(_Teacher.phone)"
 									style="margin-left: 3px">позвонить</span>
 							</td>
 							<td width="11%">

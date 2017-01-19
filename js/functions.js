@@ -1,4 +1,4 @@
-var ajaxEnd, ajaxStart, checkLogout, clearSelect, continueSession, deleteTeacher, emailMode, isMobilePhone, logoutCountdown, logoutCountdownClose, logout_interval, objectToArray, phoneCorrect, set_scope, smsMode;
+var ajaxEnd, ajaxStart, checkLogout, clearSelect, continueSession, deleteTeacher, emailMode, isMobilePhone, logoutCountdown, logoutCountdownClose, logout_interval, objectToArray, phoneCorrect, set_scope;
 
 logout_interval = false;
 
@@ -104,17 +104,6 @@ emailMode = function(mode) {
     case 2:
       $(".email-group-controls").show();
       return $(".email-template-list").hide();
-  }
-};
-
-smsMode = function(mode) {
-  $("#sms-mode").val(mode);
-  switch (mode) {
-    case 2:
-      return $(".sms-group-controls").show();
-    case 3:
-      $(".sms-group-controls").show();
-      return $("#sms-to-teacher").hide();
   }
 };
 

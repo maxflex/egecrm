@@ -8,7 +8,7 @@
 				{{ formatTime(m.start) }}
 			</td>
 			<td width="200">
-				<span class="underline-hover inline-block" ng-click="callSip(m.phone_formatted)">{{m.phone_formatted}}</span>
+				<span class="underline-hover inline-block" ng-click="PhoneService.call(m.phone_formatted)">{{m.phone_formatted}}</span>
 			</td>
 			<td>
                 <span ng-if="m.caller.type == 'teacher'">преподаватель <a target='_blank' href='teachers/edit/{{m.caller.id}}'>{{ m.caller.name }}</a></span>

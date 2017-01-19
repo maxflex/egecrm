@@ -6,7 +6,7 @@
 			* dateToStart()
 	*/
 ?>
-<table class="table table-hover border-reverse last-item-no-border" style="position: relative" <?= ($group_by_year ? ' ng-repeat="group_year in getGroupsYears()"' : '') ?>>
+<table class="table table-hover border-reverse last-item-no-border" style="position: relative" <?= ($group_by_year ? ' ng-repeat="group_year in GroupService.getYears(Groups)"' : '') ?>>
 	<tr class="no-hover" ng-if="group_year">
 		<td colspan="8" class="no-border-bottom">
 			<h4 class="row-header default-case no-margin">Группы {{ group_year + '-' + (group_year + 1) }} учебного года</h4>
@@ -15,7 +15,7 @@
 	<?php if ($loading) :?>
 	<div id="frontend-loading" style="display: block">Загрузка...</div>
 	<?php endif ?>
-	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': "" ) ?> <?= ($group_by_year ? '| yearFilter:group_year ': "" ) ?>"
+	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': '' ) ?> <?= ($group_by_year ? '| byYear:group_year ': '' ) ?>"
 		ng-class="{
 			'half-opacity': Group.day_and_time.length !== undefined
 		}"

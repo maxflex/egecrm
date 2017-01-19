@@ -49,8 +49,7 @@ app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('range', function
       frontendLoadingEnd();
       $scope.Reviews = response.data;
       $scope.counts = response.counts;
-      $scope.$apply();
-      return $scope.refreshCounts();
+      return $scope.$apply();
     }, "json");
   };
   return angular.element(document).ready(function() {

@@ -33,12 +33,6 @@ app = angular.module("Teacher", ["ngMap"]).config([
       return null;
     }
   };
-}).filter('yearFilter', function() {
-  return function(items, year) {
-    return _.where(items, {
-      'year': year
-    });
-  };
 }).filter('toArray', function() {
   return function(obj) {
     var arr;
@@ -69,7 +63,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
   return angular.element(document).ready(function() {
     return set_scope("Teacher");
   });
-}).controller("EditCtrl", function($scope, $timeout, PhoneService) {
+}).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService) {
   var _loadData, _postData, bindFileUpload, deletePayment, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
@@ -208,16 +202,6 @@ app = angular.module("Teacher", ["ngMap"]).config([
     lessons_sum = $scope.lessonsTotalSum();
     payments_sum = $scope.lessonsTotalPaid(from_lessons);
     return lessons_sum - payments_sum;
-  };
-  $scope.sipNumber = function(number) {
-    number = number.toString();
-    return "sip:" + number.replace(/[^0-9]/g, '');
-  };
-  $scope.callSip = function(element) {
-    var number;
-    number = $("#" + element).val();
-    number = $scope.sipNumber(number);
-    return location.href = number;
   };
   $scope.formatDate2 = function(date) {
     var dateOut;
@@ -623,8 +607,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
       noneSelectedText: "предметы",
       multipleSeparator: "+"
     });
-    $("#state-select").selectpicker();
-    return smsMode(4);
+    return $("#state-select").selectpicker();
   });
   $scope.totalHold = function(grade) {
     var Teacher, denominator, k, len, numerator, ref;

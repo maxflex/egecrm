@@ -153,7 +153,7 @@
 								<a class="pointer" ng-class="{
 									'gray-link'		: isFutureLesson(Schedule),
 									'text-danger'	: isMissingLesson(Schedule),
-								}" target="_blank" ng-click="callSip(Schedule.Group.Teacher.phone)">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
+								}" target="_blank" ng-click="PhoneService.call(Schedule.Group.Teacher.phone)">{{Schedule.Group.Teacher.last_name}} {{Schedule.Group.Teacher.first_name}} {{Schedule.Group.Teacher.middle_name}}</a>
 							</td>
 							<td>
 								<span ng-class="{

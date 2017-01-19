@@ -4,7 +4,7 @@
 			<h4 class="row-header default-case no-margin">Отзывы {{ review_year + '-' + (review_year + 1) }} учебного года</h4>
 		</td>
 	</tr>
-	<tr ng-repeat="Review in Reviews <?= ($review_by_year ? '|yearFilter:review_year' : '')?>">
+	<tr ng-repeat="Review in Reviews <?= ($review_by_year ? '|byYear:review_year' : '')?>">
 		<td style="width: 9%">
 			<a href="{{ <?= User::fromSession()->isStudent(true) ?> ? 'students/' : ''}}reviews/{{Review.id_teacher}}/{{Review.id_subject}}/{{Review.year}}{{<?= User::fromSession()->isStudent(true) ?> ? '' : '/' + (Review.id_entity || Review.id_student)}}">
 				{{Review.id ? 'отзыв ' + Review.id : 'создать'}}

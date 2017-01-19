@@ -13,12 +13,6 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
-			
-			$this->Comments = $this->isNewRecord ? [] : Comment::getByPlace(self::PLACE, $this->id);
-			if (! $this->Comments) {
-				$this->Comments = [];
-			}
-			
 			if (! $this->isNewRecord) {
 				$this->Student = Student::getLight($this->id_student);
 				$this->lesson_count = VisitJournal::count([

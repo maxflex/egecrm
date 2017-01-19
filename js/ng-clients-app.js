@@ -67,7 +67,6 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
     }, "json");
   };
   angular.element(document).ready(function() {
-    smsMode(3);
     set_scope("Clients");
     $scope.search = $.cookie("clients") ? JSON.parse($.cookie("clients")) : {};
     $scope.current_page = $scope.currentPage;
@@ -75,6 +74,5 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
     return $(".single-select").selectpicker();
   });
   $scope.to_students = true;
-  $scope.to_representatives = false;
-  return $scope.smsDialog3 = smsDialog3;
+  return $scope.to_representatives = false;
 });

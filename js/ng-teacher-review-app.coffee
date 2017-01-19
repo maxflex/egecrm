@@ -39,7 +39,6 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 				$scope.Reviews  = response.data
 				$scope.counts = response.counts
 				$scope.$apply()
-				$scope.refreshCounts()
 			, "json"
 
 		angular.element(document).ready ->

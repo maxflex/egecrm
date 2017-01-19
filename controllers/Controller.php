@@ -25,7 +25,6 @@
 		/*
 		 * Отобразить view
 		 * $layout – кастомный лэйаут, по умолчанию меню
-		 * @todo: изменить футер под кастомный лэйаут DONE
 		 */
 		protected function render($view, $vars = array(), $layout = false)
 		{

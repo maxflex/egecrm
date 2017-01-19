@@ -86,16 +86,7 @@
 			when 2
 				$(".email-group-controls").show()
 				$(".email-template-list").hide()
-	
-	smsMode = (mode) ->
-		$("#sms-mode").val mode
-		switch mode
-			when 2
-				$(".sms-group-controls").show()
-			when 3
-				$(".sms-group-controls").show()
-				$("#sms-to-teacher").hide()
-				
+
 	ajaxStart = (element = false) ->
 		if element isnt false
 			$(".ajax-#{element}-button").attr("disabled", "disabled")

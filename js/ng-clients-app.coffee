@@ -52,7 +52,6 @@ app = angular.module "Clients", ["ui.bootstrap"]
 			, "json"
 						 
 		angular.element(document).ready ->
-			smsMode 3
 			set_scope "Clients"
 			$scope.search = if $.cookie("clients") then JSON.parse($.cookie("clients")) else {}
 			$scope.current_page = $scope.currentPage
@@ -61,4 +60,3 @@ app = angular.module "Clients", ["ui.bootstrap"]
 			
 		$scope.to_students = true
 		$scope.to_representatives = false
-		$scope.smsDialog3 = smsDialog3
