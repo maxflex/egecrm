@@ -34,7 +34,7 @@
 	</div>
 	<div class="col-sm-4">
 		<div class="half-black pull-right" ng-show="mode=='request'" style="margin-right: 15px; margin-top: 7px">
-			ответственный: <span class="user-pick" ng-click="toggleUser()" style="color: {{responsible_user.color || 'black' }}">{{ UserService.getLogin(responsible_user || Request && Request.id_user) }}
+			ответственный: <span class="user-pick" ng-click="toggleUser()" style="color: {{responsible_user.color || 'black' }}">{{ UserService.getLogin((responsible_user && responsible_user.id) || (Request && Request.id_user)) }}
 		</div>
 	</div>
 </div>
