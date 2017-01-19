@@ -798,14 +798,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			lightBoxShow('manualedit')
 		}
 
-
-		$scope.printBill = function(payment) {
-			$scope.print_mode = 'bill'
-			$scope.PrintPayment = payment
-			$scope.$apply()
-			printDiv($scope.print_mode + "-print")
-		}
-
 		$scope.printLlcBill = function(payment) {
 			$scope.print_mode = 'llc-bill'
 			$scope.PrintPayment = payment

@@ -48,8 +48,7 @@
             <td style="white-space: nowrap">
                 <a class="link-like" ng-click="deletePayment($index, payment)">удалить</a>
                 <?php if ($student_page) :?>
-                    <a style='margin-left: 10px' class="link-like" ng-click="printBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета</a>
-                    <a style='margin-left: 10px' class="link-like" ng-click="printLlcBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета ООО</a>
+                    <a class="link-like" ng-click="printLlcBill(payment)" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">печать счета ООО</a>
                 <?php endif ?>
             </td>
             <td class="col-sm-2">
