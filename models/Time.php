@@ -57,8 +57,6 @@
 					$Time = static::findAll();
 					memcached()->set('groups:times', $Time, 3600 * 24 * 7);
 				}
-
-				return $Time;
 			}
 
 			$return = [];
