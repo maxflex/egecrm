@@ -668,40 +668,48 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		 */
 		$scope.printContract = function(contract) {
 			$scope.contract = $scope.firstContractInChain(contract)
-			$scope.$apply();
-
-			$scope.print_mode = 'contract'
-			$scope.id_user_print = 0
-			html = $("#contract-print").html()
-			$scope.editBeforePrint(html)
+			$timeout(function(){
+				$scope.$apply();
+                $scope.print_mode = 'contract'
+                $scope.id_user_print = 0
+                html = $("#contract-print").html()
+                $scope.editBeforePrint(html)
+			});
 		}
 
 		$scope.printContractLicenced = function(contract) {
 			$scope.contract = $scope.firstContractInChain(contract)
-			$scope.$apply();
+			$timeout(function(){
+				$scope.$apply();
+                $scope.print_mode = 'contract-licenced'
+                $scope.id_user_print = 0
+                html = $("#contract-licenced-print").html()
+                $scope.editBeforePrint(html)
+			});
 
-			$scope.print_mode = 'contract-licenced'
-			$scope.id_user_print = 0
-			html = $("#contract-licenced-print").html()
-			$scope.editBeforePrint(html)
 		}
 
 		$scope.printContractAdditional = function(contract) {
 			$scope.contract = contract
-			$scope.$apply();
-			$scope.print_mode = 'agreement'
-			$scope.contract_additional = contract
-			$scope.id_contract_print = contract.id
-			html = $("#agreement-print-" + $scope.id_contract_print).html()
-			$scope.editBeforePrint(html)
+			$timeout(function(){
+				$scope.$apply();
+				$scope.print_mode = 'agreement'
+				$scope.contract_additional = contract
+				$scope.id_contract_print = contract.id
+				html = $("#agreement-print-" + $scope.id_contract_print).html()
+				$scope.editBeforePrint(html)
+			});
 		}
 
 		$scope.printContractAdditionalOoo = function(contract) {
 			$scope.contract = contract
-			$scope.$apply();
-			$scope.print_mode = 'agreement-ooo'
-			html = $("#agreement-ooo-print-" + contract.id).html()
-			$scope.editBeforePrint(html)
+			$timeout(function(){
+				$scope.$apply();
+				$scope.print_mode = 'agreement-ooo'
+				html = $("#agreement-ooo-print-" + contract.id).html()
+				$scope.editBeforePrint(html)
+			});
+
 		}
 
 		$scope.printAct = function(contract) {
@@ -716,9 +724,11 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$scope.print_mode = 'service-act'
 			$scope.service_contract_parent = $scope.firstContractInChain(contract)
 			$scope.service_contract = $scope.lastContractInChain(contract)
-			$scope.$apply()
-			html = $("#service-act-print").html()
-			$scope.editBeforePrint(html)
+			$timeout(function(){
+				$scope.$apply();
+				html = $("#service-act-print").html()
+				$scope.editBeforePrint(html)
+			});
 		}
 
 		$scope.printServiceActIp = function(contract) {

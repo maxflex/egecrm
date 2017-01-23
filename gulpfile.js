@@ -18,7 +18,6 @@ vendor_files = [
 	'js/vendor/angular.js',
 	'js/vendor/angular-locale-ru.js',
 	'js/vendor/angular-animate.js',
-	'extentions/ckeditor/ckeditorg.js',
 	'js/vendor/ngmap.min.js',
 	'js/vendor/name.js',
 	'js/vendor/bootstrap.min.js',
@@ -68,9 +67,9 @@ css_files = [
 	'js/bower/cropper/dist/cropper.min.css',
 	'js/bower/simple-hint/dist/simple-hint.css',
 	'css/vendor/bootstrap-select.css',
-	'css/vendor/bs-slider',
+	'css/vendor/bs-slider.css',
 	'js/bower/phoneapi/dist/css/phone.css',
-	'css/vendor/ng-autocomplete'
+	'css/vendor/ng-autocomplete.css'
 ];
 
 gulp.task('build-vendor', function() {

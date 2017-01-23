@@ -8,7 +8,8 @@
   },
   "sass": {
       "src": "./css/*.scss",
-      "dest": "./css/"
+      "dest": "./css/",
+      "bundle": "app.css"
   },
   "coffee": {
     "task" : {

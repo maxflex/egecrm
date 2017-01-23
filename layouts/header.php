@@ -15,6 +15,7 @@
 	<link href="css/app.css" rel="stylesheet">
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/vendor.js?ver=<?= settings()->version ?>"></script>
+	<script type="text/javascript" src="extentions/ckeditor/ckeditor.js"></script>
 	<script type="text/javascript" src="js/metro_data.js"></script>
 	<script type="text/javascript" src="js/engine.js?ver=<?= settings()->version ?>"></script>
 	<script type="text/javascript" src="js/functions.js?ver=<?= settings()->version ?>"></script>
