@@ -842,7 +842,7 @@
 						$query = dbConnection()->query("
 							SELECT g.id_subject, g.id_teacher, g.grade FROM groups g
 							JOIN group_time gt ON gt.id_group = g.id
-							WHERE gt.id_time = {$id_time} AND gt.id_cabinet = {$Cabinet->id} AND g.year=" . Years::getAcademic());
+							WHERE g.ended=0 AND gt.id_time = {$id_time} AND gt.id_cabinet = {$Cabinet->id} AND g.year=" . Years::getAcademic());
 						if ($query->num_rows) {
 							$Group = $query->fetch_object();
 							$Teacher = Teacher::getLight($Group->id_teacher);
