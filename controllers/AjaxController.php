@@ -396,7 +396,7 @@
 				}
 			}
 
-			if ($to_teacher == "true") {
+			if ($to_teachers == "true") {
 				$Teacher = Teacher::findById($Group->id_teacher);
 				$msg = $message;
 				if ($Teacher->login && $Teacher->password) {
