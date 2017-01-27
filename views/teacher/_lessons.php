@@ -51,7 +51,7 @@
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Итого к выплате</td>
-					<td colspan="3">{{ (current_year_to_be_paid - current_year_paid - current_year_ndfl) | number}} рублей</td>
+					<td colspan="3">{{ (current_year_to_be_paid - current_year_paid - current_year_ndfl).toFixed(2) | number}} рублей</td>
 				</tr>
 			</table>
 		</div>
