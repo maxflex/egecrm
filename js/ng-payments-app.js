@@ -27,7 +27,7 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
         }
       });
     }
-    return sum;
+    return parseFloat(sum).toFixed(2);
   };
   $scope.lessonsTotalPaid = function(from_lessons) {
     var payments_sum;

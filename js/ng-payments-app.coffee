@@ -16,7 +16,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
             if $scope.Lessons
                 $.each $scope.Lessons, (index, value) ->
                     sum += parseFloat(value.ndfl) if value.ndfl
-            sum
+            parseFloat(sum).toFixed(2)
 
         $scope.lessonsTotalPaid = (from_lessons)->
             payments_sum = 0
