@@ -45,11 +45,11 @@
 					</tr>
 					<tr class="text-gray no-border">
 						<td colspan="4">Всего проведено {{ Lessons.length }} занятий на сумму</td>
-						<td colspan="2">{{ lessonsTotalSum() }} руб.</td>
+						<td colspan="2">{{ lessonsTotalSum() | number }} руб.</td>
 					</tr>
 					<tr class="text-gray no-border">
 						<td colspan="4">Всего выплачено</td>
-						<td colspan="2">{{ lessonsTotalPaid(true) }} руб.</td>
+						<td colspan="2">{{ lessonsTotalPaid(true) | number }} руб.</td>
 					</tr>
                     <tr class="text-gray no-border">
 						<td colspan="4">Всего НДФЛ</td>
