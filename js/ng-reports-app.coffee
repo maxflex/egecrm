@@ -97,7 +97,7 @@ app = angular.module "Reports", ["ui.bootstrap"]
 			!has_reports
 
 		$scope.getYears = ->
-			years = _.uniq $scope.Visits, (Visit) ->
+			years = _.uniq _.where($scope.Visits, type_entity:'STUDENT'), (Visit) ->
 				Visit.year
 			_.pluck(years, 'year')
 

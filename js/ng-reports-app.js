@@ -113,7 +113,9 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
   };
   $scope.getYears = function() {
     var years;
-    years = _.uniq($scope.Visits, function(Visit) {
+    years = _.uniq(_.where($scope.Visits, {
+      type_entity: 'STUDENT'
+    }), function(Visit) {
       return Visit.year;
     });
     return _.pluck(years, 'year');
