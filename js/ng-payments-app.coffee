@@ -11,12 +11,11 @@ app = angular.module "Payments", ["ui.bootstrap"]
                     lessons_sum += parseInt(value.teacher_price)
             lessons_sum
 
-        $scope.totalNdfl = (from_lessons)->
-            Lessons = from_lessons or $scope.Lessons
+        $scope.totalNdfl = ->
             sum = 0
-            if Lessons
-                $.each Lessons, (index, value) ->
-                    sum += parseInt(value.ndfl)
+            if $scope.Lessons
+                $.each $scope.Lessons, (index, value) ->
+                    sum += parseFloat(value.ndfl) if value.ndfl
             sum
 
         $scope.lessonsTotalPaid = (from_lessons)->
@@ -36,7 +35,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
 
             lessons_sum  = $scope.lessonsTotalSum()
             payments_sum = $scope.lessonsTotalPaid(from_lessons)
-            ndfl_sum = $scope.totalNdfl(from_lessons)
+            ndfl_sum = $scope.totalNdfl()
 
             lessons_sum - payments_sum - ndfl_sum
         $scope.dateFromCustomFormat = (date) ->

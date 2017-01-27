@@ -36,11 +36,12 @@
                         <td>
 							<span ng-show='Lesson.ndfl'>{{Lesson.ndfl | number}} руб.</span>
 						</td>
+                        <!-- 42919781 -->
 					</tr>
 					<tr ng-repeat-end ng-if="Lesson.payments" ng-repeat="payment in Lesson.payments" class="text-gray">
-						<td colspan="3">{{ payment_types[payment.id_type] }}</td>
+						<td colspan="2">{{ payment_types[payment.id_type] }}</td>
 						<td colspan="2">от {{ dateFromCustomFormat(payment.date) }}</td>
-						<td>{{ payment.sum + ' руб. (' + payment_statuses[payment.id_status] + ')' }}</td>
+						<td colspan="2">{{ payment.sum + ' руб. (' + payment_statuses[payment.id_status] + ')' }}</td>
 					</tr>
 					<tr class="text-gray no-border">
 						<td colspan="4">Всего проведено {{ Lessons.length }} занятий на сумму</td>
@@ -52,7 +53,7 @@
 					</tr>
                     <tr class="text-gray no-border">
 						<td colspan="4">Всего НДФЛ</td>
-						<td colspan="2">{{ totalNdfl(true) }} руб.</td>
+						<td colspan="2">{{ totalNdfl() | number }} руб.</td>
 					</tr>
 					<tr class="text-gray no-border">
 						<td colspan="4">Итого к выплате</td>
