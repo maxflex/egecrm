@@ -46,8 +46,12 @@
 					<td colspan="3">{{ current_year_paid | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
+					<td colspan="4">Итого НДФЛ</td>
+					<td colspan="3">{{ current_year_ndfl | number }} руб.</td>
+				</tr>
+				<tr class="text-gray no-border">
 					<td colspan="4">Итого к выплате</td>
-					<td colspan="3">{{ (current_year_to_be_paid - current_year_paid) | number}} рублей</td>
+					<td colspan="3">{{ (current_year_to_be_paid - current_year_paid - current_year_ndfl) | number}} рублей</td>
 				</tr>
 			</table>
 		</div>

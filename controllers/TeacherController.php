@@ -211,6 +211,7 @@
                             'condition' => "type_entity='TEACHER' AND id_entity={$id_teacher} AND year=" . academicYear()
                         ]),
                         'current_year_paid' => dbConnection()->query("select sum(sum) as s from payments where entity_type='TEACHER' and entity_id={$id_teacher} and year=" . academicYear())->fetch_object()->s,
+                        'current_year_ndfl' => dbConnection()->query("select sum(ndfl) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher} and year=" . academicYear())->fetch_object()->s,
                         'current_year_to_be_paid' => dbConnection()->query("select sum(teacher_price) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher} and year=" . academicYear())->fetch_object()->s
                     ]);
 				}
