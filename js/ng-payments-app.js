@@ -60,7 +60,7 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     lessons_sum = $scope.lessonsTotalSum();
     payments_sum = $scope.lessonsTotalPaid(from_lessons);
     ndfl_sum = $scope.totalNdfl();
-    return lessons_sum - payments_sum - ndfl_sum;
+    return parseFloat(lessons_sum - payments_sum - ndfl_sum).toFixed(2);
   };
   $scope.dateFromCustomFormat = function(date) {
     var D;

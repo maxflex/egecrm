@@ -37,7 +37,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
             payments_sum = $scope.lessonsTotalPaid(from_lessons)
             ndfl_sum = $scope.totalNdfl()
 
-            lessons_sum - payments_sum - ndfl_sum
+            parseFloat(lessons_sum - payments_sum - ndfl_sum).toFixed(2)
         $scope.dateFromCustomFormat = (date) ->
             date = date.split "."
             date = date.reverse()
