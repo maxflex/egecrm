@@ -34,7 +34,7 @@
 							{{Lesson.teacher_price | number}} руб.
 						</td>
                         <td>
-							{{Lesson.ndfl | number}} руб.
+							<span ng-show='Lesson.ndfl'>{{Lesson.ndfl | number}} руб.</span>
 						</td>
 					</tr>
 					<tr ng-repeat-end ng-if="Lesson.payments" ng-repeat="payment in Lesson.payments" class="text-gray">
