@@ -25,6 +25,9 @@
 						{{Lesson.teacher_price | number}} руб.
 					</td>
 					<td>
+						<span ng-show='Lesson.ndfl'>{{Lesson.ndfl | number}} руб.</span>
+					</td>
+					<td>
 						{{ Lesson.login_user_saved }} {{formatDate(Lesson.date) | date:'dd.MM.yy в HH:mm'}}
 					</td>
 				</tr>
