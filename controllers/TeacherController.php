@@ -126,13 +126,15 @@
             )->fetch_object()->tobe_paid;
 
 			$ang_init_data = angInit([
-				"Data" 		        => $return,
-				"total_sum"			=> $total_sum,
-				"real_total_sum"			=> $real_total_sum,
-				"total_payment_sum"	=> $total_payment_sum,
-				"lesson_count"		=> $lesson_count,
-				"subjects"	        => Subjects::$short,
-				"active_year"       => $year,
+				"Data" 		                     => $return,
+				"total_sum"			             => $total_sum,
+				"total_sum_official"			 => $total_sum_official,
+				"total_ndfl"			         => $total_ndfl,
+				"real_total_sum"			     => $real_total_sum,
+				"total_payment_sum"	             => $total_payment_sum,
+				"lesson_count"		             => $lesson_count,
+				"subjects"	                     => Subjects::$short,
+				"active_year"                    => $year,
 			]);
 
 			$this->setTabTitle('Дебет преподавателей');
