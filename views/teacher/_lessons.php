@@ -32,21 +32,21 @@
 					</td>
 				</tr>
 				<tr ng-repeat-end ng-if="Lesson.payments" ng-repeat="payment in Lesson.payments" class="text-gray">
-					<td colspan="3">{{ payment_types[payment.id_type] }}</td>
-					<td colspan="3">от {{ dateFromCustomFormat(payment.date) }}</td>
-					<td>{{ payment.sum + ' руб. (' + payment_statuses[payment.id_status] + ')' }}</td>
+					<td colspan="2">{{ payment_types[payment.id_type] }}</td>
+					<td colspan="2">от {{ dateFromCustomFormat(payment.date) }}</td>
+					<td colspan="2">{{ payment.sum + ' руб. (' + payment_statuses[payment.id_status] + ')' }}</td>
 					<td>{{ payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}</td>
 				</tr>
 				<tr class="text-gray no-border">
-					<td colspan="5">Всего проведено за {{ academicYear(<?= academicYear() ?>) }} {{ current_year_lessons_count }} занятий на сумму</td>
+					<td colspan="4">Всего проведено за {{ academicYear(<?= academicYear() ?>) }} {{ current_year_lessons_count }} занятий на сумму</td>
 					<td colspan="3">{{ current_year_to_be_paid | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
-					<td colspan="5">Всего выплачено</td>
+					<td colspan="4">Всего выплачено</td>
 					<td colspan="3">{{ current_year_paid | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
-					<td colspan="5">Итого к выплате</td>
+					<td colspan="4">Итого к выплате</td>
 					<td colspan="3">{{ (current_year_to_be_paid - current_year_paid) | number}} рублей</td>
 				</tr>
 			</table>
