@@ -53,6 +53,10 @@
 						<input class="form-control digits-only"
 							ng-model="Group.teacher_price" placeholder="цена преподавателя">
 					</div>
+                    <div class="form-group">
+						<input class="form-control digits-only"
+							ng-model="Group.teacher_price_official" placeholder="белая часть">
+					</div>
 					<div class="form-group">
 					   <?= GroupLevels::buildSelector(false, false, [
 							"ng-model" 		=> "Group.level",
