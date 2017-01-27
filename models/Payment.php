@@ -10,7 +10,6 @@
 		const PAID_BILL		= 4;
 		const CARD_ONLINE	= 5;
 		const MUTUAL_DEBTS	= 6;
-		const NDFL	        = 7;
 
 		# Все
 		static $all  = [
@@ -19,7 +18,6 @@
 			self::PAID_BILL		=> "счет",
 			self::CARD_ONLINE	=> "карта онлайн",
 			self::MUTUAL_DEBTS	=> "взаимозачет",
-			self::NDFL	        => "НДФЛ",
 		];
 
 		const PER_PAGE = 30;

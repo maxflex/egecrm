@@ -54,7 +54,7 @@
 							ng-model="Group.teacher_price" placeholder="цена преподавателя">
 					</div>
                     <div class="form-group">
-						<input class="form-control digits-only"
+						<input class="form-control digits-only-float"
 							ng-model="Group.teacher_price_official" placeholder="белая часть">
 					</div>
 					<div class="form-group">
