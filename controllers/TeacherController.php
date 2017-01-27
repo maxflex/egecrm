@@ -66,9 +66,13 @@
 				]);
 
 				$sum = 0;
+                $sum_official = 0;
+                $ndfl = 0;
                 $real_sum = 0;
 				foreach ($Data as $OneData) {
                     $sum += $OneData->teacher_price;
+                    $sum_official += $OneData->teacher_price_official;
+                    $ndfl += $OneData->ndfl;
                     $total_sum += $OneData->teacher_price;
                     $real_sum += $OneData->teacher_price;
                     $real_total_sum += $OneData->teacher_price;

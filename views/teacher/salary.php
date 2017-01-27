@@ -24,7 +24,9 @@
 					<tr style="height: 35px">
 						<td style="text-align: left">Преподаватель</td>
 						<td>Занятий всего</td>
-						<td>Общая сумма</td>
+						<td>Начислено</td>
+						<td>Начислено (белая)</td>
+						<td>НДФЛ</td>
 						<td>Выплачено</td>
 						<td>К выплате</td>
 					</tr>
@@ -48,10 +50,16 @@
 							<span ng-hide="!d.sum">{{d.sum | number}}</span>
 						</td>
 						<td class="center">
+							<span ng-hide="!d.sum_official">{{ (d.sum_official).toFixed(2) | number}}</span>
+						</td>
+						<td class="center">
+							<span ng-hide="!d.ndfl">{{ (d.ndfl).toFixed(2) | number}}</span>
+						</td>
+						<td class="center">
 							<span ng-hide="!d.payment_sum">{{d.payment_sum | number}}</span>
 						</td>
 						<td class="center">
-							<span ng-hide="(d.real_sum - d.payment_sum) == 0">{{(d.real_sum - d.payment_sum) | number}}</span>
+							<span ng-hide="(d.real_sum - d.payment_sum - d.ndfl) == 0">{{ (d.real_sum - d.payment_sum - d.ndfl).toFixed(2) | number }}</span>
 						</td>
 					</tr>
 
