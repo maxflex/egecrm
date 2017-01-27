@@ -46,6 +46,8 @@
 
 			$real_total_sum = 0;
 			$total_sum = 0;
+            $total_sum_official = 0;
+            $total_ndfl = 0;
 			$total_payment_sum = 0;
 			$lesson_count = 0;
 			foreach ($teacher_ids as $id_teacher) {
@@ -74,6 +76,8 @@
                     $sum_official += $OneData->teacher_price_official;
                     $ndfl += $OneData->ndfl;
                     $total_sum += $OneData->teacher_price;
+                    $total_sum_official += $OneData->teacher_price_official;
+                    $total_ndfl += $OneData->ndfl;
                     $real_sum += $OneData->teacher_price;
                     $real_total_sum += $OneData->teacher_price;
                 }

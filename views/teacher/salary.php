@@ -74,6 +74,12 @@
 							<b>{{total_sum | number}}</b>
 						</td>
 						<td class="center">
+							<b>{{ total_sum_official.toFixed(2) | number}}</b>
+						</td>
+						<td class="center">
+							<b>{{ total_ndfl.toFixed(2) | number}}</b>
+						</td>
+						<td class="center">
 							<b>{{total_payment_sum | number}}</b>
 						</td>
 						<td class="center">
