@@ -83,6 +83,8 @@
 				$return[] = [
 					"Teacher" 	=> $Teacher,
 					"sum"		=> $sum,
+					"sum_official"		=> $sum_official,
+					"ndfl"		=> $ndfl,
 					"real_sum"  => $real_sum,
 					"payment_sum" => $payment_sum,
 					"count"		=> ($Data ? count($Data) : 0),
