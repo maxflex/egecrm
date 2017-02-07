@@ -1,4 +1,4 @@
-<div ng-app="Tendency" ng-controller="IndexCtrl" style='min-height: 300px'>
+<div ng-app="Tendency" ng-controller="IndexCtrl" style='min-height: 270px'>
     <div class="row">
         <div class="col-sm-3">
             <div class="form-group">
@@ -18,7 +18,7 @@
             <div class="btn full-width btn-primary" ng-click="go()">ОК</div>
         </div>
     </div>
-    <div ng-show='count !== undefined' style='margin-top: 50px'>
+    <div ng-show='count !== undefined' style='margin-top: 20px'>
         <div>
             <b>найдено заявок: {{ count }}</b>
         </div>
