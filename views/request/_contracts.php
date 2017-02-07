@@ -115,7 +115,7 @@
                                 <!-- @TODO – ОТДЕБАЖИТЬ ДЕЙСТВИЯ И ФУНКЦИИ ТИПА isLastContractInChain, ДОБАВИТЬ ОДНО НОВОЕ ДЕЙСТВИЕ – ПЕЧАТЬ НОВОГО ДОГОВОРА -->
                                 <li class='link-like' ng-click="createNewContract(contract)">создать новую версию</li>
                                 <li class='link-like' ng-click="editContract(contract)">изменить без проводки</li>
-								<li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContract(contract)'>удалить</li>
+								<li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContractTest(contract)'>удалить</li>
 							</ul>
                         </div>
 					</td>
