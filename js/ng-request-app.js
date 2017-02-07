@@ -721,6 +721,17 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		}
 
+		$scope.printTestArgreement = function(contract_test) {
+			$scope.contract_test = contract_test
+			$timeout(function(){
+				$scope.$apply();
+				$scope.print_mode = 'testing-agreement'
+				html = $("#testing-agreement-print").html()
+				$scope.editBeforePrint(html)
+			});
+
+		}
+
 		$scope.printAct = function(contract) {
 			$scope.print_mode = 'act'
 			$scope.contract_act = contract

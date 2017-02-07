@@ -48,6 +48,8 @@
 								<li class='link-like' ng-click="printServiceActIp(contract)" ng-show='isLastContractInChain(contract)'>печать акта оказанных услуг ИП</li>
 								<li class='link-like' ng-click="printTerminationOoo(contract)" ng-show='isLastContractInChain(contract)'>печать соглашения о расторжении ООО</li>
 								<li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContract(contract)'>удалить</li>
+
+<!--								<li class='link-like' ng-click='printTestArgreement(contract)'>договор на тест</li>-->
 							</ul>
                         </div>
 					</td>
@@ -62,6 +64,9 @@
 		<?= partial("service_ooo_print") ?>
 		<?= partial("service_ip_print") ?>
 		<?= partial("agreement_termination_ooo") ?>
+
+
+		<?= printPartial("testing_agreement") ?>
     </div>
 </div>
 
