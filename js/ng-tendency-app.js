@@ -16,14 +16,15 @@ app = angular.module("Tendency", []).filter('toArray', function() {
     console.log('go', $scope.search);
     $scope.count = void 0;
     $scope.loading = true;
-    return $.post("tendency/AjaxSearch", {
+    return $.post('tendency/AjaxSearch', {
       search: $scope.search
-    }).then(function(response) {
+    }, function(response) {
       $scope.loading = false;
       $scope.count = response.count;
       $scope.contracts_count = response.contracts_count;
+      $scope.payments_sum = response.payments_sum;
       return $scope.$apply();
-    });
+    }, 'json');
   };
   return angular.element(document).ready(function() {
     console.log('test');
