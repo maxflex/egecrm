@@ -404,6 +404,18 @@
 			]);
 		}
 
+		/**
+		 * Получить договоры тестирования студента.
+		 *
+		 */
+		public function getContractsTest()
+		{
+			return ContractTest::findAll([
+				"condition"	=> "id_contract IN (" . ContractTest::getIdsByStudent($this->id) . ")",
+                "order"     => "str_to_date(date, '%d.%m.%Y'), date_changed"
+			]);
+		}
+
 		public static function getGroupsStatic($id_student, $with_schedule = false)
 		{
 			// @refactored

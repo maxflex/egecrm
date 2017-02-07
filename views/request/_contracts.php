@@ -78,7 +78,7 @@
 		>
 			<tr class="no-hover">
 				<td colspan="8" class="no-border-bottom">
-					<h4 class="row-header default-case"> Договор №{{ id_contract }} на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainById(id_contract).info.grade }} класс)</h4>
+					<h4 class="row-header default-case"> Договор №{{ id_contract }}T на {{ firstContractInChainByIdTest(id_contract).info.year + '-' + (firstContractInChainByIdTest(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainByIdTest(id_contract).info.grade }} класс)</h4>
 				</td>
 			</tr>
 				<tr ng-repeat="contract in contracts_test | group_by_id_contract:id_contract | orderBy:'date_changed'">
@@ -96,7 +96,7 @@
 										'text-warning'	: subject.status == 2,
 										'text-danger'	: subject.status == 1,
 									  }">
-							{{ Subjects[subject.id_subject] }}</span> ({{ subject.count }}+{{ subject.count2 }})<span ng-repeat-end>{{ $last ? '' : ', '}}
+							{{ Subjects[subject.id_subject] }}</span> ({{ subject.count }})<span ng-repeat-end>{{ $last ? '' : ', '}}
 						</span>
 					</td>
 					<td width="20%">
@@ -107,15 +107,9 @@
                         <div ng-show="contract.show_actions" class="emptyClickHandler" ng-click="closeContexMenu()"></div>
 						<div ng-show="contract.show_actions" class="contex-menu fadeInUp fadeOutDown">
                             <ul>
+                                <!-- @TODO – ОТДЕБАЖИТЬ ДЕЙСТВИЯ И ФУНКЦИИ ТИПА isLastContractInChain, ДОБАВИТЬ ОДНО НОВОЕ ДЕЙСТВИЕ – ПЕЧАТЬ НОВОГО ДОГОВОРА -->
                                 <li class='link-like' ng-click="createNewContract(contract)">создать новую версию</li>
                                 <li class='link-like' ng-click="editContract(contract)">изменить без проводки</li>
-                                <li class='link-like' ng-click="printContract(contract)" ng-show='isFirstContractInChain(contract)'>печать договора ИП</li>
-                                <li class='link-like' ng-click="printContractLicenced(contract)" ng-show='isFirstContractInChain(contract)'>печать договора ООО</li>
-                                <li class='link-like' ng-click="printContractAdditional(contract)" ng-show='!isFirstContractInChain(contract)'>печать доп.соглашения ИП</li>
-                                <li class='link-like' ng-click="printContractAdditionalOoo(contract)" ng-show='!isFirstContractInChain(contract)'>печать доп.соглашения ООО</li>
-								<li class='link-like' ng-click="printServiceActOoo(contract)" ng-show='isLastContractInChain(contract)'>печать акта оказанных услуг</li>
-								<li class='link-like' ng-click="printServiceActIp(contract)" ng-show='isLastContractInChain(contract)'>печать акта оказанных услуг ИП</li>
-								<li class='link-like' ng-click="printTerminationOoo(contract)" ng-show='isLastContractInChain(contract)'>печать соглашения о расторжении ООО</li>
 								<li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContract(contract)'>удалить</li>
 							</ul>
                         </div>
@@ -123,6 +117,7 @@
 				</tr>
 		</table>
 		<!--/договора-->
+        <!-- @TODO – СЮДА ПОДКЛЮЧИТЬ partial НОВОЙ ПЕЧАТИ -->
 		<?= partial("contract_print", ["Request" => $Request]) ?>
     </div>
 </div>

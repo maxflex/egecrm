@@ -288,11 +288,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.contractsChain = function(id_contract) {
 			return _.where($scope.contracts, {id_contract: id_contract})
 		}
-		$scope.ContractsChainTest = function(id_contract) {
+		$scope.contractsChainTest = function(id_contract) {
 			return _.where($scope.contracts_test, {id_contract: id_contract})
 		}
 		$scope.firstContractInChainById = function(id_contract) {
 			return _.find($scope.contractsChain(id_contract), function(c){ return c.id == c.id_contract})
+		}
+		$scope.firstContractInChainByIdTest = function(id_contract) {
+			return _.find($scope.contractsChainTest(id_contract), function(c){ return c.id == c.id_contract})
 		}
 		$scope.firstContractInChain = function(contract) {
 			return contract && $scope.firstContractInChainById(contract.id_contract)
@@ -1404,6 +1407,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.current_contract.id = response.id
 					$scope.current_contract.id_contract = response.id_contract
 					$scope.current_contract.user_login 	= response.user_login
+					$scope.current_contract.id_user 	= response.id_user
 					$scope.current_contract.date_changed= response.date_changed
 					$scope.current_contract.current_version = 1
 					$scope.current_contract.subjects = response.subjects;
@@ -1489,6 +1493,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.current_contract_test.id = response.id
 					$scope.current_contract_test.id_contract = response.id_contract
 					$scope.current_contract_test.user_login 	= response.user_login
+					$scope.current_contract_test.id_user 	= response.id_user
 					$scope.current_contract_test.date_changed= response.date_changed
 					$scope.current_contract_test.current_version = 1
 					$scope.current_contract_test.subjects = response.subjects;
@@ -1942,7 +1947,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.setMenu = function(menu) {
 			if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				$.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-					['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'student_phone_level',
+					['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'contracts_test', 'student', 'Groups', 'student_phone_level',
 						'branches_brick', 'representative_phone_level', 'representative'].forEach(function(field) {
 						$scope[field] = response[field]
 					})

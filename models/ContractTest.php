@@ -17,7 +17,7 @@
 			parent::__construct($array);
 
 			// Добавляем предметы в контракт
-			$this->subjects = ContractSubjectTest::getContractSubjectTests($this->id);
+			$this->subjects = ContractSubjectTest::getContractSubjects($this->id);
 
 			$this->_setNull($this->duty);
 			$this->_setNull($this->sum);
