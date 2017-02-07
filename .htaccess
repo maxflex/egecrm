@@ -128,12 +128,6 @@ RewriteRule ^users/ajax/([a-zA-Z]+)[/]?$ index.php?controller=users&action=Ajax$
 RewriteRule ^users/create[/]?$ index.php?controller=users&action=create [QSA,L]
 RewriteRule ^users/contract[/]?$ index.php?controller=users&action=contract [QSA,L]
 
-# Пробные тестирования
-RewriteRule ^testing[/]?$ index.php?controller=testing [QSA,L]
-RewriteRule ^students/testing[/]?$ index.php?controller=testing&action=students [QSA,L]
-RewriteRule ^testing/edit/([0-9]+)[/]?$ index.php?controller=testing&action=edit&id=$1 [QSA,L]
-RewriteRule ^testing/([a-zA-Z]+)[/]?$ index.php?controller=testing&action=$1 [QSA,L]
-
 # Внутренние тестирования
 RewriteRule students/tests[/]?$ index.php?controller=tests&action=StudentList [QSA,L]
 RewriteRule ^students/tests/intro/([0-9]+)[/]?$ index.php?controller=tests&action=intro&id=$1 [QSA,L]
@@ -162,6 +156,11 @@ RewriteRule ^cron/([a-zA-Z]+)[/]?$ index.php?controller=cron&action=$1 [QSA,L]
 
 # TEST
 RewriteRule ^test/([a-zA-Z]+)[/]?$ index.php?controller=test&action=$1 [QSA,L]
+RewriteRule ^cron/([a-zA-Z]+)[/]?$ index.php?controller=cron&action=$1 [QSA,L]
+
+# TEND
+RewriteRule ^tendency[/]?$ index.php?controller=tendency [QSA,L]
+RewriteRule ^tendency/([a-zA-Z]+)[/]?$ index.php?controller=tendency&action=$1 [QSA,L]
 
 # Поиск
 RewriteRule ^search[/]?$ index.php?controller=search [QSA,L]

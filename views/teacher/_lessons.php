@@ -25,26 +25,33 @@
 						{{Lesson.teacher_price | number}} руб.
 					</td>
 					<td>
+						<span ng-show='Lesson.ndfl'>{{Lesson.ndfl | number}} руб.</span>
+					</td>
+					<td>
 						{{ Lesson.login_user_saved }} {{formatDate(Lesson.date) | date:'dd.MM.yy в HH:mm'}}
 					</td>
 				</tr>
 				<tr ng-repeat-end ng-if="Lesson.payments" ng-repeat="payment in Lesson.payments" class="text-gray">
 					<td colspan="2">{{ payment_types[payment.id_type] }}</td>
 					<td colspan="2">от {{ dateFromCustomFormat(payment.date) }}</td>
-					<td>{{ payment.sum + ' руб. (' + payment_statuses[payment.id_status] + ')' }}</td>
+					<td colspan="2">{{ payment.sum + ' руб. (' + payment_statuses[payment.id_status] + ')' }}</td>
 					<td>{{ payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}</td>
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Всего проведено за {{ academicYear(<?= academicYear() ?>) }} {{ current_year_lessons_count }} занятий на сумму</td>
-					<td colspan="2">{{ current_year_to_be_paid | number }} руб.</td>
+					<td colspan="3">{{ current_year_to_be_paid | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Всего выплачено</td>
-					<td colspan="2">{{ current_year_paid | number }} руб.</td>
+					<td colspan="3">{{ current_year_paid | number }} руб.</td>
+				</tr>
+				<tr class="text-gray no-border">
+					<td colspan="4">Итого НДФЛ</td>
+					<td colspan="3">{{ current_year_ndfl | number }} руб.</td>
 				</tr>
 				<tr class="text-gray no-border">
 					<td colspan="4">Итого к выплате</td>
-					<td colspan="2">{{ (current_year_to_be_paid - current_year_paid) | number}} рублей</td>
+					<td colspan="3">{{ (current_year_to_be_paid - current_year_paid - current_year_ndfl).toFixed(2) | number}} рублей</td>
 				</tr>
 			</table>
 		</div>

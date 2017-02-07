@@ -281,9 +281,15 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.getContractIds = function () {
 			return _.uniq(_.pluck($scope.contracts, 'id_contract'));
 		}
+		$scope.getContractIdsTest = function () {
+			return _.uniq(_.pluck($scope.contracts_test, 'id_contract'));
+		}
 
 		$scope.contractsChain = function(id_contract) {
 			return _.where($scope.contracts, {id_contract: id_contract})
+		}
+		$scope.ContractsChainTest = function(id_contract) {
+			return _.where($scope.contracts_test, {id_contract: id_contract})
 		}
 		$scope.firstContractInChainById = function(id_contract) {
 			return _.find($scope.contractsChain(id_contract), function(c){ return c.id == c.id_contract})
@@ -1422,32 +1428,107 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 		}
 
-		$scope.subjectChecked = function(id_subject) {
-			checked = false
-			angular.forEach($scope.current_contract.subjects, function(subject) {
-				if (subject.id_subject == id_subject) {
-					checked = true
-					return
-				}
-			})
+		$scope.addContractTest = function() {
+			// валидация параметров договора
+			if (!$scope.current_contract_test.sum) {
+				$("#contract-test-sum").addClass("has-error").focus()
+				return false
+			} else {
+				$("#contract-test-sum").removeClass("has-error")
+			}
 
-			return checked
+			if (!$scope.current_contract_test.date) {
+				$("#contract-test-date").addClass("has-error").focus()
+				return false
+			} else {
+				$("#contract-test-date").removeClass("has-error")
+			}
+
+			if (!$scope.current_contract_test.info.grade) {
+				$("select[name='grades']").addClass("has-error").focus()
+				return false
+			} else {
+				$("select[name='grades']").removeClass("has-error")
+			}
+
+			// обновить contract.info
+			if ($scope.current_contract_test.id_contract > 0) {
+				$scope.contractsChain($scope.current_contract_test.id_contract).forEach(function(contract) {
+					contract.info = $scope.current_contract_test.info
+				})
+			}
+
+
+			// количество активных, но незаполненных полей "кол-во занятий"
+			count = $(".contract-test-lessons").filter(function() {
+				if (!$(this).val() && $(this).is(":visible")) {
+					$(this).addClass("has-error").focus()
+				} else {
+					$(this).removeClass("has-error")
+				}
+				return ($(this).val() == "" && $(this).is(":visible"))
+			}).length
+
+			// если есть незаполненные поля, то валидация не пройдена
+			if (count > 0) {
+				return
+			}
+
+			pushAndSetCurrentVersion = function (contract) {
+				$scope.lastContractInChainTest(contract).current_version = 0
+				_.where($scope.contracts_test, { id : $scope.current_contract_test.id}).map(function(c) {
+				$scope.current_contract_test.current_version = 1
+				c = $scope.current_contract_test
+			  })
+			}
+			if ($scope.current_contract_test.id) {
+				ajaxStart('contract')
+				$.post("ajax/contractEditTest", $scope.current_contract_test, function(response) {
+					ajaxEnd('contract')
+					lightBoxHide()
+					$scope.lateApply()
+				}, "json")
+			} else {
+				$scope.current_contract_test.info.id_student = $scope.student.id
+				ajaxStart('contract')
+				$.post("ajax/contractSaveTest", $scope.current_contract_test, function(response) {
+					if ($scope.current_contract_test.id_contract) {
+					    pushAndSetCurrentVersion($scope.current_contract_test)
+                    }
+					ajaxEnd('contract')
+					lightBoxHide()
+					$scope.current_contract_test.id = response.id
+					$scope.current_contract_test.id_contract = response.id_contract
+					$scope.current_contract_test.user_login 	= response.user_login
+					$scope.current_contract_test.date_changed= response.date_changed
+					$scope.current_contract_test.current_version = 1
+					$scope.current_contract_test.subjects = response.subjects;
+
+					new_contract = $.extend(true, {}, $scope.current_contract_test)
+
+					$scope.contracts_test = initIfNotSet($scope.contracts_test)
+					$scope.contracts_test.push(new_contract)
+					$scope.lateApply()
+				}, "json");
+			}
 		}
 
-		$scope.getIndexByIdSubject = function(id_subject) {
-			res = false
-			angular.forEach($scope.current_contract.subjects, function(subject, i) {
-				if (subject.id_subject == id_subject) {
-					res = i
-					return
-				}
-			})
+		$scope.subjectChecked = function(contract, id_subject) {
+            if (contract !== undefined) {
+                checked = false
+    			angular.forEach(contract.subjects, function(subject) {
+    				if (subject.id_subject == id_subject) {
+    					checked = true
+    					return
+    				}
+    			})
 
-			return res
+    			return checked
+            }
 		}
 
-		$scope.subjectHandle = function(id_subject) {
-			subjects 	= $scope.current_contract.subjects
+		$scope.subjectHandle = function(contract, id_subject) {
+			subjects 	= contract.subjects
 			subject 	= subjects[id_subject]
 
 			console.log('changed', subject.status, $("#checkbox-subject-" + id_subject).val())
@@ -1502,9 +1583,11 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		$scope.isDisabledField = function(contract, field) {
-			if (contract.disabled && contract.disabled.length)
-				return _.contains(contract.disabled, field)
-			else return false;
+            if (contract !== undefined) {
+                if (contract.disabled && contract.disabled.length)
+    				return _.contains(contract.disabled, field)
+    			else return false;
+            }
 		}
 
 		// изменить параметры без проводки
@@ -1522,6 +1605,20 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$('.triple-switch').slider('setValue', 0)
 
 			lightBoxShow('addcontract')
+			$("select[name='grades']").removeClass("has-error")
+			$scope.lateApply()
+		}
+
+		// Показать окно добавления контракта
+		$scope.addContractDialogTest = function() {
+			$scope.current_contract_test = {subjects : [], info: {year: $scope.academic_year}}
+			$scope.current_contract_test.date = moment().format("DD.MM.YYYY")
+            $timeout(function(){
+                $scope.$apply();
+            });
+			$('.triple-switch').slider('setValue', 0)
+
+			lightBoxShow('addcontracttest')
 			$("select[name='grades']").removeClass("has-error")
 			$scope.lateApply()
 		}
@@ -1856,7 +1953,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.setMenu = function(menu) {
 			if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				$.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-					['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'academic_year', 'student_phone_level',
+					['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'student', 'Groups', 'student_phone_level',
 						'branches_brick', 'representative_phone_level', 'representative'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
@@ -1891,7 +1988,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.payments === undefined && menu == 1) {
 				$.post("requests/ajax/LoadPayments", {id_student: $scope.id_student}, function(response) {
-					['user', 'payments', 'payment_types', 'payment_statuses', 'academic_year', 'tobe_paid'].forEach(function(field) {
+					['user', 'payments', 'payment_types', 'payment_statuses',  'tobe_paid'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()

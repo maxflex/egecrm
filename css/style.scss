@@ -558,7 +558,7 @@ body {
 .top-group-menu-thin {
 	position: relative;
 	& > div {
-		width: 12.5%;
+		width: 10.5%;
 		display: inline-block;
 		margin-right: 5px;
 	}
@@ -2069,7 +2069,7 @@ white-space: nowrap;
 	}
 }
 
-.lightbox-addcontract {
+.lightbox-addcontract, .lightbox-addcontracttest {
 	width: 900px;
 	left: calc(50% - 450px);
 

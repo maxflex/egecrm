@@ -46,6 +46,8 @@
 
 			$real_total_sum = 0;
 			$total_sum = 0;
+            $total_sum_official = 0;
+            $total_ndfl = 0;
 			$total_payment_sum = 0;
 			$lesson_count = 0;
 			foreach ($teacher_ids as $id_teacher) {
@@ -66,10 +68,16 @@
 				]);
 
 				$sum = 0;
+                $sum_official = 0;
+                $ndfl = 0;
                 $real_sum = 0;
 				foreach ($Data as $OneData) {
                     $sum += $OneData->teacher_price;
+                    $sum_official += $OneData->teacher_price_official;
+                    $ndfl += $OneData->ndfl;
                     $total_sum += $OneData->teacher_price;
+                    $total_sum_official += $OneData->teacher_price_official;
+                    $total_ndfl += $OneData->ndfl;
                     $real_sum += $OneData->teacher_price;
                     $real_total_sum += $OneData->teacher_price;
                 }
@@ -79,6 +87,8 @@
 				$return[] = [
 					"Teacher" 	=> $Teacher,
 					"sum"		=> $sum,
+					"sum_official"		=> $sum_official,
+					"ndfl"		=> $ndfl,
 					"real_sum"  => $real_sum,
 					"payment_sum" => $payment_sum,
 					"count"		=> ($Data ? count($Data) : 0),
@@ -116,13 +126,15 @@
             )->fetch_object()->tobe_paid;
 
 			$ang_init_data = angInit([
-				"Data" 		        => $return,
-				"total_sum"			=> $total_sum,
-				"real_total_sum"			=> $real_total_sum,
-				"total_payment_sum"	=> $total_payment_sum,
-				"lesson_count"		=> $lesson_count,
-				"subjects"	        => Subjects::$short,
-				"active_year"       => $year,
+				"Data" 		                     => $return,
+				"total_sum"			             => $total_sum,
+				"total_sum_official"			 => $total_sum_official,
+				"total_ndfl"			         => $total_ndfl,
+				"real_total_sum"			     => $real_total_sum,
+				"total_payment_sum"	             => $total_payment_sum,
+				"lesson_count"		             => $lesson_count,
+				"subjects"	                     => Subjects::$short,
+				"active_year"                    => $year,
 			]);
 
 			$this->setTabTitle('Дебет преподавателей');
@@ -211,6 +223,7 @@
                             'condition' => "type_entity='TEACHER' AND id_entity={$id_teacher} AND year=" . academicYear()
                         ]),
                         'current_year_paid' => dbConnection()->query("select sum(sum) as s from payments where entity_type='TEACHER' and entity_id={$id_teacher} and year=" . academicYear())->fetch_object()->s,
+                        'current_year_ndfl' => dbConnection()->query("select sum(ndfl) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher} and year=" . academicYear())->fetch_object()->s,
                         'current_year_to_be_paid' => dbConnection()->query("select sum(teacher_price) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher} and year=" . academicYear())->fetch_object()->s
                     ]);
 				}

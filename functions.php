@@ -755,6 +755,7 @@
 	 */
 	function academicYear($date = false)
 	{
+        return 12;
 		if ($date === false) {
 			$date = now();
 		}

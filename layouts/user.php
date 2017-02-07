@@ -113,7 +113,6 @@
     					}
     				?>
     			</a>
-    			<a href="testing" class="list-group-item">Тестирование</a>
     			<a href="tests" class="list-group-item">Тесты</a>
     			<a href="reports" class="list-group-item">Отчеты
     				 <?php

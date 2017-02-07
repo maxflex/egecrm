@@ -7666,7 +7666,7 @@ body {
 .top-group-menu-thin {
   position: relative; }
   .top-group-menu-thin > div {
-    width: 12.5%;
+    width: 10.5%;
     display: inline-block;
     margin-right: 5px; }
 
@@ -9030,40 +9030,40 @@ h4.row-header {
     margin-top: 7px;
     display: inline-block; }
 
-.lightbox-addcontract {
+.lightbox-addcontract, .lightbox-addcontracttest {
   width: 900px;
   left: calc(50% - 450px); }
-  .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select {
+  .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select, .lightbox-addcontracttest .input-group, .lightbox-addcontracttest input, .lightbox-addcontracttest select {
     width: 230px;
     float: right; }
-  .lightbox-addcontract .input-label {
+  .lightbox-addcontract .input-label, .lightbox-addcontracttest .input-label {
     margin-top: 7px;
     display: inline-block; }
-  .lightbox-addcontract .contract-subject-list.subject-line {
+  .lightbox-addcontract .contract-subject-list.subject-line, .lightbox-addcontracttest .contract-subject-list.subject-line {
     display: inline-block;
     width: 100%;
     margin-bottom: 10px;
     height: 34px;
     position: relative; }
-  .lightbox-addcontract .contract-subject-list .ios7-switch .switch {
+  .lightbox-addcontract .contract-subject-list .ios7-switch .switch, .lightbox-addcontracttest .contract-subject-list .ios7-switch .switch {
     font-size: 24px;
     margin-right: 15px; }
-  .lightbox-addcontract .contract-subject-list .ios7-switch .subject-name {
+  .lightbox-addcontract .contract-subject-list .ios7-switch .subject-name, .lightbox-addcontracttest .contract-subject-list .ios7-switch .subject-name {
     font-weight: normal;
     text-transform: capitalize;
     opacity: .5; }
-  .lightbox-addcontract .contract-subject-list input[type="text"] {
+  .lightbox-addcontract .contract-subject-list input[type="text"], .lightbox-addcontracttest .contract-subject-list input[type="text"] {
     width: 100px; }
-  .lightbox-addcontract .contract-subject-list .dogavar-label {
+  .lightbox-addcontract .contract-subject-list .dogavar-label, .lightbox-addcontracttest .contract-subject-list .dogavar-label {
     position: absolute;
     color: gray;
     font-size: 12px;
     top: 9px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.zero {
+    .lightbox-addcontract .contract-subject-list .dogavar-label.zero, .lightbox-addcontracttest .contract-subject-list .dogavar-label.zero {
       right: 220px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.first {
+    .lightbox-addcontract .contract-subject-list .dogavar-label.first, .lightbox-addcontracttest .contract-subject-list .dogavar-label.first {
       right: 115px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.second {
+    .lightbox-addcontract .contract-subject-list .dogavar-label.second, .lightbox-addcontracttest .contract-subject-list .dogavar-label.second {
       right: 10px; }
 
 .contract-recommended-price {

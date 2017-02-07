@@ -17,6 +17,18 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     }
     return lessons_sum;
   };
+  $scope.totalNdfl = function() {
+    var sum;
+    sum = 0;
+    if ($scope.Lessons) {
+      $.each($scope.Lessons, function(index, value) {
+        if (value.ndfl) {
+          return sum += parseFloat(value.ndfl);
+        }
+      });
+    }
+    return parseFloat(sum).toFixed(2);
+  };
   $scope.lessonsTotalPaid = function(from_lessons) {
     var payments_sum;
     payments_sum = 0;
@@ -41,13 +53,14 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     return payments_sum;
   };
   $scope.toBePaid = function(from_lessons) {
-    var lessons_sum, payments_sum;
+    var lessons_sum, ndfl_sum, payments_sum;
     if (!($scope.Lessons && $scope.Lessons.length)) {
       return;
     }
     lessons_sum = $scope.lessonsTotalSum();
     payments_sum = $scope.lessonsTotalPaid(from_lessons);
-    return lessons_sum - payments_sum;
+    ndfl_sum = $scope.totalNdfl();
+    return parseFloat(lessons_sum - payments_sum - ndfl_sum).toFixed(2);
   };
   $scope.dateFromCustomFormat = function(date) {
     var D;
