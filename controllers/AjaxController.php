@@ -202,9 +202,19 @@
 			returnJsonAng(Contract::addNew($_POST));
 		}
 
+		public function actionAjaxContractSaveTest()
+		{
+			returnJsonAng(ContractTest::addNew($_POST));
+		}
+
 		public function actionAjaxContractEdit()
 		{
 			returnJson(Contract::edit($_POST));
+		}
+
+		public function actionAjaxContractEditTest()
+		{
+			returnJson(ContractTest::edit($_POST));
 		}
 
 		public function actionAjaxContractDelete()

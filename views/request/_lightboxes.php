@@ -11,6 +11,7 @@
 	<!-- /ЛАЙТБОКС РЕДАКТИРОВАНИЕ ПЕЧАТИ ДОГОВОРА ВРУЧНУЮ -->
 
 	<?= partial('contract_edit') ?>
+	<?= partial('contract_edit_test') ?>
 
 	<!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ПЛАТЕЖА -->
 	<div class="lightbox-new lightbox-addpayment">

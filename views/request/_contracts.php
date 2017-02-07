@@ -70,18 +70,18 @@
 <div class="row" ng-show="student !== undefined">
     <div class="col-sm-12">
 	    <div style="margin-bottom: 20px; display: block">
-			<a ng-click="addContractDialog()" class="link-like link-reverse">добавить договор тестирования</a>
+			<a ng-click="addContractDialogTest()" class="link-like link-reverse">добавить договор тестирования</a>
 	    </div>
 		<!--договора-->
 		<table class="table table-hover border-reverse last-item-no-border"
-			   ng-repeat="id_contract in getContractIds()"
+			   ng-repeat="id_contract in getContractIdsTest()"
 		>
 			<tr class="no-hover">
 				<td colspan="8" class="no-border-bottom">
 					<h4 class="row-header default-case"> Договор №{{ id_contract }} на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainById(id_contract).info.grade }} класс)</h4>
 				</td>
 			</tr>
-				<tr ng-repeat="contract in contracts | group_by_id_contract:id_contract | orderBy:'date_changed'">
+				<tr ng-repeat="contract in contracts_test | group_by_id_contract:id_contract | orderBy:'date_changed'">
 					<td width="20%">версия {{ $index + 1 }} от {{ formatContractDate(contract.date) }}</td>
 					<td width="15%">{{ contract.sum | number }} <ng-pluralize count="contract.sum" when="{
 						'one': 'рубль',
