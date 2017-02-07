@@ -313,6 +313,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             contract_id = _.max(_.pluck($scope.contractsChain(contract.id_contract), 'id'));
             return _.find($scope.contracts,{id: contract_id});
 		}
+		$scope.lastNonCurrentContractInChainTest = function(contract) {
+            contract_id = _.max(_.pluck($scope.contractsChainTest(contract.id_contract), 'id'));
+            return _.find($scope.contracts_test,{id: contract_id});
+		}
 
 		// первая версия последней цепи (выше chain – неправильно, это версии)
 		$scope.firstInLastChain = function() {
@@ -1652,6 +1656,20 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$.post("ajax/contractDelete", {"id_contract": contract.id})
 					$scope.contracts = _.without($scope.contracts, contract);
 					if ((c = $scope.lastNonCurrentContractInChain(contract)) && contract.current_version) {
+					    c.current_version = 1
+		            }
+					$scope.$apply()
+				}
+			})
+		}
+
+		// Удалить контракт
+		$scope.deleteContractTest = function(contract) {
+			bootbox.confirm("Вы уверены, что хотите удалить договор тестирования?", function(result) {
+				if (result === true) {
+					$.post("ajax/contractDeleteTest", {"id_contract": contract.id})
+					$scope.contracts_test = _.without($scope.contracts_test, contract);
+					if ((c = $scope.lastNonCurrentContractInChainTest(contract)) && contract.current_version) {
 					    c.current_version = 1
 		            }
 					$scope.$apply()

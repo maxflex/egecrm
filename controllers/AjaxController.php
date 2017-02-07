@@ -223,6 +223,12 @@
             Contract::deleteById($id_contract);
 		}
 
+		public function actionAjaxContractDeleteTest()
+		{
+			extract($_POST);
+            ContractTest::deleteById($id_contract);
+		}
+
 //		public function actionAjaxContractDeleteHistory()
 //		{
 //			extract($_POST);
