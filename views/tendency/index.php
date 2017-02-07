@@ -23,24 +23,7 @@
             <b>найдено заявок: {{ count }}</b>
         </div>
         <div>
-            <table class='table table-divlike'>
-                <tr>
-                    <td>
-                        ID договора
-                    </td>
-                    <td>
-                        кол-во заявок
-                    </td>
-                </tr>
-                <tr ng-repeat='(id_contract, cnt) in contracts'>
-                    <td>
-                        {{ id_contract }}
-                    </td>
-                    <td>
-                        {{ cnt }}
-                    </td>
-                </tr>
-            </table>
+            <b>кол-во договоров: {{ contracts_count }}</b>
         </div>
     </div>
     <div style="padding: 100px"  ng-show="loading" class="small center half-black">

@@ -1,4 +1,6 @@
-var app;
+var ang_scope, app;
+
+ang_scope = false;
 
 app = angular.module("Tendency", []).filter('toArray', function() {
   return function(obj) {
@@ -19,7 +21,7 @@ app = angular.module("Tendency", []).filter('toArray', function() {
     }).then(function(response) {
       $scope.loading = false;
       $scope.count = response.count;
-      $scope.contracts = response.contracts;
+      $scope.contracts_count = response.contracts_count;
       return $scope.$apply();
     });
   };
@@ -38,4 +40,4 @@ app = angular.module("Tendency", []).filter('toArray', function() {
   });
 });
 
-set_scope("Tendency");
+ang_scope = angular.element('[ng-app=Tendency]').scope();

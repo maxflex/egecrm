@@ -1,3 +1,4 @@
+ang_scope = false;
 app = angular.module "Tendency", []
 		.filter 'toArray', ->
 			(obj) ->
@@ -14,7 +15,7 @@ app = angular.module "Tendency", []
                 .then (response) ->
                     $scope.loading = false
                     $scope.count = response.count
-                    $scope.contracts = response.contracts
+                    $scope.contracts_count = response.contracts_count
                     $scope.$apply()
             angular.element(document).ready ->
                 console.log('test')
@@ -25,4 +26,4 @@ app = angular.module "Tendency", []
                     $("#grades").selectpicker
                         noneSelectedText: "классы"
                         multipleSeparator: ', '
-				set_scope "Tendency"
+    				ang_scope = angular.element('[ng-app=Tendency]').scope()
