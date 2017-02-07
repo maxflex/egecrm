@@ -13,6 +13,7 @@ app = angular.module "Tendency", []
                 $scope.loading = true
                 $.post("tendency/AjaxSearch", {search: $scope.search})
                 .then (response) ->
+                    response = JSON.parse(response)
                     $scope.loading = false
                     $scope.count = response.count
                     $scope.contracts_count = response.contracts_count
