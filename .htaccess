@@ -156,6 +156,11 @@ RewriteRule ^cron/([a-zA-Z]+)[/]?$ index.php?controller=cron&action=$1 [QSA,L]
 
 # TEST
 RewriteRule ^test/([a-zA-Z]+)[/]?$ index.php?controller=test&action=$1 [QSA,L]
+RewriteRule ^cron/([a-zA-Z]+)[/]?$ index.php?controller=cron&action=$1 [QSA,L]
+
+# TEND
+RewriteRule ^tendency[/]?$ index.php?controller=tendency [QSA,L]
+RewriteRule ^tendency/([a-zA-Z]+)[/]?$ index.php?controller=tendency&action=$1 [QSA,L]
 
 # Поиск
 RewriteRule ^search[/]?$ index.php?controller=search [QSA,L]
