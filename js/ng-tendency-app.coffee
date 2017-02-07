@@ -11,13 +11,15 @@ app = angular.module "Tendency", []
                 console.log('go', $scope.search)
                 $scope.count = undefined
                 $scope.loading = true
-                $.post("tendency/AjaxSearch", {search: $scope.search})
-                .then (response) ->
-                    response = JSON.parse(response)
+                $.post 'tendency/AjaxSearch',
+                    search: $scope.search
+                , (response) ->
                     $scope.loading = false
                     $scope.count = response.count
                     $scope.contracts_count = response.contracts_count
+                    $scope.payments_sum = response.payments_sum
                     $scope.$apply()
+                , 'json'
             angular.element(document).ready ->
                 console.log('test')
                 $timeout ->

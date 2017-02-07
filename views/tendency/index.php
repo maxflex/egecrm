@@ -1,4 +1,4 @@
-<div ng-app="Tendency" ng-controller="IndexCtrl">
+<div ng-app="Tendency" ng-controller="IndexCtrl" style='min-height: 300px'>
     <div class="row">
         <div class="col-sm-3">
             <div class="form-group">
@@ -18,12 +18,15 @@
             <div class="btn full-width btn-primary" ng-click="go()">ОК</div>
         </div>
     </div>
-    <div style='min-height: 100px' ng-show='count !== undefined'>
+    <div ng-show='count !== undefined' style='margin-top: 50px'>
         <div>
             <b>найдено заявок: {{ count }}</b>
         </div>
         <div>
             <b>кол-во договоров: {{ contracts_count }}</b>
+        </div>
+        <div>
+            <b>сумма платежей: {{ payments_sum | number }} руб.</b>
         </div>
     </div>
     <div style="padding: 100px"  ng-show="loading" class="small center half-black">
