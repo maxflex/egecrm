@@ -43,7 +43,6 @@
             </table>
         </div>
     </div>
-    <b ng-show='count !== undefined'>найдено заявок: {{ count }}</b>
     <div style="padding: 100px"  ng-show="loading" class="small center half-black">
         загрузка...
     </div>
