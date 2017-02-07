@@ -13,7 +13,8 @@ app = angular.module "Tendency", []
                 $.post("tendency/AjaxSearch", {search: $scope.search})
                 .then (response) ->
                     $scope.loading = false
-                    $scope.count = response
+                    $scope.count = response.count
+                    $scope.contracts = response.contracts
                     $scope.$apply()
             angular.element(document).ready ->
                 console.log('test')

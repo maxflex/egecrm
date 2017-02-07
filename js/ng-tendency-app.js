@@ -18,7 +18,8 @@ app = angular.module("Tendency", []).filter('toArray', function() {
       search: $scope.search
     }).then(function(response) {
       $scope.loading = false;
-      $scope.count = response;
+      $scope.count = response.count;
+      $scope.contracts = response.contracts;
       return $scope.$apply();
     });
   };

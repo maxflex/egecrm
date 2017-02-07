@@ -18,8 +18,33 @@
             <div class="btn full-width btn-primary" ng-click="go()">ОК</div>
         </div>
     </div>
-    <div style="padding: 100px" class="small center">
-        <span ng-show="loading" class='half-black'>загрузка...</span>
-        <b ng-show='count !== undefined'>найдено заявок: {{ count }}</b>
+    <div style='min-height: 100px' ng-show='count !== undefined'>
+        <div>
+            <b>найдено заявок: {{ count }}</b>
+        </div>
+        <div>
+            <table class='table table-divlike'>
+                <tr>
+                    <td>
+                        ID договора
+                    </td>
+                    <td>
+                        кол-во заявок
+                    </td>
+                </tr>
+                <tr ng-repeat='(id_contract, cnt) in contracts'>
+                    <td>
+                        {{ id_contract }}
+                    </td>
+                    <td>
+                        {{ cnt }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <b ng-show='count !== undefined'>найдено заявок: {{ count }}</b>
+    <div style="padding: 100px"  ng-show="loading" class="small center half-black">
+        загрузка...
     </div>
 </div>
