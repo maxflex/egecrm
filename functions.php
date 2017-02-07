@@ -160,6 +160,27 @@
 		include($called_dir."/_".$string.".php");
 	}
 
+	/*
+	 * Включить PARTIAL
+	 * $string	– название включаемого файла
+	 * $vars	– переменные, которые будут доступны в файле
+	 */
+	function printPartial($string, $vars = array())
+	{
+		// Если передаем переменные в инклуд, то объявляем их здесь (иначе будут недоступны)
+		if (!empty($vars)) {
+			// Объявляем переменные, соответсвующие элементам массива
+			foreach ($vars as $key => $value) {
+				$$key = $value;
+			}
+		}
+
+		$called_dir = dirname(debug_backtrace()[0]["file"]);	// Получаем путь к директории, откуда была вызвана функция
+
+//		dd($called_dir."/print/_".$string.".php");
+		include($called_dir."/print/_".$string.".php");
+	}
+
 
 	/*
 	 * Включить глобальный PARTIAL
