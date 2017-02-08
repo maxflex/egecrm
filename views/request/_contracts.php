@@ -48,8 +48,6 @@
 								<li class='link-like' ng-click="printServiceActIp(contract)" ng-show='isLastContractInChain(contract)'>печать акта оказанных услуг ИП</li>
 								<li class='link-like' ng-click="printTerminationOoo(contract)" ng-show='isLastContractInChain(contract)'>печать соглашения о расторжении ООО</li>
 								<li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContract(contract)'>удалить</li>
-
-<!--								<li class='link-like' ng-click='printTestArgreement(contract)'>договор на тест</li>-->
 							</ul>
                         </div>
 					</td>
@@ -64,10 +62,7 @@
 		<?= partial("service_ooo_print") ?>
 		<?= partial("service_ip_print") ?>
 		<?= partial("agreement_termination_ooo") ?>
-
-
-		<?= printPartial("testing_agreement") ?>
-    </div>
+	</div>
 </div>
 
 
@@ -112,9 +107,10 @@
                         <div ng-show="contract.show_actions" class="emptyClickHandler" ng-click="closeContexMenu()"></div>
 						<div ng-show="contract.show_actions" class="contex-menu fadeInUp fadeOutDown">
                             <ul>
-                                <!-- @TODO – ОТДЕБАЖИТЬ ДЕЙСТВИЯ И ФУНКЦИИ ТИПА isLastContractInChain, ДОБАВИТЬ ОДНО НОВОЕ ДЕЙСТВИЕ – ПЕЧАТЬ НОВОГО ДОГОВОРА -->
-                                <li class='link-like' ng-click="createNewContract(contract)">создать новую версию</li>
-                                <li class='link-like' ng-click="editContract(contract)">изменить без проводки</li>
+                                <li class='link-like' ng-click="createNewContractTest(contract)">создать новую версию</li>
+                                <li class='link-like' ng-click="editContractTest(contract)">изменить без проводки</li>
+								<li class='link-like' ng-click='printTestArgreement(contract)'>печать договора</li>
+								<li class='link-like' ng-click='printTestAct(contract)'>печать акта оказанных услуг</li>
 								<li class='link-like' ng-show='contract.id != contract.id_contract || isLastContractInChain(contract)' ng-click='deleteContractTest(contract)'>удалить</li>
 							</ul>
                         </div>
@@ -122,7 +118,6 @@
 				</tr>
 		</table>
 		<!--/договора-->
-        <!-- @TODO – СЮДА ПОДКЛЮЧИТЬ partial НОВОЙ ПЕЧАТИ -->
-		<?= partial("contract_print", ["Request" => $Request]) ?>
-    </div>
+		<?= printPartial("testing"); ?>
+	</div>
 </div>

@@ -266,6 +266,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		/*** contex menu functions ***/
 		$scope.closeContexMenu = function() {
 				_.where($scope.contracts, {show_actions:true}).map(function(c){return c.show_actions = false});
+				_.where($scope.contracts_test, {show_actions:true}).map(function(c){return c.show_actions = false});
 				$timeout(function(){
 					$scope.$apply();
 				});
@@ -308,6 +309,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 		$scope.lastContractInChain = function(contract) {
 			return _.find($scope.contractsChain(contract.id_contract), function (c) { return c.current_version == 1})
+		}
+		$scope.lastContractInChainTest = function(contract) {
+			return _.find($scope.contractsChainTest(contract.id_contract), function (c) { return c.current_version == 1})
 		}
 		$scope.lastNonCurrentContractInChain = function(contract) {
             contract_id = _.max(_.pluck($scope.contractsChain(contract.id_contract), 'id'));
@@ -731,6 +735,17 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.$apply();
 				$scope.print_mode = 'testing-agreement'
 				html = $("#testing-agreement-print").html()
+				$scope.editBeforePrint(html)
+			});
+
+		}
+
+		$scope.printTestAct = function(contract_test) {
+			$scope.contract_test = contract_test
+			$timeout(function(){
+				$scope.$apply();
+				$scope.print_mode = 'testing-act'
+				html = $("#testing-act-print").html()
 				$scope.editBeforePrint(html)
 			});
 
@@ -1426,6 +1441,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.current_contract.date_changed= response.date_changed
 					$scope.current_contract.current_version = 1
 					$scope.current_contract.subjects = response.subjects;
+					$scope.current_contract.show_actions = false;
 
 					new_contract = $.extend(true, {}, $scope.current_contract)
 
@@ -1461,7 +1477,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			// обновить contract.info
 			if ($scope.current_contract_test.id_contract > 0) {
-				$scope.contractsChain($scope.current_contract_test.id_contract).forEach(function(contract) {
+				$scope.contractsChainTest($scope.current_contract_test.id_contract).forEach(function(contract) {
 					contract.info = $scope.current_contract_test.info
 				})
 			}
@@ -1492,6 +1508,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if ($scope.current_contract_test.id) {
 				ajaxStart('contract')
 				$.post("ajax/contractEditTest", $scope.current_contract_test, function(response) {
+					_.extend(_.find($scope.contracts_test, {id: $scope.current_contract_test.id}), $scope.current_contract_test, {show_actions: false});
 					ajaxEnd('contract')
 					lightBoxHide()
 					$scope.lateApply()
@@ -1512,6 +1529,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.current_contract_test.date_changed= response.date_changed
 					$scope.current_contract_test.current_version = 1
 					$scope.current_contract_test.subjects = response.subjects;
+					$scope.current_contract_test.show_actions = false;
 
 					new_contract = $.extend(true, {}, $scope.current_contract_test)
 
@@ -1577,6 +1595,28 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			});
 		}
 
+		// вызывает окно редактирования контракта
+		$scope.callContractTestEdit = function(contract)
+		{
+			$scope.current_contract_test = angular.copy(contract)
+
+			if ($scope.current_contract_test.info.grade === null) {
+				$scope.current_contract_test.info.grade = ""
+			}
+
+			lightBoxShow('addcontracttest')
+			$("select[name='grades']").removeClass("has-error")
+			$scope.lateApply()
+
+			$timeout(function(){
+				$scope.$apply();
+				$('.triple-switch').each(function(index, e) {
+					val = $(e).attr('data-slider-value');
+					$(e).slider('setValue', parseInt(val));
+				})
+			});
+		}
+
 		disableContractFields = function(contract) {
 			if (! $scope.isFirstContractInChain(contract)) {
 				contract.disabled = ['year', 'grade']
@@ -1591,6 +1631,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$scope.callContractEdit(disableContractFields(new_contract))
 		}
 
+		// создать новую версию
+		$scope.createNewContractTest = function(contract_test) {
+			new_contract = angular.copy($scope.lastContractInChainTest(contract_test))
+			delete new_contract.id
+			new_contract.date = moment().format("DD.MM.YYYY")
+			$scope.callContractTestEdit(disableContractFields(new_contract))
+		}
+
 		$scope.isDisabledField = function(contract, field) {
             if (contract !== undefined) {
                 if (contract.disabled && contract.disabled.length)
@@ -1602,6 +1650,11 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		// изменить параметры без проводки
 		$scope.editContract = function(contract) {
 			$scope.callContractEdit(disableContractFields(contract))
+		}
+
+		// изменить параметры без проводки
+		$scope.editContractTest = function(contract_test) {
+			$scope.callContractTestEdit(disableContractFields(contract_test))
 		}
 
 		// Показать окно добавления платежа

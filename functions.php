@@ -176,8 +176,6 @@
 		}
 
 		$called_dir = dirname(debug_backtrace()[0]["file"]);	// Получаем путь к директории, откуда была вызвана функция
-
-//		dd($called_dir."/print/_".$string.".php");
 		include($called_dir."/print/_".$string.".php");
 	}
 

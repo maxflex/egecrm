@@ -1,15 +1,17 @@
 <div id="testing-agreement-print" class="printable">
     <div style="margin-left:2cm;">
         <style>
-            p {
-                text-align: justify !important;
-                text-indent: 1cm;
-            }
-            p.no-ident {
-                text-indent: initial;
-            }
-            .centered-text {
-                text-align: center;
+            @media print {
+                p {
+                    text-align: justify !important;
+                    text-indent: 1cm;
+                }
+                p.no-ident {
+                    text-indent: initial;
+                }
+                .centered-text {
+                    text-align: center;
+                }
             }
         </style>
         <h4 style="text-align:center;margin-bottom: 0">Договор №{{contract_test.id}}</h4>
@@ -89,9 +91,9 @@
 
         <h4 class="centered-text">8. Адреса и реквизиты сторон.</h4>
 
-        <table width="100%">
+        <table width="100%" class="company-details">
             <tr>
-                <td width="50%" cell-padding="10px">
+                <td width="50%">
                     <table>
                         <tr><td align="center"><b>ИСПОЛНИТЕЛЬ:</b></td></tr>
                         <tr><td>Общество с ограниченной ответственностью «ЕГЭ-Центр»</td></tr>
@@ -128,16 +130,28 @@
             </tr>
         </table>
     </div>
+</div>
 
-    <div>
-        <div style="page-break-before: always;"><br></div>
+
+<div id="testing-act-print" class="printable">
+    <div style="margin-left:2cm;">
         <style>
+            p {
+                text-align: justify !important;
+                text-indent: 1cm;
+            }
+            p.no-ident {
+                text-indent: initial;
+            }
+            .centered-text {
+                text-align: center;
+            }
             .mb{
                 margin-bottom: 15px;
             }
         </style>
-        <h4 style="centered-text" style="margin-bottom: 4px;">АКТ ОБ ОКАЗАННЫХ УСЛУГАХ</h4>
-        <h4 style="centered-text">ПО ДОГОВОРУ №{{contract_test.id}} от  {{formatContractDate2(contract_test.date)}}</h4>
+        <h4 class="centered-text" style="margin-bottom: 4px;">АКТ ОБ ОКАЗАННЫХ УСЛУГАХ</h4>
+        <h4 class="centered-text">ПО ДОГОВОРУ №{{contract_test.id}} от  {{formatContractDate2(contract_test.date)}}</h4>
         <div style="display: inline-block; width: 100%; margin-bottom: 20px">
             <div>г. Москва</div>
             <div style="float:right;">{{formatContractDate2(todayDate())}}</div>
@@ -145,9 +159,9 @@
 
         <div>
             Мы, нижеподписавшиеся: <br>
-            От имени Заказчика: {{contractPrintName(representative, 'nominative')}}, и от имени Исполнителя _____________ ______________________,
-            действующий (-ая) на основании _________________________, составили акт о том,
-            что в соответствии с обязательствами, предусмотренными Договором от  {{formatContractDate2(contract_test.date)}} №{{contract_test.id}}
+            От имени Заказчика: {{contractPrintName(representative, 'nominative')}},
+            и от имени Исполнителя Генеральный директор Эрдман Константин Александрович, действующий (-ая) на основании Устава,
+            составили акт о том, что в соответствии с обязательствами, предусмотренными Договором от  {{formatContractDate2(contract_test.date)}} №{{contract_test.id}}
             Исполнитель оказал Заказчику в полном объеме услуги на сумму: {{contract_test.sum | number}} ({{numToText(contract_test.sum)}}) <ng-pluralize count="contract_test.sum" when="{
                 'one'	: 'рубль',
                 'few'	: 'рубля',
