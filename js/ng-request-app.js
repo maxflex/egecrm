@@ -733,8 +733,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		$scope.printTestArgreement = function(contract_test) {
-			$scope.contract_test = contract_test
-            $scope.first_contract_test = $scope.firstContractInChainTest(contract_test)
+			$scope.contract_test = contract_test;
             $timeout(function(){
 				$scope.$apply();
 				$scope.print_mode = 'testing-agreement'
@@ -746,6 +745,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		$scope.printTestAct = function(contract_test) {
 			$scope.contract_test = contract_test
+            $scope.first_contract_test = $scope.firstContractInChainTest(contract_test)
 			$timeout(function(){
 				$scope.$apply();
 				$scope.print_mode = 'testing-act'
