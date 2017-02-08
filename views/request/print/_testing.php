@@ -127,6 +127,7 @@
                         <tr><td>Тел.: {{PhoneService.format(representative.phone)}}<span ng-if="representative.phone2">, {{PhoneService.format(representative.phone2)}}</span></td></tr>
                         <tr><td>e-mail: {{representative.email}}</td></tr>
                         <tr><td></td></tr>
+                        <tr><td></td></tr>
                         <tr><td>{{contractPrintName(representative, 'nominative')}}</td></tr>
                         <tr><td>________________________</td></tr>
                     </table>
@@ -155,11 +156,14 @@
             }
         </style>
         <h4 class="centered-text" style="margin-bottom: 4px;">АКТ ОБ ОКАЗАННЫХ УСЛУГАХ</h4>
-        <h4 class="centered-text">ПО ДОГОВОРУ №{{contract_test.id}}Т от  {{formatContractDate2(contract_test.date)}}</h4>
-        <div style="display: inline-block; width: 100%; margin-bottom: 20px">
-            <div>г. Москва</div>
-            <div style="float:right;">{{formatContractDate2(todayDate())}}</div>
-        </div>
+        <h4 class="centered-text">ПО ДОГОВОРУ №{{contract_test.id}}Т от  {{formatContractDate2(first_contract_test.date)}}</h4>
+
+        <table width="100%">
+            <tr>
+                <td>г. Москва</td>
+                <td align="right">{{formatContractDate2(contract_test.date)}}</td>
+            </tr>
+        </table>
 
         <div>
             Мы, нижеподписавшиеся: <br>

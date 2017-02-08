@@ -301,6 +301,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.firstContractInChain = function(contract) {
 			return contract && $scope.firstContractInChainById(contract.id_contract)
 		}
+		$scope.firstContractInChainTest = function(test_contract) {
+			return test_contract && $scope.firstContractInChainByIdTest(test_contract.id_contract)
+		}
 		$scope.isFirstContractInChain = function(contract) {
 			return contract.id == contract.id_contract
 		}
@@ -731,7 +734,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		$scope.printTestArgreement = function(contract_test) {
 			$scope.contract_test = contract_test
-			$timeout(function(){
+            $scope.first_contract_test = $scope.firstContractInChainTest(contract_test)
+            $timeout(function(){
 				$scope.$apply();
 				$scope.print_mode = 'testing-agreement'
 				html = $("#testing-agreement-print").html()
