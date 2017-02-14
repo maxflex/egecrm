@@ -1002,6 +1002,11 @@
                 "from contract_info ci " .
                 "join contracts c on c.id_contract = ci.id_contract " .
                 "where ci.year = " . Years::getAcademic() .  " and c.current_version = 1 " . ($id_student ? " and ci.id_student = {$id_student} " : "") . ")" .
+                " + " .
+                "(select ifnull(sum(c.sum), 0) " .
+                "from contract_info_test ci " .
+                "join contracts_test c on c.id_contract = ci.id_contract " .
+                "where ci.year = " . Years::getAcademic() .  " and c.current_version = 1 " . ($id_student ? " and ci.id_student = {$id_student} " : "") . ")" .
                 " - " .
                 "(select ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0)" .
                 "from payments p " .

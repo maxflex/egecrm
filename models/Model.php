@@ -38,6 +38,9 @@
 		// Конструктор
 		public function __construct($array = false)
 		{
+			if (! static::$mysql_table) {
+				throw new Exception(get_class() . ': mysql table not defined');
+			}
 /*
 			// Запрос к текущей БД на показ столбцов
 			$Query = static::dbConnection()->query("SHOW COLUMNS FROM ".static::$mysql_table);
