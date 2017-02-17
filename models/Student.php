@@ -989,7 +989,7 @@
 				JOIN contracts c ON (c.id_contract = ci.id_contract AND c.current_version = 1) WHERE true "
 				. (!isBlank($search->error) && $search->error == 2 ? " AND NOT EXISTS (SELECT 1 FROM freetime f WHERE f.id_entity = s.id AND f.type_entity = '".Student::USER_TYPE."')" : "")
 				. (!isBlank($search->error) && $search->error == 3 ? " AND c.external = 1 " : "")
-				. " ORDER BY s.last_name, s.first_name, s.middle_name
+				. " ORDER BY s.last_name, s.first_name, s.middle_name GROUP BY s.id
 			";
 			return "SELECT " . $select . $main_query;
 		}
