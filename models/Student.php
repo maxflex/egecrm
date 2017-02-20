@@ -971,7 +971,7 @@
 
 		private static function _count($search) {
 			return dbConnection()
-					->query(static::_generateQuery($search, "COUNT(*) AS cnt"))
+					->query(static::_generateQuery($search, "COUNT(DISTINCT s.id) AS cnt"))
 					->fetch_object()
 					->cnt;
 		}
