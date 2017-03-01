@@ -524,7 +524,7 @@
 			$ec_review_avg = $result->fetch_assoc();
 			$ec_review_avg = floatval($ec_review_avg['cnt']);
 
-            return [
+			return [
 				'ec_lesson_count' 		=> $ec_lesson_count,
 				'ec_review_count' 		=> $ec_review_count,
 				'ec_review_avg' 		=> $ec_review_avg,
