@@ -503,36 +503,26 @@
 		/**
 		 * Получить статистику преподавателя
 		 */
-		public static function stats($tutor_id, $full = true)
+		public static function stats($tutor_id)
 		{
 			$ec_lesson_count = VisitJournal::count([
-								    "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'"
-							   ]);
+                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'"
+            ]);
 			$ec_lesson_count_by_grade[9] = VisitJournal::count([
-								    "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=9"
-							   ]);
+                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=9"
+            ]);
 			$ec_lesson_count_by_grade[10] = VisitJournal::count([
-								    "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=10"
-							   ]);
+                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=10"
+            ]);
 			$ec_lesson_count_by_grade[11] = VisitJournal::count([
-								    "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=11"
-							   ]);
+                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=11"
+            ]);
 			$ec_review_count = TeacherReview::count([
-                                    "condition" => "id_teacher = {$tutor_id} AND admin_rating_final <= 5 AND admin_rating_final > 0"
-                               ]);
+                "condition" => "id_teacher = {$tutor_id} AND admin_rating_final <= 5 AND admin_rating_final > 0"
+            ]);
 			$result = dbConnection()->query("select avg(admin_rating_final) as cnt from teacher_reviews where id_teacher = {$tutor_id} AND admin_rating_final <= 5 AND admin_rating_final > 0");
 			$ec_review_avg = $result->fetch_assoc();
 			$ec_review_avg = floatval($ec_review_avg['cnt']);
-
-            if ($full) {
-                $t = Teacher::findById($tutor_id);
-
-                // общий
-                $Teachers = Teacher::findAll([
-                    "condition" => "in_egecentr > 0",
-                    "order" => "last_name ASC",
-                ]);
-            }
 
 			return [
 				'ec_lesson_count' 		=> $ec_lesson_count,
