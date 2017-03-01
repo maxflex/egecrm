@@ -503,7 +503,7 @@
 		/**
 		 * Получить статистику преподавателя
 		 */
-		public static function stats($tutor_id, $full = true)
+		public static function stats($tutor_id)
 		{
 			$ec_lesson_count = VisitJournal::count([
 								    "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'"
@@ -524,17 +524,7 @@
 			$ec_review_avg = $result->fetch_assoc();
 			$ec_review_avg = floatval($ec_review_avg['cnt']);
 
-            if ($full) {
-                $t = Teacher::findById($tutor_id);
-
-                // общий
-                $Teachers = Teacher::findAll([
-                    "condition" => "in_egecentr > 0",
-                    "order" => "last_name ASC",
-                ]);
-            }
-
-			return [
+            return [
 				'ec_lesson_count' 		=> $ec_lesson_count,
 				'ec_review_count' 		=> $ec_review_count,
 				'ec_review_avg' 		=> $ec_review_avg,
