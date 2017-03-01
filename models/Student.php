@@ -931,7 +931,7 @@
 
 
 			// получаем данные
-			$query = static::_generateQuery($search, ($page == -1 ? "s.id" : "s.id, s.first_name, s.last_name, s.middle_name "));
+			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id), s.first_name, s.last_name, s.middle_name "));
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
             $data = [];
@@ -971,7 +971,7 @@
 
 		private static function _count($search) {
 			return dbConnection()
-					->query(static::_generateQuery($search, "COUNT(*) AS cnt"))
+					->query(static::_generateQuery($search, "COUNT(DISTINCT s.id) AS cnt"))
 					->fetch_object()
 					->cnt;
 		}
