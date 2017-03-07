@@ -240,7 +240,7 @@
 				}
 				case 5: {
 					$Teacher = Teacher::findById($id_teacher);
-					$Stats = Teacher::stats($id_teacher, false);
+					$Stats = Teacher::stats($id_teacher);
 
                     $Stats['clients_count'] = dbEgerep()->query("SELECT COUNT(*) AS cnt FROM attachments WHERE tutor_id=" . $id_teacher)->fetch_object()->cnt;
                     if ($Stats['clients_count']) {
