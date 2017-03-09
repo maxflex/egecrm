@@ -25,7 +25,8 @@
       "src": [
         "js/directives/*.coffee",
         "js/services/*.coffee",
-        "js/resources/*.coffee"
+        "js/resources/*.coffee",
+        "js/factory/*.coffee"
       ],
       "bundle": "assets.js",
       "dest": "js/"

@@ -862,8 +862,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$scope.print_mode = 'pko'
 			$scope.PrintPayment = payment
 			$scope.Representative = $scope.representative
-			$scope.$apply()
-			printDiv($scope.print_mode + "-print")
+			$timeout(function(){
+				$scope.$apply()
+				printDiv($scope.print_mode + "-print")
+			})
 		}
 
 		/**

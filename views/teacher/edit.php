@@ -49,9 +49,8 @@
 		</div>
 		<div class="col-sm-3"  style="width: 20%">
 			<div class="form-group">
-				<select class="form-control" ng-model="Teacher.in_egecentr" placeholder="пол" disabled>
-					<option value='0'>не работает в ЕГЭ-Центре</option>
-					<option value='1'>работает в ЕГЭ-Центре</option>
+				<select class="form-control" placeholder="место работы" disabled>
+					<option ng-selected="{{Teacher.in_egecentr == workplace}}" ng-repeat="(workplace, label) in Workplaces" value="{{workplace}}">{{label}}</option>
 				</select>
 			</div>
 

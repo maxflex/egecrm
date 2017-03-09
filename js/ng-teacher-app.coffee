@@ -48,7 +48,7 @@
 		.controller "SalaryCtrl", ($scope) ->
 			angular.element(document).ready ->
 				set_scope "Teacher"
-		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService) ->
+		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService, Workplaces) ->
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
