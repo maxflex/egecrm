@@ -12,7 +12,7 @@
 	    }
 	?>
 	<link rel="shortcut icon" href="favicon.png" />
-	<link href="css/app.css" rel="stylesheet">
+	<link href="css/app.css?ver=<?= settings()->version ?>" rel="stylesheet">
 	<?= $this->_css_additional ?>
 	<script type="text/javascript" src="js/vendor.js?ver=<?= settings()->version ?>"></script>
 	<script type="text/javascript" src="extentions/ckeditor/ckeditor.js"></script>
