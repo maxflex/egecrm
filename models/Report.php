@@ -86,7 +86,10 @@
                     AND lesson_date > '$latest_report_date' AND year={$year}"
             ]);
 
-            return $lessons_count >= self::LESSON_COUNT;
+            $in_group = Group::count([
+                "condition" => "FIND_IN_SET({$id_student}, students) AND id_subject={$id_subject} AND id_teacher={$id_teacher} AND year={$year} and ended = 0"
+            ]);
+            return $lessons_count >= self::LESSON_COUNT && $in_group;
         }
 
         /**
