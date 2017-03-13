@@ -8,7 +8,8 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
   };
 }).filter('unsafe', function($sce) {
   return $sce.trustAsHtml;
-}).controller("ListCtrl", function($scope) {
+}).controller("ListCtrl", function($scope, TaskTypes) {
+  bindArguments($scope, arguments);
   $scope.editing_tasks = [];
   $scope.editTask = function(Task) {
     $scope.editing_task = Task.id;
@@ -61,6 +62,17 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
     return $scope.saveTask(Task_copy).then(function(response) {
       if (response) {
         Task.id_status = Task_copy.id_status;
+        return $scope.$apply();
+      }
+    });
+  };
+  $scope.toggleType = function(Task) {
+    var Task_copy;
+    Task_copy = angular.copy(Task);
+    Task_copy.type = (Task_copy.type + 1) % 2;
+    return $scope.saveTask(Task_copy).then(function(response) {
+      if (response) {
+        Task.type = Task_copy.type;
         return $scope.$apply();
       }
     });

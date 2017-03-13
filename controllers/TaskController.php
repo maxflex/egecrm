@@ -56,10 +56,10 @@
 			}
 
 			$ang_init_data = angInit([
-				"type"	        => $type,
+				"type"          => (int)$type, // так надо, без этого '0' каститьcz на []
 				"Tasks"         => $Tasks,
 				"task_statuses" => TaskStatuses::$all,
-                "user"			=> User::fromSession()->dbData()
+				"user"          => User::fromSession()->dbData()
 			]);
 
 			$this->render("list", [

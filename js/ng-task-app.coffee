@@ -5,7 +5,8 @@
 					return items.slice().reverse()
 		.filter 'unsafe', ($sce) -> 
 			$sce.trustAsHtml
-		.controller "ListCtrl", ($scope) ->
+		.controller "ListCtrl", ($scope, TaskTypes) ->
+			bindArguments $scope, arguments
 			$scope.editing_tasks = []
 			
 			$scope.editTask = (Task) ->
@@ -56,7 +57,16 @@
 					if response
 						Task.id_status = Task_copy.id_status
 						$scope.$apply()
-			
+
+			$scope.toggleType = (Task) ->
+				Task_copy = angular.copy Task
+				Task_copy.type = (Task_copy.type+1)%2
+
+				$scope.saveTask(Task_copy).then (response) ->
+					if response
+						Task.type = Task_copy.type
+						$scope.$apply()
+
 			$scope.deleteTask = (Task) ->
 				Task.html = ""
 				$scope.saveTask Task

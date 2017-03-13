@@ -46,7 +46,7 @@
 					</select>
 				</div>
 -->
-				<div ng-repeat="Task in Tasks" class="row task-line" ng-hide="!Task.html.trim()">
+				<div ng-repeat="Task in Tasks | filter: {type: type}" class="row task-line" ng-hide="!Task.html.trim()">
 					<div class="col-sm-12">
 						<div class="task">
 							<div class="text-gray pull-right" ng-show="<?= allowed(Shared\Rights::IS_DEVELOPER, true) ?>">#{{Task.id}}</div>
@@ -74,6 +74,7 @@
 
 							<div class="task-status-div">
 								<span style="margin-right: 10px; opacity: .8; color: {{Task.User.color}}">{{Task.User.login}}</span>
+								<span class="link-like" ng-hide="index == <?=$_GET['type'];?>" ng-repeat="(index, type) in TaskTypes" ng-click="toggleType(Task)">перенести в {{ type }}</span>
 								<span class="task-status task-status-{{Task.id_status}}" ng-click="toggleTaskStatus(Task)">
 									<span ng-show="Task.id_status==1">новое</span>
 									<span ng-show="Task.id_status==2">новое для Макса</span>
