@@ -7608,8 +7608,7 @@ body {
   margin-top: 20px !important;
   overflow-x: hidden;
   background-color: #eee;
-  background-image: url("../img/background/bg.jpg");
-  background-size: 30%; }
+  background-image: url("../img/background/bg.jpg"); }
 
 .badge-danger {
   background-color: #A94442; }
