@@ -148,7 +148,10 @@
 
         public static function condition($id_student, $id_teacher, $id_subject, $year = null)
 		{
-			return ['condition' => self::conditionString($id_student, $id_teacher, $id_subject, $year)];
+			return [
+				'condition' => self::conditionString($id_student, $id_teacher, $id_subject, $year),
+				'order' 	=> "STR_TO_DATE(date, '%d.%m.%Y') desc "
+			];
 		}
 
         public static function conditionString($id_student, $id_teacher, $id_subject, $year = null)
