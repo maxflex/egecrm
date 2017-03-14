@@ -73,7 +73,7 @@
 							</div>
 
 							<div class="task-status-div">
-								<span style="margin-right: 10px; opacity: .8; color: {{Task.User.color}}">{{Task.User.login}}</span>
+								<span style="opacity: .8; color: {{Task.User.color}}">{{Task.User.login}}</span>
 								<span class="link-like" ng-hide="index == <?=$_GET['type'];?>" ng-repeat="(index, type) in TaskTypes" ng-click="toggleType(Task)">перенести в {{ type }}</span>
 								<span class="task-status task-status-{{Task.id_status}}" ng-click="toggleTaskStatus(Task)">
 									<span ng-show="Task.id_status==1">новое</span>

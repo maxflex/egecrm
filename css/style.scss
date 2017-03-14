@@ -1598,7 +1598,10 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 				color: #FC0F3F;
 			}
 		}
-	}
+		& > span {
+          margin-left: 10px;
+        }
+    }
 
 	img {
 		max-width:100%;
