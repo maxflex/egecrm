@@ -700,6 +700,6 @@ app.value('Workplaces', {
   2: 'ведет занятия в ЕГЭ-Центре',
   3: 'ранее работал в ЕГЭ-Центре'
 }).value('TaskTypes', {
-  0: 'crm',
+  0: 'development',
   1: 'seo'
 });
