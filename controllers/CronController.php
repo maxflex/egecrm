@@ -494,7 +494,7 @@
              dbConnection()->query("UPDATE temp SET sent=1 WHERE sent=0 LIMIT 150");
              foreach($phones as $phone) {
                 //  Email::send("makcyxa-k@yandex.ru", "СМС преподу", $phone);
-                 SMS::send($phones, $message);
+                 SMS::send($phone, $message);
              }
          }
 	}
