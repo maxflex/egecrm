@@ -8,9 +8,9 @@
 		<?php if (User::fromSession()->type == User::USER_TYPE) :?>
 			<div class="top-links pull-left">
 				<?php if ($_GET["type"] == 0 || empty($_GET["type"])) { ?>
-				<span style="margin-right: 15px; font-weight: bold">crm</span>
+				<span style="margin-right: 15px; font-weight: bold">development</span>
 				<?php } else { ?>
-				<a href="tasks" style="margin-right: 15px">crm</a>
+				<a href="tasks" style="margin-right: 15px">development</a>
 				<?php } ?>
 
 				<?php if ($_GET["type"] == 1) { ?>
