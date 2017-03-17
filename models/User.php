@@ -382,22 +382,6 @@
 			return (memcached()->get("users:{$id_user}:busy") ? true : false);
 		}
 
-		public static function getIds($real = false)
-        {
-            $user_ids = [];
-            foreach (static::getCached() as $user) {
-                if ($real) {
-                    if (! in_array($user['rights'], Shared\Rights::EC_BANNED) == 0) {
-                        $user_ids[] = $user['id'];
-                    }
-                } else {
-                    $user_ids[] = $user['id'];
-                }
-            }
-
-            return $user_ids;
-        }
-
         public static function getJson()
         {
             return toJson(User::fromSession()->dbData());
