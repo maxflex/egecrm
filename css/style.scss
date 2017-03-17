@@ -1605,6 +1605,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 	img {
 		max-width:100%;
+        zoom: 50%;
 	}
 }
 
@@ -3409,9 +3410,4 @@ table.last-item-no-border tr:last-child td {
 	  border-radius: 4px!important;
 	}
   }
-}
-
-.cke_editable img {
-    max-width: 100%;
-    zoom: 50%;
 }

@@ -8281,7 +8281,8 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
     margin-left: 10px; }
 
 #task-app img {
-  max-width: 100%; }
+  max-width: 100%;
+  zoom: 50%; }
 
 .sms-template {
   display: none; }
@@ -9673,10 +9674,6 @@ h4.row-header.default-case {
   width: 100%; }
   .user-phone .input-group > input {
     border-radius: 4px !important; }
-
-.cke_editable img {
-  max-width: 100%;
-  zoom: 50%; }
 
 /*!
  * Datepicker for Bootstrap v1.4.0 (https://github.com/eternicode/bootstrap-datepicker)
