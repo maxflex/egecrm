@@ -3410,3 +3410,8 @@ table.last-item-no-border tr:last-child td {
 	}
   }
 }
+
+.cke_editable img {
+    max-width: 100%;
+    zoom: 50%;
+}
