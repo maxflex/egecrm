@@ -133,4 +133,5 @@ a > img {
 
 img {
 	max-width: 100%;
+    zoom: 50%;
 }
