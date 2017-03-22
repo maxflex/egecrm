@@ -10,10 +10,35 @@ app.directive 'comments', ->
         $scope.UserService = UserService
         $scope.show_max = 4                 # сколько комментов показывать в свернутом режиме
         $scope.show_all_comments = false    # показать все комментарии?
+        $scope.is_dragging = false          # комментарий перетаскивается
 
+        bindDraggableAll = ->
+            $timeout ->
+                $scope.getComments().forEach (comment) ->
+                    bindDraggable(comment.id)
+
+        # @todo вычистить полностью
+        bindDraggable = (comment_id) ->
+            # $("#comment-#{comment_id}").draggable
+            #     revert: 'invalid'
+            #     activeClass: 'drag-active'
+            #     start: (e, ui) ->
+            #         $scope.is_dragging = true
+            #         $scope.$apply()
+            #     stop: (e, ui) ->
+            #         $scope.is_dragging = false
+            #         $scope.$apply()
+            #
+            # $("#comment-delete-#{$scope.entityType}-#{$scope.entityId}").droppable
+            #     tolerance: 'pointer'
+            #     hoverClass: 'hovered'
+            #     drop: (e, ui) ->
+            #         $scope.remove($(ui.draggable).data('comment-id'))
 
         $scope.showAllComments = ->
             $scope.show_all_comments = true
+            $timeout ->
+                bindDraggableAll()
             focusModal()
 
         $scope.getComments = ->
@@ -30,6 +55,8 @@ app.directive 'comments', ->
                     $scope.comments = response
                     $rootScope.loaded_comments++ if $scope.trackLoading
                     $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true
+                    $timeout ->
+                        bindDraggableAll()
                 , 'json'
 
         $scope.formatDateTime = (date) ->
@@ -48,6 +75,8 @@ app.directive 'comments', ->
             $.post "ajax/DeleteComment", {"id" : comment_id}
             , ->
                 $scope.comments = _.without($scope.comments, _.findWhere($scope.comments, {id: comment_id}))
+                $timeout ->
+                    bindDraggableAll()
 
         $scope.edit = (comment, event) ->
             old_text    = comment.comment
@@ -88,6 +117,8 @@ app.directive 'comments', ->
                     place: $scope.entityType
                 , (response) ->
                     $scope.comments.push response
+                    $timeout ->
+                        bindDraggableAll()
                     , 400
                 , 'json'
                 $scope.endCommenting()

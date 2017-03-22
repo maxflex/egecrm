@@ -9,12 +9,24 @@ app.directive('comments', function() {
       entityType: '@'
     },
     controller: function($rootScope, $scope, $timeout, UserService) {
-      var focusModal;
+      var bindDraggable, bindDraggableAll, focusModal;
       $scope.UserService = UserService;
       $scope.show_max = 4;
       $scope.show_all_comments = false;
+      $scope.is_dragging = false;
+      bindDraggableAll = function() {
+        return $timeout(function() {
+          return $scope.getComments().forEach(function(comment) {
+            return bindDraggable(comment.id);
+          });
+        });
+      };
+      bindDraggable = function(comment_id) {};
       $scope.showAllComments = function() {
         $scope.show_all_comments = true;
+        $timeout(function() {
+          return bindDraggableAll();
+        });
         return focusModal();
       };
       $scope.getComments = function() {
@@ -35,7 +47,10 @@ app.directive('comments', function() {
             if ($scope.trackLoading) {
               $rootScope.loaded_comments++;
             }
-            return $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true;
+            $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true;
+            return $timeout(function() {
+              return bindDraggableAll();
+            });
           }, 'json');
         }
       });
@@ -56,9 +71,12 @@ app.directive('comments', function() {
         return $.post("ajax/DeleteComment", {
           "id": comment_id
         }, function() {
-          return $scope.comments = _.without($scope.comments, _.findWhere($scope.comments, {
+          $scope.comments = _.without($scope.comments, _.findWhere($scope.comments, {
             id: comment_id
           }));
+          return $timeout(function() {
+            return bindDraggableAll();
+          });
         });
       };
       $scope.edit = function(comment, event) {
@@ -100,7 +118,10 @@ app.directive('comments', function() {
             id_place: $scope.entityId,
             place: $scope.entityType
           }, function(response) {
-            return $scope.comments.push(response, 400);
+            $scope.comments.push(response);
+            return $timeout(function() {
+              return bindDraggableAll();
+            }, 400);
           }, 'json');
           $scope.endCommenting();
           focusModal();
