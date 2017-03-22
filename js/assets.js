@@ -9,24 +9,12 @@ app.directive('comments', function() {
       entityType: '@'
     },
     controller: function($rootScope, $scope, $timeout, UserService) {
-      var bindDraggable, bindDraggableAll, focusModal;
+      var focusModal;
       $scope.UserService = UserService;
       $scope.show_max = 4;
       $scope.show_all_comments = false;
-      $scope.is_dragging = false;
-      bindDraggableAll = function() {
-        return $timeout(function() {
-          return $scope.getComments().forEach(function(comment) {
-            return bindDraggable(comment.id);
-          });
-        });
-      };
-      bindDraggable = function(comment_id) {};
       $scope.showAllComments = function() {
         $scope.show_all_comments = true;
-        $timeout(function() {
-          return bindDraggableAll();
-        });
         return focusModal();
       };
       $scope.getComments = function() {
@@ -47,10 +35,7 @@ app.directive('comments', function() {
             if ($scope.trackLoading) {
               $rootScope.loaded_comments++;
             }
-            $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true;
-            return $timeout(function() {
-              return bindDraggableAll();
-            });
+            return $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true;
           }, 'json');
         }
       });
@@ -59,7 +44,7 @@ app.directive('comments', function() {
       };
       $scope.startCommenting = function(event) {
         $scope.start_commenting = true;
-        return $timeout(function() {
+        $timeout(function() {
           return $(event.target).parent().find('input').focus();
         });
       };
@@ -70,20 +55,24 @@ app.directive('comments', function() {
       $scope.remove = function(comment_id) {
         return $.post("ajax/DeleteComment", {
           "id": comment_id
-        }, function() {
-          $scope.comments = _.without($scope.comments, _.findWhere($scope.comments, {
-            id: comment_id
-          }));
-          return $timeout(function() {
-            return bindDraggableAll();
-          });
-        });
+        }, (function(_this) {
+          return function() {
+            $scope.comments = _.without($scope.comments, _.findWhere($scope.comments, {
+              id: comment_id
+            }));
+            return $timeout(function() {
+              return $scope.$apply();
+            });
+          };
+        })(this));
       };
       $scope.edit = function(comment, event) {
         var element, old_text;
         old_text = comment.comment;
         element = $(event.target);
-        comment.is_being_edited = true;
+        _.extend(comment, {
+          is_being_edited: true
+        });
         element.unbind('keydown').unbind('blur');
         element.attr('contenteditable', 'true').focus().on('keydown', function(e) {
           if (e.keyCode === 13) {
@@ -120,8 +109,8 @@ app.directive('comments', function() {
           }, function(response) {
             $scope.comments.push(response);
             return $timeout(function() {
-              return bindDraggableAll();
-            }, 400);
+              return $scope.$apply();
+            });
           }, 'json');
           $scope.endCommenting();
           focusModal();
