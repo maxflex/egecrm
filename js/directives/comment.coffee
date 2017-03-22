@@ -58,7 +58,7 @@ app.directive 'comments', ->
             old_text    = comment.comment
             element     = $(event.target)
             # комментарий редактируется...
-            _.extend comment, {is_being_edited: true}
+            comment.is_being_edited = true
 
             element.unbind('keydown').unbind('blur')
 
@@ -75,10 +75,7 @@ app.directive 'comments', ->
                         $(@).blur()
 
                 .on 'blur', (e) ->
-                    $timeout ->
-                        _.find($scope.comments, {id: comment.id}).is_being_edited = false
-                        $scope.$apply()
-                    , 100
+                    _.find($scope.comments, {id: comment.id})?.is_being_edited = false
                     if element.attr 'contenteditable'
                         element.removeAttr('contenteditable').html old_text
             return

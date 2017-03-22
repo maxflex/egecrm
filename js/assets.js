@@ -70,9 +70,7 @@ app.directive('comments', function() {
         var element, old_text;
         old_text = comment.comment;
         element = $(event.target);
-        _.extend(comment, {
-          is_being_edited: true
-        });
+        comment.is_being_edited = true;
         element.unbind('keydown').unbind('blur');
         element.attr('contenteditable', 'true').focus().on('keydown', function(e) {
           if (e.keyCode === 13) {
@@ -87,12 +85,12 @@ app.directive('comments', function() {
             return $(this).blur();
           }
         }).on('blur', function(e) {
-          $timeout(function() {
-            _.find($scope.comments, {
-              id: comment.id
-            }).is_being_edited = false;
-            return $scope.$apply();
-          }, 100);
+          var ref;
+          if ((ref = _.find($scope.comments, {
+            id: comment.id
+          })) != null) {
+            ref.is_being_edited = false;
+          }
           if (element.attr('contenteditable')) {
             return element.removeAttr('contenteditable').html(old_text);
           }
