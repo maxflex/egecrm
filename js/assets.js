@@ -85,12 +85,15 @@ app.directive('comments', function() {
             return $(this).blur();
           }
         }).on('blur', function(e) {
-          var ref;
-          if ((ref = _.find($scope.comments, {
-            id: comment.id
-          })) != null) {
-            ref.is_being_edited = false;
-          }
+          $timeout(function() {
+            var ref;
+            if ((ref = _.find($scope.comments, {
+              id: comment.id
+            })) != null) {
+              ref.is_being_edited = false;
+            }
+            return $scope.$apply();
+          }, 200);
           if (element.attr('contenteditable')) {
             return element.removeAttr('contenteditable').html(old_text);
           }

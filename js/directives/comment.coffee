@@ -75,7 +75,10 @@ app.directive 'comments', ->
                         $(@).blur()
 
                 .on 'blur', (e) ->
-                    _.find($scope.comments, {id: comment.id})?.is_being_edited = false
+                    $timeout ->
+                        _.find($scope.comments, {id: comment.id})?.is_being_edited = false
+                        $scope.$apply()
+                    , 200
                     if element.attr 'contenteditable'
                         element.removeAttr('contenteditable').html old_text
             return
