@@ -5,7 +5,6 @@ app.directive('comments', function() {
     scope: {
       user: '=',
       entityId: '=',
-      trackLoading: '=',
       entityType: '@'
     },
     controller: function($rootScope, $scope, $timeout, UserService) {
@@ -32,10 +31,10 @@ app.directive('comments', function() {
         if ($scope.entityType && $scope.entityId) {
           return $.post("get/comments/" + $scope.entityType + "/" + $scope.entityId, {}, function(response) {
             $scope.comments = response;
-            if ($scope.trackLoading) {
-              $rootScope.loaded_comments++;
-            }
-            return $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true;
+            $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true;
+            return $timeout(function() {
+              return $scope.$apply();
+            });
           }, 'json');
         }
       });

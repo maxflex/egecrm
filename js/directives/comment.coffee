@@ -4,7 +4,6 @@ app.directive 'comments', ->
     scope:
         user: '='
         entityId: '='
-        trackLoading: '='
         entityType: '@'
     controller: ($rootScope, $scope, $timeout, UserService) ->
         $scope.UserService = UserService
@@ -30,8 +29,8 @@ app.directive 'comments', ->
                 , {}
                 , (response) ->
                     $scope.comments = response
-                    $rootScope.loaded_comments++ if $scope.trackLoading
                     $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true
+                    $timeout -> $scope.$apply()
                 , 'json'
 
         $scope.formatDateTime = (date) ->
