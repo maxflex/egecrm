@@ -181,6 +181,7 @@
 			$start_from = ($page - 1) * Report::PER_PAGE;
 
 			$search = json_decode($_COOKIE['reports']);
+			if (!$search) $search = (object)[];
 
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.date, r.available_for_parents, rh.lesson_count");
@@ -244,11 +245,11 @@
 					->cnt;
 		}
 
-		private static function _connectTables($t, $addon) {
+		private static function _connectTables($t, $addon = '') {
 			return " {$t} ON ({$t}.id_student = vj.id_entity AND {$t}.id_teacher = vj.id_teacher AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year {$addon})";
 		}
 
-		private static function _generateQuery($search, $select, $order = true, $ending)
+		private static function _generateQuery($search, $select, $order = true, $ending = '')
 		{
 			$main_query = "
 				FROM visit_journal vj
