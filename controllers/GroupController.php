@@ -304,15 +304,18 @@
 				if (!$Teacher) {
 					$Teacher = 0;
 				}
-
+                $exams = ExamDay::getExamDates($Group);
 				$ang_init_data = angInit([
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
-					"vocation_dates"		=> GroupSchedule::getVocationDates(true),
-					"exam_dates"			=> ExamDay::getExamDates($Group),
 					"SubjectsDative"		=> Subjects::$dative,
 					"past_lessons" 	        => $Group->getPastLessons(), // @time-refactored @time-checked
                     "all_cabinets"			=> Branches::allCabinets(), // @to show past lesson cabinet number
+                    "special_dates"	=> [
+                        'vacations' => GroupSchedule::getVocationDates(),
+                        'exams' => $exams['this_subject'],
+                        'other_exams' => $exams['other_subject'],
+                    ],
 				]);
 
 				$this->render("student_schedule", [
@@ -355,14 +358,18 @@
 						$Teacher = 0;
 					}
 
+                    $exams = ExamDay::getExamDates($Group);
 					$ang_init_data = angInit([
 						"Group" 				=> $Group,
 						"Teacher"				=> $Teacher,
-						"vocation_dates"		=> GroupSchedule::getVocationDates(true),
 						"SubjectsDative"		=> Subjects::$dative,
-						"exam_dates"			=> ExamDay::getExamDates($Group),
 						"past_lessons" 			=> $Group->getPastLessons(), // @time-refactored @time-checked
                         "all_cabinets"			=> Branches::allCabinets(), // @to show past lesson cabinet number
+                        "special_dates"	=> [
+                            'vacations' => GroupSchedule::getVocationDates(),
+                            'exams' => $exams['this_subject'],
+                            'other_exams' => $exams['other_subject'],
+                        ],
 					]);
 
 					$this->render("teacher_schedule", [
@@ -376,12 +383,16 @@
 					$id_group = $_GET['id'];
 					$Group = Group::findById($id_group);
 					$Group->Schedule = $Group->getSchedule();
+                    $exams = ExamDay::getExamDates($Group);
 
 					$ang_init_data = angInit([
 						"Group" 			=> $Group,
 						"past_lessons" => $Group->getPastLessons(), 		// @time-refactored @time-checked
-						"vocation_dates"	=> GroupSchedule::getVocationDates(),
-						"exam_dates"		=> ExamDay::getExamDates($Group),
+						"special_dates"	=> [
+                            'vacations' => GroupSchedule::getVocationDates(),
+                            'exams' => $exams['this_subject'],
+                            'other_exams' => $exams['other_subject'],
+                        ],
 						"all_cabinets"			=> Branches::allCabinets(), // @time-refactored @time-checked
 						"Time"				=> Time::getLight(),
 					]);
