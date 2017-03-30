@@ -608,7 +608,7 @@
 
 			// Обновляем красные счетчики
 			if (! LOCAL_DEVELOPMENT) {
-                $Schedule = Schedule::findById($id_schedule);
+                $Schedule = VisitJournal::findById($id_schedule);
 				$errors = memcached()->get("JournalErrors");
 
 				if (($key = array_search($Schedule->id_group, $errors[$Schedule->date])) !== false) {
