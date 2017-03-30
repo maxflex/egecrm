@@ -3457,3 +3457,9 @@ mwl-calendar .events-list {
 .cal-day-vacation {
     background: #fff1f1;
 }
+
+mwl-calendar span[data-cal-date] {
+    font-size: 14px;
+    margin-top: 7px;
+    margin-right: 7px;
+}

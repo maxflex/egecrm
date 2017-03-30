@@ -43,12 +43,12 @@
                                 {{ Schedule.time }}
 							</div>
 							<div class="lessons-table" ng-show="Schedule.was_lesson">
-								{{ getPastLesson(Schedule.date).lesson_time }}
+								{{ getPastLesson(Schedule).lesson_time }}
 							</div>
 						</td>
 						<td>
                             <div ng-show="Schedule.was_lesson">
-                                {{ getCabinet(getPastLesson(Schedule.date).cabinet).label }}
+                                {{ getCabinet(getPastLesson(Schedule).cabinet).label }}
                             </div>
                             <div ng-show="!Schedule.was_lesson">
                                 {{ getCabinet(Schedule.cabinet).label }}
