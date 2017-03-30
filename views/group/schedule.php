@@ -59,7 +59,7 @@
 						</td>
                         <td style='text-align: right'>
                             <?php if (allowed(Shared\Rights::EDIT_GROUP_SCHEDULE)) :?>
-                            <span ng-show="!Schedule.was_lesson">
+                            <span ng-show="!Schedule.was_lesson && !Schedule.cancelled">
                                 <span class='link-like link-offset-right' ng-click='scheduleModal(Schedule)'>редактировать</span>
                                 <span class='link-like red' ng-click='deleteSchedule(Schedule)'>удалить</span>
                             </span>
