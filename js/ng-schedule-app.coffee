@@ -111,8 +111,6 @@ app = angular.module "Schedule", ['mwl.calendar']
 
         $scope.monthName = (month) ->
             month_name = moment().month(month - 1).format "MMMM"
-            month_name += ' ' + (parseInt($scope.Group.year) + 1) if month is 1
-            month_name
 
         angular.element(document).ready ->
             set_scope 'Schedule'

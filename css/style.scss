@@ -3457,11 +3457,17 @@ mwl-calendar .events-list {
 .cal-day-vacation {
     background: #fff1f1;
 }
+.cal-day-exam {
+    background: rgba(orange, .2);
+}
+.cal-day-exam-other {
+    background: rgba(#9954bb, .2);
+}
 
 mwl-calendar span[data-cal-date] {
     font-size: 14px;
-    margin-top: 7px;
-    margin-right: 7px;
+    margin-top: 2px;
+    margin-right: 4px;
 }
 
 .calendar-block {

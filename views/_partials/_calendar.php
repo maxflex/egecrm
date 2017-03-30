@@ -5,11 +5,14 @@
     <div class='calendar-block'>
         <div class='calendar-block-month'>
             {{ monthName(month) }}
+            <div ng-show='month == 1'>
+                {{ (Group.year + 1) }}
+            </div>
         </div>
         <div class='calendar-block-calendar'>
             <mwl-calendar ng-if='viewDate[month]'
                 view="'month'"
-                vacation-dates="vocation_dates"
+                special-dates="special_dates"
                 view-date="viewDate[month]"
                 events="events[month]"
                 view-title="calendarTitle">

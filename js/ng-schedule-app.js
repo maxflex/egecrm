@@ -149,11 +149,7 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
   };
   $scope.monthName = function(month) {
     var month_name;
-    month_name = moment().month(month - 1).format("MMMM");
-    if (month === 1) {
-      month_name += ' ' + (parseInt($scope.Group.year) + 1);
-    }
-    return month_name;
+    return month_name = moment().month(month - 1).format("MMMM");
   };
   return angular.element(document).ready(function() {
     return set_scope('Schedule');

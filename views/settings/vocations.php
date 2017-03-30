@@ -32,7 +32,7 @@
 				</table>
                 <span class='link-like' ng-click='scheduleModal()'>добавить</span>
                 <div class="exam-days-wrapper">
-                    <h4 style="text-align: center">Дни экзаменов</h4>
+                    <h4 style="text-align: center; margin: 0 0 20px">Дни экзаменов</h4>
                     <div class="row">
                         <div class="col-sm-6">
                             <span ng-repeat="(id_subject, name) in Subjects">
@@ -141,7 +141,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title center">{{ modal_schedule.id ? 'Редактировать занятие' : 'Добавить занятие' }}</h4>
+        <h4 class="modal-title center">{{ modal_schedule.id ? 'Редактировать праздник' : 'Добавить праздник' }}</h4>
       </div>
       <div class="modal-body">
           <div class="form-group">
