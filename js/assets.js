@@ -5,28 +5,15 @@ app.directive('comments', function() {
     scope: {
       user: '=',
       entityId: '=',
-      trackLoading: '=',
       entityType: '@'
     },
     controller: function($rootScope, $scope, $timeout, UserService) {
-      var bindDraggable, bindDraggableAll, focusModal;
+      var focusModal;
       $scope.UserService = UserService;
       $scope.show_max = 4;
       $scope.show_all_comments = false;
-      $scope.is_dragging = false;
-      bindDraggableAll = function() {
-        return $timeout(function() {
-          return $scope.getComments().forEach(function(comment) {
-            return bindDraggable(comment.id);
-          });
-        });
-      };
-      bindDraggable = function(comment_id) {};
       $scope.showAllComments = function() {
         $scope.show_all_comments = true;
-        $timeout(function() {
-          return bindDraggableAll();
-        });
         return focusModal();
       };
       $scope.getComments = function() {
@@ -44,12 +31,9 @@ app.directive('comments', function() {
         if ($scope.entityType && $scope.entityId) {
           return $.post("get/comments/" + $scope.entityType + "/" + $scope.entityId, {}, function(response) {
             $scope.comments = response;
-            if ($scope.trackLoading) {
-              $rootScope.loaded_comments++;
-            }
             $rootScope[$scope.entityType.toLowerCase() + '_comments_loaded'] = true;
             return $timeout(function() {
-              return bindDraggableAll();
+              return $scope.$apply();
             });
           }, 'json');
         }
@@ -59,7 +43,7 @@ app.directive('comments', function() {
       };
       $scope.startCommenting = function(event) {
         $scope.start_commenting = true;
-        return $timeout(function() {
+        $timeout(function() {
           return $(event.target).parent().find('input').focus();
         });
       };
@@ -70,14 +54,16 @@ app.directive('comments', function() {
       $scope.remove = function(comment_id) {
         return $.post("ajax/DeleteComment", {
           "id": comment_id
-        }, function() {
-          $scope.comments = _.without($scope.comments, _.findWhere($scope.comments, {
-            id: comment_id
-          }));
-          return $timeout(function() {
-            return bindDraggableAll();
-          });
-        });
+        }, (function(_this) {
+          return function() {
+            $scope.comments = _.without($scope.comments, _.findWhere($scope.comments, {
+              id: comment_id
+            }));
+            return $timeout(function() {
+              return $scope.$apply();
+            });
+          };
+        })(this));
       };
       $scope.edit = function(comment, event) {
         var element, old_text;
@@ -99,11 +85,14 @@ app.directive('comments', function() {
           }
         }).on('blur', function(e) {
           $timeout(function() {
-            _.find($scope.comments, {
+            var ref;
+            if ((ref = _.find($scope.comments, {
               id: comment.id
-            }).is_being_edited = false;
+            })) != null) {
+              ref.is_being_edited = false;
+            }
             return $scope.$apply();
-          }, 100);
+          }, 200);
           if (element.attr('contenteditable')) {
             return element.removeAttr('contenteditable').html(old_text);
           }
@@ -120,8 +109,8 @@ app.directive('comments', function() {
           }, function(response) {
             $scope.comments.push(response);
             return $timeout(function() {
-              return bindDraggableAll();
-            }, 400);
+              return $scope.$apply();
+            });
           }, 'json');
           $scope.endCommenting();
           focusModal();
