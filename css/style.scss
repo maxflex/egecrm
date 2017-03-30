@@ -3434,14 +3434,14 @@ mwl-calendar .event {
     box-shadow: none !important;
 }
 
-// mwl-calendar .cal-year-box [class*="span"], mwl-calendar .cal-month-box [class*="cal-cell"] {
-//     min-height: 0;
-//     height: 75px !important;
-// }
-//
-// mwl-calendar .cal-month-day {
-//     height: 75px !important;
-// }
+mwl-calendar .cal-year-box [class*="span"], mwl-calendar .cal-month-box [class*="cal-cell"] {
+    min-height: 0;
+    height: 50px !important;
+}
+
+mwl-calendar .cal-month-day {
+    height: 50px !important;
+}
 
 mwl-calendar .events-list {
     padding-bottom: 1px;
@@ -3462,4 +3462,27 @@ mwl-calendar span[data-cal-date] {
     font-size: 14px;
     margin-top: 7px;
     margin-right: 7px;
+}
+
+.calendar-block {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-block-month {
+    width: 100px;
+}
+
+.calendar-block-calendar {
+    width: 100%;
+}
+
+mwl-calendar .cal-day-today {
+    background: white !important;
+}
+
+mwl-calendar .cal-day-today span[data-cal-date] {
+    color: inherit;
+    font-size: 14px !important;
 }

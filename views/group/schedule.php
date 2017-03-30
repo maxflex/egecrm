@@ -21,7 +21,7 @@
 	<div class="panel-body" style="position: relative">
 		<div class="row">
 			<div class="col-sm-6" style="position: relative">
-                <?= globalPartial('calendar') ?>
+                <?= globalPartial('calendar', ['active' => true]) ?>
 			</div>
 			<div class="col-sm-6">
 				<h3 style="font-weight: bold; margin: 10px 0 25px">{{ countNotCancelled(Group.Schedule) }} <ng-pluralize count="countNotCancelled(Group.Schedule)" when="{
