@@ -119,6 +119,7 @@
 				}
 			});
 
+            // @schedule-refactored
             $tobe_paid = dbConnection()->query(
                 "select format(sum(teacher_price), 0) as tobe_paid from group_schedule gs " .
                 "join groups g on g.id = gs.id_group " .

@@ -293,7 +293,7 @@
 
 
 
-
+        // @schedule-refactored
 		private function _totalVisits($date_start, $date_end = false)
 		{
 			$return['lesson_count'] = VisitJournal::count([

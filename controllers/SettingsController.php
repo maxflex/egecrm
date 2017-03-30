@@ -10,7 +10,7 @@
 
 		public function beforeAction()
 		{
-			$this->addJs("ng-settings-app");
+			$this->addJs("ng-settings-app, vendor/angular-bootstrap-calendar-tpls");
 		}
 
 		public function actionVocations()

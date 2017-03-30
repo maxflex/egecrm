@@ -613,19 +613,24 @@
 		public function actionAjaxLoadStatsSchedule()
 		{
 			extract($_POST);
+
+            // @schedule-refactored
 			$Schedule = GroupSchedule::findAll([
 				"condition" => "date='$date' AND id_group!=0",
-				"group"		=> "id_group",
 			]);
+
+            // returnJsonAng($Schedule);
 
 			foreach ($Schedule as &$S) {
 				$S->Group = Group::findById($S->id_group);
 				$S->Group->Teacher = Teacher::getLight($S->Group->Teacher->id, ['phone']);
+                // @schedule-refactored
 				$S->is_unplanned = $S->isUnplanned();
 
 				// номер урока
+				// @schedule-refactored
 				$S->lesson_number = GroupSchedule::count([
-					"condition" => "id_group={$S->id_group} AND date <= '{$date}' AND cancelled = 0"
+					"condition" => "id_group={$S->id_group} AND CONCAT(`date`,' ',`time`) <= '{$date} {$S->time}' AND cancelled = 0"
 				]);
 
 				// общее кол-во уроков
@@ -635,7 +640,8 @@
 
 				// данные по прошедшему занятию из журнала
 				if ($S->was_lesson) {
-					$S->Lesson = VisitJournal::find(["condition" => "id_group={$S->id_group} AND lesson_date='{$S->date}'"]);
+                    // @schedule-refactored
+					$S->getLesson();
 					if ($S->Lesson->cabinet) {
 	                    $S->Lesson->cabinet = Cabinet::getBlock($S->Lesson->cabinet);
 	                }

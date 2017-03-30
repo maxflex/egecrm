@@ -113,25 +113,26 @@
             }
 		}
 
+        /**
+         * @schedule-refactored
+         */
 		public function actionLesson()
 		{
 			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
 
-			$date 		= $_GET['date'];
-			$id_group 	= $_GET['id_group'];
+			$id_schedule = $_GET['id_schedule'];;
+
+            $Schedule = GroupSchedule::findById($id_schedule);
 
             /* третий парам чтобы не учитовать отменные занятия */
             // @refactored
-			if (!Group::inSchedule($id_group, $date, true)) {
+			if (! $Schedule) {
 				$this->setTabTitle("Ошибка");
 				$this->render("no_lesson", [
 					"message" => "Занятие отсутствует"
 				]);
 			} else {
 				// если занятие еще не началось, нельзя переходить в функционал добавления в журнал
-				$Schedule = GroupSchedule::find([
-					"condition" => "date='$date' AND id_group=$id_group"
-				]);
 				$schedule_date = $Schedule->date . " " . $Schedule->time;
 
 				if ($schedule_date > now()) {
@@ -142,19 +143,19 @@
 				} else {
 					// если дошло досюда, всё хорошо, ошибок нет
 					$this->_custom_panel = true;
-					$Group = Group::findById($id_group);
+
+                    $Schedule->getGroup();
 
 					// restrict other teachers to access journal
-					if ((User::fromSession()->type == Teacher::USER_TYPE) && ($Group->id_teacher != User::fromSession()->id_entity)) {
+					if ((User::fromSession()->type == Teacher::USER_TYPE) && ($Schedule->Group->id_teacher != User::fromSession()->id_entity)) {
 						$this->renderRestricted();
 					}
 
-					$registered_in_journal = $Group->registeredInJournal($date);
-
 					// если занятие уже зарегистрировано, берем данные из журнала
-					if ($registered_in_journal) {
+					if ($Schedule->was_lesson) {
+                        // @schedule-refactored
 						$LessonData = VisitJournal::findAll([
-							"condition" => "lesson_date='$date' AND id_group=$id_group AND type_entity='". Student::USER_TYPE ."'"
+							"condition" => "lesson_date='{$Schedule->date}' AND lesson_time='{$Schedule->time}:00' AND id_group={$Schedule->Group->id} AND type_entity='". Student::USER_TYPE ."'"
 						]);
 
 						$student_ids = [];
@@ -163,20 +164,16 @@
 							$OrderedLessonData[$OneData->id_entity] = $OneData;
 						}
 
-						$Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"], true);
+						$Schedule->Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"], true);
 					} else {
-						$Group->Students = $Group->getStudents();
+						$Schedule->Group->Students = $Schedule->Group->getStudents();
 					}
 
 					$ang_init_data = angInit([
-						"Group" 	=> $Group,
-						"LessonData"=> (object)$OrderedLessonData,
-						"Schedule"	=> $Schedule,
+                        "Schedule"        => $Schedule,
+						"LessonData"      => (object)$OrderedLessonData,
 						"lesson_statuses" => VisitJournal::$statuses,
-						"id_group"		=> $id_group,
-						"date"			=> $date,
-						"isAdmin"		=> User::isAdmin(),
-						"registered_in_journal" => $Group->registeredInJournal($date),
+						"isAdmin"		  => User::isAdmin(),
 					]);
 
 					//изменение исторических данных: доступен только админам
@@ -283,6 +280,9 @@
 		 */
 		public function actionSchedule()
 		{
+            // @cancelled_lesson_dates – удалить везде
+            // @past_lessons – рассмотреть удаление у teachers & students
+            $this->addJs("vendor/angular-bootstrap-calendar-tpls, ng-schedule-app");
 			if (User::fromSession()->type == Student::USER_TYPE) {
 				// не надо панель рисовать
 				$this->_custom_panel = true;
@@ -312,7 +312,6 @@
 					"exam_dates"			=> ExamDay::getExamDates($Group),
 					"SubjectsDative"		=> Subjects::$dative,
 					"past_lessons" 	        => $Group->getPastLessons(), // @time-refactored @time-checked
-					"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
                     "all_cabinets"			=> Branches::allCabinets(), // @to show past lesson cabinet number
 				]);
 
@@ -363,7 +362,6 @@
 						"SubjectsDative"		=> Subjects::$dative,
 						"exam_dates"			=> ExamDay::getExamDates($Group),
 						"past_lessons" 			=> $Group->getPastLessons(), // @time-refactored @time-checked
-						"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
                         "all_cabinets"			=> Branches::allCabinets(), // @to show past lesson cabinet number
 					]);
 
@@ -384,7 +382,6 @@
 						"past_lessons" => $Group->getPastLessons(), 		// @time-refactored @time-checked
 						"vocation_dates"	=> GroupSchedule::getVocationDates(),
 						"exam_dates"		=> ExamDay::getExamDates($Group),
-						"cancelled_lesson_dates" => $Group->getCancelledLessonDates(),
 						"all_cabinets"			=> Branches::allCabinets(), // @time-refactored @time-checked
 						"Time"				=> Time::getLight(),
 					]);
@@ -498,6 +495,7 @@
 				"condition" => "id_group=".$_POST["id_group"]
 			];
 
+            // @schedule-refactored
 			# Удаляем всё, что связано с группой
 			GroupTime::deleteAll($condition);
 			GroupSchedule::deleteAll($condition);
@@ -505,55 +503,27 @@
 		}
 
 
-		public function actionAjaxDeleteScheduleDate()
+		public function actionAjaxSaveSchedule()
+		{
+			extract($_POST);
+
+            if (isset($id)) {
+                GroupSchedule::updateById($id, $_POST);
+            } else {
+                returnJsonAng(
+                    GroupSchedule::add($_POST)
+                );
+            }
+		}
+
+        // @schedule-refactored
+		public function actionAjaxDeleteSchedule()
 		{
 			extract($_POST);
 
 			GroupSchedule::deleteAll([
-				"condition" => "date='$date' AND id_group=$id_group"
+				"condition" => "id={$id}"
 			]);
-		}
-
-		/**
-		 * Отмена урока в группе
-		 */
-		public function actionAjaxCancelScheduleDate()
-		{
-			extract($_POST);
-			$gs = GroupSchedule::find([
-					"condition" => "date='$date' AND id_group='$id_group'"
-			]);
-			if ($gs) {
-				$gs->cancelled = 1;
-				$gs->save("cancelled");
-			}
-		}
-
-		public function actionAjaxAddScheduleTime()
-		{
-			extract($_POST);
-
-			$GroupSchedule = GroupSchedule::find([
-				"condition" => "date='$date' AND id_group='$id_group'"
-			]);
-
-            $GroupSchedule->time = $time;
-            $GroupSchedule->save("time");
-		}
-
-		/**
-		 * Adds schedule record.
-		 * @return int       Id of new record
-		 */
-		public function actionAjaxAddScheduleDate()
-		{
-			extract($_POST);
-
-			$obj = GroupSchedule::add([
-						"date" => $date,
-						"id_group" => $id_group,
-				   ]);
-			returnJson([id => $obj->id]);
 		}
 
 		public function actionAjaxTimeFromGroup()
@@ -634,18 +604,19 @@
 			User::rememberMeLogin();
 			$data = array_filter($data);
 
-			VisitJournal::addData($id_group, $date, $data);
+			VisitJournal::addData($id_schedule, $data);
 
 			// Обновляем красные счетчики
-			if (!LOCAL_DEVELOPMENT) {
+			if (! LOCAL_DEVELOPMENT) {
+                $Schedule = Schedule::findById($id_schedule);
 				$errors = memcached()->get("JournalErrors");
 
-				if (($key = array_search($id_group, $errors[$date])) !== false) {
-					unset($errors[$date][$key]);
-					$errors[$date] = array_values($errors[$date]);
+				if (($key = array_search($Schedule->id_group, $errors[$Schedule->date])) !== false) {
+					unset($errors[$Schedule->date][$key]);
+					$errors[$Schedule->date] = array_values($errors[$Schedule->date]);
 					// if no errors now
-					if (!count($errors[$date])) {
-						unset($errors[$date]);
+					if (!count($errors[$Schedule->date])) {
+						unset($errors[$Schedule->date]);
 					}
 				    memcached()->set("JournalErrors", $errors, 3600 * 24);
 				}
@@ -664,18 +635,19 @@
 			User::rememberMeLogin();
 			if (User::fromSession()->type == User::USER_TYPE) {
 				$data = array_filter($data);
-				VisitJournal::updateData($id_group, $date, $data);
+				VisitJournal::updateData($id_schedule, $data);
 
 				// Обновляем красные счетчики
-				if (!LOCAL_DEVELOPMENT) {
+				if (! LOCAL_DEVELOPMENT) {
+                    $Schedule = Schedule::findById($id_schedule);
 					$errors = memcached()->get("JournalErrors");
 
-					if (($key = array_search($id_group, $errors[$date])) !== false) {
-						unset($errors[$date][$key]);
-						$errors[$date] = array_values($errors[$date]);
+					if (($key = array_search($Schedule->id_group, $errors[$Schedule->date])) !== false) {
+						unset($errors[$Schedule->date][$key]);
+						$errors[$Schedule->date] = array_values($errors[$Schedule->date]);
 						// if no errors now
-						if (!count($errors[$date])) {
-							unset($errors[$date]);
+						if (!count($errors[$Schedule->date])) {
+							unset($errors[$Schedule->date]);
 						}
 						memcached()->set("JournalErrors", $errors, 3600 * 24);
 					}
@@ -694,7 +666,8 @@
 			$Group = Group::findById($id_group);
 
 			$return = $Group->countSchedule();
-			// @refactored
+
+			// @refactored @schedule-refactored
 			memcached()->set("GroupScheduleCount[{$Group->id}]", $return, 5 * 24 * 3600);
 		}
 
@@ -702,7 +675,7 @@
 		{
 			$Groups = Group::findAll();
 
-			// @refactored
+			// @refactored @schedule-refactored
 			foreach ($Groups as $Group) {
 				memcached()->set("GroupScheduleCount[{$Group->id}]", $Group->countSchedule(), 5 * 24 * 3600);
 				memcached()->set("GroupPastScheduleCount[{$Group->id}]", VisitJournal::getLessonCount($Group->id), 5 * 24 * 3600);
@@ -734,19 +707,15 @@
 			}
 			//=========
 
-
-			$GroupSchedule = GroupSchedule::find([
-				"condition" => "id_group={$Group->id} AND date='" . $FirstLesson->date ."'"
-			]);
 			// @time-refactored @time-checked
 			// @sms-checked
 			$Template = Template::getFull(8, [
 				"student_name"	=> $Student->last_name . " " . $Student->first_name,
 				"subject"		=> Subjects::$dative[$Group->id_subject],
-				"address"		=> Branches::$address[Cabinet::getField($GroupSchedule->cabinet)],
-				"branch"		=> Branches::$all[Cabinet::getField($GroupSchedule->cabinet)],
+				"address"		=> Branches::$address[Cabinet::getField($FirstLesson->cabinet)],
+				"branch"		=> Branches::$all[Cabinet::getField($FirstLesson->cabinet)],
 				"date"			=> $date_formatted,
-				"cabinet"		=> trim(Cabinet::getField($GroupSchedule->cabinet, 'number')),
+				"cabinet"		=> trim(Cabinet::getField($FirstLesson->cabinet, 'number')),
 			]);
 
 			$message = $Template->text;
@@ -1003,21 +972,6 @@
 			extract($_POST);
 
 			Group::updateById($id_group, $data);
-		}
-
-		public function actionAjaxChangeScheduleCabinet()
-		{
-			extract($_POST);
-			GroupSchedule::updateById($id, compact('cabinet'));
-		}
-
-		public function actionAjaxChangeScheduleFree()
-		{
-			extract($_POST);
-
-			GroupSchedule::updateById($id, [
-				"is_free" => $is_free,
-			]);
 		}
 
 		public function actionAjaxGet()

@@ -1017,3 +1017,14 @@ function ExpandSelect(select, maxOptionsVisible)
 
 		$("li.active").first().children().first().click();
 	}
+
+
+	/**
+	 * Стандартная дата
+	 */
+	function convertDate(date) {
+		date = date.split(".")
+		date = date.reverse()
+		date = date.join("-")
+		return date
+	}

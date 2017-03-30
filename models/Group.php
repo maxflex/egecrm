@@ -93,26 +93,6 @@
 		}
 
 		/**
-		 * Получить даты отмененных занятий.
-		 *
-		 * @return string[]			Даты отмененных занятий в формате гггг-мм-дд
-		 */
-		public function getCancelledLessonDates()
-		{
-			$dates = [];
-			$Schedules = GroupSchedule::findAll([
-				"condition" => "id_group={$this->id} AND cancelled = 1"
-			]);
-
-			/* @var $Schedules GroupSchedule[] */
-			foreach ($Schedules as $Schedule) {
-				$dates[] = $Schedule->date;
-			}
-
-			return $dates;
-		}
-
-		/**
 		 * Получить ID преподавателей, которые сейчас ведут группы.
 		 *
 		 */
@@ -134,86 +114,6 @@
 			return $teacher_ids;
 		}
 
-
-		/**
-		 * Если хотя бы 1 день в расписании группы не соответствует дням недели этой группы то в списке групп нужно
-		 * ставить пиктограммку в конце например типа восклицательный значок.
-		 *
-		 */
-		public function lessonDaysMatch()
-		{
-			if ($this->day_and_time) {
-				$days = array_keys($this->day_and_time);
-
-				// sunday in mysql is 0
-				foreach ($days as &$day) {
-					if ($day == 7) {
-						$day = 0;
-					}
-				}
-
-				// дни совпали
-				// @refactored – используется в тесте
-				$days_match = GroupSchedule::count([
-					"condition" => "id_group={$this->id} AND DATE_FORMAT(date, '%w') NOT IN (" . implode(',', $days) . ") AND cancelled = 0"
-				]) > 0 ? false : true;
-
-				// если дни совпали, проверяем время
-				if ($days_match) {
-
-					// проверяем время
-					$sql = [];
-
-					foreach($this->day_and_time as $day => $day_data) {
-						$sql_tmp = "DATE_FORMAT(date, '%w') = " . ($day == 0 ? 7 : $day);
-						$sql_time = [];
-						foreach ($day_data as $time) {
-							$sql_time[] = "'". $time ."'";
-						}
-						if (count($sql_time)) {
-							$sql_tmp .= " AND SUBSTR(time, 1, 5) NOT IN (" . implode(",", $sql_time) . ")";
-						}
-						$sql[] = "(" . $sql_tmp . ")";
-					}
-
-					// время совпало?
-					return GroupSchedule::count([
-						"condition" => "id_group={$this->id} AND (" . implode(" OR ", $sql) . ") AND cancelled = 0"
-					]) > 0 ? false : true;
-				} else {
-					return false;
-				}
-
-			} else {
-				return true;
-			}
-		}
-
-
-		/**
-		 * Получить количество занятий из календаря.
-		 *  УЖЕ ГДЕ-ТО ЕСТЬ ЭТОТ ФУНКЦИОНАЛ! Group.Schedule.length
-		 */
-/*
-		public function getTotalLessonCount()
-		{
-			return GroupSchedule::count([
-				"condition"	=> "id_group={$this->id}",
-			]);
-		}
-
-*/
-        /**
-         * @refactored
-         */
-		public function inSchedule($id_group, $date, $withoutCancelled = false)
-		{
-			// @refactored
-			return GroupSchedule::find([
-				"condition" => "id_group=$id_group AND date='$date'".($withoutCancelled ? " AND cancelled = 0 " : "")
-			]);
-		}
-
 		/**
 		 * Получить отсутствующие занятие за последние N дней
 		 */
@@ -228,12 +128,9 @@
 
 				foreach ($GroupSchedule as $Schedule) {
 					// Проверяем было ли это занятие
-					$was_lesson = VisitJournal::find([
-						"condition" => "lesson_date = '" . $Schedule->date . "' AND id_group=" . $Schedule->id_group
-					]);
-
 					// если занятия не было, добавляем в ошибки
-					if (! $was_lesson) {
+					// @schedule-refactored
+					if (! $Schedule->was_lesson) {
 						$return[$date]++;
 						$total_missing_count++;
 					}
@@ -261,7 +158,7 @@
             }
 
             // Получаем дату последнего запланированного занятия
-            // @refactored
+            // @refactored @schedule-refactored
             $GroupSchedule = GroupSchedule::find([
                 "condition" => "id_group={$Group->id} AND cancelled=0",
                 "order"		=> "date DESC",
@@ -286,6 +183,7 @@
 		/**
 		 * @param bool $withoutCancelled	whether cancelled lessons should be ignored.
 		 * @return GroupSchedule[]|bool		Schedule elems if found, false otherwise.
+		 * @time-refactored
 		 */
 		public function getSchedule($withoutCancelled=false)
 		{
@@ -298,6 +196,7 @@
 		}
 
 		// Получить будущее расписание
+		// @time-refactored
 		public function getFutureSchedule($with_cabinets = false)
 		{
 			$GroupSchedule = GroupSchedule::findAll([
@@ -313,6 +212,7 @@
 		}
 
 		// @refactored
+		// @schedule-refactored
 		public function countFutureSchedule()
 		{
 			// @refactored
@@ -323,13 +223,14 @@
 
 		public function countFutureScheduleStatic($id)
 		{
-			// @refactored
+			// @refactored @schedule-refactored
 			return GroupSchedule::count([
 				"condition" => "id_group=".$id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW()) AND cancelled=0",
 			]);
 		}
 
 		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
+		// @schedule-refactored
 		public function getPastSchedule()
 		{
 			return GroupSchedule::findAll([
@@ -338,38 +239,10 @@
 			]);
 		}
 
-		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
 
-		// LESSON_LENGTH = 105 минут - 1:45 - 30 минут до конца занятия
-		//
-		// ВНИМАНИЕ, ТЕПЕРЬ LESSON_LENGTH = 135 + 30 (165). Раньше было с минусом $minutes = LESSON_LENGTH + $minutes_to_end,
-		// т.е. цифры обновлялись за полчаса
-		public function getPastScheduleBeforeEnd($minutes_to_end = 30)
-		{
-			$minutes = LESSON_LENGTH + $minutes_to_end;
-
-			return GroupSchedule::findAll([
-				// "condition" => "id_group=".$this->id." AND  ((ABS(UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) - UNIX_TIMESTAMP(NOW())) / 60) > {$minutes})
-				"condition" => "id_group=".$this->id." AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) >  {$minutes}
-					AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW())",
-				"order"		=> "date ASC, time ASC",
-			]);
-		}
-
-		// @delete – удалить после обновления крона
-		// получить прошлое расписание для уведомления учителя об отсутсвии записи в журнале
-		public function getPastScheduleTeacherReport()
-		{
-			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id."
-					AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) < ". (LESSON_LENGTH + 35) ."
-					AND ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(CONCAT_WS(' ', date, time))) / 60) > ". (LESSON_LENGTH + 25) ."
-					AND date='". date('Y-m-d') ."'",
-				"order"		=> "date ASC, time ASC",
-			]);
-		}
-
-
+        /**
+         * @schedule-refactored
+         */
 		public function countSchedule()
 		{
 			// @REFACTORED
@@ -388,6 +261,9 @@
 			];
 		}
 
+        /**
+         * @schedule-refactored
+         */
 		public function countScheduleStatic($id)
 		{
 			// @REFACTORED
@@ -490,7 +366,7 @@
 			// @refactored
 			$GroupFirstSchedule =  GroupSchedule::find([
 				"condition" => "id_group={$this->id} AND cancelled = 0",
-				"order"		=> "date ASC"
+				"order"		=> "date ASC, time ASC"
 			]);
 
 			if ($unix) {
@@ -508,7 +384,7 @@
 			// @refactored
 			$GroupFirstSchedule =  GroupSchedule::find([
 				"condition" => "id_group={$id_group} AND cancelled = 0",
-				"order"		=> "date ASC"
+				"order"		=> "date ASC, time ASC"
 			]);
 
 			return $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date . " " . $GroupFirstSchedule->time) . "000" : false;
@@ -536,13 +412,14 @@
 		/**
 		 * Получить первое занятие
 		 * $from_today – первое относительно сегодняшнего дня (ближайшее следующее)
+		 * @schedule-refactored
 		 */
 		public static function getFirstLesson($id_group, $from_today = false)
 		{
 			// @refactored
 			return GroupSchedule::find([
 				"condition" => "id_group={$id_group} AND cancelled=0 " . ($from_today ? " AND date >= '" . date("Y-m-d") . "'" : ""),
-				"order"		=> "date ASC"
+				"order"		=> "date ASC, time ASC"
 			]);
 		}
 
@@ -642,13 +519,6 @@
 
 		}
 
-		public function registeredInJournal($date)
-		{
-			return VisitJournal::count([
-				"condition" => "id_group=" . $this->id . " AND lesson_date='$date'",
-			]) > 0 ? true : false;
-		}
-
 		public function getStudents()
 		{
 			if (!$this->students) {
@@ -699,21 +569,37 @@
 		{
 			parent::__construct($array);
 			// @time-refactored @time-checked
-
+            $this->was_lesson = VisitJournal::count(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}'"]) ? true : false;
 			if ($this->time) {
 				$this->time = mb_strimwidth($this->time, 0, 5);
 				if ($this->time == "00:00") {
 					$this->time = null; // чтобы отображало "не установлено"
 				}
 			}
-
 			$this->isUnplanned = $this->isUnplanned();
-
-			$this->was_lesson = VisitJournal::count(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}'"]) ? true : false;
 		}
 
         /**
+         * Добавить группу занятия в экземпляр
+         */
+        public function getGroup()
+        {
+            $this->Group = Group::find([
+				"condition" => "id={$this->id_group} AND ended=0"
+			]);
+        }
+
+        /**
+         * Добавить занятие из журнала в экземпляр
+         */
+        public function getLesson()
+        {
+            $this->Lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}:00'"]);
+        }
+
+        /**
          * незапланированное @have-to-refactor
+         * @schedule-refactored
          */
 		public function isUnplanned()
 		{

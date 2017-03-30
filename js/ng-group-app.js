@@ -111,26 +111,25 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     $scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData;
     $scope.students_not_filled = _.filter($scope.LessonData, function(v) {
       return v && +v.presence;
-    }).length !== $scope.Group.Students.length;
+    }).length !== $scope.Schedule.Group.Students.length;
     return lightBoxHide();
   };
   $scope.registerInJournal = function() {
     return bootbox.confirm("Записать запись в журнал?", function(result) {
       if (result === true) {
-        if (_.without($scope.LessonData, void 0).length !== $scope.Group.Students.length) {
+        if (_.without($scope.LessonData, void 0).length !== $scope.Schedule.Group.Students.length) {
           return bootbox.alert("Заполните данные по всем ученикам перед записью в журнал");
         } else {
           $scope.saving = true;
           $scope.$apply();
           ajaxStart();
           return $.post("groups/ajax/registerInJournal", {
-            id_group: $scope.id_group,
-            date: $scope.date,
+            id_schedule: $scope.Schedule.id,
             data: $scope.LessonData
           }, function(response) {
             ajaxEnd();
             $scope.saving = false;
-            $scope.registered_in_journal = true;
+            $scope.Schedule.was_lesson = true;
             return $scope.$apply();
           });
         }
@@ -140,20 +139,19 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $scope.changeRegisterInJournal = function() {
     return bootbox.confirm("Сохранить изменения?", function(result) {
       if (result === true) {
-        if (_.without($scope.LessonData, void 0).length !== $scope.Group.Students.length) {
+        if (_.without($scope.LessonData, void 0).length !== $scope.Schedule.Group.Students.length) {
           return bootbox.alert("Заполните данные по всем ученикам перед записью в журнал");
         } else {
           $scope.saving = true;
           $scope.$apply();
           ajaxStart();
           return $.post("groups/ajax/registerInJournalWithoutSMS", {
-            id_group: $scope.id_group,
-            date: $scope.date,
+            id_schedule: $scope.Schedule.id,
             data: $scope.LessonData
           }, function(response) {
             ajaxEnd();
             $scope.saving = false;
-            $scope.registered_in_journal = true;
+            $scope.Schedule.was_lesson = true;
             return $scope.$apply();
           });
         }
@@ -166,255 +164,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     $scope.$apply();
     return set_scope("Group");
   });
-}).controller("ScheduleCtrl", function($scope) {
-  var hideRows;
-  $scope.schedulde_loaded = false;
-  $scope.changeCabinet = function(Schedule) {
-    ajaxStart();
-    return $.post('groups/ajax/ChangeScheduleCabinet', {
-      id: Schedule.id,
-      cabinet: Schedule.cabinet
-    }, function() {
-      return ajaxEnd();
-    });
-  };
-  $scope.formatDate = function(date) {
-    return moment(date).format("D MMMM YYYY г.");
-  };
-  $scope.getLine1 = function(Schedule) {
-    return moment(Schedule.date).format("D MMMM YYYY г.");
-  };
-  $scope.countNotCancelled = function(Schedule) {
-    return _.where(Schedule, {
-      cancelled: 0
-    }).length;
-  };
-  $scope.setParamsFromGroup = function(Group) {
-    return $.each($scope.Group.Schedule, function(i, schedule) {
-      var d, v;
-      v = angular.copy(schedule);
-      d = moment(v.date).format("d");
-      d = parseInt(d);
-      if (d === 0) {
-        d = 7;
-      }
-      if (Group.day_and_time[d] !== void 0) {
-        v.time = $scope.Time[Group.day_and_time[d][0].id_time];
-        v.cabinet = Group.day_and_time[d][0].id_cabinet;
-      } else {
-        v.time = null;
-        v.cabinet = '';
-      }
-      ajaxStart();
-      return $.post("groups/ajax/TimeFromGroup", {
-        id: v.id,
-        time: v.time,
-        cabinet: v.cabinet
-      }, function() {
-        ajaxEnd();
-        schedule.time = v.time;
-        schedule.cabinet = v.cabinet;
-        return $scope.$apply();
-      });
-    });
-  };
-  $scope.lessonCount = function() {
-    return Object.keys($scope.Group.day_and_time).length;
-  };
-  $scope.changeFree = function(Schedule) {
-    ajaxStart();
-    return $.post("groups/ajax/changeScheduleFree", {
-      id: Schedule.id,
-      is_free: Schedule.is_free
-    }, function() {
-      return ajaxEnd();
-    });
-  };
-  $scope.setTime = function(Schedule, event) {
-    $(event.target).hide();
-    $(event.target).parent().children("input").show().on("changeTime, blur", function(e) {
-      var time;
-      time = $(this).val();
-      if (time) {
-        Schedule.time = time;
-        ajaxStart();
-        $.post("groups/ajax/AddScheduleTime", {
-          time: time,
-          date: Schedule.date,
-          id_group: $scope.Group.id
-        }, function() {
-          return ajaxEnd();
-        });
-        $scope.$apply();
-      }
-      return $(this).hide().parent().children("span").html(time ? time : "не установлено").show();
-    }).focus();
-    return false;
-  };
-  $scope.inDate = function(date, dates) {
-    var ref;
-    return ref = moment(date).format("YYYY-MM-DD"), indexOf.call(dates, ref) >= 0;
-  };
-  $scope.inPastLessons = function(date) {
-    if (typeof date === 'object') {
-      date = moment(date).format("YYYY-MM-DD");
-    }
-    return $scope.getPastLesson(date) !== void 0;
-  };
-  $scope.getPastLesson = function(date) {
-    return _.findWhere($scope.past_lessons, {
-      lesson_date: date
-    });
-  };
-  $scope.getPastLessonCabinet = function(date) {
-    return _.findWhere($scope.all_cabinets, {
-      id: $scope.getPastLesson(date).cabinet
-    }).number;
-  };
-  $scope.getPastLessonCabinetName = function(date) {
-    return _.findWhere($scope.all_cabinets, {
-      id: $scope.getPastLesson(date).cabinet
-    }).label;
-  };
-  $scope.getCabinetName = function(id) {
-    if (id) {
-      return _.findWhere($scope.all_cabinets, {
-        id: id
-      }).label;
-    }
-  };
-  $scope.lessonStarted = function(Schedule) {
-    var lesson_time;
-    lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime();
-    return lesson_time < new Date().getTime();
-  };
-  $scope.getInitParams = function(el) {
-    var current_date, month, year;
-    month = parseInt($(el).attr("month"));
-    year = $scope.Group.year;
-    if (month <= 8) {
-      year++;
-    }
-    current_date = new Date(year + "-" + month + "-01");
-    console.log(current_date);
-    return {
-      language: 'ru',
-      startDate: current_date,
-      endDate: moment(current_date).endOf("month").toDate(),
-      multidate: true,
-      beforeShowDay: function(d, inst) {
-        var add_class;
-        if ($scope.inPastLessons(d)) {
-          add_class = 'was-lesson disabled ';
-        }
-        if ($scope.inDate(d, $scope.vocation_dates)) {
-          add_class += ' vocation';
-        }
-        if ($scope.inDate(d, $scope.exam_dates.other_subject)) {
-          add_class += ' exam';
-        }
-        if ($scope.inDate(d, $scope.exam_dates.this_subject)) {
-          add_class += ' exam-subject';
-        }
-        if ($scope.inDate(d, $scope.cancelled_lesson_dates)) {
-          add_class += ' cancelled';
-        }
-        return add_class;
-      }
-    };
-  };
-  $scope.monthName = function(month) {
-    return moment().month(month - 1).format("MMMM");
-  };
-  $scope.dateChange = function(e) {
-    var d, t;
-    if (!$scope.schedule_loaded) {
-      return;
-    }
-    d = moment(clicked_date).format("YYYY-MM-DD");
-    $scope.Group.Schedule = initIfNotSet($scope.Group.Schedule);
-    t = $scope.Group.Schedule.filter(function(schedule) {
-      return schedule.date === d;
-    });
-    hideRows();
-    if (t.length === 0) {
-      ajaxStart();
-      return $.post("groups/ajax/AddScheduleDate", {
-        date: d,
-        id_group: $scope.Group.id
-      }, function(response) {
-        ajaxEnd();
-        $scope.Group.Schedule.push({
-          date: d,
-          cancelled: 0,
-          id: response.id
-        });
-        return $scope.$apply();
-      }, 'json');
-    } else {
-      return $.each($scope.Group.Schedule, function(i, v) {
-        if (v !== void 0) {
-          if (v.date === d) {
-            if (!v.cancelled) {
-              ajaxStart();
-              return $.post("groups/ajax/CancelScheduleDate", {
-                date: d,
-                id_group: $scope.Group.id
-              }, function() {
-                v.title = false;
-                v.cancelled = 1;
-                return ajaxEnd();
-              });
-            } else {
-              ajaxStart();
-              $.post("groups/ajax/DeleteScheduleDate", {
-                date: d,
-                id_group: $scope.Group.id
-              }, function() {
-                return ajaxEnd();
-              });
-              $scope.Group.Schedule.splice(i, 1);
-              return $scope.$apply();
-            }
-          }
-        }
-      });
-    }
-  };
-  angular.element(document).ready(function() {
-    var init_dates, j, len, ref, schedule_date;
-    set_scope('Group');
-    init_dates = [];
-    ref = $scope.Group.Schedule;
-    for (j = 0, len = ref.length; j < len; j++) {
-      schedule_date = ref[j];
-      init_dates.push(new Date(schedule_date.date));
-    }
-    $(".calendar-month").each(function() {
-      var d, day, k, len1, m, month, month_number, year;
-      $(this).datepicker($scope.getInitParams(this)).on("changeDate", $scope.dateChange);
-      m = $(this).attr("month");
-      for (k = 0, len1 = init_dates.length; k < len1; k++) {
-        d = init_dates[k];
-        month_number = moment(d).format("M");
-        if (month_number === m) {
-          year = parseInt(moment(d).format("YYYY"));
-          month = parseInt(moment(d).format("M") - 1);
-          day = parseInt(moment(d).format("D"));
-          $(this).datepicker("_setDate", new Date(Date.UTC.apply(Date, [year, month, day])));
-        }
-      }
-      return setTimeout(function() {
-        $scope.schedule_loaded = true;
-        return $scope.$apply();
-      }, 500);
-    });
-    $(".table-condensed").first().children("thead").css("display", "table-caption");
-    return hideRows();
-  });
-  return hideRows = function() {
-    return $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide();
-  };
 }).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService) {
   var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, rebindBlinking;
   bindArguments($scope, arguments);

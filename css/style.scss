@@ -3392,7 +3392,7 @@ table.last-item-no-border tr:last-child td {
   }
 }
 
-.link-offset-right{
+.link-offset-right {
   margin-right: 10px;
 }
 .vertical-center {
@@ -3410,4 +3410,50 @@ table.last-item-no-border tr:last-child td {
 	  border-radius: 4px!important;
 	}
   }
+}
+
+#schedule-modal {
+    & .modal-dialog {
+        width: 300px;
+    }
+}
+
+
+div[name='calendarMonthView'] {
+    & > .cal-row-head {
+        display: none;
+    }
+}
+
+.cal-events-num {
+    display: none;
+}
+
+mwl-calendar .event {
+    border: none;
+    box-shadow: none !important;
+}
+
+// mwl-calendar .cal-year-box [class*="span"], mwl-calendar .cal-month-box [class*="cal-cell"] {
+//     min-height: 0;
+//     height: 75px !important;
+// }
+//
+// mwl-calendar .cal-month-day {
+//     height: 75px !important;
+// }
+
+mwl-calendar .events-list {
+    padding-bottom: 1px;
+}
+
+.exam-days-wrapper {
+    margin-top: 30px;
+    background: $hr_gray;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.cal-day-vacation {
+    background: #fff1f1;
 }

@@ -79,46 +79,44 @@
 				$scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData
 				$scope.students_not_filled = _.filter($scope.LessonData, (v) ->
 												v and +(v.presence)
-											).length isnt $scope.Group.Students.length
+											).length isnt $scope.Schedule.Group.Students.length
 				lightBoxHide()
 
 			$scope.registerInJournal = ->
 				bootbox.confirm "Записать запись в журнал?", (result) ->
 					if result is true
-						if _.without($scope.LessonData, undefined).length isnt $scope.Group.Students.length
+						if _.without($scope.LessonData, undefined).length isnt $scope.Schedule.Group.Students.length
 							bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
 						else
 							$scope.saving = true
 							$scope.$apply()
 							ajaxStart()
 							$.post "groups/ajax/registerInJournal",
-								id_group: 	$scope.id_group
-								date:		$scope.date
-								data:		$scope.LessonData
+								id_schedule: $scope.Schedule.id
+								data: $scope.LessonData
 							, (response) ->
 								ajaxEnd()
 								$scope.saving = false
-								$scope.registered_in_journal = true
+								$scope.Schedule.was_lesson = true
 								# $scope.form_changed = false
 								$scope.$apply()
 
 			$scope.changeRegisterInJournal = ->
 				bootbox.confirm "Сохранить изменения?", (result) ->
 					if result is true
-						if _.without($scope.LessonData, undefined).length isnt $scope.Group.Students.length
+						if _.without($scope.LessonData, undefined).length isnt $scope.Schedule.Group.Students.length
 							bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
 						else
 							$scope.saving = true
 							$scope.$apply()
 							ajaxStart()
 							$.post "groups/ajax/registerInJournalWithoutSMS",
-								id_group: 	$scope.id_group
-								date:		$scope.date
+								id_schedule: $scope.Schedule.id
 								data:		$scope.LessonData
 							, (response) ->
 								ajaxEnd()
 								$scope.saving = false
-								$scope.registered_in_journal = true
+								$scope.Schedule.was_lesson = true
 								# $scope.form_changed = false
 								$scope.$apply()
 
@@ -127,217 +125,6 @@
 				$scope.students_not_filled = true
 				$scope.$apply()
 				set_scope "Group"
-
-		.controller "ScheduleCtrl", ($scope) ->
-		    $scope.schedulde_loaded = false
-
-		    $scope.changeCabinet = (Schedule) ->
-			    ajaxStart()
-			    $.post 'groups/ajax/ChangeScheduleCabinet', {id: Schedule.id, cabinet: Schedule.cabinet}, ->
-			        ajaxEnd()
-
-		    $scope.formatDate = (date) ->
-		        moment(date).format "D MMMM YYYY г."
-
-		    $scope.getLine1 = (Schedule) ->
-		        moment(Schedule.date).format "D MMMM YYYY г."
-
-		    $scope.countNotCancelled = (Schedule) ->
-		        _.where(Schedule, { cancelled: 0 }).length
-
-			# установка времени филиала и кабинета из настроек группы @time-checked
-		    $scope.setParamsFromGroup = (Group) ->
-		        $.each $scope.Group.Schedule, (i, schedule) ->
-		            # обновляем только после ответа сервера
-		            v = angular.copy(schedule)
-
-		            # if not v.time
-		            d = moment(v.date).format("d")
-		            d = parseInt d
-		            d = 7 if d is 0
-
-		            # если в этот день установлено расписание и время в группе. иначе не устанавливать
-		            # console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
-		            if Group.day_and_time[d] isnt undefined
-		                v.time    = $scope.Time[Group.day_and_time[d][0].id_time]
-		                v.cabinet = Group.day_and_time[d][0].id_cabinet
-		            else
-		                v.time = null
-		                v.cabinet = ''
-
-		            # @time-refactored
-		            ajaxStart()
-		            $.post "groups/ajax/TimeFromGroup",
-		                id: v.id
-		                time: v.time
-		                cabinet: v.cabinet
-		            , ->
-		                ajaxEnd()
-		                schedule.time = v.time
-		                schedule.cabinet = v.cabinet
-		                $scope.$apply()
-
-		    $scope.lessonCount = ->
-		        Object.keys($scope.Group.day_and_time).length
-
-		    $scope.changeFree = (Schedule) ->
-		        ajaxStart()
-		        $.post "groups/ajax/changeScheduleFree",
-		            id: Schedule.id
-		            is_free: Schedule.is_free
-		        , ->
-		            ajaxEnd()
-
-		    $scope.setTime = (Schedule, event) ->
-		        $(event.target).hide()
-
-		        $(event.target)
-		            .parent()
-		            .children("input")
-		            .show()
-		            .on "changeTime, blur", (e) ->
-		                time = $(this).val()
-		                if time
-		                    Schedule.time = time
-		                    ajaxStart()
-		                    $.post "groups/ajax/AddScheduleTime", {time: time, date: Schedule.date, id_group: $scope.Group.id}, ->
-		                        ajaxEnd()
-		                    $scope.$apply()
-		                $(this)
-		                    .hide()
-		                    .parent()
-		                    .children "span"
-		                    .html if time then time else "не установлено"
-		                    .show()
-		            .focus()
-
-
-		        return false
-
-		    $scope.inDate = (date, dates) ->
-		        moment(date).format("YYYY-MM-DD") in dates
-
-		    # @time-refactored
-		    $scope.inPastLessons = (date) ->
-		    	date = moment(date).format("YYYY-MM-DD") if typeof date is 'object'
-		    	$scope.getPastLesson(date) isnt undefined
-
-		    $scope.getPastLesson = (date) ->
-		        _.findWhere($scope.past_lessons, {lesson_date: date})
-
-		    $scope.getPastLessonCabinet = (date) ->
-		        _.findWhere($scope.all_cabinets, {id: $scope.getPastLesson(date).cabinet}).number
-
-		    $scope.getPastLessonCabinetName = (date) ->
-		        _.findWhere($scope.all_cabinets, {id: $scope.getPastLesson(date).cabinet}).label
-
-		    $scope.getCabinetName = (id) ->
-		        if id
-			        _.findWhere($scope.all_cabinets, {id: id}).label
-
-		    $scope.lessonStarted = (Schedule) ->
-		        lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime()
-		        lesson_time < new Date().getTime()
-
-		    $scope.getInitParams = (el) ->
-		        month = parseInt $(el).attr "month"
-		        # year = if month >= 8 then parseInt moment().format "YYYY" else moment().add(1, "years").format "YYYY"
-		        # year = if month >= 8 then parseInt moment().subtract(1, "years").format "YYYY" else moment().format "YYYY"
-		        year = $scope.Group.year
-		        year++ if month <=8
-		        current_date = new Date "#{year}-#{month}-01"
-		        console.log(current_date)
-		        language: 'ru'
-		        startDate: current_date
-		        endDate: moment(current_date).endOf("month").toDate()
-		        multidate: true
-		        beforeShowDay: (d, inst) ->
-		            if $scope.inPastLessons(d)
-		                add_class = 'was-lesson disabled '
-		            if $scope.inDate(d, $scope.vocation_dates)
-		                add_class += ' vocation'
-		            if $scope.inDate(d, $scope.exam_dates.other_subject)
-		                add_class += ' exam'
-		            if $scope.inDate(d, $scope.exam_dates.this_subject)
-		                add_class += ' exam-subject'
-		            if $scope.inDate(d, $scope.cancelled_lesson_dates)
-		                add_class += ' cancelled'
-		            add_class
-
-		    $scope.monthName = (month) ->
-		        moment().month(month - 1).format "MMMM"
-
-		    $scope.dateChange = (e) ->
-		        return if not $scope.schedule_loaded
-		        # console.log clicked_date
-
-		        d = moment(clicked_date).format("YYYY-MM-DD")
-
-		        $scope.Group.Schedule = initIfNotSet $scope.Group.Schedule
-
-		        # check if date is in schedule
-		        t = $scope.Group.Schedule.filter (schedule) ->
-		            schedule.date is d
-		        hideRows()
-		        if t.length is 0
-		            ajaxStart()
-		            $.post "groups/ajax/AddScheduleDate", {date: d, id_group: $scope.Group.id}
-		            , (response)->
-		                ajaxEnd()
-		                $scope.Group.Schedule.push
-		                    date: d
-		                    cancelled: 0
-		                    id: response.id
-		                $scope.$apply()
-		            , 'json'
-		        else
-		            $.each $scope.Group.Schedule, (i, v) ->
-		                if v isnt undefined
-		                    if v.date is d
-		                        if not v.cancelled
-		                            ajaxStart()
-		                            $.post "groups/ajax/CancelScheduleDate", {date: d, id_group: $scope.Group.id}, ->
-			                            v.title = false
-			                            v.cancelled = 1
-			                            ajaxEnd()
-		                        else
-		                            ajaxStart()
-		                            $.post "groups/ajax/DeleteScheduleDate", {date: d, id_group: $scope.Group.id}, ->
-		                                ajaxEnd()
-			                            $scope.Group.Schedule.splice i, 1
-			                            $scope.$apply()
-
-		    angular.element(document).ready ->
-		        set_scope 'Group'
-		        init_dates = []
-		        for schedule_date in $scope.Group.Schedule
-		            init_dates.push new Date schedule_date.date
-		        $(".calendar-month").each ->
-		            $(this)
-		                .datepicker $scope.getInitParams this
-		                .on "changeDate", $scope.dateChange
-		            m = $(this).attr "month"
-
-		            # loading schedule on calendar
-		            for d in init_dates
-		                month_number = moment(d).format("M")
-		                if month_number is m
-		                    year 	= parseInt moment(d).format("YYYY")
-		                    month 	= parseInt moment(d).format("M") - 1 # fix. because months are zero-based
-		                    day 	= parseInt moment(d).format("D")
-		                    # console.log year, month, day
-		                    $(this).datepicker "_setDate", new Date(Date.UTC.apply(Date, [year, month, day]))
-		            # schedule loaded after 500 ms
-		            setTimeout ->
-		                $scope.schedule_loaded = true
-		                $scope.$apply()
-		            , 500
-
-		        $(".table-condensed").first().children("thead").css "display", "table-caption"
-		        hideRows()
-		    hideRows = ->
-		        # hack пустые строки
-		        $('tr:has(td:first.day.disabled.new),tr:has(td:last.day.disabled.old)').hide()
 
 		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService) ->
 			bindArguments $scope, arguments

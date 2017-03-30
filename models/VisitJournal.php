@@ -19,13 +19,14 @@
 			}
 		}
 
-		public static function addData($id_group, $date, $data)
+        /**
+         * @schedule-refactored
+         */
+		public static function addData($id_schedule, $data)
 		{
-			$Schedule = GroupSchedule::find([
-				"condition" => "id_group=$id_group AND date='$date'"
-			]);
+			$Schedule = GroupSchedule::findById($id_schedule);
 
-			$Group = Group::findById($id_group);
+			$Group = Group::findById($Schedule->id_group);
 
 			foreach ($Group->students as $id_student)
 			{
@@ -72,10 +73,10 @@
 				self::add([
 					"id_entity" 			=> $id_student,
 					"type_entity"			=> Student::USER_TYPE,
-					"id_group"				=> $id_group,
+					"id_group"				=> $Schedule->id_group,
 					"id_subject"			=> $Group->id_subject,
 					"cabinet"				=> $Schedule->cabinet,
-					"lesson_date"			=> $date,
+					"lesson_date"			=> $Schedule->date,
 					"lesson_time"			=> $Schedule->time,
 					"date"					=> now(),
 					"presence"				=> $data[$id_student]['presence'],
@@ -85,17 +86,17 @@
 					"id_teacher"			=> $Group->id_teacher,
 					"grade"					=> $Group->grade,
 					"duration"				=> $Group->duration,
-					"year"					=> static::_academicYear($date),
+					"year"					=> static::_academicYear($Schedule->date),
 				]);
 			}
 			// @time-refactored @time-checked
 			self::add([
 				"id_entity" 			=> $Group->id_teacher,
 				"type_entity"			=> Teacher::USER_TYPE,
-				"id_group"				=> $id_group,
+				"id_group"				=> $Schedule->id_group,
 				"id_subject"			=> $Group->id_subject,
 				"cabinet"				=> $Schedule->cabinet,
-				"lesson_date"			=> $date,
+				"lesson_date"			=> $Schedule->date,
 				"lesson_time"			=> $Schedule->time,
 				"date"					=> now(),
 				"teacher_price"			=> $Group->teacher_price,
@@ -105,31 +106,27 @@
 				"id_user_saved"			=> User::fromSession()->id,
 				"grade"					=> $Group->grade,
 				"duration"				=> $Group->duration,
-				"year"					=> static::_academicYear($date),
+				"year"					=> static::_academicYear($Schedule->date),
 			]);
 		}
 
 		/**
 		 * Изменение истории журнала. Доступен только для админов.
-		 * @param int $id_group 	ID кабинета.
-		 * @param string $date		Дата урока.
-		 * @param array $data		Данные студентов.
+		 * @schedule-refactored
 		 */
-		public static function updateData($id_group, $date, $data)
+		public static function updateData($id_schedule, $data)
 		{
-			$Schedule = GroupSchedule::find([
-				"condition" => "id_group=$id_group AND date='$date'"
-			]);
+			$Schedule = GroupSchedule::findById($id_schedule);
 
-			$Group = Group::findById($id_group);
+			$Group = Group::findById($Schedule->id_group);
 			$updatedElemCnt = 0;
 			foreach ($Group->students as $id_student)
 			{
 				$VisitJournal = VisitJournal::find([
 										'condition' => 	"id_entity = ".$id_student." AND ".
 														"type_entity = '".Student::USER_TYPE."' AND ".
-														"id_group = ".$id_group." AND ".
-														"lesson_date = '".$date."' AND ".
+														"id_group = ".$Schedule->id_group." AND ".
+														"lesson_date = '".$Schedule->date."' AND ".
 														"lesson_time = '".$Schedule->time."' "
 								]);
 

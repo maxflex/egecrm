@@ -15,7 +15,7 @@
 							</td>
 						</thead>
 						<tbody>
-							<tr ng-repeat="Student in Group.Students">
+							<tr ng-repeat="Student in Schedule.Group.Students">
 								<td width="300">{{Student.last_name}} {{Student.first_name}}</td>
 								<td width="150">
 									<span>{{LessonData[Student.id].presence ? lesson_statuses[LessonData[Student.id].presence] : 'не указано'}}</span>
@@ -31,7 +31,7 @@
 									<span>{{LessonData[Student.id].comment}}</span>
 								</td>
 								<td ng-hide="<?= User::isStudent(true) ?>">
-									<span class="link-like" ng-click="editStudent(Student)" ng-show="registered_in_journal !== true || isAdmin">редактировать</span>
+									<span class="link-like" ng-click="editStudent(Student)" ng-show="!Schedule.was_lesson || isAdmin">редактировать</span>
 								</td>
 							</tr>
 						</tbody>
@@ -43,14 +43,14 @@
 
 					<button class="btn btn-success ajax-payment-button"
                             ng-click="changeRegisterInJournal()"
-                            ng-show="registered_in_journal == true"
+                            ng-show="Schedule.was_lesson"
                             ng-disabled="saving || students_not_filled">
 						    <span>Сохранить без отправки СМС</span>
 					</button>
 
-					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true && !(registered_in_journal === true)"
-						ng-disabled="registered_in_journal === true || saving || students_not_filled">
-						<span ng-show="registered_in_journal !== true">Сохранить</span>
+					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true && !Schedule.was_lesson"
+						ng-disabled="Schedule.was_lesson || saving || students_not_filled">
+						<span ng-show="!Schedule.was_lesson">Сохранить</span>
 					</button>
 					<span ng-show="until_save !== true">
 						<button disabled class="btn btn-default">
@@ -59,9 +59,9 @@
 					</span>
 				</div>
 			</div>
-			
+
 			<?= partial("lesson_edit_student") ?>
-			
+
 		</div>
 	</div>
 </div>

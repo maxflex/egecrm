@@ -48,7 +48,8 @@ vendor_files = [
 	'js/vendor/bootstrap-select.js',
 	'js/vendor/jquery.simulate.js',
 	'js/vendor/bs-slider.js',
-	'js/vendor/ng-autocomplete.js'
+	'js/vendor/ng-autocomplete.js',
+	//'js/vendor/angular-bootstrap-calendar-tpls.js',
 ];
 
 css_files = [
@@ -69,7 +70,8 @@ css_files = [
 	'css/vendor/bootstrap-select.css',
 	'css/vendor/bs-slider.css',
 	'js/bower/phoneapi/dist/css/phone.css',
-	'css/vendor/ng-autocomplete.css'
+	'css/vendor/ng-autocomplete.css',
+    'css/vendor/angular-bootstrap-calendar.css'
 ];
 
 gulp.task('build-vendor', function() {
