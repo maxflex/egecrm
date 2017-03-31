@@ -30,9 +30,9 @@
                 <td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
                         <span class="circle-default"
                               ng-class="{
-                                'circle-red'	: getInfo(Student.id, Schedule.date).presence == 2,
-                                'circle-orange'	: getInfo(Student.id, Schedule.date).presence == 1 && getInfo(Student.id, Schedule.date).late > 0,
-                                'invisible'		: getInfo(Student.id, Schedule.date) === undefined,
+                                'circle-red'	: getInfo(Student.id, Schedule).presence == 2,
+                                'circle-orange'	: getInfo(Student.id, Schedule).presence == 1 && getInfo(Student.id, Schedule).late > 0,
+                                'invisible'		: getInfo(Student.id, Schedule) === undefined,
                             }"></span>
                 </td>
             </tr>
@@ -46,9 +46,9 @@
                 <td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
                         <span class="circle-default"
                               ng-class="{
-                                'circle-red'	: getInfo(Teacher.id, Schedule.date).presence == 2,
-                                'circle-orange'	: getInfo(Teacher.id, Schedule.date).presence == 1 && getInfo(Teacher.id, Schedule.date).late > 0,
-                                'invisible'		: getInfo(Teacher.id, Schedule.date) === undefined,
+                                'circle-red'	: getInfo(Teacher.id, Schedule).presence == 2,
+                                'circle-orange'	: getInfo(Teacher.id, Schedule).presence == 1 && getInfo(Teacher.id, Schedule).late > 0,
+                                'invisible'		: getInfo(Teacher.id, Schedule) === undefined,
                             }"></span>
                 </td>
             </tr>

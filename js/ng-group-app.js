@@ -53,10 +53,11 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     d = parseInt(d);
     return d % 2 === 1;
   };
-  $scope.getInfo = function(id_student, date) {
+  $scope.getInfo = function(id_student, Schedule) {
     return _.findWhere($scope.LessonData, {
       id_entity: id_student,
-      lesson_date: date
+      lesson_date: Schedule.date,
+      lesson_time: Schedule.time
     });
   };
   $scope.formatDate = function(date) {

@@ -1,5 +1,5 @@
 <div ng-app="Group" ng-controller="JournalCtrl" ng-init="<?= $ang_init_data ?>">
-	
+
 	<style>
 		body {
 			overflow: visible !important;
@@ -13,7 +13,7 @@
 		  font-family: sans-serif;
 		  border-collapse: collapse;
 		}
-		
+
 		thead th {
 		   -moz-transform: rotate(-90deg);  /* FF3.5+ */
 		   -o-transform: rotate(-90deg);  /* Opera 10.5 */
@@ -22,7 +22,7 @@
 		   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)"; /* IE8 */
 		   vertical-align: top !important;
 		   padding: 25px 0 !important;
-		} 
+		}
 		th {
 		  font-weight: normal;
 		  color: black;
@@ -47,9 +47,9 @@
 		td:last-child, th:last-child {
 			border-right: none !important;
 		}
-		
+
 	</style>
-	
+
 	<table class="table table-custom">
 		<thead>
 			<tr>
@@ -65,10 +65,10 @@
 					<a style="white-space: nowrap" href="students/{{Student.id}}">{{Student.first_name}} {{Student.last_name}}</a>
 				</td>
 				<td ng-repeat="Schedule in Group.Schedule">
-					<span class="circle-default" ng-show="getInfo(Student.id, Schedule.date) !== undefined"
+					<span class="circle-default" ng-show="getInfo(Student.id, Schedule) !== undefined"
 						ng-class="{
-							'circle-red'	: getInfo(Student.id, Schedule.date).presence == 2,
-							'circle-orange'	: getInfo(Student.id, Schedule.date).presence == 1 && getInfo(Student.id, Schedule.date).late > 0,
+							'circle-red'	: getInfo(Student.id, Schedule).presence == 2,
+							'circle-orange'	: getInfo(Student.id, Schedule).presence == 1 && getInfo(Student.id, Schedule).late > 0,
 						}"></span>
 				</td>
 			</tr>

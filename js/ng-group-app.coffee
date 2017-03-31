@@ -31,8 +31,8 @@
 				d = moment(date).format("M")
 				d = parseInt d
 				return d % 2 is 1
-			$scope.getInfo = (id_student,  date) ->
-				_.findWhere($scope.LessonData, {id_entity: id_student, lesson_date: date})
+			$scope.getInfo = (id_student,  Schedule) ->
+				_.findWhere($scope.LessonData, {id_entity: id_student, lesson_date: Schedule.date, lesson_time: Schedule.time})
 			$scope.formatDate = (date) ->
 				moment(date).format "DD.MM.YY"
 			angular.element(document).ready ->
