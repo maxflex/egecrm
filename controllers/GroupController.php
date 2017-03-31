@@ -416,7 +416,7 @@
 			}
 
 			if (! LOCAL_DEVELOPMENT) {
-				$Teachers = Teacher::findAll([], true);
+                $Teachers = Teacher::findAll(["select" => ['id', 'last_name', 'first_name', 'subjects', 'middle_name']], true);
 
 				if ($Group->id_teacher) {
 					foreach ($Teachers as &$Teacher) {
@@ -430,7 +430,7 @@
 			$Students = [];
 			foreach ($Group->students as $id_student) {
 				$Student = Student::findById($id_student, true);
-				$Student->Contract 	= $Student->getLastContract($Group->year);
+				$Student->Contract 	= $Student->getLastContract($Group->year, true);
 
 				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject, $Group->year);
 				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group);
@@ -473,7 +473,7 @@
 				"weekdays"		 => Time::WEEKDAYS,
 				"free_cabinets"  => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
                 "FirstLesson"    => Group::getFirstLesson($Group->id),
-                "user"					=> User::fromSession()->dbData()
+                "user"			 => User::fromSession()->dbData()
 			]);
 
 			$this->render("edit", [

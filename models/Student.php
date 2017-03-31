@@ -21,25 +21,26 @@
 
         /*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
-		public function __construct($array)
+		public function __construct($array, $light = false)
 		{
 			parent::__construct($array);
 
-			// Добавляем связи
-			$this->Representative	= Representative::findById($this->id_representative);
-			$this->Passport			= Passport::findById($this->id_passport);
-
-			$this->profile_link = "student/{$this->id}";
-
-            if ($this->id) {
-                $user_data = self::dbConnection()->query('select photo_extension, has_photo_cropped from users where id_entity = ' . $this->id)->fetch_object();
-                $this->photo_extension = $user_data->photo_extension;
-                $this->has_photo_cropped = $user_data->has_photo_cropped;
-                $this->has_photo_original = $this->hasPhotoOriginal();
-                $this->photo_original_size = $this->photoOriginalSize();
-                $this->photo_cropped_size = $this->photoCroppedSize();
-                $this->photo_url = $this->photoUrl();
+			if (! $light) {
+                // Добавляем связи
+                $this->Representative = Representative::findById($this->id_representative);
+                $this->Passport = Passport::findById($this->id_passport);
+                if ($this->id) {
+                    $user_data = self::dbConnection()->query('select photo_extension, has_photo_cropped from users where id_entity = ' . $this->id)->fetch_object();
+                    $this->photo_extension = $user_data->photo_extension;
+                    $this->has_photo_cropped = $user_data->has_photo_cropped;
+                    $this->has_photo_original = $this->hasPhotoOriginal();
+                    $this->photo_original_size = $this->photoOriginalSize();
+                    $this->photo_cropped_size = $this->photoCroppedSize();
+                    $this->photo_url = $this->photoUrl();
+                }
             }
+
+            $this->profile_link = "student/{$this->id}";
         }
 
         public function photoPath($addon = '')
@@ -469,7 +470,7 @@
 		 * Получить постудний договор студента.
 		 *
 		 */
-		public function getLastContract($year = false)
+		public function getLastContract($year = false, $light = false)
 		{
             $query = dbConnection()->query("
                 SELECT id FROM contracts c
@@ -479,7 +480,7 @@
                 LIMIT 1
             ");
             if ($query->num_rows) {
-                return Contract::findById($query->fetch_object()->id);
+                return Contract::findById($query->fetch_object()->id, $light);
             } else {
                 return false;
             }

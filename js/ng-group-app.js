@@ -356,8 +356,11 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       id_teacher: $scope.Group.id_teacher,
       id_group: $scope.Group.id
     }, function(bar) {
+      var ref;
       ajaxEnd();
-      $scope.getTeacher($scope.Group.id_teacher).bar = bar;
+      if ((ref = $scope.getTeacher($scope.Group.id_teacher)) != null) {
+        ref.bar = bar;
+      }
       $scope.$apply();
       return rebindBlinking();
     }, "json");
@@ -522,36 +525,14 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     });
   };
   $scope.getStudent = function(id_student) {
-    var Student, i;
-    id_student = parseInt(id_student);
-    return Student = ((function() {
-      var j, len, ref, results;
-      ref = $scope.TmpStudents;
-      results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        i = ref[j];
-        if (i.id === id_student) {
-          results.push(i);
-        }
-      }
-      return results;
-    })())[0];
+    return _.find($scope.TmpStudents, {
+      id: parseInt(id_student)
+    });
   };
   $scope.getTeacher = function(id_teacher) {
-    var Teacher, i;
-    id_teacher = parseInt(id_teacher);
-    return Teacher = ((function() {
-      var j, len, ref, results;
-      ref = $scope.Teachers;
-      results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        i = ref[j];
-        if (i.id === id_teacher) {
-          results.push(i);
-        }
-      }
-      return results;
-    })())[0];
+    return _.find($scope.Teachers, {
+      id: parseInt(id_teacher)
+    });
   };
   $scope.search = {
     grade: "",

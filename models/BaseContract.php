@@ -7,7 +7,7 @@
         const PER_PAGE = 30;
 
         /*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
-        public function __construct($array)
+        public function __construct($array, $light = false)
         {
             parent::__construct($array);
 
@@ -17,10 +17,12 @@
             $this->_setNull($this->duty);
             $this->_setNull($this->sum);
 
-            // логин пользователя
-            if (!$this->isNewRecord) {
-                $this->user_login = User::getLogin($this->id_user);
-                $this->info = $this->getInfo();
+            if (! $light) {
+                // логин пользователя
+                if (!$this->isNewRecord) {
+                    $this->user_login = User::getLogin($this->id_user);
+                    $this->info = $this->getInfo();
+                }
             }
         }
 
