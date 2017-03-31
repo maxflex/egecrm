@@ -74,10 +74,20 @@
 							{{ formatDate(Schedule.date) }}
 						</td>
 						<td width="20%">
-                            {{ Schedule.time }}
+                            <div ng-show="!Schedule.was_lesson">
+                                {{ Schedule.time }}
+							</div>
+							<div ng-show="Schedule.was_lesson">
+								{{ getPastLesson(Schedule).lesson_time }}
+							</div>
 						</td>
 						<td width="15%">
-                            {{ getCabinet(Schedule.cabinet).label }}
+                            <div ng-show="Schedule.was_lesson">
+                                {{ getCabinet(getPastLesson(Schedule).cabinet).label }}
+                            </div>
+                            <div ng-show="!Schedule.was_lesson">
+                                {{ getCabinet(Schedule.cabinet).label }}
+                            </div>
 						</td>
 						<td width="35%">
 							<span ng-show="Schedule.was_lesson">урок проведен</span>

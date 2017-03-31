@@ -301,7 +301,6 @@
 				return $this->countSchedule();
 			}
 
-
 			$return = memcached()->get("GroupScheduleCount[{$this->id}]");
 
 			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {

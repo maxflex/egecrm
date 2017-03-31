@@ -47,10 +47,10 @@
 							<a href='lesson/{{ Schedule.id }}' ng-hide='Schedule.cancelled'>{{ formatDate(Schedule.date) }}</a>
 						</td>
 						<td>
-							<div class="lessons-table" ng-show="!Schedule.was_lesson">
+							<div ng-show="!Schedule.was_lesson">
                                 {{ Schedule.time }}
 							</div>
-							<div class="lessons-table" ng-show="Schedule.was_lesson">
+							<div ng-show="Schedule.was_lesson">
 								{{ getPastLesson(Schedule).lesson_time }}
 							</div>
 						</td>
