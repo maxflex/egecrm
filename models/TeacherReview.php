@@ -186,7 +186,7 @@
 					->cnt;
 		}
 		
-		private static function _connectTables($t, $addon) {
+		private static function _connectTables($t, $addon = '') {
 			return " {$t} ON ({$t}.id_student = vj.id_entity AND {$t}.id_teacher = vj.id_teacher AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year {$addon})";
 		}
 		

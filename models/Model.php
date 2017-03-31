@@ -269,7 +269,7 @@
 		 * Получить только ID объектов по условию.
 		 *
 		 */
-		public static function getIds($params)
+		public static function getIds($params = [])
 		{
 			// Получаем все данные из таблицы + доп условие, если есть
 			$result = static::dbConnection()->query("
