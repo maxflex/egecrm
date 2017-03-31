@@ -568,7 +568,7 @@
 		{
 			parent::__construct($array);
 			// @time-refactored @time-checked
-            $this->was_lesson = VisitJournal::count(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}'"]) ? true : false;
+            $this->was_lesson = VisitJournal::count(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}' AND type_entity='TEACHER'"]) ? true : false;
 			if ($this->time) {
 				$this->time = mb_strimwidth($this->time, 0, 5);
 				if ($this->time == "00:00") {
@@ -593,7 +593,7 @@
          */
         public function getLesson()
         {
-            $this->Lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}:00'"]);
+            $this->Lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}:00' AND type_entity='TEACHER'"]);
         }
 
         /**
