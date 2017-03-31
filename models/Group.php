@@ -574,6 +574,7 @@
 					$this->time = null; // чтобы отображало "не установлено"
 				}
 			}
+            $this->date_time = $this->date . ' ' . $this->time;
 			$this->isUnplanned = $this->isUnplanned();
 		}
 
