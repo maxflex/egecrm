@@ -623,7 +623,7 @@
 
 			foreach ($Schedule as &$S) {
 				$S->Group = Group::findById($S->id_group);
-				$S->Group->Teacher = Teacher::getLight($S->Group->Teacher->id, ['phone']);
+				$S->Group->Teacher = Teacher::getLight($S->Group->id_teacher, ['phone']);
                 // @schedule-refactored
 				$S->is_unplanned = $S->isUnplanned();
 
