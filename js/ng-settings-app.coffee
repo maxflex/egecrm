@@ -40,11 +40,21 @@ app = angular.module "Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar']
 
         $timeout ->
             $scope.viewDate = {}
+            $scope.displayMonth = {}
+
+            # получить месяц первого занятия и отображать календарь начаная с него
+            first_lesson_month = moment($scope.Group.first_schedule).format("M")
+            year = $scope.Group.year
+            year++ if first_lesson_month <=8
+            first_lesson_date = new Date("#{year}-#{first_lesson_month}-01")
             $scope.months.forEach (month) ->
                 year = $scope.Group.year
                 year++ if month <=8
                 $scope.viewDate[month] = new Date("#{year}-#{month}-01")
+                $scope.displayMonth[month] = true
+
             $timeout -> $scope.calendarLoaded = true
+
 
         $scope.calendarTitle = 'test'
         $scope.events = {}

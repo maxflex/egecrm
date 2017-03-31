@@ -49,14 +49,22 @@ app = angular.module("Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar'])
   };
   $scope.months = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6];
   $timeout(function() {
+    var first_lesson_date, first_lesson_month, year;
     $scope.viewDate = {};
+    $scope.displayMonth = {};
+    first_lesson_month = moment($scope.Group.first_schedule).format("M");
+    year = $scope.Group.year;
+    if (first_lesson_month <= 8) {
+      year++;
+    }
+    first_lesson_date = new Date(year + "-" + first_lesson_month + "-01");
     $scope.months.forEach(function(month) {
-      var year;
       year = $scope.Group.year;
       if (month <= 8) {
         year++;
       }
-      return $scope.viewDate[month] = new Date(year + "-" + month + "-01");
+      $scope.viewDate[month] = new Date(year + "-" + month + "-01");
+      return $scope.displayMonth[month] = true;
     });
     return $timeout(function() {
       return $scope.calendarLoaded = true;
