@@ -43,7 +43,7 @@
 
 				<div style="margin: 15px 0; font-weight: bold">Расписание занятий:</div>
 
-                <table class="table table-divlike" style="margin-left: -15px;">
+                <table class="table table-divlike">
 					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'">
 						<td style="padding:2px 4px 2px 0px;">
 							<span class="day-explain"
