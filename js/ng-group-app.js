@@ -78,6 +78,9 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $scope.timeUntilSave = function() {
     var data, date_lesson, date_now, diff;
     date_now = new Date();
+    if (!$scope.Schedule.time) {
+      $scope.Schedule.time = '00:00';
+    }
     date_lesson = new Date($scope.Schedule.date + " " + $scope.Schedule.time + ":00");
     diff = date_now.getTime() - date_lesson.getTime();
     console.log('diff', diff);

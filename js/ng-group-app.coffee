@@ -47,6 +47,7 @@
 
 			$scope.timeUntilSave = ->
 				date_now = new Date()
+				$scope.Schedule.time = '00:00' if not $scope.Schedule.time
 				date_lesson = new Date($scope.Schedule.date + " " + $scope.Schedule.time + ":00")
 				diff = date_now.getTime() - date_lesson.getTime()
 				console.log('diff', diff)
