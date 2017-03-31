@@ -34,6 +34,14 @@
 					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px"
                         ng-class="Schedule.title ? 'students-11' : '';"
                         ng-attr-title="{{Schedule.title || undefined}}">
+                        <td style="padding:2px 4px 2px 0px;">
+							<span class="day-explain"
+								  ng-class="{
+									'was-lesson': Schedule.was_lesson,
+									'cancelled': Schedule.cancelled
+								  }"
+							></span>
+						</td>
 						<td>
 							<span class="text-gray" ng-show='Schedule.cancelled'>{{ formatDate(Schedule.date) }}</span>
 							<a href='lesson/{{ Schedule.id }}' ng-hide='Schedule.cancelled'>{{ formatDate(Schedule.date) }}</a>
@@ -67,7 +75,7 @@
                         </td>
 					</tr>
 				</table>
-                <span class='link-like' ng-click='scheduleModal()'>добавить</span>
+                <span class='link-like smooth-font' ng-click='scheduleModal()'>добавить</span>
 			</div>
 		</div>
 	</div>

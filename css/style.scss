@@ -3073,6 +3073,10 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 	-webkit-font-smoothing: antialiased;
 }
 
+.smooth-font {
+    -webkit-font-smoothing: antialiased;
+}
+
 .bootstrap-select.btn-group .btn .filter-option {
 	white-space: initial;
 	height: 20px;
@@ -3458,10 +3462,10 @@ mwl-calendar .events-list {
     background: #fff1f1;
 }
 .cal-day-exam {
-    background: rgba(orange, .2);
+    background: rgba(#9954bb, .2) !important;
 }
 .cal-day-exam-other {
-    background: rgba(#9954bb, .2);
+    background: rgba(orange, .2);
 }
 
 mwl-calendar span[data-cal-date] {

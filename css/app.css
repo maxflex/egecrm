@@ -16351,6 +16351,9 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
 .table, .dropdown-menu.open, .dropdown-toggle {
   -webkit-font-smoothing: antialiased; }
 
+.smooth-font {
+  -webkit-font-smoothing: antialiased; }
+
 .bootstrap-select.btn-group .btn .filter-option {
   white-space: initial;
   height: 20px; }
@@ -16670,10 +16673,10 @@ mwl-calendar .events-list {
   background: #fff1f1; }
 
 .cal-day-exam {
-  background: rgba(255, 165, 0, 0.2); }
+  background: rgba(153, 84, 187, 0.2) !important; }
 
 .cal-day-exam-other {
-  background: rgba(153, 84, 187, 0.2); }
+  background: rgba(255, 165, 0, 0.2); }
 
 mwl-calendar span[data-cal-date] {
   font-size: 14px;

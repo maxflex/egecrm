@@ -5,8 +5,8 @@
     <div class='calendar-block'>
         <div class='calendar-block-month'>
             {{ monthName(month) }}
-            <div ng-show='month == 1'>
-                {{ (Group.year + 1) }}
+            <div>
+                {{ (month <= 8 ? Group.year + 1 : Group.year) }}
             </div>
         </div>
         <div class='calendar-block-calendar'>
