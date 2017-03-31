@@ -3439,7 +3439,7 @@ mwl-calendar .event {
 }
 
 mwl-calendar .cal-year-box [class*="span"], mwl-calendar .cal-month-box [class*="cal-cell"] {
-    min-height: 0;
+    min-height: 0 !important;
     height: 37px !important;
 }
 
