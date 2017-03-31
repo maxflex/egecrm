@@ -82,13 +82,12 @@
 
 		/**
 		 * Получить даты проведенных занятий.
-		 * @time-refactored @time-checked
+		 * @time-refactored @time-checked @schedule-refactored
 		 */
 		public function getPastLessons()
 		{
 			return VisitJournal::findAll([
-				"condition" => "id_group={$this->id} AND year={$this->year}",
-				"group"		=> "lesson_date",
+				"condition" => "id_group={$this->id} AND year={$this->year} AND type_entity='TEACHER'",
 			]);
 		}
 

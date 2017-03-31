@@ -63,6 +63,9 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
   $scope.setParamsFromGroup = function(Group) {
     return $.each($scope.Group.Schedule, function(i, schedule) {
       var d, v;
+      if (schedule.was_lesson) {
+        return;
+      }
       v = angular.copy(schedule);
       d = moment(v.date).format("d");
       d = parseInt(d);

@@ -46,6 +46,8 @@ app = angular.module "Schedule", ['mwl.calendar']
         # установка времени филиала и кабинета из настроек группы @time-checked
         $scope.setParamsFromGroup = (Group) ->
             $.each $scope.Group.Schedule, (i, schedule) ->
+                return if schedule.was_lesson
+
                 # обновляем только после ответа сервера
                 v = angular.copy(schedule)
 
