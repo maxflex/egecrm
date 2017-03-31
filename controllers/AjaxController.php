@@ -645,7 +645,7 @@
 					if ($S->Lesson->cabinet) {
 	                    $S->Lesson->cabinet = Cabinet::getBlock($S->Lesson->cabinet);
 	                }
-	                $S->Lesson->Teacher = Teacher::getLight($S->Lesson->id_teacher, ['phone']);
+	                $S->Lesson->Teacher = Teacher::getLight($S->Lesson->id_entity, ['phone']);
 				}
 
 				// @time-refactored @time-checked
