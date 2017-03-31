@@ -20,10 +20,10 @@
 	</div>
 	<div class="panel-body" style="position: relative">
 		<div class="row">
-			<div class="col-sm-6" style="position: relative">
+			<div class="col-sm-6" style="position: relative; width: 48%; margin-right: 2%">
                 <?= globalPartial('calendar') ?>
 			</div>
-			<div class="col-sm-6">
+			<div class="col-sm-6" style='width: 48%; margin-left: 2%'>
 				<h3 style="font-weight: bold; margin: 10px 0 25px">{{ countNotCancelled(Group.Schedule) }} <ng-pluralize count="countNotCancelled(Group.Schedule)" when="{
 						'one': 'занятие',
 						'few': 'занятия',

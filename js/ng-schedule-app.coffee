@@ -4,10 +4,19 @@ app = angular.module "Schedule", ['mwl.calendar']
 
         $timeout ->
             $scope.viewDate = {}
+            $scope.displayMonth = {}
+
+            # получить месяц первого занятия и отображать календарь начаная с него
+            first_lesson_month = moment($scope.Group.first_schedule).format("M")
+            year = $scope.Group.year
+            year++ if first_lesson_month <=8
+            first_lesson_date = new Date("#{year}-#{first_lesson_month}-01")
             $scope.months.forEach (month) ->
                 year = $scope.Group.year
                 year++ if month <=8
                 $scope.viewDate[month] = new Date("#{year}-#{month}-01")
+                $scope.displayMonth[month] = $scope.viewDate[month] >= first_lesson_date
+
             $timeout -> $scope.calendarLoaded = true
 
         $scope.calendarTitle = 'test'
@@ -29,7 +38,7 @@ app = angular.module "Schedule", ['mwl.calendar']
             return '#5cb85c'
 
         $scope.formatDate = (date) ->
-            moment(date).format "D MMMM YYYY г."
+            moment(date).format "DD.MM.YY"
 
         $scope.countNotCancelled = (Schedule) ->
             _.where(Schedule, { cancelled: 0 }).length

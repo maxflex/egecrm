@@ -1,7 +1,7 @@
 <?php if (! isset($active)) :?>
 <div class="div-blocker"></div>
 <?php endif ?>
-<div class='ng-hide' ng-repeat="month in months" ng-show='calendarLoaded'>
+<div class='ng-hide' ng-repeat="month in months" ng-show='calendarLoaded && displayMonth[month]'>
     <div class='calendar-block'>
         <div class='calendar-block-month'>
             {{ monthName(month) }}

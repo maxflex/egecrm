@@ -3436,11 +3436,11 @@ mwl-calendar .event {
 
 mwl-calendar .cal-year-box [class*="span"], mwl-calendar .cal-month-box [class*="cal-cell"] {
     min-height: 0;
-    height: 50px !important;
+    height: 37px !important;
 }
 
 mwl-calendar .cal-month-day {
-    height: 50px !important;
+    height: 37px !important;
 }
 
 mwl-calendar .events-list {
@@ -3466,7 +3466,7 @@ mwl-calendar .events-list {
 
 mwl-calendar span[data-cal-date] {
     font-size: 14px;
-    margin-top: 2px;
+    margin-top: 0;
     margin-right: 4px;
 }
 
