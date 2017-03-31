@@ -31,11 +31,11 @@
 
 			$Group->Schedule = $Group->getSchedule();
 
-            $exams = ExamDay::getExamDates($Group);
 			$ang_init_data = angInit([
 				"Group" 		=> $Group,
 				"Subjects"		=> Subjects::$three_letters,
 				"current_year"	=> $year,
+                "exam_days" 	=> ExamDay::getData($year),
                 "special_dates"	=> [
                     'vacations' => GroupSchedule::getVocationDates(),
                 ],
