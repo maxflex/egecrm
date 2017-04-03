@@ -126,6 +126,7 @@ class Log extends Model
             'limit'     => ($page == -1 ? static::PER_PAGE : "{$start_from}, " . static::PER_PAGE),
         ]);
         // $counts = static::counts($search);
+        $counts['all'] = static::_count($search); // закомментить, если понадобится counts. верхнее раскомментить
 
         $query = static::_generateQuery($search);
         return compact('data', 'counts', 'query');

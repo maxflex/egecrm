@@ -649,12 +649,12 @@ app.service('UserService', function($rootScope, $q, $http, $timeout, User) {
   };
   this.getActiveInAnySystem = function() {
     return _.chain(this.users).filter(function(user) {
-      return user.rights.indexOf('35') === -1 || user.rights.indexOf('34') === -1;
+      return user.rights.indexOf(35) === -1 || user.rights.indexOf(34) === -1;
     }).sortBy('login').value();
   };
   this.getBannedInBothSystems = function() {
     return _.chain(this.users).filter(function(user) {
-      return user.rights.indexOf('35') !== -1 && user.rights.indexOf('34') !== -1;
+      return user.rights.indexOf(35) !== -1 && user.rights.indexOf(34) !== -1;
     }).sortBy('login').value();
   };
   return this;

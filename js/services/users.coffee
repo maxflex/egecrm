@@ -53,12 +53,12 @@ app.service 'UserService', ($rootScope, $q, $http, $timeout, User)->
 
     @getActiveInAnySystem = ->
         _.chain(@users).filter (user) ->
-            user.rights.indexOf('35') is -1 or user.rights.indexOf('34') is -1
+            user.rights.indexOf(35) is -1 or user.rights.indexOf(34) is -1
         .sortBy('login').value()
 
     @getBannedInBothSystems = ->
         _.chain(@users).filter (user) ->
-            user.rights.indexOf('35') isnt -1 and user.rights.indexOf('34') isnt -1
+            user.rights.indexOf(35) isnt -1 and user.rights.indexOf(34) isnt -1
         .sortBy('login').value()
 
     @
