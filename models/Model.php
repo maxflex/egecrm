@@ -151,13 +151,19 @@
 		 */
 		public static function findAll($params = array(), $flag = null)
 		{
+			$select = "*";
+			if (! empty($params["select"])) {
+				$select = is_array($params["select"]) ? implode(",", $params["select"]) : $params["select"];
+			}
+
 			// Получаем все данные из таблицы + доп условие, если есть
-			$result = static::dbConnection()->query("
-				SELECT * FROM ".static::$mysql_table."
-				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
-				.(!empty($params["group"]) ? " GROUP BY ".$params["group"] : "")				// Если есть условие сортировки
-				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
-				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
+			$result = static::dbConnection()->query(
+				"SELECT {$select} "
+				. "FROM " . static::$mysql_table . " "
+				. "WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
+				. (!empty($params["group"]) ? " GROUP BY ".$params["group"] : "")				// Если есть условие сортировки
+				. (!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
+				. (!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
 			);
 
 			// Если успешно получили и что-то есть

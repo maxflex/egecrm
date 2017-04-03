@@ -289,7 +289,7 @@
 					id_group: $scope.Group.id
 				, (bar) ->
 					ajaxEnd()
-					$scope.getTeacher($scope.Group.id_teacher).bar = bar
+					$scope.getTeacher($scope.Group.id_teacher)?.bar = bar
 					$scope.$apply()
 					rebindBlinking()
 				, "json"
@@ -432,12 +432,10 @@
 						$scope.TmpStudents.splice index, 1
 
 			$scope.getStudent = (id_student) ->
-				id_student = parseInt id_student
-				Student = (i for i in $scope.TmpStudents when i.id is id_student)[0]
+				_.find $scope.TmpStudents, id: parseInt id_student
 
 			$scope.getTeacher = (id_teacher) ->
-				id_teacher = parseInt id_teacher
-				Teacher = (i for i in $scope.Teachers when i.id is id_teacher)[0]
+				_.find $scope.Teachers, id: parseInt id_teacher
 
 			$scope.search =
 				grade: ""
@@ -631,7 +629,7 @@
 				moment().month(n - 1).format("MMMM")
 
 			$scope.getTeacher = (id) ->
-				_.find($scope.Teachers, {id: parseInt(id)})
+				_.find $scope.Teachers, id: parseInt id
 
 			$scope.order_reverse = false
 			$scope.orderByTime = ->

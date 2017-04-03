@@ -51,11 +51,11 @@
 					</div>
 					<div class="form-group">
 						<input class="form-control digits-only"
-							ng-model="Group.teacher_price" placeholder="цена преподавателя">
+							ng-model="Group.teacher_price" ng-model-options="{debounce: 1000}" placeholder="цена преподавателя">
 					</div>
                     <div class="form-group">
 						<input class="form-control digits-only-float"
-							ng-model="Group.teacher_price_official" placeholder="белая часть">
+							ng-model="Group.teacher_price_official" ng-model-options="{debounce: 1000}" placeholder="белая часть">
 					</div>
 					<div class="form-group">
 					   <?= GroupLevels::buildSelector(false, false, [
