@@ -10,23 +10,21 @@
 <div ng-app='Logs' ng-controller='ListCtrl' ng-init="<?= $ang_init_data ?>">
     <div class="row flex-list">
         <div>
-            <select class="form-control selectpicker" ng-model='search.user_id' ng-change="filter()" id='change-user'>
-				<option value=''>пользователь</option>
-				<option disabled>──────────────</option>
-				<option
-					ng-repeat="user in UserService.getWithSystem()"
-					ng-show='counts.user[user.id]'
-					value="{{ user.id }}"
-					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span><small class='text-muted'>{{ counts.user[user.id] || '' }}</small>"
-				></option>
-				<option disabled ng-show="UserService.getBannedHaving(counts.user).length">──────────────</option>
-				<option
-					ng-show='counts.user[user.id]'
-                    ng-repeat="user in UserService.getBannedUsers()"
-					value="{{ user.id }}"
-					data-content="<span style='color: black'>{{ user.login }}</span><small class='text-muted'>{{ counts.user[user.id] || '' }}</small>"
-				></option>
-			</select>
+            <select ng-highlight class="form-control selectpicker" ng-model='search.user_id' ng-change="filter()" id='change-user'>
+                <option value=''>пользователь</option>
+            	<option disabled>──────────────</option>
+            	<option
+            		ng-repeat="user in UserService.getActiveInAnySystem()"
+            		value="{{ user.id }}"
+            		data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span>"
+            	></option>
+            	<option disabled>──────────────</option>
+            	<option
+                    ng-repeat="user in UserService.getBannedInBothSystems()"
+            		value="{{ user.id }}"
+            		data-content="<span style='color: black'>{{ user.login }}</span>"
+            	></option>
+            </select>
         </div>
         <div>
             <select class='form-control selectpicker' ng-model='search.type' ng-change='filter()'>
@@ -39,7 +37,7 @@
             <select class='form-control selectpicker' ng-model='search.table' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.table[''] || '' }}">таблица</option>
                 <option disabled>──────────────</option>
-                <option ng-repeat='table in tables' ng-show="counts.table[table]"
+                <option ng-repeat='table in tables'
                         data-subtext="{{ counts.table[table] || '' }}"
                         value="{{table}}">{{ table }}</option>
             </select>
@@ -48,7 +46,7 @@
             <select class='form-control selectpicker' ng-model='search.column' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.column[''] || '' }}">ячейка</option>
                 <option disabled>──────────────</option>
-                <option ng-repeat='(column, count) in counts.column' ng-show="count && column"
+                <option ng-repeat='(column, count) in counts.column'
                         data-subtext="{{ counts.column[column] || '' }}"
                         value="{{column}}">{{ column }}</option>
             </select>

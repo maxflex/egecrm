@@ -125,7 +125,7 @@ class Log extends Model
             'order'     => 'created_at desc',
             'limit'     => ($page == -1 ? static::PER_PAGE : "{$start_from}, " . static::PER_PAGE),
         ]);
-        $counts = static::counts($search);
+        // $counts = static::counts($search);
 
         $query = static::_generateQuery($search);
         return compact('data', 'counts', 'query');

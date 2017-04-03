@@ -647,6 +647,16 @@ app.service('UserService', function($rootScope, $q, $http, $timeout, User) {
       return user.rights.indexOf(34) !== -1 && condition_obj && condition_obj[user.id];
     });
   };
+  this.getActiveInAnySystem = function() {
+    return _.chain(this.users).filter(function(user) {
+      return user.rights.indexOf('35') === -1 || user.rights.indexOf('34') === -1;
+    }).sortBy('login').value();
+  };
+  this.getBannedInBothSystems = function() {
+    return _.chain(this.users).filter(function(user) {
+      return user.rights.indexOf('35') !== -1 && user.rights.indexOf('34') !== -1;
+    }).sortBy('login').value();
+  };
   return this;
 });
 
