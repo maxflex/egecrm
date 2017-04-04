@@ -105,7 +105,7 @@ class Log extends Model
     {
         $cols = [];
         foreach ($tables as $table) {
-            $cols += Model::_getMysqlVars($table);
+            $cols = array_merge(Model::_getMysqlVars($table), $cols);
         }
         sort($cols);
         return array_unique($cols);
