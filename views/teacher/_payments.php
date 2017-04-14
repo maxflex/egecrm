@@ -22,6 +22,14 @@
             </select>
 		</div>
 	</div>
+    <div class="form-group" ng-show="new_payment.id_status == <?= Payment::MUTUAL_DEBTS ?>" ng-if='mutual_accounts && mutual_accounts.length'>
+        <h4>Выберите встречу</h4>
+        <select class="form-control" ng-model="new_payment.account_id" style='width: 180px'>
+            <option value="">выберите встречу</option>
+            <option disabled>──────────────</option>
+            <option ng-repeat="account in mutual_accounts" value="{{ account.id }}" ng-selected="account.id == new_payment.account_id">{{ account.date }}</option>
+        </select>
+    </div>
 	<div class="form-group payment-inline" ng-show="new_payment.id_status == <?= Payment::PAID_CARD ?>">
 		<h4>Номер карты</h4>
 		<div class="form-group inline-block">

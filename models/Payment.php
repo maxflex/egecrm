@@ -202,6 +202,16 @@
            }
         }
 
+        /**
+         * Чтобы не трансформировало account_id в 0, а оставляло NULL
+         */
+        public function afterSave()
+        {
+            if ($this->id && ! $this->account_id) {
+                dbConnection()->query("UPDATE payments SET account_id=NULL WHERE id=" . $this->id);
+            }
+        }
+
         public static function tobePaid($entity_id, $entity_type)
         {
             $tobe_paid = self::dbConnection()->query("select ".

@@ -55,7 +55,8 @@
 			extract($_POST);
 
 			$condition['confirmed'] = $search['confirmed'] != '' ? "confirmed = {$search['confirmed']}" : '1';
-			$condition['id_status'] = $search['payment_type'] ? "id_status = {$search['payment_type']}" : '1';
+			$condition['id_status'] = $search['payment_type'] ? ($search['payment_type'] == -1 ? "(id_status = 6 AND entity_type='TEACHER' AND account_id IS NULL)" : "id_status = {$search['payment_type']}") : '1';
+
 			$condition['id_type'] = $search['type'] ? "id_type = {$search['type']}" : '1';
 			$condition['year'] = $search['year'] ? "year = {$search['year']}" : '1';
 			$condition['entity_type'] = $search['mode'] ? "entity_type = '{$search['mode']}'" : '1';
@@ -77,10 +78,16 @@
 				$counts['mode'][$entity_type] = Payment::count(['condition' => implode(' and ', $count_cond)]);
 			}
 
-			foreach (array_keys(Payment::$all) as $type) {
+            // -1 = неассоциированные взаимозачеты, можно удалить
+			foreach (array_merge([-1], array_keys(Payment::$all)) as $type) {
 				$count_cond = $condition;
-				$count_cond['id_status'] = "id_status = {$type}";
-				$counts['payment_type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
+                if ($type == -1) {
+                    $count_cond['id_status'] = "(id_status = 6 AND entity_type='TEACHER' AND account_id IS NULL)";
+    				$counts['payment_type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
+                } else {
+                    $count_cond['id_status'] = "id_status = {$type}";
+    				$counts['payment_type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
+                }
 			}
 			$counts['payment_type']['all'] = array_sum($counts['payment_type']);
 

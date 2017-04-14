@@ -768,4 +768,16 @@
 			extract($_POST);
 			EntityFreetime::remove($id_entity, $type_entity, $id_time);
 		}
+
+		public function actionAjaxGetLastAccounts()
+		{
+			extract($_POST);
+            $query = dbEgerep()->query("SELECT id, date_end as `date` FROM accounts WHERE tutor_id=" . $id_teacher . " ORDER BY date_end DESC LIMIT 10");
+            $return = [];
+            while($row = $query->fetch_object()) {
+                $row->date = dateFormat($row->date, true);
+                $return[] = $row;
+            }
+			returnJsonAng($return);
+		}
 	}

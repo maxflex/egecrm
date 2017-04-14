@@ -64,7 +64,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
     return set_scope("Teacher");
   });
 }).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService, Workplaces) {
-  var _loadData, _postData, bindFileUpload, deletePayment, menus;
+  var _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
   $scope.yearLabel = function(year) {
@@ -231,7 +231,22 @@ app = angular.module("Teacher", ["ngMap"]).config([
       return;
     }
     $scope.new_payment = angular.copy(payment);
+    loadMutualAccounts($scope.new_payment.id_status);
     return lightBoxShow('addpayment');
+  };
+  $scope.$watch('new_payment.id_status', function(newVal, oldVal) {
+    return loadMutualAccounts(newVal);
+  });
+  loadMutualAccounts = function(id_status) {
+    if (parseInt(id_status) === 6) {
+      $scope.mutual_accounts = void 0;
+      return $.post("ajax/getLastAccounts", {
+        id_teacher: $scope.new_payment.entity_id
+      }, function(response) {
+        $scope.mutual_accounts = response;
+        return $scope.$apply();
+      }, 'json');
+    }
   };
   $scope.addPaymentDialog = function() {
     $scope.new_payment = {

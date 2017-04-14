@@ -185,7 +185,20 @@
 			$scope.editPayment = (payment) ->
 				return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
 				$scope.new_payment = angular.copy payment
+				loadMutualAccounts($scope.new_payment.id_status)
 				lightBoxShow 'addpayment'
+
+			$scope.$watch 'new_payment.id_status', (newVal, oldVal) -> loadMutualAccounts(newVal)
+
+			loadMutualAccounts = (id_status) ->
+				if parseInt(id_status) == 6
+					$scope.mutual_accounts = undefined
+					$.post "ajax/getLastAccounts",
+						id_teacher: $scope.new_payment.entity_id
+					, (response) ->
+						$scope.mutual_accounts = response
+						$scope.$apply()
+					, 'json'
 
 			# Показать окно добавления платежа
 			$scope.addPaymentDialog = ->

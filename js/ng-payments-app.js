@@ -115,6 +115,7 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     });
   });
 }).controller("ListCtrl", function($scope, $timeout) {
+  var loadMutualAccounts;
   $scope.initSearch = function() {
     if (!$scope.search) {
       return $scope.search = {
@@ -189,6 +190,7 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
       return;
     }
     $scope.new_payment = angular.copy(payment);
+    loadMutualAccounts($scope.new_payment.id_status);
     return lightBoxShow('addpayment');
   };
   $scope.addPaymentDialog = function() {
@@ -289,6 +291,20 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
         });
       }
     });
+  };
+  $scope.$watch('new_payment.id_status', function(newVal, oldVal) {
+    return loadMutualAccounts(newVal);
+  });
+  loadMutualAccounts = function(id_status) {
+    if (parseInt(id_status) === 6) {
+      $scope.mutual_accounts = void 0;
+      return $.post("ajax/getLastAccounts", {
+        id_teacher: $scope.new_payment.entity_id
+      }, function(response) {
+        $scope.mutual_accounts = response;
+        return $scope.$apply();
+      }, 'json');
+    }
   };
   $scope.printPKO = function(payment) {
     $scope.print_mode = 'pko';
