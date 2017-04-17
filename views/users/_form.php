@@ -148,6 +148,7 @@
         <?= partial('right', ['right' => Shared\Rights::ER_ATTACHMENT_VISIBILITY]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_SUMMARY_FIELDS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_EDIT_ACCOUNTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_EDIT_PAYMENTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_DELETE_TUTOR]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_MERGE_TUTOR]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_TUTOR_ACCOUNTS]) ?>
