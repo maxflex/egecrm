@@ -4,7 +4,7 @@
 	 */
 	class Years extends Factory {
 		# Все
-		static $all  = [2015, 2016];
+		static $all  = [2015, 2016, 2017];
 
 		public static function json()
 		{
