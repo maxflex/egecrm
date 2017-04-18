@@ -1191,7 +1191,29 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.recommendedPrice = function(contract) {
 			if (!contract) return false;
 			count = $scope.subjectCount(contract)
+
+            // 11 класс: 1700 (64 занятия), 1600 (32 занятия) и 1500 (32 занятия и далее)
+            // 9 и 10 класс: 1600 (64 занятия), 1500 (32 занятия) и 1400 (32 занятия и далее)
+
 			if (contract.info && contract.info.grade == 11) {
+				recommended_price = 0
+
+				if (count > 96) {
+					mod = count % 96
+					recommended_price += (mod * 1500)
+					count -= mod
+				}
+
+				if (count > 64) {
+					mod = count % 64
+					recommended_price += (mod * 1600)
+					count -= mod
+				}
+
+				recommended_price += count * 1700
+
+				return recommended_price
+			} else {
 				recommended_price = 0
 
 				if (count > 96) {
@@ -1207,24 +1229,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				}
 
 				recommended_price += count * 1600
-
-				return recommended_price
-			} else {
-				recommended_price = 0
-
-				if (count > 96) {
-					mod = count % 96
-					recommended_price += (mod * 1250)
-					count -= mod
-				}
-
-				if (count > 64) {
-					mod = count % 64
-					recommended_price += (mod * 1350)
-					count -= mod
-				}
-
-				recommended_price += count * 1450
 
 				return recommended_price
 			}
