@@ -1133,11 +1133,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 						if (!isNaN(cnt1)) {
 							count += cnt1
 						}
-
-						cnt2 = parseInt(subject.count2)
-						if (!isNaN(cnt2)) {
-							count += cnt2
-						}
 					}
 				})
 			}
@@ -1188,15 +1183,85 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		// Рекомендуемая цена договора
-		$scope.recommendedPrice = function(contract) {
+		$scope.recommendedPrice = function(contract, subject_count) {
 			if (!contract || !contract.info) return false;
-			count = $scope.subjectCount(contract)
+			count = subject_count || $scope.subjectCount(contract)
 			if (contract.info.grade == 11) {
 				return count * 1700
 			} else {
                 return count * 1600
 			}
 		}
+
+        // опции выбора разбиения платежей
+        $scope.payment_options = {}
+        $scope.splitPaymentsOptions = function(year) {
+            // для кэша
+            if ($scope.payment_options[year] !== undefined) {
+                return $scope.payment_options[year]
+            }
+            a = [2, 3]
+            b = [0, 1]
+            date1 = '-12-01'
+            date2 = '-03-03'
+            date_format = 'D MMMM YYYY'
+            options = {
+                '1-0': {
+                    label: '1 платеж',
+                    dates: []
+                }
+            }
+            a.forEach(function(split) {
+                b.forEach(function(queue) {
+                    date_1 = moment((parseInt(year) + 1) + date1)
+                    date_2 = moment((parseInt(year) + 2) + date2)
+
+                    if (queue == 1) {
+                        date_1.add(7, 'days')
+                        date_2.add(7, 'days')
+                    }
+
+                    key = split + '-' + queue
+                    options[key] = {
+                        label: split + ' платежа: до ' + date_1.format(date_format),
+                        dates: [date_1.format(date_format)]
+                    }
+                    if (split == 3) {
+                        options[key].label += ', до ' + date_2.format(date_format)
+                        options[key].dates.push(date_2.format(date_format))
+                    }
+                })
+            })
+            $scope.payment_options[year] = options // кэшируем
+            return options
+        }
+
+        $scope.$watch('current_contract.payments_info', function(newVal, oldVal) {
+            if (newVal) {
+                parts = newVal.split('-')
+                $scope.current_contract.payments_split = parts[0]
+                $scope.current_contract.payments_queue = parts[1]
+            }
+        })
+
+        // splitAlmostEvenly
+        // разделить number на parts почти равных частей
+        // 32, 3 = 11, 11, 10
+        $scope.splitLessons = function(contract, part) {
+            subject_count = $scope.subjectCount(contract)
+            parts = contract.payments_split
+
+            x = Math.floor(subject_count / parts)
+            y = subject_count % parts
+
+            arr = []
+
+            for (i = 1; i <= parts; i++) {
+                arr.push(y-- > 0 ? (x + 1) : x)
+            }
+
+            return arr[part]
+        }
 
 		$scope.getSubjectPrice = function(contract, price) {
 			if (contract) {

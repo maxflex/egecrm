@@ -19,9 +19,10 @@
 
             if (! $light) {
                 // логин пользователя
-                if (!$this->isNewRecord) {
+                if (! $this->isNewRecord) {
                     $this->user_login = User::getLogin($this->id_user);
                     $this->info = $this->getInfo();
+                    $this->payments_info = implode('-', [$this->payments_split, $this->payments_queue]);
                 }
             }
         }

@@ -87,6 +87,30 @@
 					</div>
 				</div>
 			</div>
+            <div class="row" style="margin-bottom: 10px">
+				<div class="col-sm-12">
+					<span class="input-label">рекомендуемый график платежей</span>
+						<select class="form-control"  ng-model="current_contract.payments_info" ng-disabled="isDisabledField(current_contract, 'year')">
+                            <option value='0-0'>не установлено</option>
+                            <option disabled>──────────────</option>
+							<option ng-repeat="(value, option) in splitPaymentsOptions(current_contract.year)"
+								value="{{ value }}">{{ option.label }}</option>
+						</select>
+					 </select>
+				</div>
+			</div>
+            <div ng-show="current_contract.payments_info != '0-0'">
+                <hr>
+                <div ng-repeat="n in [] | range:current_contract.payments_split">
+                    {{ recommendedPrice(current_contract, splitLessons(current_contract, n)) | number }} руб. ({{ splitLessons(current_contract, n) }} <ng-pluralize count="splitLessons(current_contract, n)" when="{
+                        'one' 	: 'урок',
+                        'few'	: 'урока',
+                        'many'	: 'уроков',
+                    }"></ng-pluralize>),
+                    <span ng-if='!n'>оплата при заключении договора</span>
+                    <span ng-if='n'>{{ splitPaymentsOptions(current_contract.year)[current_contract.payments_info].dates[n - 1] }}</span>
+                </div>
+            </div>
 		</div>
 
 	</div>
