@@ -27,7 +27,7 @@
 										'text-warning'	: subject.status == 2,
 										'text-danger'	: subject.status == 1,
 									  }">
-							{{ Subjects[subject.id_subject] }}</span> ({{ subject.count }}+{{ subject.count2 }})<span ng-repeat-end>{{ $last ? '' : ', '}}
+							{{ Subjects[subject.id_subject] }}</span> ({{ subject.count }})<span ng-repeat-end>{{ $last ? '' : ', '}}
 						</span>
 					</td>
 					<td width="20%">

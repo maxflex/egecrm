@@ -11,7 +11,7 @@
 					    data-slider-value="{{current_contract.subjects[id_subject].status}}"
 				    >
 				    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(current_contract, id_subject)}">{{subject_name}}</span>
-				<div class="pull-right" style="top: -5px; position: relative">
+				<div class="pull-right" style="top: -5px; position: relative; width: 205px">
 
 					<span class="dogavar-label first" ng-show="subjectChecked(current_contract, id_subject)">
 						<ng-pluralize ng-show="current_contract.subjects[id_subject].count" count="current_contract.subjects[id_subject].count" when="{
@@ -21,19 +21,7 @@
 						}"></ng-pluralize>
 					</span>
 
-					<span class="dogavar-label second" ng-show="subjectChecked(current_contract, id_subject)">
-						<ng-pluralize ng-show="current_contract.subjects[id_subject].count2" count="current_contract.subjects[id_subject].count2" when="{
-							'one' 	: 'урок',
-							'few'	: 'урока',
-							'many'	: 'уроков',
-						}"></ng-pluralize>
-					</span>
-
-					<input type="text" class="form-control contract-lessons" style="margin-left: 5px" placeholder="2й семестр"
-						ng-show="subjectChecked(current_contract, id_subject)"
-						ng-model="current_contract.subjects[id_subject].count2">
-
-					<input type="text" class="form-control contract-lessons" placeholder="1й семестр"
+					<input style='float: left' type="text" class="form-control contract-lessons" placeholder="1й семестр"
 						ng-show="subjectChecked(current_contract, id_subject)"
 						ng-model="current_contract.subjects[id_subject].count">
 				</div>
