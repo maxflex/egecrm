@@ -93,7 +93,7 @@
 						<select class="form-control"  ng-model="current_contract.payments_info" ng-disabled="isDisabledField(current_contract, 'year')">
                             <option value='0-0'>не установлено</option>
                             <option disabled>──────────────</option>
-							<option ng-repeat="(value, option) in splitPaymentsOptions(current_contract.year)"
+							<option ng-repeat="(value, option) in splitPaymentsOptions(current_contract.info.year)"
 								value="{{ value }}">{{ option.label }}</option>
 						</select>
 					 </select>
@@ -108,7 +108,7 @@
                         'many'	: 'уроков',
                     }"></ng-pluralize>),
                     <span ng-if='!n'>оплата при заключении договора</span>
-                    <span ng-if='n'>{{ splitPaymentsOptions(current_contract.year)[current_contract.payments_info].dates[n - 1] }}</span>
+                    <span ng-if='n'>{{ splitPaymentsOptions(current_contract.info.year)[current_contract.payments_info].dates[n - 1] }}</span>
                 </div>
             </div>
 		</div>
