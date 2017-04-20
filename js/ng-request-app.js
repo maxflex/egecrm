@@ -1189,44 +1189,12 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Рекомендуемая цена договора
 		$scope.recommendedPrice = function(contract) {
-			if (!contract) return false;
+			if (!contract || !contract.info) return false;
 			count = $scope.subjectCount(contract)
-			if (contract.info && contract.info.grade == 11) {
-				recommended_price = 0
-
-				if (count > 96) {
-					mod = count % 96
-					recommended_price += (mod * 1400)
-					count -= mod
-				}
-
-				if (count > 64) {
-					mod = count % 64
-					recommended_price += (mod * 1500)
-					count -= mod
-				}
-
-				recommended_price += count * 1600
-
-				return recommended_price
+			if (contract.info.grade == 11) {
+				return count * 1700
 			} else {
-				recommended_price = 0
-
-				if (count > 96) {
-					mod = count % 96
-					recommended_price += (mod * 1250)
-					count -= mod
-				}
-
-				if (count > 64) {
-					mod = count % 64
-					recommended_price += (mod * 1350)
-					count -= mod
-				}
-
-				recommended_price += count * 1450
-
-				return recommended_price
+                return count * 1600
 			}
 		}
 
