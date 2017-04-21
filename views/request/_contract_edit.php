@@ -79,7 +79,7 @@
             <div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">рекомендуемый график платежей</span>
-						<select class="form-control"  ng-model="current_contract.payments_info" ng-disabled="isDisabledField(current_contract, 'year')">
+						<select class="form-control"  ng-model="current_contract.payments_info">
                             <option value='0-0'>не установлено</option>
                             <option disabled>──────────────</option>
 							<option ng-repeat="(value, option) in splitPaymentsOptions(current_contract.info.year)"
