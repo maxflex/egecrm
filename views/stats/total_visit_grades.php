@@ -12,7 +12,7 @@
 		<span class="link-like active">классы</span>
 		<a href="stats/visits/subjects" style="margin-right: 0">предметы</a>
 	</div>
-	
+
 	<table class="table table-hover">
 		<thead style="font-weight: bold">
 			<tr>
@@ -39,7 +39,7 @@
 			<?php foreach($stats as $grade => $stat): ?>
 			<tr>
 				<td>
-					<?= $grade ?> класс
+					<?= ($grade == Grades::EXTERNAL ? 'экстернат' : $grade . ' класс') ?>
 				</td>
 				<td>
 					<?= $stat['lesson_count'] ? $stat['lesson_count'] : '' ?>
@@ -60,5 +60,5 @@
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-	
+
 </div>
