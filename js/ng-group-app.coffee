@@ -921,7 +921,7 @@
 
 					if $(".search-grades").length
 						$(".search-grades").selectpicker
-							noneSelectedText: "предметы"
+							noneSelectedText: "классы"
 							multipleSeparator: ', '
 
 					if $("#time-select").length

@@ -1103,7 +1103,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       }
       if ($(".search-grades").length) {
         $(".search-grades").selectpicker({
-          noneSelectedText: "предметы",
+          noneSelectedText: "классы",
           multipleSeparator: ', '
         });
       }
