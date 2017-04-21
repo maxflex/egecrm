@@ -512,7 +512,6 @@
 				. (! isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
 				. (! isBlank($search->grade) ? " AND g.grade={$search->grade}" : "");
 
-			var_dump("SELECT " . $select . $main_query . $ending);
 			return "SELECT " . $select . $main_query . $ending;
 
 		}
