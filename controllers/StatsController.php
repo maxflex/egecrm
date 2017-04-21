@@ -43,7 +43,7 @@
 
 			foreach ($Contracts as $index => $Contract) {
 				if ($Contract->isFirstInYear()) {
-					if ($Contract->external) {
+					if ($Contract->info->grade == Grades::EXTERNAL) {
 						$stats['contract_new']['external']++;
 						$stats['subjects_new']['external'] += count($Contract->subjects);
 						// сумма заключенных дагаваров
