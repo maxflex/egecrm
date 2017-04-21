@@ -1104,6 +1104,12 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
           multipleSeparator: '+'
         });
       }
+      if ($(".search-grades").length) {
+        $(".search-grades").selectpicker({
+          noneSelectedText: "предметы",
+          multipleSeparator: ', '
+        });
+      }
       if ($("#time-select").length) {
         $("#time-select").selectpicker({
           noneSelectedText: "время занятия"

@@ -921,6 +921,11 @@
 							noneSelectedText: "предметы"
 							multipleSeparator: '+'
 
+					if $(".search-grades").length
+						$(".search-grades").selectpicker
+							noneSelectedText: "предметы"
+							multipleSeparator: ', '
+
 					if $("#time-select").length
 						$("#time-select").selectpicker
 							noneSelectedText: "время занятия"

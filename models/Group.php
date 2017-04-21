@@ -510,8 +510,9 @@
 				. (! isBlank($search->year) ? " AND g.year={$search->year}" : "")
 				. ((! isBlank($search->id_teacher) && empty($ending)) ? " AND g.id_teacher={$search->id_teacher}" : "")
 				. (! isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
-				. (! isBlank($search->grade) ? " AND g.grade={$search->grade}" : "");
+				. (! isBlank($search->grades) ? " AND g.grade IN (". (is_array($search->grades) ? implode(",", $search->grades) : $search->grades) .") " : "");
 
+            // echo("SELECT " . $select . $main_query . $ending);
 			return "SELECT " . $select . $main_query . $ending;
 
 		}
