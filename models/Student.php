@@ -187,7 +187,7 @@
 			$result = dbConnection()->query("
 				SELECT 	s.id, s.branches, s.first_name, s.last_name, s.middle_name,
 						cs.id_subject, cs.status, cs.count,
-						contract_info.*, (if contract_info.grade = " . Grades::EXTERNAL . " then 1 else 0) as level
+						contract_info.*
 				FROM students s
                     JOIN contract_info on contract_info.id_student = s.id
 					JOIN contracts c on c.id_contract = contract_info.id_contract

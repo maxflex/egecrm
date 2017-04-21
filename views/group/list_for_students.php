@@ -19,7 +19,7 @@
 						</span>
                     </td>
                     <td width="10%">
-                        {{Subjects[Group.id_subject]}}-{{Group.grade}}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
+                        {{Subjects[Group.id_subject]}}-{{ Group.grade ==  <?= Grades::EXTERNAL ?> ? 'Э' : Group.grade }}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
                     </td>
                     <td>
 						<span ng-show="Group.first_schedule">

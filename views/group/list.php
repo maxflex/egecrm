@@ -149,7 +149,7 @@
 										{{Student.id_contract}}
 									</td>
 									<td width="100">
-										{{Student.grade}} класс
+										{{Student.grade == <?= Grades::EXTERNAL ?> ? 'Э' : Student.grade + ' класс'}}
 									</td>
 									<td width="100">
 										{{Student.date}}
