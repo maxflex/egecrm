@@ -33,7 +33,7 @@
                     {{ Subjects[d.id_subject]}}
                 </td>
                 <td style="width: 15%">
-                    {{ d.Student.grade }} класс
+                    {{ d.Student.grade_label }}
                 </td>
                 <td style="width: 15%">
                     <span ng-if='d.id_group'>группа {{ d.id_group }}</span>

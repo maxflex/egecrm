@@ -2,7 +2,7 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Расписание группы №<?= $Group->id ?>
-		| <?= Subjects::$three_letters[$Group->id_subject] ?>-<?= $Group->grade ?>
+		| <?= Subjects::$three_letters[$Group->id_subject] ?>-<?= $Group->grade_short ?>
 	</div>
 	<div class="panel-body" style="position: relative">
 		<div class="row">
@@ -22,7 +22,7 @@
 							<span class="day-explain cancelled"></span> – отмененные занятия
 						</div>
 						<div>
-							<span class="day-explain exam-day"></span> – дни экзаменов <?= $Group->grade ?> класса
+							<span class="day-explain exam-day"></span> – дни экзаменов <?= $Group->grade_label ?>
 						</div>
 						<div>
 							<span class="day-explain exam-day-subject"></span> – дни экзаменов по {{SubjectsDative[Group.id_subject]}}

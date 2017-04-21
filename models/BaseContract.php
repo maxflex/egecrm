@@ -22,6 +22,7 @@
                 if (! $this->isNewRecord) {
                     $this->user_login = User::getLogin($this->id_user);
                     $this->info = $this->getInfo();
+                    $this->info->grade_label = $this->info->grade == Grades::EXTERNAL ? 'экстернат' : $this->info->grade . ' класс';
                     $this->payments_info = implode('-', [$this->payments_split, $this->payments_queue]);
                 }
             }

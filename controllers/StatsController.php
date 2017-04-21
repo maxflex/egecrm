@@ -699,7 +699,7 @@
 		{
 			$this->setTabTitle("Общая посещаемость по классам");
 
-			foreach (range(9, 11) as $grade) {
+			foreach (array_merge(range(9, 11), Grades::EXTERNAL) as $grade) {
 				$return[$grade]['lesson_count'] = VisitJournal::count([
 					"condition" => "type_entity='TEACHER' AND grade=$grade"
 				]);

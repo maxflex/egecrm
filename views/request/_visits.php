@@ -1,14 +1,14 @@
 <div class="row" ng-show="current_menu == 2">
     <div class="col-sm-12">
 	    <?= globalPartial('loading', ['model' => 'Journal']) ?>
-	    
+
             <table ng-if="Groups !== undefined" ng-show="Journal !== undefined">
                 <tr ng-repeat="id_group in getStudentGroups()" class="visit-div">
                     <td class="visit-div-group">
                         <a href="groups/edit/{{id_group}}" style="display:inline-block;width:90px;">Группа №{{id_group}}</a>
                         <!--<span>{{Subjects[getAnyGroup(id_group).id_subject]}}{{getAnyGroup(id_group).grade ? '-' + getAnyGroup(id_group).grade : ''}}</span>-->
                         <!-- показываем данные группы из журнала посещений, а не из данных групп, потому что там нет групп, в которых ученик перестал ходит -->
-                        <span>{{Subjects[getVisitsByGroup(id_group)[0].id_subject]}}{{getVisitsByGroup(id_group)[0].grade ? '-' + getVisitsByGroup(id_group)[0].grade : ''}}</span>
+                        <span>{{Subjects[getVisitsByGroup(id_group)[0].id_subject]}}{{getVisitsByGroup(id_group)[0].grade ? '-' + getVisitsByGroup(id_group)[0].grade_short : ''}}</span>
                     </td>
                     <td>
                         <span ng-if="!getGroup(id_group)">

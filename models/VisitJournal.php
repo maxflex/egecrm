@@ -11,6 +11,16 @@
 		{
 			parent::__construct($array);
 
+            if (! $this->isNewRecord) {
+                if ($this->grade == Grades::EXTERNAL) {
+                    $this->grade_label = 'экстернат';
+                    $this->grade_short = 'Э';
+                } else {
+                    $this->grade_label = $this->grade . ' класс';
+                    $this->grade_short = $this->grade;
+                }
+            }
+
 			if ($this->lesson_time) {
 				$this->lesson_time = mb_strimwidth($this->lesson_time, 0, 5);
 				if ($this->lesson_time == "00:00") {

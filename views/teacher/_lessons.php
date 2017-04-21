@@ -13,7 +13,7 @@
 						<a href="groups/edit/{{Lesson.id_group}}">Группа №{{Lesson.id_group}}</a>
 					</td>
 					<td>
-						{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade : ''}}{{Lesson.group_level ? '-' + <?= GroupLevels::json() ?>[Lesson.group_level] : ''}}
+						{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade_short : ''}}{{Lesson.group_level ? '-' + <?= GroupLevels::json() ?>[Lesson.group_level] : ''}}
 					</td>
 					<td>
 						{{formatDateMonthName(Lesson.lesson_date, true)}} в {{formatTime(Lesson.lesson_time)}}

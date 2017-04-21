@@ -88,7 +88,7 @@
 		</thead>
 		<tbody>
 			<tr ng-repeat-start="stat in sortByDate(stats)" ng-class="{
-				'pointer': days_mode, 
+				'pointer': days_mode,
 				'visits-weekend': isWeekend(stat.date) && days_mode
 			}" ng-click="dateLoad(stat.date)">
 				<td ng-class="{'text-gray': isFuture(stat.date), 'bold-red': missing[stat.date] > 0}">
@@ -127,7 +127,7 @@
 								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
 							</td>
 							<td width="7%">
-								{{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade : ''}}
+                                {{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade_short : ''}}
 							</td>
 							<td width="10%">
 								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule">расписание</a>

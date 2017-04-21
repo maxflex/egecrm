@@ -22,7 +22,7 @@
 							Группа №{{Lesson.id_group}}
 						</td>
 						<td width="10%">
-							{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade : ''}}{{Lesson.group_level ? '-' + <?= GroupLevels::json() ?>[Lesson.group_level] : ''}}
+							{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade_short : ''}}{{Lesson.group_level ? '-' + <?= GroupLevels::json() ?>[Lesson.group_level] : ''}}
 						</td>
 						<td width="20%">
 							{{formatDate(Lesson.lesson_date, true)}} в {{formatTime(Lesson.lesson_time)}}

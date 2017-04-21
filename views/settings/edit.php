@@ -40,7 +40,7 @@
 			             <select class="form-control" ng-model="Group.day">
 				            <option selected value=''>день</option>
 							<option disabled value=''>──────────────</option>
-							<option ng-repeat="(day_number, weekday) in weekdays" 
+							<option ng-repeat="(day_number, weekday) in weekdays"
 								ng-value="(day_number + 1)" ng-selected="day_number == Group.day">{{weekday.short}}</option>
 			            </select>
 			            </div>
@@ -60,18 +60,18 @@
 		            </div>
 				</div>
 			</div>
-			
+
 			<div class="row" style="margin-top: 10px">
 				<div class="col-sm-12 center">
 			    	<button class="btn btn-primary save-button" ng-disabled="saving || !form_changed" ng-hide="!Group.id" style="width: 100px">
 			    		<span ng-show="form_changed">Сохранить</span>
 			    		<span ng-show="!form_changed && !saving">Сохранено</span>
 			    	</button>
-			    	
+
 			    	<button class="btn btn-primary save-button" ng-hide="Group.id" style="width: 100px">
 						добавить
 			    	</button>
-			    	
+
 				</div>
 			</div>
 		</form>
@@ -80,7 +80,7 @@
 
 <div class="panel panel-primary ng-hide" ng-show="add_clients_panel">
 	<div class="panel-heading">
-		Добавить ученика к группе 
+		Добавить ученика к группе
 	</div>
 	<div class="panel-body">
 		<div class="row" style="margin-bottom: 15px">
@@ -108,13 +108,13 @@
 						{{Student.Contract.id}}
 					</td>
 					<td>
-						{{Student.Contract.grade}} класс
+                        {{ Student.Contract.grade_label }}
 					</td>
 					<td>
 						{{Student.Contract.date}}
 					</td>
 					<td>
-						{{countSubjects(Student.Contract)}} 
+						{{countSubjects(Student.Contract)}}
 						<ng-pluralize count="countSubjects(Student.Contract)" when="{
 							'one' : 'предмет',
 							'few' : 'предмета',

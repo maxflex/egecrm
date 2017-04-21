@@ -37,6 +37,13 @@
                     $this->photo_original_size = $this->photoOriginalSize();
                     $this->photo_cropped_size = $this->photoCroppedSize();
                     $this->photo_url = $this->photoUrl();
+                    if ($this->grade == Grades::EXTERNAL) {
+                        $this->grade_label = 'экстернат';
+                        $this->grade_short = 'Э';
+                    } else {
+                        $this->grade_label = $this->grade . ' класс';
+                        $this->grade_short = $this->grade;
+                    }
                 }
             }
 

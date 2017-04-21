@@ -34,6 +34,13 @@
 			}
 
 			if (!$this->isNewRecord) {
+                if ($this->grade == Grades::EXTERNAL) {
+                    $this->grade_label = 'экстернат';
+                    $this->grade_short = 'Э';
+                } else {
+                    $this->grade_label = $this->grade . ' класс';
+                    $this->grade_short = $this->grade;
+                }
 				$this->past_lesson_count 		= $this->getPastScheduleCountCached();;
 				$this->schedule_count = $this->getScheduleCountCached();
 

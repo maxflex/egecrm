@@ -9,7 +9,7 @@
                 <b>{{Student.last_name}} {{Student.first_name}}</b>
             </div>
             <div style='margin-bottom: 5px'>
-                В данный момент ученик учится в {{Student.grade}} классе
+                В данный момент ученик учится в {{Student.grade_label}}e
             </div>
 		</div>
 	</div>
@@ -36,7 +36,7 @@
                     {{ Subject.three_letters }}
                 </span>
                 <span class='inline-block' style='width: 150px'>
-                    {{ Visit.grade }} класс
+                    {{ Visit.grade_label }}
                 </span>
                 <span class='inline-block' style='width: 150px'>
                     <span ng-show="Visit.presence == 2">не был</span>
@@ -80,7 +80,7 @@
                 {{ Subject.three_letters }}
             </span>
             <span class='inline-block' style='width: 150px'>
-                {{ Student.grade }} класс
+                {{ Student.grade_label }}
             </span>
             <span class='inline-block' style='width: 150px'>
                 планируется

@@ -6,8 +6,8 @@
 					<span ng-class="{'mr3' : !$last}" ng-repeat="branch in request.branches_data"><span class="label label-metro-short" style="background: {{branch.color}}; top: -2px; position: relative">{{branch.short}}</span></span>
 					<span ng-show="request.has_contract" class="label label-success" style="position: relative; top: -2px">договор заключен</span>
 				</span>
-				
-				
+
+
 				<span ng-show="request.comment" style="margin-right: 10px">
 					{{request.comment}}
 				</span>
@@ -18,9 +18,9 @@
 					</span>
 
 					<span ng-show="request.grade > 0">
-						{{request.grade}} класс,
+						{{request.grade == <?= Grades::EXTERNAL ?> ? 'экстернат' : request.grade + ' класс'}},
 					</span>
-					
+
 					<span ng-show="request.phone">
 						<span ng-class="{'label-red': request.phone_duplicate}" class="underline-hover inline-block" ng-click="PhoneService.call(request.phone_formatted)">{{request.phone_formatted}}</span>
 						<span class="glyphicon glyphicon-envelope sms-in-list" ng-click="PhoneService.sms(request.phone_formatted)" ng-show="PhoneService.isMobile(request.phone_formatted)"></span>
@@ -56,7 +56,7 @@
 				<comments entity-type='REQUEST' entity-id='request.id' user='user' track-loading="1"></comments>
 			</div>
 		</div>
-		
+
 		<div class="col-sm-2" style="text-align: right">
 			<div ng-show="request.subjects.length > 0">
 				<div ng-repeat="subject in request.subjects">

@@ -30,7 +30,7 @@
 			</span>
 		</td>
 		<td width="150">
-			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + (Group.grade ==  <?= Grades::EXTERNAL ?> ? 'Э' : Group.grade) : ''}}{{Group.level ? '-' + <?= GroupLevels::json() ?>[Group.level] : ''}}
+			{{Subjects[Group.id_subject]}}{{Group.grade ? '-' + Group.grade_short : ''}}{{Group.level ? '-' + <?= GroupLevels::json() ?>[Group.level] : ''}}
 		</td>
 		<td width="10%">
 			{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{

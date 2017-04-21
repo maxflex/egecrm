@@ -9,7 +9,7 @@
 		>
 			<tr class="no-hover">
 				<td colspan="8" class="no-border-bottom">
-					<h4 class="row-header default-case"> Договор №{{ id_contract }} на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainById(id_contract).info.grade }} класс)</h4>
+					<h4 class="row-header default-case"> Договор №{{ id_contract }} на {{ firstContractInChainById(id_contract).info.year + '-' + (firstContractInChainById(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainById(id_contract).info.grade_label }})</h4>
 				</td>
 			</tr>
 				<tr ng-repeat="contract in contracts | group_by_id_contract:id_contract | orderBy:'date_changed'">
@@ -78,7 +78,7 @@
 		>
 			<tr class="no-hover">
 				<td colspan="8" class="no-border-bottom">
-					<h4 class="row-header default-case"> Договор №{{ id_contract }}T на {{ firstContractInChainByIdTest(id_contract).info.year + '-' + (firstContractInChainByIdTest(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainByIdTest(id_contract).info.grade }} класс)</h4>
+					<h4 class="row-header default-case"> Договор №{{ id_contract }}T на {{ firstContractInChainByIdTest(id_contract).info.year + '-' + (firstContractInChainByIdTest(id_contract).info.year + 1) }} учебный год ({{ firstContractInChainByIdTest(id_contract).info.grade_label }})</h4>
 				</td>
 			</tr>
 				<tr ng-repeat="contract in contracts_test | group_by_id_contract:id_contract | orderBy:'date_changed'">

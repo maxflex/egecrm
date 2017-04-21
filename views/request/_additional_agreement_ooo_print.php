@@ -24,7 +24,7 @@
 	<p>- Пункт 1.3. Договора изложить в следующей редакции:<br>
 		«Продолжительность образовательной программы по программе курса
 		<span ng-repeat="program in contract.subjects">
-			«{{SubjectsFull2[program.id_subject]}}-{{contract.info.grade}}-{{ program.count }}» ({{ program.count * 3 }}
+			«{{SubjectsFull2[program.id_subject]}}-{{contract.info.grade_label}}-{{ program.count }}» ({{ program.count * 3 }}
 			аудиторных <ng-pluralize count="program.count * 3" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> и {{ program.count * 1.5 }}
 			 <ng-pluralize count="program.count * 1.5" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> на самостоятельную подготовку){{$last ? '.' : ','}}
 		</span> Форма обучения – очная.
