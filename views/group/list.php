@@ -85,16 +85,6 @@
 									value="{{year}}">{{ yearLabel(year) }}</option>
 							</select>
 						</div>
-						<div class="form-group">
-							<select class="watch-select single-select form-control" ng-model="search.level" ng-change='filter()'>
-								<option value="" data-subtext="{{ counts.level[''] || '' }}">все</option>
-								<option disabled>────────</option>
-								<option data-subtext="{{ counts.level['not_external'] || '' }}"
-										value="-1">все кроме экстерната</option>
-								<option data-subtext="{{ counts.level['external'] || '' }}"
-										value="<?= GroupLevels::EXTERNAL; ?>">экстернат</option>
-							</select>
-						</div>
 					</div>
 
 					<div ng-show="Groups === undefined" style="padding: 100px" class="small half-black center">
@@ -131,14 +121,6 @@
 									<option disabled>──────────────</option>
 									<option ng-repeat="year in <?= Years::json() ?>"
 											value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
-								</select>
-							</div>
-							<div>
-								<select id='external-filter' class="single-select form-control" ng-model="search2.level">
-									<option value="" data-subtext=" ">все</option>
-									<option disabled>────────</option>
-									<option data-subtext="" value="0">все кроме экстерната</option>
-									<option data-subtext="" value="1">экстернат</option>
 								</select>
 							</div>
 						</div>

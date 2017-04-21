@@ -9,7 +9,6 @@
 		const MEDIUM 	= 2;
 		const HIGH 		= 3;
 		const SPECIAL 	= 4;
-		const EXTERNAL 	= 5;
 
 		# Все
 		static $all  = [
@@ -17,7 +16,6 @@
 			self::MEDIUM 	=> "средний",
 			self::HIGH 		=> "высокий",
 			self::SPECIAL 	=> "спецкурс",
-			self::EXTERNAL 	=> "экстернат",
 		];
 		
 		# 
@@ -26,7 +24,6 @@
 			self::MEDIUM 	=> "С",
 			self::HIGH 		=> "В",
 			self::SPECIAL 	=> "Сп",
-			self::EXTERNAL 	=> "Э",
 		];
 		
 		# Заголовок
