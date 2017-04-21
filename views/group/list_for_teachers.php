@@ -20,7 +20,7 @@
 						</span>
 					</td>
 					<td width="100">
-						{{Subjects[Group.id_subject]}}-{{Group.grade}}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
+						{{Subjects[Group.id_subject]}}-{{ Group.grade ==  <?= Grades::EXTERNAL ?> ? 'Э' : Group.grade }}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
 					</td>
 					<td width="10%">
 						{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
