@@ -15,13 +15,13 @@
 
 					<span class="dogavar-label first" ng-show="subjectChecked(current_contract, id_subject)">
 						<ng-pluralize ng-show="current_contract.subjects[id_subject].count" count="current_contract.subjects[id_subject].count" when="{
-							'one' 	: 'урок',
-							'few'	: 'урока',
-							'many'	: 'уроков',
+							'one' 	: 'занятие',
+							'few'	: 'занятия',
+							'many'	: 'занятий',
 						}"></ng-pluralize>
 					</span>
 
-					<input style='float: left' type="text" class="form-control contract-lessons" placeholder="1й семестр"
+					<input style='float: left' type="text" class="form-control contract-lessons" placeholder="занятий всего"
 						ng-show="subjectChecked(current_contract, id_subject)"
 						ng-model="current_contract.subjects[id_subject].count">
 				</div>
@@ -82,8 +82,8 @@
 						<select class="form-control"  ng-model="current_contract.payments_info">
                             <option value='0-0'>не установлено</option>
                             <option disabled>──────────────</option>
-							<option ng-repeat="(value, option) in splitPaymentsOptions(current_contract.info.year)"
-								value="{{ value }}">{{ option.label }}</option>
+							<option ng-repeat="(value, dates) in splitPaymentsOptions(current_contract.info.year)" ng-selected="value == current_contract.payments_info"
+								value="{{ value }}">{{ getPaymentLabel(dates) }}</option>
 						</select>
 					 </select>
 				</div>
@@ -92,12 +92,14 @@
                 <hr>
                 <div ng-repeat="n in [] | range:current_contract.payments_split">
                     {{ recommendedPrice(current_contract, splitLessons(current_contract, n)) | number }} руб. ({{ splitLessons(current_contract, n) }} <ng-pluralize count="splitLessons(current_contract, n)" when="{
-                        'one' 	: 'урок',
-                        'few'	: 'урока',
-                        'many'	: 'уроков',
+                        'one' 	: 'занятие',
+                        'few'	: 'занятия',
+                        'many'	: 'занятий',
                     }"></ng-pluralize>),
-                    <span ng-if='!n'>оплата при заключении договора</span>
-                    <span ng-if='n'>{{ splitPaymentsOptions(current_contract.info.year)[current_contract.payments_info].dates[n - 1] }}</span>
+                    <span ng-if='!n'>{{ n + 1 }} платеж при заключении договора</span>
+                    <span ng-if='n'>
+                        {{ n + 1 }} платеж до {{ splitPaymentsOptions(current_contract.info.year)[current_contract.payments_info][n - 1] }}
+                    </span>
                 </div>
             </div>
 		</div>

@@ -338,7 +338,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		$scope.week_count = function (programm) {
 			c = parseInt(_.max(programm, function(v){ return v.count; }).count)
-			c += parseInt(_.max(programm, function(v){ return v.count2; }).count2)
 			return c
 		}
 
@@ -1196,44 +1195,58 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
         // опции выбора разбиения платежей
         $scope.payment_options = {}
         $scope.splitPaymentsOptions = function(year) {
+            if (! year) {
+                return;
+            }
             // для кэша
             if ($scope.payment_options[year] !== undefined) {
                 return $scope.payment_options[year]
             }
-            a = [2, 3]
-            b = [0, 1]
-            date1 = '-12-01'
-            date2 = '-03-03'
-            date_format = 'D MMMM YYYY'
+            year = parseInt(year)
             options = {
-                '1-0': {
-                    label: '1 платеж',
-                    dates: []
-                }
+                '1-0': [],
+                '2-0': [_paymentDate(year + 1, '02-13')],
+                '3-0': [_paymentDate(year, '11-20'), _paymentDate(year + 1, '02-20')],
+                '3-1': [_paymentDate(year, '11-27'), _paymentDate(year + 1, '02-27')],
+                '8-0': [_paymentDate(year, '10-15'), _paymentDate(year, '11-15'), _paymentDate(year, '12-15'),
+                    _paymentDate(year + 1, '01-15'), _paymentDate(year + 1, '02-15'), _paymentDate(year + 1, '03-15'), _paymentDate(year + 1, '04-15')],
             }
-            a.forEach(function(split) {
-                b.forEach(function(queue) {
-                    date_1 = moment((parseInt(year) + 1) + date1)
-                    date_2 = moment((parseInt(year) + 2) + date2)
-
-                    if (queue == 1) {
-                        date_1.add(7, 'days')
-                        date_2.add(7, 'days')
-                    }
-
-                    key = split + '-' + queue
-                    options[key] = {
-                        label: split + ' платежа: до ' + date_1.format(date_format),
-                        dates: [date_1.format(date_format)]
-                    }
-                    if (split == 3) {
-                        options[key].label += ', до ' + date_2.format(date_format)
-                        options[key].dates.push(date_2.format(date_format))
-                    }
-                })
-            })
             $scope.payment_options[year] = options // кэшируем
             return options
+        }
+
+        $scope.ceil = function(n) {
+            return Math.ceil(n)
+        }
+
+        _paymentDate = function(year, date) {
+            return moment(parseInt(year) + '-' + date).format('DD.MM.YY')
+        }
+
+        $scope.getPaymentLabel = function(dates) {
+            len = dates.length + 1
+            payment = 'платеж'
+            if (len > 1 && len <= 4) {
+                payment += 'а'
+            }
+            if (len > 4) {
+                payment += 'ей'
+            }
+            str = len + ' ' + payment
+            if (dates.length > 0) {
+                 str += ': '
+                 if (len == 8) {
+                     str += 'ежемесячно 15 числа'
+                 } else {
+                     dates.forEach(function(date, index) {
+                         str += date
+                         if ((index + 1) != dates.length) {
+                             str += ', '
+                         }
+                     })
+                 }
+            }
+            return str
         }
 
         $scope.$watch('current_contract.payments_info', function(newVal, oldVal) {

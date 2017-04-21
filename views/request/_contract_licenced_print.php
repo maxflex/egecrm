@@ -28,9 +28,9 @@
 <p>1.2. Обучение осуществляется в порядке, установленном локальными нормативными актами Исполнителя и настоящим Договором.</p>
 <p>1.3. Продолжительность образовательной программы по программе курса
 	<span ng-repeat="program in contract.subjects">
-			«{{SubjectsFull2[program.id_subject]}}-{{contract.info.grade}}-{{(program.count * 1) + (program.count2 * 1)}}» ({{((program.count * 1) + (program.count2 * 1))*3}}
-			аудиторных <ng-pluralize count="((program.count * 1) + (program.count2 * 1))*3" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> и {{((program.count * 1) + (program.count2 * 1))*1.5}}
-			 <ng-pluralize count="((program.count * 1) + (program.count2 * 1))*1.5" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> на самостоятельную подготовку){{$last ? '.' : ','}}
+			«{{SubjectsFull2[program.id_subject]}}-{{contract.info.grade_short}}-{{ program.count }}» ({{ ceil(program.count * 3) }}
+			аудиторных <ng-pluralize count="ceil(program.count * 3)" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> и {{ ceil(program.count * 1.5) }}
+			 <ng-pluralize count="ceil(program.count * 1.5)" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> на самостоятельную подготовку){{$last ? '.' : ','}}
 	</span>
 	 Форма обучения – очная.» </p>
 <p>1.4. Место оказания Услуг по Договору: г. Москва, ул. Мясницкая, дом 40, стр. 1, 3 этаж.</p>
@@ -97,19 +97,20 @@
 			'few'	: 'рубля',
 			'many'	: 'рублей',
 		}"></ng-pluralize>.</p>
-<p ng-show="contract.info.grade == 11">3.2. Стоимость занятий с 1 по 64 составляет {{ getSubjectPrice(contract, 1700) }} ({{numToText(getSubjectPrice(contract, 1700))}}) рублей за одно занятие, стоимость занятий с 65 по 96 составляет {{ getSubjectPrice(contract, 1600) }} ({{numToText(getSubjectPrice(contract, 1600))}}) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет {{ getSubjectPrice(contract, 1500) }} ({{numToText(getSubjectPrice(contract, 1500))}}) рублей.</p>
-<p ng-show="contract.info.grade == 9 || contract.info.grade == 10">3.2. Стоимость занятий с 1 по 64 составляет {{ getSubjectPrice(contract, 1600) }} ({{numToText(getSubjectPrice(contract, 1600))}}) рублей за одно занятие, стоимость занятий с 65 по 96 составляет {{ getSubjectPrice(contract, 1500) }} ({{numToText(getSubjectPrice(contract, 1500))}}) рублей за одно занятие, стоимость занятий с 97 и всех последующих составляет {{ getSubjectPrice(contract, 1400) }} ({{numToText(getSubjectPrice(contract, 1400))}}) рублей.</p>
-<p>3.3. В случае изменения Договора в связи с уменьшением или увеличением количества необходимых Заказчику занятий цена Договора пересчитывается в соответствии со стоимостью занятий по их порядковому номеру.</p>
+<p>3.2. Стоимость одного занятия составляет {{ contract.info.grade == 11 ? '1700' : '1600' }} рублей.</p>
+<p>3.3. В случае изменения Договора в связи с уменьшением или увеличением количества необходимых Заказчику занятий цена Договора пересчитывается в соответствии с измененным количеством занятий.</p>
 <p>3.4. Оплата Услуг по настоящему Договору  производится Заказчиком следующим образом:</p>
 <ul style='margin: 0'>
     <li ng-repeat="n in [] | range:contract.payments_split">
-        {{ recommendedPrice(contract, splitLessons(contract, n)) | number }} руб. ({{ splitLessons(contract, n) }} <ng-pluralize count="splitLessons(contract, n)" when="{
-            'one' 	: 'урок',
-            'few'	: 'урока',
-            'many'	: 'уроков',
-        }"></ng-pluralize>),
-        <span ng-if='!n'>оплата при заключении договора</span>
-        <span ng-if='n'>{{ splitPaymentsOptions(contract.info.year)[contract.payments_info].dates[n - 1] }}</span>
+        {{ contract.payments_split == 1 ? 'единовременный' : '' }} платеж в размере {{ recommendedPrice(contract, splitLessons(contract, n)) | number }} руб. ({{ splitLessons(contract, n) }} <ng-pluralize count="splitLessons(contract, n)" when="{
+            'one' 	: 'занятие',
+            'few'	: 'занятия',
+            'many'	: 'занятий',
+        }"></ng-pluralize>) производится
+        <span ng-if='!n'> при заключении договора</span>
+        <span ng-if='n'>
+             до {{ splitPaymentsOptions(contract.info.year)[contract.payments_info][n - 1] }}
+        </span>
     </li>
 </ul>
 <p>В случае нарушения Заказчиком обязанностей по оплате услуг Исполнителя, согласованных в графике платежей, Исполнитель вправе применить согласованные Сторонами в Договоре меры ответственности за просрочку оплаты. </p>

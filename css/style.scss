@@ -2082,6 +2082,7 @@ white-space: nowrap;
 .lightbox-addcontract, .lightbox-addcontracttest {
 	width: 900px;
 	left: calc(50% - 450px);
+    top: 10%;
 
 	& .input-group, input, select {
 		width: 230px;
@@ -2114,7 +2115,7 @@ white-space: nowrap;
 			}
 		}
 		& input[type="text"] {
-			width: 100px;
+			width: 120px;
 		//	visibility: hidden;
 		}
 
@@ -2127,7 +2128,7 @@ white-space: nowrap;
 				right: 220px;
 		    }
 		    &.first {
-				right: 115px;
+				right: 92px;
 		    }
 		    &.second {
 				right: 10px;
