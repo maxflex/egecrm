@@ -510,8 +510,7 @@
 				. (! isBlank($search->year) ? " AND g.year={$search->year}" : "")
 				. ((! isBlank($search->id_teacher) && empty($ending)) ? " AND g.id_teacher={$search->id_teacher}" : "")
 				. (! isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
-				. (! isBlank($search->grade) ? " AND g.grade={$search->grade}" : "")
-				. (! isBlank($search->level) ? $search->level == GroupLevels::EXTERNAL ? " AND g.level=".GroupLevels::EXTERNAL : " AND g.level <> ".GroupLevels::EXTERNAL : "");
+				. (! isBlank($search->grade) ? " AND g.grade={$search->grade}" : "");
 
 			return "SELECT " . $select . $main_query . $ending;
 

@@ -76,17 +76,6 @@
 					 </select>
 				</div>
 			</div>
-			<div class="row" style="margin-bottom: 10px">
-				<div class="col-sm-12">
-					<span class="input-label">экстернат</span>
-					<div class="input-group">
-						<label class="ios7-switch transition-control no-transition" style="font-size: 24px; top: 1px">
-						    <input type="checkbox" ng-model="current_contract.external" ng-true-value="1">
-						    <span class="switch"></span>
-						</label>
-					</div>
-				</div>
-			</div>
             <div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">рекомендуемый график платежей</span>

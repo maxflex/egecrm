@@ -187,14 +187,14 @@
 			$result = dbConnection()->query("
 				SELECT 	s.id, s.branches, s.first_name, s.last_name, s.middle_name,
 						cs.id_subject, cs.status, cs.count,
-						contract_info.*, c.external as level
+						contract_info.*, (if contract_info.grade = " . Grades::EXTERNAL . " then 1 else 0) as level
 				FROM students s
                     JOIN contract_info on contract_info.id_student = s.id
 					JOIN contracts c on c.id_contract = contract_info.id_contract
 					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
 					WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1
                         AND NOT EXISTS(SELECT 1 FROM groups g WHERE g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND contract_info.year = g.year)
-			");//AND c.external != 1
+			");
 
 			while ($row = $result->fetch_assoc()) {
 				$student_branches = explode(",", $row['branches']);
@@ -989,7 +989,7 @@
 				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension <> '' AND u.has_photo_cropped = 0 " : "") . "
 				JOIN contracts c ON (c.id_contract = ci.id_contract AND c.current_version = 1) WHERE true "
 				. (!isBlank($search->error) && $search->error == 2 ? " AND NOT EXISTS (SELECT 1 FROM freetime f WHERE f.id_entity = s.id AND f.type_entity = '".Student::USER_TYPE."')" : "")
-				. (!isBlank($search->error) && $search->error == 3 ? " AND c.external = 1 " : "")
+				. (!isBlank($search->error) && $search->error == 3 ? " AND ci.grade = " . Grades::EXTERNAL : "")
 				. " ORDER BY s.last_name, s.first_name, s.middle_name
 			";
 			return "SELECT " . $select . $main_query;
