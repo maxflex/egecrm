@@ -1460,6 +1460,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if ($scope.current_contract.id) {
 				ajaxStart('contract')
 				$.post("ajax/contractEdit", $scope.current_contract, function(response) {
+                    _.extend(_.find($scope.contracts, {id: $scope.current_contract.id}), $scope.current_contract, {show_actions: false})
 					ajaxEnd('contract')
 					lightBoxHide()
 					$scope.lateApply()
@@ -1473,13 +1474,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
                     }
 					ajaxEnd('contract')
 					lightBoxHide()
-					$scope.current_contract.id = response.id
-					$scope.current_contract.id_contract = response.id_contract
-					$scope.current_contract.user_login 	= response.user_login
-					$scope.current_contract.id_user 	= response.id_user
-					$scope.current_contract.date_changed= response.date_changed
+					$scope.current_contract = response
 					$scope.current_contract.current_version = 1
-					$scope.current_contract.subjects = response.subjects;
 					$scope.current_contract.show_actions = false;
 
 					new_contract = $.extend(true, {}, $scope.current_contract)
@@ -1698,7 +1694,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Показать окно добавления платежа
 		$scope.addContractDialog = function() {
-			$scope.current_contract = {subjects : [], info: {year: $scope.academic_year}}
+			$scope.current_contract = {
+                subjects : [],
+                info: {year: $scope.academic_year},
+                payments_info: '0-0',
+                payments_split: 0,
+                payments_queue: 0
+            }
 			$scope.current_contract.date = moment().format("DD.MM.YYYY")
             $timeout(function(){
                 $scope.$apply();
