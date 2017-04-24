@@ -34,13 +34,7 @@
 			}
 
 			if (!$this->isNewRecord) {
-                if ($this->grade == Grades::EXTERNAL) {
-                    $this->grade_label = 'экстернат';
-                    $this->grade_short = 'Э';
-                } else {
-                    $this->grade_label = $this->grade . ' класс';
-                    $this->grade_short = $this->grade;
-                }
+				static::assignGrade($this);
 				$this->past_lesson_count 		= $this->getPastScheduleCountCached();;
 				$this->schedule_count = $this->getScheduleCountCached();
 
@@ -60,6 +54,17 @@
 		}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
+
+		public static function assignGrade($group)
+		{
+			if ($group->grade == Grades::EXTERNAL) {
+				$group->grade_label = 'экстернат';
+				$group->grade_short = 'Э';
+			} else {
+				$group->grade_label = $group->grade . ' класс';
+				$group->grade_short = $group->grade;
+			}
+		}
 
 		// @time-refactored @time-checked
 		public static function getNotifiedStudentsCount($Group)
@@ -478,6 +483,7 @@
 				$Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
 				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTime($Group->id);
+				static::assignGrade($Group);
 
 //				if ($Group->ready_to_start) {
 					$Group->notified_students_count = static::getNotifiedStudentsCount($Group);
