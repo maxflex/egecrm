@@ -12,7 +12,7 @@
         public static $api_fields = [
             'id', 'photo_extension',
             'first_name', 'last_name', 'middle_name',
-            'description',  'has_photo', 'comment_extended',
+            'description',  'has_photo',
             'subjects', 'public_grades', 'start_career_year',
             'video_link',
         ];
@@ -42,8 +42,6 @@
                 // @rights-need-to-refactor
                 $User = User::findTeacher($this->id);
 				$this->banned = $User ? $User->allowed(Shared\Rights::EC_BANNED) : false;
-
-				$this->comment_extended = nl2br($this->comment_extended);
 			}
 
 			foreach ($this->branches as $id_branch) {
