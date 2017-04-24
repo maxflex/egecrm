@@ -1705,7 +1705,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.addContractDialog = function() {
 			$scope.current_contract = {
                 subjects : [],
-                info: {year: $scope.academic_year},
+                info: {year: parseInt($scope.academic_year) + 1},
                 payments_info: '0-0',
                 payments_split: 0,
                 payments_queue: 0
@@ -1723,7 +1723,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Показать окно добавления контракта
 		$scope.addContractDialogTest = function() {
-			$scope.current_contract_test = {subjects : [], info: {year: $scope.academic_year}}
+			$scope.current_contract_test = {subjects : [], info: {year: parseInt($scope.academic_year) + 1}}
 			$scope.current_contract_test.date = moment().format("DD.MM.YYYY")
             $timeout(function(){
                 $scope.$apply();
