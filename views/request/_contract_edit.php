@@ -21,7 +21,7 @@
 						}"></ng-pluralize>
 					</span>
 
-					<input style='float: left' type="text" class="form-control contract-lessons" placeholder="занятий всего"
+					<input style='float: left' type="text" class="form-control contract-lessons" placeholder="занятий всего" id="subject-{{ id_subject }}"
 						ng-show="subjectChecked(current_contract, id_subject)"
 						ng-model="current_contract.subjects[id_subject].count">
 				</div>
@@ -33,13 +33,29 @@
 				<div class="col-sm-12">
 					<span class="input-label" style="max-width: 180px; top: -9px; position: absolute">общая сумма оказанных и планируемых услуг</span>
 					<span class="half-black contract-recommended-price" ng-show="recommendedPrice(current_contract) && current_contract.info.
-					grade >= 9">
-						рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
+					grade >= 9" ng-class="{'with-discount': current_contract.discount}">
+                        рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
+                        <div ng-if='current_contract.discount'>
+                            с учетом скидки: {{ getContractSum({discount: current_contract.discount, sum: recommendedPrice(current_contract)}) | number}}<br />
+                            скидка: {{ current_contract.discount * recommendedPrice(current_contract) / 100 | number }}
+                        </div>
 					</span>
 					<div class="input-group">
 					    <input id="contract-sum" type="text" placeholder="сумма" class="form-control digits-only" ng-model="current_contract.sum" ng-value="current_contract.sum">
 					    <span class="input-group-addon rubble-addon">₽</span>
 					</div>
+				</div>
+			</div>
+            <div class="row" style="margin-bottom: 10px">
+				<div class="col-sm-12">
+                    <span class="input-label">скидка</span>
+					<select class="form-control" ng-model="current_contract.discount">
+                        <option value=''>не установлено</option>
+                        <option disabled>──────────────</option>
+						<option ng-repeat="discount in <?= Discount::json() ?>"
+								value="{{discount}}">{{ discount + '%'}}</option>
+						</select>
+					 </select>
 				</div>
 			</div>
 			<div class="row" style="margin-bottom: 10px">
@@ -54,10 +70,13 @@
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">класс</span>
-					    <?= Grades::buildSelector(false, false, ["ng-model" => "current_contract.info.grade", "ng-disabled" => 'isDisabledField(current_contract, "grade")']) ?>
+					    <?= Grades::buildSelector(false, false, [
+                            "ng-model" => "current_contract.info.grade",
+                            "ng-disabled" => 'isDisabledField(current_contract, "grade")'
+                        ], true) ?>
 				</div>
 			</div>
-			<div class="row" style="margin-bottom: 10px">
+			<!-- <div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">организационный сбор</span>
 					<div class="input-group">
@@ -65,7 +84,7 @@
 					    <span class="input-group-addon rubble-addon">₽</span>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">учебный год</span>
@@ -91,7 +110,7 @@
             <div ng-show="current_contract.payments_info != '0-0'">
                 <hr>
                 <div ng-repeat="n in [] | range:current_contract.payments_split">
-                    {{ recommendedPrice(current_contract, splitLessons(current_contract, n)) | number }} руб. ({{ splitLessons(current_contract, n) }} <ng-pluralize count="splitLessons(current_contract, n)" when="{
+                    {{ getPaymentPrice(current_contract, n) | number }} руб. ({{ splitLessons(current_contract, n) }} <ng-pluralize count="splitLessons(current_contract, n)" when="{
                         'one' 	: 'занятие',
                         'few'	: 'занятия',
                         'many'	: 'занятий',

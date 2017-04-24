@@ -11,6 +11,9 @@
                     case 11:
                         $prices[$grade] = 1700;
                         break;
+                    case Grades::EXTERNAL:
+                        $prices[$grade] = 1600;
+                        break;
                     default:
                         $prices[$grade] = 1550;
                         break;

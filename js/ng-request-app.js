@@ -1182,9 +1182,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		// Рекомендуемая цена договора
-		$scope.recommendedPrice = function(contract, subject_count) {
+		$scope.recommendedPrice = function(contract) {
 			if (!contract || !contract.info) return false;
-			count = subject_count || $scope.subjectCount(contract)
+			count = $scope.subjectCount(contract)
             return count * parseInt($scope.Prices[contract.info.grade])
 		}
 
@@ -1270,6 +1270,22 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             }
 
             return arr[part]
+        }
+
+        // получить ценник
+        $scope.getPaymentPrice = function(contract, part) {
+            // ценник за 1 занятие
+            one_subject_price = $scope.getContractSum(contract) / $scope.subjectCount(contract)
+            // ценник за 1 занятие * кол-во занятий
+            return parseFloat($scope.splitLessons(contract, part) * one_subject_price).toFixed(2)
+        }
+
+        $scope.getContractSum = function(contract) {
+            if (contract.discount) {
+                return contract.sum - (contract.sum * (contract.discount / 100))
+            } else {
+                return contract.sum
+            }
         }
 
 		$scope.getSubjectPrice = function(contract, price) {
@@ -1414,6 +1430,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 
 		$scope.addContractNew = function() {
+            error = false
+
 			// валидация параметров договора
 			if (!$scope.current_contract.sum) {
 				$("#contract-sum").addClass("has-error").focus()
@@ -1429,6 +1447,24 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("#contract-date").removeClass("has-error")
 			}
 
+            // если предмет желтый или зеленый, то поле «кол-во занятий» не может быть пустым или нулем
+            $.each($scope.current_contract.subjects, function(subject_id, subject) {
+                if ((subject.status == 2 || subject.status == 3) && !parseInt(subject.count)) {
+                    $("#subject-" + subject_id).addClass("has-error").focus()
+                    error = true
+                    return false
+                } else {
+                    $("#subject-" + subject_id).removeClass("has-error")
+                }
+            })
+
+            if (!$scope.current_contract.date) {
+				$("#contract-date").addClass("has-error").focus()
+				return false
+			} else {
+				$("#contract-date").removeClass("has-error")
+			}
+
 			if (!$scope.current_contract.info.grade) {
 				$("select[name='grades']").addClass("has-error").focus()
 				return false
@@ -1436,27 +1472,15 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("select[name='grades']").removeClass("has-error")
 			}
 
+            if (error) {
+                return false
+            }
+
 			// обновить contract.info
 			if ($scope.current_contract.id_contract > 0) {
 				$scope.contractsChain($scope.current_contract.id_contract).forEach(function(contract) {
 					contract.info = $scope.current_contract.info
 				})
-			}
-
-
-			// количество активных, но незаполненных полей "кол-во занятий"
-			count = $(".contract-lessons").filter(function() {
-				if (!$(this).val() && $(this).is(":visible")) {
-					$(this).addClass("has-error").focus()
-				} else {
-					$(this).removeClass("has-error")
-				}
-				return ($(this).val() == "" && $(this).is(":visible"))
-			}).length
-
-			// если есть незаполненные поля, то валидация не пройдена
-			if (count > 0) {
-				return
 			}
 
 			pushAndSetCurrentVersion = function (contract) {
@@ -1609,7 +1633,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					subject.id_subject = id_subject
 					subject.name 	= $scope.SubjectsFull[id_subject]
 					subject.count 	= ''
-					subject.count2 	= ''
 				}
 			} else {
 				delete subjects[id_subject]

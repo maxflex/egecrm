@@ -91,8 +91,8 @@
    'one'	: 'занятия',
    'few'	: 'занятий',
    'many'	: 'занятий',
-}"></ng-pluralize>, приобретаемых на момент заключения Договора, и составляет {{contract.sum | number}} (<span class="m_title">{{numToText(contract.sum)}}</span>)
-		 <ng-pluralize count="contract.sum" when="{
+}"></ng-pluralize>, приобретаемых на момент заключения Договора, и составляет {{getContractSum(contract) | number}} (<span class="m_title">{{numToText(getContractSum(contract))}}</span>)
+		 <ng-pluralize count="getContractSum(contract)" when="{
 			'one'	: 'рубль',
 			'few'	: 'рубля',
 			'many'	: 'рублей',
@@ -102,7 +102,7 @@
 <p>3.4. Оплата Услуг по настоящему Договору  производится Заказчиком следующим образом:</p>
 <ul style='margin: 0'>
     <li ng-repeat="n in [] | range:contract.payments_split">
-        {{ contract.payments_split == 1 ? 'единовременный' : '' }} платеж в размере {{ recommendedPrice(contract, splitLessons(contract, n)) | number }} руб. ({{ splitLessons(contract, n) }} <ng-pluralize count="splitLessons(contract, n)" when="{
+        {{ contract.payments_split == 1 ? 'единовременный' : '' }} платеж в размере {{ getPaymentPrice(current_contract, n) | number }} руб.  ({{ splitLessons(contract, n) }} <ng-pluralize count="splitLessons(contract, n)" when="{
             'one' 	: 'занятие',
             'few'	: 'занятия',
             'many'	: 'занятий',

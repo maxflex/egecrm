@@ -15658,6 +15658,8 @@ h4.row-header {
   position: absolute;
   right: 17px;
   top: -16px; }
+  .contract-recommended-price.with-discount {
+    top: -45px; }
 
 .visible {
   visibility: visible !important; }

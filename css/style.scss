@@ -2142,6 +2142,9 @@ white-space: nowrap;
 	position: absolute;
     right: 17px;
     top: -16px;
+    &.with-discount {
+        top: -45px;
+    }
 }
 
 .visible {
