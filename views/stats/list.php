@@ -99,7 +99,7 @@
 					<?= $stat['contract_sum_changed'] ?>
 				</td>
 				<td>
-					<?= $stat['payment_confirmed'] ?>
+					<?= $stat['payment_confirmed'] ?: '' ?>
 					<?php if ($stat['payment_unconfirmed'] > 0) :?>
 						<span class="quater-black"><?= ($stat['payment_confirmed'] > 0 ? ' + ' : '')?><?= $stat['payment_unconfirmed'] ?></span>
 					<?php endif ?>
