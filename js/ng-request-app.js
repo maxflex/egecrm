@@ -1185,11 +1185,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.recommendedPrice = function(contract, subject_count) {
 			if (!contract || !contract.info) return false;
 			count = subject_count || $scope.subjectCount(contract)
-			if (contract.info.grade == 11) {
-				return count * 1700
-			} else {
-                return count * 1600
-			}
+            return count * parseInt($scope.Prices[contract.info.grade])
 		}
 
         // опции выбора разбиения платежей
@@ -2083,7 +2079,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.setMenu = function(menu) {
 			if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				$.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
-					['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'server_markers', 'contracts', 'contracts_test', 'student', 'Groups', 'student_phone_level',
+					['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'Prices', 'server_markers', 'contracts', 'contracts_test', 'student', 'Groups', 'student_phone_level',
 						'branches_brick', 'representative_phone_level', 'representative'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
