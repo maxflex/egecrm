@@ -14,6 +14,9 @@
             // Добавляем предметы в контракт
             $this->subjects = $this->getSubjects();
 
+            // Цена с учетом скидки
+            $this->final_sum = $this->discount > 0 ? ($this->sum * ((100 - $this->discount) / 100)) : $this->sum;
+
             $this->_setNull($this->duty);
             $this->_setNull($this->sum);
 

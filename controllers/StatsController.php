@@ -47,11 +47,11 @@
 						$stats['contract_new']['external']++;
 						$stats['subjects_new']['external'] += count($Contract->subjects);
 						// сумма заключенных дагаваров
-						$stats['contract_sum_new']['external'] += $Contract->sum;
+						$stats['contract_sum_new']['external'] += $Contract->final_sum;
 					} else {
 						$stats['contract_new']['basic']++;
 						$stats['subjects_new']['basic'] += count($Contract->subjects);
-						$stats['contract_sum_new']['basic'] += $Contract->sum;
+						$stats['contract_sum_new']['basic'] += $Contract->final_sum;
 					}
 					continue; # если договор оригинальный, у него не может быть предыдущих версий
 				}
@@ -60,16 +60,16 @@
 				$PreviousContract = $Contract->getPreviousVersionInYear();
 				if ($PreviousContract) {
 					// если сумма увеличилась
-					if ($Contract->sum > $PreviousContract->sum) {
-						$stats['contract_sum_changed'] += ($Contract->sum - $PreviousContract->sum);
+					if ($Contract->final_sum > $PreviousContract->final_sum) {
+						$stats['contract_sum_changed'] += ($Contract->final_sum - $PreviousContract->final_sum);
 					}
 
 					// если сумма уменьшилась
-					if ($PreviousContract->sum > $Contract->sum) {
+					if ($PreviousContract->final_sum > $Contract->final_sum) {
 						if (!isset($stats['contract_sum_changed'])) {
 							$stats['contract_sum_changed'] = 0;
 						}
-						$stats['contract_sum_changed'] -= ($PreviousContract->sum - $Contract->sum);
+						$stats['contract_sum_changed'] -= ($PreviousContract->final_sum - $Contract->final_sum);
 					}
 
 					// уменьшение услуг (было БОЛЬШЕ стало МЕНЬШЕ)
