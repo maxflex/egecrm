@@ -1281,7 +1281,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
         $scope.getContractSum = function(contract) {
             if (!contract) return 0;
 
-            if (contract.discount) {
+            if (contract.discount > 0) {
                 return $scope.getDiscountedPrice(contract.sum, contract.discount)
             } else {
                 return contract.sum
@@ -1743,7 +1743,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
                 info: {year: parseInt($scope.academic_year) + 1},
                 payments_info: '0-0',
                 payments_split: 0,
-                payments_queue: 0
+                payments_queue: 0,
+                discount: 0
             }
 			$scope.current_contract.date = moment().format("DD.MM.YYYY")
             $timeout(function(){

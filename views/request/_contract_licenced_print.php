@@ -91,12 +91,12 @@
    'one'	: 'занятия',
    'few'	: 'занятий',
    'many'	: 'занятий',
-}"></ng-pluralize>, приобретаемых на момент заключения Договора, и <span ng-show='contract.discount'>с учетом скидки {{ contract.discount }}%</span> составляет {{ getContractSum(contract) | number}} (<span class="m_title">{{numToText(getContractSum(contract))}}</span>) руб.</p>
+}"></ng-pluralize>, приобретаемых на момент заключения Договора, и <span ng-show='contract.discount > 0'>с учетом скидки {{ contract.discount }}%</span> составляет {{ getContractSum(contract) | number}} (<span class="m_title">{{numToText(getContractSum(contract))}}</span>) руб.</p>
 <p>3.2.
-    <span ng-show='!contract.discount'>Стоимость одного занятия составляет {{ oneSubjectPrice(contract) }} руб.</span>
-    <span ng-show='contract.discount'>Стоимость одного занятия с учетом скидки {{ contract.discount }}% составляет {{ oneSubjectPrice(contract) }} руб.</span></p>
+    <span ng-show='!contract.discount > 0'>Стоимость одного занятия составляет {{ oneSubjectPrice(contract) }} руб.</span>
+    <span ng-show='contract.discount > 0'>Стоимость одного занятия с учетом скидки {{ contract.discount }}% составляет {{ oneSubjectPrice(contract) }} руб.</span></p>
 <p>3.3. В случае изменения Договора в связи с уменьшением или увеличением количества необходимых Заказчику занятий цена Договора пересчитывается в соответствии с измененным количеством занятий.</p>
-<p>3.4. Оплата Услуг по настоящему Договору <span ng-show='contract.discount'>с учетом скидки {{ contract.discount }}%</span> производится Заказчиком следующим образом:</p>
+<p>3.4. Оплата Услуг по настоящему Договору <span ng-show='contract.discount > 0'>с учетом скидки {{ contract.discount }}%</span> производится Заказчиком следующим образом:</p>
 <ul style='margin: 0'>
     <li ng-repeat="n in [] | range:contract.payments_split">
         {{ contract.payments_split == 1 ? 'единовременный' : '' }} платеж в размере {{ getPaymentPrice(contract, n) | number }} руб.  ({{ splitLessons(contract, n) }} <ng-pluralize count="splitLessons(contract, n)" when="{

@@ -33,9 +33,9 @@
 				<div class="col-sm-12">
 					<span class="input-label" style="max-width: 180px; top: -9px; position: absolute">общая сумма оказанных и планируемых услуг</span>
 					<span class="half-black contract-recommended-price" ng-show="recommendedPrice(current_contract) && current_contract.info.
-					grade >= 9" ng-class="{'with-discount': current_contract.discount}">
+					grade >= 9" ng-class="{'with-discount': current_contract.discount > 0}">
                         рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
-                        <div ng-if='current_contract.discount'>
+                        <div ng-if='current_contract.discount > 0'>
                             с учетом скидки: {{ getContractSum({discount: current_contract.discount, sum: recommendedPrice(current_contract)}) | number}}<br />
                             скидка: {{ current_contract.discount * recommendedPrice(current_contract) / 100 | number }}
                         </div>
@@ -50,7 +50,7 @@
 				<div class="col-sm-12">
                     <span class="input-label">скидка</span>
 					<select class="form-control" ng-model="current_contract.discount">
-                        <option value=''>не установлено</option>
+                        <option value='0'>не установлено</option>
                         <option disabled>──────────────</option>
 						<option ng-repeat="discount in <?= Discount::json() ?>"
 								value="{{discount}}">{{ discount + '%'}}</option>
