@@ -14,13 +14,13 @@
 			</tr>
 				<tr ng-repeat="contract in contracts | group_by_id_contract:id_contract | orderBy:'date_changed'">
 					<td width="20%">версия {{ $index + 1 }} от {{ formatContractDate(contract.date) }}</td>
-					<td width="22%">{{ getContractSum(contract) | number }} <ng-pluralize count="getContractSum(contract)" when="{
+					<td width="25%">{{ getContractSum(contract) | number }} <ng-pluralize count="getContractSum(contract)" when="{
 						'one': 'рубль',
 						'few': 'рубя',
 						'many': 'рублей'
-					}"></ng-pluralize><span class='text-gray' ng-show='contract.discount > 0'> (скидка {{ contract.discount }}%)</>
+					}"></ng-pluralize><span class='text-gray' ng-show='contract.discount > 0'> (с учетом скидки {{ contract.discount }}%)</>
 					</td>
-					<td width="35%">
+					<td width="32%">
 						<span
 							ng-repeat-start="subject in contract.subjects | orderBy:'id_subject' "
 							ng-class="{
