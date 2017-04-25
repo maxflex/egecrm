@@ -1450,7 +1450,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 
             // если предмет желтый или зеленый, то поле «кол-во занятий» не может быть пустым или нулем
-            $.each($scope.current_contract.subjects.filter(Boolean), function(subject_id, subject) {
+            $.each($scope.current_contract.subjects, function(subject_id, subject) {
+                if (subject === undefined) {
+                    return
+                }
                 if ((subject.status == 2 || subject.status == 3) && !parseInt(subject.count)) {
                     $("#subject-" + subject_id).addClass("has-error").focus()
                     error = true
