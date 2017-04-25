@@ -1274,20 +1274,27 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
         // получить ценник
         $scope.getPaymentPrice = function(contract, part) {
-            // ценник за 1 занятие
-            one_subject_price = $scope.getContractSum(contract) / $scope.subjectCount(contract)
             // ценник за 1 занятие * кол-во занятий
-            return parseFloat($scope.splitLessons(contract, part) * one_subject_price).toFixed(2)
+            return parseFloat($scope.splitLessons(contract, part) * $scope.oneSubjectPrice(contract)).toFixed(2)
         }
 
         $scope.getContractSum = function(contract) {
             if (!contract) return 0;
 
             if (contract.discount) {
-                return contract.sum - (contract.sum * (contract.discount / 100))
+                return $scope.getDiscountedPrice(contract.sum, contract.discount)
             } else {
                 return contract.sum
             }
+        }
+
+        // получить цену за 1 занятие
+        $scope.oneSubjectPrice = function(contract) {
+            return $scope.getContractSum(contract) / $scope.subjectCount(contract)
+        }
+
+        $scope.getDiscountedPrice = function(price, discount) {
+            return price - (price * (discount / 100))
         }
 
 		$scope.getSubjectPrice = function(contract, price) {
