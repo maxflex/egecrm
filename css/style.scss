@@ -2102,6 +2102,10 @@ white-space: nowrap;
 			height: 34px;
 			position: relative;
 		}
+        & .input-group {
+            width: 160px;
+            top: -5px;
+        }
 		& .ios7-switch {
 			& .switch {
 				font-size: 24px;
@@ -2114,10 +2118,10 @@ white-space: nowrap;
 				opacity: .5;
 			}
 		}
-		& input[type="text"] {
-			width: 120px;
-		//	visibility: hidden;
-		}
+		// & input[type="text"] {
+		// 	width: 120px;
+		// //	visibility: hidden;
+		// }
 
 		& .dogavar-label {
 		    position: absolute;
@@ -2128,7 +2132,7 @@ white-space: nowrap;
 				right: 220px;
 		    }
 		    &.first {
-				right: 92px;
+				right: 38px;
 		    }
 		    &.second {
 				right: 10px;
@@ -3499,4 +3503,11 @@ mwl-calendar .cal-day-today {
 mwl-calendar .cal-day-today span[data-cal-date] {
     color: inherit;
     font-size: 14px !important;
+}
+
+.contract-details {
+    & > span:first-child {
+        width: 300px;
+        display: inline-block;
+    }
 }

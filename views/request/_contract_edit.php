@@ -2,7 +2,7 @@
 <div class="lightbox-new lightbox-addcontract">
 	<h4 style="margin-bottom: 20px">ПАРАМЕТРЫ ДОГОВОРА</h4>
 	<div class="row">
-		<div class="col-sm-5">
+		<div class="col-sm-4">
 			<div class="contract-subject-list subject-line transition-control no-transition" ng-repeat="(id_subject, subject_name) in Subjects">
 				    <input class="triple-switch" id="checkbox-subject-{{id_subject}}"
 				    	ng-model="current_contract.subjects[id_subject].status"
@@ -11,38 +11,26 @@
 					    data-slider-value="{{current_contract.subjects[id_subject].status}}"
 				    >
 				    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(current_contract, id_subject)}">{{subject_name}}</span>
-				<div class="pull-right" style="top: -5px; position: relative; width: 205px">
 
-					<span class="dogavar-label first" ng-show="subjectChecked(current_contract, id_subject)">
-						<ng-pluralize ng-show="current_contract.subjects[id_subject].count" count="current_contract.subjects[id_subject].count" when="{
-							'one' 	: 'занятие',
-							'few'	: 'занятия',
-							'many'	: 'занятий',
-						}"></ng-pluralize>
-					</span>
-
-					<input style='float: left' type="text" class="form-control contract-lessons" placeholder="занятий всего" id="subject-{{ id_subject }}"
-						ng-show="subjectChecked(current_contract, id_subject)"
-						ng-model="current_contract.subjects[id_subject].count">
-				</div>
+                    <div class="input-group" ng-show="subjectChecked(current_contract, id_subject)">
+                        <input type="text" class="form-control contract-lessons" id="subject-{{ id_subject }}"
+    						ng-model="current_contract.subjects[id_subject].count">
+					    <span class="input-group-addon rubble-addon">занятий</span>
+					</div>
 			</div>
 		</div>
 
-		<div class="col-sm-7">
+		<div class="col-sm-8">
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
-					<span class="input-label" style="max-width: 180px; top: -9px; position: absolute">общая сумма оказанных и планируемых услуг</span>
+					<span class="input-label" style="max-width: 320px; top: -2px; position: absolute">общая сумма оказанных и планируемых услуг</span>
 					<span class="half-black contract-recommended-price" ng-show="recommendedPrice(current_contract) && current_contract.info.
-					grade >= 9" ng-class="{'with-discount': current_contract.discount > 0}">
+					grade >= 9">
                         рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
-                        <div ng-if='current_contract.discount > 0'>
-                            с учетом скидки: {{ getContractSum({discount: current_contract.discount, sum: recommendedPrice(current_contract)}) | number}}<br />
-                            скидка: {{ current_contract.discount * recommendedPrice(current_contract) / 100 | number }}
-                        </div>
 					</span>
 					<div class="input-group">
 					    <input id="contract-sum" type="text" placeholder="сумма" class="form-control digits-only" ng-model="current_contract.sum" ng-value="current_contract.sum">
-					    <span class="input-group-addon rubble-addon">₽</span>
+					    <span class="input-group-addon rubble-addon">₽, цена без скидки</span>
 					</div>
 				</div>
 			</div>
@@ -109,15 +97,39 @@
 			</div>
             <div ng-show="current_contract.payments_info != '0-0'">
                 <hr>
-                <div ng-repeat="n in [] | range:current_contract.payments_split">
-                    {{ getPaymentPrice(current_contract, n) | number }} руб. ({{ splitLessons(current_contract, n) }} <ng-pluralize count="splitLessons(current_contract, n)" when="{
-                        'one' 	: 'занятие',
-                        'few'	: 'занятия',
-                        'many'	: 'занятий',
-                    }"></ng-pluralize>),
-                    <span ng-if='!n'>{{ n + 1 }} платеж при заключении договора</span>
-                    <span ng-if='n'>
-                        {{ n + 1 }} платеж до {{ splitPaymentsOptions(current_contract.info.year)[current_contract.payments_info][n - 1] }}
+                <div style='margin-bottom: 20px'>
+                    <div class='contract-details'>
+                        <span>общая стоимость договора:</span>
+                        <span>{{ current_contract.sum | number }} руб.</span>
+                    </div>
+                    <div  class='contract-details' ng-if='current_contract.discount == 0'>
+                        <span>скидка:</span>
+                        <span>отсутствует</span>
+                    </div>
+                    <div ng-if='current_contract.discount > 0'>
+                        <div class='contract-details'>
+                            <span>скидка:</span>
+                            <span>{{ current_contract.discount * current_contract.sum / 100 | number }} руб.</span>
+                        </div>
+                        <div class='contract-details'>
+                            <span>стоимость договора с учетом скидки:</span>
+                            <span>{{ getContractSum(current_contract) | number}} руб.</span>
+                        </div>
+                    </div>
+                </div>
+                <div ng-repeat="n in [] | range:current_contract.payments_split" class='contract-details'>
+                    <span>
+                        <span ng-if='!n'>{{ n + 1 }} платеж при заключении договора:</span>
+                        <span ng-if='n'>
+                            {{ n + 1 }} платеж до {{ splitPaymentsOptions(current_contract.info.year)[current_contract.payments_info][n - 1] }}:
+                        </span>
+                    </span>
+                    <span>
+                        {{ getPaymentPrice(current_contract, n) | number }} руб. ({{ splitLessons(current_contract, n) }} <ng-pluralize count="splitLessons(current_contract, n)" when="{
+                            'one' 	: 'занятие',
+                            'few'	: 'занятия',
+                            'many'	: 'занятий',
+                        }"></ng-pluralize>)
                     </span>
                 </div>
             </div>
