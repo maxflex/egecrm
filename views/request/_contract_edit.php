@@ -2,7 +2,7 @@
 <div class="lightbox-new lightbox-addcontract">
 	<h4 style="margin-bottom: 20px">ПАРАМЕТРЫ ДОГОВОРА</h4>
 	<div class="row">
-		<div class="col-sm-4">
+		<div class="col-sm-4" style='width: 490px'>
 			<div class="contract-subject-list subject-line transition-control no-transition" ng-repeat="(id_subject, subject_name) in Subjects">
 				    <input class="triple-switch" id="checkbox-subject-{{id_subject}}"
 				    	ng-model="current_contract.subjects[id_subject].status"
@@ -13,14 +13,17 @@
 				    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(current_contract, id_subject)}">{{subject_name}}</span>
 
                     <div class="input-group" ng-show="subjectChecked(current_contract, id_subject)">
+                        <input type="text" class="form-control contract-lessons" id="subject-program-{{ id_subject }}"
+    						ng-model="current_contract.subjects[id_subject].count_program" style='border-right: 0'>
+					    <span class="input-group-addon rubble-addon">занятий по программе</span>
                         <input type="text" class="form-control contract-lessons" id="subject-{{ id_subject }}"
-    						ng-model="current_contract.subjects[id_subject].count">
+    						ng-model="current_contract.subjects[id_subject].count" style='border-left: 0'>
 					    <span class="input-group-addon rubble-addon">занятий</span>
 					</div>
 			</div>
 		</div>
 
-		<div class="col-sm-8">
+		<div class="col-sm-8" style='width: 600px'>
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label" style="max-width: 320px; top: -2px; position: absolute">общая сумма оказанных и планируемых услуг</span>

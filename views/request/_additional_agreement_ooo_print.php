@@ -4,6 +4,16 @@
 		text-align: justify !important;
 		text-indent: 2cm;
 	}
+    .ng-hide {
+	    display: none !important;
+    }
+    ul {
+		margin: 0;
+        -webkit-padding-start: 100px;
+	}
+    br {
+        display: none;
+    }
     </style>
 	<h4 style="margin-bottom: 0">Дополнительное соглашение №</h4>
 	<h4 style="margin-top: 0">к договору на оказание платных образовательных услуг №{{contract.id_contract}} от {{firstContractInChain(contract).date}} г.</h4>
@@ -20,27 +30,11 @@
 		<h4>1. ПРЕДМЕТ СОГЛАШЕНИЯ</h4>
 
 	<p>1.1. Стороны пришли к соглашению внести следующие изменения в Договор №{{contract.id_contract}} от {{firstContractInChain(contract).date}} г.:</p>
-
-	<p>- Пункт 1.3. Договора изложить в следующей редакции:<br>
-		«Продолжительность образовательной программы по программе курса
-		<span ng-repeat="program in contract.subjects">
-			«{{SubjectsFull2[program.id_subject]}}-{{contract.info.grade_label}}-{{ program.count }}» ({{ program.count * 3 }}
-			аудиторных <ng-pluralize count="program.count * 3" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> и {{ program.count * 1.5 }}
-			 <ng-pluralize count="program.count * 1.5" when="{'one' : 'час', 'few' : 'часа', 'many' : 'часов'}"></ng-pluralize> на самостоятельную подготовку){{$last ? '.' : ','}}
-		</span> Форма обучения – очная.
-	</p>
-	<p>- Пункт 3.1. Договора изложить в следующей редакции:<br>
-		«Общая стоимость Услуг Исполнителя по Договору складывается из стоимости {{ subjectCount(contract) }} <ng-pluralize count="subjectCount(contract)" when="{
-			'one' 	: 'занятия',
-			'few'	: 'занятий',
-			'many'	: 'занятий',
-		}"></ng-pluralize>, приобретаемых на момент заключения Договора, и составляет {{contract.sum | number}} (<span class="m_title">{{numToText(contract.sum)}}</span>)
-		 <ng-pluralize count="contract.sum" when="{
-			'one'	: 'рубль',
-			'few'	: 'рубля',
-			'many'	: 'рублей',
-		}"></ng-pluralize>.»
-	</p>
+    <?php foreach(['1.3', '3.1', '3.2', '3.4', '11.2'] as $point) :?>
+        <p>- Пункт <?= $point ?>. Договора изложить в следующей редакции:
+    		«<?= partial("contract/{$point}") ?>»
+    	</p>
+    <?php endforeach ?>
 	<p>1.2. Все обязательства Сторон, предусмотренные Договором и не затронутые настоящим Дополнительным соглашением, остаются в неизменном виде.</p>
 	<p>1.3. Настоящее Дополнительное соглашение является неотъемлемой частью Договора.</p>
 	<p>1.4. Настоящее Дополнительное соглашение вступает в силу с момента подписания и действует в течение срока действия Договора.</p>
@@ -49,8 +43,8 @@
 
 	<div style='margin: 50px 0 0 0'>
 		<div style="display: inline-block; float: left; width: 50%">
-			Генеральный директор  ООО «ЕГЭ-Центр»<br>
-				Эрдман К. А.
+			<div>Генеральный директор  ООО «ЕГЭ-Центр»</div>
+			<div>Эрдман К. А.</div>
 		</div>
 		<div style="display: inline-block; width: 50%">
 			{{ representative.last_name }} {{ representative.first_name[0] }}. {{ representative.middle_name[0] }}

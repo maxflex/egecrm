@@ -1,0 +1,2 @@
+<span ng-show='!contract.discount > 0'>Стоимость одного занятия составляет {{ oneSubjectPrice(contract) }} руб.</span>
+<span ng-show='contract.discount > 0'>Стоимость одного занятия с учетом скидки {{ contract.discount }}% составляет {{ oneSubjectPrice(contract) }} руб.</span>

@@ -301,6 +301,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.firstContractInChain = function(contract) {
 			return contract && $scope.firstContractInChainById(contract.id_contract)
 		}
+        $scope.getPreviousContract = function(contract) {
+            contracts = $scope.contractsChain(contract.id)
+            contract_ids = _.uniq(_.pluck(contracts, 'id_contract')).sort().reverse()
+            previous_contract_id = _.find(contract_ids, function(contract_id) {
+                return contract_id < contract.id
+            })
+            return _.find($scope.contracts, {id: previous_contract_id})
+        }
 		$scope.firstContractInChainTest = function(test_contract) {
 			return test_contract && $scope.firstContractInChainByIdTest(test_contract.id_contract)
 		}
@@ -1393,6 +1401,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 		}
 
+        // получить предметы договора, игнорируя с кол-вом предметов по программе=0
+        $scope.getSubjects = function(contract) {
+            return _.filter(contract.subjects, function(subject) {
+                return parseInt(subject.count) > 0;
+            })
+        }
+
 		// Добавление по нажатию ENTER
 		$scope.watchEnter = function($event) {
 			// получаем ID элемента
@@ -1460,6 +1475,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             $.each($scope.current_contract.subjects, function(subject_id, subject) {
                 if (subject === undefined) {
                     return
+                }
+                if (!parseInt(subject.count_program)) {
+                    $("#subject-program-" + subject_id).addClass("has-error").focus()
+                    error = true
+                    return false
+                } else {
+                    $("#subject-program-" + subject_id).removeClass("has-error")
                 }
                 if ((subject.status == 2 || subject.status == 3) && !parseInt(subject.count)) {
                     $("#subject-" + subject_id).addClass("has-error").focus()

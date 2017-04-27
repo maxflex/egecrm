@@ -15617,7 +15617,7 @@ h4.row-header {
     display: inline-block; }
 
 .lightbox-addcontract, .lightbox-addcontracttest {
-  width: 900px;
+  width: 1100px;
   left: calc(50% - 450px);
   top: 10%; }
   .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select, .lightbox-addcontracttest .input-group, .lightbox-addcontracttest input, .lightbox-addcontracttest select {
@@ -16708,6 +16708,9 @@ mwl-calendar .cal-day-today span[data-cal-date] {
 .contract-details > span:first-child {
   width: 300px;
   display: inline-block; }
+
+.contract-lessons {
+  width: 42px !important; }
 
 .control-group {
   display: inline-block;

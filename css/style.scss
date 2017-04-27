@@ -2080,7 +2080,7 @@ white-space: nowrap;
 }
 
 .lightbox-addcontract, .lightbox-addcontracttest {
-	width: 900px;
+	width: 1100px;
 	left: calc(50% - 450px);
     top: 10%;
 
@@ -3510,4 +3510,8 @@ mwl-calendar .cal-day-today span[data-cal-date] {
         width: 300px;
         display: inline-block;
     }
+}
+
+.contract-lessons {
+    width: 42px !important;
 }
