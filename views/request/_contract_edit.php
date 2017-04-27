@@ -13,11 +13,11 @@
 				    <span class="subject-name" ng-class="{'no-opacity' : subjectChecked(current_contract, id_subject)}">{{subject_name}}</span>
 
                     <div class="input-group" ng-show="subjectChecked(current_contract, id_subject)">
-                        <input type="text" class="form-control contract-lessons" id="subject-program-{{ id_subject }}"
-    						ng-model="current_contract.subjects[id_subject].count_program" style='border-right: 0'>
-					    <span class="input-group-addon rubble-addon">занятий по программе</span>
                         <input type="text" class="form-control contract-lessons" id="subject-{{ id_subject }}"
-    						ng-model="current_contract.subjects[id_subject].count" style='border-left: 0'>
+    						ng-model="current_contract.subjects[id_subject].count" style='border-right: 0'>
+					    <span class="input-group-addon rubble-addon">занятий. Программа</span>
+                        <input type="text" class="form-control contract-lessons" id="subject-program-{{ id_subject }}"
+    						ng-model="current_contract.subjects[id_subject].count_program" style='border-left: 0'>
 					    <span class="input-group-addon rubble-addon">занятий</span>
 					</div>
 			</div>
