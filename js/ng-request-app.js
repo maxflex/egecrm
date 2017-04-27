@@ -301,14 +301,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.firstContractInChain = function(contract) {
 			return contract && $scope.firstContractInChainById(contract.id_contract)
 		}
-        $scope.getPreviousContract = function(contract) {
-            contracts = $scope.contractsChain(contract.id)
-            contract_ids = _.uniq(_.pluck(contracts, 'id_contract')).sort().reverse()
-            previous_contract_id = _.find(contract_ids, function(contract_id) {
-                return contract_id < contract.id
-            })
-            return _.find($scope.contracts, {id: previous_contract_id})
-        }
 		$scope.firstContractInChainTest = function(test_contract) {
 			return test_contract && $scope.firstContractInChainByIdTest(test_contract.id_contract)
 		}
