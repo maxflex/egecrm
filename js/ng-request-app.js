@@ -1400,6 +1400,20 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             })
         }
 
+        // максимальное кол-во занятий из предметов договора
+        $scope.getMaxSubjectCount = function(contract) {
+            max = -1
+            $scope.getSubjects(contract).forEach(function(subject) {
+                if (subject.count > max) {
+                    max = subject.count
+                }
+                if (subject.count_program > max) {
+                    max = subject.count_program
+                }
+            })
+            return max
+        }
+
 		// Добавление по нажатию ENTER
 		$scope.watchEnter = function($event) {
 			// получаем ID элемента
