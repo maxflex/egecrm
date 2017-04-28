@@ -41,7 +41,7 @@
 				<div class="col-sm-12">
                     <span class="input-label">скидка</span>
 					<select class="form-control" ng-model="current_contract.discount">
-                        <option value='0'>не установлено</option>
+                        <option value='0'>отсутствует</option>
                         <option disabled>──────────────</option>
 						<option ng-repeat="discount in <?= Discount::json() ?>"
 								value="{{discount}}">{{ discount + '%'}}</option>
