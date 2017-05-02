@@ -32,7 +32,8 @@
                         рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
 					</span>
 					<div class="input-group">
-					    <input id="contract-sum" type="text" placeholder="сумма" class="form-control digits-only" ng-model="current_contract.sum" ng-value="current_contract.sum">
+					    <input id="contract-sum" type="text" placeholder="сумма" style='padding-right: 4px'
+                            class="form-control digits-only" ng-model="current_contract.sum" ng-value="current_contract.sum">
 					    <span class="input-group-addon rubble-addon">₽, цена без скидки</span>
 					</div>
 				</div>

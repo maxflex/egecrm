@@ -15621,7 +15621,7 @@ h4.row-header {
   left: calc(50% - 450px);
   top: 10%; }
   .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select, .lightbox-addcontracttest .input-group, .lightbox-addcontracttest input, .lightbox-addcontracttest select {
-    width: 230px;
+    width: 232px;
     float: right; }
   .lightbox-addcontract .input-label, .lightbox-addcontracttest .input-label {
     margin-top: 7px;
