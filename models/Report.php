@@ -243,6 +243,47 @@
 				]);
 			}
 
+            // если не первый отчет в конфигурации, добавляем соответствующие r.id null-записи с кол-вом занятий
+            // с момента последнего отчета в конфигурации
+
+            // массив для хранения созданных null-конфигураций
+            $nulls = [];
+            foreach ($data as $Object) {
+                // если отчет создан и null-конфигурация еще не создана
+                if ($Object->id && ! isset($nulls[$Object->id_teacher][$Object->id_entity][$Object->id_subject][$Object->year])) {
+                    // находим последний отчет в конфигурации
+                    // отчет перед отчетом
+                    $condition = "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ."
+    							AND id_teacher=" . $Object->id_teacher ." AND year=" . $Object->year;
+
+					$LastReport = Report::find([
+						"condition" => $condition,
+	                    "order" 	=> "STR_TO_DATE(date,'%d.%m.%Y') desc "
+					]);
+
+                    // создаем r.id null-запись с кол-вом занятий с момента последнего отчета в конфигурации
+
+                    // кол-во занятий с момента последнего отчета в конфигурации
+                    $lessons_count = VisitJournal::count([
+						"condition" => "id_subject={$Object->id_subject} AND id_entity={$Object->id_entity}
+							AND id_teacher=" . $Object->id_teacher . " AND year={$Object->year}
+							AND lesson_date > '" . date("Y-m-d", strtotime($LastReport->date)) . "'"
+					]);
+
+                    ReportHelper::add([
+    					// 'id_report' 	=> $Object->id, id_report = NULL
+    					'id_teacher' 	=> $Object->id_teacher,
+    					'id_student' 	=> $Object->id_entity,
+    					'id_subject' 	=> $Object->id_subject,
+    					'year'			=> $Object->year,
+    					'lesson_count'	=> $lessons_count,
+    				]);
+
+                    // отмечаем, что для этой конфигурации null-запись создана
+                    $nulls[$Object->id_teacher][$Object->id_entity][$Object->id_subject][$Object->year] = true;
+                }
+            }
+
 			return Settings::set('reports_updated', now());
 		}
 
