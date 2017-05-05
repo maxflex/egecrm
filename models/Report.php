@@ -68,27 +68,18 @@
             if ($year != academicYear()) {
                 return false;
             }
-            // if forced then not needed
-            if (ReportForce::check($id_student, $id_teacher, $id_subject, $year)) {
-                return false;
-            }
-            // получаем кол-во занятий с последнего отчета по предмету
-            $LatestReport = Report::find(self::condition($id_student, $id_teacher, $id_subject, $year));
-
-            if ($LatestReport) {
-                $latest_report_date = date("Y-m-d", strtotime($LatestReport->date));
-            } else {
-                $latest_report_date = "0000-00-00";
-            }
-
-            $lessons_count = VisitJournal::count([
-                "condition" => "id_subject={$id_subject} AND id_entity={$id_student} AND id_teacher={$id_teacher}
-                    AND lesson_date > '$latest_report_date' AND year={$year}"
-            ]);
 
             $in_group = Group::count([
                 "condition" => "FIND_IN_SET({$id_student}, students) AND id_subject={$id_subject} AND id_teacher={$id_teacher} AND year={$year} and ended = 0"
             ]);
+
+            $lesson_count = dbConnection()->query("
+                                SELECT COUNT(*) AS cnt FROM reports_helper rh
+                                LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
+                                WHERE rh.lesson_count >= " . self::LESSON_COUNT . " AND rf.id IS NULL AND rh.id_report IS NULL AND
+                                rh.id_student = {$id_student} AND rh.id_teacher = {$id_teacher} AND rh.id_subject = {$id_subject} AND rh.year={$year}
+                            ")->fetch_object()->cnt;
+
             return $lessons_count >= self::LESSON_COUNT && $in_group;
         }
 
