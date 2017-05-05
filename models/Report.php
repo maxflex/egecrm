@@ -84,7 +84,7 @@
                                 rh.id_student = {$id_student} AND rh.id_teacher = {$id_teacher} AND rh.id_subject = {$id_subject} AND rh.year={$year}
                             ")->fetch_object()->cnt;
 
-            return $lessons_count >= self::LESSON_COUNT && $in_group;
+            return $lessons_count && $in_group;
         }
 
         /**
