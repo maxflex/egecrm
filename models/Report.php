@@ -201,7 +201,7 @@
                     }
 
                     $in_group = Group::count([
-                        "condition" => "FIND_IN_SET({$Object->id_student}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
+                        "condition" => "FIND_IN_SET({$Object->id_entity}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
                     ]);
 
                     // если ученик не находится в группе – не создаем «требуется отчета»
@@ -259,7 +259,7 @@
                     }
 
                     $in_group = Group::count([
-                        "condition" => "FIND_IN_SET({$Object->id_student}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
+                        "condition" => "FIND_IN_SET({$Object->id_entity}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
                     ]);
 
                     // если ученик не находится в группе – не создаем «требуется отчета»
