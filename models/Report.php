@@ -69,6 +69,10 @@
                 return false;
             }
 
+            if (ReportForce::check($id_student, $id_teacher, $id_subject, $year)) {
+                return false;
+            }
+
             $in_group = Group::count([
                 "condition" => "FIND_IN_SET({$id_student}, students) AND id_subject={$id_subject} AND id_teacher={$id_teacher} AND year={$year} and ended = 0"
             ]);
