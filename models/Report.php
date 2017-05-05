@@ -69,22 +69,18 @@
                 return false;
             }
 
-            if (ReportForce::check($id_student, $id_teacher, $id_subject, $year)) {
-                return false;
-            }
-
             $in_group = Group::count([
                 "condition" => "FIND_IN_SET({$id_student}, students) AND id_subject={$id_subject} AND id_teacher={$id_teacher} AND year={$year} and ended = 0"
             ]);
 
-            $lesson_count = dbConnection()->query("
+            $required = dbConnection()->query("
                                 SELECT COUNT(*) AS cnt FROM reports_helper rh
                                 LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
                                 WHERE rh.lesson_count >= " . self::LESSON_COUNT . " AND rf.id IS NULL AND rh.id_report IS NULL AND
                                 rh.id_student = {$id_student} AND rh.id_teacher = {$id_teacher} AND rh.id_subject = {$id_subject} AND rh.year={$year}
-                            ")->fetch_object()->cnt;
+                            ")->fetch_object()->cnt > 0;
 
-            return $lessons_count >= self::LESSON_COUNT && $in_group;
+            return $required && $in_group;
         }
 
         /**
