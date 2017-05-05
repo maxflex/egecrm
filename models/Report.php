@@ -64,23 +64,12 @@
          */
         public static function required($id_student, $id_teacher, $id_subject, $year)
         {
-            // if last year then not needed
-            if ($year != academicYear()) {
-                return false;
-            }
-
-            $in_group = Group::count([
-                "condition" => "FIND_IN_SET({$id_student}, students) AND id_subject={$id_subject} AND id_teacher={$id_teacher} AND year={$year} and ended = 0"
-            ]);
-
-            $required = dbConnection()->query("
+            return dbConnection()->query("
                                 SELECT COUNT(*) AS cnt FROM reports_helper rh
                                 LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
                                 WHERE rh.lesson_count >= " . self::LESSON_COUNT . " AND rf.id IS NULL AND rh.id_report IS NULL AND
                                 rh.id_student = {$id_student} AND rh.id_teacher = {$id_teacher} AND rh.id_subject = {$id_subject} AND rh.year={$year}
                             ")->fetch_object()->cnt > 0;
-
-            return $required && $in_group;
         }
 
         /**
@@ -204,7 +193,23 @@
 							AND lesson_date > '$latest_report_date' AND lesson_date < '{$Object->date}'"
 					]);
 				} else {
-				// если отчет не существует, то подсчитываем сколько дней прошло с последнего отчета/начала занятий
+                    // перед созданием null-записи проверям учебный год и находится ли ученик в группе
+
+                    // если год не равен текущему академическому – не создаем «требуется отчета»
+                    if ($Object->year != academicYear()) {
+                        continue;
+                    }
+
+                    $in_group = Group::count([
+                        "condition" => "FIND_IN_SET({$Object->id_student}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
+                    ]);
+
+                    // если ученик не находится в группе – не создаем «требуется отчета»
+                    if (! $in_group) {
+                        continue;
+                    }
+
+				     // если отчет не существует, то подсчитываем сколько дней прошло с последнего отчета/начала занятий
 					// получаем кол-во занятий с последнего отчета по предмету
 					$LatestReport = Report::find([
 						"condition" => $condition,
@@ -242,6 +247,25 @@
             foreach ($data as $Object) {
                 // если отчет создан и null-конфигурация еще не создана
                 if ($Object->id && ! isset($nulls[$Object->id_teacher][$Object->id_entity][$Object->id_subject][$Object->year])) {
+                    // отмечаем, что для этой конфигурации создали/проверили необходимость создания null-записи
+                    $nulls[$Object->id_teacher][$Object->id_entity][$Object->id_subject][$Object->year] = true;
+
+
+                    // перед созданием null-записи проверям учебный год и находится ли ученик в группе
+
+                    // если год не равен текущему академическому – не создаем «требуется отчета»
+                    if ($Object->year != academicYear()) {
+                        continue;
+                    }
+
+                    $in_group = Group::count([
+                        "condition" => "FIND_IN_SET({$Object->id_student}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
+                    ]);
+
+                    // если ученик не находится в группе – не создаем «требуется отчета»
+                    if (! $in_group) {
+                        continue;
+                    }
                     // находим последний отчет в конфигурации
                     // отчет перед отчетом
                     $condition = "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ."
@@ -269,9 +293,6 @@
     					'year'			=> $Object->year,
     					'lesson_count'	=> $lessons_count,
     				]);
-
-                    // отмечаем, что для этой конфигурации null-запись создана
-                    $nulls[$Object->id_teacher][$Object->id_entity][$Object->id_subject][$Object->year] = true;
                 }
             }
 
