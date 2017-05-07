@@ -62,12 +62,6 @@
 			return Freetime::getTeacherBar($this->id);
 		}
 
-		// 	количество красных меток "требуется создание отчета"
-		public function redReportCount()
-		{
-			return self::redReportCountStatic($this->id);
-		}
-
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
 		/**
@@ -97,12 +91,8 @@
 		// 	количество красных меток "требуется создание отчета"
         public static function redReportCountStatic($id_teacher, $year = false)
         {
-            return dbConnection()->query("
-                SELECT COUNT(*) AS cnt FROM reports_helper rh
-                LEFT JOIN reports_force rf ON (rf.id_subject = rh.id_subject AND rf.id_teacher = rh.id_teacher AND rf.id_student = rh.id_student AND rf.year = rh.year)
-                WHERE rh.lesson_count >= 8 AND rf.id IS NULL AND rh.id_teacher = {$id_teacher} AND rh.id_report IS NULL " . ($year ? "AND rh.year={$year}" : "")
-            )->fetch_object()->cnt;
-		}
+            return dbConnection()->query(Report::generateQuery(compact('id_teacher', 'year')))->fetch_object()->cnt;
+        }
 
 		public static function redReportCountAll()
 		{
@@ -182,8 +172,7 @@
 			if (!$search) $search = (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.date, r.available_for_parents, rh.lesson_count");
-
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, rh.id_report as id, r.date, r.available_for_parents, rh.lesson_count");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
 
 			while ($row = $result->fetch_object()) {
@@ -253,14 +242,14 @@
 				FROM visit_journal vj
 				LEFT JOIN reports" . static::_connectTables('r') . "
 				LEFT JOIN reports_force " . static::_connectTables('rf') . "
-				JOIN reports_helper" . static::_connectTables('rh', 'AND isnull(rh.id_report) = isnull(r.id)') . "
+				JOIN reports_helper" . static::_connectTables('rh') . "
 				WHERE vj.type_entity='STUDENT' "
 				. (($search->mode == 1 || !isBlank($search->available_for_parents)) ? " AND r.id IS NOT NULL" : "")
 				. (!isBlank($search->available_for_parents) ? " AND r.available_for_parents={$search->available_for_parents}" : "")
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
-				. (($search->mode > 1 && $search->mode < 4) ? " AND (r.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? ">=8 AND rf.id IS NULL" : "<8") . ")" : "")
+				. (($search->mode > 1 && $search->mode < 4) ? " AND (rh.id_report IS NULL AND rf.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? " >= 8 " : " <8 ") . ")" : "")
 				. (($search->mode == 4) ? " AND rf.id IS NOT NULL AND r.id IS NULL" : "")
 				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id "
 				. ($order ? " ORDER BY vj.lesson_date DESC" : "");
