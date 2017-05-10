@@ -135,11 +135,11 @@
 			return $data;
 	    }
 
-        public static function condition($id_student, $id_teacher, $id_subject, $year = null)
+        public static function condition($id_student, $id_teacher, $id_subject, $year = null, $order = null)
 		{
 			return [
 				'condition' => self::conditionString($id_student, $id_teacher, $id_subject, $year),
-				'order' 	=> "STR_TO_DATE(date, '%d.%m.%Y') desc "
+				'order' 	=> $order ?: "STR_TO_DATE(date, '%d.%m.%Y') desc "
 			];
 		}
 
@@ -206,14 +206,14 @@
                         continue;
                     }
 
-                    $in_group = Group::count([
-                        "condition" => "FIND_IN_SET({$Object->id_entity}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
-                    ]);
-
-                    // если ученик не находится в группе – не создаем «требуется отчета»
-                    if (! $in_group) {
-                        continue;
-                    }
+                    // $in_group = Group::count([
+                    //     "condition" => "FIND_IN_SET({$Object->id_entity}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year}"
+                    // ]);
+					//
+                    // // если ученик не находится в группе – не создаем «требуется отчета»
+                    // if (! $in_group) {
+                    //     continue;
+                    // }
 
 				     // если отчет не существует, то подсчитываем сколько дней прошло с последнего отчета/начала занятий
 					// получаем кол-во занятий с последнего отчета по предмету
@@ -264,14 +264,14 @@
                         continue;
                     }
 
-                    $in_group = Group::count([
-                        "condition" => "FIND_IN_SET({$Object->id_entity}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
-                    ]);
-
-                    // если ученик не находится в группе – не создаем «требуется отчета»
-                    if (! $in_group) {
-                        continue;
-                    }
+//                    $in_group = Group::count([
+//                        "condition" => "FIND_IN_SET({$Object->id_entity}, students) AND id_subject={$Object->id_subject} AND id_teacher={$Object->id_teacher} AND year={$Object->year} and ended = 0"
+//                    ]);
+//
+//                    // если ученик не находится в группе – не создаем «требуется отчета»
+//                    if (! $in_group) {
+//                        continue;
+//                    }
                     // находим последний отчет в конфигурации
                     // отчет перед отчетом
                     $condition = "id_student=" . $Object->id_entity . " AND id_subject=" . $Object->id_subject ."
@@ -325,7 +325,7 @@
 
 		public static function toggle($id_student, $id_teacher, $id_subject, $year)
 		{
-			$ReportForce = ReportForce::find(Report::condition($id_student, $id_teacher, $id_subject, $year));
+			$ReportForce = ReportForce::find(Report::condition($id_student, $id_teacher, $id_subject, $year, 'year desc'));
 
 			if ($ReportForce) {
 				$ReportForce->delete();
