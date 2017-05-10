@@ -10,8 +10,8 @@
 				{{Review.id ? 'отзыв ' + Review.id : 'создать'}}
 			</a>
 		</td>
-		<td style="width: 25%" ng-init="_Teacher = (Review.Teacher || Teacher)">
-			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
+		<td style="width: 20%" ng-init="_Teacher = (Review.Teacher || Teacher)">
+			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
 		</td>
 		<td style="width: 5%">
 			{{three_letters[Review.id_subject]}}
@@ -41,9 +41,9 @@
 			<div ng-if="Review.admin_comment_final" class="hint--bottom" data-hint="{{Review.admin_comment_final}}"></div>
 			<span ng-show="Review.admin_rating_final > 0">{{(Review.admin_rating_final == 6 ? 0 : Review.admin_rating_final)}}</span>
 		</td>
-		<td style="width: 4%" class="vertical-gray">
-			{{Review.score | hideZero}}
-		</td>
+		<td style="width: 9%" class="vertical-gray">
+			<span ng-if="+(Review.score)">{{ Review.score }} из {{ Review.max_score }}</span>
+        </td>
 		<td style="width: 10%">
 			<span ng-show='Review.id'>
 				<span ng-class="{

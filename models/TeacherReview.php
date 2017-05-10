@@ -53,6 +53,7 @@
 				"published" 			=> $rating['published'],
 				"score" 				=> $rating['score'],
 				"signature" 			=> $rating['signature'],
+				"max_score" 			=> $rating['max_score'],
 				"date"					=> now(),
 			];
 			
@@ -109,7 +110,7 @@
 
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating, 
-				r.admin_rating, r.admin_rating_final, r.published, r.score, r.comment, r.admin_comment, r.admin_comment_final, " . static::_countQuery('vj2'));
+				r.admin_rating, r.admin_rating_final, r.published, r.score, r.max_score, r.comment, r.admin_comment, r.admin_comment_final, " . static::_countQuery('vj2'));
 			$result = dbConnection()->query($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
 			
 			while ($row = $result->fetch_object()) {

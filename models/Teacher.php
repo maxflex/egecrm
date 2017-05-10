@@ -251,8 +251,8 @@
 				LEFT JOIN reports_force " . static::_connectTables('rf') . "
 				JOIN reports_helper" . static::_connectTables('rh') . "
 				WHERE vj.type_entity='STUDENT' "
-				. (($search->mode == 1 || !isBlank($search->available_for_parents)) ? " AND rh.id_report IS NOT NULL" : "")
-				. (!isBlank($search->available_for_parents) ? " AND r.available_for_parents={$search->available_for_parents}" : "")
+				. ($search->mode == 1 ? " AND rh.id_report IS NOT NULL" : "")
+				. (!isBlank($search->available_for_parents) ? " AND r.id is not null and r.available_for_parents={$search->available_for_parents}" : "")
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
