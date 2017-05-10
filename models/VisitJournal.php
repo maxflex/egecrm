@@ -154,7 +154,7 @@
 
 		public static function getLessonCount($id_group)
 		{
-			return dbConnection()->query("SELECT id as c FROM visit_journal WHERE true AND id_group=$id_group GROUP BY lesson_date")->num_rows;
+			return dbConnection()->query("SELECT id as c FROM visit_journal WHERE true AND id_group=$id_group and type_entity = 'TEACHER'")->num_rows;
 		}
 
 		public static function lessonPresent($id_group)

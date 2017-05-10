@@ -99,7 +99,7 @@
 		public function getPastLessons()
 		{
 			return VisitJournal::findAll([
-				"condition" => "id_group={$this->id} AND year={$this->year} AND type_entity='TEACHER'",
+				"condition" => "id_group={$this->id} AND type_entity='TEACHER'",
 			]);
 		}
 
