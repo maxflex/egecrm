@@ -99,8 +99,11 @@
             $red_count = 0;
 			$search = json_decode($_COOKIE['reports']);
 
-			foreach (self::getIds(['condition' => 'in_egecentr >= 1']) as $id_teacher) {
-				$red_count += Teacher::redReportCountStatic($id_teacher, $search->year);
+            foreach (static::getJournalTeachers(true) as $id_teacher) {
+                //$red_count += Teacher::redReportCountStatic($id_teacher, $search->year);
+                $search->mode = 2;                  // требующие создания
+                $search->id_teacher = $id_teacher;
+                $red_count += static::_count($search);
 			}
 			return $red_count ? $red_count : null;
 		}
@@ -108,7 +111,7 @@
 		/*
 		 * Получить преподавателей для отчета
 		 */
-		public static function getJournalTeachers()
+		public static function getJournalTeachers($only_ids = false)
 		{
 			$result = dbConnection()->query("
 				SELECT id_entity
@@ -122,7 +125,11 @@
 				$tutor_ids[] = $row->id_entity;
 			}
 
-			return static::getLightArray($tutor_ids);
+			if ($only_ids) {
+			    return $tutor_ids;
+            } else {
+			    return static::getLightArray($tutor_ids);
+            }
 		}
 
 		/*
