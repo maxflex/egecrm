@@ -12,7 +12,7 @@
 		Отчёты
 		<div class='pull-right'>
 			обновлено {{ formatDateTime(reports_updated) }}
-			<span class="glyphicon glyphicon-refresh opacity-pointer" ng-click='updateHelperTable()' ng-class="{
+			<span class="glyphicon glyphicon-refresh opacity-pointer" ng-click='!helper_updating && updateHelperTable()' ng-class="{
 		        'spinning': helper_updating
 		    }" style="margin: 0 0 0 5px"></span>
 		</div>
@@ -42,9 +42,9 @@
 				<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.id_subject" ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.subject[''] || '' }}">все предметы</option>
 					<option disabled>──────────────</option>
-					<option 
+					<option
 						data-subtext="{{ counts.subject[id_subject] || '' }}"
-						ng-repeat="(id_subject, name) in three_letters" 
+						ng-repeat="(id_subject, name) in three_letters"
 						value="{{id_subject}}">{{ name }}</option>
 				</select>
 			</div>
@@ -60,7 +60,7 @@
 				<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.year[''] || '' }}">все годы</option>
 					<option disabled>────────</option>
-					<option ng-repeat="year in <?= Years::json() ?>" 
+					<option ng-repeat="year in <?= Years::json() ?>"
 						data-subtext="{{ counts.year[year] || '' }}"
 						value="{{year}}">{{ yearLabel(year) }}</option>
 				</select>
@@ -70,7 +70,7 @@
 			<div id="frontend-loading"></div>
 			<?= globalPartial('reports') ?>
 		</div>
-		
+
 		<pagination
 			ng-show='(Reports && Reports.length) && (counts.all > <?= Report::PER_PAGE ?>)'
 			ng-model="current_page"
@@ -84,7 +84,7 @@
 			next-text="»"
 	    >
 	    </pagination>
-	
+
 		<div ng-show="Reports === undefined" style="padding: 100px" class="small half-black center">
 			загрузка отчетов...
 		</div>
