@@ -36,7 +36,7 @@
                     {{ d.Student.grade_label }}
                 </td>
                 <td style="width: 15%">
-                    <span ng-if='d.id_group'>группа {{ d.id_group }}</span>
+                    <span ng-if='d.group.id'>группа {{ d.group.id }} ({{ d.group.grade_label }})</span>
                 </td>
 				<td style="width: 10%">
 					<span ng-show="d.reports_count">
