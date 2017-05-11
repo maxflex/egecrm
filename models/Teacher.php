@@ -252,7 +252,7 @@
 				JOIN reports_helper" . static::_connectTables('rh') . "
 				WHERE vj.type_entity='STUDENT' "
 				. ($search->mode == 1 ? " AND rh.id_report IS NOT NULL" : "")
-				. (!isBlank($search->available_for_parents) ? " AND r.id is not null and r.available_for_parents={$search->available_for_parents}" : "")
+				. (!isBlank($search->available_for_parents) ? " and if(r.available_for_parents = 1 and rh.id_report is not null, 1, 0) = {$search->available_for_parents} " : "")
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
