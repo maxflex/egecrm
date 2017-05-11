@@ -19,7 +19,12 @@
 				$this->lesson_count = ReportHelper::getLessonCount($this->id_student, $this->id_teacher, $this->id_subject, $this->year);
 				$this->Student = Student::getLight($this->id_student);
 			}
-		}
+
+            $year = $this->year ?: academicYear();
+            $this->grade = VisitJournal::find([
+                "condition" => "id_entity = {$this->id_student} and type_entity = 'STUDENT' and id_teacher = {$this->id_teacher} and id_subject = {$this->id_subject} and year = {$year}"
+            ])->grade;
+        }
 
         public static function add($array)
         {

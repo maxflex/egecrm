@@ -2,7 +2,7 @@
 	<div class="panel-heading">
 		{{Report.id ? 'Редактирование отчета №' + Report.id : 'Добавление отчета'}} по {{Subjects[Report.id_subject]}}
 		<?php if (User::fromSession()->type == Teacher::USER_TYPE) :?>
-			<span style="margin: 0 7px; display: inline-block; opacity: .1">|</span> {{Report.Student.last_name}} {{Report.Student.first_name}}
+			<span style="margin: 0 7px; display: inline-block; opacity: .1">|</span> {{Report.Student.last_name}} {{Report.Student.first_name}}, {{ Report.grade == <?= Grades::EXTERNAL ?> ? 'экстернат' : Report.grade + ' класс' }}
 		<?php endif ?>
 		<div class="pull-right" ng-show="Report.id">
 			<span class="link-reverse link-like link-white" ng-click="deleteReport()">удалить отчет</span>
@@ -17,6 +17,8 @@
 				Преподаватель: <a href="teachers/edit/{{Report.id_teacher}}">{{Report.Teacher.last_name}} {{Report.Teacher.first_name}} {{Report.Teacher.middle_name}}</a>
 				<br>
 				Предмет отчета: <span style="text-transform: lowercase">{{SubjectsFull[Report.id_subject]}}</span>
+                <br>
+                Класс: {{ Report.grade == <?= Grades::EXTERNAL ?> ? 'экстернат' : Report.grade }}
 			</div>
 		</div>
 		<?php endif ?>
