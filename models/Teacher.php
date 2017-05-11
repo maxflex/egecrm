@@ -247,12 +247,12 @@
 		{
 			$main_query = "
 				FROM visit_journal vj
-				LEFT JOIN reports" . static::_connectTables('r') . "
-				LEFT JOIN reports_force " . static::_connectTables('rf') . "
 				JOIN reports_helper" . static::_connectTables('rh') . "
+				LEFT JOIN reports" . static::_connectTables('r', 'and rh.id_report = r.id') . "
+				LEFT JOIN reports_force " . static::_connectTables('rf') . "
 				WHERE vj.type_entity='STUDENT' "
 				. ($search->mode == 1 ? " AND rh.id_report IS NOT NULL" : "")
-				. (!isBlank($search->available_for_parents) ? " and if(r.available_for_parents = 1 and rh.id_report is not null, 1, 0) = {$search->available_for_parents} " : "")
+				. (!isBlank($search->available_for_parents) ? " and if(r.available_for_parents = 1 and r.id > 0, 1, 0) = {$search->available_for_parents} " : "")
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")

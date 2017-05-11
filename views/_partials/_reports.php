@@ -9,10 +9,10 @@
 				{{Report.force_noreport ? 'отчет не требуется' : 'требуется отчет' }}
 			</span>
 		</td>
-		<td style="width: 23%" ng-init="_Teacher = (Report.Teacher || Teacher)">
+		<td style="width: 25%" ng-init="_Teacher = (Report.Teacher || Teacher)">
 			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
 		</td>
-		<td style='width: 10%'>
+		<td style='width: 8%'>
 			{{three_letters[Report.id_subject]}}
 		</td>
 		<td style='width: 20%'>
