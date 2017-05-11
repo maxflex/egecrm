@@ -10,7 +10,7 @@
 			</span>
 		</td>
 		<td style="width: 25%" ng-init="_Teacher = (Report.Teacher || Teacher)">
-			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name}} {{_Teacher.middle_name}}</a>
+			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
 		</td>
 		<td style='width: 8%'>
 			{{three_letters[Report.id_subject]}}
