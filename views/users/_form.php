@@ -177,6 +177,7 @@
         <?= partial('right', ['right' => Shared\Rights::SHOW_CONTRACT]) ?>
         <?= partial('right', ['right' => Shared\Rights::EC_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_BANNED]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ECC_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::ERC_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::WORLDWIDE_ACCESS]) ?>
     </div>
