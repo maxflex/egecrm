@@ -8,9 +8,7 @@
 		<div class="pull-right">
 			<?php if (!$Request->adding) :?>
 				<span class="link-reverse pointer" style="margin-left: 10px" onclick="lightBoxShow('glue')">перенести в другой профиль</span>
-				<?php if ($Request->getDuplicates()): ?>
-					<span class="link-reverse pointer" style="margin-left: 10px" onclick='deleteRequest(<?= $Request->id ?>)'>удалить заявку</span>
-				<?php endif ?>
+				<span class="link-reverse pointer" style="margin-left: 10px" onclick='deleteRequest(<?= $Request->id ?>)'>удалить заявку</span>
 			<?php endif ?>
 		</div>
 	</div>

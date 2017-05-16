@@ -279,12 +279,12 @@
 				"condition" => "entity_id=$id_student and entity_type='".Student::USER_TYPE."'"
 			]);
 
-			Contract::deleteAll([
+			ContractInfo::deleteAll([
 				"condition" => "id_student=$id_student"
 			]);
 
-			Freetime::deleteAll([
-				"condition" => "id_student=$id_student"
+			EntityFreetime::deleteAll([
+				"condition" => "id_entity=$id_student AND type_entity='student'"
 			]);
 
 			Marker::deleteAll([
