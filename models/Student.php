@@ -240,18 +240,13 @@
 		{
 			$Student = Student::findById($id_student);
 
-			# Договоры
-			$contract_ids = Contract::getIds([
-				"condition" => "id_student=$id_student"
-			]);
 
-			Contract::deleteAll([
-				"condition" => "id IN (". implode(",", $contract_ids) .")"
-			]);
-
-			ContractSubject::deleteAll([
-				"condition" => "id_contract IN (". implode(",", $contract_ids) .")"
-			]);
+            dbConnection()->query("
+                DELETE * FROM contract_info ci
+                LEFT JOIN contracts c on c.id_contract = ci.id_contract
+                LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+                WHERE ci.id_student={$id_student}
+            ");
 
 			# Метки
 			Marker::deleteAll([

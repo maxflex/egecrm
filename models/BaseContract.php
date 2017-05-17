@@ -67,8 +67,8 @@
             }
 
             static::deleteSubjects($Contract);
-            $Contract->delete();
             static::deleteInfo($Contract);
+            $Contract->delete();
         }
 
         public static function add($data = false)
