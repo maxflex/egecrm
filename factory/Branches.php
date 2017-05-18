@@ -22,6 +22,7 @@
 		const BRT = 14;
 		const MLD = 15;
 		const VLD = 16;
+		const BEL = 17;
 
 
 
@@ -41,6 +42,7 @@
 			self::BRT => "Братиславская",
 			self::MLD => "Молодежная",
 			self::VLD => "Владыкино",
+			self::BEL => "Беляево",
 		];
 
 		# Короткие
@@ -59,6 +61,7 @@
 			self::BRT => "БРА",
 			self::MLD => "МОЛ",
 			self::VLD => "ВЛА",
+			self::BEL => "БЕЛ",
 		];
 
 		# Короткие
@@ -263,7 +266,9 @@
 		{
 			switch ($id_branch) {
 				# Оранжевый
-				case self::TRG: case self::KLG: {
+				case self::TRG:
+                case self::BEL:
+                case self::KLG: {
 					if ($return) {
 						return 1;
 					}
