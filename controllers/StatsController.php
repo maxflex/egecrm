@@ -56,6 +56,13 @@
 					continue; # если договор оригинальный, у него не может быть предыдущих версий
 				}
 
+                // если договор первый в цепи (и, получается, не первый в году), то добавлять в категорию «изменения»
+                if ($Contract->isOriginal()) {
+                    $stats['contract_sum_changed'] += $Contract->final_sum;
+                    $stats['subjects_plus'] += $Contract->activeSubjectsCount();
+                    continue; # если договор оригинальный, у него не может быть предыдущих версий
+                }
+
 				// если есть версия договора
 				$PreviousContract = $Contract->getPreviousVersionInYear();
 				if ($PreviousContract) {
