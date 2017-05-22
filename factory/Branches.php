@@ -14,7 +14,7 @@
 		const IZM = 5;
 		const OPL = 6;
 		const RPT = 7;
-		const VKS = 8;
+		const SKL = 8;
 		const ORH = 9;
 		const UJN = 11;
 		const PER = 12;
@@ -34,7 +34,7 @@
 			self::IZM => "Измайловская",
 			self::OPL => "Октябрьское поле",
 			self::RPT => "Рязанский Проспект",
-			self::VKS => "Войковская",
+			self::SKL => "Сокол",
 			self::ORH => "Орехово",
 			self::UJN => "Южная",
 			self::PER => "Перово",
@@ -53,7 +53,7 @@
 			self::IZM => "ИЗМ",
 			self::OPL => "ОКТ",
 			self::RPT => "РЯЗ",
-			self::VKS => "ВОЙ",
+			self::SKL => "СОК",
 			self::ORH => "ОРЕ",
 			self::UJN => "ЮЖН",
 			self::PER => "ПЕР",
@@ -72,7 +72,7 @@
 			self::IZM => "",
 			self::OPL => "",
 			self::RPT => "",
-			self::VKS => "",
+			self::SKL => "Ленинградский проспект, 68с24",
 			self::ORH => "",
 			self::UJN => "",
 			self::PER => "",
@@ -315,7 +315,7 @@
 					break;
 				}
 				# Зеленый
-				case self::VKS:
+				case self::SKL:
 				case self::ORH: {
 					if ($return) {
 						return 6;
