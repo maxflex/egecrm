@@ -252,7 +252,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
     $scope.new_payment = {
       id_status: 0,
       year: '',
-      id_teacher: $scope.Teacher.id
+      entity_id: $scope.Teacher.id
     };
     lightBoxShow('addpayment');
     $scope.handleKeyPress();
