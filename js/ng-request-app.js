@@ -1905,7 +1905,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Показать окно добавления платежа
 		$scope.addPaymentDialog = function() {
-			$scope.new_payment = {id_status : 0, year: $scope.academic_year}
+			$scope.new_payment = {id_status : 0, year: ''}
 			lightBoxShow('addpayment')
 		}
 

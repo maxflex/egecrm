@@ -16,6 +16,8 @@
 		</div> за
         <div class="form-group inline-block">
             <select class="form-control" ng-model="new_payment.year" style='width: 130px'>
+                <option value="">выберите год</option>
+                <option disabled>──────────────</option>
                 <option ng-repeat="year in <?= Years::json() ?>"
                     data-subtext="{{ counts.year[year] || '' }}"
                     value="{{year}}">{{ yearLabel(year) }}</option>

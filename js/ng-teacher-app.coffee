@@ -204,7 +204,8 @@
 			$scope.addPaymentDialog = ->
 				$scope.new_payment =
 					id_status: 0
-					year: $scope.academic_year
+					year: ''
+					id_teacher: $scope.Teacher.id
 				lightBoxShow 'addpayment'
 				$scope.handleKeyPress()
 				setTimeout ->
