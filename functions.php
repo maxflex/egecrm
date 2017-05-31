@@ -498,7 +498,7 @@
 	{
         $number = preg_replace("/[^0-9]/", "", $number);
         if ($number && $number[0] != '7') {
-            $number .= '7';
+            $number = '7' . $number;
         }
         return $number;
 	}
