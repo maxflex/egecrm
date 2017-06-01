@@ -188,11 +188,6 @@
 
 		public function beforeSave()
         {
-            if ($this->id_status == self::PAID_CARD) {
-                $this->card_first_number = in_array(intval($this->card_first_number), [2, 4, 5, 6]) ? intval($this->card_first_number) : '';
-            } else {
-                $this->card_first_number = '';
-            }
             // наличные и платеж и не имеет номера и клиент
            if ($this->isNewRecord && !$this->dont_assign_pko &&
            $this->id_status == self::PAID_CASH && $this->id_type == PaymentTypes::PAYMENT && $this->entity_type == Student::USER_TYPE) {
