@@ -493,7 +493,7 @@
       function focusSibling(elem) {
         $(elem).siblings(':enabled').first().focus()
       }
-			$.mask.definitions['~']='[3-6]';
+			$.mask.definitions['~']='[24-6]';
 			$(".card-first-number").on('keyup', function(e){ if (e.keyCode == 13) {
         focusSibling(this)
       } }).mask("~XXX", { autoclear: false, completed:function(){this.val().length == 4 ? focusSibling(this) : false;} });

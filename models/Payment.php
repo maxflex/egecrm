@@ -189,7 +189,7 @@
 		public function beforeSave()
         {
             if ($this->id_status == self::PAID_CARD) {
-                $this->card_first_number = in_array(intval($this->card_first_number), range(4,6)) ? intval($this->card_first_number) : '4';
+                $this->card_first_number = in_array(intval($this->card_first_number), [2, 4, 5, 6]) ? intval($this->card_first_number) : '';
             } else {
                 $this->card_first_number = '';
             }
