@@ -167,6 +167,7 @@
         <?= partial('right', ['right' => Shared\Rights::ER_STREAM]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_TEMPLATES]) ?>
         <?= partial('right', ['right' => Shared\Rights::EDIT_CONTRACT]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_REQUEST_ERRORS]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
