@@ -25,8 +25,8 @@
             'last_action_time',
             'last_action_link',
             'token',
-            'login_count'
-
+            'login_count',
+            'updated_at'
         ];
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
@@ -255,7 +255,8 @@
 		{
 			return isset($_SESSION["user"]) // пользователь залогинен
                 && ! User::isBlocked()      // и не заблокирован
-                && User::worldwideAccess(); // и можно входить
+                && User::worldwideAccess() // и можно входить
+                && User::notChanged();      // и данные по пользователю не изменились
 		}
 
 		/*
@@ -398,6 +399,15 @@
                 SELECT 1 FROM users
                 WHERE id=' . User::fromSession()->id . ' AND FIND_IN_SET(' . Shared\Rights::EC_BANNED . ', rights)
             ')->num_rows;
+        }
+
+        /**
+         * Данные по пользователю не изменились
+         * если поменяли в настройках хоть что-то, сразу выкидывает, чтобы перезайти
+         */
+        public static function notChanged()
+        {
+            return User::fromSession()->updated_at == dbConnection()->query('SELECT updated_at FROM users WHERE id=' . User::fromSession()->id)->fetch_object()->updated_at;
         }
 
         /**
