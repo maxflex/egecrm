@@ -65,14 +65,14 @@
 		$_actionName		= "actionLogin";
 	} else {
 		// обновить время последнего действия
-		// if (User::loggedIn()) {
-        //     try {
-        //         User::fromSession()->updateLastActionTime();
-        //     }
-        //     catch (Exception $e) {
-        //         header("Location: logout");
-        //     }
-		// }
+		if (User::loggedIn()) {
+            try {
+                User::fromSession()->updateLastActionTime();
+            }
+            catch (Exception $e) {
+                header("Location: logout");
+            }
+		}
 
 		// если у учителя в URL нет teachers/ или у ученика нет students/
 		if (!$_ajax_request && $_controllerName != "AsController" && $_controllerName != "LoginController") {
