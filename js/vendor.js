@@ -205,16 +205,16 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
 
       if (n === 1) {
         // Fade out
-        css(progress, { 
-          transition: 'none', 
-          opacity: 1 
+        css(progress, {
+          transition: 'none',
+          opacity: 1
         });
         progress.offsetWidth; /* Repaint */
 
         setTimeout(function() {
-          css(progress, { 
-            transition: 'all ' + speed + 'ms linear', 
-            opacity: 0 
+          css(progress, {
+            transition: 'all ' + speed + 'ms linear',
+            opacity: 0
           });
           setTimeout(function() {
             NProgress.remove();
@@ -342,7 +342,7 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
     if (NProgress.isRendered()) return document.getElementById('nprogress');
 
     addClass(document.documentElement, 'nprogress-busy');
-    
+
     var progress = document.createElement('div');
     progress.id = 'nprogress';
     progress.innerHTML = Settings.template;
@@ -351,7 +351,7 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
         perc     = fromStart ? '-100' : toBarPerc(NProgress.status || 0),
         parent   = document.querySelector(Settings.parent),
         spinner;
-    
+
     css(bar, {
       transition: 'all 0 linear',
       transform: 'translate3d(' + perc + '%,0,0)'
@@ -462,7 +462,7 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
 
   var queue = (function() {
     var pending = [];
-    
+
     function next() {
       var fn = pending.shift();
       if (fn) {
@@ -477,10 +477,10 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
   })();
 
   /**
-   * (Internal) Applies css properties to an element, similar to the jQuery 
+   * (Internal) Applies css properties to an element, similar to the jQuery
    * css method.
    *
-   * While this helper does assist with vendor prefixed property names, it 
+   * While this helper does assist with vendor prefixed property names, it
    * does not perform any manipulation of values prior to setting styles.
    */
 
@@ -521,7 +521,7 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
 
     return function(element, properties) {
       var args = arguments,
-          prop, 
+          prop,
           value;
 
       if (args.length == 2) {
@@ -552,7 +552,7 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
     var oldList = classList(element),
         newList = oldList + name;
 
-    if (hasClass(oldList, name)) return; 
+    if (hasClass(oldList, name)) return;
 
     // Trim the opening space.
     element.className = newList.substring(1);
@@ -576,8 +576,8 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
   }
 
   /**
-   * (Internal) Gets a space separated list of the class names on the element. 
-   * The list is wrapped with a single space on each end to facilitate finding 
+   * (Internal) Gets a space separated list of the class names on the element.
+   * The list is wrapped with a single space on each end to facilitate finding
    * matches within the list.
    */
 
@@ -28573,7 +28573,7 @@ if("undefined"==typeof jQuery)throw new Error("Bootstrap requires jQuery");+func
 
   return exports;
 }));
-/* 
+/*
 * Project: Bootstrap Notify = v3.1.3
 * Description: Turns standard Bootstrap alerts into "Growl-like" notifications.
 * Author: Mouse0270 aka Robert McIntosh
@@ -28682,7 +28682,7 @@ if("undefined"==typeof jQuery)throw new Error("Bootstrap requires jQuery");+func
 				$ele: this.$ele,
 				update: function(command, update) {
 					var commands = {};
-					if (typeof command == "string") {					
+					if (typeof command == "string") {
 						commands[command] = update;
 					}else{
 						commands = command;
@@ -28732,7 +28732,7 @@ if("undefined"==typeof jQuery)throw new Error("Bootstrap requires jQuery");+func
 		buildNotify: function () {
 			var content = this.settings.content;
 			this.$ele = $(String.format(this.settings.template, this.settings.type, content.title, content.message, content.url, content.target));
-			this.$ele.attr('data-notify-position', this.settings.placement.from + '-' + this.settings.placement.align);		
+			this.$ele.attr('data-notify-position', this.settings.placement.from + '-' + this.settings.placement.align);
 			if (!this.settings.allow_dismiss) {
 				this.$ele.find('[data-notify="dismiss"]').css('display', 'none');
 			}
@@ -28748,7 +28748,7 @@ if("undefined"==typeof jQuery)throw new Error("Bootstrap requires jQuery");+func
 					this.$ele.find('[data-notify="icon"]').attr('src', this.settings.content.icon);
 				}else{
 					this.$ele.find('[data-notify="icon"]').append('<img src="'+this.settings.content.icon+'" alt="Notify Icon" />');
-				}	
+				}
 			}
 		},
 		styleURL: function() {
@@ -28810,7 +28810,7 @@ if("undefined"==typeof jQuery)throw new Error("Bootstrap requires jQuery");+func
 				offsetAmt = (parseInt(offsetAmt)+parseInt(this.settings.spacing)) + this.$ele.outerHeight();
 				this.reposition(offsetAmt);
 			}
-			
+
 			if ($.isFunction(self.settings.onShow)) {
 				self.settings.onShow.call(this.$ele);
 			}
@@ -28834,7 +28834,7 @@ if("undefined"==typeof jQuery)throw new Error("Bootstrap requires jQuery");+func
 		bind: function() {
 			var self = this;
 
-			this.$ele.find('[data-notify="dismiss"]').on('click', function() {		
+			this.$ele.find('[data-notify="dismiss"]').on('click', function() {
 				self.close();
 			})
 
@@ -28868,8 +28868,8 @@ if("undefined"==typeof jQuery)throw new Error("Bootstrap requires jQuery");+func
 				hasAnimation = false;
 
 			this.$ele.data('closing', 'true').addClass(this.settings.animate.exit);
-			self.reposition(posX);			
-			
+			self.reposition(posX);
+
 			if ($.isFunction(self.settings.onClose)) {
 				self.settings.onClose.call(this.$ele);
 			}
@@ -33722,15 +33722,15 @@ function(a) {
 				return settings.step;
 			}
 		}
-		
+
 		// "неизвестно" (?) в качестве первого аргумента времени
 		if (settings.hasOwnProperty("unknownFirst")) {
 			var row = $('<li />');
 			row.data('time', '?');
-			row.text('неизвестно');		
+			row.text('неизвестно');
 			list.append(row);
 		}
-		
+
 		for (var i=start, j=0; i <= end; j++, i += stepFunc(j)*60) {
 			var timeInt = i;
 			var timeString = _int2time(timeInt, settings);
@@ -34442,19 +34442,19 @@ function(a) {
 
 	var _ONE_DAY = 86400000;
 	var jq = window.Zepto || window.jQuery
-	
+
 	function simpleExtend(obj1, obj2) {
 		var out = obj2 || {};
-	
+
 		for (var i in obj1) {
 			if (!(i in out)) {
 				out[i] = obj1[i]
 			}
 		}
-	
+
 		return out;
 	}
-	
+
 	// IE's custom event support is totally borked.
 	// Use jQuery if possible
 	function triggerSimpleCustomEvent(el, eventName) {
@@ -34466,7 +34466,7 @@ function(a) {
 			el.dispatchEvent(event);
 		}
 	}
-	
+
 	// el.classList not supported by < IE10
 	// use jQuery if available
 	function hasClass(el, className) {
@@ -34476,7 +34476,7 @@ function(a) {
 			return el.classList.contains(className);
 		}
 	}
-	
+
 	function Datepair(container, options) {
 		this.dateDelta = null;
 		this.timeDelta = null;
@@ -34488,7 +34488,7 @@ function(a) {
 			defaultDateDelta: 0,
 			defaultTimeDelta: 3600000,
 			anchor: 'start',
-	
+
 			// defaults for jquery-timepicker; override when using other input widgets
 			parseTime: function(input){
 				return jq(input).timepicker('getTime');
@@ -34499,7 +34499,7 @@ function(a) {
 			setMinTime: function(input, dateObj){
 				jq(input).timepicker('option', 'minTime', dateObj);
 			},
-	
+
 			// defaults for bootstrap datepicker; override when using other input widgets
 			parseDate: function(input){
 				return jq(input).datepicker('getDate');
@@ -34508,41 +34508,41 @@ function(a) {
 				jq(input).datepicker('update', dateObj);
 			}
 		};
-	
+
 		this.container = container;
 		this.settings = simpleExtend(this._defaults, options);
-	
+
 		this.startDateInput = this.container.querySelector('.'+this.settings.startClass+'.'+this.settings.dateClass);
 		this.endDateInput = this.container.querySelector('.'+this.settings.endClass+'.'+this.settings.dateClass);
 		this.startTimeInput = this.container.querySelector('.'+this.settings.startClass+'.'+this.settings.timeClass);
 		this.endTimeInput = this.container.querySelector('.'+this.settings.endClass+'.'+this.settings.timeClass);
-	
+
 		// initialize date and time deltas
 		this.refresh()
 		this._updateEndMintime();
-	
+
 		// init starts here
 		this._bindChangeHandler();
 	}
-	
+
 	Datepair.prototype = {
 		constructor: Datepair,
-	
+
 		option: function(key, value)
 		{
 			if (typeof key == 'object') {
 				this.settings = simpleExtend(this.settings, key);
-	
+
 			} else if (typeof key == 'string' && typeof value != 'undefined') {
 				this.settings[key] = value;
-	
+
 			} else if (typeof key == 'string') {
 				return this.settings[key];
 			}
-	
+
 			this._updateEndMintime();
 		},
-	
+
 		getTimeDiff: function()
 		{
 			// due to the fact that times can wrap around, timeDiff for any
@@ -34551,10 +34551,10 @@ function(a) {
 			if (delta < 0 && (!this.startDateInput || !this.endDateInput) ) {
 				delta += _ONE_DAY
 			}
-	
+
 			return delta;
 		},
-	
+
 		refresh: function()
 		{
 			if (this.startDateInput && this.startDateInput.value && this.endDateInput && this.endDateInput.value) {
@@ -34572,12 +34572,12 @@ function(a) {
 				}
 			}
 		},
-	
+
 		remove: function()
 		{
 			this._unbindChangeHandler()
 		},
-	
+
 		_bindChangeHandler: function(){
 			// addEventListener doesn't work with synthetic "change" events
 			// fired by jQuery's trigger() functioin. If jQuery is present,
@@ -34588,7 +34588,7 @@ function(a) {
 				this.container.addEventListener('change', this, false);
 			}
 		},
-	
+
 		_unbindChangeHandler: function(){
 			if (jq) {
 				jq(this.container).off('change.datepair');
@@ -34596,20 +34596,20 @@ function(a) {
 				this.container.removeEventListener('change', this, false);
 			}
 		},
-	
+
 		// This function will be called when passing 'this' to addEventListener
 		handleEvent: function(e){
 			// temporarily unbind the change handler to prevent triggering this
 			// if we update other inputs
 			this._unbindChangeHandler();
-	
+
 			if (hasClass(e.target, this.settings.dateClass)) {
 				if (e.target.value != '') {
 					this._dateChanged(e.target);
 				} else {
 					this.dateDelta = null;
 				}
-	
+
 			} else if (hasClass(e.target, this.settings.timeClass)) {
 				if (e.target.value != '') {
 					this._timeChanged(e.target);
@@ -34617,39 +34617,39 @@ function(a) {
 					this.timeDelta = null;
 				}
 			}
-	
+
 			this._validateRanges();
 			this._updateEndMintime()
 			this._bindChangeHandler();
 		},
-	
+
 		_dateChanged: function(target){
 			if (!this.startDateInput || !this.endDateInput) {
 				return
 			}
-	
+
 			var startDate = this.settings.parseDate(this.startDateInput);
 			var endDate = this.settings.parseDate(this.endDateInput);
-	
+
 			if (!startDate || !endDate) {
 				if (this.settings.defaultDateDelta !== null) {
 					if (startDate) {
 						var newEnd = new Date(startDate.getTime() + this.settings.defaultDateDelta * _ONE_DAY);
 						this.settings.updateDate(this.endDateInput, newEnd);
-	
+
 					} else if (endDate) {
 						var newStart = new Date(endDate.getTime() - this.settings.defaultDateDelta * _ONE_DAY);
 						this.settings.updateDate(this.startDateInput, newStart);
 					}
-	
+
 					this.dateDelta = this.settings.defaultDateDelta * _ONE_DAY;
 				} else {
 					this.dateDelta = null;
 				}
-	
+
 				return;
 			}
-	
+
 			if (this.settings.anchor == 'start' && hasClass(target, this.settings.startClass)) {
 				var newDate = new Date(startDate.getTime() + this.dateDelta);
 				this.settings.updateDate(this.endDateInput, newDate);
@@ -34667,21 +34667,21 @@ function(a) {
 				}
 			}
 		},
-	
+
 		_timeChanged: function(target){
 			if (!this.startTimeInput || !this.endTimeInput) {
 				return
 			}
-	
+
 			var startTime = this.settings.parseTime(this.startTimeInput);
 			var endTime = this.settings.parseTime(this.endTimeInput);
-			
-			// если один из аргументов – вопрос, то никаких дельта-связей между полями, 
+
+			// если один из аргументов – вопрос, то никаких дельта-связей между полями,
 			// просто обновляем на установленное значение
 			if ($(this.endTimeInput).val() == "?" || $(this.startTimeInput).val() == "?") {
 				return
 			}
-			
+
 			if (!startTime || !endTime) {
 				if (this.settings.defaultTimeDelta !== null) {
 					if (startTime) {
@@ -34691,19 +34691,19 @@ function(a) {
 						var newStart = new Date(endTime.getTime() - this.settings.defaultTimeDelta);
 						this.settings.updateTime(this.startTimeInput, newStart);
 					}
-	
+
 					this.timeDelta = this.settings.defaultTimeDelta;
 				} else {
 					this.timeDelta = null;
 					return;
 				}
 			}
-			
-			
+
+
 			if (this.settings.anchor == 'start' && hasClass(target, this.settings.startClass)) {
 				var newTime = new Date(startTime.getTime() + this.timeDelta);
 				this.settings.updateTime(this.endTimeInput, newTime);
-				endTime = this.settings.parseTime(this.endTimeInput);	
+				endTime = this.settings.parseTime(this.endTimeInput);
 			} else if (this.settings.anchor == 'end' && hasClass(target, this.settings.endClass)) {
 				var newTime = new Date(endTime.getTime() - this.timeDelta);
 				this.settings.updateTime(this.startTimeInput, newTime);
@@ -34712,13 +34712,13 @@ function(a) {
 
 			var newDelta = endTime.getTime() - startTime.getTime();
 			var offset = (endTime < startTime) ? _ONE_DAY : -1 * _ONE_DAY;
-	
+
 			if (this.dateDelta !== null
 					&& this.dateDelta + this.timeDelta <= _ONE_DAY
 					&& this.dateDelta + newDelta != 0
 					&& (offset > 0 || this.dateDelta != 0)
 					&& ((newDelta >= 0 && this.timeDelta < 0) || (newDelta < 0 && this.timeDelta >= 0))) {
-	
+
 				if (this.settings.anchor == 'start') {
 					var endDate = this.settings.parseDate(this.endDateInput);
 					this.settings.updateDate(this.endDateInput, new Date(endDate.getTime() + offset));
@@ -34731,29 +34731,29 @@ function(a) {
 			}
 			this.timeDelta = newDelta;
 		},
-	
+
 		_updateEndMintime: function(){
 			if (typeof this.settings.setMinTime != 'function') return;
-	
+
 			var baseTime = null;
 			if (this.settings.anchor == 'start' && (!this.dateDelta || this.dateDelta < _ONE_DAY || (this.timeDelta && this.dateDelta + this.timeDelta < _ONE_DAY))) {
 				baseTime = this.settings.parseTime(this.startTimeInput);
 			}
-	
+
 			this.settings.setMinTime(this.endTimeInput, baseTime);
 		},
-	
+
 		_validateRanges: function(){
 			if (this.startTimeInput && this.endTimeInput && this.timeDelta === null) {
 				triggerSimpleCustomEvent(this.container, 'rangeIncomplete');
 				return;
 			}
-	
+
 			if (this.startDateInput && this.endDateInput && this.dateDelta === null) {
 				triggerSimpleCustomEvent(this.container, 'rangeIncomplete');
 				return;
 			}
-	
+
 			// due to the fact that times can wrap around, any time-only pair will be considered valid
 			if (!this.startDateInput || !this.endDateInput || this.dateDelta + this.timeDelta >= 0) {
 				triggerSimpleCustomEvent(this.container, 'rangeSelected');
@@ -47873,7 +47873,7 @@ return Vue;
         left: o.left,
         top: o.top
       })
-        
+
       if (target) {
         target.insertBefore(el, target.firstChild||null)
       }
@@ -48495,7 +48495,7 @@ return Vue;
 
 			return this;
 		}
-	});	
+	});
 }( this.Ladda, this.jQuery ));
 /*
  AngularJS v1.5.9
@@ -52263,7 +52263,7 @@ vueInit = function() {
 
   // part of this is duplicated in i18n/defaults-en_US.js. Make sure to update both.
   Selectpicker.DEFAULTS = {
-    noneSelectedText: 'удобные филиалы для ученика',
+    noneSelectedText: 'не выбрано',
     noneResultsText: 'No results match',
     countSelectedText: function (numSelected, numTotal) {
       return (numSelected == 1) ? "{0} item selected" : "{0} items selected";
@@ -53371,7 +53371,7 @@ vueInit = function() {
  * Copyright (c) 2009 Eduardo Lundgren (eduardolundgren@gmail.com)
  * and Richard D. Worth (rdworth@gmail.com)
  *
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) 
+ * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
  */
@@ -53478,8 +53478,8 @@ $.extend($.simulate.prototype, {
 	},
 
 	drag: function(el) {
-		var self = this, center = this.findCenter(this.target), 
-			options = this.options,	x = Math.floor(center.x), y = Math.floor(center.y), 
+		var self = this, center = this.findCenter(this.target),
+			options = this.options,	x = Math.floor(center.x), y = Math.floor(center.y),
 			dx = options.dx || 0, dy = options.dy || 0, target = this.target;
 		var coord = { clientX: x, clientY: y };
 		this.simulateEvent(target, "mousedown", coord);
@@ -54301,9 +54301,9 @@ $.extend($.simulate, {
 
 				this._layout();
 				var newValue = this.options.range ? this._state.value : this._state.value[0];
-				
+
 				this._setDataVal(newValue);
-				
+
 				if(triggerSlideEvent === true) {
 					this._trigger('slide', newValue);
 				}
@@ -54496,12 +54496,12 @@ $.extend($.simulate, {
 				else {
 					positionPercentages = [ this._state.percentage[0], this._state.percentage[1] ];
 				}
-				
+
 				per = positionPercentages[0];
-				
+
 				// goto
 				rounded_per = Math.round(per);
-				
+
 				if (rounded_per == 33) {
 					this.trackSelection.style.background = 'red';
 					per = per - 12;
@@ -54521,7 +54521,7 @@ $.extend($.simulate, {
 				} else {
 					this.trackSelection.style.background = '#4cd964';
 				}
-				
+
 				if (per == 100) {
 					per = per - 39;
 				}
@@ -54529,8 +54529,8 @@ $.extend($.simulate, {
 // 				console.log('per', per);
 
 				this.handle1.style[this.stylePos] = per + '%';
-				
-				
+
+
 				this.handle2.style[this.stylePos] = positionPercentages[1]+'%';
 
 				/* Position ticks and labels */
@@ -54657,7 +54657,7 @@ $.extend($.simulate, {
 					this.trackLow.style.width = Math.min(positionPercentages[0], positionPercentages[1]) +'%';
 
 					this.trackSelection.style.left = Math.min(positionPercentages[0], positionPercentages[1]) +'%';
-					
+
 					// goto
 					wdh = Math.abs(positionPercentages[0] - positionPercentages[1]);
 					if (wdh > 0) {
@@ -54698,7 +54698,7 @@ $.extend($.simulate, {
 				this._state.size = this.sliderElem[this.sizePos];
 
 				var percentage = this._getPercentage(ev);
-				
+
 				if (this.options.range) {
 					var diff1 = Math.abs(this._state.percentage[0] - percentage);
 					var diff2 = Math.abs(this._state.percentage[1] - percentage);
@@ -54825,10 +54825,10 @@ $.extend($.simulate, {
 				this._adjustPercentageForRangeSliders(percentage);
 				this._state.percentage[this._state.dragged] = percentage;
 				this._layout();
-				
+
 				var val = this._calculateValue(true);
 				this.setValue(val, true, true);
-				
+
 				return false;
 			},
 			_adjustPercentageForRangeSliders: function(percentage) {
