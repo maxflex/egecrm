@@ -1,4 +1,10 @@
 app = angular.module "TeacherReview", ["ui.bootstrap"]
+    .filter 'toArray', ->
+        (obj) ->
+            arr = []
+            $.each obj, (index, value) ->
+                arr.push(value)
+            return arr
 	.filter 'range', () ->
 		return (input, total) ->
 			total = parseInt total
@@ -52,13 +58,13 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 		bindArguments($scope, arguments)
 		$scope.UserService = UserService
 		$scope.enum = review_statuses
-		
+
 		$scope.formatDateTime = (date) ->
 			moment(date).format "DD.MM.YY в HH:mm"
-		
+
 		$scope.yearLabel = (year) ->
 			year + '-' + (parseInt(year) + 1) + ' уч. г.'
-		
+
 		$scope.refreshCounts = ->
 			$timeout ->
 				$('.watch-select option').each (index, el) ->
@@ -71,13 +77,13 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 			$.cookie("reviews", JSON.stringify($scope.search), { expires: 365, path: '/' });
 			$scope.current_page = 1
 			$scope.getByPage($scope.current_page)
-		
+
 		# Страница изменилась
 		$scope.pageChanged = ->
 			window.history.pushState {}, '', 'reviews/?page=' + $scope.current_page if $scope.current_page > 1
 			# Получаем задачи, соответствующие странице и списку
 			$scope.getByPage($scope.current_page)
-		
+
 		$scope.getByPage = (page) ->
 			frontendLoadingStart()
 			$.post "ajax/GetReviews",
@@ -91,15 +97,15 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 				$scope.$apply()
 				$scope.refreshCounts()
 			, "json"
-						 
+
 		angular.element(document).ready ->
 			set_scope "TeacherReview"
 			$scope.search = if $.cookie("reviews") then JSON.parse($.cookie("reviews")) else {}
 			$scope.current_page = $scope.currentPage
 			$scope.pageChanged()
 			$(".single-select").selectpicker()
-				
-	.controller "Main", ($scope) -> 
+
+	.controller "Main", ($scope) ->
 		$scope.toggleReviewUser = ->
 			new_user_id = if $scope.id_user_review == $scope.user.id then 0 else $scope.user.id
 			ajaxStart()
@@ -110,24 +116,24 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 				ajaxEnd()
 				$scope.id_user_review = new_user_id
 				$scope.$apply()
-		
+
 		$scope.findUser = (id) ->
 			_.findWhere $scope.users, id: id
-	
+
 		$scope.enum = review_statuses
-			
+
 		$scope.RatingInfo = []
-		
+
 		$scope.setRating = (field, rating) ->
 			if $scope.RatingInfo[field] and $scope.RatingInfo[field] == rating
 				$scope.RatingInfo[field] = 0
 			else
 				$scope.RatingInfo[field] = rating
-		
+
 		$scope.saveReviews = ->
 			ajaxStart()
 			$.post "reviews/ajax/save",
-				RatingInfo: $scope.RatingInfo 
+				RatingInfo: $scope.RatingInfo
 				id_student: $scope.Student.id
 				id_subject: $scope.id_subject
 				id_teacher: $scope.Teacher.id
@@ -137,7 +143,7 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 				ajaxEnd()
 				$scope.form_changed = false
 				$scope.$apply()
-		
+
 		$scope.toggleEnum = (ngModel, status, ngEnum) ->
             statuses = Object.keys(ngEnum)
             status_id = statuses.indexOf ngModel[status].toString()
@@ -145,7 +151,7 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
             status_id = 0 if status_id > (statuses.length - 1)
             ngModel[status] = statuses[status_id]
             $scope.form_changed = true
-		
+
 		$scope.form_changed = false
 		angular.element(document).ready ->
 			set_scope "TeacherReview"

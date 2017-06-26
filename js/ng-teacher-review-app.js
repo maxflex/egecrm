@@ -1,6 +1,15 @@
 var app;
 
-app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('range', function() {
+app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('toArray', function() {
+  return function(obj) {
+    var arr;
+    arr = [];
+    $.each(obj, function(index, value) {
+      return arr.push(value);
+    });
+    return arr;
+  };
+}).filter('range', function() {
   return function(input, total) {
     var i, j, ref;
     total = parseInt(total);

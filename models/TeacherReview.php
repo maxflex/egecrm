@@ -109,7 +109,7 @@
 			}
 
 			// получаем данные
-			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating,
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating, r.grade,
 				r.admin_rating, r.admin_rating_final, r.published, r.score, r.max_score, r.comment, r.admin_comment, r.admin_comment_final, " . static::_countQuery('vj2'));
 			$result = dbConnection()->query($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
 
@@ -166,6 +166,11 @@
 					$new_search->mode = $mode;
 					$counts['mode'][$mode] = static::_count($new_search);
 				}
+				foreach(["", 9, 10, 11, 12, 13, 14] as $grade) {
+					$new_search = clone $search;
+					$new_search->grade = $grade;
+					$counts['grade'][$grade] = static::_count($new_search);
+				}
 				$users = User::getCached(true);
 				foreach(array_merge([""], $users) as $user) {
 					$new_search = clone $search;
@@ -213,6 +218,7 @@
 				. (!isBlank($search->published) ? " AND r.published={$search->published}" : "")
 				. (!isBlank($search->id_user) ? " AND s.id_user_review={$search->id_user}" : "")
 				. (!isBlank($search->rating) ? " AND r.rating={$search->rating}" : "")
+				. (!isBlank($search->grade) ? " AND r.grade={$search->grade}" : "")
 				. (!isBlank($search->admin_rating) ? " AND r.admin_rating={$search->admin_rating}" : "")
 				. (!isBlank($search->admin_rating_final) ? " AND r.admin_rating_final={$search->admin_rating_final}" : "")
 				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year"
