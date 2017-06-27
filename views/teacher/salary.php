@@ -83,7 +83,7 @@
 							<b>{{total_payment_sum | number}}</b>
 						</td>
 						<td class="center">
-							<b>{{(real_total_sum - total_payment_sum) | number}}</b>
+							<b>{{ toBePaid() | number}}</b>
 						</td>
 					</tr>
 				</tbody>

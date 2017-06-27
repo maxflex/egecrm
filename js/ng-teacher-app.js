@@ -60,6 +60,14 @@ app = angular.module("Teacher", ["ngMap"]).config([
     return $scope.editor.getSession().setMode("ace/mode/html");
   });
 }).controller("SalaryCtrl", function($scope) {
+  $scope.toBePaid = function() {
+    var to_be_paid;
+    to_be_paid = 0;
+    $scope.Data.forEach(function(d) {
+      return to_be_paid += d.real_sum - d.payment_sum - d.ndfl;
+    });
+    return to_be_paid.toFixed(2);
+  };
   return angular.element(document).ready(function() {
     return set_scope("Teacher");
   });

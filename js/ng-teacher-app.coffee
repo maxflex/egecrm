@@ -46,6 +46,11 @@
 				$scope.editor.getSession().setMode("ace/mode/html")
 
 		.controller "SalaryCtrl", ($scope) ->
+			$scope.toBePaid = ->
+				to_be_paid = 0
+				$scope.Data.forEach (d) ->
+					to_be_paid += (d.real_sum - d.payment_sum - d.ndfl)
+				to_be_paid.toFixed(2)
 			angular.element(document).ready ->
 				set_scope "Teacher"
 		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService, Workplaces) ->
