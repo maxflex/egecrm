@@ -109,7 +109,7 @@
 						<div>ответственный: <span class="user-pick" ng-click="toggleReviewUser()" style="color: {{findUser(id_user_review).color || 'black' }}">{{ findUser(id_user_review).login || "system"}}</span>
 						</div>
                         <div>статус:
-        						<span style="top: 14px; position: relative; white-space: nowrap" class="link-like-nocolor" ng-class="{
+        						<span class="link-like-nocolor" ng-class="{
         							'text-danger': RatingInfo.approved == 0,
         							'text-success': RatingInfo.approved == 1
         						}" ng-click="toggleEnum(RatingInfo, 'approved', enum_approved)">{{ enum_approved[RatingInfo.approved] }}</span>
