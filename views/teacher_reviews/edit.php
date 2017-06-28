@@ -71,7 +71,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-7">
 						<b style="top: 14px; position: relative">Оценка и отзыв ученика по окончании занятий (заполняется администратором)</b>
 					</div>
 					<div class="col-sm-1">
@@ -79,12 +79,6 @@
 							'text-danger': RatingInfo.published == 0,
 							'text-success': RatingInfo.published == 1
 						}" ng-click="toggleEnum(RatingInfo, 'published', enum)">{{ enum[RatingInfo.published] }}</span>
-					</div>
-                    <div class="col-sm-1">
-						<span style="top: 14px; position: relative; white-space: nowrap" class="link-like-nocolor" ng-class="{
-							'text-danger': RatingInfo.approved == 0,
-							'text-success': RatingInfo.approved == 1
-						}" ng-click="toggleEnum(RatingInfo, 'approved', enum_approved)">{{ enum_approved[RatingInfo.approved] }}</span>
 					</div>
 					<div class="col-sm-4">
 						<div class="pull-right">
@@ -112,7 +106,17 @@
 						<comments entity-id="RatingInfo.id" entity-type="REVIEW" user="user"></comments>
 					</div>
 					<div class="col-sm-2">
-						ответственный: <span class="user-pick" ng-click="toggleReviewUser()" style="color: {{findUser(id_user_review).color || 'black' }}">{{ findUser(id_user_review).login || "system"}}</span>
+						<div>
+						    ответственный: <span class="user-pick" ng-click="toggleReviewUser()" style="color: {{findUser(id_user_review).color || 'black' }}">{{ findUser(id_user_review).login || "system"}}</span>
+						</div>
+                        <div>
+                            статус: <div class="col-sm-1">
+        						<span style="top: 14px; position: relative; white-space: nowrap" class="link-like-nocolor" ng-class="{
+        							'text-danger': RatingInfo.approved == 0,
+        							'text-success': RatingInfo.approved == 1
+        						}" ng-click="toggleEnum(RatingInfo, 'approved', enum_approved)">{{ enum_approved[RatingInfo.approved] }}</span>
+        					</div>
+                        </div>
 					</div>
 					<div class="col-sm-4">
 						<input placeholder="подпись" class="watch-change form-control" maxlength="150" ng-model="RatingInfo.signature">

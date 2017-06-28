@@ -25,8 +25,8 @@
 				<select class="watch-select single-select form-control" ng-model="search.approved" ng-change='filter()'>
 					<option value=""  data-subtext="{{ counts.approved[''] || '' }}">все типы</option>
 					<option disabled>──────────────</option>
-					<option value="1"  data-subtext="{{ counts.approved[1] || '' }}">подтвержденные</option>
-					<option value="0"  data-subtext="{{ counts.approved[0] || '' }}">не подтвержденные</option>
+					<option value="1"  data-subtext="{{ counts.approved[1] || '' }}">проверенные</option>
+					<option value="0"  data-subtext="{{ counts.approved[0] || '' }}">не проверенные</option>
 				</select>
 	        </div>
 			<div>
