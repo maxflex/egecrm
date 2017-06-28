@@ -105,7 +105,7 @@
 					<div class="col-sm-4">
 						<comments entity-id="RatingInfo.id" entity-type="REVIEW" user="user"></comments>
 					</div>
-					<div class="col-sm-3">
+					<div class="col-sm-2">
 						<div>ответственный: <span class="user-pick" ng-click="toggleReviewUser()" style="color: {{findUser(id_user_review).color || 'black' }}">{{ findUser(id_user_review).login || "system"}}</span>
 						</div>
                         <div>статус:
@@ -115,7 +115,7 @@
         						}" ng-click="toggleEnum(RatingInfo, 'approved', enum_approved)">{{ enum_approved[RatingInfo.approved] }}</span>
                         </div>
 					</div>
-					<div class="col-sm-3">
+					<div class="col-sm-4">
 						<input placeholder="подпись" class="watch-change form-control" maxlength="150" ng-model="RatingInfo.signature">
 					</div>
 					<div class="col-sm-2 inline-inputs">
