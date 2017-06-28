@@ -21,6 +21,14 @@
 					<option value="0"  data-subtext="{{ counts.published[0] || '' }}">не опубликованные</option>
 				</select>
 	        </div>
+            <div>
+				<select class="watch-select single-select form-control" ng-model="search.approved" ng-change='filter()'>
+					<option value=""  data-subtext="{{ counts.approved[''] || '' }}">все типы</option>
+					<option disabled>──────────────</option>
+					<option value="1"  data-subtext="{{ counts.approved[1] || '' }}">подтвержденные</option>
+					<option value="0"  data-subtext="{{ counts.approved[0] || '' }}">не подтвержденные</option>
+				</select>
+	        </div>
 			<div>
 				<select class="watch-select single-select form-control" ng-model="search.id_teacher"  ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.teacher[''] || '' }}">все преподаватели</option>

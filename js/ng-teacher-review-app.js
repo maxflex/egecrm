@@ -28,6 +28,7 @@ app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('toArray', functi
   };
 }).controller('StudentReviews', function($scope, $timeout) {
   $scope["enum"] = review_statuses;
+  $scope.enum_approved = review_statuses_approved;
   $scope.formatDateTime = function(date) {
     return moment(date).format("DD.MM.YY в HH:mm");
   };
@@ -72,6 +73,7 @@ app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('toArray', functi
   bindArguments($scope, arguments);
   $scope.UserService = UserService;
   $scope["enum"] = review_statuses;
+  $scope.enum_approved = review_statuses_approved;
   $scope.formatDateTime = function(date) {
     return moment(date).format("DD.MM.YY в HH:mm");
   };
@@ -142,6 +144,7 @@ app = angular.module("TeacherReview", ["ui.bootstrap"]).filter('toArray', functi
     });
   };
   $scope["enum"] = review_statuses;
+  $scope.enum_approved = review_statuses_approved;
   $scope.RatingInfo = [];
   $scope.setRating = function(field, rating) {
     if ($scope.RatingInfo[field] && $scope.RatingInfo[field] === rating) {

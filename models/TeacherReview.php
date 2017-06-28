@@ -156,10 +156,15 @@
 					$new_search->admin_rating_final = $admin_rating_final;
 					$counts['admin_rating_final'][$admin_rating_final] = static::_count($new_search);
 				}
-				foreach(["", 0, 1, 2] as $published) {
+				foreach(["", 0, 1] as $published) {
 					$new_search = clone $search;
 					$new_search->published = $published;
 					$counts['published'][$published] = static::_count($new_search);
+				}
+				foreach(["", 0, 1] as $approved) {
+					$new_search = clone $search;
+					$new_search->approved = $approved;
+					$counts['approved'][$approved] = static::_count($new_search);
 				}
 				foreach(["", 0, 1] as $mode) {
 					$new_search = clone $search;
@@ -216,6 +221,7 @@
 				. ($search->id_student ? " AND vj.id_entity={$search->id_student}" : "")
 				. (!isBlank($search->mode) ? ($search->mode == 1 ? " AND r.id IS NOT NULL" : " AND r.id IS NULL") : "")
 				. (!isBlank($search->published) ? " AND r.published={$search->published}" : "")
+				. (!isBlank($search->approved) ? " AND r.approved={$search->approved}" : "")
 				. (!isBlank($search->id_user) ? " AND s.id_user_review={$search->id_user}" : "")
 				. (!isBlank($search->rating) ? " AND r.rating={$search->rating}" : "")
 				. (!isBlank($search->grade) ? " AND r.grade={$search->grade}" : "")

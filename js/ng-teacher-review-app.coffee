@@ -16,6 +16,7 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 			if item > 0 then item else null
 	.controller 'StudentReviews', ($scope, $timeout) ->
 		$scope.enum = review_statuses
+		$scope.enum_approved = review_statuses_approved
 
 		$scope.formatDateTime = (date) ->
 			moment(date).format "DD.MM.YY в HH:mm"
@@ -58,6 +59,7 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 		bindArguments($scope, arguments)
 		$scope.UserService = UserService
 		$scope.enum = review_statuses
+		$scope.enum_approved = review_statuses_approved
 
 		$scope.formatDateTime = (date) ->
 			moment(date).format "DD.MM.YY в HH:mm"
@@ -121,6 +123,7 @@ app = angular.module "TeacherReview", ["ui.bootstrap"]
 			_.findWhere $scope.users, id: id
 
 		$scope.enum = review_statuses
+		$scope.enum_approved = review_statuses_approved
 
 		$scope.RatingInfo = []
 

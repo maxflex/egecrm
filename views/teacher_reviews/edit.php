@@ -24,7 +24,7 @@
 					<?php else :?>
 					<span style="top: 14px; position: relative">Напишите что понравилось/не понравилось (текст отзыва доступен только для администрации)</span>
 					<?php endif ?>
-					
+
 				</div>
 				<div class="col-sm-4">
 					<div class="pull-right">
@@ -44,7 +44,7 @@
 					<textarea maxlength="1024" class="teacher-review-textarea form-control" rows="5" ng-model="RatingInfo.comment"></textarea>
 				</div>
 			</div>
-			
+
 			<?php if (User::fromSession()->isUser()) :?>
 				<div class="row">
 					<div class="col-sm-8">
@@ -71,7 +71,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-7">
+					<div class="col-sm-6">
 						<b style="top: 14px; position: relative">Оценка и отзыв ученика по окончании занятий (заполняется администратором)</b>
 					</div>
 					<div class="col-sm-1">
@@ -79,6 +79,12 @@
 							'text-danger': RatingInfo.published == 0,
 							'text-success': RatingInfo.published == 1
 						}" ng-click="toggleEnum(RatingInfo, 'published', enum)">{{ enum[RatingInfo.published] }}</span>
+					</div>
+                    <div class="col-sm-1">
+						<span style="top: 14px; position: relative; white-space: nowrap" class="link-like-nocolor" ng-class="{
+							'text-danger': RatingInfo.approved == 0,
+							'text-success': RatingInfo.approved == 1
+						}" ng-click="toggleEnum(RatingInfo, 'approved', enum_approved)">{{ enum_approved[RatingInfo.approved] }}</span>
 					</div>
 					<div class="col-sm-4">
 						<div class="pull-right">
@@ -100,7 +106,7 @@
 						<textarea maxlength="1024" class="teacher-review-textarea form-control" rows="5" ng-model="RatingInfo.admin_comment_final"></textarea>
 					</div>
 				</div>
-				
+
 				<div class="row" style="margin-top: 10px" ng-show='RatingInfo.id'>
 					<div class="col-sm-4">
 						<comments entity-id="RatingInfo.id" entity-type="REVIEW" user="user"></comments>
@@ -125,7 +131,7 @@
                     width: 35%;
                 }
             </style>
-			
+
 			<div class="row" style="margin-top: 30px">
 				<div class="col-sm-12 center">
 					<button class="btn btn-primary" ng-disabled="!form_changed" ng-click="saveReviews()">
