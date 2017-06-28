@@ -105,12 +105,10 @@
 					<div class="col-sm-4">
 						<comments entity-id="RatingInfo.id" entity-type="REVIEW" user="user"></comments>
 					</div>
-					<div class="col-sm-2">
-						<div>
-						    ответственный: <span class="user-pick" ng-click="toggleReviewUser()" style="color: {{findUser(id_user_review).color || 'black' }}">{{ findUser(id_user_review).login || "system"}}</span>
+					<div class="col-sm-3">
+						<div>ответственный: <span class="user-pick" ng-click="toggleReviewUser()" style="color: {{findUser(id_user_review).color || 'black' }}">{{ findUser(id_user_review).login || "system"}}</span>
 						</div>
-                        <div>
-                            статус: <div class="col-sm-1">
+                        <div>статус: <div class="col-sm-1">
         						<span style="top: 14px; position: relative; white-space: nowrap" class="link-like-nocolor" ng-class="{
         							'text-danger': RatingInfo.approved == 0,
         							'text-success': RatingInfo.approved == 1
@@ -118,7 +116,7 @@
         					</div>
                         </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<input placeholder="подпись" class="watch-change form-control" maxlength="150" ng-model="RatingInfo.signature">
 					</div>
 					<div class="col-sm-2 inline-inputs">
