@@ -52,9 +52,17 @@
 					}">{{ enum[Review.published] }}</span>
 			</span>
 		</td>
+		<td style="width: 10%">
+			<span ng-show='Review.id'>
+				<span ng-class="{
+						'text-danger': Review.approved == 0,
+						'text-success': Review.approved == 1
+					}">{{ enum_approved[Review.approved] }}</span>
+			</span>
+		</td>
 		<td style="width: 13%">
 			<span style="color: {{ Review.Student.color || 'black' }}">{{Review.Student.user_login || 'system'}}</span>
-		</td>		
+		</td>
 	</tr>
 </table>
 <style>
