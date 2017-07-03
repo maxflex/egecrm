@@ -59,7 +59,7 @@
 			self::PER => "ПЕР",
 			self::KLG => "КЛЖ",
 			self::BRT => "БРА",
-			self::STR => "МОЛ",
+			self::STR => "СТР",
 			self::VLD => "ВЛА",
 			self::BEL => "БЕЛ",
 		];
