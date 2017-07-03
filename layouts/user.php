@@ -195,7 +195,7 @@
     				<a href="users" class="list-group-item">Пользователи</a>
     			<?php endif ?>
                 <?php if (allowed(Shared\Rights::EMERGENCY_EXIT)) :?>
-    				<a onclick="emergency()" class="list-group-item">Экстренный выход</a>
+    				<a onclick="emergency()" class="cursor list-group-item">Экстренный выход</a>
     			<?php endif ?>
     			<a href="logout" class="list-group-item">Выход</a>
     		</div>
