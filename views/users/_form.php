@@ -181,6 +181,7 @@
         <?= partial('right', ['right' => Shared\Rights::ECC_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::ERC_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::WORLDWIDE_ACCESS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EMERGENCY_EXIT]) ?>
     </div>
 </div>
 <!--/access settings -->
