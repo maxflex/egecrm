@@ -173,6 +173,10 @@ RewriteRule ^upload[/]?$ index.php?controller=upload [QSA,L]
 RewriteRule ^[/]?$ index.php?controller=login&action=login [QSA,L]
 
 # Mango
+RewriteRule ^stream?$ index.php?controller=stream&action=index [QSA,L]
+RewriteRule ^stream/get[?page=(0-9)]?[/]?$ index.php?controller=stream&action=get [QSA,L]
+
+# Mango
 RewriteRule ^mango/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=$1 [QSA,L]
 RewriteRule ^mango/events/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=Event$1 [QSA,L]
 RewriteRule ^mango/result/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=Result$1 [QSA,L]

@@ -135,6 +135,7 @@
         <?= partial('right', ['right' => Shared\Rights::SHOW_STATS]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_SALARY]) ?>
         <?= partial('right', ['right' => Shared\Rights::LOGS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EC_STREAM]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">

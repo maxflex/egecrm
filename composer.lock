@@ -121,7 +121,7 @@
             "source": {
                 "type": "git",
                 "url": "https://mkolyadin@bitbucket.org/mkolyadin/ege-shared.git",
-                "reference": "6de4eca0f12d2b5a76daf611103e4265001d104e"
+                "reference": "0a29389c7a0f159e2d8fd5fabe38c7be60a7174b"
             },
             "type": "library",
             "autoload": {
@@ -129,7 +129,7 @@
                     "Shared\\": "src/"
                 }
             },
-            "time": "2017-07-03 11:30:58"
+            "time": "2017-07-03 16:06:01"
         },
         {
             "name": "elfet/pure",

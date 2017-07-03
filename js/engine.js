@@ -1039,3 +1039,10 @@ function ExpandSelect(select, maxOptionsVisible)
             bootbox.alert('OK')
         })
     }
+
+    /**
+     * Helper function for recording pagination history
+     */
+    function paginate(entity, page) {
+        window.history.pushState('', '', entity + '?page=' + page)
+    }
