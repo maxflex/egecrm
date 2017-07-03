@@ -783,6 +783,7 @@
 
         public function actionAjaxEmergency()
         {
+            $this->checkRights(Shared\Rights::EMERGENCY_EXIT);
             dbEgerep()->query("UPDATE settings SET emergency_exit=1");
             Socket::trigger('egerep', 'App\Events\EmergencyExit', [], 'egerep');
         }
