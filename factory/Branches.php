@@ -20,7 +20,7 @@
 		const PER = 12;
 		const KLG = 13;
 		const BRT = 14;
-		const MLD = 15;
+		const STR = 15;
 		const VLD = 16;
 		const BEL = 17;
 
@@ -40,7 +40,7 @@
 			self::PER => "Перово",
 			self::KLG => "Калужская",
 			self::BRT => "Братиславская",
-			self::MLD => "Молодежная",
+			self::STR => "Строгино",
 			self::VLD => "Владыкино",
 			self::BEL => "Беляево",
 		];
@@ -59,7 +59,7 @@
 			self::PER => "ПЕР",
 			self::KLG => "КЛЖ",
 			self::BRT => "БРА",
-			self::MLD => "МОЛ",
+			self::STR => "МОЛ",
 			self::VLD => "ВЛА",
 			self::BEL => "БЕЛ",
 		];
@@ -78,7 +78,7 @@
 			self::PER => "",
 			self::KLG => "Научный проезд 8с1",
 			self::BRT => "",
-			self::MLD => "",
+			self::STR => "",
 			self::VLD => "",
 		];
 
@@ -298,7 +298,7 @@
 				# Синий
 //				case self::STR:
 				case self::IZM:
-				case self::MLD: {
+				case self::STR: {
 					if ($return) {
 						return 4;
 					}
