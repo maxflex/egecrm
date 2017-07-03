@@ -1029,3 +1029,13 @@ function ExpandSelect(select, maxOptionsVisible)
 		date = date.join("-")
 		return date
 	}
+
+
+    /**
+     * Экстренный выход
+     */
+    function emergency() {
+        $.get('ajax/Emergency').then(function() {
+            bootbox.alert('OK')
+        })
+    }

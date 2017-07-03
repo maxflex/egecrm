@@ -780,4 +780,10 @@
             }
 			returnJsonAng($return);
 		}
+
+        public function actionAjaxEmergency()
+        {
+            dbEgerep()->query("UPDATE settings SET emergency_exit=1");
+            Socket::trigger('egerep', 'App\Events\EmergencyExit', [], 'egerep');
+        }
 	}

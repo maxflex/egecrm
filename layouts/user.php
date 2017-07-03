@@ -194,6 +194,9 @@
                 <?php if (User::fromSession()->allowed(Shared\Rights::SHOW_USERS)) :?>
     				<a href="users" class="list-group-item">Пользователи</a>
     			<?php endif ?>
+                <?php if (allowed(Shared\Rights::EMERGENCY_EXIT)) :?>
+    				<a onclick="emergency()" class="list-group-item">Экстренный выход</a>
+    			<?php endif ?>
     			<a href="logout" class="list-group-item">Выход</a>
     		</div>
     	</div>
