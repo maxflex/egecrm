@@ -11,28 +11,13 @@
 					$scope.checkFields()
 				}
 			}
-			
-			// Отправка формы
-			$scope.checkFields = function() {
-				if (!$scope.login) {
-					angular.element('#inputLogin').focus()
-					$scope.form_errors = "Укажите логин"
-					return false
-				}
-				if (!$scope.password) {
-					angular.element('#inputPassword').focus()
-					$scope.form_errors = "Укажите пароль"
-					return false
-				}
-				
-				
-			 	l.start();
-				
-				ajaxStart()
-				$scope.in_process = true;
-				$.post("index.php?controller=login&action=AjaxLogin", {
+
+            $scope.goLogin = function() {
+                ajaxStart()
+                $.post("index.php?controller=login&action=AjaxLogin", {
 					'login'		: $scope.login,
-					'password'	: $scope.password
+					'password'	: $scope.password,
+                    'captcha'   : grecaptcha.getResponse()
 				}, function(response) {
 					console.log(response)
 					if (response === true) {
@@ -51,5 +36,33 @@
 						return false
 					}
 				}, "json")
+            }
+
+			// Отправка формы
+			$scope.checkFields = function() {
+				if (!$scope.login) {
+					angular.element('#inputLogin').focus()
+					$scope.form_errors = "Укажите логин"
+					return false
+				}
+				if (!$scope.password) {
+					angular.element('#inputPassword').focus()
+					$scope.form_errors = "Укажите пароль"
+					return false
+				}
+
+			 	l.start()
+				$scope.in_process = true
+
+                if (grecaptcha.getResponse() == '') {
+                    grecaptcha.execute()
+                } else {
+                    $scope.goLogin()
+                }
 			}
 		});
+
+
+function captchaChecked() {
+    ang_scope.goLogin()
+}
