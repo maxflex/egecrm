@@ -17,13 +17,21 @@
                 $.post("index.php?controller=login&action=AjaxLogin", {
 					'login'		: $scope.login,
 					'password'	: $scope.password,
+                    'code'      : $scope.code,
                     'captcha'   : grecaptcha.getResponse()
 				}, function(response) {
 					console.log(response)
+                    grecaptcha.reset()
 					if (response === true) {
 						// window.location = "requests";
 						location.reload()
-					} else {
+					} else if (response === 'sms') {
+                        ajaxEnd()
+						$scope.in_process = false;
+						l.stop()
+                        $scope.sms_verification = true
+                        $scope.$apply()
+                    } else {
 						ajaxEnd()
 						$scope.in_process = false;
 						l.stop()

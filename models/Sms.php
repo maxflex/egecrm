@@ -198,4 +198,15 @@ class SMS extends Model
         );
         return true;
     }
+
+    public static function verify($User)
+    {
+        $code = mt_rand(1000, 9999);
+        $client = new Predis\Client();
+        $client->set("egecrm:codes:{$User->id}", $code, 'EX', 120);
+
+        Sms::send($User->phone, $code . ' – код для входа в ЛК');
+        // cache(["codes:{$user_id}" => $code], 3);
+        return $code;
+    }
 }
