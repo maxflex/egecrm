@@ -66,7 +66,13 @@
                          left join representatives r on r.id = s.id_representative
                          where 1 ".
                          (!isBlank($search->year) ? " and ci.year={$search->year} " : '') .
-                         ($search->version == 2 ? " and c.current_version = 1 " : "") . "
+                         (!isBlank($search->version) ? "
+                            and c.id = (
+                                SELECT " . ($search->version == 1 ? "MIN" : "MAX") . "(id) as min_id FROM " . static::$mysql_table . " c2
+                                JOIN " . static::$info_table. " ci2 on ci2.id_contract = c2.id_contract
+                                WHERE ci2.id_student=s.id AND ci2.year=ci.year
+                            )
+                         " : "") . "
                          order by c.id desc";
 
 
