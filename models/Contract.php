@@ -63,11 +63,11 @@
                          from " . static::$mysql_table . " c
                          join   " . static::$info_table. " ci on ci.id_contract = c.id_contract
                          join  students s on ci.id_student = s.id
+                         left join representatives r on r.id = s.id_representative
                          where 1 ".
-                         (!isBlank($search->start_date) ? " and str_to_date(c.date, '%d.%m.%Y') >= str_to_date('" . $search->start_date . "', '%d.%m.%Y') " : "") .
-                         (!isBlank($search->end_date) ? " and str_to_date(c.date, '%d.%m.%Y') <= str_to_date('" . $search->end_date . "', '%d.%m.%Y') " : "") .
-                         (!isBlank($search->id_student) ? " and (s.id = " . $search->id_student . ") " : "") . "
-                         order by str_to_date(c.date, '%d.%m.%Y') desc, c.date_changed desc";
+                         (!isBlank($search->year) ? " and ci.year={$search->year} " : '') .
+                         ($search->version == 2 ? " and c.current_version = 1 " : "") . "
+                         order by c.id desc";
 
 
             $color_counts = " (select count(id_subject) from contract_subjects cs where cs.id_contract = c.id AND cs.status = 3) as green, " .

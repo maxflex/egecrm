@@ -18,6 +18,16 @@ app = angular.module("Contracts", ["ui.bootstrap"]).filter('to_trusted', [
   $scope.getNumber = function(index) {
     return (($scope.current_page - 1) * 30) + (index + 1);
   };
+  $timeout(function() {
+    $('.watch-select option').each(function(index, el) {
+      $(el).data('subtext', $(el).attr('data-subtext'));
+      return $(el).data('content', $(el).attr('data-content'));
+    });
+    return $('.watch-select').selectpicker('refresh');
+  }, 500);
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
   $scope.filter = function() {
     $.cookie("contracts", JSON.stringify($scope.search), {
       expires: 365,

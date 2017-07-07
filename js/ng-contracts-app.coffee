@@ -10,6 +10,17 @@ app = angular.module "Contracts", ["ui.bootstrap"]
 		$scope.getNumber = (index) ->
 			(($scope.current_page - 1) * 30) + (index + 1)
 
+		$timeout ->
+			$('.watch-select option').each (index, el) ->
+				$(el).data 'subtext', $(el).attr 'data-subtext'
+				$(el).data 'content', $(el).attr 'data-content'
+			$('.watch-select').selectpicker 'refresh'
+		, 500
+
+
+		$scope.yearLabel = (year) ->
+			year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
 		$scope.filter = ->
 			$.cookie("contracts", JSON.stringify($scope.search), { expires: 365, path: '/' });
 			$scope.current_page = 1

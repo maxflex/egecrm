@@ -415,7 +415,7 @@
          */
         public static function fromOffice()
         {
-            return strpos($_SERVER['HTTP_X_REAL_IP'], '213.184.130.') === 0;
+            return LOCAL_DEVELOPMENT || strpos($_SERVER['HTTP_X_REAL_IP'], '213.184.130.') === 0;
         }
 
         /**

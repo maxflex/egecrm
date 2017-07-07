@@ -3,22 +3,20 @@
     <div class="panel-body">
         <div class="row" style="margin-bottom: 15px;">
             <div class="col-sm-2">
-                <div class="input-group custom" style="position: relative">
-                    <span class="input-group-addon">начало - </span>
-                    <input class="form-control bs-date-clear pointer" readonly ng-model="search.start_date" ng-change="filter()">
-                </div>
+                <select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
+                    <option value="">все годы</option>
+                    <option disabled>────────</option>
+                    <option ng-repeat="year in <?= Years::json() ?>"
+                        value="{{year}}">{{ yearLabel(year) }}</option>
+                </select>
             </div>
             <div class="col-sm-2">
-                <div class="input-group custom" style="position: relative">
-                    <span class="input-group-addon">конец - </span>
-                    <input class="form-control bs-date-clear pointer" readonly ng-model="search.end_date" ng-change="filter()">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div class="input-group custom" style="position: relative">
-                    <span class="input-group-addon">ID ученика - </span>
-                    <input class="digits-only form-control" ng-model="search.id_student" ng-keyup='keyFilter($event)'>
-                </div>
+                <select class="watch-select single-select form-control" ng-model="search.version" ng-change='filter()'>
+                    <option value="">все версии</option>
+                    <option disabled>────────</option>
+                    <option value="1">первая в году</option>
+                    <option value="2">последняя в году</option>
+                </select>
             </div>
         </div>
 
@@ -27,7 +25,7 @@
             <table class="table table-hover border-reverse">
                 <tr ng-repeat="Contract in Contracts">
                     <td>
-                        {{getNumber($index)}}. <a href="student/{{ Contract.id_student}}">
+                        {{ Contract.id }}. <a href="student/{{ Contract.id_student}}">
                             <span ng-show='Contract.last_name'>{{Contract.last_name}} {{Contract.first_name}} {{Contract.middle_name}}</span>
                             <span ng-hide='Contract.last_name'>имя не указано</span>
                         </a>
