@@ -3,6 +3,14 @@
 			angular.element(document).ready(function() {
 				set_scope("Login")
 				l = Ladda.create(document.querySelector('#login-submit'));
+                login_data = $.cookie("login_data")
+                if (login_data !== undefined) {
+                    login_data = JSON.parse(login_data)
+                    $scope.login = login_data.login
+                    $scope.password = login_data.password
+                    $scope.sms_verification = true
+                    $scope.$apply()
+                }
 			});
 
 			//обработка события по enter в форме логина
@@ -24,6 +32,7 @@
                     grecaptcha.reset()
 					if (response === true) {
 						// window.location = "requests";
+						$.removeCookie('login_data')
 						location.reload()
 					} else if (response === 'sms') {
                         ajaxEnd()
@@ -31,6 +40,7 @@
 						l.stop()
                         $scope.sms_verification = true
                         $scope.$apply()
+                        $.cookie("login_data", JSON.stringify({login: $scope.login, password: $scope.password}), { expires: 1 / (24 * 60) * 2, path: '/' })
                     } else {
 						ajaxEnd()
 						$scope.in_process = false;
