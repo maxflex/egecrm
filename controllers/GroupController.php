@@ -144,10 +144,10 @@
 
                     $Schedule->getGroup();
 
-					// restrict other teachers to access journal
-					if ((User::fromSession()->type == Teacher::USER_TYPE) && ($Schedule->Group->id_teacher != User::fromSession()->id_entity)) {
-						$this->renderRestricted();
-					}
+					// has-access-refactored
+                    if (User::isTeacher()) {
+                        $this->hasAccess('groups', $Schedule->Group->id);
+                    }
 
 					// если занятие уже зарегистрировано, берем данные из журнала
 					if ($Schedule->was_lesson) {
