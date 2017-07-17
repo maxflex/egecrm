@@ -32,8 +32,6 @@
 				$layout = strtolower(User::fromSession()->type);
 			}
 
-            $this->_custom_panel = true;
-
 			// Рендер лэйаута
 			include_once(BASE_ROOT."/layouts/header.php");
 			include_once(BASE_ROOT."/layouts/{$layout}.php");
@@ -59,6 +57,9 @@
 			if (! $layout) {
 				$layout = strtolower(User::fromSession()->type);
 			}
+
+            $this->_custom_panel = false;
+
 
 			$this->setTabTitle("Ошибка");
 
