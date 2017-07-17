@@ -72,6 +72,25 @@
 			exit();
 		}
 
+        /**
+         * Logged user has access
+         */
+        protected function hasAccess($table, $id, $column = null, $array = null)
+        {
+            if (! $column) {
+                $column = 'id_' . strtolower(User::fromSession()->type);
+            }
+
+            $condition = $array ? "FIND_IN_SET(" . User::fromSession()->id_entity . ", {$column})" : "{$column} = " . User::fromSession()->id_entity;
+
+            $query = "SELECT 1 FROM {$table} WHERE id={$id} AND {$condition}";
+
+            $has_access = dbConnection()->query($query)->num_rows;
+
+            if (! $has_access) {
+                $this->renderRestricted();
+            }
+        }
 
 		/**
 		 * Установить права доступа к контроллеру.
@@ -82,7 +101,7 @@
 		 */
 		protected function setRights($allowed_users = [User::USER_TYPE])
 		{
-			if (!in_array(User::fromSession()->type, $allowed_users)) {
+			if (! in_array(User::fromSession()->type, $allowed_users)) {
 				$this->renderRestricted();
 			}
 		}

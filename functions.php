@@ -21,7 +21,7 @@
 	 */
 	function preType($anything, $exit = NULL)
 	{
-		if (allowed(Shared\Rights::IS_DEVELOPER)) {
+		//if (allowed(Shared\Rights::IS_DEVELOPER)) {
 			echo "<pre>";
 			print_r($anything);
 			echo "</pre>";
@@ -30,7 +30,7 @@
 			{
 				exit();
 			}
-		}
+		//}
 	}
 
     function dd($objects)

@@ -19,9 +19,9 @@ RewriteRule ^login$ index.php?controller=login&action=login [QSA,L]
 RewriteRule ^ajax/([a-zA-Z]+)[/]?$ index.php?controller=ajax&action=Ajax$1 [QSA,L]
 
 # Отчеты
-RewriteRule ^(students/|teachers/)?reports/student/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=student&id_student=$2&id_subject=$3 [QSA,L]
-RewriteRule ^(students/|teachers/)?reports/teacher/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=teacher&id_teacher=$2&id_subject=$3 [QSA,L]
-RewriteRule ^(students/|teachers/)?reports/add/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=add&id_student=$2&id_subject=$3 [QSA,L]
+RewriteRule ^teachers/reports/student/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=student&id_student=$1&id_subject=$2 [QSA,L]
+RewriteRule ^students/reports/teacher/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=teacher&id_teacher=$1&id_subject=$2 [QSA,L]
+RewriteRule ^(teachers/)?reports/add/([0-9]+)/([0-9]+)[/]?$ index.php?controller=reports&action=add&id_student=$2&id_subject=$3 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/([0-9]+)?[/]?$ index.php?controller=reports&action=list&year=$2 [QSA,L]
 
 RewriteRule ^(students/|teachers/)?reports[?page=(0-9)]?[/]?$ index.php?controller=reports&action=list&page=$1 [QSA,L]

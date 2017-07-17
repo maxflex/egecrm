@@ -57,7 +57,7 @@
         <div class="col-sm-12 link-padding" ng-if='!id_group'>
             <span style='margin-bottom: 0'>Ученик прекратил обучение в группе</span>
         </div>
-        <div class="col-sm-12 link-padding">
+        <div class="col-sm-12 link-padding" ng-show='id_group'>
             <a href="teachers/reports/add/{{ Student.id }}/{{ Subject.id }}">создать отчет по {{ Subject.dative }}</a>
             <span class="text-danger" ng-show="<?= $report_required ?>" style="margin-left: 20px">требуется создание отчета</span>
         </div>

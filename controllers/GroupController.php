@@ -17,20 +17,18 @@
 
 		public function actionJournal()
 		{
-			$id_group 	= $_GET['id_group'];
 			$id_group = $_GET['id'];
 
 			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
 
+            // has-access-refactored
+            if (User::isTeacher()) {
+                $this->hasAccess('groups', $id_group);
+            }
+
 			$this->setTabTitle("Посещаемость группы №" . $id_group);
 
 			$Group = Group::findById($id_group, true);
-
-			// restrict other teachers to access journal
-			if ((User::fromSession()->type == Teacher::USER_TYPE) && ($Group->id_teacher != User::fromSession()->id_entity)) {
-				$this->renderRestricted();
-			}
-
 
 			$Group->Schedule = $Group->getSchedule();
 
@@ -284,10 +282,13 @@
             // @past_lessons – рассмотреть удаление у teachers & students
             $this->addJs("vendor/angular-bootstrap-calendar-tpls, ng-schedule-app");
 			if (User::fromSession()->type == Student::USER_TYPE) {
+                $id_group = $_GET['id'];
+
+                // has-access-refactored
+                $this->hasAccess('groups', $id_group, 'students', true);
+
 				// не надо панель рисовать
 				$this->_custom_panel = true;
-
-				$id_group = $_GET['id'];
 				$Group = Group::findById($id_group);
 
 				// @refactored
@@ -324,16 +325,15 @@
 				]);
 			} else
 				if (User::fromSession()->type == Teacher::USER_TYPE) {
-					// не надо панель рисовать
-					$this->_custom_panel = true;
-
 					$id_group = $_GET['id'];
 					$Group = Group::findById($id_group);
 
-					// restrict other teachers to access journal
-					if ($Group->id_teacher != User::fromSession()->id_entity) {
-						$this->renderRestricted();
-					}
+
+					// has-access-refactored
+					$this->hasAccess('groups', $id_group);
+
+                    // не надо панель рисовать
+					$this->_custom_panel = true;
 
 					// @refactored
 					$Group->Schedule = $Group->getSchedule();
@@ -763,6 +763,8 @@
 		// DOWNLOAD SCHEDULE
 		public function actionDownloadSchedule()
 		{
+            $this->setRights([User::USER_TYPE]);
+
 			header('Content-Type: application/vnd.ms-excel');
 			header('Content-Disposition: attachment;filename="расписание.xls"');
 			header('Cache-Control: max-age=0');

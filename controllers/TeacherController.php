@@ -44,6 +44,8 @@
                                         )->fetch_object()->teacher_ids
                            );
 
+            $teacher_ids = array_filter($teacher_ids);
+
 			$real_total_sum = 0;
 			$total_sum = 0;
             $total_sum_official = 0;

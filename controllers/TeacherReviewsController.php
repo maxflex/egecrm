@@ -17,7 +17,7 @@
 
 		private function _studentId()
 		{
-			return User::fromSession()->type == Student::USER_TYPE ? User::fromSession()->id_entity : $_GET['id_student'];
+			return User::isStudent() ? User::fromSession()->id_entity : $_GET['id_student'];
 		}
 
 		/**
@@ -118,6 +118,10 @@
 								"condition" => "id_teacher={$id_teacher} AND id_entity=" . $id_student . "
 								AND type_entity='STUDENT' AND id_subject={$id_subject} AND year={$year}"
  							]);
+
+            if (! $lesson_count) {
+                $this->renderRestricted();
+            }
 
  			$RatingInfo = TeacherReview::getInfo($id_student, $id_teacher, $id_subject, $year);
 
