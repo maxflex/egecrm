@@ -16,7 +16,7 @@
 		const RPT = 7;
 		const SKL = 8;
 		const ORH = 9;
-		const UJN = 11;
+		const ANN = 11;
 		const PER = 12;
 		const KLG = 13;
 		const BRT = 14;
@@ -36,7 +36,7 @@
 			self::RPT => "Рязанский Проспект",
 			self::SKL => "Сокол",
 			self::ORH => "Орехово",
-			self::UJN => "Южная",
+			self::ANN => "Аннино",
 			self::PER => "Перово",
 			self::KLG => "Калужская",
 			self::BRT => "Братиславская",
@@ -55,7 +55,7 @@
 			self::RPT => "РЯЗ",
 			self::SKL => "СОК",
 			self::ORH => "ОРЕ",
-			self::UJN => "ЮЖН",
+			self::ANN => "АНН",
 			self::PER => "ПЕР",
 			self::KLG => "КЛЖ",
 			self::BRT => "БРА",
@@ -74,7 +74,7 @@
 			self::RPT => "",
 			self::SKL => "Ленинградский проспект, 68с24",
 			self::ORH => "",
-			self::UJN => "",
+			self::ANN => "",
 			self::PER => "",
 			self::KLG => "Научный проезд 8с1",
 			self::BRT => "",
@@ -325,7 +325,7 @@
 				}
 				# Серый
 //				case self::PRR:
-				case self::UJN:
+				case self::ANN:
 				case self::VLD: {
 					if ($return) {
 						return 8;
