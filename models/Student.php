@@ -242,7 +242,7 @@
 
 
             dbConnection()->query("
-                DELETE * FROM contract_info ci
+                DELETE c, ci, cs FROM contract_info ci
                 LEFT JOIN contracts c on c.id_contract = ci.id_contract
                 LEFT JOIN contract_subjects cs on cs.id_contract = c.id
                 WHERE ci.id_student={$id_student}
