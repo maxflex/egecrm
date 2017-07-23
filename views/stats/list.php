@@ -114,7 +114,7 @@
 					<?php endif ?>
 				</td>
                 <td>
-					<?= $stat['teachers'] ?>
+					<?= $stat['teachers'] ?: '' ?>
 				</td>
 			</tr>
 			<?php endforeach; ?>
