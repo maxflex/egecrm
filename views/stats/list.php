@@ -69,6 +69,9 @@
 				<td>
 					возвраты
 				</td>
+                <td>
+					резюме
+				</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -109,6 +112,9 @@
 					<?php if ($stat['return_unconfirmed'] > 0) :?>
 						<span class="quater-black"><?= ($stat['return_confirmed'] > 0 ? ' + ' : '')?><?= $stat['return_unconfirmed'] ?></span>
 					<?php endif ?>
+				</td>
+                <td>
+					<?= $stat['teachers'] ?>
 				</td>
 			</tr>
 			<?php endforeach; ?>

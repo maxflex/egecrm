@@ -116,6 +116,14 @@
 
 			$stats['requests'] = $requests_count;
 
+            $teachers_count = Teacher::count([
+				"condition" =>
+					$date_end 	? "DATE(created_at) > '". $date_start_formatted ."' AND DATE(created_at) <= '". $date_end_formatted ."' AND egecentr_source=1"
+								: "DATE(created_at) = '". $date_start_formatted ."' AND egecentr_source=1"
+			]);
+
+			$stats['teachers'] = $teachers_count;
+
 			return $stats;
 		}
 
