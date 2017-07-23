@@ -45,6 +45,9 @@
 				<td>
 					заявок
 				</td>
+                <td>
+					резюме
+				</td>
 				<td>
 					новых договоров
 				</td>
@@ -69,9 +72,6 @@
 				<td>
 					возвраты
 				</td>
-                <td>
-					резюме
-				</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -82,6 +82,9 @@
 				</td>
 				<td>
 					<?= $stat['requests'] ?>
+				</td>
+                <td>
+					<?= $stat['teachers'] ?: '' ?>
 				</td>
 				<td>
 					<?= $stat['contract_new']['basic'] ?> <?= $stat['contract_new']['external'] ? "<span class='text-primary'>+ {$stat['contract_new']['external']}</span>" : "" ?>
@@ -112,9 +115,6 @@
 					<?php if ($stat['return_unconfirmed'] > 0) :?>
 						<span class="quater-black"><?= ($stat['return_confirmed'] > 0 ? ' + ' : '')?><?= $stat['return_unconfirmed'] ?></span>
 					<?php endif ?>
-				</td>
-                <td>
-					<?= $stat['teachers'] ?: '' ?>
 				</td>
 			</tr>
 			<?php endforeach; ?>
