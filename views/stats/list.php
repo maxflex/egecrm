@@ -42,11 +42,11 @@
 			<tr>
 				<td>
 				</td>
-				<td>
-					заявок
-				</td>
                 <td>
 					резюме
+				</td>
+				<td>
+					заявок
 				</td>
 				<td>
 					новых договоров
@@ -80,11 +80,11 @@
 				<td>
 					<?= strftime("%d %b %Y", strtotime($date)) ?>
 				</td>
-				<td>
-					<?= $stat['requests'] ?>
-				</td>
                 <td>
 					<?= $stat['teachers'] ?: '' ?>
+				</td>
+				<td>
+					<?= $stat['requests'] ?>
 				</td>
 				<td>
 					<?= $stat['contract_new']['basic'] ?> <?= $stat['contract_new']['external'] ? "<span class='text-primary'>+ {$stat['contract_new']['external']}</span>" : "" ?>
