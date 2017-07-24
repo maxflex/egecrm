@@ -8,7 +8,7 @@ app = angular.module "Logs", ["ui.bootstrap"]
 			wrong_login: 'неверный логин'
 			wrong_password: 'неверный пароль'
 			wrong_captcha: 'неверная капча'
-			wrong_sms_code: 'неверный код смс' 
+			wrong_sms_code: 'неверный код смс'
 			sms_code_sent: 'код смс отправлен'
 			outside_office: 'вне офиса'
 			banned: 'заблокирован'
@@ -19,6 +19,9 @@ app = angular.module "Logs", ["ui.bootstrap"]
 
 		$scope.toJson = (data)->
 			JSON.parse(data)
+
+		$scope.$watch 'search.table', (newVal, oldVal) -> 
+			$scope.search.column = null if ((newVal && oldVal) || (oldVal && not newVal))
 
 		$scope.refreshCounts = ->
 			$timeout ->

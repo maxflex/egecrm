@@ -37,7 +37,7 @@
             <select class='form-control selectpicker' ng-model='search.table' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.table[''] || '' }}">таблица</option>
                 <option disabled>──────────────</option>
-                <option ng-repeat='table in tables'
+                <option ng-repeat='(table, data) in tables'
                         data-subtext="{{ counts.table[table] || '' }}"
                         value="{{table}}">{{ table }}</option>
             </select>
@@ -46,7 +46,7 @@
             <select class='form-control selectpicker' ng-model='search.column' ng-change='filter()'>
                 <option value="" data-subtext="{{ counts.column[''] || '' }}">ячейка</option>
                 <option disabled>──────────────</option>
-                <option ng-repeat='column in columns'
+                <option ng-repeat='column in tables[search.table]'
                         value="{{ column }}">{{ column }}</option>
             </select>
         </div>

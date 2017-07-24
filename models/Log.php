@@ -112,17 +112,12 @@ class Log extends Model
     public static function getTables()
     {
         $tables = static::dbConnection()->query('select group_concat(distinct `table` order by `table`) as tables from ' . static::$mysql_table)->fetch_object()->tables;
-        return empty($tables) ? [] : array_filter(explode(',', $tables));
-    }
-
-    public static function getTableColumns($tables = [])
-    {
-        $cols = [];
-        foreach ($tables as $table) {
-            $cols = array_merge(Model::_getMysqlVars($table), $cols);
+        foreach(array_filter(explode(',', $tables)) as $table) {
+            $fields = Model::_getMysqlVars($table);
+            sort($fields);
+            $return[$table] = $fields;
         }
-        sort($cols);
-        return array_unique($cols);
+        return $return;
     }
 
     public static function getData($page)

@@ -21,6 +21,11 @@ app = angular.module("Logs", ["ui.bootstrap"]).controller("ListCtrl", function($
   $scope.toJson = function(data) {
     return JSON.parse(data);
   };
+  $scope.$watch('search.table', function(newVal, oldVal) {
+    if ((newVal && oldVal) || (oldVal && !newVal)) {
+      return $scope.search.column = null;
+    }
+  });
   $scope.refreshCounts = function() {
     return $timeout(function() {
       $('.selectpicker option').each(function(index, el) {
