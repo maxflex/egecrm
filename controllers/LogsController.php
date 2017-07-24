@@ -22,8 +22,7 @@
             $page = $_GET['page'] ? $_GET['page'] : 1;
             $ang_init_data = angInit([
                 'page'      => $page,
-                'tables' => ($tables = Log::getTables()),
-                'columns' => Log::getTableColumns($tables)
+                'tables' => ($tables = Log::getTables())
             ]);
 
 
