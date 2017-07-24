@@ -6,7 +6,16 @@ app = angular.module("Logs", ["ui.bootstrap"]).controller("ListCtrl", function($
   $scope.LogTypes = {
     create: 'создание',
     update: 'обновление',
-    "delete": 'удаление'
+    "delete": 'удаление',
+    wrong_login: 'неверный логин',
+    wrong_password: 'неверный пароль',
+    wrong_captcha: 'неверная капча',
+    wrong_sms_code: 'неверный код смс',
+    sms_code_sent: 'код смс отправлен',
+    outside_office: 'вне офиса',
+    banned: 'заблокирован',
+    login: 'вход',
+    url: 'просмотр URL'
   };
   frontendLoadingStart();
   $scope.toJson = function(data) {

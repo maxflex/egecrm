@@ -15,6 +15,20 @@ class Log extends Model
 
     const VERBOSE = false;
 
+    /**
+     * Кастомный лог
+     */
+    public static function custom($type, $user_id, $data = [])
+    {
+        parent::add([
+            'table'     => null,
+            'user_id'   => $user_id,
+            'data'      => json_encode($data),
+            'type'      => $type,
+            'ip'        => @$_SERVER['HTTP_X_REAL_IP'],
+        ]);
+    }
+
     public static function add($model, $action = false)
     {
         $s = microtime(true);
@@ -31,7 +45,6 @@ class Log extends Model
                 'table'     => $model->getTable(),
                 'type'      => $action ? $action : static::_getType($model),
                 'ip'        => @$_SERVER['HTTP_X_REAL_IP'],
-                'created_at'=> now()
             ]);
 
             if ($model->isNewRecord) { // to update entity_id afted adding;

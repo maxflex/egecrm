@@ -69,22 +69,27 @@
                         {{ log.table }}
                     </td>
                     <td width="8%">
-                        {{ LogTypes[log.type] }}
+                        {{ LogTypes[log.type] || log.type }}
                     </td>
                     <td width="6%">
                         {{ log.row_id }}
                     </td>
                     <td width="120">
-                        <span style="color: {{ UserService.getColor(log.user_id) }}">{{ UserService.getLogin(log.user_id) }}</span>
+                        <span ng-if="log.user_id !== null" style="color: {{ UserService.getColor(log.user_id) }}">{{ UserService.getLogin(log.user_id) }}</span>
                     </td>
                     <td>
                         <table style="font-size: 12px">
                             <tr ng-repeat="(key, data) in log.data track by $index">
                                 <td style="vertical-align: top; width: 150px">{{ key }}</td>
-                                <td>
-                                    <span class="text-gray">{{ data[0]  }}</span>
-                                    <span class='text-gray'>⟶</span>
-                                    <span>{{ data[1] }}</span>
+                                <td class="text-gray">
+                                    <span ng-if="log.row_id">
+                                        <span>{{ data[0]  }}</span>
+                                        <span>⟶</span>
+                                        <span style='color: black'>{{ data[1] }}</span>
+                                    </span>
+                                    <span ng-if="!log.row_id">
+                                        {{ data }}
+                                    </span>
                                 </td>
                             </tr>
                         </table>
