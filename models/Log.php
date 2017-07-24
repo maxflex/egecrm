@@ -30,6 +30,7 @@ class Log extends Model
                 'data'      => $dirty_fields,
                 'table'     => $model->getTable(),
                 'type'      => $action ? $action : static::_getType($model),
+                'ip'        => @$_SERVER['HTTP_X_REAL_IP'],
                 'created_at'=> now()
             ]);
 
