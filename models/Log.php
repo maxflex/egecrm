@@ -154,16 +154,6 @@ class Log extends Model
             $condition[] = "user_id = {$search->user_id}";
         }
 
-        if (isset($search->date_start)) {
-            $date = fromDotDate($search->date_start);
-            $condition[] = "created_at >= '{$date} 00:00:00'";
-        }
-
-        if (isset($search->date_end)) {
-            $date = fromDotDate($search->date_end);
-            $condition[] = "created_at <= '{$date} 23:59:59'";
-        }
-
         if (isset($search->column)) {
             $condition[] = "data like '%{$search->column}%'";
         }
