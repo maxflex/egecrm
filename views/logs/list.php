@@ -77,8 +77,8 @@
                     <td width="120">
                         <span ng-if="log.user_id !== null">
                             <span ng-show="log.user.type == 'USER'" style="color: {{ UserService.getColor(log.user_id) }}">{{ log.user.login }}</span>
-                            <a ng-show="log.user.type == 'TEACHER'" href='/teachers/edit/{{ log.user.id_entity }}'>{{ log.teacher.last_name }} {{ log.teacher.first_name[0] }}. {{ log.teacher.middle_name[0] }}.</a>
-                            <a ng-show="log.user.type == 'STUDENT'" href='/student/{{ log.user.id_entity }}' >ученик №{{ log.user.id_entity }}</a>
+                            <a ng-show="log.user.type == 'TEACHER'" href='/teachers/edit/{{ log.user.id_entity }}' target="_blank">{{ log.teacher.last_name }} {{ log.teacher.first_name[0] }}. {{ log.teacher.middle_name[0] }}.</a>
+                            <a ng-show="log.user.type == 'STUDENT'" href='/student/{{ log.user.id_entity }}' target="_blank">ученик №{{ log.user.id_entity }}</a>
                         </span>
                     </td>
                     <td>
