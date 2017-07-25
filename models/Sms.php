@@ -68,7 +68,7 @@ class SMS extends Model
 
 	public static function sendToNumbers($numbers, $message, $create = true) {
 		foreach ($numbers as $number) {
-			self::send($number, $message);
+			self::send($number, $message, $create);
 		}
 	}
 
