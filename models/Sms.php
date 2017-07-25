@@ -66,14 +66,14 @@ class SMS extends Model
 		return SMS::count(["condition" => self::applySearchFilters($search)]);
 	}
 
-	public static function sendToNumbers($numbers, $message) {
+	public static function sendToNumbers($numbers, $message, $create = true) {
 		foreach ($numbers as $number) {
 			self::send($number, $message);
 		}
 	}
 
 
-	public static function send($to, $message)
+	public static function send($to, $message, $create = true)
 	{
 		$to = explode(",", $to);
 		foreach ($to as $number) {
@@ -95,7 +95,7 @@ class SMS extends Model
 		return $result;
 	}
 
-	protected static function exec($url, $params)
+	protected static function exec($url, $params, $create = true)
 	{
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -117,7 +117,9 @@ class SMS extends Model
 		];
 
 		// создаем объект для истории
-		return SMS::add($info);
+		if ($create) {
+            return SMS::add($info);
+        }
 	}
 
 	public function beforeSave()
@@ -205,7 +207,7 @@ class SMS extends Model
         $client = new Predis\Client();
         $client->set("egecrm:codes:{$User->id}", $code, 'EX', 120);
 
-        Sms::send($User->phone, $code . ' – код для входа в ЛК');
+        Sms::send($User->phone, $code . ' – код для входа в ЛК', false);
         // cache(["codes:{$user_id}" => $code], 3);
         return $code;
     }

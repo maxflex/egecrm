@@ -33,8 +33,9 @@
 		public function __construct($array = [], $flag = null)
         {
             parent::__construct($array);
-            $this->salary = $this->salary ? $this->salary : '';
+            
 			if ($flag === null) {
+                $this->salary = $this->salary ? $this->salary : '';
 				$this->has_photo_original = $this->hasPhotoOriginal();
 	            $this->photo_original_size = $this->photoOriginalSize();
 	            $this->photo_cropped_size = $this->photoCroppedSize();

@@ -75,7 +75,11 @@
                         {{ log.row_id }}
                     </td>
                     <td width="120">
-                        <span ng-if="log.user_id !== null" style="color: {{ UserService.getColor(log.user_id) }}">{{ UserService.getLogin(log.user_id) }}</span>
+                        <span ng-if="log.user_id !== null">
+                            <span ng-show="log.user.type == 'USER'" style="color: {{ UserService.getColor(log.user_id) }}">{{ log.user.login }}</span>
+                            <a ng-show="log.user.type == 'TEACHER'" href='/teachers/edit/{{ log.user.id_entity }}'>{{ log.teacher.last_name }} {{ log.teacher.first_name[0] }}. {{ log.teacher.middle_name[0] }}.</a>
+                            <a ng-show="log.user.type == 'STUDENT'" href='/student/{{ log.user.id_entity }}' >ученик №{{ log.user.id_entity }}</a>
+                        </span>
                     </td>
                     <td>
                         <table style="font-size: 12px">

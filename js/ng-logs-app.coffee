@@ -5,14 +5,7 @@ app = angular.module "Logs", ["ui.bootstrap"]
 			create: 'создание'
 			update: 'обновление'
 			delete: 'удаление'
-			wrong_login: 'неверный логин'
-			wrong_password: 'неверный пароль'
-			wrong_captcha: 'неверная капча'
-			wrong_sms_code: 'неверный код смс'
-			sms_code_sent: 'код смс отправлен'
-			outside_office: 'вне офиса'
-			banned: 'заблокирован'
-			login: 'вход'
+			authorization: 'авторизация'
 			url: 'просмотр URL'
 
 		frontendLoadingStart()
@@ -20,7 +13,7 @@ app = angular.module "Logs", ["ui.bootstrap"]
 		$scope.toJson = (data)->
 			JSON.parse(data)
 
-		$scope.$watch 'search.table', (newVal, oldVal) -> 
+		$scope.$watch 'search.table', (newVal, oldVal) ->
 			$scope.search.column = null if ((newVal && oldVal) || (oldVal && not newVal))
 
 		$scope.refreshCounts = ->

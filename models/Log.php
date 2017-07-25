@@ -134,6 +134,16 @@ class Log extends Model
             'order'     => 'created_at desc',
             'limit'     => ($page == -1 ? static::PER_PAGE : "{$start_from}, " . static::PER_PAGE),
         ]);
+
+        foreach($data as &$d) {
+            if ($d->user_id) {
+                $d->user = User::findById($d->user_id, false);
+                if ($d->user->type == Teacher::USER_TYPE) {
+                    $d->teacher = Teacher::getLight($d->user->id_entity);
+                }
+            }
+        }
+
         // $counts = static::counts($search);
         $counts['all'] = static::_count($search); // закомментить, если понадобится counts. верхнее раскомментить
 
