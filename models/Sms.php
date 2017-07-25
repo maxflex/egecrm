@@ -88,7 +88,7 @@ class SMS extends Model
 				"text"		=>	$message,
 				"from"      =>  "EGE-Centr",
 			);
-			$result = self::exec("http://sms.ru/sms/send", $params);
+			$result = self::exec("http://sms.ru/sms/send", $params, $create);
 		}
 
 
