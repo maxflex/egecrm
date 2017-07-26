@@ -170,6 +170,7 @@
         <?= partial('right', ['right' => Shared\Rights::EDIT_CONTRACT]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_REQUEST_ERRORS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_ATTENDANCE]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_ACTIVITY]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
