@@ -203,7 +203,7 @@ class SMS extends Model
 
     public static function verify($User)
     {
-        $code = mt_rand(1000, 9999);
+        $code = mt_rand(10000, 99999);
         $client = new Predis\Client();
         $client->set("egecrm:codes:{$User->id}", $code, 'EX', 120);
 
