@@ -34,7 +34,7 @@ app = angular.module "Stream", ["ui.bootstrap"]
             paginate('stream', $scope.current_page)
 
         $scope.formatDate = (date) ->
-            moment(date).format "DD.MM.YY в HH:mm"
+            moment(date).format "DD.MM.YY в HH:mm:ss" 
 
         load = (page) ->
             params = '?page=' + page

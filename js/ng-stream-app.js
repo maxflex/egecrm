@@ -37,7 +37,7 @@ app = angular.module("Stream", ["ui.bootstrap"]).controller('Main', function($sc
     return paginate('stream', $scope.current_page);
   };
   $scope.formatDate = function(date) {
-    return moment(date).format("DD.MM.YY в HH:mm");
+    return moment(date).format("DD.MM.YY в HH:mm:ss");
   };
   load = function(page) {
     var params;
