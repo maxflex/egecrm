@@ -20,8 +20,8 @@ app = angular.module "Activity", []
 			, 600
 
 		$scope.show = ->
-			# $scope.frontend_loading = true
+			$scope.frontend_loading = true
 			$http.get "activity/get/#{$scope.search.user_id}/#{$scope.search.date}"
 				.then (response) ->
-					# $scope.frontend_loading = false
+					$scope.frontend_loading = false
 					$scope.data = response.data

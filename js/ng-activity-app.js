@@ -22,7 +22,9 @@ app = angular.module("Activity", []).controller("IndexCtrl", function($scope, $h
     }, 600);
   };
   return $scope.show = function() {
+    $scope.frontend_loading = true;
     return $http.get("activity/get/" + $scope.search.user_id + "/" + $scope.search.date).then(function(response) {
+      $scope.frontend_loading = false;
       return $scope.data = response.data;
     });
   };
