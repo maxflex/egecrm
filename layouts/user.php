@@ -197,6 +197,9 @@
                 <?php if (allowed(Shared\Rights::EC_STREAM)) :?>
     				<a href="stream" class="cursor list-group-item">Стрим</a>
     			<?php endif ?>
+                <?php if (allowed(Shared\Rights::EC_ACTIVITY)) :?>
+    				<a href="activity" class="cursor list-group-item">Активность</a>
+    			<?php endif ?>
                 <?php if (allowed(Shared\Rights::EMERGENCY_EXIT)) :?>
     				<a onclick="emergency()" class="cursor list-group-item">Экстренный выход</a>
     			<?php endif ?>

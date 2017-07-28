@@ -41,6 +41,7 @@ vendor_files = [
 	'js/bower/jsSHA/src/sha256.js',
 	'js/bower/cropper/dist/cropper.js',
 	'js/bower/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
+	'js/bower/moment-duration-format/lib/moment-duration-format.js',
 	'js/vendor/Chart.min.js',
 	'js/vendor/angular-chart.js',
 	'js/vendor/pusher.min.js',
