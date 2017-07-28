@@ -33,7 +33,7 @@
 		public function __construct($array = [], $flag = null)
         {
             parent::__construct($array);
-            
+
 			if ($flag === null) {
                 $this->salary = $this->salary ? $this->salary : '';
 				$this->has_photo_original = $this->hasPhotoOriginal();
@@ -416,7 +416,16 @@
          */
         public static function fromOffice()
         {
-            return LOCAL_DEVELOPMENT || strpos($_SERVER['HTTP_X_REAL_IP'], '213.184.130.') === 0;
+            if (LOCAL_DEVELOPMENT) {
+                return true;
+            }
+            $current_ip = @$_SERVER['HTTP_X_REAL_IP'];
+            foreach(['213.184.130.', '77.37.220.250'] as $ip) {
+                if (strpos($current_ip, $ip) === 0) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /**
