@@ -620,7 +620,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.request_comments_loaded === undefined && mode == 'request') {
 				$.post("requests/ajax/LoadRequest", {id_request: $scope.id_request}, function(response) {
-					['responsible_user', 'user', 'users', 'request_duplicates', 'request_phone_level'].forEach(function(field) {
+					['responsible_user', 'user', 'users', 'request_phone_level'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()
