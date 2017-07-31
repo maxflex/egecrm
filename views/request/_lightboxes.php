@@ -40,11 +40,19 @@
 				<input class="form-control bs-date" id="payment-date" ng-model="new_payment.date">
 			</div> за
             <div class="form-group inline-block">
-                <select class="form-control" ng-model="new_payment.year" style='width: 130px'>
+                <select id="payment-year" class="form-control" ng-model="new_payment.year" style='width: 130px'>
                     <option value="">выберите год</option>
                     <option disabled>──────────────</option>
                     <option ng-repeat="year in <?= Years::json() ?>"
                         value="{{year}}">{{ yearLabel(year) }}</option>
+                </select>
+    		</div>
+            <div class="form-group inline-block" ng-show="new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">
+                <select ng-init='payment_categories = <?= PaymentTypes::categories() ?>' id="payment-category" class="form-control" ng-model="new_payment.category" style='width: 130px'>
+                    <option value="0">категория</option>
+                    <option disabled>──────────────</option>
+                    <option ng-repeat="(id, label) in payment_categories"
+                        value="{{id}}">{{ label }}</option>
                 </select>
     		</div>
 		</div>

@@ -299,8 +299,9 @@ app = angular.module("Teacher", ["ngMap"]).config([
     });
   };
   $scope.addPayment = function() {
-    var payment_card, payment_card_first_number, payment_date, payment_select, payment_sum, payment_type;
+    var payment_card, payment_card_first_number, payment_date, payment_select, payment_sum, payment_type, payment_year;
     payment_date = $('#payment-date');
+    payment_year = $("#payment-year");
     payment_sum = $('#payment-sum');
     payment_select = $('#payment-select');
     payment_type = $('#paymenttypes-select');
@@ -331,6 +332,12 @@ app = angular.module("Teacher", ["ngMap"]).config([
       return;
     } else {
       payment_date.parent().removeClass('has-error');
+    }
+    if (!$scope.new_payment.year) {
+      payment_year.focus().parent().addClass("has-error");
+      return;
+    } else {
+      payment_year.parent().removeClass("has-error");
     }
     if ($scope.new_payment.id) {
       $scope.new_payment.entity_type = 'TEACHER';

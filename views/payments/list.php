@@ -32,6 +32,14 @@
                     value="{{year}}">{{ yearLabel(year) }}</option>
             </select>
 		</div>
+        <div class="form-group inline-block" ng-show="new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">
+            <select ng-init='payment_categories = <?= PaymentTypes::categories() ?>' id="payment-category" class="form-control" ng-model="new_payment.category" style='width: 130px'>
+                <option value="0">категория</option>
+                <option disabled>──────────────</option>
+                <option ng-repeat="(id, label) in payment_categories"
+                    value="{{id}}">{{ label }}</option>
+            </select>
+        </div>
 	</div>
     <div class="form-group" ng-show="new_payment.id_status == <?= Payment::MUTUAL_DEBTS ?>" ng-if='mutual_accounts && mutual_accounts.length'>
         <h4>Выберите встречу</h4>
@@ -103,6 +111,15 @@
                     <option ng-repeat="year in <?= Years::json() ?>"
                         data-subtext="{{ counts.year[year] || '' }}"
                         value="{{year}}">{{ yearLabel(year) }}</option>
+				</select>
+			</div>
+            <div class="col-sm-2">
+				<select id='years-select' class="watch-select form-control single-select year-fix" ng-model="search.category" ng-change='filter()'>
+					<option value="" data-subtext="{{ counts.category.all || ''}}" >все категории</option>
+					<option disabled>──────────────</option>
+                    <option ng-repeat="(id, category) in payment_categories"
+                        data-subtext="{{ counts.category[id] || '' }}"
+                        value="{{id}}">{{ category }}</option>
 				</select>
 			</div>
 		</div>

@@ -1000,6 +1000,7 @@
 
         public static function getDebt($id_student = false)
         {
+            return 0;
             $query =
                 "select " .
                 "(select ifnull(sum(c.sum), 0) " .

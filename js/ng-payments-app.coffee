@@ -159,6 +159,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
             # Получаем элементы (я знаю, что по-хорошему нужно получить их один раз вне функции
             # а не каждый раз, когда функция вызывается, искать их заново. Но забей. Хочу их внутри когда
             payment_date	= $("#payment-date")
+            payment_year	= $("#payment-year")
             payment_sum 	= $("#payment-sum")
             payment_select	= $("#payment-select")
             payment_type	= $("#paymenttypes-select")
@@ -204,6 +205,13 @@ app = angular.module "Payments", ["ui.bootstrap"]
                 return
             else
                 payment_date.parent().removeClass "has-error"
+
+            # Установлен ли год платежа?
+            if not $scope.new_payment.year
+                payment_year.focus().parent().addClass("has-error")
+                return
+            else
+                payment_year.parent().removeClass("has-error")
 
             # редактирование платежа, если есть ID
             if $scope.new_payment.id

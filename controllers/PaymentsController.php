@@ -58,6 +58,7 @@
 			$condition['id_status'] = $search['payment_type'] ? ($search['payment_type'] == -1 ? "(id_status = 6 AND entity_type='TEACHER' AND account_id IS NULL)" : "id_status = {$search['payment_type']}") : '1';
 
 			$condition['id_type'] = $search['type'] ? "id_type = {$search['type']}" : '1';
+			$condition['category'] = $search['category'] ? "category = {$search['category']}" : '1';
 			$condition['year'] = $search['year'] ? "year = {$search['year']}" : '1';
 			$condition['entity_type'] = $search['mode'] ? "entity_type = '{$search['mode']}'" : '1';
 
@@ -104,6 +105,13 @@
 				$counts['type'][$type] = Payment::count(["condition" => implode(' and ', $count_cond)]);
 			}
 			$counts['type']['all'] = array_sum($counts['type']);
+
+			foreach([1, 2, 3] as $category) {
+				$count_cond = $condition;
+				$count_cond['category'] = "category = {$category}";
+				$counts['category'][$category] = Payment::count(["condition" => implode(' and ', $count_cond)]);
+			}
+			$counts['category']['all'] = array_sum($counts['category']);
 
 			foreach(Years::$all as $year) {
 				$count_cond = $condition;

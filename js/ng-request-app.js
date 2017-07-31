@@ -1440,6 +1440,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("#contract-date").removeClass("has-error")
 			}
 
+            if (!$scope.current_contract.year) {
+                $("#contract-year").addClass("has-error").focus()
+                return false
+            } else {
+                $("#contract-year").removeClass("has-error")
+            }
+
             // если предмет желтый или зеленый, то поле «кол-во занятий» не может быть пустым или нулем
             $.each($scope.current_contract.subjects, function(subject_id, subject) {
                 if (subject === undefined) {
@@ -1538,6 +1545,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			} else {
 				$("#contract-test-date").removeClass("has-error")
 			}
+
+            if (!$scope.current_contract_test.year) {
+                $("#contract-test-year").addClass("has-error").focus()
+                return false
+            } else {
+                $("#contract-test-year").removeClass("has-error")
+            }
 
 			if (!$scope.current_contract_test.info.grade) {
 				$("select[name='grades']").addClass("has-error").focus()
@@ -1731,7 +1745,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.addContractDialog = function() {
 			$scope.current_contract = {
                 subjects : [],
-                info: {year: parseInt($scope.academic_year) + 1},
+                info: {year: getYear()},
                 payments_info: '3-0',
                 payments_split: 3,
                 payments_queue: 0,
@@ -1750,7 +1764,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Показать окно добавления контракта
 		$scope.addContractDialogTest = function() {
-			$scope.current_contract_test = {subjects : [], info: {year: parseInt($scope.academic_year) + 1}}
+			$scope.current_contract_test = {subjects : [], info: {year: getYear()}}
 			$scope.current_contract_test.date = moment().format("DD.MM.YYYY")
             $timeout(function(){
                 $scope.$apply();
@@ -1858,7 +1872,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Показать окно добавления платежа
 		$scope.addPaymentDialog = function() {
-			$scope.new_payment = {id_status : 0, year: ''}
+			$scope.new_payment = {id_status : 0, year: getYear()}
 			lightBoxShow('addpayment')
 		}
 
@@ -1867,6 +1881,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			// Получаем элементы (я знаю, что по-хорошему нужно получить их один раз вне функции
 			// а не каждый раз, когда функция вызывается, искать их заново. Но забей. Хочу их внутри когда
 			payment_date	= $("#payment-date")
+			payment_year	= $("#payment-year")
 			payment_sum 	= $("#payment-sum")
 			payment_select	= $("#payment-select")
 			payment_type	= $("#paymenttypes-select")
@@ -1917,6 +1932,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				return
 			} else {
 				payment_date.parent().removeClass("has-error")
+			}
+
+			// Установлен ли год платежа?
+			if (!$scope.new_payment.year) {
+				payment_year.focus().parent().addClass("has-error")
+				return
+			} else {
+				payment_year.parent().removeClass("has-error")
 			}
 
 			// редактирование платежа, если есть ID

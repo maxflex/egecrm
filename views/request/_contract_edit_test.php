@@ -57,7 +57,7 @@
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12">
 					<span class="input-label">учебный год</span>
-						<select class="form-control"  ng-model="current_contract_test.info.year" ng-disabled="isDisabledField(current_contract_test, 'year')">
+						<select id='contract-test-year' class="form-control"  ng-model="current_contract_test.info.year" ng-disabled="isDisabledField(current_contract_test, 'year')">
 							<option ng-repeat="year in <?= Years::json() ?>"
 								value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
 						</select>

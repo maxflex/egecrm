@@ -1046,3 +1046,11 @@ function ExpandSelect(select, maxOptionsVisible)
     function paginate(entity, page) {
         window.history.pushState('', '', entity + '?page=' + page)
     }
+
+    function getYear() {
+        year = moment().format('YYYY')
+        if (moment().format('MM-DD') < '04-01') {
+            year = parseInt(year) - 1
+        }
+        return year.toString()
+    }

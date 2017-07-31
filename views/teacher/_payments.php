@@ -23,6 +23,14 @@
                     value="{{year}}">{{ yearLabel(year) }}</option>
             </select>
 		</div>
+        <div class="form-group inline-block" ng-show="new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">
+            <select ng-init='payment_categories = <?= PaymentTypes::categories() ?>' id="payment-category" class="form-control" ng-model="new_payment.category" style='width: 130px'>
+                <option value="0">категория</option>
+                <option disabled>──────────────</option>
+                <option ng-repeat="(id, label) in payment_categories"
+                    value="{{id}}">{{ label }}</option>
+            </select>
+        </div>
 	</div>
     <div class="form-group" ng-show="new_payment.id_status == <?= Payment::MUTUAL_DEBTS ?>" ng-if='mutual_accounts && mutual_accounts.length'>
         <h4>Выберите встречу</h4>
