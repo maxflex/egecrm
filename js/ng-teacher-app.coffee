@@ -209,7 +209,7 @@
 			$scope.addPaymentDialog = ->
 				$scope.new_payment =
 					id_status: 0
-					year: ''
+					year: getYear()
 					entity_id: $scope.Teacher.id
 				lightBoxShow 'addpayment'
 				$scope.handleKeyPress()
