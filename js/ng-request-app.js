@@ -685,17 +685,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		 * Выбрать ID контракта для последующей печати договора
 		 *
 		 */
-		$scope.printContract = function(contract) {
-			$scope.contract = $scope.firstContractInChain(contract)
-			$timeout(function(){
-				$scope.$apply();
-                $scope.print_mode = 'contract'
-                $scope.id_user_print = 0
-                html = $("#contract-print").html()
-                $scope.editBeforePrint(html)
-			});
-		}
-
 		$scope.printContractLicenced = function(contract) {
 			$scope.contract = $scope.firstContractInChain(contract)
 			$timeout(function(){
@@ -706,18 +695,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
                 $scope.editBeforePrint(html)
 			});
 
-		}
-
-		$scope.printContractAdditional = function(contract) {
-			$scope.contract = contract
-			$timeout(function(){
-				$scope.$apply();
-				$scope.print_mode = 'agreement'
-				$scope.contract_additional = contract
-				$scope.id_contract_print = contract.id
-				html = $("#agreement-print-" + $scope.id_contract_print).html()
-				$scope.editBeforePrint(html)
-			});
 		}
 
 		$scope.printContractAdditionalOoo = function(contract) {
@@ -770,20 +747,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.$apply();
 				html = $("#service-act-print").html()
 				$scope.editBeforePrint(html)
-			});
-		}
-
-		$scope.printServiceActIp = function(contract) {
-			$scope.print_mode = 'service-act-ip'
-			$scope.service_contract_parent = $scope.firstContractInChain(contract)
-			$scope.service_contract = $scope.lastContractInChain(contract)
-			$scope.term_contract_parent = $scope.firstContractInChain(contract)
-			$scope.term_contract = $scope.lastContractInChain(contract)
-
-			$timeout(function(){
-				$scope.$apply();
-				html = $("#service-act-ip-print").html()
-				$scope.editBeforePrint(html);
 			});
 		}
 
@@ -1882,16 +1845,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.$apply();
 				}, 'json');
 			}
-		}
-
-		$scope.dontAssignPko = function(payment) {
-			if (payment.dont_assign_pko) {
-				payment.dont_assign_pko = false
-			} else {
-				payment.dont_assign_pko = true
-			}
-			 // payment.dont_assign_pko = payment.dont_assign_pko
-			// payment.dont_assign_pko = payment.dont_assign_pko ? true : false
 		}
 
 		// Окно редактирования платежа

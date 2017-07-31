@@ -18,15 +18,11 @@
 		<h4 style="display: inline-block">{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
 		<span class="small" ng-show="new_payment.id_status == <?= Payment::PAID_CASH ?> && new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">
 			<span ng-show="new_payment.id">
-				<span ng-show="new_payment.document_number">присвоен номер ПКО: {{ new_payment.document_number }}</span>
-				<span ng-show="!new_payment.document_number">номер ПКО не присвоен</span>
+                номер ПКО: {{ new_payment.document_number }}
 			</span>
 
 			<span ng-show="!new_payment.id">
-				номер ПКО:
-				<span class="link-like" ng-class="{
-					'red': new_payment.dont_assign_pko
-				}" ng-click="dontAssignPko(new_payment)">{{ new_payment.dont_assign_pko ? 'номер не присваевать' : 'будет присвоен номер' }}</span>
+				будет присвоен номер ПКО
 			</span>
 		</span>
 
