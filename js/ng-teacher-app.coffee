@@ -253,7 +253,7 @@
 			  payment_card_first_number = $("#payment-card-first-number")
 
 			# Установлен ли способ оплаты
-			  if !$scope.new_payment.id_status
+			  if not parseInt($scope.new_payment.id_status)
 			    payment_select.focus().parent().addClass 'has-error'
 			    return
 			  else
@@ -290,7 +290,7 @@
 			  else
 			    payment_year.parent().removeClass("has-error")
 				# Установлена ли категория платежа?
-			  if not $scope.new_payment.category
+			  if not parseInt($scope.new_payment.category)
 			    payment_category.focus().parent().addClass("has-error")
 			    return
 			  else

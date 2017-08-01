@@ -308,7 +308,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
     payment_type = $('#paymenttypes-select');
     payment_card = $('#payment-card-number');
     payment_card_first_number = $("#payment-card-first-number");
-    if (!$scope.new_payment.id_status) {
+    if (!parseInt($scope.new_payment.id_status)) {
       payment_select.focus().parent().addClass('has-error');
       return;
     } else {
@@ -340,7 +340,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
     } else {
       payment_year.parent().removeClass("has-error");
     }
-    if (!$scope.new_payment.category) {
+    if (!parseInt($scope.new_payment.category)) {
       payment_category.focus().parent().addClass("has-error");
       return;
     } else {

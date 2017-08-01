@@ -1890,7 +1890,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			payment_card_first_num	= $("#payment-card-first-number")
 
 			// Установлен ли способ оплаты
-			if (!$scope.new_payment.id_status) {
+			if (! parseInt($scope.new_payment.id_status)) {
 				payment_select.focus().parent().addClass("has-error")
 				return
 			} else {
@@ -1912,7 +1912,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 
 			// Установлен ли тип платежа?
-			if (!$scope.new_payment.id_type) {
+			if (! parseInt($scope.new_payment.id_type)) {
 				payment_type.focus().parent().addClass("has-error")
 				return
 			} else {
@@ -1944,7 +1944,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 
 			// Установлена ли категория платежа?
-			if (!$scope.new_payment.category) {
+			if (! parseInt($scope.new_payment.category)) {
 				payment_category.focus().parent().addClass("has-error")
 				return
 			} else {
