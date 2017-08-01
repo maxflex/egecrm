@@ -158,6 +158,7 @@
 	{
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 		public static $mysql_table	= "reports_helper";
+        protected $loggable = false;
 
 		public static function recalc()
 		{
