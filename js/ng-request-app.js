@@ -1440,7 +1440,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("#contract-date").removeClass("has-error")
 			}
 
-            if (!$scope.current_contract.year) {
+            if (!$scope.current_contract.info.year) {
                 $("#contract-year").addClass("has-error").focus()
                 return false
             } else {
@@ -1546,7 +1546,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("#contract-test-date").removeClass("has-error")
 			}
 
-            if (!$scope.current_contract_test.year) {
+            if (!$scope.current_contract_test.info.year) {
                 $("#contract-test-year").addClass("has-error").focus()
                 return false
             } else {
