@@ -6,8 +6,8 @@
     <table class="table table-hover payments-table" style="font-size: 12px !important">
         <tr ng-repeat="payment in payments" <?= ($student_page ? 'ng-init="payment.Entity = student"' : '') ?>>
 	        <?php if (! $student_page) :?>
-            <td class="col-sm-3" ng-if="payment.Entity && payment.Entity.id">
-                <span ng-show="payment.Entity.id"><a href="{{ payment.Entity.profile_link }}">{{ payment.Entity.last_name }} {{ payment.Entity.first_name }} {{ payment.Entity.middle_name }}</a></span>
+            <td class="col-sm-2" ng-if="payment.Entity && payment.Entity.id">
+                <span ng-show="payment.Entity.id"><a href="{{ payment.Entity.profile_link }}">{{ payment.Entity.last_name }} {{ payment.Entity.first_name[0] }}. {{ payment.Entity.middle_name[0] }}.</a></span>
             </td>
             <?php endif ?>
             <td>
@@ -35,6 +35,9 @@
             </td>
             <td>
                 {{ yearLabel(payment.year) }}
+            </td>
+            <td>
+                {{ payment_categories[payment.category] }}
             </td>
             <td>
                 <a class="text-danger pointer"

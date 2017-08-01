@@ -1882,6 +1882,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			// а не каждый раз, когда функция вызывается, искать их заново. Но забей. Хочу их внутри когда
 			payment_date	= $("#payment-date")
 			payment_year	= $("#payment-year")
+			payment_category= $("#payment-category")
 			payment_sum 	= $("#payment-sum")
 			payment_select	= $("#payment-select")
 			payment_type	= $("#paymenttypes-select")
@@ -1940,6 +1941,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				return
 			} else {
 				payment_year.parent().removeClass("has-error")
+			}
+
+			// Установлена ли категория платежа?
+			if (!$scope.new_payment.category) {
+				payment_category.focus().parent().addClass("has-error")
+				return
+			} else {
+				payment_category.parent().removeClass("has-error")
 			}
 
 			// редактирование платежа, если есть ID

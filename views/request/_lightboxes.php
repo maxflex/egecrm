@@ -47,7 +47,7 @@
                         value="{{year}}">{{ yearLabel(year) }}</option>
                 </select>
     		</div>
-            <div class="form-group inline-block" ng-show="new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">
+            <div class="form-group inline-block">
                 <select ng-init='payment_categories = <?= PaymentTypes::categories() ?>' id="payment-category" class="form-control" ng-model="new_payment.category" style='width: 130px'>
                     <option value="0">категория</option>
                     <option disabled>──────────────</option>
