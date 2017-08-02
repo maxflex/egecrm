@@ -244,6 +244,10 @@
                         AND vj.year = {$this->year}
                         AND vj.type_entity = 'STUDENT'
                     LIMIT 1")->fetch_object()->grade;
+                
+                if ($this->admin_comment_final && ! $this->date) {
+                    $this->date = now();
+                }
             }
         }
 	}
