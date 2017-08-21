@@ -185,6 +185,9 @@ RewriteRule ^mango/result/([a-zA-Z]+)[/]?$ index.php?controller=mango&action=Res
 RewriteRule ^activity[/]?$ index.php?controller=activity [QSA,L]
 RewriteRule ^activity/get/([0-9]+)/([0-9\.]+)[/]?$ index.php?controller=activity&action=get&user_id=$1&date=$2 [QSA,L]
 
+# Отправка СМС
+RewriteRule ^send-sms[/]?$ index.php?controller=sendsms [QSA,L]
+
 # logs
 RewriteRule ^logs/ajax([a-zA-Z]+)[/]?$ index.php?controller=logs&action=Ajax$1 [QSA,L]
 RewriteRule ^logs[?page=(0-9)]?[/]?$ index.php?controller=logs&action=$1 [QSA,L]
