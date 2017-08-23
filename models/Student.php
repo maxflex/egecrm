@@ -527,10 +527,9 @@
 
 			/*
 				Хотя бы в 1 заявке отсутствует дата создания
-				Хотя бы в 1 заявке не указан источник
 			*/
 			foreach ($Requsts as $Requst) {
-				if (emptyDate($Requst->date) || !$Requst->id_source) {
+				if (emptyDate($Requst->date)) {
 					return true;
 				}
 			}
@@ -543,8 +542,6 @@
 			*/
 
 //			preType($Requst);
-//			echo $Requst->id_source;
-//			var_dump(!$Requst->id_source);
 
 			if (
 				   !$this->grade || !$this->first_name || !$this->last_name || !$this->middle_name || !$this->Representative->address

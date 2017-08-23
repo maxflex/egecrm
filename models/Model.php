@@ -254,7 +254,6 @@
 				"SELECT COUNT(*) as c FROM `".static::$mysql_table."` " .
 				"WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "")
 			);
-
 			// Возвращаем кол-во
 			return $result->fetch_object()->c;
 		}
