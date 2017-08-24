@@ -3,7 +3,6 @@
 	{
 
 	    public $log_except = [
-	        'ip',
             'user_agent',
             'referer_url',
             'referer'
@@ -11,10 +10,6 @@
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		const PER_PAGE = 20; // Сколько заявок отображать на странице списка заявок
-
-        const MAX_REQ_PER_HOUR = 30;
-        const MAX_REQ_PER_HOUR_FROM_IP = 10;
-
 
 		public static $mysql_table	= "requests";
 
@@ -306,10 +301,6 @@
 			// На всякий случай очищаем номер челефона (через "ч" написано специально)
 			$this->phone = cleanNumber($this->phone);
 
-            if (!$this->checkRequestLimit()) {
-                return false;
-            }
-
 			// Создаем нового ученика по заявке, либо привязываем к уже существующему
 			$this->createStudent();
 
@@ -326,35 +317,6 @@
 
             return true;
 		}
-
-        /**
-         * check request count for last hour.
-         * limits:
-         *  from 1 ip   - 10 req
-         *  from all ip - 30 req
-         * @return bool
-         */
-        private function checkRequestLimit() {
-            $req_from_ip = dbConnection()->query("
-				SELECT COUNT(*) as cnt FROM requests
-				WHERE date > DATE_SUB(NOW(), INTERVAL 1 HOUR) AND ip = '".$this->ip."'
-			");
-
-            if ($req_from_ip->fetch_object()->cnt > static::MAX_REQ_PER_HOUR_FROM_IP) {
-                return false;
-            }
-
-            $total_req = dbConnection()->query("
-				SELECT COUNT(*) as cnt FROM requests
-				WHERE date > DATE_SUB(NOW(), INTERVAL 1 HOUR)
-			");
-
-            if ($total_req->fetch_object()->cnt > static::MAX_REQ_PER_HOUR) {
-                return false;
-            }
-
-            return true;
-        }
 
 		private function _phoneExists()
 		{
