@@ -171,7 +171,6 @@
 				"id_user_created"	=> User::fromSession()->id,
 			//	"id_status"			=> RequestStatuses::CUSTOM,
 				"adding" 			=> 1,
-				"id_source"			=> 0,
 			];
 
 			// Добавляем заявку
