@@ -145,14 +145,11 @@
 										<span ng-show="!Student.last_name && !Student.first_name && !Student.middle_name">Неизвестно</span>
 										</a>
 									</td>
-									<td width="150">
-										{{ Student.grade }} класс
+									<td width="200">
+										{{ Subjects[Student.id_subject]}}-{{ Student.grade }}
 									</td>
 									<td width="200">
 										{{ yearLabel(Student.year) }}
-									</td>
-									<td width="150">
-										<span ng-class="{'text-danger bold': Student.count > 40}">{{Subjects[Student.id_subject]}}</span>
 									</td>
 									<td>
 										<span ng-repeat="(id_branch, short) in Student.branch_short track by $index"
