@@ -146,7 +146,7 @@
 										</a>
 									</td>
 									<td width="200">
-										{{ Subjects[Student.id_subject]}}-{{ Student.grade }}
+										{{ Subjects[Student.id_subject]}}-{{ Student.grade == 14 ? 'Э' : Student.grade }}
 									</td>
 									<td width="200">
 										{{ yearLabel(Student.year) }}
