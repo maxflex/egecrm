@@ -63,11 +63,15 @@
 		</td>
 		<td width="15%">
             <!-- @time-refactored @time-checked -->
-			<span ng-repeat="data in Group.day_and_time">
-				<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
+			<span ng-show='Group.is_dump == 0'>
+				<span ng-repeat="data in Group.day_and_time">
+					<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
+				</span>
+				<span ng-show="Group.day_and_time.length !== undefined">без расписания</span>
 			</span>
-			<span ng-show="Group.day_and_time.length !== undefined">без расписания</span>
-<!-- 			{{weekdays[Group.day - 1].short}} <span ng-show="Group.start">в {{Group.start}}</span> -->
+			<span ng-show='Group.is_dump == 1'>
+				болото
+			</span>
 		</td>
 		<td>
 			<span ng-show="Group.id_teacher" ng-init="_Teacher = Group.Teacher || getTeacher(Group.id_teacher)" style="position: relative;">

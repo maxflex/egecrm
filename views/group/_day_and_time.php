@@ -1,10 +1,29 @@
 <div class="lightbox-new lightbox-freetime">
     <!-- @time-refactored @time-checked -->
-	<h4 style="text-transform: uppercase; margin-bottom: 25px">ДАТА И ВРЕМЯ ЗАНЯТИЙ</h4>
+	<h4 style="text-transform: uppercase; margin-bottom: 25px">ДАТА И ВРЕМЯ ЗАНЯТИЙ
+        <span style='font-size: 12px; font-weight: normal; margin-left: 15px; text-transform: lowercase'>
+            <input type="checkbox" ng-model="Group.is_dump" ng-true-value='1' ng-false-value='0'> болото
+        </span>
+    </h4>
         <?php if (! allowed(Shared\Rights::EDIT_GROUPS)) :?>
         <div class='div-blocker'></div>
         <?php endif ?>
-		<table class="table table-divlike">
+        <div ng-show="Group.is_dump">
+            <span>
+                <select class='branch-cabinet'
+                    ng-model="getGroupTime(1, time[1][0]).id_cabinet"
+                >
+                    <option selected value=''>кабинет</option>
+                    <option disabled>──────────────</option>
+                    <option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}"
+                        style='color: {{ cabinet.color }}'
+                        ng-selected="getGroupTime(1, time[1][0]).id_cabinet == cabinet.id">
+                        {{ cabinet.label}}
+                    </option>
+                </select>
+            </span>
+        </div>
+		<table class="table table-divlike" ng-show="!Group.is_dump">
 			<tbody>
 				<tr ng-repeat='(day, data) in time'>
 					<td style="width: 100px"><b>{{ weekdays[day] }}</b></td>

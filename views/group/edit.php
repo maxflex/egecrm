@@ -9,11 +9,12 @@
 					<a style="margin-right: 12px" class="link-reverse" href="groups/edit/<?= $Group->id ?>/schedule"><span ng-show="Group.schedule_count.paid">{{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span>
 					<ng-pluralize count="Group.schedule_count.paid" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize></span><span ng-show="!Group.schedule_count.paid">установить расписание</span></a>
 					<span style="margin-right: 12px" ng-click="dayAndTime()">
-						<span class="link-like link-reverse link-white" ng-show='hasDayAndTime()'>
+						<span class="link-like link-reverse link-white" ng-show='hasDayAndTime() && Group.is_dump == 0'>
 							<span ng-repeat="(day, data) in Group.day_and_time">
 								{{ weekdays[day] }} в <span ng-repeat='d in data'>{{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
 							</span>
 						</span>
+						<span class="link-like link-reverse link-white" ng-show='hasDayAndTime() && Group.is_dump == 1'>болото</span>
 						<span class="link-like link-reverse link-white" ng-show='!hasDayAndTime()'>установить день и время</span>
 					</span>
 				<?php endif ?>

@@ -134,6 +134,10 @@
 				ajaxEnd()
 
 			######## ВЫБОР ВРЕМЕНИ ########
+			$scope.empty_time =
+					id: null
+					day: 0
+					time: ''
 			$scope.timeClick = (day, time) ->
 				if $scope.timeChecked(day, time)
 					$scope.Group.day_and_time[day] = _.reject $scope.Group.day_and_time[day], (t) ->
@@ -151,6 +155,9 @@
 			# найти конкретное время из Group.day_and_time по day, time.id
 			$scope.getGroupTime = (day, time) ->
 				_.findWhere($scope.Group.day_and_time[day], {id_time: time.id})
+
+			$scope.$watch 'Group.is_dump', (newVal, oldVal)->
+				if newVal == 1 && $scope.Group.day_and_time[1] is undefined then $scope.timeClick(1, $scope.time[1][0])
 
 			$scope.dayAndTime = ->
 				lightBoxShow "freetime"

@@ -464,7 +464,7 @@
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
 			// получаем данные
-			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.year, g.ready_to_start");
+			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.year, g.is_dump, g.ready_to_start");
 			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Group::PER_PAGE);
 
 			while ($row = $result->fetch_object()) {
