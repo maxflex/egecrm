@@ -137,7 +137,7 @@
 							<tbody>
 								<tr ng-repeat="Student in StudentsWithNoGroup | filter:studentsWithNoGroupFilter" class="student-line is-draggable"
 									data-group-index="{{$parent.$index}}" data-student="{{Student}}" data-id="{{Student.id}}">
-									<td width="300">
+									<td width="350">
 										<a href="student/{{Student.id}}" ng-class="{
 											'text-warning': Student.status == 2
 										}">
@@ -145,24 +145,18 @@
 										<span ng-show="!Student.last_name && !Student.first_name && !Student.middle_name">Неизвестно</span>
 										</a>
 									</td>
-									<td width="100">
-										{{Student.id_contract}}
+									<td width="150">
+										{{ Student.grade }} класс
 									</td>
-									<td width="100">
-										{{ Student.grade_label }}
+									<td width="200">
+										{{ yearLabel(Student.year) }}
 									</td>
-									<td width="100">
-										{{Student.date}}
+									<td width="150">
+										<span ng-class="{'text-danger bold': Student.count > 40}">{{Subjects[Student.id_subject]}}</span>
 									</td>
-									<td width="100">
-										<span ng-class="{'text-danger bold': Student.count > 40}">{{SubjectsShort[Student.id_subject]}}</span>
-									</td>
-									<td width="300">
+									<td>
 										<span ng-repeat="(id_branch, short) in Student.branch_short track by $index"
 											ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}"></span>
-									</td>
-									<td style="text-align: right">
-										<b ng-show="Student.score != ''">{{Student.score}}</b>
 									</td>
 								</tr>
 							</tbody>

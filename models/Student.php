@@ -195,13 +195,17 @@
 			$result = dbConnection()->query("
 				SELECT 	s.id, s.branches, s.first_name, s.last_name, s.middle_name,
 						cs.id_subject, cs.status, cs.count,
-						contract_info.*
+						ci.*
 				FROM students s
-                    JOIN contract_info on contract_info.id_student = s.id
-					JOIN contracts c on c.id_contract = contract_info.id_contract
-					LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-					WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1
-                        AND NOT EXISTS(SELECT 1 FROM groups g WHERE g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND contract_info.year = g.year)
+				JOIN contract_info ci on (ci.id_student = s.id and ci.id_contract = (
+					select max(id_contract)
+					from contract_info ci2
+					where ci2.year = ci.year and ci.id_student = ci2.id_student
+				))
+				JOIN contracts c on c.id_contract = ci.id_contract
+				LEFT JOIN contract_subjects cs on cs.id_contract = c.id
+				WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1
+					AND NOT EXISTS(SELECT 1 FROM groups g WHERE g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND ci.year = g.year)
 			");
 
 			while ($row = $result->fetch_assoc()) {
