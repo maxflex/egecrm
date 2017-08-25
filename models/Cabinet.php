@@ -104,6 +104,7 @@
 				'id' 	=> $id_cabinet,
 				'color' => Branches::metroSvg($id_branch, false, true),
 				'label'	=> Branches::$short[$id_branch] . "–" . self::getField($id_cabinet, 'number'),
+                'id_branch' => $id_branch,
 			];
 		}
 

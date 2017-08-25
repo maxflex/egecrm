@@ -45,7 +45,7 @@ vendor_files = [
 	'js/vendor/Chart.min.js',
 	'js/vendor/angular-chart.js',
 	'js/vendor/pusher.min.js',
-	'js/bower/phoneapi/dist/js/pusher.js',
+	// 'js/bower/phoneapi/dist/js/pusher.js',
 	'js/vendor/bootstrap-select.js',
 	'js/vendor/jquery.simulate.js',
 	'js/vendor/bs-slider.js',

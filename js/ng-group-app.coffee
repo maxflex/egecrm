@@ -779,6 +779,23 @@
 						id_student	 = $(ui.draggable).data("id")
 
 						Group = $scope.getGroup id_group
+						Student = _.find($scope.StudentsWithNoGroup, {id: parseInt(id_student)})
+
+						# есть ли соответствие по филиалу
+						group_branch_ids = _.pluck(Group.cabinets, 'id_branch')
+						if not _.intersection(group_branch_ids, Student.branches).length
+							notifyError "Филиалы не соответствуют"
+							return false
+
+						# есть ли соответствие по классу
+						if Group.grade != Student.grade
+							notifyError "Класс не соответствует"
+							return false
+
+						# есть ли соответствие по предмету
+						if Group.id_subject != Student.id_subject
+							notifyError "Предмет не соответствует"
+							return false
 
 						if id_student in Group.students
 							notifySuccess "Ученик уже в группе"

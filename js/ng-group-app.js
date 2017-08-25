@@ -931,10 +931,26 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       tolerance: 'pointer',
       hoverClass: "request-status-drop-hover",
       drop: function(event, ui) {
-        var Group, id_group, id_student, student_group_index, table;
+        var Group, Student, group_branch_ids, id_group, id_student, student_group_index, table;
         id_group = $(this).data("id");
         id_student = $(ui.draggable).data("id");
         Group = $scope.getGroup(id_group);
+        Student = _.find($scope.StudentsWithNoGroup, {
+          id: parseInt(id_student)
+        });
+        group_branch_ids = _.pluck(Group.cabinets, 'id_branch');
+        if (!_.intersection(group_branch_ids, Student.branches).length) {
+          notifyError("Филиалы не соответствуют");
+          return false;
+        }
+        if (Group.grade !== Student.grade) {
+          notifyError("Класс не соответствует");
+          return false;
+        }
+        if (Group.id_subject !== Student.id_subject) {
+          notifyError("Предмет не соответствует");
+          return false;
+        }
         if (indexOf.call(Group.students, id_student) >= 0) {
           return notifySuccess("Ученик уже в группе");
         } else {
