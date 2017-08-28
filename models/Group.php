@@ -439,11 +439,18 @@
 		private static function _addCabinets(&$Group)
 		{
 			$Group->cabinet_ids = Group::getCabinetIds($Group->id);
-			foreach($Group->cabinet_ids as $id_cabinet) {
-                if (empty($id_cabinet)) {
-                    continue;
-                }
-				$Group->cabinets[] = Cabinet::getBlock($id_cabinet);
+			// для "болото" не отображаем кабинет
+			if ($Group->is_dump) {
+				$cabinet = Cabinet::getBlock($Group->cabinet_ids[0]);
+				$cabinet['label'] = $cabinet['short'];
+				$Group->cabinets[] = $cabinet;
+			} else {
+				foreach($Group->cabinet_ids as $id_cabinet) {
+	                if (empty($id_cabinet)) {
+	                    continue;
+	                }
+					$Group->cabinets[] = Cabinet::getBlock($id_cabinet);
+				}
 			}
 		}
 
