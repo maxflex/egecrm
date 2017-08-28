@@ -26,8 +26,8 @@
 		<table class="table table-divlike" ng-show="!Group.is_dump">
 			<tbody>
 				<tr ng-repeat='(day, data) in time'>
-					<td style="width: 100px"><b>{{ weekdays[day] }}</b></td>
-					<td ng-repeat='d in data' style="text-align: left; width: 200px; padding-left: 15px">
+					<td style="width: 100px" ng-class="{'extra-padding': day == 6}"><b>{{ weekdays[day] }}</b></td>
+					<td  ng-class="{'extra-padding': day == 6}" ng-repeat='d in data' style="text-align: left; width: 200px; padding-left: 15px">
 						<input type="checkbox"
 							ng-checked='timeChecked(day, d)'
 							ng-click="timeClick(day, d)"

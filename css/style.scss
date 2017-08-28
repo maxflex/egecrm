@@ -3547,3 +3547,7 @@ mwl-calendar .cal-day-today span[data-cal-date] {
     font-size: 12px;
     color: $placeholder_gray;
 }
+
+td.extra-padding {
+	padding-top: 30px !important;
+}
