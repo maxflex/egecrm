@@ -878,7 +878,7 @@ body {
 
 	.bar {
 		height: 15px;
-		width: 5px;
+		width: 4px;
 		margin-right: 1px;
 		display: inline-block;
 		&.gray, &.empty {
@@ -1832,9 +1832,9 @@ h4.row-header {
 
 
 .lightbox-email, .lightbox-freetime {
-	width: 70%;
+	width: 80%;
 //	height: 80%;
-	left: 15%;
+	left: 10%;
 	top: 10%;
 }
 
