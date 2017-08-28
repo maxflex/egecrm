@@ -22,7 +22,8 @@ vueInit = function() {
         mango: {},
         caller: false,
         last_call_data: false,
-        answered_user: false
+        answered_user: false,
+        busy_users: []
       };
     },
     template: '#phone-template',
@@ -79,7 +80,7 @@ vueInit = function() {
             }
           };
         })(this));
-        return channel.bind('answered', (function(_this) {
+        channel.bind('answered', (function(_this) {
           return function(data) {
             console.log(data);
             if (_this.show_element) {
@@ -87,6 +88,16 @@ vueInit = function() {
               _this.answered_user = data.answered_user;
               return _this.setHideTimeout(4);
             }
+          };
+        })(this));
+        channel.bind('set_busy', (function(_this) {
+          return function(data) {
+            return console.log(data);
+          };
+        })(this));
+        return channel.bind('set_busy', (function(_this) {
+          return function(data) {
+            return console.log(data);
           };
         })(this));
       }

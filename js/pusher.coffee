@@ -19,6 +19,7 @@ vueInit = ->
 			caller: false 				# caller info
 			last_call_data: false		# last call info, including user, time etc.
 			answered_user: false		# answered user
+			busy_users: []
 		template: '#phone-template'
 		methods:
 			time: (seconds) ->
@@ -68,6 +69,11 @@ vueInit = ->
 						console.log 'setting answered user to', data.answered_user
 						this.answered_user = data.answered_user
 						this.setHideTimeout(4)
+
+				channel.bind 'set_busy', (data) =>
+					console.log(data)
+				channel.bind 'set_busy', (data) =>
+					console.log(data)
 		computed:
 			call_length: ->
 				moment(parseInt(this.timer.diff) * 1000).format 'mm:ss'

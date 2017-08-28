@@ -788,6 +788,8 @@
 						Group = $scope.getGroup id_group
 						Student = _.find($scope.StudentsWithNoGroup, {id: parseInt(id_student)})
 
+						console.log(Group, Student) 
+
 						# есть ли соответствие по филиалу
 						group_branch_ids = _.pluck(Group.cabinets, 'id_branch')
 						if not _.intersection(group_branch_ids, Student.branches).length

@@ -948,6 +948,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
         Student = _.find($scope.StudentsWithNoGroup, {
           id: parseInt(id_student)
         });
+        console.log(Group, Student);
         group_branch_ids = _.pluck(Group.cabinets, 'id_branch');
         if (!_.intersection(group_branch_ids, Student.branches).length) {
           notifyError("Филиалы не соответствуют");
