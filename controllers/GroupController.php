@@ -470,6 +470,7 @@
 				"branches_brick" => Branches::getShortColored(),
 				"cabinet_bars"	 => Freetime::getCabinetBar($Group),
 				"time"			 => Time::get(),
+				"time_imcomp"	 => Time::INCOMPABILITY_MAP,
 				"weekdays"		 => Time::WEEKDAYS,
 				"free_cabinets"  => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
                 "FirstLesson"    => Group::getFirstLesson($Group->id),

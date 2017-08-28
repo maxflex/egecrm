@@ -134,20 +134,38 @@
 				ajaxEnd()
 
 			######## ВЫБОР ВРЕМЕНИ ########
-			$scope.empty_time =
-					id: null
-					day: 0
-					time: ''
 			$scope.timeClick = (day, time) ->
 				if $scope.timeChecked(day, time)
-					$scope.Group.day_and_time[day] = _.reject $scope.Group.day_and_time[day], (t) ->
-						t.id_time is time.id
-					delete $scope.Group.day_and_time[day] if not $scope.Group.day_and_time[day].length
+					timeUncheck(day, time)
 				else
-					$scope.Group.day_and_time[day] = [] if $scope.Group.day_and_time[day] is undefined
-					$scope.Group.day_and_time[day].push
-						time: time
-						id_time: time.id
+					timeCheck(day, time)
+
+			timeCheck = (day, time) ->
+				$scope.Group.day_and_time[day] = [] if $scope.Group.day_and_time[day] is undefined
+				$scope.Group.day_and_time[day].push
+					time: time
+					id_time: time.id
+				timeCompabilityControl(day, time)
+
+			timeUncheck = (day, time) ->
+				$scope.Group.day_and_time[day] = _.reject $scope.Group.day_and_time[day], (t) ->
+					t.id_time is time.id
+				delete $scope.Group.day_and_time[day] if not $scope.Group.day_and_time[day].length
+
+			# контроль соответствия времени
+			timeCompabilityControl = (day, time) ->
+				ids = Object.keys($scope.time_imcomp).map(Number)
+				if ids.indexOf(time.id) isnt -1
+					time_ids = $scope.time_imcomp[time.id]
+					console.log(_.find($scope.time[day], {id: time_ids[0]}))
+					timeUncheck(day, _.find($scope.time[day], {id: time_ids[0]}))
+					timeUncheck(day, _.find($scope.time[day], {id: time_ids[1]}))
+					return
+				$.each $scope.time_imcomp, (index, time_ids) ->
+					time_ids.forEach (time_id) ->
+						if time_id == time.id
+							timeUncheck(timeUncheck(day, _.find($scope.time[day], {id: parseInt(index)})))
+							return
 
 			$scope.timeChecked = (day, time) ->
 				$scope.Group.day_and_time[day] and $scope.getGroupTime(day, time) isnt undefined

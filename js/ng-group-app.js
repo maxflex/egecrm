@@ -169,33 +169,61 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return set_scope("Group");
   });
 }).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService) {
-  var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, rebindBlinking;
+  var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, rebindBlinking, timeCheck, timeCompabilityControl, timeUncheck;
   bindArguments($scope, arguments);
   $timeout(function() {
     return ajaxEnd();
   });
-  $scope.empty_time = {
-    id: null,
-    day: 0,
-    time: ''
-  };
   $scope.timeClick = function(day, time) {
     if ($scope.timeChecked(day, time)) {
-      $scope.Group.day_and_time[day] = _.reject($scope.Group.day_and_time[day], function(t) {
-        return t.id_time === time.id;
-      });
-      if (!$scope.Group.day_and_time[day].length) {
-        return delete $scope.Group.day_and_time[day];
-      }
+      return timeUncheck(day, time);
     } else {
-      if ($scope.Group.day_and_time[day] === void 0) {
-        $scope.Group.day_and_time[day] = [];
-      }
-      return $scope.Group.day_and_time[day].push({
-        time: time,
-        id_time: time.id
-      });
+      return timeCheck(day, time);
     }
+  };
+  timeCheck = function(day, time) {
+    if ($scope.Group.day_and_time[day] === void 0) {
+      $scope.Group.day_and_time[day] = [];
+    }
+    $scope.Group.day_and_time[day].push({
+      time: time,
+      id_time: time.id
+    });
+    return timeCompabilityControl(day, time);
+  };
+  timeUncheck = function(day, time) {
+    $scope.Group.day_and_time[day] = _.reject($scope.Group.day_and_time[day], function(t) {
+      return t.id_time === time.id;
+    });
+    if (!$scope.Group.day_and_time[day].length) {
+      return delete $scope.Group.day_and_time[day];
+    }
+  };
+  timeCompabilityControl = function(day, time) {
+    var ids, time_ids;
+    ids = Object.keys($scope.time_imcomp).map(Number);
+    if (ids.indexOf(time.id) !== -1) {
+      time_ids = $scope.time_imcomp[time.id];
+      console.log(_.find($scope.time[day], {
+        id: time_ids[0]
+      }));
+      timeUncheck(day, _.find($scope.time[day], {
+        id: time_ids[0]
+      }));
+      timeUncheck(day, _.find($scope.time[day], {
+        id: time_ids[1]
+      }));
+      return;
+    }
+    return $.each($scope.time_imcomp, function(index, time_ids) {
+      return time_ids.forEach(function(time_id) {
+        if (time_id === time.id) {
+          timeUncheck(timeUncheck(day, _.find($scope.time[day], {
+            id: parseInt(index)
+          })));
+        }
+      });
+    });
   };
   $scope.timeChecked = function(day, time) {
     return $scope.Group.day_and_time[day] && $scope.getGroupTime(day, time) !== void 0;

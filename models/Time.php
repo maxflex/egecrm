@@ -34,6 +34,15 @@
 			7 => [25, 26, 27, 28],
 		];
 
+		// несоответствия со временем
+		const INCOMPABILITY_MAP = [
+			29 => [3, 4],
+			30 => [7, 8],
+			31 => [11, 12],
+			32 => [15, 16],
+			33 => [19, 20]
+		];
+
 		public function __construct($array)
 		{
 			parent::__construct($array);
