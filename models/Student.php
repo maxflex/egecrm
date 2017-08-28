@@ -193,7 +193,7 @@
 		{
             // @contract-refactored
 			$result = dbConnection()->query("
-				SELECT 	s.id, s.branches, s.first_name, s.last_name, s.middle_name,
+				SELECT 	UUID() as unique_id, s.id, s.branches, s.first_name, s.last_name, s.middle_name,
 						cs.id_subject, cs.status, cs.count,
 						ci.*
 				FROM students s

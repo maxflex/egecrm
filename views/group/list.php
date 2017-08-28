@@ -136,7 +136,7 @@
 						<table class="table table-divlike">
 							<tbody>
 								<tr ng-repeat="Student in StudentsWithNoGroup | filter:studentsWithNoGroupFilter" class="student-line is-draggable"
-									data-group-index="{{$parent.$index}}" data-student="{{Student}}" data-id="{{Student.id}}">
+									data-group-index="{{$parent.$index}}" data-student="{{Student}}" data-id="{{Student.unique_id}}">
 									<td width="350">
 										<a href="student/{{Student.id}}" ng-class="{
 											'text-warning': Student.status == 2

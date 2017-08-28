@@ -783,12 +783,10 @@
 					hoverClass: "request-status-drop-hover",
 					drop: (event, ui) ->
 						id_group	 = $(this).data("id")
-						id_student	 = $(ui.draggable).data("id")
+						unique_id	 = $(ui.draggable).data("id")
 
 						Group = $scope.getGroup id_group
-						Student = _.find($scope.StudentsWithNoGroup, {id: parseInt(id_student)})
-
-						console.log(Group, Student) 
+						Student = _.find($scope.StudentsWithNoGroup, {unique_id: unique_id})
 
 						# есть ли соответствие по филиалу
 						group_branch_ids = _.pluck(Group.cabinets, 'id_branch')
