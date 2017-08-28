@@ -941,7 +941,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       tolerance: 'pointer',
       hoverClass: "request-status-drop-hover",
       drop: function(event, ui) {
-        var Group, Student, group_branch_ids, id_group, student_group_index, table, unique_id;
+        var Group, Student, group_branch_ids, id_group, ref, student_group_index, table, unique_id;
         id_group = $(this).data("id");
         unique_id = $(ui.draggable).data("id");
         Group = $scope.getGroup(id_group);
@@ -961,16 +961,16 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
           notifyError("Предмет не соответствует");
           return false;
         }
-        if (indexOf.call(Group.students, id_student) >= 0) {
+        if (ref = Student.id, indexOf.call(Group.students, ref) >= 0) {
           return notifySuccess("Ученик уже в группе");
         } else {
           ajaxStart();
           $.post("groups/ajax/AddStudentDnd", {
             id_group: id_group,
-            id_student: id_student
+            id_student: Student.id
           }, function() {
             ajaxEnd();
-            Group.students.push(id_student);
+            Group.students.push(Student.id);
             return $scope.$apply();
           });
           student_group_index = $(ui.draggable).data("group-index");

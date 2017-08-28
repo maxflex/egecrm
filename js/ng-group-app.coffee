@@ -804,13 +804,13 @@
 							notifyError "Предмет не соответствует"
 							return false
 
-						if id_student in Group.students
+						if Student.id in Group.students
 							notifySuccess "Ученик уже в группе"
 						else
 							ajaxStart()
-							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student}, ->
+							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: Student.id}, ->
 								ajaxEnd()
-								Group.students.push id_student
+								Group.students.push Student.id
 								$scope.$apply()
 
 							student_group_index = $(ui.draggable).data "group-index"
