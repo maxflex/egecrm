@@ -16,8 +16,6 @@
 					<div class="row flex-list" style="margin-bottom: 15px">
 						<div>
 							<select class="watch-select form-control search-grades" ng-model="search.grades" ng-change='filter()' multiple none-selected-text='классы'>
-								<option value=""  data-subtext="{{ counts.grade[''] || '' }}">все классы</option>
-								<option disabled>──────────────</option>
 								<option ng-hide='grade < 8' ng-repeat="(grade, label) in Grades | toArray" value="{{(grade + 1)}}" data-subtext="{{ counts.grade[grade] || '' }}">{{label}}</option>
 							</select>
 				        </div>

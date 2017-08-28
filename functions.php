@@ -748,7 +748,7 @@
 	   return null;
 	}
 
-	function isBlank($value) {
+	function isBlank($value, $filter = false) {
 		return empty($value) && !is_numeric($value);
 	}
 
