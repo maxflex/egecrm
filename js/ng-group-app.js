@@ -981,6 +981,10 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
           notifyError("Филиалы не соответствуют");
           return false;
         }
+        if (Group.year !== Student.year) {
+          notifyError("Год не соответствует");
+          return false;
+        }
         if (Group.id_subject !== Student.id_subject) {
           notifyError("Предмет не соответствует");
           return false;

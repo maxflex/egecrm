@@ -813,9 +813,9 @@
 							return false
 
 						# есть ли соответствие по классу
-						# if Group.grade != Student.grade
-						# 	notifyError "Класс не соответствует"
-						# 	return false
+						if Group.year != Student.year
+							notifyError "Год не соответствует"
+							return false
 
 						# есть ли соответствие по предмету
 						if Group.id_subject != Student.id_subject
