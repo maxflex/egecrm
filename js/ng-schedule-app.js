@@ -60,40 +60,32 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
       cancelled: 0
     }).length;
   };
-  $scope.setParamsFromGroup = function(Group) {
-    return $.each($scope.Group.Schedule, function(i, schedule) {
-      var d, v;
-      if (schedule.was_lesson) {
-        return;
-      }
-      v = angular.copy(schedule);
-      d = moment(v.date).format("d");
-      d = parseInt(d);
-      if (d === 0) {
-        d = 7;
-      }
-      if (Group.day_and_time[d] !== void 0 && Group.day_and_time[d].length === 1) {
-        v.time = $scope.Time[Group.day_and_time[d][0].id_time];
-        v.cabinet = Group.day_and_time[d][0].id_cabinet;
-      } else {
-        v.time = null;
-        v.cabinet = '';
-      }
-      ajaxStart();
-      return $.post("groups/ajax/TimeFromGroup", {
-        id: v.id,
-        time: v.time,
-        cabinet: v.cabinet
-      }, function() {
-        ajaxEnd();
-        schedule.time = v.time;
-        schedule.cabinet = v.cabinet;
-        return $scope.$apply();
-      });
-    });
-  };
   $scope.lessonCount = function() {
     return Object.keys($scope.Group.day_and_time).length;
+  };
+  $scope.duplicateSchedule = function() {
+    var bug_index, current_date, date, index, results, to_be_duplicated;
+    date = (parseInt($scope.Group.year) + 1) + '-06-01';
+    current_date = moment($scope.Group.Schedule[$scope.Group.Schedule.length - 1].date).add(7, 'days').format("YYYY-MM-DD");
+    index = 0;
+    bug_index = 0;
+    to_be_duplicated = {};
+    results = [];
+    while (current_date < date) {
+      index++;
+      to_be_duplicated[index] = _.clone($scope.Group.Schedule[$scope.Group.Schedule.length - 1]);
+      delete to_be_duplicated[index].id;
+      to_be_duplicated[index].date = current_date;
+      $.post("groups/ajax/SaveSchedule", to_be_duplicated[index], function(response) {
+        bug_index++;
+        to_be_duplicated[bug_index].id = response.id;
+        console.log(response.id, to_be_duplicated[bug_index]);
+        $scope.Group.Schedule.push(to_be_duplicated[bug_index]);
+        return $scope.$apply();
+      }, 'json');
+      results.push(current_date = moment(current_date).add(7, 'days').format("YYYY-MM-DD"));
+    }
+    return results;
   };
   $scope.scheduleModal = function(schedule) {
     if (schedule == null) {

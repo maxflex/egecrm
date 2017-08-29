@@ -1,7 +1,7 @@
 <div ng-app="Schedule" ng-controller="MainCtrl" ng-init="<?= $ang_init_data ?>">
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		Расписание группы №<?= $Group->id ?>
+		Расписание группы <a href="groups/edit/<?= $Group->id ?>">№<?= $Group->id ?></a>
 
 			<span ng-show="Group.past_lesson_count" style="margin-bottom: 20px">
 				({{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span>
@@ -10,13 +10,6 @@
 					'few': 'занятия',
 					'many': 'занятий'
 				}"></ng-pluralize>)</span>
-
-		<span class="link-reverse small pointer" onclick="redirect('groups/edit/<?= $Group->id ?>')">вернуться в группу</span>
-		<div class="pull-right">
-			<span class="link-reverse pointer" ng-click="setParamsFromGroup(Group)" ng-show="Group.Schedule.length">
-				установить время занятий, филиал и кабинет из настроек группы
-			</span>
-		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
 		<div class="row">
@@ -31,7 +24,7 @@
 					}"></ng-pluralize></h3>
 
 				<table class="table table-divlike">
-					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date_time'" style="height: 30px"
+					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date_time' track by $index" style="height: 30px"
                         ng-class="Schedule.title ? 'students-11' : '';"
                         ng-attr-title="{{Schedule.title || undefined}}">
                         <td style="padding:2px 4px 2px 0px;">
@@ -76,6 +69,7 @@
 					</tr>
 				</table>
                 <span class='link-like smooth-font' ng-click='scheduleModal()'>добавить</span>
+				<span class='link-like smooth-font' style='margin-left: 25px' ng-click='duplicateSchedule()' ng-show='Group.Schedule && Group.Schedule.length && Group.Schedule[Group.Schedule.length - 1].date && Group.Schedule[Group.Schedule.length - 1].cabinet && Group.Schedule[Group.Schedule.length - 1].time'>проставить занятия до 1 июня</span>
 			</div>
 		</div>
 	</div>
@@ -125,5 +119,4 @@
     </div>
   </div>
 </div>
-
 </div>

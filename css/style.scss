@@ -3471,7 +3471,7 @@ table.last-item-no-border tr:last-child td {
   }
 }
 
-#schedule-modal {
+#schedule-modal, #duplicate-modal {
     & .modal-dialog {
         width: 300px;
     }

@@ -43,42 +43,29 @@ app = angular.module "Schedule", ['mwl.calendar']
         $scope.countNotCancelled = (Schedule) ->
             _.where(Schedule, { cancelled: 0 }).length
 
-        # установка времени филиала и кабинета из настроек группы @time-checked
-        $scope.setParamsFromGroup = (Group) ->
-            $.each $scope.Group.Schedule, (i, schedule) ->
-                return if schedule.was_lesson
-
-                # обновляем только после ответа сервера
-                v = angular.copy(schedule)
-
-                # if not v.time
-                d = moment(v.date).format("d")
-                d = parseInt d
-                d = 7 if d is 0
-
-                # если в этот день установлено расписание и время в группе. иначе не устанавливать
-                # console.log Group.day_and_time, d, v.date, Group.day_and_time[d]
-                if Group.day_and_time[d] isnt undefined and Group.day_and_time[d].length is 1
-                    v.time    = $scope.Time[Group.day_and_time[d][0].id_time]
-                    v.cabinet = Group.day_and_time[d][0].id_cabinet
-                else
-                    v.time = null
-                    v.cabinet = ''
-
-                # @time-refactored
-                ajaxStart()
-                $.post "groups/ajax/TimeFromGroup",
-                    id: v.id
-                    time: v.time
-                    cabinet: v.cabinet
-                , ->
-                    ajaxEnd()
-                    schedule.time = v.time
-                    schedule.cabinet = v.cabinet
-                    $scope.$apply()
-
         $scope.lessonCount = ->
             Object.keys($scope.Group.day_and_time).length
+
+        $scope.duplicateSchedule = ->
+            date = (parseInt($scope.Group.year) + 1) + '-06-01'
+            # date = '2016-10-05'
+            current_date = moment($scope.Group.Schedule[$scope.Group.Schedule.length - 1].date).add(7, 'days').format("YYYY-MM-DD")
+            index = 0
+            bug_index = 0
+            to_be_duplicated = {}
+            while current_date < date
+                index++
+                to_be_duplicated[index] = _.clone($scope.Group.Schedule[$scope.Group.Schedule.length - 1])
+                delete to_be_duplicated[index].id
+                to_be_duplicated[index].date = current_date
+                $.post "groups/ajax/SaveSchedule", to_be_duplicated[index], (response)->
+                    bug_index++
+                    to_be_duplicated[bug_index].id = response.id
+                    console.log(response.id, to_be_duplicated[bug_index])
+                    $scope.Group.Schedule.push(to_be_duplicated[bug_index])
+                    $scope.$apply()
+                , 'json'
+                current_date = moment(current_date).add(7, 'days').format("YYYY-MM-DD")
 
         $scope.scheduleModal = (schedule = null) ->
             $('#schedule-modal').modal('show')

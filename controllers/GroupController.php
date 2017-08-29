@@ -540,12 +540,6 @@
 			]);
 		}
 
-		public function actionAjaxTimeFromGroup()
-		{
-			extract($_POST);
-			GroupSchedule::updateById($id, compact('time', 'cabinet'));
-		}
-
 		public function actionAjaxInGroup()
 		{
 			extract($_POST);

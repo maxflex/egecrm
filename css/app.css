@@ -16674,7 +16674,7 @@ h4.row-header.default-case {
   .user-phone .input-group > input {
     border-radius: 4px !important; }
 
-#schedule-modal .modal-dialog {
+#schedule-modal .modal-dialog, #duplicate-modal .modal-dialog {
   width: 300px; }
 
 div[name='calendarMonthView'] > .cal-row-head {
