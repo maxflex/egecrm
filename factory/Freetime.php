@@ -46,9 +46,6 @@
 		{
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
-				    if ($id_time < 10) {
-                        $id_time = '0'.$id_time;
-                    }
 					$bar[$day][$id_time] = EntityFreetime::hasFreetime($id_entity, $type_entity, $id_time) ? 'green' : 'empty';
 				}
 			}
@@ -64,21 +61,21 @@
 				$bar = [];
 			}
 			// кол-во групп в предыдущей итерации
-			$previous_group_cnt = 0;
+			$previous_result = null;
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
-                    if ($id_time < 10) {
-                        $id_time = '0'.$id_time;
-                    }
 				    $result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
 						WHERE FIND_IN_SET({$id_student}, g.students) AND g.ended = 0 AND gt.id_time=$id_time
 					")->fetch_object();
-                    static::_brushBar($result, $previous_group_cnt, $bar, $day, $id_time, $id_group);
-					$previous_group_cnt = $result->cnt;
+                    static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
+					$previous_result = $result;
                 }
             }
+			foreach ($bar as $day => $data) {
+				$bar[$day] = array_values($data);
+			}
             return $bar;
         }
 
@@ -91,7 +88,7 @@
 				$bar = [];
 			}
 			// кол-во групп в предыдущей итерации
-			$previous_group_cnt = 0;
+			$previous_result = null;
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
                     if ($id_time < 10) {
@@ -102,14 +99,17 @@
 						LEFT JOIN groups g ON g.id = gt.id_group
 						WHERE g.id_teacher={$id_teacher} AND g.ended = 0 AND gt.id_time=$id_time
 					")->fetch_object();
-					static::_brushBar($result, $previous_group_cnt, $bar, $day, $id_time, $id_group);
-					$previous_group_cnt = $result->cnt;
+					static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
+					$previous_result = $result;
                 }
             }
+			foreach ($bar as $day => $data) {
+				$bar[$day] = array_values($data);
+			}
             return $bar;
         }
 
-        private static function _brushBar($result, $previous_group_cnt, &$bar, $day, $id_time, $id_group)
+        private static function _brushBar($result, $previous_result, &$bar, $day, $id_time, $id_group)
         {
             // зуб находится на позиции будни 17:20 и 18:40?
             if (in_array($id_time, [29, 30, 31, 32, 33, 4, 8, 12, 16, 20])) {
@@ -120,15 +120,15 @@
 					// текущий зуб – зуб хотя бы 1 группы?
 					if ($result->cnt >= 1) {
 						// слева есть зуб хотя бы 1 группы?
-						if ($previous_group_cnt > 1) {
+						if ($previous_result->cnt >= 1) {
 							$bar[$day][$id_time] = 'blink red';
 						} else {
 							$bar[$day][$id_time] = 'branch-' . Cabinet::getField($result->id_cabinet, 'id_branch');
 						}
 					} else {
 						// слева есть зуб хотя бы 1 группы?
-						if ($previous_group_cnt > 1) {
-							$bar[$day][$id_time] = 'branch-' . Cabinet::getField($result->id_cabinet, 'id_branch');
+						if ($previous_result->cnt >= 1) {
+							$bar[$day][$id_time] = 'branch-' . Cabinet::getField($previous_result->id_cabinet, 'id_branch');
 						} else {
 							$bar[$day][$id_time] = 'gray';
 						}

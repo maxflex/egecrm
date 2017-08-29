@@ -248,6 +248,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     lightBoxHide();
     return justSave(function() {
       $scope.updateCabinetBar(false);
+      $scope.updateStudentBars();
       $scope.reloadSmsNotificationStatuses();
       return checkFreeCabinets();
     });

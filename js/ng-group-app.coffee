@@ -186,6 +186,7 @@
 				lightBoxHide()
 				justSave ->
 					$scope.updateCabinetBar(false)
+					$scope.updateStudentBars()
 					$scope.reloadSmsNotificationStatuses()
 					checkFreeCabinets()
 

@@ -91,6 +91,9 @@
 		 */
 		public function getField($id_cabinet, $field = 'id_branch')
 		{
+			if (! $id_cabinet) {
+				return 0;
+			}
 			return dbConnection()->query("SELECT $field FROM cabinets WHERE id={$id_cabinet}")->fetch_object()->{$field};
 		}
 
