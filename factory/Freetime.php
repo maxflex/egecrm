@@ -63,7 +63,8 @@
 			} else {
 				$bar = [];
 			}
-
+			// кол-во групп в предыдущей итерации
+			$previous_group_cnt = 0;
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
                     if ($id_time < 10) {
@@ -74,7 +75,8 @@
 						LEFT JOIN groups g ON g.id = gt.id_group
 						WHERE FIND_IN_SET({$id_student}, g.students) AND g.ended = 0 AND gt.id_time=$id_time
 					")->fetch_object();
-                    static::_brushBar($result, $with_freetime, $bar, $day, $id_time, $id_group);
+                    static::_brushBar($result, $previous_group_cnt, $bar, $day, $id_time, $id_group);
+					$previous_group_cnt = $result->cnt;
                 }
             }
             return $bar;
@@ -95,10 +97,10 @@
                     if ($id_time < 10) {
                         $id_time = '0'.$id_time;
                     }
-                    $result = dbConnection()->query("
-						SELECT COUNT(*) AS cnt, g.id as id_group FROM group_time gt
+					$result = dbConnection()->query("
+						SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
-						WHERE g.id_teacher = {$id_teacher} AND g.ended = 0 AND gt.id_time={$id_time} AND g.year = ".Years::getAcademic()."
+						WHERE g.id_teacher={$id_teacher} AND g.ended = 0 AND gt.id_time=$id_time
 					")->fetch_object();
 					static::_brushBar($result, $previous_group_cnt, $bar, $day, $id_time, $id_group);
 					$previous_group_cnt = $result->cnt;
