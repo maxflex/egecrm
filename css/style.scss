@@ -721,7 +721,7 @@ body {
 
 .group-freetime-block {
 	display: inline-block;
-	margin-right: 5px;
+	margin-right: 8px;
 	margin-top: 4px;
 	white-space: nowrap;
 	& .freetime-bar {
@@ -878,7 +878,7 @@ body {
 
 	.bar {
 		height: 15px;
-		width: 4px;
+		width: 8px;
 		margin-right: 1px;
 		display: inline-block;
         &.branch-{
@@ -929,7 +929,7 @@ body {
             }
         }
 		&.gray, &.empty, &.branch-0 {
-			background-color: rgba(176, 176, 176, 0.2);
+			background-color: rgba(176, 176, 176, 0.3);
 		}
 		&.green {
 			background-color: $green;

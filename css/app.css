@@ -14381,7 +14381,7 @@ body {
 
 .group-freetime-block {
   display: inline-block;
-  margin-right: 5px;
+  margin-right: 8px;
   margin-top: 4px;
   white-space: nowrap; }
   .group-freetime-block .freetime-bar {
@@ -14594,7 +14594,7 @@ body {
 
 .bar {
   height: 15px;
-  width: 4px;
+  width: 8px;
   margin-right: 1px;
   display: inline-block; }
   .bar.branch-1 {
@@ -14628,7 +14628,7 @@ body {
   .bar.branch-17 {
     background-color: #C07911; }
   .bar.gray, .bar.empty, .bar.branch-0 {
-    background-color: rgba(176, 176, 176, 0.2); }
+    background-color: rgba(176, 176, 176, 0.3); }
   .bar.green {
     background-color: #5cb85c; }
   .bar.blue {

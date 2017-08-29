@@ -90,6 +90,11 @@
 										}">
 											{{Student.first_name}}
 											{{Student.last_name}}
+											<span ng-show="Student.Test">
+												(<span ng-show="Student.Test.notStarted" class="quater-black">к тесту не приступал</span>
+												<span ng-show="Student.Test.inProgress" class="quater-black">тест в процессе</span>
+												<span ng-show="Student.Test.isFinished">{{ Student.Test.final_score }}%</span>)
+											</span>
 										</a>
 									</td>
 									<td>
@@ -103,57 +108,45 @@
 										</span>
 									</td>
 									<td>
-										<span ng-show="Student.Test">
-											<span ng-show="Student.Test.notStarted" class="quater-black">к тесту не приступал</span>
-											<span ng-show="Student.Test.inProgress" class="quater-black">тест в процессе</span>
-											<span ng-show="Student.Test.isFinished">{{ Student.Test.final_score }} <ng-pluralize count="Student.Test.final_score" when="{
-												'one': 'балл',
-												'few': 'балла',
-												'many': 'баллов'
-											}"></ng-pluralize></span>
-										</span>
-										<span ng-show="!Student.Test" class="text-gray">тест не найден</span>
-									</td>
-									<td>
 										<span ng-hide="!enoughSmsParams() || Student.already_had_lesson >= 2">
 											<span class="half-black pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified">отправить SMS</span>
 											<span class="text-success default" ng-show="Student.sms_notified">SMS отправлена</span>
 										</span>
 									</td>
-									<td width="220">
+									<td width="380">
 										<span ng-repeat="(day, data) in Student.bar" class="group-freetime-block">
 											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
 										</span>
 									</td>
 								</tr>
-								<tr ng-show="Group.id_teacher">
-									<td width="220" colspan="4">
+								<tr ng-show="Group.id_teacher" class="increased-padding">
+									<td width="380" colspan="3">
 										Преподаватель: <a href="teachers/edit/{{Group.id_teacher}}" target="_blank">{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}</a>
 									</td>
-									<td width="220">
+									<td width="380">
 									   <span ng-repeat="(day, data) in getTeacher(Group.id_teacher).bar" class="group-freetime-block">
 											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
 										</span>
 									</td>
 								</tr>
-								<tr>
-									<td colspan="4">Загрузка группы</td>
-									<td width="220">
-										<span ng-repeat="(day, data) in Group.bar" class="group-freetime-block">
-											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
-										</span>
-									</td>
-								</tr>
 								<tr ng-repeat="(id_cabinet, cabinet_bar) in cabinet_bars" ng-show='id_cabinet > 0'>
-									<td colspan="4">Загрузка кабинета <span style='color: {{ getCabinet(id_cabinet).color }}'>{{ getCabinet(id_cabinet).label }}</span></td>
-									<td width="220">
+									<td colspan="3">Загрузка кабинета <span style='color: {{ getCabinet(id_cabinet).color }}'>{{ getCabinet(id_cabinet).label }}</span></td>
+									<td width="380">
 										<span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
 										</span>
 									</td>
 								</tr>
 								<tr>
-									<td colspan="5">
+									<td colspan="3">Загрузка группы</td>
+									<td width="380">
+										<span ng-repeat="(day, data) in Group.bar" class="group-freetime-block">
+											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4">
 										Готова к запуску: <span class="link-like" ng-click="toggleReadyToStart()"> {{ Group.ready_to_start ? 'да' : 'нет' }}</span>
 									</td>
 								</tr>
@@ -184,5 +177,8 @@
 <style>
 	.bootstrap-select.btn-group .btn .filter-option {
 		white-space: nowrap !important;
+	}
+	.increased-padding td {
+		padding-bottom: 20px !important;
 	}
 </style>
