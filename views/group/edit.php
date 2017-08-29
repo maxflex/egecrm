@@ -90,12 +90,12 @@
 										}">
 											{{Student.first_name}}
 											{{Student.last_name}}
-											<span ng-show="Student.Test">
-												(<span ng-show="Student.Test.notStarted" class="quater-black">к тесту не приступал</span>
-												<span ng-show="Student.Test.inProgress" class="quater-black">тест в процессе</span>
-												<span ng-show="Student.Test.isFinished">{{ Student.Test.final_score }}%</span>)
-											</span>
 										</a>
+										<span ng-show="Student.Test">
+											(<span ng-show="Student.Test.notStarted" class="quater-black">к тесту не приступал</span>
+											<span ng-show="Student.Test.inProgress" class="quater-black">тест в процессе</span>
+											<span ng-show="Student.Test.isFinished">{{ Student.Test.final_score }}%</span>)
+										</span>
 									</td>
 									<td>
 										<span ng-show='Student.already_had_lesson'>
