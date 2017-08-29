@@ -126,11 +126,16 @@
 							$bar[$day][$id_time] = 'branch-' . Cabinet::getField($result->id_cabinet, 'id_branch');
 						}
 					} else {
-						// слева есть зуб хотя бы 1 группы?
-						if ($previous_result->cnt >= 1) {
-							$bar[$day][$id_time] = 'branch-' . Cabinet::getField($previous_result->id_cabinet, 'id_branch');
+						// слева есть зуб хотя бы 2 групп?
+						if ($previous_result->cnt >= 2) {
+							$bar[$day][$id_time] = 'blink red';
 						} else {
-							$bar[$day][$id_time] = 'gray';
+							// слева есть зуб хотя бы 1 группы?
+							if ($previous_result->cnt >= 1) {
+								$bar[$day][$id_time] = 'branch-' . Cabinet::getField($previous_result->id_cabinet, 'id_branch');
+							} else {
+								$bar[$day][$id_time] = 'gray';
+							}
 						}
 					}
 				}
