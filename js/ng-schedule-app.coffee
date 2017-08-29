@@ -54,17 +54,18 @@ app = angular.module "Schedule", ['mwl.calendar']
             bug_index = 0
             to_be_duplicated = {}
             while current_date < date
-                index++
-                to_be_duplicated[index] = _.clone($scope.Group.Schedule[$scope.Group.Schedule.length - 1])
-                delete to_be_duplicated[index].id
-                to_be_duplicated[index].date = current_date
-                $.post "groups/ajax/SaveSchedule", to_be_duplicated[index], (response)->
-                    bug_index++
-                    to_be_duplicated[bug_index].id = response.id
-                    console.log(response.id, to_be_duplicated[bug_index])
-                    $scope.Group.Schedule.push(to_be_duplicated[bug_index])
-                    $scope.$apply()
-                , 'json'
+                if $scope.special_dates.vacations.indexOf(current_date) is -1
+                    index++
+                    to_be_duplicated[index] = _.clone($scope.Group.Schedule[$scope.Group.Schedule.length - 1])
+                    delete to_be_duplicated[index].id
+                    to_be_duplicated[index].date = current_date
+                    $.post "groups/ajax/SaveSchedule", to_be_duplicated[index], (response)->
+                        bug_index++
+                        to_be_duplicated[bug_index].id = response.id
+                        console.log(response.id, to_be_duplicated[bug_index])
+                        $scope.Group.Schedule.push(to_be_duplicated[bug_index])
+                        $scope.$apply()
+                    , 'json'
                 current_date = moment(current_date).add(7, 'days').format("YYYY-MM-DD")
 
         $scope.scheduleModal = (schedule = null) ->
