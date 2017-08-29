@@ -881,8 +881,52 @@ body {
 		width: 4px;
 		margin-right: 1px;
 		display: inline-block;
+        &.branch-{
+            &1 {
+                background-color: #FBAA33;
+            }
+            &2 {
+                background-color: #EF1E25;
+            }
+            &3 {
+                background-color: #019EE0;
+            }
+            &5 {
+                background-color: #0252A2;
+            }
+            &6 {
+                background-color: #B61D8E;
+            }
+            &7 {
+                background-color: #B61D8E;
+            }
+            &8 {
+                background-color: #029A55;
+            }
+            &9 {
+                background-color: #029A55;
+            }
+            &11 {
+                background-color: #ACADAF;
+            }
+            &12 {
+                background-color: #FFD803;
+            }
+            &14 {
+                background-color: #B1D332;
+            }
+            &15 {
+                background-color: #0252A2;
+            }
+            &16 {
+                background-color: #ACADAF;
+            }
+            &17 {
+                background-color: #C07911;
+            }
+        }
 		&.gray, &.empty {
-			background-color: rgba(176, 176, 176, 0.2);
+			background-color: rgba(176, 176, 176, 0.1);
 		}
 		&.green {
 			background-color: $green;

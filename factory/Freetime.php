@@ -70,9 +70,9 @@
                         $id_time = '0'.$id_time;
                     }
 				    $result = dbConnection()->query("
-						SELECT COUNT(*) AS cnt, g.id as id_group FROM group_time gt
+						SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
-						WHERE FIND_IN_SET({$id_student}, g.students) AND g.ended = 0 AND gt.id_time=$id_time AND g.year = ".Years::getAcademic()."
+						WHERE FIND_IN_SET({$id_student}, g.students) AND g.ended = 0 AND gt.id_time=$id_time
 					")->fetch_object();
                     static::_brushBar($result, $with_freetime, $bar, $day, $id_time, $id_group);
                 }
@@ -88,6 +88,8 @@
 			} else {
 				$bar = [];
 			}
+			// кол-во групп в предыдущей итерации
+			$previous_group_cnt = 0;
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
                     if ($id_time < 10) {
@@ -98,49 +100,51 @@
 						LEFT JOIN groups g ON g.id = gt.id_group
 						WHERE g.id_teacher = {$id_teacher} AND g.ended = 0 AND gt.id_time={$id_time} AND g.year = ".Years::getAcademic()."
 					")->fetch_object();
-					static::_brushBar($result, $with_freetime, $bar, $day, $id_time, $id_group);
+					static::_brushBar($result, $previous_group_cnt, $bar, $day, $id_time, $id_group);
+					$previous_group_cnt = $result->cnt;
                 }
             }
             return $bar;
         }
 
-        private static function _brushBar($result, $with_freetime, &$bar, $day, $id_time, $id_group)
+        private static function _brushBar($result, $previous_group_cnt, &$bar, $day, $id_time, $id_group)
         {
-	        if ($result->cnt >= 1) {
-                if ($result->cnt > 1) {
-                    if ($with_freetime && $bar[$day][$id_time] !== 'empty') {
-                        $bar[$day][$id_time] = 'blink red-green';
-                        if ($id_group && $id_group != $result->id_group) {
-	                    	$bar[$day][$id_time] = 'blink quater-red-green';
-                    	}
-                    } else {
-                    	$bar[$day][$id_time] = 'blink red';
-                    	if ($id_group && $id_group != $result->id_group) {
-	                    	$bar[$day][$id_time] .= ' half-opacity';
-                    	}
-                    }
-                } else {
-                    if ($with_freetime && $bar[$day][$id_time] !== 'empty') {
-                        $bar[$day][$id_time] = 'red-green';
-                        if ($id_group && $id_group != $result->id_group) {
-	                    	$bar[$day][$id_time] = 'quater-red-green';
-                    	}
-                    } else {
-                    	$bar[$day][$id_time] = 'red';
-                    	if ($id_group && $id_group != $result->id_group) {
-	                    	$bar[$day][$id_time] .= ' half-opacity';
-                    	}
-                    }
-                }
-            } else {
-				if ($with_freetime && $bar[$day][$id_time] !== 'empty') {
-					if ($id_group && $id_group != $result->id_group) {
-                    	$bar[$day][$id_time] .= ' half-opacity';
-                	}
+            // зуб находится на позиции будни 17:20 и 18:40?
+            if (in_array($id_time, [29, 30, 31, 32, 33, 4, 8, 12, 16, 20])) {
+                // текущий зуб – зуб хотя бы 2 групп?
+				if ($result->cnt >= 2) {
+					$bar[$day][$id_time] = 'blink red';
 				} else {
-					$bar[$day][$id_time] = 'gray';
+					// текущий зуб – зуб хотя бы 1 группы?
+					if ($result->cnt >= 1) {
+						// слева есть зуб хотя бы 1 группы?
+						if ($previous_group_cnt > 1) {
+							$bar[$day][$id_time] = 'blink red';
+						} else {
+							$bar[$day][$id_time] = 'branch-' . Cabinet::getField($result->id_cabinet, 'id_branch');
+						}
+					} else {
+						// слева есть зуб хотя бы 1 группы?
+						if ($previous_group_cnt > 1) {
+							$bar[$day][$id_time] = 'branch-' . Cabinet::getField($result->id_cabinet, 'id_branch');
+						} else {
+							$bar[$day][$id_time] = 'gray';
+						}
+					}
 				}
-            }
+            } else {
+				// текущий зуб – зуб хотя бы 2 групп?
+				if ($result->cnt >= 2) {
+					$bar[$day][$id_time] = 'blink red';
+				} else {
+					// текущий зуб – зуб хотя бы 1 группы?
+					if ($result->cnt >= 1) {
+						$bar[$day][$id_time] = 'branch-' . Cabinet::getField($result->id_cabinet, 'id_branch');
+					} else {
+						$bar[$day][$id_time] = 'gray';
+					}
+				}
+			}
         }
 
 		// @time-refactored @time-checked multiple cabinets
