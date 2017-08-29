@@ -929,7 +929,7 @@ body {
             }
         }
 		&.gray, &.empty, &.branch-0 {
-			background-color: rgba(176, 176, 176, 0.1);
+			background-color: rgba(176, 176, 176, 0.2);
 		}
 		&.green {
 			background-color: $green;
@@ -941,7 +941,7 @@ body {
 			background: $orange !important;
 		}
 		&.red {
-			background: $red !important;
+			background: #EF1E25 !important;
 		}
 		&.red-green {
 			background: #00b700 !important;

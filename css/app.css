@@ -14628,7 +14628,7 @@ body {
   .bar.branch-17 {
     background-color: #C07911; }
   .bar.gray, .bar.empty, .bar.branch-0 {
-    background-color: rgba(176, 176, 176, 0.1); }
+    background-color: rgba(176, 176, 176, 0.2); }
   .bar.green {
     background-color: #5cb85c; }
   .bar.blue {
@@ -14636,7 +14636,7 @@ body {
   .bar.orange {
     background: #fbaa33 !important; }
   .bar.red {
-    background: #c40000 !important; }
+    background: #EF1E25 !important; }
   .bar.red-green {
     background: #00b700 !important;
     background: -moz-linear-gradient(top, #00b700 0%, #00b700 50%, #c40000 51%, #c40000 100%) !important;
