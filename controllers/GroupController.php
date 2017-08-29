@@ -458,6 +458,8 @@
 				$Students[] = $Student;
 			}
 
+			$Group->bar = Freetime::getGroupBar($Group->id);
+
 			$ang_init_data = angInit([
 				"Group" 	     => $Group,
 				"Teachers"	     => $Teachers,
@@ -576,6 +578,15 @@
 
 			returnJsonAng(
 				Freetime::getCabinetBar(Group::findById($id_group))
+			);
+		}
+
+		public function actionAjaxGetGroupBar()
+		{
+			extract($_POST);
+
+			returnJsonAng(
+				Freetime::getGroupBar($id_group)
 			);
 		}
 

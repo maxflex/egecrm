@@ -248,6 +248,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     lightBoxHide();
     return justSave(function() {
       $scope.updateCabinetBar(false);
+      $scope.updateGroupBar();
       $scope.updateStudentBars();
       $scope.reloadSmsNotificationStatuses();
       return checkFreeCabinets();
@@ -418,8 +419,15 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
         ajaxEnd();
       }
       $scope.cabinet_bars = bars;
-      $scope.$apply();
-      return rebindBlinking();
+      return $scope.$apply();
+    }, "json");
+  };
+  $scope.updateGroupBar = function() {
+    return $.post("groups/ajax/GetGroupBar", {
+      id_group: $scope.Group.id
+    }, function(bar) {
+      $scope.Group.bar = bar;
+      return $scope.$apply();
     }, "json");
   };
   $scope.getCabinet = function(id) {

@@ -53,13 +53,10 @@
 		}
 
         // @time-refactored @time-checked
+        // $with_freetime – depricated
 		public static function getStudentBar($id_student, $with_freetime = false, $id_group = false)
 		{
-			if ($with_freetime) {
-				$bar = Freetime::getFreetimeBar($id_student, 'student');
-			} else {
-				$bar = [];
-			}
+			$bar = [];
 			// кол-во групп в предыдущей итерации
 			$previous_result = null;
 			foreach(Time::MAP as $day => $data) {
@@ -82,18 +79,11 @@
         // @time-refactored @time-checked
 		public static function getTeacherBar($id_teacher, $with_freetime = false, $id_group = false)
 		{
-		    if ($with_freetime) {
-				$bar = Freetime::getFreetimeBar($id_teacher, 'teacher');
-			} else {
-				$bar = [];
-			}
+			$bar = [];
 			// кол-во групп в предыдущей итерации
 			$previous_result = null;
 			foreach(Time::MAP as $day => $data) {
 				foreach ($data as $id_time) {
-                    if ($id_time < 10) {
-                        $id_time = '0'.$id_time;
-                    }
 					$result = dbConnection()->query("
 						SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
 						LEFT JOIN groups g ON g.id = gt.id_group
@@ -101,8 +91,65 @@
 					")->fetch_object();
 					static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
 					$previous_result = $result;
-                }
-            }
+				}
+			}
+			foreach ($bar as $day => $data) {
+				$bar[$day] = array_values($data);
+			}
+            return $bar;
+        }
+
+		// @time-refactored @time-checked multiple cabinets
+		public static function getCabinetBar($Group, $cabinet = null)
+		{
+		    $bars = [];
+
+			if ($cabinet) {
+				$cabinet_ids = [$cabinet];
+			} else {
+				$cabinet_ids = Group::getCabinetIds($Group->id);
+			}
+
+			foreach($cabinet_ids as $id_cabinet) {
+				// кол-во групп в предыдущей итерации
+				$previous_result = null;
+				$bar = [];
+				foreach(Time::MAP as $day => $data) {
+					foreach ($data as $id_time) {
+						$result = dbConnection()->query("
+							SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
+							LEFT JOIN groups g ON g.id = gt.id_group
+							WHERE gt.id_cabinet={$id_cabinet} AND g.ended = 0 AND gt.id_time=$id_time
+						")->fetch_object();
+						static::_brushBar($result, $previous_result, $bar, $day, $id_time, $Group->id);
+						$previous_result = $result;
+					}
+				}
+				foreach ($bar as $day => $data) {
+					$bar[$day] = array_values($data);
+				}
+	            $bars[$id_cabinet] = $bar;
+			}
+            return ($cabinet ? $bars[$cabinet] : $bars);
+        }
+
+		// @time-refactored @time-checked multiple cabinets
+		public static function getGroupBar($id_group)
+		{
+			$bar = [];
+			// кол-во групп в предыдущей итерации
+			$previous_result = null;
+			foreach(Time::MAP as $day => $data) {
+				foreach ($data as $id_time) {
+					$result = dbConnection()->query("
+						SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
+						LEFT JOIN groups g ON g.id = gt.id_group
+						WHERE g.id={$id_group} AND g.ended = 0 AND gt.id_time=$id_time
+					")->fetch_object();
+					static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
+					$previous_result = $result;
+				}
+			}
 			foreach ($bar as $day => $data) {
 				$bar[$day] = array_values($data);
 			}
@@ -152,64 +199,6 @@
 					}
 				}
 			}
-        }
-
-		// @time-refactored @time-checked multiple cabinets
-		public static function getCabinetBar($Group, $cabinet = null)
-		{
-		    $bars = [];
-
-			if ($cabinet) {
-				$cabinet_ids = [$cabinet];
-			} else {
-				$cabinet_ids = Group::getCabinetIds($Group->id);
-			}
-
-			foreach($cabinet_ids as $id_cabinet) {
-				foreach(Time::MAP as $day => $data) {
-					foreach ($data as $id_time) {
-                        if ($id_time < 10) {
-                            $id_time = '0'.$id_time;
-                        }
-						// подсчитываем кол-во групп в этом кабинете в это время
-						$result = dbConnection()->query("
-							SELECT COUNT(*) AS cnt FROM group_time gt
-							LEFT JOIN groups g ON g.id = gt.id_group
-							WHERE gt.id_cabinet = $id_cabinet AND g.ended = 0 AND gt.id_time={$id_time} AND g.year = " . Years::getAcademic() . " " . ($Group ? " AND g.id!={$Group->id}" : "")
-						);
-
-	                    // если нет группы
-	                    if ($result === false) {
-	                        $groups_at_this_time_count = false;
-	                    } else {
-	                        $groups_at_this_time_count = $result->fetch_object()->cnt;
-	                    }
-
-	                    if ($groups_at_this_time_count >= 1) {
-	                        if ($groups_at_this_time_count > 1) {
-	                            if (static::_cabinetFree($Group, $day, $id_time, $id_cabinet)) {
-				                    $bars[$id_cabinet][$day][$id_time] = 'blink red';
-			                    } else {
-				                    $bars[$id_cabinet][$day][$id_time] = 'half-opacity blink red';
-			                    }
-	                        } else {
-	                            if (static::_cabinetFree($Group, $day, $id_time, $id_cabinet)) {
-				                    $bars[$id_cabinet][$day][$id_time] = 'red';
-			                    } else {
-				                    $bars[$id_cabinet][$day][$id_time] = 'half-opacity red';
-			                    }
-	                        }
-	                    } else {
-		                    if (static::_cabinetFree($Group, $day, $id_time, $id_cabinet)) {
-			                    $bars[$id_cabinet][$day][$id_time] = 'red';
-		                    } else {
-			                    $bars[$id_cabinet][$day][$id_time] = 'gray';
-		                    }
-	                    }
-	                }
-	            }
-			}
-            return ($cabinet ? $bars[$cabinet] : $bars);
         }
 
         private static function _cabinetFree($Group, $day, $id_time, $id_cabinet)

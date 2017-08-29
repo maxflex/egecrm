@@ -136,11 +136,19 @@
 										</span>
 									</td>
 								</tr>
+								<tr>
+									<td colspan="4">Загрузка группы</td>
+									<td width="220">
+										<span ng-repeat="(day, data) in Group.bar" class="group-freetime-block">
+											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
+										</span>
+									</td>
+								</tr>
 								<tr ng-repeat="(id_cabinet, cabinet_bar) in cabinet_bars" ng-show='id_cabinet > 0'>
 									<td colspan="4">Загрузка кабинета <span style='color: {{ getCabinet(id_cabinet).color }}'>{{ getCabinet(id_cabinet).label }}</span></td>
 									<td width="220">
 										<span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
-											<span ng-repeat="bar in data track by $index" class="bar {{bar}}">{{ timeid }}</span>
+											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
 										</span>
 									</td>
 								</tr>

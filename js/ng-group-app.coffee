@@ -186,6 +186,7 @@
 				lightBoxHide()
 				justSave ->
 					$scope.updateCabinetBar(false)
+					$scope.updateGroupBar()
 					$scope.updateStudentBars()
 					$scope.reloadSmsNotificationStatuses()
 					checkFreeCabinets()
@@ -326,7 +327,12 @@
 					ajaxEnd() if ajax_animation
 					$scope.cabinet_bars = bars
 					$scope.$apply()
-					rebindBlinking()
+				, "json"
+
+			$scope.updateGroupBar = ->
+				$.post "groups/ajax/GetGroupBar", {id_group: $scope.Group.id}, (bar) ->
+					$scope.Group.bar = bar
+					$scope.$apply()
 				, "json"
 
 			$scope.getCabinet = (id) ->
