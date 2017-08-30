@@ -52,7 +52,7 @@
         {
             $this->setTabTitle("Загрузка кабинетов");
             $Cabinets = [];
-            foreach (Branches::$all as $id_branch => $title) {
+            foreach (Branches::getAll() as $id_branch => $title) {
                 foreach (Cabinet::getByBranch($id_branch) as $Cabinet) {
                     $Cabinet->bar = Freetime::getCabinetBar(null, $Cabinet->id);
                     $Cabinets[$id_branch][] = $Cabinet;

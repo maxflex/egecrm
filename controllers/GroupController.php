@@ -208,7 +208,7 @@
 					"Subjects" 		=> Subjects::$three_letters,
 					"Grades"		=> Grades::$all,
 					"GroupLevels"	=> GroupLevels::$short,
-					"Branches"		=> Branches::$all,
+					"Branches"		=> Branches::getAll(),
 				]);
 
 				$this->render("list_for_teachers", [
@@ -232,7 +232,7 @@
 					"Subjects" 		=> Subjects::$three_letters,
 					"Grades"		=> Grades::$all,
 					"GroupLevels"	=> GroupLevels::$short,
-					"Branches"		=> Branches::$all,
+					"Branches"		=> Branches::getAll(),
 				]);
 
 				$this->render("list_for_students", [
@@ -248,7 +248,7 @@
 
 				$ang_init_data = angInit([
 					"Cabinets"		=> Cabinet::getByBranch(1),
-					"Branches"		=> Branches::$all,
+					"Branches"		=> Branches::getAll(),
 					"Teachers"		=> $Teachers,
 					"Subjects" 		=> Subjects::$three_letters,
 					"SubjectsShort" => Subjects::$short,
@@ -729,8 +729,8 @@
 			$Template = Template::getFull(8, [
 				"student_name"	=> $Student->last_name . " " . $Student->first_name,
 				"subject"		=> Subjects::$dative[$Group->id_subject],
-				"address"		=> Branches::$address[Cabinet::getField($FirstLesson->cabinet)],
-				"branch"		=> Branches::$all[Cabinet::getField($FirstLesson->cabinet)],
+				"address"		=> Branches::getField(Cabinet::getField($FirstLesson->cabinet), 'address'),
+				"branch"		=> Branches::getField(Cabinet::getField($FirstLesson->cabinet), 'full'),
 				"date"			=> $date_formatted,
 				"cabinet"		=> trim(Cabinet::getField($FirstLesson->cabinet, 'number')),
 			]);
@@ -802,7 +802,7 @@
 			// CABINETS
 			//
 			$Cabinets = Cabinet::findAll([
-				"condition" => "id_branch=" . Branches::TRG,
+				"condition" => "id_branch=1",
 			]);
 
 

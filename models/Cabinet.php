@@ -72,7 +72,7 @@
 			// чтобы было понятно филиал какого кабинета это
 			if (is_array($branch) && count($branch) > 1) {
 				foreach ($return as &$cabinet) {
-					$cabinet->number = Branches::$short[$cabinet->id_branch] . ": " . $cabinet->number;
+					$cabinet->number = Branches::getField($cabinet->id_branch, 'short') . ": " . $cabinet->number;
 				}
 			}
 
@@ -103,11 +103,13 @@
                 $id_branch = self::getField($id_cabinet);
             }
 
+			$branch = Branches::getOne($id_branch);
+			
 			return [
 				'id' 	=> $id_cabinet,
-				'color' => Branches::metroSvg($id_branch, false, true),
-				'label'	=> Branches::$short[$id_branch] . "–" . self::getField($id_cabinet, 'number'),
-                'short' => Branches::$short[$id_branch],
+				'color' => $branch->color,
+				'label'	=> $branch->short . "–" . self::getField($id_cabinet, 'number'),
+                'short' => $branch->short,
                 'id_branch' => $id_branch,
 			];
 		}

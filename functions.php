@@ -61,6 +61,12 @@
 		return $db_egerep;
 	}
 
+	function dbFactory()
+	{
+		global $db_factory;
+		return $db_factory;
+	}
+
 	/*
 	 * Возвращает соединение DB_SETTINGS
 	 */

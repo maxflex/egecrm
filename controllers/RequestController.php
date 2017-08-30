@@ -87,7 +87,7 @@
 			$ang_init_data = angInit([
 				"requests" 				=> $Requests,
                 "subjects"				=> Subjects::$all,
-				"branches"				=> Branches::$all,
+				"branches"				=> Branches::getAll(),
 				"request_statuses"		=> RequestStatuses::get(),
 				"chosen_list"			=> $id_status,
                 "currentPage"			=> $page,
@@ -145,7 +145,7 @@
 				"requests" 				=> $Requests,
 				"users"					=> $Users,
 				"subjects"				=> Subjects::$all,
-				"branches"				=> Branches::$all,
+				"branches"				=> Branches::getAll(),
 				"request_statuses"		=> RequestStatuses::get(),
 				"requests_count"		=> Request::countByPageRelevant($grade, $branch, $subject),
 				"search"				=> [

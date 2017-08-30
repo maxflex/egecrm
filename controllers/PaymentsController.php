@@ -40,7 +40,7 @@
 
 			$ang_init_data = angInit([
 				"Subjects" => Subjects::$three_letters,
-				"Branches" => Branches::$all,
+				"Branches" => Branches::getAll(),
 				"payment_statuses"	=> Payment::$all,
                 'payment_types'		=> PaymentTypes::$all,
 			]);

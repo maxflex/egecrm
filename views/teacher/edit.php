@@ -70,7 +70,7 @@
 			</div>
 
 			<div class="form-group">
-				<?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches", 'disabled' => 'disabled']) ?>
+				<?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches", 'readonly' => 'true']) ?>
 			</div>
 		</div>
 <!--
@@ -133,3 +133,9 @@
 	<sms number='sms_number' templates="full"></sms>
 	<!-- /СМС -->
 </form>
+
+<style>
+    .dropdown-menu {
+        pointer-events: none;
+    }
+</style>

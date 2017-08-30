@@ -7,86 +7,50 @@
 	 */
 	class Branches extends Factory {
 
-		# Список
-		const TRG = 1;
-		const PVN = 2;
-		const BGT = 3;
-		const IZM = 5;
-		const OPL = 6;
-		const RPT = 7;
-		const SKL = 8;
-		const ORH = 9;
-		const ANN = 11;
-		const PER = 12;
-		const KLG = 13;
-		const BRT = 14;
-		const STR = 15;
-		const VLD = 16;
-		const BEL = 17;
-
-
-
-		# Все
-		static $all  = [
-			self::TRG => "Тургеневская",
-			self::PVN => "Проспект Вернадского",
-			self::BGT => "Багратионовская",
-			self::IZM => "Измайловская",
-			self::OPL => "Октябрьское поле",
-			self::RPT => "Рязанский Проспект",
-			self::SKL => "Сокол",
-			self::ORH => "Орехово",
-			self::ANN => "Аннино",
-			self::PER => "Перово",
-			self::KLG => "Калужская",
-			self::BRT => "Братиславская",
-			self::STR => "Строгино",
-			self::VLD => "Владыкино",
-			self::BEL => "Беляево",
-		];
-
-		# Короткие
-		static $short  = [
-			self::TRG => "ТУР",
-			self::PVN => "ВЕР",
-			self::BGT => "БАГ",
-			self::IZM => "ИЗМ",
-			self::OPL => "ОКТ",
-			self::RPT => "РЯЗ",
-			self::SKL => "СОК",
-			self::ORH => "ОРЕ",
-			self::ANN => "АНН",
-			self::PER => "ПЕР",
-			self::KLG => "КЛЖ",
-			self::BRT => "БРА",
-			self::STR => "СТР",
-			self::VLD => "ВЛА",
-			self::BEL => "БЕЛ",
-		];
-
-		# Короткие
-		static $address  = [
-			self::TRG => "Мясницкая 40с1",
-			self::PVN => "",
-			self::BGT => "",
-			self::IZM => "",
-			self::OPL => "",
-			self::RPT => "",
-			self::SKL => "Ленинградский проспект, 68с24",
-			self::ORH => "",
-			self::ANN => "",
-			self::PER => "",
-			self::KLG => "Научный проезд 8с1",
-			self::BRT => "",
-			self::STR => "",
-			self::VLD => "",
-		];
-
 		# title
 		static $title = "филиал";
 
 		# удаленные станции
 		static $deleted = [];
+
+		public static function getField($id, $field)
+		{
+			return dbFactory()->query("SELECT $field FROM branches WHERE id={$id}")->fetch_object()->{$field};
+		}
+
+		public static function getAll($field = 'full', $sort_by_weight = false)
+		{
+			$result = dbFactory()->query("SELECT id, branches.{$field} FROM branches ORDER BY id ASC");
+			while ($row = $result->fetch_object()) {
+				if ($field == '*') {
+					$return[] = $row;
+				} else {
+					$return[$row->id] = $row->{$field};
+				}
+			}
+
+			if ($sort_by_weight) {
+				// Сортируем по весу ветки метро
+				usort($return, function($a, $b) {
+					$lineWeightA = $a->weight;
+					$lineWeightB = $b->weight;
+
+					if ($lineWeightA == $lineWeightB) {
+						// Внутри одинакового цвета ветки сортируем по ID (чем меньше ID, тем выше)
+						return ($a->id < $b->id) ? -1 : 1;
+					}
+
+					return ($lineWeightA < $lineWeightB) ? -1 : 1;
+				});
+			}
+
+			return $return;
+		}
+
+		public static function getOne($id)
+		{
+			return dbFactory()->query("SELECT * FROM branches WHERE id={$id}")->fetch_object();
+		}
 
 		/**
 		 * Построить селектор с кружочками метро
@@ -104,38 +68,38 @@
 			}
 
 			// Получаем филиалы
-			$branches = self::getBranches();
+			$branches = self::getAll('*', true);
 
 			foreach ($branches as $branch) {
                 if ($params['all_cabinets']) {
-                    $isSelected = $selected == $branch["id"]  && !$cabinet ? "selected" : "";
-                    echo "<option ".$isSelected." value='{$branch['id']}'
+                    $isSelected = $selected == $branch->id  && !$cabinet ? "selected" : "";
+                    echo "<option ".$isSelected." value='{$branch->id}'
 							ng-selected=".($isSelected ? 'true' : 'false')."
 							data-content='".
-                                ($params['coloured_text'] ? '<span style="color:'.$branch['color'].';">' : '').
-                                ($params['without_svg']   ? '' : $branch['svg']).
-                                ($params['short'] ? $branch['short'].' (все кабинеты)' : $branch['name']).
+                                ($params['coloured_text'] ? '<span style="color:' . $branch->color . ';">' : '').
+                                ($params['without_svg']   ? '' : self::metroSvg($branch->color)).
+                                ($params['short'] ? $branch->short . ' (все кабинеты)' : $branch->full).
                                 ($params['coloured_text'] ? '</span>' : '').
                             "'></option>";
                 }
 
-				$Cabinets = Cabinet::getBranchId($branch['id']);
+				$Cabinets = Cabinet::getBranchId($branch->id);
 				foreach($Cabinets as $Cabinet) {
 					// если это массив выбранных элементов (при $multiple = true)
 					if (is_array($selected)) {
-						$option_selected = in_array($branch["id"], $selected);
+						$option_selected = in_array($branch->id, $selected);
 					} else {
-						$option_selected = ($selected == $branch["id"] && $cabinet == $Cabinet->id);
+						$option_selected = ($selected == $branch->id && $cabinet == $Cabinet->id);
 					}
 					// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
-					if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
+					if (!in_array($branch->id, self::$deleted) || ($option_selected)) {
 						echo "<option ".($option_selected ? "selected" : "")." value='-{$Cabinet->id}'
 							ng-selected='" . ( $option_selected ? 'true' : 'false' ). "'
-							ng-class=\"{'half-opacity': free_cabinets[" . $branch["id"] . "][{$Cabinet->id}]}\"
+							ng-class=\"{'half-opacity': free_cabinets[" . $branch->id . "][{$Cabinet->id}]}\"
 							data-content='".
-                                    ($params['coloured_text'] ? '<span style="color:'.$branch['color'].';">' : '').
-                                    ($params['without_svg']   ? '' : $branch['svg']).
-                                    ($params['short'] ? $branch['short'] : $branch['name'])."-{$Cabinet->number}".
+                                    ($params['coloured_text'] ? '<span style="color:' . $branch->color . ';">' : '').
+                                    ($params['without_svg']   ? '' : self::metroSvg($branch->color)).
+                                    ($params['short'] ? $branch->short : $branch->full )."-{$Cabinet->number}".
                                     ($params['coloured_text'] ? '</span>' : '').
                             "'></option>";
 					}
@@ -146,38 +110,20 @@
 			echo "<script>$('#{$attrs['id']}').selectpicker()</script>";
 		}
 
-
-		public static function cabinetsSelector($attrs = [])
-		{
-
-			echo "<select class='branch-cabinet' ".Html::generateAttrs($attrs).">";
-			echo "<option selected style='cursor: default; outline: none' value=''>кабинет</option>";
-			echo "<option disabled style='cursor: default' value=''>──────────────</option>";
-			// Получаем филиалы
-			$branches = self::getBranches();
-
-			foreach ($branches as $branch) {
-				$Cabinets = Cabinet::getBranchId($branch['id']);
-				foreach($Cabinets as $Cabinet) {
-					echo "<option value='{$Cabinet->id}'>" . $branch['short'] . "–" . $Cabinet->number ."</option>";
-				}
-			}
-			echo "</select>";
-		}
-
 		/**
 		 * Вернуть массив кабинетов в формате филиал-кабинет
+		 * @branch-refactored
 		 */
 		public static function allCabinets()
 		{
-			$branches = self::getBranches();
+			$branches = self::getAll('*');
 			foreach ($branches as $branch) {
-				$Cabinets = Cabinet::getBranchId($branch['id']);
+				$Cabinets = Cabinet::getBranchId($branch->id);
 				foreach($Cabinets as $Cabinet) {
 					$return[] = [
 						'id' 	=> $Cabinet->id,
-						'color' => static::metroSvg($Cabinet->id_branch, false, true),
-						'label'	=> $branch['short'] . "–" . $Cabinet->number,
+						'color' => $branch->color,
+						'label'	=> $branch->short . "–" . $Cabinet->number,
 						'number'	=> $Cabinet->number,
 					];
 				}
@@ -201,18 +147,18 @@
 			}
 
 			// Получаем филиалы
-			$branches = self::getBranches();
+			$branches = self::getAll('*', true);
 
 			foreach ($branches as $branch) {
 				// если это массив выбранных элементов (при $multiple = true)
 				if (is_array($selected)) {
-					$option_selected = in_array($branch["id"], $selected);
+					$option_selected = in_array($branch->id, $selected);
 				} else {
-					$option_selected = ($selected == $branch["id"]);
+					$option_selected = ($selected == $branch->id);
 				}
 				// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
-				if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
-					echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}' data-content='{$branch['svg']}{$branch['name']}'></option>";
+				if (!in_array($branch->id, self::$deleted) || ($option_selected)) {
+					echo "<option ".($option_selected ? "selected" : "")." value='{$branch->id}' data-content='" . self::metroSvg($branch->color) . $branch->full . "'></option>";
 				}
 			}
 			echo "</select>";
@@ -235,187 +181,54 @@
 			}
 
 			// Получаем филиалы
-			$branches = self::getBranches();
+			$branches = self::getAll('*', true);
 
 			foreach ($branches as $branch) {
 				// если это массив выбранных элементов (при $multiple = true)
 				if (is_array($selected)) {
-					$option_selected = in_array($branch["id"], $selected);
+					$option_selected = in_array($branch->id, $selected);
 				} else {
-					$option_selected = ($selected == $branch["id"]);
+					$option_selected = ($selected == $branch->id);
 				}
 				// если опция не удалена (если удалена, то отображается только в том случае, если удаленный вариант был выбран ранее)
-				if (!in_array($branch["id"], self::$deleted) || ($option_selected)) {
-					echo "<option ".($option_selected ? "selected" : "")." value='{$branch['id']}' data-content='{$branch['svg']}{$branch['name']}'></option>";
+				if (!in_array($branch->id, self::$deleted) || ($option_selected)) {
+					echo "<option ".($option_selected ? "selected" : "")." value='{$branch->id}' data-content='" . self::metroSvg($branch->color) . $branch->full . "'></option>";
 				}
 			}
 			echo "</select>";
-			if (!empty($none_selected)) {
-				echo "<script>$('#{$attrs['id']}').selectpicker({noneSelectedText: '$none_selected'})</script>";
-			}
+			echo "<script>$('#{$attrs['id']}').selectpicker()</script>";
 		}
 
 
 		/**
 		 * Цвет метро, СВГ-кружок.
-		 *
-		 * $return - возвратить вес линии для сортировки
-		 * $return_color_only – возвратить только цвет вместо SVG
 		 */
-		public static function metroSvg($id_branch, $return = false, $return_color_only = false)
+		public static function metroSvg($color)
 		{
-			switch ($id_branch) {
-				# Оранжевый
-				case self::TRG:
-                case self::BEL:
-                case self::KLG: {
-					if ($return) {
-						return 1;
-					}
-					if ($id_branch == self::TRG) {
-						$color = "#FBAA33";
-					} else {
-						$color = "#C07911";
-					}
-					break;
-				}
-				# Красный
-				case self::PVN: {
-					if ($return) {
-						return 2;
-					}
-					$color = "#EF1E25";
-					break;
-				}
-				# Голубой
-				case self::BGT: {
-					if ($return) {
-						return 3;
-					}
-					$color = "#019EE0";
-					break;
-				}
-				# Синий
-//				case self::STR:
-				case self::IZM:
-				case self::STR: {
-					if ($return) {
-						return 4;
-					}
-					$color = "#0252A2";
-					break;
-				}
-				# Фиолетовый
-				case self::OPL:
-				case self::RPT: {
-					if ($return) {
-						return 5;
-					}
-					$color = "#B61D8E";
-					break;
-				}
-				# Зеленый
-				case self::SKL:
-				case self::ORH: {
-					if ($return) {
-						return 6;
-					}
-					$color = "#029A55";
-					break;
-				}
-				# Серый
-//				case self::PRR:
-				case self::ANN:
-				case self::VLD: {
-					if ($return) {
-						return 8;
-					}
-					$color = "#ACADAF";
-					break;
-				}
-				# Желтый
-				case self::PER: {
-					if ($return) {
-						return 9;
-					}
-					$color = "#FFD803";
-					break;
-				}
-				# Салатовый
-				case self::BRT: {
-					if ($return) {
-						return 7;
-					}
-					$color = "#B1D332";
-					break;
-				}
-			}
-
-			if ($return_color_only) {
-				return $color;
-			} else {
-				return
+			return
 					'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-metro">
 	            		<circle fill="'.$color.'" r="6" cx="7" cy="7"></circle>
 					</svg>';
-			}
 		}
 
-
-		public static function getName($id_branch) {
-			return self::metroSvg($id_branch) .  self::getById($id_branch);
-		}
-
+		// @branch-refactored
 		public static function getShortColoredById($id_branch, $additional = false)
 		{
-			$name = self::$short[$id_branch];
+			$branch = self::getOne($id_branch);
 
-			return "<span style='color: ". self::metroSvg($id_branch, false, true) . "'>"
-				. $name . ($additional ? $additional : "") . "</span>";
+			return "<span style='color: ". $branch->color . "'>"
+				. $branch->short . ($additional ? $additional : "") . "</span>";
 		}
 
-
+		// @branch-refactored
 		public static function getShortColored()
 		{
-			foreach (self::$all as $id_branch => $name) {
-				$return[$id_branch] = self::getShortColoredById($id_branch);
+			$branches = self::getAll('*');
+
+			foreach($branches as $branch) {
+				$return[$branch->id] = "<span style='color: ". $branch->color . "'>"
+					. $branch->short . "</span>";
 			}
-
-			return $return;
-		}
-
-		/**
-		 * Получить отсортированные по весу линий филиалы с другими параметрами (имя, свг и тд)
-		 *
-		 */
-		public static function getBranches()
-		{
-			$branches = static::$all;
-
-			// Генерируем филиалы
-			foreach ($branches as $id => $branch) {
-				$return[] = [
-					"id"	=> $id,
-					"name"	=> $branch,
-					"line"	=> self::metroSvg($id, true),
-					"svg"	=> self::metroSvg($id),
-					"short"	=> self::$short[$id],
-					"color"	=> self::metroSvg($id, false, true)
-				];
-			}
-
-			// Сортируем по весу ветки метро
-			usort($return, function($a, $b) {
-				$lineWeightA = $a["line"];
-				$lineWeightB = $b["line"];
-
-				if ($lineWeightA == $lineWeightB) {
-					// Внутри одинакового цвета ветки сортируем по ID (чем меньше ID, тем выше)
-					return ($a["id"] < $b["id"]) ? -1 : 1;
-				}
-
-				return ($lineWeightA < $lineWeightB) ? -1 : 1;
-			});
 
 			return $return;
 		}

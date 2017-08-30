@@ -137,21 +137,23 @@
 		public static function getGroupBar($id_group)
 		{
 			$bar = [];
-			// кол-во групп в предыдущей итерации
-			$previous_result = null;
-			foreach(Time::MAP as $day => $data) {
-				foreach ($data as $id_time) {
-					$result = dbConnection()->query("
-						SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
-						LEFT JOIN groups g ON g.id = gt.id_group
-						WHERE g.id={$id_group} AND g.ended = 0 AND g.is_dump = 0 AND gt.id_time=$id_time
-					")->fetch_object();
-					static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
-					$previous_result = $result;
+			if ($id_group) {
+				// кол-во групп в предыдущей итерации
+				$previous_result = null;
+				foreach(Time::MAP as $day => $data) {
+					foreach ($data as $id_time) {
+						$result = dbConnection()->query("
+							SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
+							LEFT JOIN groups g ON g.id = gt.id_group
+							WHERE g.id={$id_group} AND g.ended = 0 AND g.is_dump = 0 AND gt.id_time=$id_time
+						")->fetch_object();
+						static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
+						$previous_result = $result;
+					}
 				}
-			}
-			foreach ($bar as $day => $data) {
-				$bar[$day] = array_values($data);
+				foreach ($bar as $day => $data) {
+					$bar[$day] = array_values($data);
+				}
 			}
             return $bar;
         }

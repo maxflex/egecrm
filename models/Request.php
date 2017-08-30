@@ -384,10 +384,11 @@
 		 */
 		public function addBranchInfo() {
 			foreach ($this->branches as $id_branch) {
+                $branch = Branches::getOne($id_branch);
 				$this->branches_data[$id_branch] = [
 					"id"	=> $id_branch,
-					"short"	=> Branches::$short[$id_branch],
-					"color" => Branches::metroSvg($id_branch, false, true),
+					"short"	=> $branch->short,
+					"color" => $branch->color,
 				];
 			}
 		}
