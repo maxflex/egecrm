@@ -188,6 +188,10 @@ RewriteRule ^activity/get/([0-9]+)/([0-9\.]+)[/]?$ index.php?controller=activity
 # Отправка СМС
 RewriteRule ^send-sms[/]?$ index.php?controller=sendsms [QSA,L]
 
+# Карта
+RewriteRule ^map[/]?$ index.php?controller=map [QSA,L]
+RewriteRule ^map/markers[/]?$ index.php?controller=map&action=markers [QSA,L]
+
 # logs
 RewriteRule ^logs/ajax([a-zA-Z]+)[/]?$ index.php?controller=logs&action=Ajax$1 [QSA,L]
 RewriteRule ^logs[?page=(0-9)]?[/]?$ index.php?controller=logs&action=$1 [QSA,L]
