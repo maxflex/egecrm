@@ -70,7 +70,7 @@
             $conditions = count($conditions) ? " AND " . implode(" AND ", $conditions) : '';
 
             $query = "
-				SELECT m.*
+				SELECT m.*, s.first_name, s.last_name, s.middle_name
 				FROM students s
                 JOIN markers m ON (m.id_owner = s.id AND m.owner = 'STUDENT')
 				JOIN contract_info ci on (ci.id_student = s.id and ci.id_contract = (

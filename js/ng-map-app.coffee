@@ -37,6 +37,28 @@ app = angular.module "Map", ["ui.bootstrap"]
                     marker_location = new google.maps.LatLng(marker.lat, marker.lng)
                     new_marker = newMarker(marker.id, marker_location, map, marker.type)
 
+                    infowindow =  new google.maps.InfoWindow({content: marker.last_name + ' ' + marker.first_name[0] + '. ' + marker.middle_name[0] + '.'})
+
+                    new_marker.addListener 'mouseover', ->
+                        infowindow.open(map, this)
+
+                    new_marker.addListener 'mouseout', ->
+                        infowindow.close()
+
+                    new_marker.addListener 'click', ->
+                        window.open('https://lk.ege-centr.ru/student/' + marker.id_owner, '_blank')
+
+# var infowindow =  new google.maps.InfoWindow({
+# 	content: 'Hello World!',
+# 	map: map
+# });
+#
+# var marker = new google.maps.Marker({
+# 	position: homeLatlng,
+# 	map: map
+# });
+#
+# infowindow.open(map, marker);
 
 		angular.element(document).ready ->
 			set_scope "Map"

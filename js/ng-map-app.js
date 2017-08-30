@@ -56,9 +56,21 @@ app = angular.module("Map", ["ui.bootstrap"]).filter('toArray', function() {
     return $http.get('map/markers').then(function(response) {
       console.log(response.data);
       return response.data.markers.forEach(function(marker) {
-        var marker_location, new_marker;
+        var infowindow, marker_location, new_marker;
         marker_location = new google.maps.LatLng(marker.lat, marker.lng);
-        return new_marker = newMarker(marker.id, marker_location, map, marker.type);
+        new_marker = newMarker(marker.id, marker_location, map, marker.type);
+        infowindow = new google.maps.InfoWindow({
+          content: marker.last_name + ' ' + marker.first_name[0] + '. ' + marker.middle_name[0] + '.'
+        });
+        new_marker.addListener('mouseover', function() {
+          return infowindow.open(map, this);
+        });
+        new_marker.addListener('mouseout', function() {
+          return infowindow.close();
+        });
+        return new_marker.addListener('click', function() {
+          return window.open('https://lk.ege-centr.ru/student/' + marker.id_owner, '_blank');
+        });
       });
     });
   };

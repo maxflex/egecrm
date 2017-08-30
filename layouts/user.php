@@ -146,6 +146,7 @@
     			</a>
     			<a href="contracts" class="list-group-item">Версии договоров</a>
 				<a href="send-sms" class="list-group-item">Отправка СМС</a>
+                <a href="map" class="list-group-item">Карта клиентов</a>
                 <?php if (
                     User::fromSession()->allowed(Shared\Rights::SHOW_PAYMENTS) ||
                     User::fromSession()->allowed(Shared\Rights::SHOW_TEACHER_PAYMENTS) ||
