@@ -17,7 +17,7 @@
 	<?php endif ?>
 	<tr ng-repeat="Group in Groups <?= ($filter ? '| filter:groupsFilter': '' ) ?> <?= ($group_by_year ? '| byYear:group_year ': '' ) ?>"
 		ng-class="{
-			'half-opacity': Group.day_and_time.length !== undefined
+			'half-opacity': Group.day_and_time.length !== undefined || Group.is_dump == 1
 		}"
 		class="group-list" data-id="{{Group.id}}">
 		<td width="5%">
