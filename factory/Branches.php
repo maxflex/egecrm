@@ -23,7 +23,7 @@
 			$result = dbFactory()->query("SELECT id, branches.{$field} FROM branches ORDER BY id ASC");
 			while ($row = $result->fetch_object()) {
 				if ($field == '*') {
-					$return[] = $row;
+					$return[$row->id] = $row;
 				} else {
 					$return[$row->id] = $row->{$field};
 				}

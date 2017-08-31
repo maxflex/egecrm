@@ -174,6 +174,36 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $timeout(function() {
     return ajaxEnd();
   });
+  $scope.gmap = function(Student) {
+    var bounds, map;
+    if (!(Student.markers && Student.markers.length)) {
+      return;
+    }
+    lightBoxShow('map');
+    map = new google.maps.Map(document.getElementById("gmap"), {
+      center: new google.maps.LatLng(55.7387, 37.6032),
+      scrollwheel: false,
+      zoom: 11,
+      disableDefaultUI: true,
+      clickableLabels: false,
+      clickableIcons: false,
+      zoomControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM
+      },
+      scaleControl: true
+    });
+    bounds = new google.maps.LatLngBounds;
+    Student.markers.forEach(function(marker) {
+      var marker_location;
+      marker_location = new google.maps.LatLng(marker.lat, marker.lng);
+      bounds.extend(marker_location);
+      return marker = newMarker(marker.id, marker_location, map, marker.type);
+    });
+    map.fitBounds(bounds);
+    map.panToBounds(bounds);
+    return map.setZoom(Student.markers.length > 1 ? 11 : 16);
+  };
   $scope.timeClick = function(day, time) {
     if ($scope.timeChecked(day, time)) {
       return timeUncheck(day, time);

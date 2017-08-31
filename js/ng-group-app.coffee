@@ -133,6 +133,31 @@
 			$timeout ->
 				ajaxEnd()
 
+			$scope.gmap = (Student) ->
+				return if not (Student.markers && Student.markers.length)
+				lightBoxShow('map')
+				map = new google.maps.Map document.getElementById("gmap"),
+	                    center: new google.maps.LatLng(55.7387, 37.6032)
+	                    scrollwheel: false,
+	                    zoom: 11
+	                    disableDefaultUI: true
+	                    clickableLabels: false
+	                    clickableIcons: false
+	                    zoomControl: true
+	                    zoomControlOptions:
+	                        position: google.maps.ControlPosition.LEFT_BOTTOM
+	                    scaleControl: true
+				bounds = new (google.maps.LatLngBounds)
+				Student.markers.forEach (marker) ->
+					marker_location = new google.maps.LatLng(marker.lat, marker.lng)
+					bounds.extend(marker_location)
+					marker = newMarker(marker.id, marker_location, map, marker.type)
+
+				map.fitBounds bounds
+				map.panToBounds bounds
+				map.setZoom if Student.markers.length > 1 then 11 else 16
+
+
 			######## ВЫБОР ВРЕМЕНИ ########
 			$scope.timeClick = (day, time) ->
 				if $scope.timeChecked(day, time)

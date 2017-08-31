@@ -410,6 +410,9 @@
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 
+			$this->addJs("//maps.google.ru/maps/api/js?key=AIzaSyAXXZZwXMG5yNxFHN7yR4GYJgSe9cKKl7o&libraries=places&language=ru", true);
+            $this->addJs('maps.controller');
+
 			if (!$Group) {
 				$this->addJs("dnd");
 				$Group = Group::findById($_GET['id']);
@@ -449,6 +452,7 @@
 
 				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
 				$Student->bar					= Freetime::getStudentBar($Student->id, true, $Group->id); // @refactored
+				$Student->markers 				= $Student->getMarkers();
 
 				if (array_key_exists($Student->id, $Group->student_statuses)) {
 					$Student->id_status		= $Group->student_statuses[$Student->id]['id_status'];
@@ -462,6 +466,7 @@
 
 			$ang_init_data = angInit([
 				"Group" 	     => $Group,
+				"Branches" 	     => Branches::getAll('*'),
 				"Teachers"	     => $Teachers,
 				"TmpStudents"    => $Students,
 				"Subjects"	     => Subjects::$three_letters,

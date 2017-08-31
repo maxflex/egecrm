@@ -94,6 +94,17 @@
 										<span ng-show="Student.Test && Student.Test.isFinished">({{ Student.Test.final_score }}%)</span>
 									</td>
 									<td>
+										<span ng-hide="!enoughSmsParams() || Student.already_had_lesson >= 2">
+											<span class="glyphicon glyphicon-envelope text-gray quater-opacity pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified"></span>
+											<span class="glyphicon glyphicon-envelope text-gray default" ng-show="Student.sms_notified"></span>
+										</span>
+									</td>
+									<td>
+										<span ng-repeat="branch in Student.branches">
+											<span class="link-like" ng-click="gmap(Student)" style='color: {{ Branches[branch].color }}; margin-right: 3px'>{{ Branches[branch].short }}</span>
+										</span>
+									</td>
+									<td>
 										<span ng-show='Student.already_had_lesson'>
 											<span class="review-small" ng-class="{
 												'bg-red': Student.teacher_like_status <= 3,
@@ -103,12 +114,6 @@
 											<span class="review-small gray" ng-if="!Student.teacher_like_status">?</span>
 										</span>
 									</td>
-									<td>
-										<span ng-hide="!enoughSmsParams() || Student.already_had_lesson >= 2">
-											<span class="half-black pointer" ng-click="smsNotify(Student, $event)" ng-hide="Student.sms_notified">отправить SMS</span>
-											<span class="text-success default" ng-show="Student.sms_notified">SMS отправлена</span>
-										</span>
-									</td>
 									<td width="380">
 										<span ng-repeat="(day, data) in Student.bar" class="group-freetime-block">
 											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
@@ -116,7 +121,7 @@
 									</td>
 								</tr>
 								<tr ng-show="Group.id_teacher" class="increased-padding">
-									<td width="380" colspan="3">
+									<td width="380" colspan="4">
 										Преподаватель: <a href="teachers/edit/{{Group.id_teacher}}" target="_blank">{{getTeacher(Group.id_teacher).last_name}} {{getTeacher(Group.id_teacher).first_name}} {{getTeacher(Group.id_teacher).middle_name}}</a>
 									</td>
 									<td width="380">
@@ -126,7 +131,7 @@
 									</td>
 								</tr>
 								<tr ng-repeat="(id_cabinet, cabinet_bar) in cabinet_bars" ng-show='id_cabinet > 0'>
-									<td colspan="3">Загрузка кабинета <span style='color: {{ getCabinet(id_cabinet).color }}'>{{ getCabinet(id_cabinet).label }}</span></td>
+									<td colspan="4">Загрузка кабинета <span style='color: {{ getCabinet(id_cabinet).color }}'>{{ getCabinet(id_cabinet).label }}</span></td>
 									<td width="380">
 										<span ng-repeat="(day, data) in cabinet_bar" class="group-freetime-block">
 											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
@@ -134,7 +139,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td colspan="3">Загрузка группы</td>
+									<td colspan="4">Загрузка группы</td>
 									<td width="380">
 										<span ng-repeat="(day, data) in Group.bar" class="group-freetime-block">
 											<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
@@ -142,7 +147,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td colspan="4">
+									<td colspan="5">
 										Готова к запуску: <span class="link-like" ng-click="toggleReadyToStart()"> {{ Group.ready_to_start ? 'да' : 'нет' }}</span>
 									</td>
 								</tr>
@@ -170,11 +175,22 @@
 	</div>
 	<sms templates="short" mode="group" mass="1" group-id="Group.id"></sms>
 </div>
+
+<!-- ЛАЙТБОКС КАРТА -->
+<div class="lightbox-element lightbox-map">
+	<div id='gmap'></div>
+</div>
+<!-- КОНЕЦ /КАРТА И ЛАЙТБОКС -->
+
 <style>
 	.bootstrap-select.btn-group .btn .filter-option {
 		white-space: nowrap !important;
 	}
 	.increased-padding td {
 		padding-bottom: 20px !important;
+	}
+	#gmap {
+		height: 100%;
+		width: 100%;
 	}
 </style>
