@@ -26,8 +26,8 @@
 						<select class='form-control' id='subjects-select' ng-model='id_subject' ng-change='changeSubjects()'>
 							<option value=""  data-subtext="{{ getCount(0, id_subject) }}">все</option>
 							<option disabled>──────────────</option>
-							<option ng-repeat='(key, name) in three_letters' 
-								value='{{key}}' 
+							<option ng-repeat='(key, name) in three_letters'
+								value='{{key}}'
 								data-subtext="{{ getCount(in_egecentr, key) }}">{{name}}</option>
 						</select>
 <!--
@@ -38,7 +38,7 @@
 				</div>
 				<table class="table table-hover border-reverse" id="teachers-list">
 					<tr ng-repeat="Teacher in Teachers | filter:teachersFilter">
-						<td class="col-sm-4">
+						<td>
 							<a href="teachers/edit/{{Teacher.id}}">
 								<span ng-show="Teacher.last_name || Teacher.first_name || Teacher.middle_name">
 									{{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
@@ -48,8 +48,13 @@
 								</span>
 							</a>
 						</td>
-						<td class="col-sm=2">
-							<span ng-repeat="id_subject in Teacher.subjects">{{subjects[id_subject]}}{{$last ? "" : "+"}}</span>
+						<td>
+							<span ng-repeat="id_subject in Teacher.subjects">{{three_letters[id_subject]}}{{$last ? "" : "+"}}</span>
+						</td>
+						<td>
+							<span ng-repeat="branch in Teacher.branches">
+								<span class="link-like" ng-click="gmap(Student)" style='color: {{ Branches[branch].color }}; margin-right: 3px'>{{ Branches[branch].short }}</span>
+							</span>
 						</td>
                     </tr>
 				</table>

@@ -161,6 +161,7 @@
             $ang_init_data = angInit([
 				"Teachers" 		=> $Teachers,
 				"three_letters"	=> Subjects::$three_letters,
+				"Branches"		=> Branches::getAll('*'),
 				"subjects" 		=> Subjects::$short,
                 "user"          => User::fromSession()->dbData()
 			]);
