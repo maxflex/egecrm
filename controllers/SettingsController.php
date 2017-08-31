@@ -52,15 +52,17 @@
         {
             $this->setTabTitle("Загрузка кабинетов");
             $Cabinets = [];
-            foreach (Branches::getAll() as $id_branch => $title) {
-                foreach (Cabinet::getByBranch($id_branch) as $Cabinet) {
+            $branches = Branches::getAll('*');
+            foreach ($branches as &$branch) {
+				$branch->svg = Branches::metroSvg($branch->color);
+                foreach (Cabinet::getByBranch($branch->id) as $Cabinet) {
                     $Cabinet->bar = Freetime::getCabinetBar(null, $Cabinet->id);
-                    $Cabinets[$id_branch][] = $Cabinet;
+                    $Cabinets[$branch->id][] = $Cabinet;
                 }
             }
 
             $ang_init_data = angInit([
-                "Branches" => Branches::getBranches(),
+                "Branches" => $branches,
                 "Cabinets" => $Cabinets
             ]);
 

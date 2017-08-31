@@ -7,7 +7,7 @@
 	<div class="row" style="position: relative">
         <div class="col-sm-12">
             <div class="branches" ng-repeat="Branch in Branches" ng-show="Cabinets[Branch.id] && Cabinets[Branch.id].length">
-                <p style="margin-bottom:7px;"><span ng-bind-html="Branch.svg"></span>{{ Branch.name }}</p>
+                <p style="margin-bottom:7px;"><span ng-bind-html="Branch.svg"></span>{{ Branch.full }}</p>
                 <table class="table table-divlike">
                     <tr ng-repeat="Cabinet in Cabinets[Branch.id]">
                         <td width="200px" style="padding-left: 20px;">{{ Cabinet.number }}</td>
