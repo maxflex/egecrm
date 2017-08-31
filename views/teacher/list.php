@@ -35,6 +35,15 @@
 						</select>
 -->
 					</div>
+					<div class="col-sm-4">
+						<div>
+				            <?= Branches::buildSvgSelector([], [
+				                "ng-model" => "filter_branch",
+								"ng-change" => "refreshCounts()",
+				                "id" => "filter-branches",
+				            ]) ?>
+				        </div>
+					</div>
 				</div>
 				<table class="table table-hover border-reverse" id="teachers-list">
 					<tr ng-repeat="Teacher in Teachers | filter:teachersFilter">

@@ -528,6 +528,9 @@
 			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0
 			$scope.id_subject = localStorage.getItem('teachers_id_subject') or 0
 
+			$timeout ->
+				$("#filter-branches").selectpicker({noneSelectedText: "филиалы"}).selectpicker('refresh')
+
 			# The amount of hidden teachers
 			$scope.othersCount = ->
 				_.where($scope.Teachers, {had_lesson: 0}).length
@@ -543,13 +546,15 @@
 				$scope.refreshCounts()
 
 			$scope.teachersFilter = (Teacher) ->
-				subjects = [$scope.id_subject]
-				(if not $scope.in_egecentr then true else Teacher.in_egecentr is (parseInt($scope.in_egecentr) or 1)) and (if not $scope.id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length)
+				subjects	= [$scope.id_subject]
+				branches	= [$scope.filter_branch]
+				(if not $scope.in_egecentr then true else Teacher.in_egecentr is (parseInt($scope.in_egecentr) or 1)) and (if not $scope.id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length) and (if not $scope.filter_branch then true else _.intersection(Teacher.branches, branches.map(Number)).length)
 
 			$scope.getCount = (state, id_subject) ->
 				subjects = [id_subject]
+				branches = [$scope.filter_branch]
 				_.filter($scope.Teachers, (Teacher) ->
-					(if not state then true else Teacher.in_egecentr is (parseInt(state) or 1)) and (if not id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length)
+					(if not state then true else Teacher.in_egecentr is (parseInt(state) or 1)) and (if not id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length) and (if not $scope.filter_branch then true else _.intersection(Teacher.branches, branches.map(Number)).length)
 				).length
 
 			$scope.refreshCounts = ->

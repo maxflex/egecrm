@@ -603,6 +603,11 @@ app = angular.module("Teacher", ["ngMap"]).config([
   bindArguments($scope, arguments);
   $scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') || 0;
   $scope.id_subject = localStorage.getItem('teachers_id_subject') || 0;
+  $timeout(function() {
+    return $("#filter-branches").selectpicker({
+      noneSelectedText: "филиалы"
+    }).selectpicker('refresh');
+  });
   $scope.othersCount = function() {
     return _.where($scope.Teachers, {
       had_lesson: 0
@@ -618,15 +623,17 @@ app = angular.module("Teacher", ["ngMap"]).config([
     return $scope.refreshCounts();
   };
   $scope.teachersFilter = function(Teacher) {
-    var subjects;
+    var branches, subjects;
     subjects = [$scope.id_subject];
-    return (!$scope.in_egecentr ? true : Teacher.in_egecentr === (parseInt($scope.in_egecentr) || 1)) && (!$scope.id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length);
+    branches = [$scope.filter_branch];
+    return (!$scope.in_egecentr ? true : Teacher.in_egecentr === (parseInt($scope.in_egecentr) || 1)) && (!$scope.id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
   };
   $scope.getCount = function(state, id_subject) {
-    var subjects;
+    var branches, subjects;
     subjects = [id_subject];
+    branches = [$scope.filter_branch];
     return _.filter($scope.Teachers, function(Teacher) {
-      return (!state ? true : Teacher.in_egecentr === (parseInt(state) || 1)) && (!id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length);
+      return (!state ? true : Teacher.in_egecentr === (parseInt(state) || 1)) && (!id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
     }).length;
   };
   $scope.refreshCounts = function() {
