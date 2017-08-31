@@ -133,6 +133,7 @@
 			$timeout ->
 				ajaxEnd()
 
+			map_was_opened = false
 			$scope.gmap = (Student) ->
 				return if not (Student.markers && Student.markers.length)
 				lightBoxShow('map')
@@ -155,7 +156,10 @@
 
 				map.fitBounds bounds
 				map.panToBounds bounds
-				map.setZoom if Student.markers.length > 1 then 11 else 16
+				zoom = if Student.markers.length > 1 then 11 else 16
+				zoom = zoom + 5 if map_was_opened # bug fix
+				map.setZoom(zoom)
+				map_was_opened = true
 
 
 			######## ВЫБОР ВРЕМЕНИ ########

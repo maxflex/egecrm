@@ -169,13 +169,14 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return set_scope("Group");
   });
 }).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService) {
-  var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, rebindBlinking, timeCheck, timeCompabilityControl, timeUncheck;
+  var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, map_was_opened, rebindBlinking, timeCheck, timeCompabilityControl, timeUncheck;
   bindArguments($scope, arguments);
   $timeout(function() {
     return ajaxEnd();
   });
+  map_was_opened = false;
   $scope.gmap = function(Student) {
-    var bounds, map;
+    var bounds, map, zoom;
     if (!(Student.markers && Student.markers.length)) {
       return;
     }
@@ -202,7 +203,12 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     });
     map.fitBounds(bounds);
     map.panToBounds(bounds);
-    return map.setZoom(Student.markers.length > 1 ? 11 : 16);
+    zoom = Student.markers.length > 1 ? 11 : 16;
+    if (map_was_opened) {
+      zoom = zoom + 5;
+    }
+    map.setZoom(zoom);
+    return map_was_opened = true;
   };
   $scope.timeClick = function(day, time) {
     if ($scope.timeChecked(day, time)) {
