@@ -53,7 +53,7 @@
 						</td>
 						<td>
 							<span ng-repeat="branch in Teacher.branches">
-								<span class="link-like" ng-click="gmap(Student)" style='color: {{ Branches[branch].color }}; margin-right: 3px'>{{ Branches[branch].short }}</span>
+								<span ng-click="gmap(Student)" style='color: {{ Branches[branch].color }}; margin-right: 3px'>{{ Branches[branch].short }}</span>
 							</span>
 						</td>
                     </tr>
