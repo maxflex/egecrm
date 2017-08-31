@@ -103,6 +103,7 @@
 										<span ng-repeat="branch in Student.branches">
 											<span class="link-like" ng-click="gmap(Student)" style='color: {{ Branches[branch].color }}; margin-right: 3px'>{{ Branches[branch].short }}</span>
 										</span>
+										<span class="text-gray">({{ Student.markers.length }})</span>
 									</td>
 									<td>
 										<span ng-show='Student.already_had_lesson'>
