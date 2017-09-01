@@ -49,7 +49,10 @@
 
 		public static function getOne($id)
 		{
-			return dbFactory()->query("SELECT * FROM branches WHERE id={$id}")->fetch_object();
+            if ($id) {
+                return dbFactory()->query("SELECT * FROM branches WHERE id={$id}")->fetch_object();
+            }
+            return null;
 		}
 
 		/**
