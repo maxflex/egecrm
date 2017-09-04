@@ -219,7 +219,7 @@
 			} else
 			if (User::fromSession()->type == Student::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
-				$Groups = Student::getGroupsStatic(User::fromSession()->id_entity);
+				$Groups = Student::getGroupsStatic(User::fromSession()->id_entity, false, false);
                 foreach ($Groups as &$Group) {
                     $counts = Group::getScheduleCountCachedStatic($Group->id);
                     $Group->schedule_count      = $counts['free'] + $counts['paid'];

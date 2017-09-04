@@ -424,11 +424,11 @@
 			]);
 		}
 
-		public static function getGroupsStatic($id_student, $with_schedule = false)
+		public static function getGroupsStatic($id_student, $with_schedule = false, $show_dump = true)
 		{
 			// @refactored
 			$Groups = Group::findAll([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND is_dump=0"
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'" . ($show_dump ? '' : ' AND is_dump=0')
 			]);
 
 			if ($with_schedule) {
@@ -444,7 +444,7 @@
 		{
 			// @refactored
 			$Groups = Group::findAll([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%' AND is_dump=0"
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
 			]);
 
 			if ($with_schedule) {
