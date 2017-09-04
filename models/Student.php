@@ -461,7 +461,7 @@
 		{
 			// @refactored
 			return Group::count([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0"
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0 AND is_dump=0"
 			]);
 		}
 
