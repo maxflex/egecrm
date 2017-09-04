@@ -13,7 +13,7 @@
 		</div>
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-sm-8">
+				<div class="col-sm-9">
 					<div class="top-links">
 						<span class="link-like" ng-click="setMenu(0)" ng-class="{'active': current_menu == 0}">
 					    	основные данные
@@ -39,17 +39,20 @@
 						<span class="link-like" ng-click="setMenu(7)" ng-class="{'active': current_menu == 7}">
 					    	фото ученика
 					    </span>
+						<span class="link-like" ng-click="setMenu(8)" ng-class="{'active': current_menu == 8}">
+					    	график
+					    </span>
 					</div>
 				</div>
-				<div class="col-sm-4">
+				<div class="col-sm-3">
 					<div class="top-links pull-right">
 					    <span class="link-like" ng-click="setMode('request')">заявки</span>
 					    <span class="link-like active">клиент</span>
 				    </div>
 				</div>
 			</div>
-			
-			
+
+
 	<?= partial('general', compact('Request')) ?>
 	<?= partial('payments', compact('Request')) ?>
 	<?= partial("visits") ?>
@@ -58,6 +61,7 @@
     <?= partial("comments") ?>
     <?= partial("tests") ?>
     <?= partial("photo") ?>
+	<?= partial("freetime") ?>
 
     <?= partial("save_button", ["Request" => $Request]) ?>
 	<?= partial("bill_print") ?>
