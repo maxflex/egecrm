@@ -428,7 +428,7 @@
 		{
 			// @refactored
 			$Groups = Group::findAll([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'"
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND is_dump=0"
 			]);
 
 			if ($with_schedule) {
@@ -444,7 +444,7 @@
 		{
 			// @refactored
 			$Groups = Group::findAll([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%' AND is_dump=0"
 			]);
 
 			if ($with_schedule) {
