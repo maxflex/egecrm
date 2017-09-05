@@ -767,13 +767,15 @@
 			$scope.search2 =
 				grades: []
 				branches: []
-				id_subject: ""
+				id_subject: "",
+				in_group: ""
 
 			$scope.groupsFilter2 = (Group) ->
 				return true if not Group.hasOwnProperty "grade"
 
 				return (String(Group.grade) in $scope.search2.grades or $scope.search2.grades.length == 0) and
 					(String(Group.branch) in $scope.search2.branches or $scope.search2.branches.length == 0) and
+					(Group.in_group is parseInt($scope.search2.in_group) or not $scope.search2.in_group) and
 					(Group.subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject)
 
 			filterBranches = (Student) ->

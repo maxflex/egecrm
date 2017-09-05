@@ -195,7 +195,7 @@
 			$result = dbConnection()->query("
 				SELECT 	UUID() as unique_id, s.id, s.branches, s.first_name, s.last_name, s.middle_name,
 						cs.id_subject, cs.status, cs.count,
-						ci.*
+						ci.*, EXISTS(SELECT 1 FROM groups g WHERE g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND ci.year = g.year) as in_group
 				FROM students s
 				JOIN contract_info ci on (ci.id_student = s.id and ci.id_contract = (
 					select max(id_contract)
@@ -204,8 +204,7 @@
 				))
 				JOIN contracts c on c.id_contract = ci.id_contract
 				LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-				WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1
-					AND NOT EXISTS(SELECT 1 FROM groups g WHERE g.id_subject = cs.id_subject AND FIND_IN_SET(s.id, g.students) AND ci.year = g.year)
+				WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1 and ci.year=2017
 			");
 
 			while ($row = $result->fetch_assoc()) {

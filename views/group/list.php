@@ -114,6 +114,15 @@
 							</div>
 							<div>
 								<select class="form-control"
+									ng-model="search2.in_group">
+									<option value="">все</option>
+									<option disabled>──────────────</option>
+									<option value="0">не в группе</option>
+									<option value="1">в группе</option>
+								</select>
+							</div>
+							<div>
+								<select class="form-control"
 									ng-model="search2.year">
 									<option value="">все</option>
 									<option disabled>──────────────</option>

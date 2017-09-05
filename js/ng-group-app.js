@@ -929,14 +929,15 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $scope.search2 = {
     grades: [],
     branches: [],
-    id_subject: ""
+    id_subject: "",
+    in_group: ""
   };
   $scope.groupsFilter2 = function(Group) {
     var ref, ref1;
     if (!Group.hasOwnProperty("grade")) {
       return true;
     }
-    return ((ref = String(Group.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ((ref1 = String(Group.branch), indexOf.call($scope.search2.branches, ref1) >= 0) || $scope.search2.branches.length === 0) && (Group.subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject);
+    return ((ref = String(Group.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ((ref1 = String(Group.branch), indexOf.call($scope.search2.branches, ref1) >= 0) || $scope.search2.branches.length === 0) && (Group.in_group === parseInt($scope.search2.in_group) || !$scope.search2.in_group) && (Group.subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject);
   };
   filterBranches = function(Student) {
     return _.intersection($scope.search2.branches.map(Number), Student.branches).length > 0;
