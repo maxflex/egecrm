@@ -158,6 +158,9 @@
 									<td width="200">
 										{{ yearLabel(Student.year) }}
 									</td>
+									<td width="200">
+										{{ Student.in_group ? 'в группе' : '' }}
+									</td>
 									<td>
 										<span ng-repeat="(id_branch, short) in Student.branch_short track by $index"
 											ng-bind-html="short | to_trusted" ng-class="{'mr3' : !$last}"></span>

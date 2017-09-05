@@ -775,7 +775,6 @@
 
 				return (String(Group.grade) in $scope.search2.grades or $scope.search2.grades.length == 0) and
 					(String(Group.branch) in $scope.search2.branches or $scope.search2.branches.length == 0) and
-					(Group.in_group is parseInt($scope.search2.in_group) or not $scope.search2.in_group) and
 					(Group.subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject)
 
 			filterBranches = (Student) ->
@@ -785,6 +784,7 @@
 				return (String(Student.grade) in $scope.search2.grades or $scope.search2.grades.length == 0) and
 					($scope.search2.branches.length is 0 or filterBranches(Student)) and
 					(Student.id_subject is parseInt($scope.search2.id_subject) or not $scope.search2.id_subject) and
+					(Student.in_group is parseInt($scope.search2.in_group) or not $scope.search2.in_group) and
 					(Student.year is parseInt($scope.search2.year) or not $scope.search2.year)
 
 			$scope.dateToStart = (date) ->

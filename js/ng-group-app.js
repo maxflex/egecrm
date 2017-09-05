@@ -937,14 +937,14 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     if (!Group.hasOwnProperty("grade")) {
       return true;
     }
-    return ((ref = String(Group.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ((ref1 = String(Group.branch), indexOf.call($scope.search2.branches, ref1) >= 0) || $scope.search2.branches.length === 0) && (Group.in_group === parseInt($scope.search2.in_group) || !$scope.search2.in_group) && (Group.subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject);
+    return ((ref = String(Group.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ((ref1 = String(Group.branch), indexOf.call($scope.search2.branches, ref1) >= 0) || $scope.search2.branches.length === 0) && (Group.subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject);
   };
   filterBranches = function(Student) {
     return _.intersection($scope.search2.branches.map(Number), Student.branches).length > 0;
   };
   $scope.studentsWithNoGroupFilter = function(Student) {
     var ref;
-    return ((ref = String(Student.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ($scope.search2.branches.length === 0 || filterBranches(Student)) && (Student.id_subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject) && (Student.year === parseInt($scope.search2.year) || !$scope.search2.year);
+    return ((ref = String(Student.grade), indexOf.call($scope.search2.grades, ref) >= 0) || $scope.search2.grades.length === 0) && ($scope.search2.branches.length === 0 || filterBranches(Student)) && (Student.id_subject === parseInt($scope.search2.id_subject) || !$scope.search2.id_subject) && (Student.in_group === parseInt($scope.search2.in_group) || !$scope.search2.in_group) && (Student.year === parseInt($scope.search2.year) || !$scope.search2.year);
   };
   $scope.dateToStart = function(date) {
     var D;
