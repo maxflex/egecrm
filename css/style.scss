@@ -932,7 +932,7 @@ body {
 			background-color: rgba(176, 176, 176, 0.3);
 		}
 		&.green {
-			background-color: $green;
+			background-color: rgba($green, 0.3);
 		}
 		&.blue {
 			background-color: $blue;

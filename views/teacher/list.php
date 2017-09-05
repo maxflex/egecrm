@@ -65,6 +65,11 @@
 								<span ng-click="gmap(Student)" style='color: {{ Branches[branch].color }}; margin-right: 3px'>{{ Branches[branch].short }}</span>
 							</span>
 						</td>
+						<td width="380">
+						   <span ng-repeat="(day, data) in Teacher.bar" class="group-freetime-block">
+								<span ng-repeat="bar in data track by $index" class="bar {{bar}}"></span>
+							</span>
+						</td>
                     </tr>
 				</table>
 

@@ -79,7 +79,11 @@
         // @time-refactored @time-checked
 		public static function getTeacherBar($id_teacher, $with_freetime = false, $id_group = false)
 		{
-			$bar = [];
+            if ($with_freetime) {
+               $bar = Freetime::getFreetimeBar($id_teacher, 'teacher');
+           } else {
+               $bar = [];
+           }
 			// кол-во групп в предыдущей итерации
 			$previous_result = null;
 			foreach(Time::MAP as $day => $data) {
@@ -183,7 +187,9 @@
 							if ($previous_result->cnt >= 1) {
 								$bar[$day][$id_time] = 'branch-' . Cabinet::getField($previous_result->id_cabinet, 'id_branch');
 							} else {
-								$bar[$day][$id_time] = 'gray';
+								if (! isset($bar[$day][$id_time])) {
+									$bar[$day][$id_time] = 'gray';
+								}
 							}
 						}
 					}
@@ -197,7 +203,9 @@
 					if ($result->cnt >= 1) {
 						$bar[$day][$id_time] = 'branch-' . Cabinet::getField($result->id_cabinet, 'id_branch');
 					} else {
-						$bar[$day][$id_time] = 'gray';
+						if (! isset($bar[$day][$id_time])) {
+							$bar[$day][$id_time] = 'gray';
+						}
 					}
 				}
 			}

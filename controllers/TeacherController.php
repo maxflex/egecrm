@@ -158,6 +158,10 @@
 				"order" => "last_name ASC",
 			]);
 
+			foreach($Teachers as &$Teacher) {
+				$Teacher->bar = Freetime::getTeacherBar($Teacher->id, true);
+			}
+
             $ang_init_data = angInit([
 				"Teachers" 		=> $Teachers,
 				"three_letters"	=> Subjects::$three_letters,
