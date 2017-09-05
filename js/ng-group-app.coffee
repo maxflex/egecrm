@@ -768,7 +768,7 @@
 				grades: []
 				branches: []
 				id_subject: "",
-				in_group: ""
+				in_group: "0"
 
 			$scope.groupsFilter2 = (Group) ->
 				return true if not Group.hasOwnProperty "grade"
@@ -843,6 +843,11 @@
 
 						Group = $scope.getGroup id_group
 						Student = _.find($scope.StudentsWithNoGroup, {unique_id: unique_id})
+
+                        # если ученик в группе
+						if Student.in_group
+							notifyError "Ученик уже в группе"
+							return false
 
 						# есть ли соответствие по филиалу
 						group_branch_ids = _.pluck(Group.cabinets, 'id_branch')

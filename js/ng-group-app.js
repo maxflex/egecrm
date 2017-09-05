@@ -930,7 +930,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     grades: [],
     branches: [],
     id_subject: "",
-    in_group: ""
+    in_group: "0"
   };
   $scope.groupsFilter2 = function(Group) {
     var ref, ref1;
@@ -1022,6 +1022,10 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
         Student = _.find($scope.StudentsWithNoGroup, {
           unique_id: unique_id
         });
+        if (Student.in_group) {
+          notifyError("Ученик уже в группе");
+          return false;
+        }
         group_branch_ids = _.pluck(Group.cabinets, 'id_branch');
         if (!_.intersection(group_branch_ids, Student.branches).length) {
           notifyError("Филиалы не соответствуют");
