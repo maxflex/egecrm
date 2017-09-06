@@ -92,7 +92,7 @@
 			}
 		}
 
-		/*
+        /*
 		 * Получить данные для основного модуля
 		 * $id_student – если просматриваем отзывы отдельного ученика
 		 */
@@ -212,10 +212,10 @@
 		private static function _generateQuery($search, $select, $order = true, $ending)
 		{
 			$main_query = "
-				FROM (select * from visit_journal where type_entity='STUDENT' GROUP BY id_entity, id_subject, id_teacher, `year`)  vj
+				FROM visit_journal vj
 				LEFT JOIN teacher_reviews" . static::_connectTables('r')
 				. (isset($search->id_user) ? " JOIN students s ON s.id = vj.id_entity " : "") . "
-				WHERE true "
+				WHERE vj.type_entity='STUDENT' "
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
@@ -228,6 +228,7 @@
 				. (!isBlank($search->grade) ? " AND r.grade={$search->grade}" : "")
 				. (!isBlank($search->admin_rating) ? " AND r.admin_rating={$search->admin_rating}" : "")
 				. (!isBlank($search->admin_rating_final) ? " AND r.admin_rating_final={$search->admin_rating_final}" : "")
+				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year"
 				. ($order ? " ORDER BY vj.lesson_date DESC" : "");
 			return "SELECT " . $select . $main_query . $ending;
 		}
