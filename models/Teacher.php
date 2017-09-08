@@ -532,7 +532,12 @@
          */
         public static function getEfficency($id_teacher)
         {
-            $student_ids = dbConnection()->query("SELECT id_entity FROM visit_journal WHERE type_entity = 'STUDENT' AND id_teacher={$id_teacher} GROUP BY id_entity");
+			$student_ids = [];
+            $query = dbConnection()->query("SELECT id_entity FROM visit_journal WHERE type_entity = 'STUDENT' AND id_teacher={$id_teacher} GROUP BY id_entity");
+
+			while($row = $query->fetch_object()) {
+				$student_ids[] = $row->id_entity;
+			}
 
 			// сколько всего учитель принес компании (сколько всего ученики заплатили учителю )
 			$total_students_paid = 0;
@@ -545,7 +550,6 @@
 				$payment_sum = [];
 				$sums = [];
 				$limits = [];
-
 				foreach($payments as $payment) {
 					if (! isset($payment_sum[$payment->year])) {
 						$payment_sum[$payment->year] = 0;
@@ -559,13 +563,13 @@
 
 				// Находим все цепи договоров
 				$contracts = ContractInfo::findAll([
-					'condition' => "id_student=>{$id_student}"
+					'condition' => "id_student={$id_student}"
 				]);
 
 				// Для каждой последней версии из цепи получаем кол-во предметов
 				foreach($contracts as $contract) {
 					$last_contract_id = Contract::getIds([
-						'condition' => "id_contract={$contract->id} AND current_version=1"
+						'condition' => "id_contract={$contract->id_contract} AND current_version=1"
 					])[0];
 
 					$contract_subjects = ContractSubject::findAll([

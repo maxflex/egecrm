@@ -34,6 +34,9 @@
 					}"></ng-pluralize>)
 				</div>
 				<div ng-show="Stats.abscent_percent !== undefined">Доля пропусков: {{ Stats.abscent_percent }}%</div>
+				<div ng-show="Stats.ec_efficency">
+					Расход: {{ Stats.ec_efficency }}%
+				</div>
 			</div>
 		</div>
 	</div>

@@ -9,9 +9,8 @@
 
         public function actionTest()
         {
-            $client = new Predis\Client();
-            $count = $client->get('egerep-web:constants:TRANSPORT_DISTANCE');
-            var_dump($count);
+			echo Teacher::getEfficency(111);
+            echo '<hr />';
         }
 
 		/**
