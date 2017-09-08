@@ -294,6 +294,8 @@
 						$Stats['abscent_percent'] = round($abscent_count / $total_student_visits * 100);
 					}
 
+                    $Stats['ec_efficency'] = Teacher::getEfficency($Teacher->id);
+
 					returnJsonAng($Stats);
 				}
 				case 6: {

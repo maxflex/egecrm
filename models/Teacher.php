@@ -526,4 +526,74 @@
 			];
 
 		}
+
+        /**
+         * Сколько процентов приносит компании
+         */
+        public static function getEfficency($id_teacher)
+        {
+            $student_ids = dbConnection()->query("SELECT id_entity FROM visit_journal WHERE type_entity = 'STUDENT' AND id_teacher={$id_teacher} GROUP BY id_entity");
+
+			// сколько всего учитель принес компании (сколько всего ученики заплатили учителю )
+			$total_students_paid = 0;
+
+			// сколько всего компания заплатила учителю
+			$total_paid_to_teacher = dbConnection()->query("select sum(teacher_price) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher}")->fetch_object()->s;
+
+			foreach($student_ids as $id_student) {
+				$payments = Payment::getByStudentId($id_student);
+				$payment_sum = [];
+				$sums = [];
+				$limits = [];
+
+				foreach($payments as $payment) {
+					if (! isset($payment_sum[$payment->year])) {
+						$payment_sum[$payment->year] = 0;
+					}
+					if ($payment->type == 2) {
+						$payment_sum[$payment->year] -= $payment->sum;
+					} else {
+						$payment_sum[$payment->year] += $payment->sum;
+					}
+				}
+
+				// Находим все цепи договоров
+				$contracts = ContractInfo::findAll([
+					'condition' => "id_student=>{$id_student}"
+				]);
+
+				// Для каждой последней версии из цепи получаем кол-во предметов
+				foreach($contracts as $contract) {
+					$last_contract_id = Contract::getIds([
+						'condition' => "id_contract={$contract->id} AND current_version=1"
+					])[0];
+
+					$contract_subjects = ContractSubject::findAll([
+						'condition' => "id_contract={$last_contract_id}"
+					]);
+
+					foreach($contract_subjects as $cs) {
+						$limits[$contract->year][$cs->id_subject] += $cs->count;
+						$sums[$contract->year] += $cs->count;
+					}
+				}
+
+				foreach($payment_sum as $year => $sum) {
+					// цена за 1 занятие
+					$price_for_one_lesson = $payment_sum[$year] / $sums[$year];
+
+					// сколько занятий было по предмету у учителя
+					foreach($limits[$year] as $id_subject => $limit) {
+						$lesson_count = dbConnection()->query("select count(*) as cnt from (select id_teacher from visit_journal where id_subject={$id_subject} AND type_entity='STUDENT' AND id_entity={$id_student} AND year={$year} limit {$limit}) as x where id_teacher={$id_teacher}")->fetch_object()->cnt;
+						$total_students_paid += ($lesson_count * $price_for_one_lesson);
+					}
+				}
+			}
+
+			if ($total_students_paid > 0) {
+				return round($total_paid_to_teacher / $total_students_paid * 100);
+			} else {
+				return 0;
+			}
+        }
     }
