@@ -554,7 +554,7 @@
 					if (! isset($payment_sum[$payment->year])) {
 						$payment_sum[$payment->year] = 0;
 					}
-					if ($payment->type == 2) {
+					if ($payment->id_type == 2) {
 						$payment_sum[$payment->year] -= $payment->sum;
 					} else {
 						$payment_sum[$payment->year] += $payment->sum;
