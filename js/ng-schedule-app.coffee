@@ -54,7 +54,7 @@ app = angular.module "Schedule", ['mwl.calendar']
             bug_index = 0
             to_be_duplicated = {}
             while current_date < date
-                if $scope.special_dates.vacations.indexOf(current_date) is -1
+                if $scope.special_dates.vacations.indexOf(current_date) is -1 && _.find($scope.Group.Schedule, {date: current_date}) is undefined
                     index++
                     to_be_duplicated[index] = _.clone($scope.Group.Schedule[$scope.Group.Schedule.length - 1])
                     delete to_be_duplicated[index].id
