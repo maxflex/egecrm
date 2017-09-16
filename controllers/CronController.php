@@ -340,7 +340,7 @@
 									$messages[] = [
 										"type"      => "Учителю #" . $Teacher->id,
 										"number" 	=> $teacher_number,
-										"message"	=> self::_generateMessage($GS->Group, $Teacher, $tomorrow),
+										"message"	=> self::_generateMessage($GS, $Teacher, $tomorrow),
 									];
 								}
 							}
@@ -369,7 +369,7 @@
 							$messages[] = [
 								"type"      => "Ученику #" . $Student->id,
 								"number" 	=> $student_number,
-								"message"	=> self::_generateMessage($GS->Group, $Student, $tomorrow),
+								"message"	=> self::_generateMessage($GS, $Student, $tomorrow),
 							];
 						}
 
@@ -379,7 +379,7 @@
 								$messages[] = [
 									"type"      => "Представителю #" . $Student->Representative->id,
 									"number" 	=> $representative_number,
-									"message"	=> self::_generateMessage($GS->Group, $Student, $tomorrow),
+									"message"	=> self::_generateMessage($GS, $Student, $tomorrow),
 								];
 							}
 						}
