@@ -168,11 +168,33 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     $scope.$apply();
     return set_scope("Group");
   });
-}).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService) {
+}).controller("EditCtrl", function($scope, $timeout, $http, PhoneService, GroupService) {
   var bindDraggable, bindGroupsDroppable, checkFreeCabinets, justSave, map_was_opened, rebindBlinking, timeCheck, timeCompabilityControl, timeUncheck;
   bindArguments($scope, arguments);
   $timeout(function() {
-    return ajaxEnd();
+    ajaxEnd();
+    return $.post('groups/ajax/GetEditData', {
+      id: $scope.Group.id
+    }, function(response) {
+      $scope.Branches = response.Branches;
+      $scope.Teachers = response.Teachers;
+      $scope.TmpStudents = response.TmpStudents;
+      $scope.Subjects = response.Subjects;
+      $scope.GroupLevels = response.GroupLevels;
+      $scope.subjects_short = response.subjects_short;
+      $scope.duration = response.duration;
+      $scope.all_cabinets = response.all_cabinets;
+      $scope.branches_brick = response.branches_brick;
+      $scope.cabinet_bars = response.cabinet_bars;
+      $scope.time_imcomp = response.time_imcomp;
+      $scope.weekdays = response.weekdays;
+      $scope.free_cabinets = response.free_cabinets;
+      $scope.FirstLesson = response.FirstLesson;
+      $scope.user = response.user;
+      return $timeout(function() {
+        return $('#fe-loading').remove();
+      });
+    }, 'json');
   });
   map_was_opened = false;
   $scope.gmap = function(Student) {
@@ -325,7 +347,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
             id_student: id_student,
             old_id_group: old_id_group
           }, function() {
-            ajaxEnd();
             Group.students.push(id_student);
             $scope.removeStudent(id_student, true);
             return $scope.$apply();

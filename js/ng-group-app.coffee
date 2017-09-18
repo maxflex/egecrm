@@ -127,11 +127,30 @@
 				$scope.$apply()
 				set_scope "Group"
 
-		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService) ->
+		.controller "EditCtrl", ($scope, $timeout, $http, PhoneService, GroupService) ->
 			bindArguments $scope, arguments
 
 			$timeout ->
 				ajaxEnd()
+				$.post 'groups/ajax/GetEditData', {id: $scope.Group.id}, (response) ->
+					$scope.Branches = response.Branches
+					$scope.Teachers = response.Teachers
+					$scope.TmpStudents = response.TmpStudents
+					$scope.Subjects = response.Subjects
+					$scope.GroupLevels = response.GroupLevels
+					$scope.subjects_short = response.subjects_short
+					$scope.duration = response.duration
+					$scope.all_cabinets = response.all_cabinets
+					$scope.branches_brick = response.branches_brick
+					$scope.cabinet_bars = response.cabinet_bars
+					$scope.time_imcomp = response.time_imcomp
+					$scope.weekdays = response.weekdays
+					$scope.free_cabinets = response.free_cabinets
+					$scope.FirstLesson = response.FirstLesson
+					$scope.user = response.user
+					$timeout -> $('#fe-loading').remove()
+				, 'json'
+
 
 			map_was_opened = false
 			$scope.gmap = (Student) ->
@@ -251,7 +270,6 @@
 							ajaxStart()
 							$.post "groups/ajax/AddStudentDnd", {id_group: id_group, id_student: id_student, old_id_group: old_id_group}
 							, ->
-								ajaxEnd()
 								Group.students.push id_student
 								$scope.removeStudent id_student, true
 								$scope.$apply()

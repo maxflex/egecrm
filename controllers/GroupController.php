@@ -418,70 +418,11 @@
 				$Group = Group::findById($_GET['id']);
 			}
 
-			if (! LOCAL_DEVELOPMENT) {
-                $Teachers = Teacher::findAll(["select" => ['id', 'last_name', 'first_name', 'subjects', 'middle_name']], true);
-
-				if ($Group->id_teacher) {
-					foreach ($Teachers as &$Teacher) {
-						if ($Teacher->id == $Group->id_teacher) {
-							$Teacher->bar = $Teacher->getBar();
-						}
-					}
-				}
-			}
-
-			$Students = [];
-			foreach ($Group->students as $id_student) {
-				$Student = Student::findById($id_student, true);
-				$Student->Contract 	= $Student->getLastContract($Group->year, true);
-
-				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject, $Group->year);
-				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group);
-
-				if ($Group->grade && $Group->id_subject) {
-					// тест ученика
-					$Student->Test = TestStudent::getForGroup($id_student, $Group->id_subject, $Group->grade);
-				}
-
-				foreach ($Student->branches as $id_branch) {
-					if (!$id_branch) {
-						continue;
-					}
-					$Student->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
-				}
-
-				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
-				$Student->bar					= Freetime::getStudentBar($Student->id, true, $Group->id); // @refactored
-				$Student->markers 				= $Student->getMarkers();
-
-				if (array_key_exists($Student->id, $Group->student_statuses)) {
-					$Student->id_status		= $Group->student_statuses[$Student->id]['id_status'];
-					$Student->notified		= $Group->student_statuses[$Student->id]['notified'];
-					$Student->review_status	= $Group->student_statuses[$Student->id]['review_status'];
-				}
-				$Students[] = $Student;
-			}
-
 			$Group->bar = Freetime::getGroupBar($Group->id);
 
 			$ang_init_data = angInit([
 				"Group" 	     => $Group,
-				"Branches" 	     => Branches::getAll('*'),
-				"Teachers"	     => $Teachers,
-				"TmpStudents"    => $Students,
-				"Subjects"	     => Subjects::$three_letters,
-				"GroupLevels"    => GroupLevels::$all,
-				"subjects_short" => Subjects::$short,
-				"duration"		 => Group::DURATION,
-				"all_cabinets"	 => Branches::allCabinets(),
-				"branches_brick" => Branches::getShortColored(),
-				"cabinet_bars"	 => Freetime::getCabinetBar($Group),
 				"time"			 => Time::get(),
-				"time_imcomp"	 => Time::INCOMPABILITY_MAP,
-				"weekdays"		 => Time::WEEKDAYS,
-				"free_cabinets"  => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
-                "FirstLesson"    => Group::getFirstLesson($Group->id),
-                "user"			 => User::fromSession()->dbData()
 			]);
 
 			$this->render("edit", [
@@ -1020,5 +961,74 @@
 		{
 			extract($_POST);
 			Group::updateById($id, compact('ready_to_start'));
+		}
+
+		public function actionAjaxGetEditData()
+		{
+			extract($_POST);
+
+			$Group = Group::findById($id);
+
+			if (! LOCAL_DEVELOPMENT) {
+                $Teachers = Teacher::findAll(["select" => ['id', 'last_name', 'first_name', 'subjects', 'middle_name']], true);
+
+				if ($Group->id_teacher) {
+					foreach ($Teachers as &$Teacher) {
+						if ($Teacher->id == $Group->id_teacher) {
+							$Teacher->bar = $Teacher->getBar();
+						}
+					}
+				}
+			}
+
+			$Students = [];
+			foreach ($Group->students as $id_student) {
+				$Student = Student::findById($id_student, true);
+				$Student->Contract 	= $Student->getLastContract($Group->year, true);
+
+				$Student->teacher_like_status 	= TeacherReview::getStatus($Student->id, $Group->id_teacher, $Group->id_subject, $Group->year);
+				$Student->sms_notified			= GroupSms::getStatus($id_student, $Group);
+
+				if ($Group->grade && $Group->id_subject) {
+					// тест ученика
+					$Student->Test = TestStudent::getForGroup($id_student, $Group->id_subject, $Group->grade);
+				}
+
+				foreach ($Student->branches as $id_branch) {
+					if (!$id_branch) {
+						continue;
+					}
+					$Student->branch_short[$id_branch] = Branches::getShortColoredById($id_branch);
+				}
+
+				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
+				$Student->bar					= Freetime::getStudentBar($Student->id, true, $Group->id); // @refactored
+				$Student->markers 				= $Student->getMarkers();
+
+				if (array_key_exists($Student->id, $Group->student_statuses)) {
+					$Student->id_status		= $Group->student_statuses[$Student->id]['id_status'];
+					$Student->notified		= $Group->student_statuses[$Student->id]['notified'];
+					$Student->review_status	= $Group->student_statuses[$Student->id]['review_status'];
+				}
+				$Students[] = $Student;
+			}
+
+			returnJsonAng([
+				"Branches" 	     => Branches::getAll('*'),
+				"Teachers"	     => $Teachers,
+				"TmpStudents"    => $Students,
+				"Subjects"	     => Subjects::$three_letters,
+				"GroupLevels"    => GroupLevels::$all,
+				"subjects_short" => Subjects::$short,
+				"duration"		 => Group::DURATION,
+				"all_cabinets"	 => Branches::allCabinets(),
+				"branches_brick" => Branches::getShortColored(),
+				"cabinet_bars"	 => Freetime::getCabinetBar($Group),
+				"time_imcomp"	 => Time::INCOMPABILITY_MAP,
+				"weekdays"		 => Time::WEEKDAYS,
+				"free_cabinets"  => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
+                "FirstLesson"    => Group::getFirstLesson($Group->id),
+                "user"			 => User::fromSession()->dbData()
+			]);
 		}
 	}

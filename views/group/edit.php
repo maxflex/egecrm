@@ -1,5 +1,5 @@
 <div ng-app="Group" ng-controller="EditCtrl" ng-init="<?= $ang_init_data ?>">
-	<div id="frontend-loading" style="display: block">Загрузка...</div>
+	<div id="fe-loading" class="frontend-loading" style="display: block">Загрузка...</div>
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<?= $Group->id ? "Группа {$Group->id}" : "Добавление группы" ?>
