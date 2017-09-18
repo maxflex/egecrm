@@ -630,7 +630,7 @@
 				// номер урока
 				// @schedule-refactored
 				$S->lesson_number = GroupSchedule::count([
-					"condition" => "id_group={$S->id_group} AND CONCAT(`date`,' ',`time`) <= '{$date} {$S->time}' AND cancelled = 0"
+					"condition" => "id_group={$S->id_group} AND CONCAT(`date`,' ',`time`) <= '{$date} {$S->time}:00' AND cancelled = 0"
 				]);
 
 				// общее кол-во уроков
