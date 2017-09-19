@@ -148,7 +148,9 @@
 					$scope.free_cabinets = response.free_cabinets
 					$scope.FirstLesson = response.FirstLesson
 					$scope.user = response.user
-					$timeout -> $('#fe-loading').remove()
+					$timeout ->
+						$('#fe-loading').remove()
+						bindDraggable() 
 				, 'json'
 
 
