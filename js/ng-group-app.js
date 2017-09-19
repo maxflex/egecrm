@@ -193,7 +193,9 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       $scope.user = response.user;
       return $timeout(function() {
         $('#fe-loading').remove();
-        return bindDraggable();
+        return setTimeout(function() {
+          return bindDraggable();
+        }, 500);
       });
     }, 'json');
   });

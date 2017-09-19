@@ -150,7 +150,9 @@
 					$scope.user = response.user
 					$timeout ->
 						$('#fe-loading').remove()
-						bindDraggable() 
+						setTimeout ->
+							bindDraggable()
+						, 500
 				, 'json'
 
 
