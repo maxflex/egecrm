@@ -152,6 +152,7 @@
 						$('#fe-loading').remove()
 						setTimeout ->
 							bindDraggable()
+							$('.branch-cabinet').selectpicker('refresh')
 						, 500
 				, 'json'
 

@@ -194,7 +194,8 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       return $timeout(function() {
         $('#fe-loading').remove();
         return setTimeout(function() {
-          return bindDraggable();
+          bindDraggable();
+          return $('.branch-cabinet').selectpicker('refresh');
         }, 500);
       });
     }, 'json');
