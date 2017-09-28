@@ -459,7 +459,6 @@
 			# Удаляем всё, что связано с группой
 			GroupTime::deleteAll($condition);
 			GroupSchedule::deleteAll($condition);
-			GroupNote::deleteAll($condition);
 		}
 
 
