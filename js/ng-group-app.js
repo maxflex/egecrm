@@ -861,7 +861,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return $.post("ajax/GroupCreateHelper", {
       year: $scope.search.year,
       subjects: $scope.search.subjects,
-      grade: $scope.search.grade
+      grades: $scope.search.grades
     }, function(response) {
       $scope.create_helper_data = response;
       $scope.labels = _.keys(response);
