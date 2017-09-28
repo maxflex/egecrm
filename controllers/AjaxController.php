@@ -93,6 +93,10 @@
 				$subject_ids = implode(",", $subjects);
 			}
 
+			if ($grades) {
+				$grade_ids = implode(",", $grades);
+			}
+
 	        $return = [];
             // @contract-refactored
 	        while ($start_date < $end_date) {
@@ -112,7 +116,7 @@
                     ) mt ON mt.id_student = contract_info.id_student AND mt.year = contract_info.year AND mt.id_subject = cs.id_subject
                     WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND cs.status=3 AND contract_info.grade <> " . Grades::EXTERNAL . " AND c.id = mt.id
                     " . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
-                    " . ($grade ? " AND contract_info.grade = {$grade} " : "") . "
+                    " . ($grades ? " AND contract_info.grade IN ({$grade_ids}) " : "") . "
                     " . ($year ? " AND contract_info.year = {$year} " : "");
 	            $return[date('d.m.y', strtotime($return_date))] = dbConnection()->query($query)->fetch_object()->cnt;
 	        }

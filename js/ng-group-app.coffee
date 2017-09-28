@@ -700,7 +700,7 @@
 				$.post "ajax/GroupCreateHelper",
 					year: $scope.search.year
 					subjects: $scope.search.subjects
-					grade: $scope.search.grade
+					grades: $scope.search.grades
 				, (response) ->
 					$scope.create_helper_data = response
 					# chart data
