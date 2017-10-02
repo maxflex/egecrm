@@ -135,7 +135,7 @@
 </form>
 
 <style>
-    .dropdown-menu {
+    .form-group .dropdown-menu {
         pointer-events: none;
     }
 </style>
