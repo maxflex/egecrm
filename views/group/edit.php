@@ -154,7 +154,7 @@
 								</tr>
 								<tr>
 									<td colspan="5">
-										Договор заключен: <span class="link-like" ng-click="toggleBoolean('contract_signed')"> {{ Group.contract_signed ? 'да' : 'нет' }}</span>
+										Договор подписан: <span class="link-like" ng-click="toggleBoolean('contract_signed')"> {{ Group.contract_signed ? 'да' : 'нет' }}</span>
 									</td>
 								</tr>
 							</table>
