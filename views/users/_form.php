@@ -125,6 +125,7 @@
         <?= partial('right', ['right' => Shared\Rights::EDIT_GROUPS]) ?>
         <?= partial('right', ['right' => Shared\Rights::EDIT_GROUP_SCHEDULE]) ?>
         <?= partial('right', ['right' => Shared\Rights::EDIT_PAYMENTS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EC_EDIT_GROUP_CONTRACT]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_TASKS]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_CALENDAR]) ?>
         <?= partial('right', ['right' => Shared\Rights::SHOW_FAQ]) ?>

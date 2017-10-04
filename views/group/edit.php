@@ -154,7 +154,7 @@
 								</tr>
 								<tr>
 									<td colspan="5">
-										Договор подписан: <span class="link-like" ng-click="toggleBoolean('contract_signed')"> {{ Group.contract_signed ? 'да' : 'нет' }}</span>
+										Договор подписан: <span <?php if (allowed(Shared\Rights::EC_EDIT_GROUP_CONTRACT)) :?>class="link-like" ng-click="toggleBoolean('contract_signed')"<?php endif ?>> {{ Group.contract_signed ? 'да' : 'нет' }}</span>
 									</td>
 								</tr>
 							</table>
