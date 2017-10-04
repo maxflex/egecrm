@@ -57,22 +57,21 @@
 									value="{{Teacher.id}}">{{ Teacher.last_name }} {{ Teacher.first_name }} {{ Teacher.middle_name }}</option>
 							</select>
 				        </div>
-<!--				        <div>-->
-<!--							<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.cabinet" ng-change='filter()'>-->
-<!--								<option value="" data-subtext="{{ counts.cabinet[''] || '' }}">№ кабинета</option>-->
-<!--								<option disabled>──────────────</option>-->
-<!--								<option-->
-<!--									data-subtext="{{ counts.cabinet[id_subject] || '' }}"-->
-<!--									ng-repeat="Cabinet in Cabinets"-->
-<!--									value="{{Cabinet.id}}">{{Cabinet.number}}</option>-->
-<!--							</select>-->
-<!--						</div>-->
 						<div>
 							<?= Freetime::buildMultiSelector($search->time_ids, [
 								"id" => "time-select",
 								"ng-model" 	=> "search.time_ids",
 								"ng-change"	=> "filter()"
 							], true) ?>
+						</div>
+						<div>
+							<select class="watch-select single-select form-control"
+								ng-model="search.contract_signed" ng-change='filter()'>
+								<option value="">все</option>
+								<option disabled>──────────────</option>
+								<option value="0">договор не подписан</option>
+								<option value="1">договор подписан</option>
+							</select>
 						</div>
 				        <div id='year-fix'>
 							<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>

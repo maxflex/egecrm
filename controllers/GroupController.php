@@ -956,10 +956,12 @@
 			);
 		}
 
-		public function actionAjaxToggleReadyToStart()
+		public function actionAjaxToggleBoolean()
 		{
 			extract($_POST);
-			Group::updateById($id, compact('ready_to_start'));
+			Group::updateById($id, [
+				$field => $value
+			]);
 		}
 
 		public function actionAjaxGetEditData()

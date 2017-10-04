@@ -149,7 +149,12 @@
 								</tr>
 								<tr>
 									<td colspan="5">
-										Готова к запуску: <span class="link-like" ng-click="toggleReadyToStart()"> {{ Group.ready_to_start ? 'да' : 'нет' }}</span>
+										Готова к запуску: <span class="link-like" ng-click="toggleBoolean('ready_to_start')"> {{ Group.ready_to_start ? 'да' : 'нет' }}</span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="5">
+										Договор заключен: <span class="link-like" ng-click="toggleBoolean('contract_signed')"> {{ Group.contract_signed ? 'да' : 'нет' }}</span>
 									</td>
 								</tr>
 							</table>

@@ -539,16 +539,17 @@
 							redirect "groups"
 
 
-			$scope.toggleReadyToStart = ->
-				ready_to_start = if $scope.Group.ready_to_start then 0 else 1
+			$scope.toggleBoolean = (field) ->
+				value = if $scope.Group[field] then 0 else 1
 				if $scope.Group.id
-					ajaxStart()
-					$.post "groups/ajax/toggleReadyToStart",
+					ajaxStart() 
+					$.post "groups/ajax/toggleBoolean",
 						id: $scope.Group.id
-						ready_to_start: ready_to_start
+						field: field
+						value: value
 					, ->
 						ajaxEnd()
-						$scope.Group.ready_to_start = ready_to_start
+						$scope.Group[field] = value
 						$scope.$apply()
 
 
@@ -700,7 +701,7 @@
 				$.post "ajax/GroupCreateHelper",
 					year: $scope.search.year
 					subjects: $scope.search.subjects
-					grades: $scope.search.grades 
+					grades: $scope.search.grades
 				, (response) ->
 					$scope.create_helper_data = response
 					# chart data

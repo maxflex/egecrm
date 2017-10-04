@@ -663,17 +663,18 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       }
     });
   };
-  $scope.toggleReadyToStart = function() {
-    var ready_to_start;
-    ready_to_start = $scope.Group.ready_to_start ? 0 : 1;
+  $scope.toggleBoolean = function(field) {
+    var value;
+    value = $scope.Group[field] ? 0 : 1;
     if ($scope.Group.id) {
       ajaxStart();
-      return $.post("groups/ajax/toggleReadyToStart", {
+      return $.post("groups/ajax/toggleBoolean", {
         id: $scope.Group.id,
-        ready_to_start: ready_to_start
+        field: field,
+        value: value
       }, function() {
         ajaxEnd();
-        $scope.Group.ready_to_start = ready_to_start;
+        $scope.Group[field] = value;
         return $scope.$apply();
       });
     }
