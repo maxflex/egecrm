@@ -112,7 +112,7 @@
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating, r.grade,
 				r.admin_rating, r.admin_rating_final, r.published, r.approved, r.score, r.max_score, r.comment, r.admin_comment, r.admin_comment_final, " . static::_countQuery('vj2'));
-			exit($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
+			// exit($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
 			$result = dbConnection()->query($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
 
 			while ($row = $result->fetch_object()) {
