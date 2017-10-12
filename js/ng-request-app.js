@@ -1746,7 +1746,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$scope.current_contract = {
                 subjects : [],
                 info: {year: getYear()},
-                payments_info: '3-0',
+                payments_info: '2-0',
                 payments_split: 3,
                 payments_queue: 0,
                 discount: 0
