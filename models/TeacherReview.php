@@ -128,62 +128,62 @@
 				// counts
 				$counts['all'] = static::_count($search);
 
-				foreach(array_merge([""], Years::$all) as $year) {
-					$new_search = clone $search;
-					$new_search->year = $year;
-					$counts['year'][$year] = static::_count($new_search);
-				}
-				foreach(([''=>''] + Subjects::$all) as $id_subject => $name) {
-					$new_search = clone $search;
-					$new_search->id_subject = $id_subject;
-					$counts['subject'][$id_subject] = static::_count($new_search);
-				}
-				foreach(array_merge(['id' => ''], $Teachers) as $Teacher) {
-					$new_search = clone $search;
-					$new_search->id_teacher = $Teacher['id'];
-					$counts['teacher'][$Teacher['id']] = static::_count($new_search);
-				}
-				foreach(["", 1, 2, 3, 4, 5, 0] as $rating) {
-					$new_search = clone $search;
-					$new_search->rating = $rating;
-					$counts['rating'][$rating] = static::_count($new_search);
-				}
-				foreach(["", 6, 1, 2, 3, 4, 5, 0] as $admin_rating) {
-					$new_search = clone $search;
-					$new_search->admin_rating = $admin_rating;
-					$counts['admin_rating'][$admin_rating] = static::_count($new_search);
-				}
-				foreach(["", 6, 1, 2, 3, 4, 5, 0] as $admin_rating_final) {
-					$new_search = clone $search;
-					$new_search->admin_rating_final = $admin_rating_final;
-					$counts['admin_rating_final'][$admin_rating_final] = static::_count($new_search);
-				}
-				foreach(["", 0, 1] as $published) {
-					$new_search = clone $search;
-					$new_search->published = $published;
-					$counts['published'][$published] = static::_count($new_search);
-				}
-				foreach(["", 0, 1] as $approved) {
-					$new_search = clone $search;
-					$new_search->approved = $approved;
-					$counts['approved'][$approved] = static::_count($new_search);
-				}
-				foreach(["", 0, 1] as $mode) {
-					$new_search = clone $search;
-					$new_search->mode = $mode;
-					$counts['mode'][$mode] = static::_count($new_search);
-				}
-				foreach(["", 9, 10, 11, 12, 13, 14] as $grade) {
-					$new_search = clone $search;
-					$new_search->grade = $grade;
-					$counts['grade'][$grade] = static::_count($new_search);
-				}
-				$users = User::getCached(true);
-				foreach(array_merge([""], $users) as $user) {
-					$new_search = clone $search;
-					$new_search->id_user = $user['id'];
-					$counts['user'][$user['id']] = static::_count($new_search);
-				}
+				// foreach(array_merge([""], Years::$all) as $year) {
+				// 	$new_search = clone $search;
+				// 	$new_search->year = $year;
+				// 	$counts['year'][$year] = static::_count($new_search);
+				// }
+				// foreach(([''=>''] + Subjects::$all) as $id_subject => $name) {
+				// 	$new_search = clone $search;
+				// 	$new_search->id_subject = $id_subject;
+				// 	$counts['subject'][$id_subject] = static::_count($new_search);
+				// }
+				// foreach(array_merge(['id' => ''], $Teachers) as $Teacher) {
+				// 	$new_search = clone $search;
+				// 	$new_search->id_teacher = $Teacher['id'];
+				// 	$counts['teacher'][$Teacher['id']] = static::_count($new_search);
+				// }
+				// foreach(["", 1, 2, 3, 4, 5, 0] as $rating) {
+				// 	$new_search = clone $search;
+				// 	$new_search->rating = $rating;
+				// 	$counts['rating'][$rating] = static::_count($new_search);
+				// }
+				// foreach(["", 6, 1, 2, 3, 4, 5, 0] as $admin_rating) {
+				// 	$new_search = clone $search;
+				// 	$new_search->admin_rating = $admin_rating;
+				// 	$counts['admin_rating'][$admin_rating] = static::_count($new_search);
+				// }
+				// foreach(["", 6, 1, 2, 3, 4, 5, 0] as $admin_rating_final) {
+				// 	$new_search = clone $search;
+				// 	$new_search->admin_rating_final = $admin_rating_final;
+				// 	$counts['admin_rating_final'][$admin_rating_final] = static::_count($new_search);
+				// }
+				// foreach(["", 0, 1] as $published) {
+				// 	$new_search = clone $search;
+				// 	$new_search->published = $published;
+				// 	$counts['published'][$published] = static::_count($new_search);
+				// }
+				// foreach(["", 0, 1] as $approved) {
+				// 	$new_search = clone $search;
+				// 	$new_search->approved = $approved;
+				// 	$counts['approved'][$approved] = static::_count($new_search);
+				// }
+				// foreach(["", 0, 1] as $mode) {
+				// 	$new_search = clone $search;
+				// 	$new_search->mode = $mode;
+				// 	$counts['mode'][$mode] = static::_count($new_search);
+				// }
+				// foreach(["", 9, 10, 11, 12, 13, 14] as $grade) {
+				// 	$new_search = clone $search;
+				// 	$new_search->grade = $grade;
+				// 	$counts['grade'][$grade] = static::_count($new_search);
+				// }
+				// $users = User::getCached(true);
+				// foreach(array_merge([""], $users) as $user) {
+				// 	$new_search = clone $search;
+				// 	$new_search->id_user = $user['id'];
+				// 	$counts['user'][$user['id']] = static::_count($new_search);
+				// }
 			}
 
 			return [
