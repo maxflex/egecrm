@@ -1164,7 +1164,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             year = parseInt(year)
             options = {
                 '1-0': [],
-                '2-0': [_paymentDate(year + 1, '02-13')],
+                '2-0': [_paymentDate(year, '11-27')],
                 '3-0': [_paymentDate(year, '11-20'), _paymentDate(year + 1, '02-20')],
                 '3-1': [_paymentDate(year, '11-27'), _paymentDate(year + 1, '02-27')],
                 '8-0': [_paymentDate(year, '10-15'), _paymentDate(year, '11-15'), _paymentDate(year, '12-15'),

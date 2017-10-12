@@ -112,6 +112,7 @@
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating, r.grade,
 				r.admin_rating, r.admin_rating_final, r.published, r.approved, r.score, r.max_score, r.comment, r.admin_comment, r.admin_comment_final, " . static::_countQuery('vj2'));
+			exit($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
 			$result = dbConnection()->query($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
 
 			while ($row = $result->fetch_object()) {
@@ -193,7 +194,7 @@
 
 		private static function _count($search) {
 			return dbConnection()
-					->query(static::_generateQuery($search, "COUNT(*) AS cnt FROM (SELECT vj.id", false, ") AS X"))
+					->query(static::_generateQuery($search, "COUNT(*) AS cnt FROM (SELECT 1 ", false, ") AS X"))
 					->fetch_object()
 					->cnt;
 		}
@@ -212,10 +213,10 @@
 		private static function _generateQuery($search, $select, $order = true, $ending)
 		{
 			$main_query = "
-				FROM visit_journal vj
+				FROM (select distinct id_entity, id_subject, id_teacher, `year` from visit_journal where type_entity='STUDENT') vj
 				LEFT JOIN teacher_reviews" . static::_connectTables('r')
 				. (isset($search->id_user) ? " JOIN students s ON s.id = vj.id_entity " : "") . "
-				WHERE vj.type_entity='STUDENT' "
+				WHERE true "
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
@@ -228,8 +229,8 @@
 				. (!isBlank($search->grade) ? " AND r.grade={$search->grade}" : "")
 				. (!isBlank($search->admin_rating) ? " AND r.admin_rating={$search->admin_rating}" : "")
 				. (!isBlank($search->admin_rating_final) ? " AND r.admin_rating_final={$search->admin_rating_final}" : "")
-				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year"
-				. ($order ? " ORDER BY vj.lesson_date DESC" : "");
+				. ($order ? "" : "");
+			// exit("SELECT " . $select . $main_query . $ending);
 			return "SELECT " . $select . $main_query . $ending;
 		}
 
