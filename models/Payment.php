@@ -20,7 +20,7 @@
 			self::MUTUAL_DEBTS	=> "взаимозачет",
 		];
 
-		const PER_PAGE = 30;
+		const PER_PAGE = 1500;
 
 		# удаленные записи коллекции
 		static $deleted = [
