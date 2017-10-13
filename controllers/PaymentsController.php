@@ -62,7 +62,7 @@
 			$condition['year'] = $search['year'] ? "year = {$search['year']}" : '1';
 			$condition['entity_type'] = $search['mode'] ? "entity_type = '{$search['mode']}'" : '1';
 
-			$query['limit'] = ($search['current_page'] - 1)*Payment::PER_PAGE.',30';
+			$query['limit'] = ($search['current_page'] - 1)*Payment::PER_PAGE.',' . Payment::PER_PAGE;
 			$query['condition'] = implode(' and ', $condition);;
 			$query['order'] = 'first_save_date desc';
 
