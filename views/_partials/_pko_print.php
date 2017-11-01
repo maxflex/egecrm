@@ -222,7 +222,7 @@
                                 <tr>
                                     <td style="border-bottom: 1px solid black;"></td>
                                     <td width="20%"></td>
-                                    <td style="border-bottom: 1px solid black;">Эрдман К. А.</td>
+                                    <td style="border-bottom: 1px solid black;">Заикина C. Ю.</td>
                                 </tr>
                                 <tr style="font-size:8px;text-align: center;">
                                     <td>подпись</td>
