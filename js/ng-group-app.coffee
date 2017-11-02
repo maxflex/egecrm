@@ -542,7 +542,7 @@
 			$scope.toggleBoolean = (field) ->
 				value = if $scope.Group[field] then 0 else 1
 				if $scope.Group.id
-					ajaxStart() 
+					ajaxStart()
 					$.post "groups/ajax/toggleBoolean",
 						id: $scope.Group.id
 						field: field
@@ -552,14 +552,16 @@
 						$scope.Group[field] = value
 						$scope.$apply()
 
-
+			$scope.yearLabel = (year) -> year + '-' + (parseInt(year) + 1) + ' уч. г.'
 
 			$scope.addGroupsPanel = ->
+				$scope.search_groups =
+					grades: [$scope.Group.grade.toString()]
+					year: $scope.Group.year.toString()
+					subjects: [$scope.Group.id_subject.toString()]
+				$timeout -> $('.selectpicker').selectpicker('refresh')
 				$scope.loadGroups() if not $scope.Groups
 				$scope.add_groups_panel = not $scope.add_groups_panel
-				$scope.search_groups.grade = $scope.Group.grade if not $scope.search_groups.grade and $scope.Group.grade
-				$scope.search_groups.year = $scope.Group.year if not $scope.search_groups.year and $scope.Group.year
-				$scope.search_groups.id_subject = $scope.Group.id_subject if not $scope.search_groups.id_subject and $scope.Group.id_subject
 
 
 			$scope.subjectChange = ->
@@ -616,13 +618,13 @@
 			$scope.loading_groups = false
 			$scope.loadGroups = ->
 				return if not $scope.Group.id
-				$scope.Groups = false
+				$scope.Groups = undefined
 				$scope.loading_groups = true
-				$.post "groups/ajax/getGroups", {}, (response) ->
-						$scope.loading_groups = false
-						$scope.Groups = response
-						$scope.$apply()
-						bindGroupsDroppable()
+				$timeout -> $.post "groups/ajax/get", {search: $scope.search_groups}, (response) ->
+					$scope.loading_groups = false
+					$scope.Groups = response.data
+					$scope.$apply()
+					bindGroupsDroppable()
 				, "json"
 
 			angular.element(document).ready ->

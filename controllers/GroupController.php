@@ -422,6 +422,7 @@
 
 			$ang_init_data = angInit([
 				"Group" 	     => $Group,
+				"Grades"		=> Grades::$all,
 				"time"			 => Time::get(),
 			]);
 
@@ -547,15 +548,6 @@
 			}
 
 			returnJsonAng($return);
-		}
-
-		// Похожие гуппы (вверху из редактирования группы)
-		public function actionAjaxGetGroups()
-		{
-			// @reafactored
-			$Groups = Group::findAll();
-
-			returnJsonAng($Groups);
 		}
 
 		public function actionAjaxRegisterInJournal()
@@ -943,7 +935,7 @@
 			extract($_POST);
 
 			returnJsonAng(
-				Group::getData($page, $teachers)
+				Group::getData($search)
 			);
 		}
 

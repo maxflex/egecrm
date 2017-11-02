@@ -479,7 +479,8 @@
 			extract($_POST);
 
 			returnJsonAng([
-				'Tests'			=> Test::findAll(),
+				'Tests'			=> Test::getLightAll(),
+				"correct_answers" => TestProblem::getCorrectAnswers(),
 				'StudentTests'	=> TestStudent::getByStudentId($id_student),
 			]);
 		}

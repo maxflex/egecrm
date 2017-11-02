@@ -679,20 +679,22 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       });
     }
   };
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
   $scope.addGroupsPanel = function() {
+    $scope.search_groups = {
+      grades: [$scope.Group.grade.toString()],
+      year: $scope.Group.year.toString(),
+      subjects: [$scope.Group.id_subject.toString()]
+    };
+    $timeout(function() {
+      return $('.selectpicker').selectpicker('refresh');
+    });
     if (!$scope.Groups) {
       $scope.loadGroups();
     }
-    $scope.add_groups_panel = !$scope.add_groups_panel;
-    if (!$scope.search_groups.grade && $scope.Group.grade) {
-      $scope.search_groups.grade = $scope.Group.grade;
-    }
-    if (!$scope.search_groups.year && $scope.Group.year) {
-      $scope.search_groups.year = $scope.Group.year;
-    }
-    if (!$scope.search_groups.id_subject && $scope.Group.id_subject) {
-      return $scope.search_groups.id_subject = $scope.Group.id_subject;
-    }
+    return $scope.add_groups_panel = !$scope.add_groups_panel;
   };
   $scope.subjectChange = function() {
     if (!$scope.Group.id) {
@@ -760,14 +762,18 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     if (!$scope.Group.id) {
       return;
     }
-    $scope.Groups = false;
+    $scope.Groups = void 0;
     $scope.loading_groups = true;
-    return $.post("groups/ajax/getGroups", {}, function(response) {
-      $scope.loading_groups = false;
-      $scope.Groups = response;
-      $scope.$apply();
-      return bindGroupsDroppable();
-    }, "json");
+    return $timeout(function() {
+      return $.post("groups/ajax/get", {
+        search: $scope.search_groups
+      }, function(response) {
+        $scope.loading_groups = false;
+        $scope.Groups = response.data;
+        $scope.$apply();
+        return bindGroupsDroppable();
+      }, "json");
+    });
   };
   angular.element(document).ready(function() {
     set_scope("Group");

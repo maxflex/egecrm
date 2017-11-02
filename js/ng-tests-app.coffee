@@ -1,5 +1,5 @@
 	app = angular.module "Tests", ['ngSanitize', 'ui.bootstrap']
-		.filter 'unsafe', ($sce) -> 
+		.filter 'unsafe', ($sce) ->
 			$sce.trustAsHtml
 		.filter 'range', () ->
 			return (input, total) ->
@@ -21,16 +21,16 @@
 						console.log($scope.time)
 						finishTest() if $scope.time <= 0
 					, 1000
-				$scope.current_problem = 0			
-			
+				$scope.current_problem = 0
+
 			$scope.counter = ->
 	            moment({}).seconds($scope.time).format("mm:ss")
-			
+
 			$scope.nextProblem = ->
 				last_question = ($scope.Test.Problems.length - $scope.current_problem) is 1
 				saveAnswers(last_question)
 				$scope.current_problem++ if not last_question
-			
+
 			$scope.answered = ->
 				problem_id = $scope.Test.Problems[$scope.current_problem].id
 				$scope.answers[problem_id] isnt undefined
@@ -38,17 +38,17 @@
 			$scope.prevProblem = ->
 				saveAnswers()
 				$scope.current_problem--
-			
+
 			$scope.setProblem = (index) ->
 				$scope.current_problem = index
-			
+
 			saveAnswers = (last_question) ->
 				$.post "tests/ajaxSaveAnswers", {id: $scope.Test.id, answers: $scope.answers}, (response) ->
 					$scope.server_answers = angular.copy($scope.answers)
 					$scope.$apply()
 					finishTest() if last_question
 # 				$.cookie("answers#{$scope.Test.id}", JSON.stringify($scope.answers), { expires: 3, path: '/' });
-			
+
 			finishTest = ->
 				$.post "tests/ajaxFinishTest", {id: $scope.Test.id}, (final_score) ->
 					$interval.cancel($scope.interval)
@@ -57,14 +57,14 @@
 
 			$scope.back = ->
 				redirect "students/tests"
-			
+
 			$scope.notFinished = ->
 				$scope.final_score is undefined
-			
+
 			$scope.$watch 'current_problem', (newVal) ->
 				if newVal isnt undefined
 					$scope.Problem = $scope.Test.Problems[newVal]
-			
+
 			angular.element(document).ready ->
 				set_scope "Tests"
 		.controller "StudentTestsCtrl", ($scope, $timeout) ->
@@ -97,24 +97,16 @@
 			$scope.testDisplay = (StudentTest) ->
 				StudentTest && (StudentTest.isFinished || StudentTest.inProgress)
 
-			$scope.getStudentAnswer = (Problem, StudentTest) ->
-				if StudentTest && StudentTest.answers && StudentTest.answers[Problem.id]
-					if StudentTest.answers[Problem.id] == Problem.correct_answer
+			$scope.getStudentAnswerClass = (StudentTest, problem_id, correct_answer) ->
+				if StudentTest && StudentTest.answers && StudentTest.answers.hasOwnProperty(problem_id)
+					if StudentTest.answers[problem_id] == correct_answer
 						return ""
 					else
 						return "circle-red"
 				return "circle-gray"
 
-			$scope.getStudentAnswerClass = (Problem, StudentTest) ->
-				if StudentTest.answers and StudentTest.answers[Problem.id] isnt undefined
-					if StudentTest.answers[Problem.id] == Problem.correct_answer
-						return ''
-					else
-						return 'circle-red'
-				return 'circle-gray'
-
-			$scope.getTestHint = (Problem, StudentTest) ->
-					answer = $scope.getStudentAnswer(Problem, StudentTest)
+			$scope.getTestHint = (StudentTest, problem_id, correct_answer) ->
+					answer = $scope.getStudentAnswerClass(Problem, StudentTest)
 					switch answer
 						when 'circle-red' then 'ответ неверный'
 						when 'circle-gray' then 'ответ не указан'
@@ -130,14 +122,6 @@
 						e.id == StudentTest.id
 					$scope.Tests = angular.copy($scope.Tests)
 					$scope.$apply()
-
-			$scope.refreshCounts = ->
-				$timeout ->
-					$('.watch-select option').each (index, el) ->
-						$(el).data 'subtext', $(el).attr 'data-subtext'
-						$(el).data 'content', $(el).attr 'data-content'
-					$('.watch-select').selectpicker 'refresh'
-				, 100
 
 			$scope.filter = ->
 				$.cookie("tests", JSON.stringify($scope.search), { expires: 365, path: '/' });
@@ -157,9 +141,8 @@
 				, (response) ->
 					frontendLoadingEnd()
 					$scope.StudentTests  = response.data
-					$scope.counts = response.counts
+					$scope.item_count = response.item_count
 					$scope.$apply()
-					$scope.refreshCounts()
 				, "json"
 
 			angular.element(document).ready ->
@@ -170,10 +153,10 @@
 
 			$scope.formatDate = (date) ->
 				moment(date).format 'DD MMMM'
-			
+
 			$scope.getTestStatus = (Test) ->
 				test_statuses[Test.intermediate]
-			
+
 			$scope.timeLeft = (StudentTest, Test) ->
 				timestamp_end = moment(StudentTest.date_start).add(Test.minutes, 'minutes').unix()
 				seconds = timestamp_end - moment().unix()
@@ -182,10 +165,10 @@
 			setInterval ->
 				$scope.$apply()
 			, 1000
-			
+
 			$scope.testDisplay = (StudentTest) ->
 				StudentTest.isFinished || StudentTest.inProgress
-			
+
 			$scope.getStudentAnswer = (Problem, StudentTest) ->
 				if StudentTest.answers && (StudentTest.answers[Problem.id] isnt undefined)
 					if StudentTest.answers[Problem.id] == Problem.correct_answer
@@ -193,14 +176,14 @@
 					else
 						return false
 				return undefined
-			
+
 			$scope.getTestHint = (Problem, StudentTest) ->
 				answer = $scope.getStudentAnswer(Problem, StudentTest)
 				if answer isnt undefined
 					return 'ответ установлен'
 				else
 					return 'ответ не установлен'
-			
+
 			$scope.getCurrentScore = (Test, StudentTest) ->
 				count = 0
 				$.each Test.Problems, (index, Problem) ->
@@ -224,16 +207,16 @@
 			$scope.addTest = (Test) ->
 				$scope.adding = true
 				ajaxStart()
-				$.post 'tests/ajaxAdd', 
+				$.post 'tests/ajaxAdd',
 					Test: $scope.Test
 				, (response) ->
 					redirect "tests/edit/#{response}"
 				, "json"
-			
+
 			$scope.saveTest = ->
 				$scope.saving = true
 				ajaxStart()
-				$.post "tests/ajaxEdit", 
+				$.post "tests/ajaxEdit",
 					Test: $scope.Test
 				, (response) ->
 					ajaxEnd()
@@ -247,7 +230,7 @@
 					$scope.form_changed = false
 					$scope.$apply()
 				, "json"
-			
+
 			$scope.deleteTest = ->
 				bootbox.confirm "Вы уверены, что хотите удалить тест №#{$scope.Test.id}?", (result) ->
 					if result is true
@@ -256,20 +239,20 @@
 							redirect "tests"
 						, ->
 							ajaxEnd()
-				
+
 			$scope.addProblem = ->
 				$scope.form_changed = true
 				$scope.Test.Problems.push angular.copy $scope.NewProblem
-		
+
 			$scope.editingAnswer = (parent_index, index) ->
 				$scope.editing_answer and $scope.editing_answer[0] is parent_index and $scope.editing_answer[1] is index
-			
+
 			$scope.addAnswer = (Problem, parent_index) ->
 				$scope.form_changed = true
 				Problem.answers.push('текст ответа...')
 				$timeout ->
 					$scope.editAnswer(Problem, parent_index, Problem.answers.length - 1)
-			
+
 			$scope.setCorrect = (Problem, index) ->
 				if typeof $scope.a is "object"
 
@@ -284,7 +267,7 @@
 					Problem.correct_answer = -1
 				else
 					Problem.correct_answer = index
-			
+
 			$scope.deleteAnswer = (Problem, index) ->
 				if Problem.correct_answer
 					Problem.correct_answer = -1 if Problem.correct_answer == index
@@ -294,7 +277,7 @@
 				$scope.form_changed = true
 				$scope.editing_answer = undefined
 				Problem.answers.splice(index, 1)
-			
+
 			$scope.deleteProblem = (Problem, index) ->
 				$scope.e.destroy()
 				delete $scope.e
@@ -302,11 +285,11 @@
 				$scope.Test.Problems.splice(index, 1)
 				if Problem.id
 					ajaxStart()
-					$.post "tests/ajaxDeleteProblem", 
+					$.post "tests/ajaxDeleteProblem",
 						id_problem: Problem.id
 					, ->
 						ajaxEnd()
-			
+
 			$scope.editAnswer = (Problem, parent_index, index) ->
 				console.log(parent_index, index)
 				answer = Problem.answers[index]
@@ -324,9 +307,9 @@
 					height: 150
 					title: "testy"
 					extraPlugins: 'pastebase64,panel,button,panelbutton,colorbutton'
-						
+
 				$scope.a.setData answer
-				
+
 				$scope.a.on 'contentDom', ->
 					$scope.a.document.on 'keydown', (event) ->
 						event = event.data.$
@@ -347,7 +330,7 @@
 				$scope.a.on 'instanceReady', (event) ->
 					$scope.a.focus().select
 					$scope.a.execCommand 'selectAll'
-			
+
 			$scope.editIntro = ->
 				$scope.old_html = $scope.Test.intro
 				if typeof $scope.t is "object"
@@ -358,9 +341,9 @@
 					height: 250
 					title: "testy"
 					extraPlugins: 'pastebase64,panel,button,panelbutton,colorbutton'
-						
+
 				$scope.t.setData $scope.Test.intro
-				
+
 				$scope.t.on 'contentDom', ->
 					$scope.t.document.on 'keydown', (event) ->
 						event = event.data.$
@@ -380,7 +363,7 @@
 				$scope.t.on 'instanceReady', (event) ->
 					$scope.t.focus().select
 					$scope.t.execCommand 'selectAll'
-			
+
 			$scope.editProblem = (Problem, index) ->
 				$scope.editing_problem = Problem
 				$scope.old_html = Problem.problem
@@ -392,9 +375,9 @@
 					height: 250
 					title: "testy"
 					extraPlugins: 'pastebase64,panel,button,panelbutton,colorbutton'
-						
+
 				$scope.e.setData Problem.problem
-				
+
 				$scope.e.on 'contentDom', ->
 					$scope.e.document.on 'keydown', (event) ->
 						event = event.data.$
@@ -415,7 +398,7 @@
 				$scope.e.on 'instanceReady', (event) ->
 					$scope.e.focus().select
 					$scope.e.execCommand 'selectAll'
-			
+
 			angular.element(document).ready ->
 				$(".form-change-control").on 'keyup change', 'input, select', ->
 					$scope.form_changed = true

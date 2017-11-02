@@ -6,6 +6,7 @@
 <div class="panel panel-primary form-change-control" ng-app="Tests" ng-controller="StudentTestsCtrl" ng-init="<?= $ang_init_data ?>">
     <div class="panel-heading">Тесты
         <div class="pull-right">
+            <span ng-show="item_count" style='margin-right: 20px'>всего тестов: {{ item_count }}</span>
             <a href="tests/create">добавить тест</a>
         </div>
     </div>
@@ -62,9 +63,9 @@
                             </td>
                             <td>
                                 <div ng-show='testDisplay(StudentTest)'>
-						<span ng-repeat="Problem in StudentTest.Test.Problems">
-							<span class="circle-default {{ getStudentAnswerClass(Problem, StudentTest) }}" title="{{ getTestHint(Problem, StudentTest) }}"></span>
-						</span>
+            						<span ng-repeat="(problem_id, correct_answer) in correct_answers[StudentTest.id_test]">
+            							<span class="circle-default {{ getStudentAnswerClass(StudentTest, problem_id, correct_answer) }}" title="{{ getTestHint(StudentTest, problem_id, correct_answer) }}"></span>
+            						</span>
                                 </div>
                             </td>
                             <td>
@@ -76,10 +77,10 @@
                         </tr>
                     </table>
                     <pagination
-                        ng-show="(StudentTests && StudentTests.length) && (counts.state[search.state ? search.state : 'all'] > <?= TestStudent::PER_PAGE ?>)"
+                        ng-show="(StudentTests && StudentTests.length) && (item_count > <?= TestStudent::PER_PAGE ?>)"
                         ng-model="current_page"
                         ng-change="pageChanged()"
-                        total-items="counts.state[search.state ? search.state : 'all']"
+                        total-items="item_count"
                         max-size="10"
                         items-per-page="<?= TestStudent::PER_PAGE ?>"
                         first-text="«"

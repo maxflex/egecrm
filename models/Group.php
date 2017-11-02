@@ -456,19 +456,19 @@
 
 		/*
 		 * Получить данные для основного модуля
-		 * $id_student – если просматриваем отзывы отдельного ученика
-		 * @time-refactored @time-checked
 		 */
-		public static function getData($page)
+		public static function getData($search = null)
 		{
-			if (!$page) {
-				$page = 1;
+			if (! $search) {
+				$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
+			} else {
+				$search = (object)$search;
 			}
 
-			// С какой записи начинать отображение, по формуле
-			$start_from = ($page - 1) * Group::PER_PAGE;
-
-			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
+			// если никаких фильтров не установлено, не загружать
+			if (count(array_filter((array)$search)) == 0) {
+				return returnJsonAng(['data' => -1]);
+			}
 
 			// получаем данные
 			$query = static::_generateQuery($search, "g.id, g.id_subject, g.grade, g.level, g.students, g.id_teacher, g.ended, g.year, g.is_dump, g.ready_to_start", " group by g.id");

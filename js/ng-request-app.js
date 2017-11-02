@@ -361,8 +361,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 		}
 
-		$scope.getTestHint = function(Problem, StudentTest) {
-			answer = $scope.getStudentAnswer(Problem, StudentTest)
+		$scope.getTestHint = function(StudentTest, problem_id, correct_answer) {
+			answer = $scope.getStudentAnswer(StudentTest, problem_id, correct_answer)
 			switch(answer) {
 				case 'circle-red': {
 					return 'ответ неверный'
@@ -391,25 +391,15 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			return (StudentTest && (StudentTest.isFinished || StudentTest.inProgress))
 		}
 
-		$scope.getStudentAnswer = function(Problem, StudentTest) {
-			if (StudentTest && StudentTest.answers && StudentTest.answers[Problem.id] !== undefined) {
-				if (StudentTest.answers[Problem.id] == Problem.correct_answer) {
+		$scope.getStudentAnswer = function(StudentTest, problem_id, correct_answer) {
+			if (StudentTest && StudentTest.answers && StudentTest.answers.hasOwnProperty(problem_id)) {
+				if (StudentTest.answers[problem_id] == correct_answer) {
 					return ""
 				} else {
 					return "circle-red"
 				}
 			}
 			return "circle-gray";
-		}
-
-		$scope.getCurrentScore = function(Test, StudentTest) {
-			count = 0
-			$.each(Test.Problems, function(index, Problem) {
-				if (! $scope.getStudentAnswer(Problem, StudentTest)) {
-					count += parseInt(Problem.score)
-				}
-			})
-			return Math.round(count * 100 / Test.max_score)
 		}
 
 		$scope.toggleUser = function() {
@@ -2195,7 +2185,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.Tests === undefined && menu == 6) {
 				$.post("requests/ajax/LoadStudentTests", {id_student: $scope.id_student}, function(response) {
-					['Tests', 'StudentTests'].forEach(function(field) {
+					['Tests', 'StudentTests', 'correct_answers'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()

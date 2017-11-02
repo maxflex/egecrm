@@ -128,9 +128,9 @@ app = angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', f
   $scope.testDisplay = function(StudentTest) {
     return StudentTest && (StudentTest.isFinished || StudentTest.inProgress);
   };
-  $scope.getStudentAnswer = function(Problem, StudentTest) {
-    if (StudentTest && StudentTest.answers && StudentTest.answers[Problem.id]) {
-      if (StudentTest.answers[Problem.id] === Problem.correct_answer) {
+  $scope.getStudentAnswerClass = function(StudentTest, problem_id, correct_answer) {
+    if (StudentTest && StudentTest.answers && StudentTest.answers.hasOwnProperty(problem_id)) {
+      if (StudentTest.answers[problem_id] === correct_answer) {
         return "";
       } else {
         return "circle-red";
@@ -138,19 +138,9 @@ app = angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', f
     }
     return "circle-gray";
   };
-  $scope.getStudentAnswerClass = function(Problem, StudentTest) {
-    if (StudentTest.answers && StudentTest.answers[Problem.id] !== void 0) {
-      if (StudentTest.answers[Problem.id] === Problem.correct_answer) {
-        return '';
-      } else {
-        return 'circle-red';
-      }
-    }
-    return 'circle-gray';
-  };
-  $scope.getTestHint = function(Problem, StudentTest) {
+  $scope.getTestHint = function(StudentTest, problem_id, correct_answer) {
     var answer;
-    answer = $scope.getStudentAnswer(Problem, StudentTest);
+    answer = $scope.getStudentAnswerClass(Problem, StudentTest);
     switch (answer) {
       case 'circle-red':
         return 'ответ неверный';
@@ -172,15 +162,6 @@ app = angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', f
       $scope.Tests = angular.copy($scope.Tests);
       return $scope.$apply();
     });
-  };
-  $scope.refreshCounts = function() {
-    return $timeout(function() {
-      $('.watch-select option').each(function(index, el) {
-        $(el).data('subtext', $(el).attr('data-subtext'));
-        return $(el).data('content', $(el).attr('data-content'));
-      });
-      return $('.watch-select').selectpicker('refresh');
-    }, 100);
   };
   $scope.filter = function() {
     $.cookie("tests", JSON.stringify($scope.search), {
@@ -204,9 +185,8 @@ app = angular.module("Tests", ['ngSanitize', 'ui.bootstrap']).filter('unsafe', f
     }, function(response) {
       frontendLoadingEnd();
       $scope.StudentTests = response.data;
-      $scope.counts = response.counts;
-      $scope.$apply();
-      return $scope.refreshCounts();
+      $scope.item_count = response.item_count;
+      return $scope.$apply();
     }, "json");
   };
   angular.element(document).ready(function() {

@@ -19,14 +19,6 @@
 								<option ng-hide='grade < 8' ng-repeat="(grade, label) in Grades | toArray" value="{{(grade + 1)}}" data-subtext="{{ counts.grade[grade] || '' }}">{{label}}</option>
 							</select>
 				        </div>
-<!--						<div>-->
-<!--							 --><?//= Branches::buildSvgSelector($search->id_branch, [
-//				                "id" => "group-branch-filter",
-//				                "class" => "watch-select",
-//				                "ng-model" => "search.id_branch",
-//				                "ng-change" => "filter()"
-//				            ]) ?>
-<!--						</div>-->
 				        <div>
 							 <?= Branches::buildSvgSelectorCabinets($search->id_branch, $search->cabinet, [
 				                "id" => "group-branch-cabinet-filter",
@@ -75,10 +67,9 @@
 						</div>
 				        <div id='year-fix'>
 							<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
-								<option value="" data-subtext="{{ counts.year[''] || '' }}">все годы</option>
+								<option value="">все годы</option>
 								<option disabled>────────</option>
 								<option ng-repeat="year in <?= Years::json() ?>"
-									data-subtext="{{ counts.year[year] || '' }}"
 									value="{{year}}">{{ yearLabel(year) }}</option>
 							</select>
 						</div>
@@ -87,6 +78,7 @@
 					<div ng-show="Groups === undefined" style="padding: 100px" class="small half-black center">
 						загрузка групп...
 					</div>
+					<div ng-show="Groups == -1" style="padding: 100px" class="small half-black center">выберите фильтр</div>
 					<div ng-show="Groups === null" style="padding: 100px" class="small half-black center">
 						нет групп
 					</div>
