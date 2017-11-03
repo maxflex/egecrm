@@ -599,14 +599,21 @@ app = angular.module("Teacher", ["ngMap"]).config([
       return _.uniq(_.pluck(ang_scope.Reviews, 'year'));
     }
   };
-}).controller("ListCtrl", function($scope, $timeout, PhoneService) {
+}).controller("ListCtrl", function($scope, $timeout, $http, PhoneService) {
   bindArguments($scope, arguments);
   $scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') || 0;
   $scope.id_subject = localStorage.getItem('teachers_id_subject') || 0;
   $timeout(function() {
-    return $("#filter-branches").selectpicker({
+    $("#filter-branches").selectpicker({
       noneSelectedText: "филиалы"
     }).selectpicker('refresh');
+    return $http.post("teachers/ajax/LoadAll").then(function(response) {
+      console.log(response.data);
+      $scope.Teachers = response.data;
+      return $timeout(function() {
+        return $scope.refreshCounts();
+      });
+    });
   });
   $scope.othersCount = function() {
     return _.where($scope.Teachers, {

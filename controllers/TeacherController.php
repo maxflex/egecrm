@@ -153,17 +153,7 @@
 		{
 			$this->_custom_panel = true;
 
-			$Teachers = Teacher::findAll([
-				"condition" => "in_egecentr > 0",
-				"order" => "last_name ASC",
-			]);
-
-			foreach($Teachers as &$Teacher) {
-				$Teacher->bar = Freetime::getTeacherBar($Teacher->id, true);
-			}
-
             $ang_init_data = angInit([
-				"Teachers" 		=> $Teachers,
 				"three_letters"	=> Subjects::$three_letters,
 				"Branches"		=> Branches::getAll('*'),
 				"subjects" 		=> Subjects::$short,
@@ -306,5 +296,34 @@
 					returnJsonAng($Bars);
 				}
 			}
+		}
+
+		public function actionAjaxLoadAll()
+		{
+			// $Teachers = Teacher::findAll([
+			// 	"condition" => "in_egecentr > 0",
+			// 	"order" => "last_name ASC",
+			// ]);
+
+			$query = dbEgerep()->query("
+				select id, first_name, last_name, middle_name, branches, subjects, in_egecentr
+				from tutors
+				where in_egecentr > 0
+				order by last_name ASC
+			");
+
+			$Teachers = [];
+			while ($row = $query->fetch_object()) {
+				$row->subjects = explode(',', $row->subjects);
+				$row->branches = explode(',', $row->branches);
+				$row->bar = Freetime::getTeacherBar($row->id, true);
+				$Teachers[] = $row;
+			}
+
+			// foreach($Teachers as &$Teacher) {
+			// 	$Teacher->bar = Freetime::getTeacherBar($Teacher->id, true);
+			// }
+
+			returnJsonAng($Teachers);
 		}
 	}

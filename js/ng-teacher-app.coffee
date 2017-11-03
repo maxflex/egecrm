@@ -523,13 +523,18 @@
 				if $scope.Reviews
 					_.uniq _.pluck ang_scope.Reviews, 'year'
 
-		.controller "ListCtrl", ($scope, $timeout, PhoneService) ->
+		.controller "ListCtrl", ($scope, $timeout, $http, PhoneService) ->
 			bindArguments $scope, arguments
 			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0
 			$scope.id_subject = localStorage.getItem('teachers_id_subject') or 0
 
 			$timeout ->
 				$("#filter-branches").selectpicker({noneSelectedText: "филиалы"}).selectpicker('refresh')
+				$http.post("teachers/ajax/LoadAll").then (response) ->
+					console.log(response.data)
+					$scope.Teachers = response.data
+					$timeout -> $scope.refreshCounts()
+					# $timeout -> $('.filters select').selectpicker('refresh')
 
 			# The amount of hidden teachers
 			$scope.othersCount = ->

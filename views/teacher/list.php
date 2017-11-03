@@ -12,7 +12,7 @@
 		<div class="row" style="position: relative">
 			<div id="frontend-loading"></div>
 			<div class="col-sm-12">
-				<div class="row" style="margin-bottom: 20px">
+				<div class="row filters" style="margin-bottom: 20px">
 					<div class="col-sm-4">
 						<select id='state-select' class="form-control" ng-model='in_egecentr' ng-change='changeState()'>
 							<option value=""  data-subtext="{{ getCount(0, id_subject) }}">все</option>
@@ -72,7 +72,9 @@
 						</td>
                     </tr>
 				</table>
-
+				<div ng-show="Teachers === undefined" style="padding: 100px" class="small half-black center">
+					загрузка...
+				</div>
 			</div>
 		</div>
 	</div>
