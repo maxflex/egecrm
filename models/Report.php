@@ -6,7 +6,7 @@
 
 		// кол-во занятий до того, как потребуется отчет
 		// (с этой цифры включительно уже требуется)
-		const LESSON_COUNT = 8;
+		const LESSON_COUNT = 6;
 
 		public static $mysql_table	= "reports";
 
