@@ -256,7 +256,7 @@
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
-				. (($search->mode > 1 && $search->mode < 4) ? " AND (rh.id_report IS NULL AND rf.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? " >= 8 " : " <8 ") . ")" : "")
+				. (($search->mode > 1 && $search->mode < 4) ? " AND (rh.id_report IS NULL AND rf.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? " >= " . Report::LESSON_COUNT : " < " . Report::LESSON_COUNT) . ")" : "")
 				. (($search->mode == 4) ? " AND rf.id IS NOT NULL AND rh.id_report IS NULL" : "")
 				. " GROUP BY vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, rh.id_report "
 				. ($order ? " ORDER BY vj.lesson_date DESC" : "");
