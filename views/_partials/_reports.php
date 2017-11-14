@@ -3,7 +3,7 @@
 		<td style='width: 12%'>
 			<a ng-if='Report.id' href="reports/edit/{{Report.id}}">Отчёт №{{Report.id}}</a>
 			<span class="link-like-nocolor {{Report.force_noreport ? 'text-gray' : 'text-danger'}}"
-				ng-show="Report.lesson_count >= 8 && !Report.id"
+				ng-show="Report.lesson_count >= <?= Report::LESSON_COUNT ?> && !Report.id"
 				ng-click="forceNoreport(Report)"
 			>
 				{{Report.force_noreport ? 'отчет не требуется' : 'требуется отчет' }}
