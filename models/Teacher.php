@@ -167,7 +167,7 @@
 		 * Получить данные для отчета
 		 * $Teachers – нужен для counts, чтобы не получать заново
 		 */
-		public static function getReportData($page, $Teachers)
+		public static function getReportData($page, $Teachers, $id_student = false)
 		{
 			if (!$page) {
 				$page = 1;
@@ -175,8 +175,12 @@
 			// С какой записи начинать отображение, по формуле
 			$start_from = ($page - 1) * Report::PER_PAGE;
 
-			$search = json_decode($_COOKIE['reports']);
-			if (!$search) $search = (object)[];
+			if (! $id_student) {
+				$search = json_decode($_COOKIE['reports']);
+				if (!$search) $search = (object)[];
+			} else {
+				$search = (object)compact('id_student');
+			}
 
 			// получаем данные
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, rh.id_report as id, r.date, r.available_for_parents, rh.lesson_count");
@@ -190,6 +194,10 @@
 				$ss->Student = Student::getLight($ss->id_entity);
 				$ss->Teacher = Teacher::getLight($ss->id_teacher);
 				$ss->force_noreport = ReportForce::check($ss->id_entity, $ss->id_teacher, $ss->id_subject, $ss->year);
+			}
+
+			if ($id_student) {
+				return $student_subject;
 			}
 
 			// counts
@@ -255,6 +263,7 @@
 				. (!isBlank($search->available_for_parents) ? " and if(r.available_for_parents = 1 and r.id > 0, 1, 0) = {$search->available_for_parents} " : "")
 				. ($search->year ? " AND vj.year={$search->year}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
+				. ($search->id_student ? " AND vj.id_entity={$search->id_student}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")
 				. (($search->mode > 1 && $search->mode < 4) ? " AND (rh.id_report IS NULL AND rf.id IS NULL AND rh.lesson_count" . ($search->mode == 2 ? " >= " . Report::LESSON_COUNT : " < " . Report::LESSON_COUNT) . ")" : "")
 				. (($search->mode == 4) ? " AND rf.id IS NOT NULL AND rh.id_report IS NULL" : "")

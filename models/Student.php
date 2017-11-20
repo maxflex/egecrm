@@ -388,15 +388,16 @@
 
 		public function getReportsStatic($id_student)
 		{
-			$Reports = Report::findAll([
-				"condition" => "id_student=" . $id_student
-			]);
-
-			foreach ($Reports as &$Report) {
-				$Report->Teacher = Teacher::findById($Report->id_teacher);
-			}
-
-			return $Reports;
+			return Teacher::getReportData(1, [], $id_student);
+			// $Reports = Report::findAll([
+			// 	"condition" => "id_student=" . $id_student
+			// ]);
+			//
+			// foreach ($Reports as &$Report) {
+			// 	$Report->Teacher = Teacher::findById($Report->id_teacher);
+			// }
+			//
+			// return $Reports;
 		}
 
 		/**
