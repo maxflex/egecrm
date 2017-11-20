@@ -859,6 +859,18 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 		}
 
+		$scope.forceNoreport = function(d) {
+			$.post("reports/AjaxForceNoreport", {
+				id_student: d.id_entity,
+				id_teacher: d.id_teacher,
+				id_subject: d.id_subject,
+				year: d.year
+			}, function(response) {
+				d.force_noreport = !d.force_noreport
+				$scope.$apply()
+			}
+		}
+
 		$scope.saveMarkersToServer = function() {
 			$.post("requests/ajax/saveMarkers", {markers: $scope.markerData(), id_student: $scope.student.id})
 			lightBoxHide()
