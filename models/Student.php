@@ -183,6 +183,29 @@
 		}
 
 		/**
+		 * разрешен вход только тем, у кого последняя версия договора в этом году имеет зеленый или желтый предмет
+		 * @param  [type]  $id_student [description]
+		 * @return boolean             [description]
+		 */
+		public static function isBanned($id_student)
+		{
+			$query = dbConnection()->query("
+                SELECT id FROM contracts c
+                JOIN contract_info ci ON ci.id_contract = c.id_contract
+                WHERE ci.id_student={$id_student} AND c.current_version=1 AND ci.year=" . academicYear() . "
+                ORDER BY id DESC
+                LIMIT 1
+            ");
+			if ($query->num_rows) {
+				$last_contract_id = $query->fetch_object()->id;
+				return ! ContractSubject::count([
+					'condition' => "id_contract={$last_contract_id} and status>1"
+				]);
+			}
+			return true;
+		}
+
+		/**
 		 * Получить человеко-предметы без групп.
 		 *
 		 * @access public

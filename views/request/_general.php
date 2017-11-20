@@ -140,11 +140,16 @@
 		            <div>
 			            <span style="width: 75px; display: inline-block">Пароль:</span><i><?= $Request->Student->password ?></i>
 		            </div>
-		            <div style="margin-bottom: 20px">
+		            <div>
 			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
 		            </div>
+		            <div>
+						<span style="width: 73px; display: inline-block">Статус:</span>
+						<span ng-show="!student.is_banned">активен</span>
+						<span class="text-danger" ng-show="student.is_banned">заблокирован</span>
+		            </div>
 
-		            <div class="form-group">
+		            <div class="form-group" style='margin-top: 20px'>
 			            <?= Branches::buildSvgSelector($Request->Student->branches, [
 				            "name" => "Student[branches][]",
 				            "ng-model" => "student.branches",

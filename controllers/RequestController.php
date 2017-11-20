@@ -403,6 +403,7 @@
 			extract($_POST);
 
 			$Student = Student::findById($id_student);
+			$Student->is_banned = Student::isBanned($id_student);
 
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
