@@ -116,12 +116,9 @@
             }
 
             // Учитель заблокирован?
-            if ($User->type == Teacher::USER_TYPE) {
-				$status = Teacher::getLight($User->id_entity, ['in_egecentr'])->in_egecentr;
-				if (! in_array($status, [1, 2])) {
-					self::log($user_id, 'failed_login', 'пользователь заблокирован');
-					returnJSON('banned');
-				}
+            if ($User->type == Teacher::USER_TYPE && Teacher::getLight($User->id_entity, ['in_egecentr'])->in_egecentr != 2) {
+				self::log($user_id, 'failed_login', 'пользователь заблокирован');
+                returnJSON('banned');
             }
 
             // Ученик заблокирован?

@@ -59,7 +59,7 @@
 			      <input placeholder="логин" disabled ng-model="Teacher.login" class="form-control">
 			      <span class="input-group-addon">
 			      	<span class="glyphicon glyphicon-lock no-margin-right small" ng-class="{
-				      	'text-danger': Teacher.in_egecentr != 1
+				      	'text-danger': Teacher.in_egecentr != 2
 			      	}"></span>
 <!-- 			        <input type="checkbox" aria-label="заблокирован"> -->
 			      </span>
