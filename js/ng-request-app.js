@@ -868,7 +868,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}, function(response) {
 				d.force_noreport = !d.force_noreport
 				$scope.$apply()
-			}
+			})
 		}
 
 		$scope.saveMarkersToServer = function() {
