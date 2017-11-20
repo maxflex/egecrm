@@ -455,4 +455,43 @@
         {
             ReportHelper::recalc();
         }
+
+		public function actionMasteredSum()
+		{
+			dbConnection()->query("TRUNCATE TABLE student_sums");
+
+			$prices = Price::get();
+
+			foreach([2015, 2016, 2017] as $year) {
+				$query = dbConnection()->query("SELECT max(id) as id_contract, ci.id_student FROM contracts c
+	                JOIN contract_info ci ON ci.id_contract = c.id_contract
+	                WHERE c.current_version=1 AND ci.year={$year}
+					GROUP BY ci.id_student
+	                ORDER BY id DESC
+	            ");
+				while ($row = $query->fetch_object()) {
+					$payment_sum = dbConnection()->query("SELECT sum(`sum`) as s from payments where id_type=1 and entity_id={$row->id_student} and year={$year} and entity_type='STUDENT'")->fetch_object()->s;
+					$returns_sum = dbConnection()->query("SELECT sum(`sum`) as s from payments where id_type=2 and entity_id={$row->id_student} and year={$year} and entity_type='STUDENT'")->fetch_object()->s;
+
+
+					$active_contract = dbConnection()->query("SELECT 1 from contract_subjects where status > 1 and id_contract=" . $row->id_contract)->num_rows;
+
+					if ($active_contract) {
+						$contract 		= dbConnection()->query("SELECT * from contracts where id=" . $row->id_contract)->fetch_object();
+						// $subject_count 	= dbConnection()->query("SELECT count(*) as cnt from contract_subjects where id_contract=" . $row->id_contract)->fetch_object()->cnt;
+						$grade 			= dbConnection()->query("SELECT grade from contract_info where id_contract=" . $contract->id_contract)->fetch_object()->grade;
+						$lesson_count   = dbConnection()->query("SELECT count(*) as cnt from visit_journal where id_entity={$row->id_student} and type_entity='STUDENT' and year={$year}")->fetch_object()->cnt;
+
+						$price = $prices[$grade];
+						if ($contract->discount) {
+
+						}
+
+						// $sum = $payment_sum - $returns_sum - ($lesson_count * $prices[$grade])
+					}
+
+					// $sum =
+				}
+			}
+		}
 	}
