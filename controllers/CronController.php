@@ -495,13 +495,13 @@
 						$sum = $payment_sum - $returns_sum - ($lesson_count * $price);
 
 						// минус договоры тестирования
-						$contract_test_sum = dbConnection()->query("SELECT c.sum FROM contracts_test c
+						$contract_test = dbConnection()->query("SELECT c.* FROM contracts_test c
 							JOIN (select max(id_contract), grade, id_student, year from contract_info_test group by grade, id_student, year) ci ON c.id_contract = ci.id_contract
 							where ci.id_student={$row->id_student} and ci.year={$year}
 							limit 1
 						");
-						if ($contract_test_sum->num_rows) {
-							$sum -= $contract_test_sum->fetch_object()->s;
+						if ($contract_test->num_rows) {
+							$sum -= $contract_test->fetch_object()->sum;
 						}
 
 						dbConnection()->query("INSERT INTO student_sums (id_student, year, sum) VALUES ({$row->id_student}, {$year}, {$sum})");

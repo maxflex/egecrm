@@ -24,6 +24,7 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
     return arr;
   };
 }).controller("ListCtrl", function($scope, $timeout, PhoneService) {
+  var _paymentDate;
   bindArguments($scope, arguments);
   $scope.yearLabel = function(year) {
     return 'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год';
@@ -76,6 +77,55 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
       $scope.$apply();
       return $scope.refreshCounts();
     }, "json");
+  };
+  $scope.payment_options = {};
+  $scope.splitPaymentsOptions = function(year) {
+    var options;
+    if (!year) {
+      return;
+    }
+    if ($scope.payment_options[year] !== void 0) {
+      return $scope.payment_options[year];
+    }
+    year = parseInt(year);
+    options = {
+      '1-0': [],
+      '2-0': [_paymentDate(year + 1, '01-27')],
+      '3-0': [_paymentDate(year, '11-20'), _paymentDate(year + 1, '02-20')],
+      '3-1': [_paymentDate(year, '11-27'), _paymentDate(year + 1, '02-27')],
+      '8-0': [_paymentDate(year, '10-15'), _paymentDate(year, '11-15'), _paymentDate(year, '12-15'), _paymentDate(year + 1, '01-15'), _paymentDate(year + 1, '02-15'), _paymentDate(year + 1, '03-15'), _paymentDate(year + 1, '04-15')]
+    };
+    $scope.payment_options[year] = options;
+    return options;
+  };
+  _paymentDate = function(year, date) {
+    return moment(parseInt(year) + '-' + date).format('DD.MM.YY');
+  };
+  $scope.getPaymentLabel = function(dates) {
+    var len, payment, str;
+    len = dates.length + 1;
+    payment = 'платеж';
+    if (len > 1 && len <= 4) {
+      payment += 'а';
+    }
+    if (len > 4) {
+      payment += 'ей';
+    }
+    str = len + ' ' + payment;
+    if (dates.length > 0) {
+      str += ': ';
+      if (len === 8) {
+        str += 'ежемесячно 15 числа';
+      } else {
+        dates.forEach(function(date, index) {
+          str += date;
+          if ((index + 1) !== dates.length) {
+            return str += ', ';
+          }
+        });
+      }
+    }
+    return str;
   };
   angular.element(document).ready(function() {
     set_scope("Clients");

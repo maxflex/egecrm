@@ -58,6 +58,42 @@ app = angular.module "Clients", ["ui.bootstrap"]
 				$scope.refreshCounts()
 			, "json"
 
+		$scope.payment_options = {}
+		$scope.splitPaymentsOptions = (year) ->
+			return if not year
+			return $scope.payment_options[year] if $scope.payment_options[year] isnt undefined
+			year = parseInt(year)
+			options =
+				'1-0': [],
+				'2-0': [_paymentDate(year + 1, '01-27')],
+				'3-0': [_paymentDate(year, '11-20'), _paymentDate(year + 1, '02-20')],
+				'3-1': [_paymentDate(year, '11-27'), _paymentDate(year + 1, '02-27')],
+				'8-0': [_paymentDate(year, '10-15'), _paymentDate(year, '11-15'), _paymentDate(year, '12-15'),
+					_paymentDate(year + 1, '01-15'), _paymentDate(year + 1, '02-15'), _paymentDate(year + 1, '03-15'), _paymentDate(year + 1, '04-15')]
+			$scope.payment_options[year] = options
+			options
+
+		_paymentDate = (year, date) -> moment(parseInt(year) + '-' + date).format('DD.MM.YY')
+
+		$scope.getPaymentLabel = (dates) ->
+			len = dates.length + 1
+			payment = 'платеж'
+			if len > 1 && len <= 4
+				payment += 'а'
+			if len > 4
+				payment += 'ей'
+			str = len + ' ' + payment
+			if dates.length > 0
+				str += ': '
+				if len == 8
+					str += 'ежемесячно 15 числа'
+				else
+					dates.forEach (date, index) ->
+						str += date
+						if ((index + 1) != dates.length)
+							str += ', '
+			return str
+
 		angular.element(document).ready ->
 			set_scope "Clients"
 			$scope.search = if $.cookie("clients") then JSON.parse($.cookie("clients")) else {}

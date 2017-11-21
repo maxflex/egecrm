@@ -961,6 +961,8 @@
 			// получаем данные
 			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id),
 				c.sum as contract_sum,
+				concat(c.payments_split, '-', c.payments_queue) as contract_split,
+				ci.year as contract_year,
 				(select ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0)" .
                 "from payments p " .
                 "where p.entity_type = '" . Student::USER_TYPE . "' and p.entity_id = s.id " . (! isBlank($search->year) ? "and p.year={$search->year}" : '') . ") as payment_sum,
