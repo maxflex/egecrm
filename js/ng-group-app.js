@@ -729,16 +729,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       });
     }
   });
-  $scope.$watch("Group.teacher_price_official", function(newVal, oldVal) {
-    if (!$scope.Group.id) {
-      return;
-    }
-    if (newVal !== oldVal) {
-      return $scope.updateGroup({
-        teacher_price_official: newVal
-      });
-    }
-  });
   $scope.$watch("Group.level", function(newVal, oldVal) {
     if (!$scope.Group.id) {
       return;

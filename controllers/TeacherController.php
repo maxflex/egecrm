@@ -73,9 +73,7 @@
                 $real_sum = 0;
 				foreach ($Data as $OneData) {
                     $sum += $OneData->teacher_price;
-                    $sum_official += $OneData->teacher_price_official;
                     $total_sum += $OneData->teacher_price;
-                    $total_sum_official += $OneData->teacher_price_official;
                     $real_sum += $OneData->teacher_price;
                     $real_total_sum += $OneData->teacher_price;
                 }
