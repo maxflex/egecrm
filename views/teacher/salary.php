@@ -25,7 +25,6 @@
 						<td style="text-align: left">Преподаватель</td>
 						<td>Занятий всего</td>
 						<td>Начислено</td>
-						<td>Начислено (белая)</td>
 						<td>Выплачено</td>
 						<td>К выплате</td>
 					</tr>
@@ -49,9 +48,6 @@
 							<span ng-hide="!d.sum">{{d.sum | number}}</span>
 						</td>
 						<td class="center">
-							<span ng-hide="!d.sum_official">{{ (d.sum_official).toFixed(2) | number}}</span>
-						</td>
-						<td class="center">
 							<span ng-hide="!d.payment_sum">{{d.payment_sum | number}}</span>
 						</td>
 						<td class="center">
@@ -68,9 +64,6 @@
 						</td>
 						<td class="center">
 							<b>{{total_sum | number}}</b>
-						</td>
-						<td class="center">
-							<b>{{ total_sum_official.toFixed(2) | number}}</b>
 						</td>
 						<td class="center">
 							<b>{{total_payment_sum | number}}</b>
