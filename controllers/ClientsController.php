@@ -19,7 +19,6 @@
 			$this->_custom_panel = true;
 			$ang_init_data = angInit([
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
-				'total_debt'	=> Student::getTotalDebt(),
 				'user'	        => User::fromSession(),
 			]);
 
@@ -28,7 +27,7 @@
 				"ang_init_data" => $ang_init_data,
 			]);
 		}
-		
+
 		public function actionAjaxGetStudents()
 		{
 			extract($_POST);

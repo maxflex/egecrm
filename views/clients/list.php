@@ -1,14 +1,9 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <div class="panel panel-primary" ng-app="Clients" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
-	<div class="panel-heading">Клиенты с договорами
-		<div class="pull-right">
-			<span class="link-like link-reverse link-white" ng-click="PhoneService.sms()">групповое SMS</span>
-			<span style="display: inline; margin-left: 10px;">общая сумма задолженностей: {{ total_debt | number }} руб.</span>
-		</div>
-	</div>
+	<div class="panel-heading">Клиенты с договорами</div>
 	<div class="panel-body">
 		<div class="row" style="margin-bottom: 15px">
-			<div class="col-sm-2">
+			<div class="col-sm-2" style='width: 250px'>
 				<select class="watch-select single-select form-control" ng-model="search.year" ng-change='filter()'>
 					<option value="" data-subtext="{{ counts.year[''] || '' }}">все годы</option>
 					<option disabled>────────</option>
@@ -17,7 +12,7 @@
 							value="{{year}}">{{ yearLabel(year) }}</option>
 				</select>
 			</div>
-			<div class="col-sm-2">
+			<div class="col-sm-2" style='width: 250px'>
 				<select class="watch-select single-select form-control" ng-model="search.error" ng-change='filter()'>
 					<option value=""  data-subtext="{{ counts.error[''] || '' }}">все</option>
 					<option disabled>───────</option>
@@ -27,10 +22,11 @@
 					<option value="3"  data-subtext="{{ counts.error[3] || '' }}">экстернат</option>
 				</select>
 	        </div>
-			<div class="col-sm-2">
+			<div class="col-sm-2" style='width: 250px'>
 				<select class="watch-select single-select form-control" ng-model="search.status" ng-change='filter()'>
 					<option value=""  data-subtext="{{ counts.status[''] || '' }}">все</option>
 					<option disabled>───────</option>
+					<option value="green"  data-subtext="{{ counts.status['green'] || '' }}">в работе</option>
 					<option value="yellow"  data-subtext="{{ counts.status['yellow'] || '' }}">к расторжению</option>
 					<option value="red"  data-subtext="{{ counts.status['red'] || '' }}">расторгнут</option>
 				</select>

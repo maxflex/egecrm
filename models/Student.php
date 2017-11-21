@@ -975,6 +975,7 @@
                         $data[] = $row->id;
                     } else {
                         $row->debt = Student::getDebt($row->id);
+
 						$totals['debt'] += intval($row->debt);
 						$totals['sum']  += intval($row->sum);
 						$totals['contract_sum']  += intval($row->contract_sum);
@@ -1041,6 +1042,7 @@
 				. (!isBlank($search->error) && $search->error == 3 ? " AND ci.grade = " . Grades::EXTERNAL : "")
 				. ($search->status == 'red' ? 'having red_cnt = (red_cnt + yellow_cnt + green_cnt)' : '')
 				. ($search->status == 'yellow' ? 'having (yellow_cnt > 0 and green_cnt = 0)' : '')
+				. ($search->status == 'green' ? 'having green_cnt > 0' : '')
 				. " ORDER BY " . ((isset($search->order) && !isBlank($search->year)) ? " ss.sum {$search->order}, " : "") . " s.last_name, s.first_name, s.middle_name
 			";
 			//exit("SELECT " . $select . $main_query);
