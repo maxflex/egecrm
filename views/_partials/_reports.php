@@ -7,7 +7,7 @@
 					<span class="link-like-nocolor text-gray" ng-show="Report.lesson_count < <?= Report::LESSON_COUNT ?>" ng-click="forceNoreport(Report)">мало занятий</span>
 					<span class="link-like-nocolor text-danger" ng-show="Report.lesson_count >= <?= Report::LESSON_COUNT ?>" ng-click="forceNoreport(Report)">требуется отчет</span>
 				</span>
-				<span ng-show="!Report.force_noreport" class="link-like-nocolor text-gray" ng-click="forceNoreport(Report)">отчет не требуется</span>
+				<span ng-show="Report.force_noreport" class="link-like-nocolor text-gray" ng-click="forceNoreport(Report)">отчет не требуется</span>
 			</span>
 		</td>
 		<td style="width: 25%" ng-init="_Teacher = (Report.Teacher || Teacher)">
