@@ -27,10 +27,26 @@
 				</select>
 	        </div>
 		</div>
-		
+
 		<div style="position: relative">
 			<div id="frontend-loading" style="height: 100%"></div>
 			<table class="table table-hover border-reverse">
+				<thead>
+					<tr>
+						<td>
+						</td>
+						<td>
+							дебет
+						</td>
+						<td>
+							<span class="link-like" ng-click="sort()">неосвоенная сумма</span>
+							<span class="glyphicon text-primary small" ng-class="{
+								'glyphicon-triangle-top': search.order == 'asc',
+								'glyphicon-triangle-bottom': search.order == 'desc'
+							}" ng-show="search.order !== undefined"></span>
+						</td>
+					</tr>
+				</thead>
 				<tr ng-repeat="Student in Students">
 					<td>
 						{{getNumber($index)}}. <a href="student/{{Student.id}}">
@@ -38,14 +54,16 @@
 							<span ng-hide='Student.last_name'>имя не указано</span>
 						</a>
 					</td>
-					<td width="10%" class="text-right">
+					<td width="15%">
 						<span ng-show="Student.debt">{{ Student.debt | number }} руб.</span>
-
+					</td>
+					<td width="15%">
+						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
 					</td>
 				</tr>
 			</table>
 		</div>
-		
+
 		<pagination
 			ng-show='(Students && Students.length) && (counts.all > <?= Student::PER_PAGE ?>)'
 			ng-model="current_page"
@@ -60,7 +78,7 @@
 		>
 		</pagination>
 
- 		
+
 		<div ng-show="Students === undefined" style="padding: 100px" class="small half-black center">
 			загрузка клиентов...
 		</div>

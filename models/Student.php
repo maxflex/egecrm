@@ -959,7 +959,7 @@
 
 
 			// получаем данные
-			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id), s.first_name, s.last_name, s.middle_name "));
+			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id), s.first_name, s.last_name, s.middle_name " . (! isBlank($search->year) ? ", ss.sum" : '') ));
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
             $data = [];
@@ -1014,10 +1014,12 @@
                 "  JOIN contract_info ci ON (ci.id_student = s.id" . (! isBlank($search->year) ? " AND ci.year = {$search->year}" : '') . ")" .
 				( ! isBlank($search->error) && $search->error == 0 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension = '' " : "") .
 				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension <> '' AND u.has_photo_cropped = 0 " : "") . "
-				JOIN contracts c ON (c.id_contract = ci.id_contract AND c.current_version = 1) WHERE true "
+				JOIN contracts c ON (c.id_contract = ci.id_contract AND c.current_version = 1)
+				" . (! isBlank($search->year) ? " LEFT JOIN student_sums ss ON (ss.id_student = s.id AND ss.year = {$search->year}) " : '') . "
+				WHERE true "
 				. (!isBlank($search->error) && $search->error == 2 ? " AND NOT EXISTS (SELECT 1 FROM freetime f WHERE f.id_entity = s.id AND f.type_entity = '".Student::USER_TYPE."')" : "")
 				. (!isBlank($search->error) && $search->error == 3 ? " AND ci.grade = " . Grades::EXTERNAL : "")
-				. " ORDER BY s.last_name, s.first_name, s.middle_name
+				. " ORDER BY " . ((isset($search->order) && !isBlank($search->year)) ? " ss.sum {$search->order}, " : "") . " s.last_name, s.first_name, s.middle_name
 			";
 			return "SELECT " . $select . $main_query;
 		}

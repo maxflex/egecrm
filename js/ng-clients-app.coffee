@@ -16,10 +16,10 @@ app = angular.module "Clients", ["ui.bootstrap"]
 		bindArguments $scope, arguments
 		$scope.yearLabel = (year) ->
 			'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год'
-		
+
 		$scope.getNumber = (index) ->
 			(($scope.current_page - 1) * 30) + (index + 1)
-		
+
 		$scope.refreshCounts = ->
 			$timeout ->
 				$('.watch-select option').each (index, el) ->
@@ -32,13 +32,19 @@ app = angular.module "Clients", ["ui.bootstrap"]
 			$.cookie("clients", JSON.stringify($scope.search), { expires: 365, path: '/' });
 			$scope.current_page = 1
 			$scope.getByPage($scope.current_page)
-		
+
+		$scope.sort = ->
+			if $scope.search.order is undefined   then $scope.search.order = 'asc'
+			else if $scope.search.order is 'asc'  then $scope.search.order = 'desc'
+			else if $scope.search.order is 'desc' then delete $scope.search.order
+			$scope.filter()
+
 		# Страница изменилась
 		$scope.pageChanged = ->
 			window.history.pushState {}, '', 'clients/?page=' + $scope.current_page if $scope.current_page > 1
 			# Получаем задачи, соответствующие странице и списку
 			$scope.getByPage($scope.current_page)
-		
+
 		$scope.getByPage = (page) ->
 			frontendLoadingStart()
 			$.post "clients/ajax/GetStudents",
@@ -50,13 +56,13 @@ app = angular.module "Clients", ["ui.bootstrap"]
 				$scope.$apply()
 				$scope.refreshCounts()
 			, "json"
-						 
+
 		angular.element(document).ready ->
 			set_scope "Clients"
 			$scope.search = if $.cookie("clients") then JSON.parse($.cookie("clients")) else {}
 			$scope.current_page = $scope.currentPage
 			$scope.pageChanged()
 			$(".single-select").selectpicker()
-			
+
 		$scope.to_students = true
 		$scope.to_representatives = false

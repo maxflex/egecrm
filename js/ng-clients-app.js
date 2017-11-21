@@ -48,6 +48,16 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
     $scope.current_page = 1;
     return $scope.getByPage($scope.current_page);
   };
+  $scope.sort = function() {
+    if ($scope.search.order === void 0) {
+      $scope.search.order = 'asc';
+    } else if ($scope.search.order === 'asc') {
+      $scope.search.order = 'desc';
+    } else if ($scope.search.order === 'desc') {
+      delete $scope.search.order;
+    }
+    return $scope.filter();
+  };
   $scope.pageChanged = function() {
     if ($scope.current_page > 1) {
       window.history.pushState({}, '', 'clients/?page=' + $scope.current_page);

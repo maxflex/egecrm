@@ -460,7 +460,7 @@
 		{
 			dbConnection()->query("TRUNCATE TABLE student_sums");
 
-			$prices = Price::get();
+			$prices = Prices::get();
 
 			foreach([2015, 2016, 2017] as $year) {
 				$query = dbConnection()->query("SELECT max(id) as id_contract, ci.id_student FROM contracts c
@@ -484,13 +484,11 @@
 
 						$price = $prices[$grade];
 						if ($contract->discount) {
-
+							$price = $price * ((100 - $contract->discount) * 0.01);
 						}
-
-						// $sum = $payment_sum - $returns_sum - ($lesson_count * $prices[$grade])
+						$sum = $payment_sum - $returns_sum - ($lesson_count * $price);
+						dbConnection()->query("INSERT INTO student_sums (id_student, year, sum) VALUES ({$row->id_student}, {$year}, {$sum})");
 					}
-
-					// $sum =
 				}
 			}
 		}
