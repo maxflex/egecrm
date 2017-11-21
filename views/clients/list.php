@@ -41,13 +41,7 @@
 						<td>
 						</td>
 						<td>
-							сумма договора
-						</td>
-						<td>
-							остаток по оплате
-						</td>
-						<td>
-							оплачено
+							оплаченная сумма
 						</td>
 						<td>
 							<span class="pointer" ng-click="sort()">депозит</span>
@@ -55,6 +49,12 @@
 								'fa-long-arrow-up': search.order == 'asc',
 								'fa-long-arrow-down': search.order == 'desc'
 							}" ng-show="search.order !== undefined"></i>
+						</td>
+						<td>
+							остаток по оплате
+						</td>
+						<td>
+							сумма договора
 						</td>
 					</tr>
 				</thead>
@@ -69,16 +69,16 @@
 						</a>
 					</td>
 					<td width="15%">
-						<span ng-show="Student.contract_sum">{{ Student.contract_sum | number }} руб.</span>
+						<span ng-show="Student.payment_sum">{{ Student.payment_sum | number }} руб.</span>
+					</td>
+					<td width="15%">
+						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
 					</td>
 					<td width="15%">
 						<span ng-show="Student.debt">{{ Student.debt | number }} руб.</span>
 					</td>
 					<td width="15%">
-						<span ng-show="Student.payment_sum">{{ Student.payment_sum | number }} руб.</span>
-					</td>
-					<td width="15%">
-						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
+						<span ng-show="Student.contract_sum">{{ Student.contract_sum | number }} руб.</span>
 					</td>
 				</tr>
 				<tr class="last-row">
@@ -86,16 +86,16 @@
 						<b>итого на странице</b>
 					</td>
 					<td>
-						<b>{{ totals.contract_sum | number }} руб.</b>
+						<b>{{ totals.payment_sum | number }} руб.</b>
+					</td>
+					<td>
+						<b>{{ totals.sum | number }} руб.</b>
 					</td>
 					<td>
 						<b>{{ totals.debt | number }} руб.</b>
 					</td>
 					<td>
-						<b>{{ totals.payment_sum | number }} руб.</b>
-					</td>
-					<td>
-						<b>{{ totals.sum | number }} руб.</b>
+						<b>{{ totals.contract_sum | number }} руб.</b>
 					</td>
 				</tr>
 			</table>
