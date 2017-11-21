@@ -601,7 +601,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
   };
 }).controller("ListCtrl", function($scope, $timeout, $http, PhoneService, Workplaces) {
   bindArguments($scope, arguments);
-  $scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') || 0;
+  $scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') || '';
   $scope.id_subject = localStorage.getItem('teachers_id_subject') || 0;
   $timeout(function() {
     $("#filter-branches").selectpicker({

@@ -526,7 +526,7 @@
 
 		.controller "ListCtrl", ($scope, $timeout, $http, PhoneService, Workplaces) ->
 			bindArguments $scope, arguments
-			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0
+			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or ''
 			$scope.id_subject = localStorage.getItem('teachers_id_subject') or 0
 
 			$timeout ->
