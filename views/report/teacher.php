@@ -49,7 +49,7 @@
                 </span>
             </div>
             <div ng-if='isReport(Visit)' class='link-padding'>
-				<i class="fa fa-paperclip" aria-hidden="true"></i>
+				<i class="fa fa-paperclip text-primary" aria-hidden="true"></i>
                 <a href="students/reports/view/{{ Visit.id }}" style='font-weight: bold'>Отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}</a>
             </div>
         </div>
