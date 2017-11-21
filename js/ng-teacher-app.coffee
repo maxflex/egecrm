@@ -524,7 +524,7 @@
 				if $scope.Reviews
 					_.uniq _.pluck ang_scope.Reviews, 'year'
 
-		.controller "ListCtrl", ($scope, $timeout, $http, PhoneService) ->
+		.controller "ListCtrl", ($scope, $timeout, $http, PhoneService, Workplaces) ->
 			bindArguments $scope, arguments
 			$scope.in_egecentr = localStorage.getItem('teachers_in_egecentr') or 0
 			$scope.id_subject = localStorage.getItem('teachers_id_subject') or 0
