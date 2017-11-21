@@ -981,7 +981,7 @@
 						$total_subject_cnt = $row->green_cnt + $row->yellow_cnt + $row->red_cnt;
 						if ($row->red_cnt == $total_subject_cnt) {
 							$row->status = 'red';
-						} else if ($row->yellow_cnt > 0 && $row->green_cnt = 0) {
+						} else if ($row->yellow_cnt > 0 && $row->green_cnt == 0) {
 							$row->status = 'yellow';
 						} else {
 							$row->status = 'none';
