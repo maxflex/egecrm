@@ -1,3 +1,4 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <div ng-app="Reports" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row mb">
 		<div class="col-sm-12">
@@ -48,6 +49,7 @@
                 </span>
             </div>
             <div ng-if='isReport(Visit)' class='link-padding'>
+				<i class="fa fa-paperclip" aria-hidden="true"></i>
                 <a href="students/reports/view/{{ Visit.id }}" style='font-weight: bold'>Отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}</a>
             </div>
         </div>
