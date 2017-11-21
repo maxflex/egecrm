@@ -633,14 +633,14 @@ app = angular.module("Teacher", ["ngMap"]).config([
     var branches, subjects;
     subjects = [$scope.id_subject];
     branches = [$scope.filter_branch];
-    return (!$scope.in_egecentr ? true : Teacher.in_egecentr === (parseInt($scope.in_egecentr) || 1)) && (!$scope.id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
+    return ($scope.in_egecentr === '' ? true : Teacher.in_egecentr === parseInt($scope.in_egecentr)) && (!$scope.id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
   };
   $scope.getCount = function(state, id_subject) {
     var branches, subjects;
     subjects = [id_subject];
     branches = [$scope.filter_branch];
     return _.filter($scope.Teachers, function(Teacher) {
-      return (!state ? true : Teacher.in_egecentr === (parseInt(state) || 1)) && (!id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
+      return (state === '' ? true : Teacher.in_egecentr === parseInt(state)) && (!id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
     }).length;
   };
   $scope.refreshCounts = function() {
