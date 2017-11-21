@@ -959,7 +959,11 @@
 
 
 			// получаем данные
-			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id), s.first_name, s.last_name, s.middle_name " . (! isBlank($search->year) ? ", ss.sum" : '') ));
+			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id),
+				(select count(*) from contract_subjects where id_contract=c.id and status=3) as green_cnt,
+				(select count(*) from contract_subjects where id_contract=c.id and status=2) as yellow_cnt,
+				(select count(*) from contract_subjects where id_contract=c.id and status=1) as red_cnt,
+				s.first_name, s.last_name, s.middle_name " . (! isBlank($search->year) ? ", ss.sum" : '') ));
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
             $data = [];
@@ -972,6 +976,16 @@
                         $row->debt = Student::getDebt($row->id);
 						$totals['debt'] += intval($row->debt);
 						$totals['sum']  += intval($row->sum);
+
+						// статус клиента
+						$total_subject_cnt = $row->green_cnt + $row->yellow_cnt + $row->red_cnt;
+						if ($row->red_cnt == $total_subject_cnt) {
+							$row->status = 'red';
+						} else if ($row->yellow_cnt > 0 && $row->green_cnt = 0) {
+							$row->status = 'yellow';
+						} else {
+							$row->status = 'none';
+						}
                         $data[] = $row;
                     }
                 }

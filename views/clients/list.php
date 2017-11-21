@@ -1,3 +1,4 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <div class="panel panel-primary" ng-app="Clients" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="panel-heading">Клиенты с договорами
 		<div class="pull-right">
@@ -30,7 +31,7 @@
 
 		<div style="position: relative">
 			<div id="frontend-loading" style="height: 100%"></div>
-			<table class="table table-hover border-reverse">
+			<table class="table small table-hover border-reverse">
 				<thead>
 					<tr>
 						<td>
@@ -40,16 +41,19 @@
 						</td>
 						<td>
 							<span class="pointer" ng-click="sort()">неосвоенная сумма</span>
-							<span class="pointer glyphicon" ng-class="{
-								'glyphicon-triangle-top': search.order == 'asc',
-								'glyphicon-triangle-bottom': search.order == 'desc'
-							}" ng-show="search.order !== undefined"></span>
+							<i class="fa" aria-hidden="true" ng-class="{
+								'fa-long-arrow-up': search.order == 'asc',
+								'fa-long-arrow-down': search.order == 'desc'
+							}" ng-show="search.order !== undefined"></i>
 						</td>
 					</tr>
 				</thead>
 				<tr ng-repeat="Student in Students">
 					<td>
-						{{getNumber($index)}}. <a href="student/{{Student.id}}">
+						{{getNumber($index)}}. <a href="student/{{Student.id}}" ng-class="{
+							'text-danger': Student.status == 'red',
+							'text-warning': Student.status == 'yellow',
+						}">
 							<span ng-show='Student.last_name'>{{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}</span>
 							<span ng-hide='Student.last_name'>имя не указано</span>
 						</a>
@@ -61,7 +65,7 @@
 						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
 					</td>
 				</tr>
-				<tr>
+				<tr class="last-row">
 					<td>
 						<b>итого на странице</b>
 					</td>
@@ -90,5 +94,8 @@
     font-weight: bold;
     text-transform: uppercase;
     color: #ddd;
+}
+tr.last-row td {
+	border-bottom: none !important;
 }
 </style>
