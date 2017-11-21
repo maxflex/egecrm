@@ -501,7 +501,7 @@
 							limit 1
 						");
 						if ($contract_test_sum->num_rows) {
-							$sum -= $contract_test_sum->fetch_object()->sum;
+							$sum -= $contract_test_sum->fetch_object()->s;
 						}
 
 						dbConnection()->query("INSERT INTO student_sums (id_student, year, sum) VALUES ({$row->id_student}, {$year}, {$sum})");
