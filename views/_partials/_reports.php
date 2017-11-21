@@ -2,11 +2,12 @@
 	<tr ng-repeat="Report in Reports">
 		<td style='width: 12%'>
 			<a ng-if='Report.id' href="reports/edit/{{Report.id}}">Отчёт №{{Report.id}}</a>
-			<span class="link-like-nocolor {{Report.force_noreport ? 'text-gray' : 'text-danger'}}"
-				ng-show="Report.lesson_count >= <?= Report::LESSON_COUNT ?> && !Report.id"
-				ng-click="forceNoreport(Report)"
-			>
-				{{Report.force_noreport ? 'отчет не требуется' : 'требуется отчет' }}
+			<span ng-show="!Report.id">
+				<span ng-show="!Report.force_noreport">
+					<span class="link-like-nocolor text-gray" ng-show="Report.lesson_count < <?= Report::LESSON_COUNT ?>" ng-click="forceNoreport(Report)">мало занятий</span>
+					<span class="link-like-nocolor text-danger" ng-show="Report.lesson_count >= <?= Report::LESSON_COUNT ?>" ng-click="forceNoreport(Report)">требуется отчет</span>
+				</span>
+				<span ng-show="!Report.force_noreport" class="link-like-nocolor text-gray" ng-click="forceNoreport(Report)">отчет не требуется</span>
 			</span>
 		</td>
 		<td style="width: 25%" ng-init="_Teacher = (Report.Teacher || Teacher)">
