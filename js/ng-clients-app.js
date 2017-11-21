@@ -72,6 +72,7 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
       frontendLoadingEnd();
       $scope.Students = response.data;
       $scope.counts = response.counts;
+      $scope.totals = response.totals;
       $scope.$apply();
       return $scope.refreshCounts();
     }, "json");

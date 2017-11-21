@@ -53,6 +53,7 @@ app = angular.module "Clients", ["ui.bootstrap"]
 				frontendLoadingEnd()
 				$scope.Students  = response.data
 				$scope.counts = response.counts
+				$scope.totals = response.totals
 				$scope.$apply()
 				$scope.refreshCounts()
 			, "json"

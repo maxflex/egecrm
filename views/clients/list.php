@@ -39,8 +39,8 @@
 							дебет
 						</td>
 						<td>
-							<span class="link-like" ng-click="sort()">неосвоенная сумма</span>
-							<span class="glyphicon text-primary small" ng-class="{
+							<span class="pointer" ng-click="sort()">неосвоенная сумма</span>
+							<span class="pointer glyphicon" ng-class="{
 								'glyphicon-triangle-top': search.order == 'asc',
 								'glyphicon-triangle-bottom': search.order == 'desc'
 							}" ng-show="search.order !== undefined"></span>
@@ -54,29 +54,26 @@
 							<span ng-hide='Student.last_name'>имя не указано</span>
 						</a>
 					</td>
-					<td width="15%">
+					<td width="20%">
 						<span ng-show="Student.debt">{{ Student.debt | number }} руб.</span>
 					</td>
-					<td width="15%">
+					<td width="20%">
 						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<b>итого на странице</b>
+					</td>
+					<td>
+						<b>{{ totals.debt | number }} руб.</b>
+					</td>
+					<td>
+						<b>{{ totals.sum | number }} руб.</b>
 					</td>
 				</tr>
 			</table>
 		</div>
-
-		<pagination
-			ng-show='(Students && Students.length) && (counts.all > <?= Student::PER_PAGE ?>)'
-			ng-model="current_page"
-			ng-change="pageChanged()"
-			total-items="counts.all"
-			max-size="10"
-			items-per-page="<?= Student::PER_PAGE ?>"
-			first-text="«"
-			last-text="»"
-			previous-text="«"
-			next-text="»"
-		>
-		</pagination>
 
 
 		<div ng-show="Students === undefined" style="padding: 100px" class="small half-black center">
@@ -88,3 +85,10 @@
 	</div>
 	<sms templates="full" mode="client" mass="1" counts="counts.all"></sms>
 </div>
+<style>
+.table thead {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #ddd;
+}
+</style>

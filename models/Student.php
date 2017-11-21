@@ -14,7 +14,7 @@
 		// тип маркера
 		const MARKER_OWNER 	= "STUDENT";
 		const USER_TYPE		= "STUDENT";
-		const PER_PAGE		= 30;
+		const PER_PAGE		= 99999;
 
         const UPLOAD_DIR = 'img/students/';
         const NO_PHOTO   = 'no-profile-img.gif';
@@ -963,12 +963,15 @@
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
             $data = [];
+			$totals = ['debt' => 0, 'sum' => 0];
             if ($result->num_rows) {
                 while ($row = $result->fetch_object()) {
                     if ($page == -1) {
                         $data[] = $row->id;
                     } else {
                         $row->debt = Student::getDebt($row->id);
+						$totals['debt'] += intval($row->debt);
+						$totals['sum']  += intval($row->sum);
                         $data[] = $row;
                     }
                 }
@@ -994,6 +997,7 @@
 			return [
 				'data' 	=> $data,
 				'counts' => $counts,
+				'totals' => $totals,
 			];
 		}
 
