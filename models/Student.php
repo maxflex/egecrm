@@ -961,6 +961,9 @@
 			// получаем данные
 			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id),
 				c.sum as contract_sum,
+				(select ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0)" .
+                "from payments p " .
+                "where p.entity_type = '" . Student::USER_TYPE . "' and p.entity_id = s.id " . (! isBlank($search->year) ? "and p.year={$search->year}" : '') . ") as payment_sum,
 				(select count(*) from contract_subjects where id_contract=c.id and status=3) as green_cnt,
 				(select count(*) from contract_subjects where id_contract=c.id and status=2) as yellow_cnt,
 				(select count(*) from contract_subjects where id_contract=c.id and status=1) as red_cnt,
@@ -968,7 +971,7 @@
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
             $data = [];
-			$totals = ['debt' => 0, 'sum' => 0, 'contract_sum' => 0];
+			$totals = ['debt' => 0, 'sum' => 0, 'contract_sum' => 0, 'payment_sum' => 0];
             if ($result->num_rows) {
                 while ($row = $result->fetch_object()) {
                     if ($page == -1) {
@@ -979,6 +982,7 @@
 						$totals['debt'] += intval($row->debt);
 						$totals['sum']  += intval($row->sum);
 						$totals['contract_sum']  += intval($row->contract_sum);
+						$totals['payment_sum']  += intval($row->payment_sum);
 
 						// статус клиента
 						$total_subject_cnt = $row->green_cnt + $row->yellow_cnt + $row->red_cnt;
@@ -1045,7 +1049,7 @@
 				. ($search->status == 'green' ? 'having green_cnt > 0' : '')
 				. " ORDER BY " . ((isset($search->order) && !isBlank($search->year)) ? " ss.sum {$search->order}, " : "") . " s.last_name, s.first_name, s.middle_name
 			";
-			//exit("SELECT " . $select . $main_query);
+			// exit("SELECT " . $select . $main_query);
 			return "SELECT " . $select . $main_query;
 		}
 

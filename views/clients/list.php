@@ -44,10 +44,13 @@
 							сумма договора
 						</td>
 						<td>
-							дебет
+							остаток по оплате
 						</td>
 						<td>
-							<span class="pointer" ng-click="sort()">неосвоенная сумма</span>
+							оплачено
+						</td>
+						<td>
+							<span class="pointer" ng-click="sort()">депозит</span>
 							<i class="fa" aria-hidden="true" ng-class="{
 								'fa-long-arrow-up': search.order == 'asc',
 								'fa-long-arrow-down': search.order == 'desc'
@@ -72,6 +75,9 @@
 						<span ng-show="Student.debt">{{ Student.debt | number }} руб.</span>
 					</td>
 					<td width="15%">
+						<span ng-show="Student.payment_sum">{{ Student.payment_sum | number }} руб.</span>
+					</td>
+					<td width="15%">
 						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
 					</td>
 				</tr>
@@ -84,6 +90,9 @@
 					</td>
 					<td>
 						<b>{{ totals.debt | number }} руб.</b>
+					</td>
+					<td>
+						<b>{{ totals.payment_sum | number }} руб.</b>
 					</td>
 					<td>
 						<b>{{ totals.sum | number }} руб.</b>
