@@ -1036,7 +1036,7 @@
             // @have-to-refactor c.id_student – depricated @refactored
 			$main_query = "
 				FROM students s " .
-                "  JOIN contract_info ci ON (ci.id_student = s.id" . (! isBlank($search->year) ? " AND ci.year = {$search->year}" : '') . ")" .
+                "  JOIN (select max(id_contract) as id_contract, id_student, year, grade from contract_info group by id_student, grade, year) ci ON (ci.id_student = s.id" . (! isBlank($search->year) ? " AND ci.year = {$search->year}" : '') . ")" .
 				( ! isBlank($search->error) && $search->error == 0 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension = '' " : "") .
 				( ! isBlank($search->error) && $search->error == 1 ? " JOIN users u ON u.id_entity = s.id AND type = 'STUDENT' AND u.photo_extension <> '' AND u.has_photo_cropped = 0 " : "") . "
 				JOIN contracts c ON (c.id_contract = ci.id_contract AND c.current_version = 1)
