@@ -15,9 +15,9 @@
 				<div class="row filters" style="margin-bottom: 20px">
 					<div class="col-sm-4">
 						<select id='state-select' class="form-control" ng-model='in_egecentr' ng-change='changeState()'>
-							<option value=""  data-subtext="{{ getCount(0, id_subject) }}">все</option>
+							<option value=""  data-subtext="{{ getCount(0, id_subject) }}">не активен в система</option>
 							<option disabled>──────────────</option>
-							<option ng-repeat="(id, label) in Workplaces" value='{{ id }}' data-subtext="{{ getCount(id, id_subject) }}">{{ label }}</option>
+							<option ng-repeat="(id, label) in Workplaces" ng-hide="id == 0" value='{{ id }}' data-subtext="{{ getCount(id, id_subject) }}">{{ label }}</option>
 							<!-- <option value='1' data-subtext="{{ getCount(1, id_subject) }}">{{ Workplaces[0] }}</option>
 							<option value='2' data-subtext="{{ getCount(2, id_subject) }}">ведет занятия в ЕГЭ-Центре</option>
 							<option value='3' data-subtext="{{ getCount(3, id_subject) }}">ранее работал в ЕГЭ-Центре</option> -->
