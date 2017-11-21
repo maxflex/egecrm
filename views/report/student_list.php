@@ -37,6 +37,7 @@
                 </td>
 				<td style="width: 10%">
 					<span ng-show="d.reports_count">
+						<i class="fa fa-paperclip" aria-hidden="true"></i>
                         {{ d.reports_count }}
                         <ng-pluralize count="d.reports_count" when="{
 							'one': 'отчет',
