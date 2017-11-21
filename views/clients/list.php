@@ -27,6 +27,14 @@
 					<option value="3"  data-subtext="{{ counts.error[3] || '' }}">экстернат</option>
 				</select>
 	        </div>
+			<div class="col-sm-2">
+				<select class="watch-select single-select form-control" ng-model="search.status" ng-change='filter()'>
+					<option value=""  data-subtext="{{ counts.status[''] || '' }}">все</option>
+					<option disabled>───────</option>
+					<option value="yellow"  data-subtext="{{ counts.status['yellow'] || '' }}">к расторжению</option>
+					<option value="red"  data-subtext="{{ counts.status['red'] || '' }}">расторгнут</option>
+				</select>
+	        </div>
 		</div>
 
 		<div style="position: relative">
@@ -35,6 +43,9 @@
 				<thead>
 					<tr>
 						<td>
+						</td>
+						<td>
+							сумма договора
 						</td>
 						<td>
 							дебет
@@ -58,16 +69,22 @@
 							<span ng-hide='Student.last_name'>имя не указано</span>
 						</a>
 					</td>
-					<td width="20%">
+					<td width="15%">
+						<span ng-show="Student.contract_sum">{{ Student.contract_sum | number }} руб.</span>
+					</td>
+					<td width="15%">
 						<span ng-show="Student.debt">{{ Student.debt | number }} руб.</span>
 					</td>
-					<td width="20%">
+					<td width="15%">
 						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
 					</td>
 				</tr>
 				<tr class="last-row">
 					<td>
 						<b>итого на странице</b>
+					</td>
+					<td>
+						<b>{{ totals.contract_sum | number }} руб.</b>
 					</td>
 					<td>
 						<b>{{ totals.debt | number }} руб.</b>

@@ -960,6 +960,7 @@
 
 			// получаем данные
 			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id),
+				c.sum as contract_sum,
 				(select count(*) from contract_subjects where id_contract=c.id and status=3) as green_cnt,
 				(select count(*) from contract_subjects where id_contract=c.id and status=2) as yellow_cnt,
 				(select count(*) from contract_subjects where id_contract=c.id and status=1) as red_cnt,
@@ -967,7 +968,7 @@
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
             $data = [];
-			$totals = ['debt' => 0, 'sum' => 0];
+			$totals = ['debt' => 0, 'sum' => 0, 'contract_sum' => 0];
             if ($result->num_rows) {
                 while ($row = $result->fetch_object()) {
                     if ($page == -1) {
@@ -976,6 +977,7 @@
                         $row->debt = Student::getDebt($row->id);
 						$totals['debt'] += intval($row->debt);
 						$totals['sum']  += intval($row->sum);
+						$totals['contract_sum']  += intval($row->contract_sum);
 
 						// статус клиента
 						$total_subject_cnt = $row->green_cnt + $row->yellow_cnt + $row->red_cnt;
@@ -991,26 +993,26 @@
                 }
             }
 
-			if ($page > 0) {
-				// counts
-				$counts['all'] = static::_count($search);
-
-				foreach(array_merge([""], Years::$all) as $year) {
-					$new_search = clone $search;
-					$new_search->year = $year;
-					$counts['year'][$year] = static::_count($new_search);
-				}
-
-				foreach(array_merge([''], range(0,3)) as $error) {
-					$new_search = clone $search;
-					$new_search->error = $error;
-					$counts['error'][$error] = static::_count($new_search);
-				}
-			}
+			// if ($page > 0) {
+			// 	// counts
+			// 	$counts['all'] = static::_count($search);
+			//
+			// 	foreach(array_merge([""], Years::$all) as $year) {
+			// 		$new_search = clone $search;
+			// 		$new_search->year = $year;
+			// 		$counts['year'][$year] = static::_count($new_search);
+			// 	}
+			//
+			// 	foreach(array_merge([''], range(0,3)) as $error) {
+			// 		$new_search = clone $search;
+			// 		$new_search->error = $error;
+			// 		$counts['error'][$error] = static::_count($new_search);
+			// 	}
+			// }
 
 			return [
 				'data' 	=> $data,
-				'counts' => $counts,
+			//	'counts' => $counts,
 				'totals' => $totals,
 			];
 		}
@@ -1037,8 +1039,11 @@
 				WHERE true "
 				. (!isBlank($search->error) && $search->error == 2 ? " AND NOT EXISTS (SELECT 1 FROM freetime f WHERE f.id_entity = s.id AND f.type_entity = '".Student::USER_TYPE."')" : "")
 				. (!isBlank($search->error) && $search->error == 3 ? " AND ci.grade = " . Grades::EXTERNAL : "")
+				. ($search->status == 'red' ? 'having red_cnt = (red_cnt + yellow_cnt + green_cnt)' : '')
+				. ($search->status == 'yellow' ? 'having (yellow_cnt > 0 and green_cnt = 0)' : '')
 				. " ORDER BY " . ((isset($search->order) && !isBlank($search->year)) ? " ss.sum {$search->order}, " : "") . " s.last_name, s.first_name, s.middle_name
 			";
+			//exit("SELECT " . $select . $main_query);
 			return "SELECT " . $select . $main_query;
 		}
 
