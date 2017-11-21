@@ -64,7 +64,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
     var to_be_paid;
     to_be_paid = 0;
     $scope.Data.forEach(function(d) {
-      return to_be_paid += d.real_sum - d.payment_sum - d.ndfl;
+      return to_be_paid += d.real_sum - d.payment_sum;
     });
     return to_be_paid.toFixed(2);
   };

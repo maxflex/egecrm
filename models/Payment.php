@@ -211,13 +211,11 @@
 
         public static function tobePaid($entity_id, $entity_type)
         {
-            $tobe_paid = self::dbConnection()->query("select ".
+			return self::dbConnection()->query("select ".
                 "(select ifnull(sum(v.teacher_price), 0) from visit_journal v where v.id_entity = {$entity_id} and year=" . academicYear() . " and v.type_entity = '{$entity_type}') " .
                 " - " .
                 "(select ifnull(sum(if(p.id_type = 1, p.sum, -1*p.sum)), 0) from payments p where p.entity_id = {$entity_id} and year=" . academicYear() . " and p.entity_type = '{$entity_type}') " .
                 "as tobe_paid"
             )->fetch_object()->tobe_paid;
-            $tobe_paid -= dbConnection()->query("select sum(ndfl) as s from visit_journal where type_entity='{$entity_type}' and id_entity={$entity_id} and year=" . academicYear())->fetch_object()->s;
-            return $tobe_paid;
         }
     }

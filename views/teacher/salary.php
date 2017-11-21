@@ -53,13 +53,10 @@
 							<span ng-hide="!d.sum_official">{{ (d.sum_official).toFixed(2) | number}}</span>
 						</td>
 						<td class="center">
-							<span ng-hide="!d.ndfl">{{ (d.ndfl).toFixed(2) | number}}</span>
-						</td>
-						<td class="center">
 							<span ng-hide="!d.payment_sum">{{d.payment_sum | number}}</span>
 						</td>
 						<td class="center">
-							<span ng-hide="(d.real_sum - d.payment_sum - d.ndfl) == 0">{{ (d.real_sum - d.payment_sum - d.ndfl).toFixed(2) | number }}</span>
+							<span ng-hide="(d.real_sum - d.payment_sum) == 0">{{ (d.real_sum - d.payment_sum).toFixed(2) | number }}</span>
 						</td>
 					</tr>
 
@@ -75,9 +72,6 @@
 						</td>
 						<td class="center">
 							<b>{{ total_sum_official.toFixed(2) | number}}</b>
-						</td>
-						<td class="center">
-							<b>{{ total_ndfl.toFixed(2) | number}}</b>
 						</td>
 						<td class="center">
 							<b>{{total_payment_sum | number}}</b>

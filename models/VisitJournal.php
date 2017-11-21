@@ -112,7 +112,6 @@
 				"teacher_price"			=> $Group->teacher_price,
 				"teacher_price_official"=> $Group->teacher_price_official,
 				"insurance"             => round($Group->teacher_price_official * 0.302, 2),
-				"ndfl"                  => round($Group->teacher_price_official * 0.13, 2),
 				"id_user_saved"			=> User::fromSession()->id,
 				"grade"					=> $Group->grade,
 				"duration"				=> $Group->duration,
