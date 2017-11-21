@@ -48,7 +48,7 @@
                 </span>
             </div>
             <div ng-if='isReport(Visit)' class='link-padding'>
-                <a href="students/reports/view/{{ Visit.id }}">отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}</a>
+                <a href="students/reports/view/{{ Visit.id }}" style='font-weight: bold'>Отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}</a>
             </div>
         </div>
     </div>
