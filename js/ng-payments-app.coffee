@@ -10,10 +10,15 @@ app = angular.module "Payments", ["ui.bootstrap"]
         $scope.setYear = (year) ->
             $scope.selected_year = year
 
-        $scope.daySum = (date, items) ->
-            sum = 0
-            items.forEach (item) -> sum += item.sum
-            sum
+        $scope.totalSum = (date) ->
+            total_sum = 0
+            $.each $scope.Lessons[$scope.selected_year], (d, items) ->
+                return if d > date
+                day_sum = 0
+                items.forEach (item) -> day_sum += item.sum
+                day_sum
+                total_sum += day_sum
+            total_sum
 
         angular.element(document).ready ->
             bootbox.prompt {
