@@ -654,7 +654,7 @@
 
 			foreach($additional_payments as $payment) {
 				$items[$payment->date][] = [
-					'sum' 		=> intval($payment->sum) * -1,
+					'sum' 		=> $payment->sum,
 					'comment' 	=> $payment->purpose
 				];
 			}
