@@ -631,7 +631,7 @@
 					$groups[$lesson->id_group] = $group;
 				}
 				$group = $groups[$lesson->id_group];
-				$items[$lesson->lesson_date][] = [
+				$items[$lesson->year][$lesson->lesson_date][] = [
 					'sum' 		=> $lesson->teacher_price,
 					'comment'	=> "занятие в группе {$lesson->id_group} (" . mb_strtolower(Subjects::$full[$group->id_subject]) . " " . Grades::$all[$group->grade] . ")" . " " . date("j", strtotime($lesson->lesson_date)) . " " . russian_month(date("n", strtotime($lesson->lesson_date))) . " " . date("Y", strtotime($lesson->lesson_date)) . ", кабинет " . $group->cabinet['label']
 				];
@@ -643,7 +643,7 @@
 			]);
 
 			foreach($payments as $payment) {
-				$items[fromDotDate($payment->date)][] = [
+				$items[$payment->year][fromDotDate($payment->date)][] = [
 					'sum' 		=> intval($payment->sum) * -1,
 					'comment' 	=> Payment::$all[$payment->id_status]
 				];
@@ -653,21 +653,20 @@
 			$additional_payments = TeacherAdditionalPayment::get($id_teacher);
 
 			foreach($additional_payments as $payment) {
-				$items[fromDotDate($payment->date)][] = [
+				$items[date('Y', strtotime($payment->date))][fromDotDate($payment->date)][] = [
 					'sum' 		=> $payment->sum,
 					'comment' 	=> $payment->purpose
 				];
 			}
 
 			ksort($items);
-            $items = array_reverse($items);
+            $items = array_reverse($items, true);
 
-			// группировка по годам
-			$return = [];
-			foreach($items as $date => $payments) {
-				$return[date('Y', strtotime($date))][$date] = $payments;
+			foreach($items as $year => $data) {
+				ksort($items[$year]);
+				$items[$year] = array_reverse($items[$year], true);
 			}
 
-			return $return;
+			return $items;
 		}
     }
