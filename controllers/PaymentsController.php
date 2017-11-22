@@ -43,6 +43,7 @@
 				"Branches" => Branches::getAll(),
 				"payment_statuses"	=> Payment::$all,
                 'payment_types'		=> PaymentTypes::$all,
+				"id_teacher" => User::fromSession()->id_entity
 			]);
 
 			$this->render("lk_teacher", [
@@ -130,10 +131,13 @@
 		public function actionAjaxLkTeacher()
 		{
             $id_teacher = User::fromSession()->id_entity;
-            $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['payments']);
-            returnJsonAng([
-                'Lessons' => $Lessons,
-            ]);
+			$payments = Teacher::getPayments($id_teacher);
+			$years = array_reverse(array_keys($payments));
+			returnJsonAng([
+				'Lessons' => $payments,
+				'years' => $years,
+				'selected_year' => end($years)
+			]);
 		}
 
 		public function actionAjaxNewDocumentNumber()

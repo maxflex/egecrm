@@ -78,7 +78,17 @@ app = angular.module("Teacher", ["ngMap"]).config([
   $scope.yearLabel = function(year) {
     return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };
-  menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars'];
+  $scope.setYear = function(year) {
+    return $scope.selected_year = year;
+  };
+  $scope.addAdditionalPaymentDialog = function() {
+    $scope.new_additional_payment = {
+      id_teacher: $scope.Teacher.id,
+      date: moment().format('DD.MM.YYYY')
+    };
+    return lightBoxShow('additional-payment');
+  };
+  menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars', 'TeacherAdditionalPayments'];
   $scope.setMenu = function(menu, complex_data) {
     $.each(menus, function(index, value) {
       return _loadData(index, menu, value, complex_data);
@@ -104,6 +114,14 @@ app = angular.module("Teacher", ["ngMap"]).config([
         return $scope.$apply();
       }, "json");
     }
+  };
+  $scope.daySum = function(items) {
+    var sum;
+    sum = 0;
+    items.forEach(function(item) {
+      return sum += item.sum;
+    });
+    return sum;
   };
   $scope.yearDifference = function(year) {
     return moment().format("YYYY") - year;
@@ -242,6 +260,10 @@ app = angular.module("Teacher", ["ngMap"]).config([
     loadMutualAccounts($scope.new_payment.id_status);
     return lightBoxShow('addpayment');
   };
+  $scope.editPaymentAdditional = function(payment) {
+    $scope.new_additional_payment = angular.copy(payment);
+    return lightBoxShow('additional-payment');
+  };
   $scope.$watch('new_payment.id_status', function(newVal, oldVal) {
     return loadMutualAccounts(newVal);
   });
@@ -297,6 +319,32 @@ app = angular.module("Teacher", ["ngMap"]).config([
         return e.preventDefault();
       }
     });
+  };
+  $scope.addAdditionalPayment = function() {
+    if ($scope.new_additional_payment.id) {
+      ajaxStart();
+      return $.post('ajax/PaymentAdditionalEdit', $scope.new_additional_payment, function(response) {
+        angular.forEach($scope.TeacherAdditionalPayments, function(payment, i) {
+          if (payment.id === $scope.new_additional_payment.id) {
+            $scope.TeacherAdditionalPayments[i] = $scope.new_additional_payment;
+            return $scope.$apply();
+          }
+        });
+        ajaxEnd();
+        return lightBoxHide();
+      });
+    } else {
+      ajaxStart();
+      return $.post('ajax/PaymentAdditionalAdd', $scope.new_additional_payment, function(response) {
+        if (!$.isArray($scope.TeacherAdditionalPayments)) {
+          $scope.TeacherAdditionalPayments = [];
+        }
+        $scope.TeacherAdditionalPayments.push(response);
+        $scope.$apply();
+        ajaxEnd();
+        return lightBoxHide();
+      }, 'json');
+    }
   };
   $scope.addPayment = function() {
     var payment_card, payment_card_first_number, payment_category, payment_date, payment_select, payment_sum, payment_type, payment_year;
@@ -408,6 +456,22 @@ app = angular.module("Teacher", ["ngMap"]).config([
       return;
     }
     return deletePayment(payment);
+  };
+  $scope.deletePaymentAdditional = function(index, payment) {
+    return bootbox.confirm('Вы уверены, что хотите удалить доп. услугу?', function(result) {
+      if (result === true) {
+        return $.post('ajax/deletePaymentAdditional', {
+          'id_payment': payment.id
+        }, function() {
+          $scope.TeacherAdditionalPayments = _.without($scope.TeacherAdditionalPayments, _.findWhere($scope.TeacherAdditionalPayments, {
+            id: payment.id
+          }));
+          return $timeout(function() {
+            return $scope.$apply();
+          });
+        });
+      }
+    });
   };
   $scope.formatDateMonthName = function(date, full_year) {
     return moment(date).format("D MMMM YY" + (full_year ? 'YY' : ''));

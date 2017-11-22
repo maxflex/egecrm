@@ -609,4 +609,65 @@
 				return 0;
 			}
         }
+
+		// получить платежи преподавателя
+		public static function getPayments($id_teacher)
+		{
+			$items = [];
+
+			// кешируем группы
+			$groups = [];
+
+			/* начисления за проведенные занятия */
+			$lessons = VisitJournal::findAll([
+                "condition" => "id_entity=$id_teacher AND type_entity='TEACHER'"
+            ]);
+
+			foreach($lessons as $lesson) {
+				if (! isset($groups[$lesson->id_group])) {
+					$group = dbConnection()->query("select * from groups where id={$lesson->id_group}")->fetch_object();
+					$group->cabinet_ids = Group::getCabinetIds($group->id);
+					$group->cabinet = Cabinet::getBlock($group->cabinet_ids[0]);
+					$groups[$lesson->id_group] = $group;
+				}
+				$group = $groups[$lesson->id_group];
+				$items[$lesson->lesson_date][] = [
+					'sum' 		=> $lesson->teacher_price,
+					'comment'	=> "занятие в группе {$lesson->id_group} (" . mb_strtolower(Subjects::$full[$group->id_subject]) . " " . Grades::$all[$group->grade] . ")" . " " . date("j", strtotime($lesson->lesson_date)) . " " . russian_month(date("n", strtotime($lesson->lesson_date))) . " " . date("Y", strtotime($lesson->lesson_date)) . ", кабинет " . $group->cabinet['label']
+				];
+			}
+
+			/* платежи */
+			$payments = Payment::findAll([
+				"condition" => "entity_id={$id_teacher} and entity_type='" . Teacher::USER_TYPE . "' "
+			]);
+
+			foreach($payments as $payment) {
+				$items[fromDotDate($payment->date)][] = [
+					'sum' 		=> intval($payment->sum) * -1,
+					'comment' 	=> Payment::$all[$payment->id_status]
+				];
+			}
+
+			/* доп услуги */
+			$additional_payments = TeacherAdditionalPayment::get($id_teacher);
+
+			foreach($additional_payments as $payment) {
+				$items[$payment->date][] = [
+					'sum' 		=> intval($payment->sum) * -1,
+					'comment' 	=> $payment->purpose
+				];
+			}
+
+			ksort($items);
+            $items = array_reverse($items);
+
+			// группировка по годам
+			$return = [];
+			foreach($items as $date => $payments) {
+				$return[date('Y', strtotime($date))][$date] = $payments;
+			}
+
+			return $return;
+		}
     }

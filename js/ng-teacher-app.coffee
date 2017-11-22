@@ -61,7 +61,16 @@
 			$scope.yearLabel = (year) ->
 				year + '-' + (parseInt(year) + 1) + ' уч. г.'
 
-			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars']
+			$scope.setYear = (year) ->
+				$scope.selected_year = year
+
+			$scope.addAdditionalPaymentDialog = ->
+				$scope.new_additional_payment =
+					id_teacher: $scope.Teacher.id
+					date: moment().format('DD.MM.YYYY')
+				lightBoxShow('additional-payment')
+
+			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars', 'TeacherAdditionalPayments']
 
 			$scope.setMenu = (menu, complex_data) ->
 				$.each menus, (index, value) ->
@@ -82,6 +91,11 @@
 							$scope[ngModel] = response
 						$scope.$apply()
 					, "json"
+
+			$scope.daySum = (items) ->
+				sum = 0
+				items.forEach (item) -> sum += item.sum
+				sum
 
 			$scope.yearDifference = (year) ->
 				moment().format("YYYY") - year
@@ -194,6 +208,10 @@
 				loadMutualAccounts($scope.new_payment.id_status)
 				lightBoxShow 'addpayment'
 
+			$scope.editPaymentAdditional = (payment) ->
+				$scope.new_additional_payment = angular.copy payment
+				lightBoxShow 'additional-payment'
+
 			$scope.$watch 'new_payment.id_status', (newVal, oldVal) -> loadMutualAccounts(newVal)
 
 			loadMutualAccounts = (id_status) ->
@@ -239,6 +257,27 @@
 
 										$scope.addPayment()
 						e.preventDefault()
+
+			# Добавить платеж
+			$scope.addAdditionalPayment = ->
+				if $scope.new_additional_payment.id
+					ajaxStart()
+					$.post 'ajax/PaymentAdditionalEdit', $scope.new_additional_payment, (response) ->
+						angular.forEach $scope.TeacherAdditionalPayments, (payment, i) ->
+							if payment.id == $scope.new_additional_payment.id
+								$scope.TeacherAdditionalPayments[i] = $scope.new_additional_payment
+								$scope.$apply()
+						ajaxEnd()
+						lightBoxHide()
+				else
+					ajaxStart()
+					$.post 'ajax/PaymentAdditionalAdd', $scope.new_additional_payment, (response) ->
+						$scope.TeacherAdditionalPayments = [] if not $.isArray($scope.TeacherAdditionalPayments)
+						$scope.TeacherAdditionalPayments.push response
+						$scope.$apply()
+						ajaxEnd()
+						lightBoxHide()
+					, 'json'
 
 			# Добавить платеж
 			$scope.addPayment = ->
@@ -347,6 +386,14 @@
 			$scope.deletePayment = (index, payment) ->
                 return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
                 deletePayment payment
+
+            # Удалить платеж
+			$scope.deletePaymentAdditional = (index, payment) ->
+				bootbox.confirm 'Вы уверены, что хотите удалить доп. услугу?', (result) ->
+					if result is true
+						$.post 'ajax/deletePaymentAdditional', 'id_payment': payment.id, ->
+							$scope.TeacherAdditionalPayments = _.without($scope.TeacherAdditionalPayments, _.findWhere($scope.TeacherAdditionalPayments, {id: payment.id}))
+							$timeout -> $scope.$apply()
 
 			$scope.formatDateMonthName = (date, full_year) ->
 				moment(date).format "D MMMM YY" + (if full_year then 'YY' else '')

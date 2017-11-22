@@ -1885,6 +1885,12 @@ h4.row-header {
 	top: 10%;
 }
 
+.lightbox-additional-payment {
+	width: 300px;
+	left: calc(50% - 150px);
+	top: 20%;
+}
+
 .lightbox-sms {
 	width: 80%;
     left: 10%;
@@ -3597,4 +3603,27 @@ mwl-calendar .cal-day-today span[data-cal-date] {
 
 td.extra-padding {
 	padding-top: 30px !important;
+}
+
+
+.table.balance > tbody + tbody {
+	border-top: none !important;
+}
+.table.balance tr td {
+	font-size: 12px;
+}
+.table.balance tr td {
+	border-bottom: none !important;
+}
+.table.balance tr.last-date td {
+	border-bottom: 1px solid #ddd !important;
+}
+
+.table {
+	&.reverse-borders {
+		& > tbody > tr > td {
+			border-top: none;
+			border-bottom: 1px solid #ddd;
+		}
+	}
 }

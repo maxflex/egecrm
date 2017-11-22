@@ -4,42 +4,16 @@ app = angular.module "Payments", ["ui.bootstrap"]
             if items
                 items.slice().reverse()
     .controller "LkTeacherCtrl", ($scope, $http) ->
-        $scope.lessonsTotalSum = ->
-            lessons_sum = 0
-            if $scope.Lessons
-                $.each $scope.Lessons, (index, value) ->
-                    lessons_sum += parseInt(value.teacher_price)
-            lessons_sum
+        $scope.yearLabel = (year) ->
+            year + '-' + (parseInt(year) + 1) + ' уч. г.'
 
-        $scope.lessonsTotalPaid = (from_lessons)->
-            payments_sum = 0
-            if from_lessons and $scope.Lessons
-                $.each $scope.Lessons, (index, lesson) ->
-                    payments_sum += parseInt(payment.sum) for payment in lesson.payments
-            else
-	            if $scope.payments
-	                $.each $scope.payments, (index, value) ->
-	                    payments_sum += parseInt(value.sum)
-            return payments_sum
+        $scope.setYear = (year) ->
+            $scope.selected_year = year
 
-        # солько нужно выплатить репетитору
-        $scope.toBePaid = (from_lessons)->
-            return if not ($scope.Lessons and $scope.Lessons.length)
-            lessons_sum  = $scope.lessonsTotalSum()
-            payments_sum = $scope.lessonsTotalPaid(from_lessons)
-            parseFloat(lessons_sum - payments_sum).toFixed(2)
-
-        $scope.dateFromCustomFormat = (date) ->
-            date = date.split "."
-            date = date.reverse()
-            date = date.join "-"
-            D = new Date(date)
-            moment(D).format "D MMMM YYYY"
-        $scope.formatDate = (date) ->
-            moment(date).format("D MMMM YYYY")
-
-        $scope.formatTime = (time) ->
-            return time.substr(0, 5)
+        $scope.daySum = (items) ->
+            sum = 0
+            items.forEach (item) -> sum += item.sum
+            sum
 
         angular.element(document).ready ->
             bootbox.prompt {
@@ -56,6 +30,8 @@ app = angular.module "Payments", ["ui.bootstrap"]
                                 $scope.password_correct = true;
                                 $.post "payments/ajaxLkTeacher", {}, (response) ->
                                     $scope.Lessons 	= response.Lessons
+                                    $scope.selected_year = response.selected_year
+                                    $scope.years = response.years
                                     $scope.loaded	= true # data loaded
                                     $scope.$apply()
                                 , "json"

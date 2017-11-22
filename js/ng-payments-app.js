@@ -7,61 +7,19 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     }
   };
 }).controller("LkTeacherCtrl", function($scope, $http) {
-  $scope.lessonsTotalSum = function() {
-    var lessons_sum;
-    lessons_sum = 0;
-    if ($scope.Lessons) {
-      $.each($scope.Lessons, function(index, value) {
-        return lessons_sum += parseInt(value.teacher_price);
-      });
-    }
-    return lessons_sum;
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };
-  $scope.lessonsTotalPaid = function(from_lessons) {
-    var payments_sum;
-    payments_sum = 0;
-    if (from_lessons && $scope.Lessons) {
-      $.each($scope.Lessons, function(index, lesson) {
-        var j, len, payment, ref, results;
-        ref = lesson.payments;
-        results = [];
-        for (j = 0, len = ref.length; j < len; j++) {
-          payment = ref[j];
-          results.push(payments_sum += parseInt(payment.sum));
-        }
-        return results;
-      });
-    } else {
-      if ($scope.payments) {
-        $.each($scope.payments, function(index, value) {
-          return payments_sum += parseInt(value.sum);
-        });
-      }
-    }
-    return payments_sum;
+  $scope.setYear = function(year) {
+    return $scope.selected_year = year;
   };
-  $scope.toBePaid = function(from_lessons) {
-    var lessons_sum, payments_sum;
-    if (!($scope.Lessons && $scope.Lessons.length)) {
-      return;
-    }
-    lessons_sum = $scope.lessonsTotalSum();
-    payments_sum = $scope.lessonsTotalPaid(from_lessons);
-    return parseFloat(lessons_sum - payments_sum).toFixed(2);
-  };
-  $scope.dateFromCustomFormat = function(date) {
-    var D;
-    date = date.split(".");
-    date = date.reverse();
-    date = date.join("-");
-    D = new Date(date);
-    return moment(D).format("D MMMM YYYY");
-  };
-  $scope.formatDate = function(date) {
-    return moment(date).format("D MMMM YYYY");
-  };
-  $scope.formatTime = function(time) {
-    return time.substr(0, 5);
+  $scope.daySum = function(items) {
+    var sum;
+    sum = 0;
+    items.forEach(function(item) {
+      return sum += item.sum;
+    });
+    return sum;
   };
   return angular.element(document).ready(function() {
     return bootbox.prompt({
@@ -80,6 +38,8 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
               $scope.password_correct = true;
               $.post("payments/ajaxLkTeacher", {}, function(response) {
                 $scope.Lessons = response.Lessons;
+                $scope.selected_year = response.selected_year;
+                $scope.years = response.years;
                 $scope.loaded = true;
                 return $scope.$apply();
               }, "json");

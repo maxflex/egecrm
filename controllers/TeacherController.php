@@ -206,15 +206,13 @@
 					returnJsonAng(Teacher::getReviews($id_teacher));
 				}
 				case 2: {
-                    $Lessons = VisitJournal::getTeacherLessons($id_teacher, ['login', 'payments']);
-                    returnJsonAng([
-                        'Lessons' => $Lessons,
-                        'current_year_lessons_count' => VisitJournal::count([
-                            'condition' => "type_entity='TEACHER' AND id_entity={$id_teacher} AND year=" . academicYear()
-                        ]),
-                        'current_year_paid' => dbConnection()->query("select sum(sum) as s from payments where entity_type='TEACHER' and entity_id={$id_teacher} and year=" . academicYear())->fetch_object()->s,
-                        'current_year_to_be_paid' => dbConnection()->query("select sum(teacher_price) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher} and year=" . academicYear())->fetch_object()->s
-                    ]);
+					$payments = Teacher::getPayments($id_teacher);
+					$years = array_reverse(array_keys($payments));
+					returnJsonAng([
+						'Lessons' => $payments,
+						'years' => $years,
+						'selected_year' => end($years)
+					]);
 				}
 				case 3: {
 					returnJsonAng([
@@ -285,6 +283,9 @@
 						'Freetime'	=> Freetime::getFreetimeBar($id_teacher, EntityFreetime::TEACHER)
 					];
 					returnJsonAng($Bars);
+				}
+				case 7: {
+					returnJsonAng(TeacherAdditionalPayment::get($id_teacher));
 				}
 			}
 		}

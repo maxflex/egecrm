@@ -180,6 +180,12 @@
 			returnJson(Payment::add($_POST)->dbData());
 		}
 
+		public function actionAjaxPaymentAdditionalAdd()
+		{
+			$id = TeacherAdditionalPayment::add($_POST)->id;
+			returnJson(TeacherAdditionalPayment::findById($id));
+		}
+
 		public function actionAjaxConfirmPayment()
 		{
 			extract($_POST);
@@ -193,10 +199,21 @@
 			Payment::deleteById($_POST["id_payment"]);
 		}
 
+		public function actionAjaxDeletePaymentAdditional()
+		{
+			TeacherAdditionalPayment::deleteById($_POST["id_payment"]);
+		}
+
 		public function actionAjaxPaymentEdit()
 		{
 			extract($_POST);
 			returnJson(Payment::updateById($id, $_POST)->dbData());
+		}
+
+		public function actionAjaxPaymentAdditionalEdit()
+		{
+			extract($_POST);
+			returnJson(TeacherAdditionalPayment::updateById($id, $_POST)->dbData());
 		}
 
 
