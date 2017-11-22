@@ -13,7 +13,7 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
   $scope.setYear = function(year) {
     return $scope.selected_year = year;
   };
-  $scope.daySum = function(items) {
+  $scope.daySum = function(date, items) {
     var sum;
     sum = 0;
     items.forEach(function(item) {

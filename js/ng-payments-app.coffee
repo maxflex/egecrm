@@ -10,7 +10,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
         $scope.setYear = (year) ->
             $scope.selected_year = year
 
-        $scope.daySum = (items) ->
+        $scope.daySum = (date, items) ->
             sum = 0
             items.forEach (item) -> sum += item.sum
             sum

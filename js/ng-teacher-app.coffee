@@ -92,10 +92,15 @@
 						$scope.$apply()
 					, "json"
 
-			$scope.daySum = (items) ->
-				sum = 0
-				items.forEach (item) -> sum += item.sum
-				sum
+			$scope.totalSum = (date) ->
+				total_sum = 0
+				$.each $scope.Lessons[$scope.selected_year], (d, items) ->
+					return if d > date
+					day_sum = 0
+					items.forEach (item) -> day_sum += item.sum
+					day_sum
+					total_sum += day_sum
+				total_sum
 
 			$scope.yearDifference = (year) ->
 				moment().format("YYYY") - year

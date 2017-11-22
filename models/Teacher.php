@@ -653,7 +653,7 @@
 			$additional_payments = TeacherAdditionalPayment::get($id_teacher);
 
 			foreach($additional_payments as $payment) {
-				$items[$payment->date][] = [
+				$items[fromDotDate($payment->date)][] = [
 					'sum' 		=> $payment->sum,
 					'comment' 	=> $payment->purpose
 				];

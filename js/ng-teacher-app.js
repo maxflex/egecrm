@@ -115,13 +115,22 @@ app = angular.module("Teacher", ["ngMap"]).config([
       }, "json");
     }
   };
-  $scope.daySum = function(items) {
-    var sum;
-    sum = 0;
-    items.forEach(function(item) {
-      return sum += item.sum;
+  $scope.totalSum = function(date) {
+    var total_sum;
+    total_sum = 0;
+    $.each($scope.Lessons[$scope.selected_year], function(d, items) {
+      var day_sum;
+      if (d > date) {
+        return;
+      }
+      day_sum = 0;
+      items.forEach(function(item) {
+        return day_sum += item.sum;
+      });
+      day_sum;
+      return total_sum += day_sum;
     });
-    return sum;
+    return total_sum;
   };
   $scope.yearDifference = function(year) {
     return moment().format("YYYY") - year;

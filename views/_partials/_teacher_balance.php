@@ -3,10 +3,10 @@
         <span ng-click="setYear(year)" class="link-like" ng-class="{'active': year == selected_year}" ng-repeat="year in years">{{ yearLabel(year) }}</span>
     </div>
     <table class="table balance table-hover reverse-borders">
-        <tbody ng-repeat="(date, items) in Lessons[selected_year]">
+        <tbody ng-repeat="(date, items) in Lessons[selected_year] | orderBy:'+':true">
             <tr>
                 <td colspan="3"></td>
-                <td>{{ daySum(items) | number}} руб.</td>
+                <td>{{ totalSum(date) | number}} руб.</td>
                 <td>
 
                 </td>
