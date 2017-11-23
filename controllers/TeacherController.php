@@ -37,18 +37,17 @@
 
 
             $teacher_ids = explode(',', dbConnection()->query(
-                                            "select group_concat(distinct id_entity) as teacher_ids " .
-                                            "from visit_journal " .
-                                            "where type_entity='" . Teacher::USER_TYPE . "'" .
-											" and year={$year}"
-                                        )->fetch_object()->teacher_ids
-                           );
+	                "select group_concat(distinct id_entity) as teacher_ids " .
+	                "from visit_journal " .
+	                "where type_entity='" . Teacher::USER_TYPE . "'" .
+					" and year={$year}"
+	            )->fetch_object()->teacher_ids
+			);
 
             $teacher_ids = array_filter($teacher_ids);
 
 			$real_total_sum = 0;
 			$total_sum = 0;
-            $total_sum_official = 0;
 			$total_payment_sum = 0;
 			$lesson_count = 0;
 			foreach ($teacher_ids as $id_teacher) {
@@ -69,7 +68,6 @@
 				]);
 
 				$sum = 0;
-                $sum_official = 0;
                 $real_sum = 0;
 				foreach ($Data as $OneData) {
                     $sum += $OneData->teacher_price;
@@ -78,12 +76,17 @@
                     $real_total_sum += $OneData->teacher_price;
                 }
 
+				$additional_payments_sum = dbConnection()->query("select sum(`sum`) as s from teacher_additional_payments where id_teacher={$id_teacher} and year={$year}")->fetch_object()->s;
+				$sum += $additional_payments_sum;
+				$total_sum += $additional_payments_sum;
+				$real_sum += $additional_payments_sum;
+				$real_total_sum += $additional_payments_sum;
+
 				$lesson_count += count($Data);
 
 				$return[] = [
 					"Teacher" 	=> $Teacher,
 					"sum"		=> $sum,
-					"sum_official"		=> $sum_official,
 					"real_sum"  => $real_sum,
 					"payment_sum" => $payment_sum,
 					"count"		=> ($Data ? count($Data) : 0),
@@ -124,7 +127,6 @@
 			$ang_init_data = angInit([
 				"Data" 		                     => $return,
 				"total_sum"			             => $total_sum,
-				"total_sum_official"			 => $total_sum_official,
 				"real_total_sum"			     => $real_total_sum,
 				"total_payment_sum"	             => $total_payment_sum,
 				"lesson_count"		             => $lesson_count,

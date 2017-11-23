@@ -87,6 +87,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
   $scope.addAdditionalPaymentDialog = function() {
     $scope.new_additional_payment = {
       id_teacher: $scope.Teacher.id,
+      year: getYear(),
       date: moment().format('DD.MM.YYYY')
     };
     return lightBoxShow('additional-payment');

@@ -69,6 +69,7 @@
 			$scope.addAdditionalPaymentDialog = ->
 				$scope.new_additional_payment =
 					id_teacher: $scope.Teacher.id
+					year: getYear()
 					date: moment().format('DD.MM.YYYY')
 				lightBoxShow('additional-payment')
 

@@ -37,6 +37,14 @@
 			<input style='margin: 0' type="text" placeholder="сумма" class="form-control digits-only full-width" id="add-payment-sum" ng-model="new_additional_payment.sum">
 		</div>
 		<div class="form-group">
+            <select class="form-control" ng-model="new_additional_payment.year" style='margin: 0; width: 100%'>
+                <option value="">выберите год</option>
+                <option disabled>──────────────</option>
+                <option ng-repeat="year in <?= Years::json() ?>"
+                    value="{{year}}">{{ yearLabel(year) }}</option>
+            </select>
+		</div>
+		<div class="form-group">
 			<input style='margin: 0' placeholder="дата" class="form-control bs-date full-width" id="add-payment-date" ng-model="new_additional_payment.date">
 		</div>
 		<div class="form-group">
