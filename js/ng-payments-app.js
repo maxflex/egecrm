@@ -7,6 +7,9 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     }
   };
 }).controller("LkTeacherCtrl", function($scope, $http) {
+  $scope.reverseObjKeys = function(obj) {
+    return Object.keys(obj).reverse();
+  };
   $scope.yearLabel = function(year) {
     return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };

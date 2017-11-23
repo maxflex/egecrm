@@ -10,4 +10,22 @@ app.filter('formatDateTime', function() {
       year: year
     });
   };
+}).filter('orderObjectBy', function() {
+  return function(items, field, reverse) {
+    var filtered;
+    filtered = [];
+    angular.forEach(items, function(item) {
+      return filtered.push(item);
+    });
+    filtered.sort(function(a, b) {
+      var ref;
+      return (ref = a[field] > b[field]) != null ? ref : {
+        1: -1
+      };
+    });
+    if (reverse) {
+      filtered.reverse();
+    }
+    return filtered;
+  };
 });

@@ -3626,4 +3626,9 @@ td.extra-padding {
 			border-bottom: 1px solid #ddd;
 		}
 	}
+	&.gray-headers thead {
+	    font-weight: bold;
+	    text-transform: uppercase;
+	    color: #ddd;
+	}
 }

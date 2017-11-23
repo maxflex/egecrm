@@ -633,7 +633,7 @@
 				$group = $groups[$lesson->id_group];
 				$items[$lesson->year][$lesson->lesson_date][] = [
 					'sum' 		=> $lesson->teacher_price,
-					'comment'	=> "занятие в группе {$lesson->id_group} (" . mb_strtolower(Subjects::$full[$group->id_subject]) . " " . Grades::$all[$group->grade] . ")" . " " . date("j", strtotime($lesson->lesson_date)) . " " . russian_month(date("n", strtotime($lesson->lesson_date))) . " " . date("Y", strtotime($lesson->lesson_date)) . ", кабинет " . $group->cabinet['label']
+					'comment'	=> "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label']
 				];
 			}
 
@@ -644,8 +644,9 @@
 
 			foreach($payments as $payment) {
 				$items[$payment->year][fromDotDate($payment->date)][] = [
-					'sum' 		=> intval($payment->sum) * -1,
-					'comment' 	=> Payment::$all[$payment->id_status]
+					'sum' 		  => intval($payment->sum) * -1,
+					'comment' 	  => Payment::$all[$payment->id_status],
+					'credentials' => $payment->user_login . ' ' . dateFormat($payment->first_save_date),
 				];
 			}
 
@@ -654,8 +655,9 @@
 
 			foreach($additional_payments as $payment) {
 				$items[date('Y', strtotime($payment->date))][fromDotDate($payment->date)][] = [
-					'sum' 		=> $payment->sum,
-					'comment' 	=> $payment->purpose
+					'sum' 		  => $payment->sum,
+					'comment' 	  => $payment->purpose,
+					'credentials' => $payment->user_login . ' ' . dateFormat($payment->created_at),
 				];
 			}
 
@@ -664,7 +666,6 @@
 
 			foreach($items as $year => $data) {
 				ksort($items[$year]);
-				$items[$year] = array_reverse($items[$year], true);
 			}
 
 			return $items;

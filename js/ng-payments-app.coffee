@@ -4,6 +4,8 @@ app = angular.module "Payments", ["ui.bootstrap"]
             if items
                 items.slice().reverse()
     .controller "LkTeacherCtrl", ($scope, $http) ->
+        $scope.reverseObjKeys = (obj) -> Object.keys(obj).reverse()
+        
         $scope.yearLabel = (year) ->
             year + '-' + (parseInt(year) + 1) + ' уч. г.'
 

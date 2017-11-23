@@ -41,6 +41,24 @@
 			self::EXTERNAL	=> 'экстернат',
 		];
 
+		# Все
+		static $short  = [
+			self::FIRST 	=> self::FIRST,
+			self::SECOND 	=> self::SECOND,
+			self::THIRD 	=> self::THIRD,
+			self::FOURTH	=> self::FOURTH,
+			self::FIFTH		=> self::FIFTH,
+			self::SIXTH		=> self::SIXTH,
+			self::SEVENTH	=> self::SEVENTH,
+			self::EIGHTH	=> self::EIGHTH,
+			self::NINETH	=> self::NINETH,
+			self::TENTH		=> self::TENTH,
+			self::ELEVENTH	=> self::ELEVENTH,
+			self::STUDENTS	=> 'C',
+			self::OTHERS	=> 'O',
+			self::EXTERNAL	=> 'Э',
+		];
+
         const LIGHT = [self::NINETH, self::TENTH, self::ELEVENTH, self::EXTERNAL];
 
 		# Заголовок
@@ -65,7 +83,7 @@
                 if (!in_array($id, static::$deleted) || ($id == $selcted)) {
                     // лёкгая версия
                     if (!$light || in_array($id, static::LIGHT)) {
-                        echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";					
+                        echo "<option value='$id' ".($id == $selcted ? "selected" : "").">$value</option>";
                     }
                 }
             }

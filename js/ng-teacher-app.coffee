@@ -58,6 +58,8 @@
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
+			$scope.reverseObjKeys = (obj) -> Object.keys(obj).reverse()
+
 			$scope.yearLabel = (year) ->
 				year + '-' + (parseInt(year) + 1) + ' уч. г.'
 

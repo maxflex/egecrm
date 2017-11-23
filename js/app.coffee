@@ -5,3 +5,11 @@ app
 
 .filter 'byYear', ->
     (items, year) -> _.where items, year: year
+
+.filter 'orderObjectBy', ->
+	(items, field, reverse) ->
+		filtered = []
+		angular.forEach items, (item) -> filtered.push(item)
+		filtered.sort (a, b) -> (a[field] > b[field] ? 1 : -1)
+		filtered.reverse() if (reverse)
+		filtered

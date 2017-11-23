@@ -12,9 +12,8 @@
 				</div>
 			</div>
 			<div class="col-sm-12" ng-show="loaded">
-				<?= globalPartial('teacher_balance') ?>
+				<?= globalPartial('teacher_balance', ['credentials' => false]) ?>
 			</div>
 		</div>
 	</div>
-
 </div>

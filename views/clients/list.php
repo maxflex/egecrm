@@ -35,7 +35,7 @@
 
 		<div style="position: relative">
 			<div id="frontend-loading" style="height: 100%"></div>
-			<table class="table small table-hover border-reverse">
+			<table class="table small table-hover border-reverse gray-headers">
 				<thead>
 					<tr>
 						<td>
@@ -121,11 +121,6 @@
 	<sms templates="full" mode="client" mass="1" counts="counts.all"></sms>
 </div>
 <style>
-.table thead {
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #ddd;
-}
 tr.last-row td {
 	border-bottom: none !important;
 }

@@ -75,6 +75,9 @@ app = angular.module("Teacher", ["ngMap"]).config([
   var _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
+  $scope.reverseObjKeys = function(obj) {
+    return Object.keys(obj).reverse();
+  };
   $scope.yearLabel = function(year) {
     return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };
