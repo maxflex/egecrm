@@ -635,6 +635,7 @@
 					'sum' 		  => $lesson->teacher_price,
 					'comment'	  => "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label'],
 					'credentials' => User::findById($lesson->id_user_saved)->login . ' ' . dateFormat($lesson->date),
+					'date'		  => $lesson->date,
 				];
 			}
 
@@ -648,6 +649,7 @@
 					'sum' 		  => intval($payment->sum) * -1,
 					'comment' 	  => Payment::$all[$payment->id_status],
 					'credentials' => $payment->user_login . ' ' . dateFormat($payment->first_save_date),
+					'date' 		  => $payment->first_save_date,
 				];
 			}
 
@@ -659,6 +661,7 @@
 					'sum' 		  => $payment->sum,
 					'comment' 	  => $payment->purpose,
 					'credentials' => $payment->user_login . ' ' . dateFormat($payment->created_at),
+					'date' 		  => $payment->created_at,
 				];
 			}
 
