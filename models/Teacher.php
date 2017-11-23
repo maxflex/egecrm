@@ -632,8 +632,9 @@
 				}
 				$group = $groups[$lesson->id_group];
 				$items[$lesson->year][$lesson->lesson_date][] = [
-					'sum' 		=> $lesson->teacher_price,
-					'comment'	=> "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label']
+					'sum' 		  => $lesson->teacher_price,
+					'comment'	  => "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label'],
+					'credentials' => User::findById($lesson->id_user_saved)->login . ' ' . dateFormat($lesson->date),
 				];
 			}
 
