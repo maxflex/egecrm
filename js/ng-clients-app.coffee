@@ -24,6 +24,12 @@ app = angular.module "Clients", ["ui.bootstrap"]
 				$(".single-select").selectpicker()
 			, 300
 
+		$scope.totalSum = ->
+			if $scope.contract_subjects and $scope.contract_subjects.length
+				sum = 0
+				$scope.contract_subjects.forEach (cs) -> sum += cs.subject_sum
+				return sum
+
 		$scope.yearLabel = (year) ->
 			'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год'
 

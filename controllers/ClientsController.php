@@ -81,12 +81,15 @@
 				JOIN students s ON s.id = ci.id_student
 				WHERE c.current_version = 1 "
 				. (! isBlank($search->year) ? " AND ci.year={$search->year} " : '') .
-				(! isBlank($search->status) ? " AND cs.status={$search->status} " : '');
+				  (! isBlank($search->status) ? " AND cs.status={$search->status} " : '');
 
 			$count = dbConnection()->query("SELECT COUNT(*) AS cnt " . $query)->fetch_object()->cnt;
 
+			//28/(28+31) * 100300
+
 			$query = "SELECT cs.*, CONCAT(s.last_name, ' ', s.first_name, ' ', s.middle_name) as `student_name`,
-				s.id as `id_student`, ci.grade "
+				(select sum(`count`) from contract_subjects where contract_subjects.id_contract = cs.id_contract) as `total_count`,
+				s.id as `id_student`, ci.grade, c.sum "
 				. $query;
 				// . " LIMIT {$start_from}, 100";
 
@@ -95,9 +98,34 @@
 			$data = [];
 
 			while($row = $result->fetch_object()) {
+				if ($row->total_count) {
+					$row->subject_sum = round($row->count / $row->total_count * $row->sum);
+				} else {
+					$row->subject_sum = 0;
+				}
 				$data[] = $row;
 			}
 
-			return compact('data', 'count');
+			// $visits = [];
+			// if (! isBlank($search->year)) {
+			// 	foreach($data as $d) {
+			// 		if (! isset($visits[$d->id_student][$d->id_subject])) {
+			// 			$query = dbConnection()->query("SELECT presence, late from visit_journal where year={$search->year} and id_entity={$d->id_student} and type_entity='STUDENT' and id_subject={$d->id_subject}");
+			// 			while($row = $query->fetch_object()) {
+			// 				if ($row->presence == 2) {
+			// 					$visits[$d->id_student][$d->id_subject][] = 1;
+			// 				} else {
+			// 					if ($row->late > 0) {
+			// 						$visits[$d->id_student][$d->id_subject][] = 2;
+			// 					} else {
+			// 						$visits[$d->id_student][$d->id_subject][] = 3;
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// }
+
+			return compact('data', 'count', 'visits');
 		}
 	}

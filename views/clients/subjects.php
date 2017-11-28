@@ -44,8 +44,25 @@
 					<td width='100'>
 						{{ Subjects[cs.id_subject]}}-{{ Grades[cs.grade] }}
 					</td>
-					<td>
+					<td width='100'>
 						{{ cs.count }}
+					</td>
+					<td width='100'>
+						{{ cs.subject_sum | number }}
+					</td>
+					<td>
+
+					</td>
+				</tr>
+				<tr class="last-row">
+					<td colspan="3">
+						<b>итого на странице</b>
+					</td>
+					<td>
+						{{ totalSum() | number }}
+					</td>
+					<td>
+
 					</td>
 				</tr>
 			</table>
