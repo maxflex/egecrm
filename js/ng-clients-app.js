@@ -44,6 +44,16 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
       return sum;
     }
   };
+  $scope.totalCount = function() {
+    var sum;
+    if ($scope.contract_subjects && $scope.contract_subjects.length) {
+      sum = 0;
+      $scope.contract_subjects.forEach(function(cs) {
+        return sum += cs.count;
+      });
+      return sum;
+    }
+  };
   $scope.yearLabel = function(year) {
     return 'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год';
   };

@@ -55,11 +55,14 @@
 					</td>
 				</tr>
 				<tr class="last-row">
-					<td colspan="3">
+					<td colspan="2">
 						<b>итого на странице</b>
 					</td>
 					<td>
-						{{ totalSum() | number }}
+						<b>{{ totalCount() | number }}</b>
+					</td>
+					<td>
+						<b>{{ totalSum() | number }}</b>
 					</td>
 					<td>
 
