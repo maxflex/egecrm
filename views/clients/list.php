@@ -1,6 +1,11 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <div class="panel panel-primary" ng-app="Clients" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
-	<div class="panel-heading">Клиенты с договорами</div>
+	<div class="panel-heading">
+		Клиенты с договорами
+		<div class="pull-right">
+			<a href="clients/subjects">по предметам</a>
+		</div>
+	</div>
 	<div class="panel-body">
 		<div class="row" style="margin-bottom: 15px">
 			<div class="col-sm-2" style='width: 250px'>
@@ -118,7 +123,6 @@
 			нет клиентов
 		</div>
 	</div>
-	<sms templates="full" mode="client" mass="1" counts="counts.all"></sms>
 </div>
 <style>
 tr.last-row td {

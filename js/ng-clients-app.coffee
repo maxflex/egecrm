@@ -12,6 +12,45 @@ app = angular.module "Clients", ["ui.bootstrap"]
 			$.each obj, (index, value) ->
 				arr.push(value)
 			return arr
+	.controller "SubjectsCtrl", ($scope, $timeout, PhoneService) ->
+		bindArguments $scope, arguments
+
+		angular.element(document).ready ->
+			set_scope "Clients"
+			$scope.search = if $.cookie("clients_subjects") then JSON.parse($.cookie("clients_subjects")) else {}
+			$scope.current_page = $scope.currentPage
+			$scope.pageChanged()
+			$timeout ->
+				$(".single-select").selectpicker()
+			, 300
+
+		$scope.yearLabel = (year) ->
+			'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год'
+
+		$scope.filter = ->
+			$.cookie("clients_subjects", JSON.stringify($scope.search), { expires: 365, path: '/' });
+			$scope.current_page = 1
+			$scope.getByPage($scope.current_page)
+
+		# Страница изменилась
+		$scope.pageChanged = ->
+			window.history.pushState {}, '', 'clients/subjects?page=' + $scope.current_page if $scope.current_page > 1
+			# Получаем задачи, соответствующие странице и списку
+			$scope.getByPage($scope.current_page)
+
+		$scope.getByPage = (page) ->
+			frontendLoadingStart()
+			$.post "clients/ajax/GetSubjects",
+				page: page
+			, (response) ->
+				frontendLoadingEnd()
+				$scope.contract_subjects = response.data
+				$scope.count = response.count
+				$scope.$apply()
+			, "json"
+
+		$scope.getNumber = (index) ->
+			(($scope.current_page - 1) * 100) + (index + 1)
 	.controller "ListCtrl", ($scope, $timeout, PhoneService) ->
 		bindArguments $scope, arguments
 		$scope.yearLabel = (year) ->
@@ -100,6 +139,3 @@ app = angular.module "Clients", ["ui.bootstrap"]
 			$scope.current_page = $scope.currentPage
 			$scope.pageChanged()
 			$(".single-select").selectpicker()
-
-		$scope.to_students = true
-		$scope.to_representatives = false

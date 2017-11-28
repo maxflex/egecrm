@@ -23,6 +23,48 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
     });
     return arr;
   };
+}).controller("SubjectsCtrl", function($scope, $timeout, PhoneService) {
+  bindArguments($scope, arguments);
+  angular.element(document).ready(function() {
+    set_scope("Clients");
+    $scope.search = $.cookie("clients_subjects") ? JSON.parse($.cookie("clients_subjects")) : {};
+    $scope.current_page = $scope.currentPage;
+    $scope.pageChanged();
+    return $timeout(function() {
+      return $(".single-select").selectpicker();
+    }, 300);
+  });
+  $scope.yearLabel = function(year) {
+    return 'договоры на ' + year + '-' + (parseInt(year) + 1) + ' год';
+  };
+  $scope.filter = function() {
+    $.cookie("clients_subjects", JSON.stringify($scope.search), {
+      expires: 365,
+      path: '/'
+    });
+    $scope.current_page = 1;
+    return $scope.getByPage($scope.current_page);
+  };
+  $scope.pageChanged = function() {
+    if ($scope.current_page > 1) {
+      window.history.pushState({}, '', 'clients/subjects?page=' + $scope.current_page);
+    }
+    return $scope.getByPage($scope.current_page);
+  };
+  $scope.getByPage = function(page) {
+    frontendLoadingStart();
+    return $.post("clients/ajax/GetSubjects", {
+      page: page
+    }, function(response) {
+      frontendLoadingEnd();
+      $scope.contract_subjects = response.data;
+      $scope.count = response.count;
+      return $scope.$apply();
+    }, "json");
+  };
+  return $scope.getNumber = function(index) {
+    return (($scope.current_page - 1) * 100) + (index + 1);
+  };
 }).controller("ListCtrl", function($scope, $timeout, PhoneService) {
   var _paymentDate;
   bindArguments($scope, arguments);
@@ -127,13 +169,11 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
     }
     return str;
   };
-  angular.element(document).ready(function() {
+  return angular.element(document).ready(function() {
     set_scope("Clients");
     $scope.search = $.cookie("clients") ? JSON.parse($.cookie("clients")) : {};
     $scope.current_page = $scope.currentPage;
     $scope.pageChanged();
     return $(".single-select").selectpicker();
   });
-  $scope.to_students = true;
-  return $scope.to_representatives = false;
 });

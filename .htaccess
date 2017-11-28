@@ -85,6 +85,7 @@ RewriteRule ^stats/visits/subjects[/]?$ index.php?controller=stats&action=TotalV
 
 # Клиенты
 RewriteRule ^clients[?page=(0-9)]?[/]?$ index.php?controller=clients&page=$1 [QSA,L]
+RewriteRule ^clients/subjects[?page=(0-9)]?[/]?$ index.php?controller=clients&action=subjects&page=$1 [QSA,L]
 RewriteRule ^clients/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=$1 [QSA,L]
 RewriteRule ^clients/ajax/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=Ajax$1 [QSA,L]
 

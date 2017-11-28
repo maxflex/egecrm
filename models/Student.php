@@ -1000,26 +1000,8 @@
                 }
             }
 
-			// if ($page > 0) {
-			// 	// counts
-			// 	$counts['all'] = static::_count($search);
-			//
-			// 	foreach(array_merge([""], Years::$all) as $year) {
-			// 		$new_search = clone $search;
-			// 		$new_search->year = $year;
-			// 		$counts['year'][$year] = static::_count($new_search);
-			// 	}
-			//
-			// 	foreach(array_merge([''], range(0,3)) as $error) {
-			// 		$new_search = clone $search;
-			// 		$new_search->error = $error;
-			// 		$counts['error'][$error] = static::_count($new_search);
-			// 	}
-			// }
-
 			return [
 				'data' 	=> $data,
-			//	'counts' => $counts,
 				'totals' => $totals,
 			];
 		}
