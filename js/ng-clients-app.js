@@ -34,22 +34,12 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
       return $(".single-select").selectpicker();
     }, 300);
   });
-  $scope.totalSum = function() {
+  $scope.total = function(field) {
     var sum;
     if ($scope.contract_subjects && $scope.contract_subjects.length) {
       sum = 0;
       $scope.contract_subjects.forEach(function(cs) {
-        return sum += cs.subject_sum;
-      });
-      return sum;
-    }
-  };
-  $scope.totalCount = function() {
-    var sum;
-    if ($scope.contract_subjects && $scope.contract_subjects.length) {
-      sum = 0;
-      $scope.contract_subjects.forEach(function(cs) {
-        return sum += cs.count;
+        return sum += cs[field];
       });
       return sum;
     }
@@ -79,6 +69,7 @@ app = angular.module("Clients", ["ui.bootstrap"]).filter('to_trusted', [
       frontendLoadingEnd();
       $scope.contract_subjects = response.data;
       $scope.count = response.count;
+      $scope.visits = response.visits;
       return $scope.$apply();
     }, "json");
   };

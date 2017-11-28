@@ -106,25 +106,25 @@
 				$data[] = $row;
 			}
 
-			// $visits = [];
-			// if (! isBlank($search->year)) {
-			// 	foreach($data as $d) {
-			// 		if (! isset($visits[$d->id_student][$d->id_subject])) {
-			// 			$query = dbConnection()->query("SELECT presence, late from visit_journal where year={$search->year} and id_entity={$d->id_student} and type_entity='STUDENT' and id_subject={$d->id_subject}");
-			// 			while($row = $query->fetch_object()) {
-			// 				if ($row->presence == 2) {
-			// 					$visits[$d->id_student][$d->id_subject][] = 1;
-			// 				} else {
-			// 					if ($row->late > 0) {
-			// 						$visits[$d->id_student][$d->id_subject][] = 2;
-			// 					} else {
-			// 						$visits[$d->id_student][$d->id_subject][] = 3;
-			// 					}
-			// 				}
-			// 			}
-			// 		}
-			// 	}
-			// }
+			$visits = [];
+			if (! isBlank($search->year)) {
+				foreach($data as $d) {
+					if (! isset($visits[$d->id_student][$d->id_subject])) {
+						$query = dbConnection()->query("SELECT presence, late from visit_journal where year={$search->year} and id_entity={$d->id_student} and type_entity='STUDENT' and id_subject={$d->id_subject}");
+						while($row = $query->fetch_object()) {
+							if ($row->presence == 2) {
+								$visits[$d->id_student][$d->id_subject][] = 1;
+							} else {
+								if ($row->late > 0) {
+									$visits[$d->id_student][$d->id_subject][] = 2;
+								} else {
+									$visits[$d->id_student][$d->id_subject][] = 3;
+								}
+							}
+						}
+					}
+				}
+			}
 
 			return compact('data', 'count', 'visits');
 		}

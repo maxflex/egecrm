@@ -51,7 +51,15 @@
 						{{ cs.subject_sum | number }}
 					</td>
 					<td>
-
+						<div class="pull-right">
+							<div class="visit-div-circle" ng-repeat="v in visits[cs.id_student][cs.id_subject] track by $index">
+								<span class="circle-default"
+								ng-class="{
+									'circle-red'	: v == 1,
+									'circle-orange'	: v == 2
+								}"></span>
+							</div>
+						</div>
 					</td>
 				</tr>
 				<tr class="last-row">
@@ -59,13 +67,10 @@
 						<b>итого на странице</b>
 					</td>
 					<td>
-						<b>{{ totalCount() | number }}</b>
+						<b>{{ total('count') | number }}</b>
 					</td>
-					<td>
-						<b>{{ totalSum() | number }}</b>
-					</td>
-					<td>
-
+					<td colspan='2'>
+						<b>{{ total('subject_sum') | number }}</b>
 					</td>
 				</tr>
 			</table>
