@@ -4,9 +4,8 @@
 			 <div ng-repeat="id_group in getStudentGroups()" class="visit-div">
 				 <div class="visit-div-group">
 					<a href="groups/edit/{{id_group}}">Группа №{{id_group}}</a>
-
 				<span>
-					{{Subjects[getAnyGroup(id_group).id_subject]}}{{getAnyGroup(id_group).grade ? '-' + getAnyGroup(id_group).grade_short : ''}}				
+					{{Subjects[getAnyGroup(id_group).id_subject]}}{{getAnyGroup(id_group).grade ? '-' + getAnyGroup(id_group).grade_short : ''}}
 				</span>
 				</div>
 

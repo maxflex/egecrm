@@ -78,10 +78,11 @@
 				FROM contract_subjects cs
 				JOIN contracts c ON cs.id_contract = c.id
 				JOIN contract_info ci ON ci.id_contract = c.id_contract
-				JOIN students s ON s.id = ci.id_student
+				JOIN students s ON s.id = ci.id_student "
+				. (! isBlank($search->year) ? "JOIN student_sums ss ON (ss.id_student = ci.id_student and ss.year = {$search->year})" : "") . "
 				WHERE c.current_version = 1 "
-				. (! isBlank($search->year) ? " AND ci.year={$search->year} " : '') .
-				  (! isBlank($search->status) ? " AND cs.status={$search->status} " : '');
+				. (! isBlank($search->year) ? " AND ci.year={$search->year} " : '')
+				.  (! isBlank($search->status) ? " AND cs.status={$search->status} " : '');
 
 			$count = dbConnection()->query("SELECT COUNT(*) AS cnt " . $query)->fetch_object()->cnt;
 
@@ -89,7 +90,7 @@
 
 			$query = "SELECT cs.*, CONCAT(s.last_name, ' ', s.first_name, ' ', s.middle_name) as `student_name`,
 				(select sum(`count`) from contract_subjects where contract_subjects.id_contract = cs.id_contract) as `total_count`,
-				s.id as `id_student`, ci.grade, c.sum "
+				s.id as `id_student`, ci.grade, c.sum " . (! isBlank($search->year) ? ", ss.sum as deposit" : "")
 				. $query;
 				// . " LIMIT {$start_from}, 100";
 
