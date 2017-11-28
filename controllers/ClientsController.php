@@ -87,8 +87,8 @@
 
 			$query = "SELECT cs.*, CONCAT(s.last_name, ' ', s.first_name, ' ', s.middle_name) as `student_name`,
 				s.id as `id_student`, ci.grade "
-				. $query
-				. " LIMIT {$start_from}, 100";
+				. $query;
+				// . " LIMIT {$start_from}, 100";
 
 			$result = dbConnection()->query($query);
 

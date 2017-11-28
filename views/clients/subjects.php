@@ -51,20 +51,6 @@
 			</table>
 		</div>
 
-		<pagination
-			ng-show='(contract_subjects && contract_subjects.length) && (count > 100)'
-			ng-model="current_page"
-			ng-change="pageChanged()"
-			total-items="count"
-			max-size="10"
-			items-per-page="100"
-			first-text="«"
-			last-text="»"
-			previous-text="«"
-			next-text="»"
-		>
-		</pagination>
-
 		<div ng-show="contract_subjects === undefined" style="padding: 100px" class="small half-black center">
 			загрузка клиентов...
 		</div>
