@@ -79,7 +79,7 @@
 				JOIN contracts c ON cs.id_contract = c.id
 				JOIN contract_info ci ON ci.id_contract = c.id_contract
 				JOIN students s ON s.id = ci.id_student "
-				. (! isBlank($search->year) ? "JOIN student_sums ss ON (ss.id_student = ci.id_student and ss.year = {$search->year})" : "") . "
+				. (! isBlank($search->year) ? " LEFT JOIN student_sums ss ON (ss.id_student = ci.id_student and ss.year = {$search->year})" : "") . "
 				WHERE c.current_version = 1 "
 				. (! isBlank($search->year) ? " AND ci.year={$search->year} " : '')
 				.  (! isBlank($search->status) ? " AND cs.status={$search->status} " : '');
