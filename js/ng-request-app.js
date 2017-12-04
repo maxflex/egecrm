@@ -355,6 +355,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 		}
 
+		$scope.changePaymentStatus = function() {
+			$.post("ajax/ChangePaymentStatus", {id_student: $scope.student.id, status: $scope.student.payment_status})
+		}
+
 		$scope.formatTestDate = function(StudentTest) {
 			if (StudentTest) {
 				return moment(StudentTest.date_start).format('DD.MM.YY в HH:mm')

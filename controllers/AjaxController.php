@@ -776,6 +776,12 @@
             Student::updateById($id_student, ['id_user_review' => $id_user_new]);
 		}
 
+		public function actionAjaxChangePaymentStatus()
+		{
+			extract($_POST);
+            Student::updateById($id_student, ['payment_status' => $status]);
+		}
+
 		// @time-refactored @time-checked
 		public function actionAjaxAddFreetime()
 		{
