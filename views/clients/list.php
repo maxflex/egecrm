@@ -28,12 +28,17 @@
 				</select>
 	        </div>
 			<div class="col-sm-2" style='width: 250px'>
-				<select class="watch-select single-select form-control" ng-model="search.status" ng-change='filter()'>
-					<option value=""  data-subtext="{{ counts.status[''] || '' }}">все</option>
-					<option disabled>───────</option>
-					<option value="green"  data-subtext="{{ counts.status['green'] || '' }}">в работе</option>
-					<option value="yellow"  data-subtext="{{ counts.status['yellow'] || '' }}">к расторжению</option>
-					<option value="red"  data-subtext="{{ counts.status['red'] || '' }}">расторгнут</option>
+				<select multiple class="watch-select single-select form-control" ng-model="search.statuses" ng-change='filter()' title='статус' data-multiple-separator=', '>
+					<option value="green">в работе</option>
+					<option value="yellow">к расторжению</option>
+					<option value="red">расторгнут</option>
+				</select>
+	        </div>
+			<div class="col-sm-2" style='width: 250px'>
+				<select multiple class="watch-select single-select form-control" ng-model="search.payment_statuses" ng-change='filter()' title='статус платежа' data-multiple-separator=', '>
+					<?php foreach(StudentPaymentStatuses::$all as $id => $label) :?>
+						<option value="<?= $id ?>"><?= $label ?></option>
+					<?php endforeach ?>
 				</select>
 	        </div>
 		</div>
@@ -49,9 +54,6 @@
 							платежи
 						</td>
 						<td>
-							оплаченная сумма
-						</td>
-						<td>
 							<span class="pointer" ng-click="sort()">депозит</span>
 							<i class="fa" aria-hidden="true" ng-class="{
 								'fa-long-arrow-up': search.order == 'asc',
@@ -59,10 +61,7 @@
 							}" ng-show="search.order !== undefined"></i>
 						</td>
 						<td>
-							остаток по оплате
-						</td>
-						<td>
-							сумма договора
+							дата последнего платежа
 						</td>
 						<td>
 							статус платежа
@@ -79,22 +78,16 @@
 							<span ng-hide='Student.last_name'>имя не указано</span>
 						</a>
 					</td>
-					<td width="23%">
+					<td>
 						{{ getPaymentLabel(splitPaymentsOptions(Student.contract_year)[Student.contract_split]) }}
 					</td>
-					<td width="11%">
-						<span ng-show="Student.payment_sum">{{ Student.payment_sum | number }} руб.</span>
-					</td>
-					<td width="11%">
+					<td>
 						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
 					</td>
-					<td width="11%">
-						<span ng-show="Student.debt">{{ Student.debt | number }} руб.</span>
+					<td>
+						{{ Student.latest_payment_date | date:"dd.MM.yyyy"}}
 					</td>
-					<td width="11%">
-						<span ng-show="Student.contract_sum">{{ Student.contract_sum | number }} руб.</span>
-					</td>
-					<td width="8%">
+					<td>
 						{{ student_payment_statuses[Student.payment_status] }}
 					</td>
 				</tr>
@@ -106,16 +99,7 @@
 
 					</td>
 					<td>
-						<b>{{ totals.payment_sum | number }} руб.</b>
-					</td>
-					<td>
 						<b>{{ totals.sum | number }} руб.</b>
-					</td>
-					<td>
-						<b>{{ totals.debt | number }} руб.</b>
-					</td>
-					<td>
-						<b>{{ totals.contract_sum | number }} руб.</b>
 					</td>
 					<td>
 

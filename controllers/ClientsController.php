@@ -83,6 +83,7 @@
 				JOIN students s ON s.id = ci.id_student "
 				. (! isBlank($search->year) ? " LEFT JOIN student_sums ss ON (ss.id_student = ci.id_student and ss.year = {$search->year})" : "") . "
 				WHERE c.current_version = 1 "
+				. (count($search->payment_statuses) ? ' and s.payment_status in (' . implode(',', $search->payment_statuses) . ')' : '')
 				. (! isBlank($search->year) ? " AND ci.year={$search->year} " : '')
 				.  (! isBlank($search->status) ? " AND cs.status={$search->status} " : '');
 

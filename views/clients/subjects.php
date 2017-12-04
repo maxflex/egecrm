@@ -26,6 +26,13 @@
 					<option value="1">расторгнут</option>
 				</select>
 	        </div>
+			<div class="col-sm-2" style='width: 250px'>
+				<select multiple class="watch-select single-select form-control" ng-model="search.payment_statuses" ng-change='filter()' title='статус платежа' data-multiple-separator=', '>
+					<?php foreach(StudentPaymentStatuses::$all as $id => $label) :?>
+						<option value="<?= $id ?>"><?= $label ?></option>
+					<?php endforeach ?>
+				</select>
+			</div>
 		</div>
 
 		<div style="position: relative">

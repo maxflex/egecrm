@@ -960,13 +960,12 @@
 
 			// получаем данные
 			$query = static::_generateQuery($search, ($page == -1 ? "DISTINCT(s.id)" : "DISTINCT(s.id),
-				c.sum as contract_sum,
 				concat(c.payments_split, '-', c.payments_queue) as contract_split,
 				ci.year as contract_year,
 				s.payment_status,
-				(select ifnull(sum(case when p.id_type = " . PaymentTypes::PAYMENT . " then p.sum else -p.sum end), 0)" .
+				(select MAX(STR_TO_DATE(date, '%d.%m.%Y')) " .
                 "from payments p " .
-                "where p.entity_type = '" . Student::USER_TYPE . "' and p.entity_id = s.id " . (! isBlank($search->year) ? "and p.year={$search->year}" : '') . ") as payment_sum,
+                "where p.entity_type = '" . Student::USER_TYPE . "' and p.entity_id = s.id " . (! isBlank($search->year) ? "and p.year={$search->year}" : '') . ") as latest_payment_date,
 				(select count(*) from contract_subjects where id_contract=c.id and status=3) as green_cnt,
 				(select count(*) from contract_subjects where id_contract=c.id and status=2) as yellow_cnt,
 				(select count(*) from contract_subjects where id_contract=c.id and status=1) as red_cnt,
@@ -974,18 +973,13 @@
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
             $data = [];
-			$totals = ['debt' => 0, 'sum' => 0, 'contract_sum' => 0, 'payment_sum' => 0];
+			$totals = ['sum' => 0];
             if ($result->num_rows) {
                 while ($row = $result->fetch_object()) {
                     if ($page == -1) {
                         $data[] = $row->id;
                     } else {
-                        $row->debt = Student::getDebt($row->id);
-
-						$totals['debt'] += intval($row->debt);
 						$totals['sum']  += intval($row->sum);
-						$totals['contract_sum']  += intval($row->contract_sum);
-						$totals['payment_sum']  += intval($row->payment_sum);
 
 						// статус клиента
 						$total_subject_cnt = $row->green_cnt + $row->yellow_cnt + $row->red_cnt;
@@ -1017,6 +1011,19 @@
 
 		private static function _generateQuery($search, $select)
 		{
+			$status_conditions = [];
+			if (in_array('red', $search->statuses)) {
+				$status_conditions[] = '(red_cnt = (red_cnt + yellow_cnt + green_cnt))';
+			}
+			if (in_array('yellow', $search->statuses)) {
+				$status_conditions[] = '(yellow_cnt > 0 and green_cnt = 0)';
+			}
+			if (in_array('green', $search->statuses)) {
+				$status_conditions[] = '(green_cnt > 0)';
+			}
+			// все рублевые стобцы, кроме депозита убрать
+			// добавить "дата последнего платежа"
+
             // @contract-refactored
             // @have-to-refactor c.id_student – depricated @refactored
 			$main_query = "
@@ -1029,9 +1036,8 @@
 				WHERE true "
 				. (!isBlank($search->error) && $search->error == 2 ? " AND NOT EXISTS (SELECT 1 FROM freetime f WHERE f.id_entity = s.id AND f.type_entity = '".Student::USER_TYPE."')" : "")
 				. (!isBlank($search->error) && $search->error == 3 ? " AND ci.grade = " . Grades::EXTERNAL : "")
-				. ($search->status == 'red' ? 'having red_cnt = (red_cnt + yellow_cnt + green_cnt)' : '')
-				. ($search->status == 'yellow' ? 'having (yellow_cnt > 0 and green_cnt = 0)' : '')
-				. ($search->status == 'green' ? 'having green_cnt > 0' : '')
+				. (count($search->payment_statuses) ? ' and s.payment_status in (' . implode(',', $search->payment_statuses) . ')' : '')
+				. (count($status_conditions) ? 'having ' . implode(' OR ', $status_conditions) : '')
 				. " ORDER BY " . ((isset($search->order) && !isBlank($search->year)) ? " ss.sum {$search->order}, " : "") . " s.last_name, s.first_name, s.middle_name
 			";
 			// exit("SELECT " . $select . $main_query);
