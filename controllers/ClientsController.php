@@ -20,6 +20,7 @@
 			$ang_init_data = angInit([
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 				'user'	        => User::fromSession(),
+				'student_payment_statuses' => StudentPaymentStatuses::$all,
 			]);
 
 			$this->render("list", [
@@ -36,6 +37,7 @@
 			$ang_init_data = angInit([
 				'currentPage' => $_GET['page'] ? $_GET['page'] : 1,
 				'Subjects' => Subjects::$three_letters,
+				'student_payment_statuses' => StudentPaymentStatuses::$all,
 				'Grades' => Grades::$short,
 			]);
 
@@ -89,6 +91,7 @@
 			//28/(28+31) * 100300
 
 			$query = "SELECT cs.*, CONCAT(s.last_name, ' ', s.first_name, ' ', s.middle_name) as `student_name`,
+				s.payment_status,
 				(select sum(`count`) from contract_subjects where contract_subjects.id_contract = cs.id_contract) as `total_count`,
 				s.id as `id_student`, ci.grade, c.sum " . (! isBlank($search->year) ? ", ss.sum as deposit" : "")
 				. $query;

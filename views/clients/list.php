@@ -64,6 +64,9 @@
 						<td>
 							сумма договора
 						</td>
+						<td>
+							статус платежа
+						</td>
 					</tr>
 				</thead>
 				<tr ng-repeat="Student in Students">
@@ -76,20 +79,23 @@
 							<span ng-hide='Student.last_name'>имя не указано</span>
 						</a>
 					</td>
-					<td width="27%">
+					<td width="23%">
 						{{ getPaymentLabel(splitPaymentsOptions(Student.contract_year)[Student.contract_split]) }}
 					</td>
-					<td width="12%">
+					<td width="11%">
 						<span ng-show="Student.payment_sum">{{ Student.payment_sum | number }} руб.</span>
 					</td>
-					<td width="12%">
+					<td width="11%">
 						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
 					</td>
-					<td width="12%">
+					<td width="11%">
 						<span ng-show="Student.debt">{{ Student.debt | number }} руб.</span>
 					</td>
-					<td width="12%">
+					<td width="11%">
 						<span ng-show="Student.contract_sum">{{ Student.contract_sum | number }} руб.</span>
+					</td>
+					<td width="8%">
+						{{ student_payment_statuses[Student.payment_status] }}
 					</td>
 				</tr>
 				<tr class="last-row">
@@ -110,6 +116,9 @@
 					</td>
 					<td>
 						<b>{{ totals.contract_sum | number }} руб.</b>
+					</td>
+					<td>
+
 					</td>
 				</tr>
 			</table>

@@ -54,6 +54,9 @@
 						{{ cs.deposit | number }}
 					</td>
 					<td>
+						{{ student_payment_statuses[cs.payment_status] }}
+					</td>
+					<td>
 						<div class="pull-right">
 							<div class="visit-div-circle" ng-repeat="v in visits[cs.id_student][cs.id_subject] track by $index">
 								<span class="circle-default"
@@ -71,6 +74,9 @@
 					</td>
 					<td>
 						<b>{{ total('count') | number }}</b>
+					</td>
+					<td>
+
 					</td>
 					<td colspan='3'>
 						<b>{{ total('subject_sum') | number }}</b>
