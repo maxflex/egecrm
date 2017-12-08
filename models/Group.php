@@ -529,7 +529,7 @@
 				. " WHERE true "
 				. (! isBlank($search->contract_signed) ? " AND g.contract_signed={$search->contract_signed}" : "")
 				. (! isBlank($search->year) ? " AND g.year={$search->year}" : "")
-				. ((! isBlank($search->id_teacher) && empty($ending)) ? " AND g.id_teacher={$search->id_teacher}" : "")
+				. (! isBlank($search->id_teacher) ? " AND g.id_teacher={$search->id_teacher}" : "")
 				. (! isBlank($search->subjects) ? " AND g.id_subject IN (". (is_array($search->subjects) ? implode(",", $search->subjects) : $search->subjects) .") " : "")
 				. (! isBlank($search->grades) ? " AND g.grade IN (". (is_array($search->grades) ? implode(",", $search->grades) : $search->grades) .") " : "");
 

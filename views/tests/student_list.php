@@ -16,7 +16,7 @@
 				</td>
 				<td>
 					<div ng-show='testDisplay(Test)'>
-						<span ng-repeat="Problem in Test.Test.Problems">  
+						<span ng-repeat="Problem in Test.Test.Problems">
 							<span class="circle-default {{ getStudentAnswer(Problem, Test) !== undefined ? 'circle-dark-gray' : 'circle-gray' }}" title="{{ getTestHint(Problem, Test) }}"></span>
 						</span>
 					</div>

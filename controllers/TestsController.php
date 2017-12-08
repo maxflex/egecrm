@@ -93,6 +93,7 @@
 			$this->addCss('tests');
 
 			$Test = Test::findById($id);
+			$Test->Problems = TestProblem::findByTest($Test->id);
 
 			$StudentTest = TestStudent::find([
 				"condition" => "id_student=" . User::fromSession()->id_entity . " AND id_test={$id}",
@@ -172,8 +173,8 @@
             extract($_POST);
 
             returnJsonAng(
-                TestStudent::getData($page)
-            );
+				TestStudent::getData($page)
+			);
         }
 
 		public function actionAjaxAdd()
