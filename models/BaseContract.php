@@ -299,7 +299,7 @@
 
 
             // получаем данные
-            $query = static::_generateQuery($search, "s.id as id_student, r.first_name, r.last_name, r.middle_name, c.sum, c.date, ci.year, c.id, ", true);
+            $query = static::_generateQuery($search, "s.id as id_student, r.first_name, r.last_name, r.middle_name, c.sum, c.discount, c.date, ci.year, c.id, ", true);
             $result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Contract::PER_PAGE));
 
             while ($row = $result->fetch_object()) {
