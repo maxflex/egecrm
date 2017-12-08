@@ -59,7 +59,7 @@ app = angular.module("Contracts", ["ui.bootstrap"]).filter('to_trusted', [
     }
   };
   $scope.getDiscountedPrice = function(price, discount) {
-    return price - (price * (discount / 100));
+    return Math.round(price - (price * (discount / 100)));
   };
   $scope.getContractSum = function(contract) {
     if (!contract) {

@@ -1263,7 +1263,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
         }
 
         $scope.getDiscountedPrice = function(price, discount) {
-            return price - (price * (discount / 100))
+            return Math.round(price - (price * (discount / 100)))
         }
 
 		$scope.getSubjectPrice = function(contract, price) {

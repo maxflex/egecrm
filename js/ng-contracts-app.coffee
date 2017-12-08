@@ -45,11 +45,11 @@ app = angular.module "Contracts", ["ui.bootstrap"]
 			$scope.filter() if event.keyCode is 13
 
 		$scope.getDiscountedPrice = (price, discount) ->
-			price - (price * (discount / 100))
+			Math.round(price - (price * (discount / 100)))
 
 		$scope.getContractSum = (contract) ->
 			return 0 if not contract
-			
+
 			if contract.discount > 0
 				return $scope.getDiscountedPrice(contract.sum, contract.discount)
 			else
