@@ -44,6 +44,17 @@ app = angular.module "Contracts", ["ui.bootstrap"]
 		$scope.keyFilter = (event) ->
 			$scope.filter() if event.keyCode is 13
 
+		$scope.getDiscountedPrice = (price, discount) ->
+			price - (price * (discount / 100))
+
+		$scope.getContractSum = (contract) ->
+			return 0 if not contract
+			
+			if contract.discount > 0
+				return $scope.getDiscountedPrice(contract.sum, contract.discount)
+			else
+				return contract.sum
+
 		angular.element(document).ready ->
 			set_scope "Contracts"
 			$scope.search = if $.cookie("contracts") then JSON.parse($.cookie("contracts")) else {}

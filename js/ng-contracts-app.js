@@ -58,6 +58,19 @@ app = angular.module("Contracts", ["ui.bootstrap"]).filter('to_trusted', [
       return $scope.filter();
     }
   };
+  $scope.getDiscountedPrice = function(price, discount) {
+    return price - (price * (discount / 100));
+  };
+  $scope.getContractSum = function(contract) {
+    if (!contract) {
+      return 0;
+    }
+    if (contract.discount > 0) {
+      return $scope.getDiscountedPrice(contract.sum, contract.discount);
+    } else {
+      return contract.sum;
+    }
+  };
   return angular.element(document).ready(function() {
     set_scope("Contracts");
     $scope.search = $.cookie("contracts") ? JSON.parse($.cookie("contracts")) : {};

@@ -30,7 +30,9 @@
                             <span ng-hide='Contract.last_name'>имя не указано</span>
                         </a>
                     </td>
-                    <td>{{ Contract.sum }}</td>
+                    <td>
+                        {{ getContractSum(Contract) | number }} <span class='text-gray' ng-show='Contract.discount > 0'> (с учетом скидки {{ Contract.discount }}%)</span>
+                    </td>
                     <td class="text-success">{{ Contract.green }}</td>
                     <td class="text-warning">{{ Contract.yellow }}</td>
                     <td class="text-danger">{{ Contract.red }}</td>

@@ -18,7 +18,7 @@
 						'one': 'рубль',
 						'few': 'рубя',
 						'many': 'рублей'
-					}"></ng-pluralize><span class='text-gray' ng-show='contract.discount > 0'> (с учетом скидки {{ contract.discount }}%)</>
+					}"></ng-pluralize><span class='text-gray' ng-show='contract.discount > 0'> (с учетом скидки {{ contract.discount }}%)</span>
 					</td>
 					<td width="32%">
 						<span
