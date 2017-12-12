@@ -167,11 +167,29 @@
 						$Schedule->Group->Students = $Schedule->Group->getStudents();
 					}
 
+					// получаем учеников, которые присутствовали в группе, но сейчас их по какой-то причине нет
+					// (перешли в другую группу или прекратили обучение)
+					$left_students_vj = VisitJournal::findAll([
+						'condition' => "id_group={$Schedule->Group->id} AND type_entity='". Student::USER_TYPE ."' AND id_entity NOT IN (" . implode(',', $Schedule->Group->students) . ")",
+						'group' => 'id_entity'
+					]);
+
+					$left_students = [];
+					foreach($left_students_vj as $s) {
+						$student = Student::getLight($s->id_entity);
+						$student->id = $s->id_entity;
+						$student->status = VisitJournal::count([
+							'condition' => "id_group!={$Schedule->Group->id} AND type_entity='". Student::USER_TYPE ."' AND year={$Schedule->Group->year}  AND id_subject={$Schedule->Group->id_subject}"
+						]);
+						$left_students[] = $student;
+					}
+
 					$ang_init_data = angInit([
                         "Schedule"        => $Schedule,
 						"LessonData"      => (object)$OrderedLessonData,
 						"lesson_statuses" => VisitJournal::$statuses,
 						"isAdmin"		  => User::isAdmin(),
+						"left_students"   => $left_students,
 					]);
 
 					//изменение исторических данных: доступен только админам

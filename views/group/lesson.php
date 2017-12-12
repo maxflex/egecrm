@@ -34,6 +34,12 @@
 									<span class="link-like" ng-click="editStudent(Student)" ng-show="!Schedule.was_lesson">редактировать</span>
 								</td>
 							</tr>
+							<tr ng-repeat="Student in left_students">
+								<td width="300">{{Student.last_name}} {{Student.first_name}}</td>
+								<td colspan='4' class="text-gray half-opacity">
+									{{ Student.status ? 'перешел в другую группу' : 'прекратил обучение в группе'}}
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
