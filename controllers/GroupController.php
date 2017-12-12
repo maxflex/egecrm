@@ -190,6 +190,7 @@
 						"lesson_statuses" => VisitJournal::$statuses,
 						"isAdmin"		  => User::isAdmin(),
 						"left_students"   => $left_students,
+						'Teacher'		  => Teacher::getLight(User::fromSession()->id_entity)
 					]);
 
 					//изменение исторических данных: доступен только админам

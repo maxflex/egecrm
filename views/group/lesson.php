@@ -50,7 +50,11 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-12 text-danger" style='margin-bottom: 20px'>
-					<?= User::fromSession()->first_name . " " . User::fromSession()->middle_name ?>, если в группе присутствуют ученики, не обозначенные зелёной меткой, просьба сообщить об этом в администрацию
+					{{ Teacher.first_name }} {{ Teacher.middle_name }}, если в группе присутствуют ученики, не обозначенные
+					<div class="visit-div-circle">
+						<span class="circle-default"></span>
+					</div>
+					, просьба сообщить об этом в администрацию
 				</div>
 			</div>
 			<div class="row" ng-hide="<?= User::isStudent(true) ?>">
