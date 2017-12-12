@@ -50,11 +50,10 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-12 text-danger" style='margin-bottom: 20px'>
-					{{ Teacher.first_name }} {{ Teacher.middle_name }}, если в группе присутствуют ученики, не обозначенные
-					<div class="visit-div-circle">
+					{{ Teacher.first_name }} {{ Teacher.middle_name }}, если на занятии присутствуют ученики, не обозначенные
+					<div class="visit-div-circle" style='padding: 0 !important; float: none'>
 						<span class="circle-default"></span>
-					</div>
-					, просьба сообщить об этом в администрацию
+					</div>, просьба сообщить об этом в администрацию
 				</div>
 			</div>
 			<div class="row" ng-hide="<?= User::isStudent(true) ?>">
