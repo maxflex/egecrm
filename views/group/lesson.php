@@ -35,9 +35,9 @@
 								</td>
 							</tr>
 							<tr ng-repeat="Student in left_students">
-								<td width="300">{{Student.last_name}} {{Student.first_name}}</td>
-								<td colspan='4' class="text-gray half-opacity">
-									{{ Student.status ? 'перешел в другую группу' : 'прекратил обучение в группе'}}
+								<td width="300" class="text-gray">{{Student.last_name}} {{Student.first_name}}</td>
+								<td colspan='4' class="text-gray">
+									{{ Student.status ? 'перешел в другую группу' : 'прекратил обучение по предмету'}}
 								</td>
 							</tr>
 						</tbody>
