@@ -179,7 +179,7 @@
 						$student = Student::getLight($s->id_entity);
 						$student->id = $s->id_entity;
 						$student->status = VisitJournal::count([
-							'condition' => "id_group!={$Schedule->Group->id} AND type_entity='". Student::USER_TYPE ."' AND year={$Schedule->Group->year}  AND id_subject={$Schedule->Group->id_subject}"
+							'condition' => "id_group!={$Schedule->Group->id} AND type_entity='". Student::USER_TYPE ."' AND id_entity={$s->id_entity} AND year={$Schedule->Group->year}  AND id_subject={$Schedule->Group->id_subject}"
 						]);
 						$left_students[] = $student;
 					}
