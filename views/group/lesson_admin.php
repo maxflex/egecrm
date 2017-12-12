@@ -16,7 +16,12 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="Student in Schedule.Group.Students">
-								<td width="300">{{Student.last_name}} {{Student.first_name}}</td>
+								<td width="300">
+									<div class="visit-div-circle" style='margin: 0 10px 0 0'>
+										<span class="circle-default"></span>
+									</div>
+									{{Student.last_name}} {{Student.first_name}}
+								</td>
 								<td width="150">
 									<span>{{LessonData[Student.id].presence ? lesson_statuses[LessonData[Student.id].presence] : 'не указано'}}</span>
 								</td>

@@ -16,7 +16,11 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="Student in Schedule.Group.Students">
-								<td width="300">{{Student.last_name}} {{Student.first_name}}</td>
+								<td width="300">
+									<div class="visit-div-circle" style='margin: 0 5px 0 0'>
+										<span class="circle-default"></span>
+									</div>
+									{{Student.last_name}} {{Student.first_name}}</td>
 								<td width="150">
 									<span>{{LessonData[Student.id].presence ? lesson_statuses[LessonData[Student.id].presence] : 'не указано'}}</span>
 								</td>
@@ -36,12 +40,17 @@
 							</tr>
 							<tr ng-repeat="Student in left_students">
 								<td width="300" class="text-gray">{{Student.last_name}} {{Student.first_name}}</td>
-								<td colspan='4' class="text-gray">
+								<td colspan='4' class="text-gray" >
 									{{ Student.status ? 'перешел в другую группу' : 'прекратил обучение по предмету'}}
 								</td>
 							</tr>
 						</tbody>
 					</table>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-danger" style='margin-bottom: 20px'>
+					<?= User::fromSession()->first_name . " " . User::fromSession()->middle_name ?>, если в группе присутствуют ученики, не обозначенные зелёной меткой, просьба сообщить об этом в администрацию
 				</div>
 			</div>
 			<div class="row" ng-hide="<?= User::isStudent(true) ?>">
