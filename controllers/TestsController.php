@@ -142,6 +142,7 @@
 		public function actionEdit()
 		{
 			$Test = Test::findById($_GET['id']);
+			$Test->Problems = TestProblem::findByTest($Test->id);
 
 			$this->actionCreate($Test);
 		}
