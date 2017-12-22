@@ -11,9 +11,9 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
         $rootScope.$apply()
 
     @getStatus = (sms) ->
-        switch @updates[sms.id] or sms.id_status
-            when 103 then status_class = 'delivered'
-            when 102 then status_class = 'inway'
+        switch @updates[sms.id] or parseInt(sms.id_status) 
+            when 1 then status_class = 'delivered'
+            when 0 then status_class = 'inway'
             else status_class = 'not-delivered'
         status_class
 

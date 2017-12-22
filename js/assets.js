@@ -508,11 +508,11 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
   })(this));
   this.getStatus = function(sms) {
     var status_class;
-    switch (this.updates[sms.id] || sms.id_status) {
-      case 103:
+    switch (this.updates[sms.id] || parseInt(sms.id_status)) {
+      case 1:
         status_class = 'delivered';
         break;
-      case 102:
+      case 0:
         status_class = 'inway';
         break;
       default:

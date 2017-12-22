@@ -107,11 +107,11 @@
 		public function actionGetTeachers()
 		{
 			extract($_POST);
-			
+
 			if (isset($subject) && $subject != 'all') {
-				$id_subject = array_search($subject, Subjects::$short_eng);	
+				$id_subject = array_search($subject, Subjects::$short_eng);
 			}
-			
+
 			$condition = "description!='' " . (isset($id_subject) ? " AND FIND_IN_SET($id_subject, subjects)" : "") ;
 /*
 			returnJSON($condition);
@@ -121,16 +121,16 @@
 				'condition' => $condition,
 				'limit' => $limit,
 			]);
-			
+
 
 			returnJSON(Teacher::forApi($Teachers));
 		}
-		
+
 		public function actionCountTeachers()
 		{
 			echo Teacher::count([
 				'condition' => "description!=''"
-			]);	
+			]);
 		}
 
         /**
@@ -162,11 +162,11 @@
             }
             returnJSON($Teachers ? Teacher::forApi($Teachers) : []);
         }
-		
+
 		public function actionMetro()
 		{
 			extract($_POST);
-			
+
 			$Metors = Metro::calculate($lat, $lng);
 
 			returnJSON($Metors);
@@ -195,4 +195,24 @@
             }
         }
 
+		// Обновление статуса SMS
+		public function actionSmsStatus()
+		{
+			extract($_POST);
+
+			if (isset($mes)) {
+	            // message
+	        } else {
+	            // status
+				$SMS = SMS::find([
+					"condition" => "external_id={$id}"
+				]);
+
+				if ($SMS) {
+					$SMS->id_status = $status;
+					$SMS->save("id_status");
+					SMS::notifyStatus($SMS);
+				}
+	        }
+		}
 	}

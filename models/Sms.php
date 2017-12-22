@@ -83,12 +83,15 @@ class SMS extends Model
 				continue;
 			}
 			$params = array(
-				"api_id"	=>	"8d5c1472-6dea-d6e4-75f4-a45e1a0c0653",
-				"to"		=>	$number,
-				"text"		=>	$message,
-				"from"      =>  "EGE-Centr",
+				"login"		=> SMS_LOGIN,
+				"psw"		=> SMS_PSW,
+                "fmt"       => 1, // 1 – вернуть ответ в виде чисел: ID и количество SMS через запятую (1234,1)
+                "charset"   => "utf-8",
+				"phones"	=> $number,
+				"mes"		=> $message,
+				"sender"    => "EGE-Centr",
 			);
-			$result = self::exec("http://sms.ru/sms/send", $params, $create);
+			$result = self::exec(SMS_HOST, $params, $create);
 		}
 
 
@@ -105,16 +108,15 @@ class SMS extends Model
 		curl_close($ch);
 
 		// Сохраняем отправленную смс
-		$info = explode("\n", $result);
+		// Сохраняем отправленную смс
+			$info = explode(",", $result);
 
-		$info = [
-			"id_status" => $info[0],
-			"id_smsru"	=> $info[1],
-			"balance"	=> $info[2],
-
-			"message"	=> $params["text"],
-			"number"	=> $params["to"],
-		];
+			$info = [
+				"id_status"   => 0,
+				"external_id" => $info[0],
+				"message"	=> $params["mes"],
+				"number"	=> $params["phones"],
+			];
 
 		// создаем объект для истории
 		if ($create) {
