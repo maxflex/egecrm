@@ -162,20 +162,20 @@ class SMS extends Model
 	 */
 	public static function textStatus($sms_status)
 	{
-		// Статусы тут: http://sms.ru/?panel=api&subpanel=method&show=sms/status
+		// Статусы тут: https://smsc.ru/api/http/status_messages/statuses/#menu
 		switch ($sms_status) {
-			case -2 : return "не доставлено";
-			case 100: return "в очереди";
-			case 101: return "передается оператору";
-			case 102: return "в пути";
-			case 103: return "доставлено";
-			case 104: return "время жизни истекло";
-			case 105: return "удалено оператором";
-			case 106: return "сбой в телефоне";
-			case 107: return "не доставлено";
-			case 108: return "отклонено";
-			case 207: return "недопустимый номер";
-			default:  return "неизвестно";
+			case -3 : 	return "сообщение не найдено";
+			case -1: 	return "ожидает отправки";
+			case 0: 	return "передано оператору";
+			case 1: 	return "доставлено";
+			case 2: 	return "прочитано";
+			case 3: 	return "просрочено";
+			case 20: 	return "невозможно доставить";
+			case 22:	return "неверный номер";
+			case 23:	return "запрещено";
+			case 24:	return "недостаточно средств";
+			case 25:	return "недоступный номер";
+			default:	return "неизвестно";
 		}
 	}
 
