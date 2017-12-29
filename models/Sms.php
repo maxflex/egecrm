@@ -5,7 +5,7 @@ class SMS extends Model
 	public static $mysql_table	= "sms";
 
     public $log_except = [
-        'id_smsru',
+        'external_id',
         'id_status'
     ];
 
