@@ -72,8 +72,7 @@
 		{
 			extract($_POST);
 
-			// если в задаче пустой html - удаляем ее
-			if (empty(trim($Task['html']))) {
+			if ($Task['delete'] == 1) {
 				Task::deleteById($Task['id']);
 			} else {
 				echo Task::updateById($Task['id'], $Task) ? 1 : 0;

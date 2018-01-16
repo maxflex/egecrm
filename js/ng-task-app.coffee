@@ -3,12 +3,12 @@
 			(items) ->
 				if items
 					return items.slice().reverse()
-		.filter 'unsafe', ($sce) -> 
+		.filter 'unsafe', ($sce) ->
 			$sce.trustAsHtml
 		.controller "ListCtrl", ($scope, TaskTypes) ->
 			bindArguments $scope, arguments
 			$scope.editing_tasks = []
-			
+
 			$scope.editTask = (Task) ->
 				$scope.editing_task = Task.id
 				$scope.old_html = Task.html
@@ -20,9 +20,9 @@
 					height: 500
 					title: "testy"
 					extraPlugins: 'pastebase64,panel,button,panelbutton,colorbutton'
-						
+
 				$scope.e.setData Task.html
-				
+
 				$scope.e.on 'contentDom', ->
 					$scope.e.document.on 'keydown', (event) ->
 						event = event.data.$
@@ -42,24 +42,27 @@
 				$scope.e.on 'instanceReady', (event) ->
 					$scope.e.focus().select
 					$scope.e.execCommand 'selectAll'
-				
+
 			$scope.editingTask = (Task) ->
 				Task.id is $scope.editing_task
-			
-			$scope.toggleTaskStatus = (Task) ->
-				Task_copy = angular.copy Task
-				Task_copy.id_status++
 
-				if Task_copy.id_status > Object.keys($scope.task_statuses).length
+			$scope.toggleTaskStatus = (Task) ->
+				Task_copy = {id: Task.id, id_status: Task.id_status}
+				# добавляем возможность пропускать удаленные (идущие не подряд) статусы
+				task_statuses = Object.keys($scope.task_statuses).map(Number)
+				Task_copy.id_status = task_statuses[task_statuses.indexOf(Task_copy.id_status) + 1]
+
+				if not Task_copy.id_status
 					Task_copy.id_status = 1
 
 				$scope.saveTask(Task_copy).then (response) ->
+					console.log(response)
 					if response
 						Task.id_status = Task_copy.id_status
 						$scope.$apply()
 
 			$scope.toggleType = (Task) ->
-				Task_copy = angular.copy Task
+				Task_copy = {id: Task.id, type: Task.type}
 				Task_copy.type = (Task_copy.type+1)%2
 
 				$scope.saveTask(Task_copy).then (response) ->
@@ -68,18 +71,17 @@
 						$scope.$apply()
 
 			$scope.deleteTask = (Task) ->
-				Task.html = ""
-				$scope.saveTask Task
-				
-			
+				$scope.saveTask {id: Task.id, delete: 1}
+
+
 			$scope.addTask = ->
 				$.post "tasks/ajax/add", {}, (id_task) ->
-					Task = 
+					Task =
 						id: id_task
 						id_status: 1
 						type: $scope.type
 						html: "Текст задачи..."
-						
+
 					$scope.Tasks.unshift Task
 					$scope.$apply()
 					$scope.editTask Task
@@ -118,17 +120,17 @@
 						$.each data.messages, (index, error) ->
 							notifyError error
 				})
-			
+
 			$scope.deleteTaskFile = (Task, id) ->
 			    Task.files.splice id, 1
 			    $scope.saveTask(Task)
-			
+
 			$scope.saveTask = (Task) ->
 				$.post "tasks/ajax/save", {Task: Task}
-			
+
 			angular.element(document).ready ->
 				$.each $scope.Tasks, (i, Task) ->
 					$scope.bindFileUpload Task
-				
+
 			$(document).ready ->
 				set_scope 'Task'

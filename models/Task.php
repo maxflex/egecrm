@@ -39,7 +39,7 @@ class Task extends Model
 
 	public static function countNew($type = false)
 	{
-        $taskStatusesToShow = implode(',',[TaskStatuses::NEWR, TaskStatuses::NEWR_FOR_MAX, TaskStatuses::NEWR_FOR_SHAM]);
+        $taskStatusesToShow = implode(',',[TaskStatuses::NEWR]);
 
         return self::count([
             "condition" => "id_status IN (". $taskStatusesToShow .") AND html!=''" . ($type !== false ? " AND type=$type" : "")

@@ -53,13 +53,18 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
     return Task.id === $scope.editing_task;
   };
   $scope.toggleTaskStatus = function(Task) {
-    var Task_copy;
-    Task_copy = angular.copy(Task);
-    Task_copy.id_status++;
-    if (Task_copy.id_status > Object.keys($scope.task_statuses).length) {
+    var Task_copy, task_statuses;
+    Task_copy = {
+      id: Task.id,
+      id_status: Task.id_status
+    };
+    task_statuses = Object.keys($scope.task_statuses).map(Number);
+    Task_copy.id_status = task_statuses[task_statuses.indexOf(Task_copy.id_status) + 1];
+    if (!Task_copy.id_status) {
       Task_copy.id_status = 1;
     }
     return $scope.saveTask(Task_copy).then(function(response) {
+      console.log(response);
       if (response) {
         Task.id_status = Task_copy.id_status;
         return $scope.$apply();
@@ -68,7 +73,10 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
   };
   $scope.toggleType = function(Task) {
     var Task_copy;
-    Task_copy = angular.copy(Task);
+    Task_copy = {
+      id: Task.id,
+      type: Task.type
+    };
     Task_copy.type = (Task_copy.type + 1) % 2;
     return $scope.saveTask(Task_copy).then(function(response) {
       if (response) {
@@ -78,8 +86,10 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
     });
   };
   $scope.deleteTask = function(Task) {
-    Task.html = "";
-    return $scope.saveTask(Task);
+    return $scope.saveTask({
+      id: Task.id,
+      "delete": 1
+    });
   };
   $scope.addTask = function() {
     return $.post("tasks/ajax/add", {}, function(id_task) {

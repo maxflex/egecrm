@@ -77,8 +77,8 @@
 								<span class="link-like" ng-hide="index == <?=$_GET['type'];?>" ng-repeat="(index, type) in TaskTypes" ng-click="toggleType(Task)">перенести в {{ type }}</span>
 								<span class="task-status task-status-{{Task.id_status}}" ng-click="toggleTaskStatus(Task)">
 									<span ng-show="Task.id_status==1">новое</span>
-									<span ng-show="Task.id_status==2">новое для Макса</span>
-									<span ng-show="Task.id_status==3">новое для Шамшода</span>
+									<!-- <span ng-show="Task.id_status==2">новое для Макса</span>
+									<span ng-show="Task.id_status==3">новое для Шамшода</span> -->
 									<span ng-show="Task.id_status==4">выгружено на GitHub</span>
 									<span ng-show="Task.id_status==5">выгружено на Production (тестируется)</span>
 									<span ng-show="Task.id_status==6">выгружено на Production (готово)</span>
