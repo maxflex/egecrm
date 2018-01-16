@@ -65,7 +65,7 @@
 					}
 				}
 
-				$this->text = str_replace('{name}', $Student->first_name . ' ' . $Student->middle_name, $this->text);
+				$this->text = str_replace('{name}', $Student->Representative->first_name . ' ' . $Student->Representative->middle_name, $this->text);
 				$this->text = str_replace('{price}', $price, $this->text);
 			} else {
 				$this->text = str_replace('{name}',  User::fromSession()->first_name, $this->text);
