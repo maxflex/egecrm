@@ -11,7 +11,7 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
         $rootScope.$apply()
 
     @getStatus = (sms) ->
-        switch @updates[sms.id] or parseInt(sms.id_status) 
+        switch @updates[sms.id] or parseInt(sms.id_status)
             when 1 then status_class = 'delivered'
             when 0 then status_class = 'inway'
             else status_class = 'not-delivered'
@@ -43,7 +43,8 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
 
     @getTemplate = (id_template, entity) ->
         params = {}
-        if entity
+        if entity 
+            params['id'] = entity.id if entity.id
             params['entity_login'] = entity.login if entity.login
             params['entity_password'] = entity.password if entity.password
             params['phone'] = entity.phone if entity.phone

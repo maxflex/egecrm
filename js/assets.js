@@ -553,6 +553,9 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
     var data, params;
     params = {};
     if (entity) {
+      if (entity.id) {
+        params['id'] = entity.id;
+      }
       if (entity.login) {
         params['entity_login'] = entity.login;
       }

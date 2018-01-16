@@ -597,10 +597,10 @@
 		 * Найти все платежи студента (клиента).
 		 *
 		 */
-		public function getPayments()
+		public function getPayments($year = null)
 		{
 			return Payment::findAll([
-				"condition" => "entity_id=" . $this->id." and entity_type = '".Student::USER_TYPE."'"
+				"condition" => "entity_id=" . $this->id." and entity_type = '".Student::USER_TYPE."'" . ($year ? " AND year={$year}" : '')
 			]);
 		}
 
