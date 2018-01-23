@@ -34,7 +34,7 @@
 			$this->_custom_panel = true;
 
 			if ($list) {
-				$condition = "type=$type AND id_status=" . $list;
+				$condition = "type=$type AND html IS NOT NULL AND id_status=" . $list;
 				if (isset($search)) {
 					$condition .= " AND html LIKE '%{$search}%'";
 				}
@@ -44,7 +44,7 @@
 					"limit"		=> $list == 8 ? 200 : 50,
 				]);
 			} else {
-				$condition =  "type=$type AND id_status!=" . TaskStatuses::CLOSED;
+				$condition =  "type=$type AND html IS NOT NULL AND id_status!=" . TaskStatuses::CLOSED;
 				if (isset($search)) {
 					$condition .= " AND html LIKE '%{$search}%'";
 				}
