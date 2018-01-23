@@ -41,7 +41,7 @@
 				$Tasks = Task::findAll([
 					"condition" => $condition,
 					"order"		=> "id DESC",
-					"limit"		=> $list == 8 ? 200 : 50,
+					"limit"		=> $list == 8 ? 50 : 50,
 				]);
 			} else {
 				$condition =  "type=$type AND html IS NOT NULL AND id_status!=" . TaskStatuses::CLOSED;
