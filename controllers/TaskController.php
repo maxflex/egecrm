@@ -51,7 +51,7 @@
 				$Tasks = Task::findAll([
 					"condition" => $condition,
 					"order"		=> "id DESC",
-                    "limit"     => $_GET["limit"] ? $_GET["limit"] : 1000,
+                    "limit"     => $_GET["limit"] ? $_GET["limit"] : 100,
 				]);
 			}
 
