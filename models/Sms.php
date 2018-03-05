@@ -18,7 +18,9 @@ class SMS extends Model
 		parent::__construct($array);
 
         if (!$light) {
-            $this->getCoordinates();
+        //    $this->getCoordinates();
+        	$this->status = $this->getStatus();
+			$this->number_formatted = formatNumber($this->number);
         }
 
 		if (mb_strlen($this->message) > self::INLINE_SMS_LENGTH) {
@@ -26,26 +28,20 @@ class SMS extends Model
 		}
 	}
 
-	public static function applySearchFilters($filter)
+	public static function applySearchFilters($search)
 	{
-		$phone   = isset($filter['phone']) ? cleanNumberForSearch($filter['phone']) : '';
-		$search = isset($filter['search']) ? $filter['search'] : '';
-
-		if ($phone || $search) {
-			return "number LIKE '%$phone%' AND message LIKE '%$search%'";
+		if ($search) {
+			return "number LIKE '%{$search}%' OR message LIKE '%{$search}%'";
 		}
-		return '';
+		return null;
 	}
 
-	/**
-	 * Получить заявки по номеру страницы и ID списка из RequestStatuses Factory.
-	 *
-	 */
-	public static function getByPage($page, $filter = false)
+	public static function getByPage($page, $search = false)
 	{
 		if (!$page) {
 			$page = 1;
 		}
+
 		// С какой записи начинать отображение, по формуле
 		$start_from = ($page - 1) * self::PER_PAGE;
 
@@ -54,7 +50,7 @@ class SMS extends Model
 			"limit" 	=> $start_from. ", " .self::PER_PAGE
 		];
 
-		$condition['condition'] = self::applySearchFilters($filter);
+		$condition['condition'] = self::applySearchFilters($search);
 
 		$SMS = self::findAll($condition);
 

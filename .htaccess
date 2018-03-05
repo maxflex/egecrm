@@ -114,6 +114,7 @@ RewriteRule ^students/ajax/([a-zA-Z]+)[/]?$ index.php?controller=studentsProfile
 
 # SMS
 RewriteRule ^sms[/]?$ index.php?controller=sms [QSA,L]
+RewriteRule ^sms/ajax/([a-zA-Z]+)[/]?$ index.php?controller=sms&action=Ajax$1 [QSA,L]
 RewriteRule ^sms/([0-9]+)[/]?$ index.php?controller=sms&page=$1 [QSA,L]
 
 # RATING

@@ -1,21 +1,33 @@
 var app;
 
-app = angular.module("Sms", ["ui.bootstrap"]).controller("Main", function($scope, $element, PhoneService) {
+app = angular.module("Sms", ["ui.bootstrap"]).controller("Main", function($scope, $element, $http, PhoneService) {
   bindArguments($scope, arguments);
+  $scope.getByPage = function(page) {
+    frontendLoadingStart();
+    return $.post('sms/ajax/history', {
+      page: page,
+      search: $scope.search
+    }, function(response) {
+      frontendLoadingEnd();
+      $scope.data = response.data;
+      $scope.total = response.total;
+      return $scope.$apply();
+    }, 'json');
+  };
+  $scope.filter = _.debounce(function() {
+    console.log('debounced');
+    $scope.current_page = 1;
+    return $scope.getByPage($scope.current_page);
+  }, 150);
   $scope.pageChanged = function() {
-    var redirect_string;
-    ajaxStart();
-    redirect_string = "sms/" + $scope.currentPage;
-    if ($scope.search) {
-      redirect_string += "?search=" + $scope.search;
+    if ($scope.current_page > 1) {
+      window.history.pushState({}, '', 'clients/?page=' + $scope.current_page);
     }
-    redirect_string += $scope.search && $scope.phone ? '&' : $scope.phone ? '?' : '';
-    if ($scope.phone) {
-      redirect_string += "&phone=" + $scope.phone;
-    }
-    return redirect(redirect_string);
+    return $scope.getByPage($scope.current_page);
   };
   return angular.element(document).ready(function() {
+    $scope.current_page = $scope.currentPage;
+    $scope.pageChanged();
     return set_scope("Sms");
   });
 });
