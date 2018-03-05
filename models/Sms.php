@@ -18,7 +18,7 @@ class SMS extends Model
 		parent::__construct($array);
 
         if (!$light) {
-        //    $this->getCoordinates();
+			$this->getCoordinates();
         	$this->status = $this->getStatus();
 			$this->number_formatted = formatNumber($this->number);
         }
