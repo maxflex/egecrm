@@ -46,7 +46,7 @@
 					</select>
 				</div>
 -->
-				<div ng-repeat="Task in Tasks | filter: {type: type}" class="row task-line" ng-hide="!Task.html.trim()">
+				<div ng-repeat="Task in Tasks | filter: {type: type}" class="row task-line" ng-hide="Task.delete">
 					<div class="col-sm-12">
 						<div class="task">
 							<div class="text-gray pull-right" ng-show="<?= allowed(Shared\Rights::IS_DEVELOPER, true) ?>">#{{Task.id}}</div>

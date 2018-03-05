@@ -71,6 +71,7 @@
 						$scope.$apply()
 
 			$scope.deleteTask = (Task) ->
+				Task.delete = 1
 				$scope.saveTask {id: Task.id, delete: 1}
 
 

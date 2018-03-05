@@ -86,6 +86,7 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
     });
   };
   $scope.deleteTask = function(Task) {
+    Task["delete"] = 1;
     return $scope.saveTask({
       id: Task.id,
       "delete": 1
