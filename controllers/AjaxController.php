@@ -44,8 +44,6 @@
 			// (сколько минут назад было последнее действие)
 			$time_diff = (time() - User::fromSession()->last_action_time) / 60;
 
-// 			returnJsonAng($time_diff);
-
 			// одна минута до выброса из сессии
 			if ($time_diff >= ($minutes_limit - 1) && $time_diff <= $minutes_limit) {
 				returnJsonAng(2);
@@ -65,7 +63,6 @@
 
 				returnJsonAng(1);
 			}
-
 			returnJsonAng(0);
 		}
 

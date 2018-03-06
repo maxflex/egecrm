@@ -427,6 +427,23 @@
             ReportHelper::recalc();
         }
 
+		/**
+		 * Отложенные задачи
+		 */
+		public function actionDelayedJobs()
+		{
+			// получить все текущие задачи
+			$current_jobs = Job::findAll([
+				'condition' => "DATE_FORMAT(run_at, '%Y-%m-%d %H:%i')='" . date('Y-m-d H:i') ."'"
+			]);
+
+			foreach($current_jobs as $job) {
+				$job_class = new $job->class;
+				$job_class->handle($job->params);
+				$job->delete();
+			}
+		}
+
 		public function actionMasteredSum()
 		{
 			dbConnection()->query("TRUNCATE TABLE student_sums");

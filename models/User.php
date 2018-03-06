@@ -119,6 +119,9 @@
 					$this->save('last_action_link');
 				}
 				$this->save('last_action_time');
+
+				// создать отложенную задачу на логаут
+				Job::dispatch(LogoutJob::class, ['session_id' => session_id()], 40);
 			}
 		}
 
