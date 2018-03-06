@@ -4,7 +4,8 @@ class Job extends Model
 {
     public static $mysql_table = "delayed_jobs";
     protected $_json = ['params'];
-
+    protected $loggable = false;
+    
     public static function dispatch($class, $params, $delay_in_minutes)
     {
         // сначала удаляем похожие
