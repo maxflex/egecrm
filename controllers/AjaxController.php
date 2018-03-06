@@ -27,6 +27,11 @@
 			# ничего не надо, пустая функция для обновления сессии
 		}
 
+		public function actionDefault()
+		{
+
+		}
+
 		// public function actionAjaxCheckSession()
 		// {
 		//

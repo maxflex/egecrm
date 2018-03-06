@@ -110,23 +110,26 @@
 		 */
 		public function updateLastActionTime()
 		{
-			// не засчитываем AjaxCheckLogout за действие. не обновляем
-			// if ($_GET['action'] != 'AjaxCheckLogout') {
-				$this->last_action_time = time();
-				// если не ajax-действие, записываем ссылку последнего действия
-				if (strpos(strtolower($_GET['action']), "ajax") !== 0) {
-					$this->last_action_link = $_SERVER['REQUEST_URI'];
-					$this->save('last_action_link');
-				}
-				$this->save('last_action_time');
+			$this->last_action_time = time();
+			// если не ajax-действие, записываем ссылку последнего действия
+			if (strpos(strtolower($_GET['action']), "ajax") !== 0) {
+				$this->last_action_link = $_SERVER['REQUEST_URI'];
+				$this->save('last_action_link');
+			}
+			$this->save('last_action_time');
 
-				// создать отложенную задачу на логаут
-				Job::dispatch(
-					LogoutJob::class,
-					['session_id' => session_id()],
-					User::fromSession()->type == User::USER_TYPE ? 40 : 15
-				);
-			// }
+			Job::dispatch(
+				LogoutNotifyJob::class,
+				['user_id' => $this->id],
+				$this->type == User::USER_TYPE ? (40 - 1) : (15 - 1)
+			);
+
+			// создать отложенную задачу на логаут
+			Job::dispatch(
+				LogoutJob::class,
+				['session_id' => session_id()],
+				$this->type == User::USER_TYPE ? 40 : 15
+			);
 		}
 
 		public static function isUser($return_string = false)
