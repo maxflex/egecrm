@@ -13,6 +13,9 @@
         const UPLOAD_DIR = 'img/users/';
         const NO_PHOTO   = 'no-profile-img.gif';
 
+		const ADMIN_SESSION_DURATION = 40;
+		const OTHER_SESSION_DURATION = 15;
+
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "users";
@@ -111,6 +114,7 @@
 		public function updateLastActionTime()
 		{
 			$this->last_action_time = time();
+
 			// если не ajax-действие, записываем ссылку последнего действия
 			if (strpos(strtolower($_GET['action']), "ajax") !== 0) {
 				$this->last_action_link = $_SERVER['REQUEST_URI'];
@@ -121,14 +125,14 @@
 			Job::dispatch(
 				LogoutNotifyJob::class,
 				['user_id' => $this->id],
-				$this->type == User::USER_TYPE ? (40 - 1) : (15 - 1)
+				$this->type == User::USER_TYPE ? (self::ADMIN_SESSION_DURATION - 1) : (self::OTHER_SESSION_DURATION - 1)
 			);
 
 			// создать отложенную задачу на логаут
 			Job::dispatch(
 				LogoutJob::class,
 				['session_id' => session_id()],
-				$this->type == User::USER_TYPE ? 40 : 15
+				$this->type == User::USER_TYPE ? self::ADMIN_SESSION_DURATION : self::OTHER_SESSION_DURATION
 			);
 		}
 
