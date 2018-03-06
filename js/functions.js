@@ -8,8 +8,11 @@ listenToLogout = function(user_id) {
     encrypted: true
   });
   channel = pusher.subscribe('user_' + user_id);
-  return channel.bind('logout_notify', function(data) {
+  channel.bind('logout_notify', function() {
     return logoutCountdown();
+  });
+  return channel.bind('continue_session', function() {
+    return logoutCountdownClose();
   });
 };
 

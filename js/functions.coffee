@@ -9,33 +9,9 @@
             encrypted: true
 		channel = pusher.subscribe 'user_' + user_id
 
-		channel.bind 'logout_notify', (data) ->
-			logoutCountdown()
+		channel.bind 'logout_notify', -> logoutCountdown()
+		channel.bind 'continue_session', -> logoutCountdownClose()
 
-	# $(window).on 'focus', ->
-	# 	checkLogout()
-
-	# checkLogout = ->
-	# 	# на странице логина, то просто обновляем страницу, вдруг с других вкладок
-	# 	# уже перезалогинились
-	# 	if $('[ng-app=Login]').length
-	# 	#	location.reload()
-	# 	else
-	# 		$.post "ajax/CheckLogout", {},
-	# 			(response) ->
-	# 				if response is 1
-	# 					location.reload()
-	# 				else if response is 2
-	# 					console.log 'logout_int', logout_interval
-	# 					logoutCountdown() if logout_interval is false
-	# 				else
-	# 					logoutCountdownClose()
-	# 		, 'json'
-	# 		.fail (response)->
-	# 			# console.log response
-	# 			# если не в режиме просмотра, то обновляем страницу в случае ошибки
-	# 			# т.е. пользователя выбило в другой вкладке и сейчас у него нет доступа к ajax, выкидывает ошибку
-	# 			location.reload() # if not $('.view-as').length
 
 	logoutCountdownClose = ->
 		clearInterval(logout_interval)

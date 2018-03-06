@@ -24,7 +24,7 @@
 
 		public function actionAjaxContinueSession()
 		{
-			# ничего не надо, пустая функция для обновления сессии
+			Socket::trigger('user_' . User::fromSession()->id, 'continue_session', []);
 		}
 
 		public function actionDefault()
