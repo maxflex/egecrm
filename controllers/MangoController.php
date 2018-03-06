@@ -6,6 +6,11 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "mango";
 
+		public function actionMain()
+		{
+
+		}
+
 		/**
 		 * Поступил входящий звонок
 		 */

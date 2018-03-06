@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Отложенный логаут пользователя
+ */
+
 class LogoutJob extends BaseJob
 {
     public function handle($params)

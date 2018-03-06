@@ -27,44 +27,10 @@
 			# ничего не надо, пустая функция для обновления сессии
 		}
 
-		public function actionAjaxCheckLogout()
-		{
-			// если в режиме просмотра, не делаем логаут
-			if (User::inViewMode()) {
-				returnJsonAng(0);
-			}
-
-			if (User::fromSession()->type == User::USER_TYPE) {
-				$minutes_limit = 40; // 40 минут для пользователей
-			} else {
-				$minutes_limit = 15; // 15 минут
-			}
-
-			// разница во времени между последним действием и сейчас
-			// (сколько минут назад было последнее действие)
-			$time_diff = (time() - User::fromSession()->last_action_time) / 60;
-
-			// одна минута до выброса из сессии
-			if ($time_diff >= ($minutes_limit - 1) && $time_diff <= $minutes_limit) {
-				returnJsonAng(2);
-			}
-
-			if ($time_diff >= $minutes_limit) {
-				// Удаляем сессию
-				session_destroy();
-				session_unset();
-
-				// Очищаем куку залогиненного пользователя
-				removeCookie("egecrm_token");
-
-				// Очищаем куку сессии PHP
-				removeCookie("PHPSESSID", "/");
-				//setcookie("PHPSESSID","",time()-3600,"/"); // delete session cookie
-
-				returnJsonAng(1);
-			}
-			returnJsonAng(0);
-		}
+		// public function actionAjaxCheckSession()
+		// {
+		//
+		// }
 
 		public function actionAjaxEgecentr()
 		{

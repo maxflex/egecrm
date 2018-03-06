@@ -5,5 +5,8 @@
   	</div>
   </div>
   <script src="js/vendor/ga.js"></script>
+  <script>
+	listenToLogout(<?= User::fromSession()->id ?>)
+  </script>
  </body>
 </html>

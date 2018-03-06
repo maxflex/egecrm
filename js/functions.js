@@ -1,36 +1,16 @@
-var ajaxEnd, ajaxStart, checkLogout, clearSelect, continueSession, deleteTeacher, emailMode, isMobilePhone, logoutCountdown, logoutCountdownClose, logout_interval, objectToArray, phoneCorrect, set_scope;
+var ajaxEnd, ajaxStart, clearSelect, continueSession, deleteTeacher, emailMode, isMobilePhone, listenToLogout, logoutCountdown, logoutCountdownClose, logout_interval, objectToArray, phoneCorrect, set_scope;
 
 logout_interval = false;
 
-if ($('[ng-app=Login]').length <= 0) {
-  setInterval(function() {
-    return checkLogout();
-  }, 60000);
-}
-
-$(window).on('focus', function() {
-  return checkLogout();
-});
-
-checkLogout = function() {
-  if ($('[ng-app=Login]').length) {
-
-  } else {
-    return $.post("ajax/CheckLogout", {}, function(response) {
-      if (response === 1) {
-        return location.reload();
-      } else if (response === 2) {
-        console.log('logout_int', logout_interval);
-        if (logout_interval === false) {
-          return logoutCountdown();
-        }
-      } else {
-        return logoutCountdownClose();
-      }
-    }, 'json').fail(function(response) {
-      return location.reload();
-    });
-  }
+listenToLogout = function(user_id) {
+  var channel, pusher;
+  pusher = new Pusher('a9e10be653547b7106c0', {
+    encrypted: true
+  });
+  channel = pusher.subscribe('user_' + user_id);
+  return channel.bind('logout_notify', function(data) {
+    return logoutCountdown();
+  });
 };
 
 logoutCountdownClose = function() {
@@ -48,7 +28,10 @@ logoutCountdown = function() {
     seconds--;
     $('#logout-seconds').html(seconds);
     if (seconds <= 1) {
-      return clearInterval(logout_interval);
+      clearInterval(logout_interval);
+      return setTimeout(function() {
+        return location.reload();
+      }, 1000);
     }
   }, 1000);
 };
