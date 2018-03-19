@@ -1751,7 +1751,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.addContractDialog = function() {
 			$scope.current_contract = {
                 subjects : [],
-                info: {year: getYear()},
+                info: {year: 2018},
                 payments_info: '2-0',
                 payments_split: 3,
                 payments_queue: 0,
