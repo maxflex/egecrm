@@ -1,17 +1,12 @@
 	logout_interval = false
 
-
-	# listenToLogout() if $('[ng-app=Login]').length <= 0
-
 	# проверка времени сессии
 	listenToLogout = (user_id) ->
 		pusher = new Pusher 'a9e10be653547b7106c0',
             encrypted: true
 		channel = pusher.subscribe 'user_' + user_id
-
 		channel.bind 'logout_notify', -> logoutCountdown()
 		channel.bind 'continue_session', -> logoutCountdownClose()
-
 
 	logoutCountdownClose = ->
 		clearInterval(logout_interval)
@@ -36,8 +31,6 @@
 	continueSession = ->
 		$.post "ajax/ContinueSession"
 		logoutCountdownClose()
-
-
 
 	set_scope = (app_name) ->
 		@ang_scope = angular.element("[ng-app='#{app_name}']").scope()
