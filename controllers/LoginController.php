@@ -96,7 +96,7 @@
                 returnJSON($resp->getErrorCodes());
             }
 
-            $query = ["email='$login'"];
+            $query = ["login='$login'"];
 
             # проверка логина
             if (self::userExists($query)) {
