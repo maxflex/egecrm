@@ -34,6 +34,8 @@
 					$this->refresh();
 				}
 			}
+			$this->addCss("signin");
+			$this->addJs("ng_login");
 		}
 
 		// Папка вьюх
@@ -42,9 +44,14 @@
 		// Страница входа
 		public function actionLogin()
 		{
-			$this->addCss("signin");
-			$this->addJs("ng_login");
 			$this->render("login", array(), "login");
+		}
+
+		public function actionPassword()
+		{
+			$this->render('password', [
+				'mode' => $_GET['mode'] ? 1 : 0
+			], 'login');
 		}
 
 
@@ -89,7 +96,7 @@
                 returnJSON($resp->getErrorCodes());
             }
 
-            $query = ["login='$login'"];
+            $query = ["email='$login'"];
 
             # проверка логина
             if (self::userExists($query)) {
@@ -108,6 +115,12 @@
 
 			// Пытаемся найти пользователя
 			$User = User::find(['condition'	=> implode(' AND ', $query)]);
+
+			// Если входит представитель, подменяем на ученика
+			if ($User->type == Representative::USER_TYPE) {
+				$student_id = Student::find(['condition' => "id_representative={$User->id_entity}"])->id;
+				$User = User::find(['condition' => "id_entity={$student_id} AND type='" . Student::USER_TYPE . "'"]);
+			}
 
             // Пользователь заблокирован?
             if ($User->type == User::USER_TYPE && $User->allowed(Shared\Rights::EC_BANNED)) {
@@ -163,6 +176,59 @@
 			} else {
                 self::log($user_id, 'failed_login', 'нет прав доступа для данного IP');
 				returnJSON(false);
+			}
+		}
+
+		public function actionReset()
+		{
+			$client = new Predis\Client();
+			$code = $_GET['code'];
+			$user_id = User::getIdFromCode($code);
+			$key = "egecrm:reset-password:{$user_id}";
+			if ($client->exists($key) && $client->get($key) == $code) {
+				$this->render('reset', [], 'login');
+			} else {
+				$this->render('link_timeout', [], 'login');
+			}
+			// $code = $_GET['code'];
+			// $user_id = base64_decode(substr($code, 32, 999));
+			//
+			// return;
+		}
+
+		public function actionAjaxGetPwd()
+		{
+			extract($_POST);
+
+			$user = User::getByEmail($email);
+			if ($user) {
+				// если с таким email > 1
+				if (User::getByEmail($email, 'count') > 1) {
+					returnJsonAng(-3);
+				}
+				// по ссылке "получить пароль" пароль уже установлен
+				if ($user->password && $mode == 1) {
+					returnJsonAng(-2);
+				}
+				$user->resetPassword();
+			} else {
+				returnJsonAng(-1);
+			}
+		}
+
+		public function actionAjaxResetPwd()
+		{
+			extract($_POST);
+			$client = new Predis\Client();
+			$user_id = User::getIdFromCode($code);
+			$key = "egecrm:reset-password:{$user_id}";
+			if ($client->exists($key) && $client->get($key) == $code) {
+				$user = User::findById($user_id);
+				$user->password = User::password($password);
+				$user->save('password');
+				// $client->del($key);
+			} else {
+				returnJsonAng(-1);
 			}
 		}
 

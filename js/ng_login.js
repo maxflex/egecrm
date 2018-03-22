@@ -1,4 +1,90 @@
 	app = angular.module("Login", ["ngAnimate"])
+		.controller("ResetPwdCtrl", function($scope) {
+			$scope.success = false
+
+			angular.element(document).ready(function() {
+				set_scope("Login")
+				l = Ladda.create(document.querySelector('#login-submit'));
+			})
+
+			//обработка события по enter в форме логина
+			$scope.enter = function($event){
+				if($event.keyCode == 13){
+					$scope.go()
+				}
+			}
+
+			$scope.go = function() {
+				if ($scope.pwd_1 != $scope.pwd_2) {
+					notifyError('Пароли не совпадают')
+					return
+				}
+				if ($scope.pwd_1.length < 6) {
+					notifyError('Пароль должен быть<br> длиннее 6 символов')
+					return
+				}
+				ajaxStart()
+				l.start()
+				$scope.in_process = true
+				$.post("/login/AjaxResetPwd", {
+					'password': $scope.pwd_1,
+					'code': $scope.code
+				}, function(response) {
+					ajaxEnd()
+					l.stop()
+					$scope.in_process = false
+					if (response == -1) {
+						notifyError("Произошла ошибка")
+					} else {
+						$scope.success = true
+						$scope.$apply()
+					}
+				})
+			}
+		})
+		.controller("GetPwdCtrl", function($scope) {
+			$scope.success = false
+			$scope.error = false
+
+			angular.element(document).ready(function() {
+				set_scope("Login")
+				l = Ladda.create(document.querySelector('#login-submit'));
+			})
+
+			//обработка события по enter в форме логина
+			$scope.enter = function($event){
+				if($event.keyCode == 13){
+					$scope.go()
+				}
+			}
+
+			$scope.go = function() {
+				ajaxStart()
+				l.start()
+				$scope.in_process = true
+				$.post("/login/AjaxGetPwd", {
+					'email': $scope.email,
+					'mode': $scope.mode
+				}, function(response) {
+					ajaxEnd()
+					l.stop()
+					$scope.in_process = false
+					if (response == -1) {
+						notifyError("Пользователь с таким email не найден")
+					}
+					else if (response == -2 && $scope.mode == 1) {
+						notifyError("Пароль уже установлен")
+					}
+					else if (response == -3) {
+						$scope.error = true
+						$scope.$apply()
+					} else {
+						$scope.success = true
+						$scope.$apply()
+					}
+				})
+			}
+		})
 		.controller("LoginCtrl", function($scope) {
 			angular.element(document).ready(function() {
 				set_scope("Login")

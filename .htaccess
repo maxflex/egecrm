@@ -11,7 +11,9 @@ RewriteRule ^egecrm/(.*) https://%{HTTP_HOST}/$1 [L,R=301]
 ###### Правила ######
 
 # Вход, регистрация
-RewriteRule ^register$ index.php?controller=login&action=register [QSA,L]
+RewriteRule ^login/get-password$ index.php?controller=login&action=password&mode=1 [QSA,L]
+RewriteRule ^login/forgot-password$ index.php?controller=login&action=password&mode=0 [QSA,L]
+RewriteRule ^login/([a-zA-Z]+)[/]?$ index.php?controller=login&action=$1 [QSA,L]
 RewriteRule ^logout$ index.php?controller=login&action=logout [QSA,L]
 RewriteRule ^login$ index.php?controller=login&action=login [QSA,L]
 
@@ -28,7 +30,6 @@ RewriteRule ^(students/|teachers/)?reports[?page=(0-9)]?[/]?$ index.php?controll
 RewriteRule ^(students/|teachers/)?reports/([a-zA-Z]+)[/]?$ index.php?controller=reports&action=$2 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/view/([0-9]+)[/]?$ index.php?controller=reports&action=view&id=$2 [QSA,L]
 RewriteRule ^(students/|teachers/)?reports/edit/([0-9]+)[/]?$ index.php?controller=reports&action=edit&id=$2 [QSA,L]
-
 
 # Заявки
 RewriteRule ^requests/edit/([0-9]+)$ index.php?controller=request&action=edit&id=$1 [QSA,L]

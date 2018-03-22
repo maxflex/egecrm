@@ -116,7 +116,7 @@
     			<a href="tests" class="list-group-item">Тесты</a>
     			<a href="reports" class="list-group-item">Отчеты
     				 <?php
-    					$report_count = Teacher::redReportCountAll();
+    					//$report_count = Teacher::redReportCountAll();
     					if ($report_count) {
     				?>
     					<span id='red-report-count' class="badge pull-right"><?= $report_count ?></span>

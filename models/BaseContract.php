@@ -118,18 +118,33 @@
             $Student = Student::findById($NewContract->info->id_student, true);
             if (!$Student->login) {
                 $Student->login = $NewContract->id;
-                $Student->password = mt_rand(10000000, 99999999);
+                // $Student->password = mt_rand(10000000, 99999999);
                 $Student->code = self::_generateCode();
                 $Student->save();
 
                 User::add([
-                    "login" => $Student->login,
-                    "password" => $Student->password,
+                    "email" => $Student->email,
+                    "phone" => $Student->phone,
+                    "login" => $NewContract->id,
+                    // "password" => $Student->password,
                     "first_name" => $Student->first_name,
                     "last_name" => $Student->last_name,
                     "middle_name" => $Student->middle_name,
                     "type" => Student::USER_TYPE,
                     "id_entity" => $Student->id
+                ]);
+
+                $Representative = $Student->Representative;
+                User::add([
+                    "email" => $Representative->email,
+                    "phone" => $Representative->phone,
+                    "login" => $NewContract->id,
+                    // "password" => $Representative->password,
+                    "first_name" => $Representative->first_name,
+                    "last_name" => $Representative->last_name,
+                    "middle_name" => $Representative->middle_name,
+                    "type" => Representative::USER_TYPE,
+                    "id_entity" => $Representative->id
                 ]);
             }
 

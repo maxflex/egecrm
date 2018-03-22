@@ -368,6 +368,8 @@
 					"first_name"	=> $this->first_name,
 					"last_name"		=> $this->last_name,
 					"middle_name"	=> $this->middle_name,
+					"phone"			=> $this->phone,
+					"email"			=> $this->email,
 					"type"			=> self::USER_TYPE,
 				]);
 			} else {

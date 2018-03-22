@@ -531,7 +531,7 @@
 			static::dbConnection()->query("DELETE FROM ".static::$mysql_table." WHERE id=".$this->id);
 
 			// Удаляем объект
-			unset($this);
+			// unset($this);
 		 }
 
 		 /**

@@ -142,7 +142,7 @@
 			}
 		}
 
-		public static function countNeeded($id_test) {
+		public static function countNeeded() {
 			// @todo: брошеные тесты здесь не засчитываются
 			return TestStudent::count([
 				'condition' => 'id_student=' . User::fromSession()->id_entity . ' AND date_finish="' . EMPTY_DATETIME .'"'

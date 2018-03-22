@@ -19,7 +19,10 @@
 			</div>
 		</div>
 -->
-
+  <div class="password-controls">
+    <a href='/login/get-password' class="get-password">получить пароль</a>
+    <a href='/login/forgot-password' class="forgot-password">забыли пароль?</a>
+  </div>
 	</div>
 </center>
 <script src='https://www.google.com/recaptcha/api.js?hl=ru'></script>

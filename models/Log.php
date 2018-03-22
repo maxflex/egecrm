@@ -99,7 +99,7 @@ class Log extends Model
     public static function updateField($fields = [])
     {
         if (static::$row_id) {
-            $update_vals = '';
+            $update_vals = [];
             foreach ($fields as $key => $val) {
                 $update_vals[] = $key . " = '" . $val . "'";
             }
