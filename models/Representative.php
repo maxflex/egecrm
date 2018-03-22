@@ -3,7 +3,7 @@
 	{
 
 		const USER_TYPE = 'REPRESENTATIVE';
-		
+
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "representatives";
@@ -38,6 +38,18 @@
 			// Очищаем номера телефонов
 			foreach (static::$_phone_fields as $phone_field) {
 				$this->{$phone_field} = cleanNumber($this->{$phone_field});
+			}
+		}
+
+		public function afterSave()
+		{
+			// синхронизация email
+			$user = User::find([
+				'condition' => "id_entity={$this->id} && type='" . self::USER_TYPE . "'"
+			]);
+			if ($user) {
+				$user->email = $this->email;
+				$user->save('email');
 			}
 		}
 

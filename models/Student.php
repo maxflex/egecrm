@@ -94,10 +94,17 @@
             }
         }
 
-		public function afterSave()
-		{
-
-		}
+				public function afterSave()
+				{
+					// синхронизация email
+					$user = User::find([
+						'condition' => "id_entity={$this->id} && type='" . self::USER_TYPE . "'"
+					]);
+					if ($user) {
+						$user->email = $this->email;
+						$user->save('email');
+					}
+				}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 		public static function getReportCount($id_student)
