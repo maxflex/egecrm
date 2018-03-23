@@ -58,7 +58,6 @@
 			}
 		?>
 	</a>
-	<a href="send-sms" class="list-group-item">Отправка СМС</a>
 	<a href="map" class="list-group-item">Карта клиентов</a>
 	<?php if (
 		User::fromSession()->allowed(Shared\Rights::SHOW_PAYMENTS) ||
