@@ -26,6 +26,9 @@ app = angular.module("Sms", ["ui.bootstrap"]).controller("Main", function($scope
     return $scope.getByPage($scope.current_page);
   };
   return angular.element(document).ready(function() {
+    setTimeout(function() {
+      return $('#entity-phone-phone').attr('placeholder', 'отправить СМС');
+    }, 300);
     $scope.current_page = $scope.currentPage;
     $scope.pageChanged();
     return set_scope("Sms");

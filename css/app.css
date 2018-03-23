@@ -14231,7 +14231,9 @@ body {
   color: white;
   padding: 6px;
   text-align: center;
-  font-size: 12px; }
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between; }
   .view-as .btn {
     padding: 3px 10px !important; }
 
@@ -16816,8 +16818,6 @@ a[href^="https://www.google.com/maps"] {
   width: calc(100% - 100px);
   box-sizing: border-box;
   bottom: 15px; }
-  .password-controls a {
-    margin-right: 10px; }
 
 .control-group {
   display: inline-block;

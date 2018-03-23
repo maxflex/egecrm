@@ -116,17 +116,10 @@
 
             // Создаем логин-пароль пользователя
             $Student = Student::findById($NewContract->info->id_student, true);
-            if (!$Student->login) {
-                $Student->login = $NewContract->id;
-                // $Student->password = mt_rand(10000000, 99999999);
-                $Student->code = self::_generateCode();
-                $Student->save();
-
+            if (! User::byType($Student->id, Student::USER_TYPE, 'count')) {
                 User::add([
                     "email" => $Student->email,
                     "phone" => $Student->phone,
-                    "login" => $NewContract->id,
-                    // "password" => $Student->password,
                     "first_name" => $Student->first_name,
                     "last_name" => $Student->last_name,
                     "middle_name" => $Student->middle_name,
@@ -138,8 +131,6 @@
                 User::add([
                     "email" => $Representative->email,
                     "phone" => $Representative->phone,
-                    "login" => $NewContract->id,
-                    // "password" => $Representative->password,
                     "first_name" => $Representative->first_name,
                     "last_name" => $Representative->last_name,
                     "middle_name" => $Representative->middle_name,
@@ -298,51 +289,7 @@
             )->fetch_object()->contract_ids;
         }
 
-        /*
-         * Получить данные для основного модуля
-         * $page==-1 – получить без лимита
-         */
-        public static function getData($page)
-        {
-            if (!$page) {
-                $page = 1;
-            }
-            // С какой записи начинать отображение, по формуле
-            $start_from = ($page - 1) * Contract::PER_PAGE;
-
-            $search = static::parseSearch();
-
-
-            // получаем данные
-            $query = static::_generateQuery($search, "s.id as id_student, r.first_name, r.last_name, r.middle_name, c.sum, c.discount, c.date, ci.year, c.id, ", true);
-            $result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Contract::PER_PAGE));
-
-            while ($row = $result->fetch_object()) {
-                $data[] = ($page == -1 ? $row->id : $row);
-            }
-
-            return [
-                'data' => $data,
-                'counts' => ['all' => static::_count($search)]
-            ];
-        }
-
-        protected static function _count($search)
-        {
-            return dbConnection()
-                ->query(static::_generateQuery($search, "COUNT(*) AS cnt"))
-                ->fetch_object()
-                ->cnt;
-        }
-
-
         /*================= methods should be overridden =================*/
-
-
-        protected static function _generateQuery($search, $select, $with_colors = false)
-        {
-            throw new Exception(get_class() . ': method should be overriden');
-        }
         public function getSubjects()
         {
             throw new Exception(get_class() . ': method should be overriden');
@@ -374,11 +321,6 @@
         }
 
         public static function edit($Contract)
-        {
-            throw new Exception(get_class() . ': method should be overriden');
-        }
-
-        protected static function parseSearch()
         {
             throw new Exception(get_class() . ': method should be overriden');
         }

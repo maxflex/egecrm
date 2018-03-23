@@ -3,6 +3,8 @@
 	// Контроллер
 	class SmsController extends Controller
 	{
+		public static $allowed_users = [User::USER_TYPE];
+
 		public $defaultAction = 'history';
 
 		// Папка вьюх
@@ -26,7 +28,7 @@
 				'ang_init_data' => $ang_init_data,
 			]);
 		}
-
+		
         public function actionGet()
         {
             $number = filter_var($_GET['number'], FILTER_SANITIZE_NUMBER_INT);

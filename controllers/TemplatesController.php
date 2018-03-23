@@ -52,20 +52,6 @@
 		{
 			extract($_POST);
 
-			if ($params['entity_login'] == 'false' && $params['entity_password'] == 'false') {
-				$phone = cleanNumber($params['number']);
-
-				# Ищем заявку с таким же номером телефона
-				$Request = Request::find([
-					"condition"	=> "(phone='".$phone."' OR phone2='".$phone."' OR phone3='".$phone."')"
-				]);
-
-				if ($Request) {
-					$params['entity_login'] 	= $Request->Student->login;
-					$params['entity_password'] 	= $Request->Student->password;
-				}
-			}
-
 			echo Template::get($number, $params);
 		}
 	}

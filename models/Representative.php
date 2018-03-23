@@ -44,12 +44,14 @@
 		public function afterSave()
 		{
 			// синхронизация email
-			$user = User::find([
-				'condition' => "id_entity={$this->id} && type='" . self::USER_TYPE . "'"
-			]);
+			$user = User::byType($this->id, self::USER_TYPE);
 			if ($user) {
 				$user->email = $this->email;
-				$user->save('email');
+				$user->phone = $this->phone;
+				$user->first_name = $this->first_name;
+				$user->last_name = $this->last_name;
+				$user->middle_name = $this->middle_name;
+				$user->save();
 			}
 		}
 

@@ -53,22 +53,6 @@
 					<option ng-selected="{{Teacher.in_egecentr == workplace}}" ng-repeat="(workplace, label) in Workplaces" value="{{workplace}}">{{label}}</option>
 				</select>
 			</div>
-
-			<div class="form-group">
-				<div class="input-group">
-			      <input placeholder="логин" disabled ng-model="Teacher.login" class="form-control">
-			      <span class="input-group-addon">
-			      	<span class="glyphicon glyphicon-lock no-margin-right small" ng-class="{
-				      	'text-danger': Teacher.in_egecentr != 2
-			      	}"></span>
-<!-- 			        <input type="checkbox" aria-label="заблокирован"> -->
-			      </span>
-			    </div>
-			</div>
-			<div class="form-group">
-				<input placeholder="пароль" disabled type="text" ng-model="Teacher.password" class="form-control">
-			</div>
-
 			<div class="form-group">
 				<?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches", 'readonly' => 'true']) ?>
 			</div>

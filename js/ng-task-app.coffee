@@ -5,7 +5,7 @@
 					return items.slice().reverse()
 		.filter 'unsafe', ($sce) ->
 			$sce.trustAsHtml
-		.controller "ListCtrl", ($scope, TaskTypes) ->
+		.controller "ListCtrl", ($scope) ->
 			bindArguments $scope, arguments
 			$scope.editing_tasks = []
 
@@ -61,15 +61,6 @@
 						Task.id_status = Task_copy.id_status
 						$scope.$apply()
 
-			$scope.toggleType = (Task) ->
-				Task_copy = {id: Task.id, type: Task.type}
-				Task_copy.type = (Task_copy.type+1)%2
-
-				$scope.saveTask(Task_copy).then (response) ->
-					if response
-						Task.type = Task_copy.type
-						$scope.$apply()
-
 			$scope.deleteTask = (Task) ->
 				Task.delete = 1
 				$scope.saveTask {id: Task.id, delete: 1}
@@ -80,7 +71,6 @@
 					Task =
 						id: id_task
 						id_status: 1
-						type: $scope.type
 						html: "Текст задачи..."
 
 					$scope.Tasks.unshift Task

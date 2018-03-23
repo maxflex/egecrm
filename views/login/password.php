@@ -1,4 +1,4 @@
-<center ng-app="Login" ng-controller="GetPwdCtrl" ng-init="mode = <?= $mode ?>">
+<center ng-app="Login" ng-controller="GetPwdCtrl">
 	<div class="form-signin" autocomplete="off">
 <!-- 		<h2 class="form-signin-heading">Вход в систему</h2> -->
 		<div ng-show="!success && !error">
@@ -10,10 +10,17 @@
 			</button>
 		</div>
 		<div ng-show="success">
-			ссылка на <?= $mode == 1 ? 'установку' : 'восстановление' ?> пароля отправлена на <br /><b>{{ email }}</b>
+			ссылка на установку пароля отправлена на <br /><b>{{ email }}</b>
 		</div>
 		<div ng-show="error">
-			<span class="text-danger">Невозможно получить пароль<br />Cвяжитесь с администрацией по телефону<br /><b>+7 495 646-85-92</b></span>
+			<span class="text-danger">
+				{{ error }}
+				<br />
+				<b>+7 495 646-85-92</b>
+			</span>
 		</div>
+		<div class="password-controls">
+	    <a href='/login' class="forgot-password">назад</a>
+	  </div>
 	</div>
 </center>

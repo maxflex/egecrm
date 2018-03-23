@@ -8,7 +8,7 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
   };
 }).filter('unsafe', function($sce) {
   return $sce.trustAsHtml;
-}).controller("ListCtrl", function($scope, TaskTypes) {
+}).controller("ListCtrl", function($scope) {
   bindArguments($scope, arguments);
   $scope.editing_tasks = [];
   $scope.editTask = function(Task) {
@@ -71,20 +71,6 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
       }
     });
   };
-  $scope.toggleType = function(Task) {
-    var Task_copy;
-    Task_copy = {
-      id: Task.id,
-      type: Task.type
-    };
-    Task_copy.type = (Task_copy.type + 1) % 2;
-    return $scope.saveTask(Task_copy).then(function(response) {
-      if (response) {
-        Task.type = Task_copy.type;
-        return $scope.$apply();
-      }
-    });
-  };
   $scope.deleteTask = function(Task) {
     Task["delete"] = 1;
     return $scope.saveTask({
@@ -98,7 +84,6 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
       Task = {
         id: id_task,
         id_status: 1,
-        type: $scope.type,
         html: "Текст задачи..."
       };
       $scope.Tasks.unshift(Task);

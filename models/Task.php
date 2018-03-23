@@ -37,12 +37,12 @@ class Task extends Model
 		}
 	}
 
-	public static function countNew($type = false)
+	public static function countNew()
 	{
         $taskStatusesToShow = implode(',',[TaskStatuses::NEWR]);
 
         return self::count([
-            "condition" => "id_status IN (". $taskStatusesToShow .") AND html!=''" . ($type !== false ? " AND type=$type" : "")
+            "condition" => "id_status IN (". $taskStatusesToShow .") AND html!=''"
 		]);
 	}
 }

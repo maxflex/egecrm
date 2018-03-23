@@ -1,3 +1,8 @@
+	error_messages = {
+		'-1': 'Пользователь с таким email не найден. Пожалуйста, проверьте правильность написания email или позвоните в администрацию ЕГЭ-Центра',
+		'-2': 'Невозможно войти. Пожалуйста, свяжитесь с администрацией по телефону'
+	}
+
 	app = angular.module("Login", ["ngAnimate"])
 		.controller("ResetPwdCtrl", function($scope) {
 			$scope.success = false
@@ -19,8 +24,8 @@
 					notifyError('Пароли не совпадают')
 					return
 				}
-				if ($scope.pwd_1.length < 6) {
-					notifyError('Пароль должен быть<br> длиннее 6 символов')
+				if ($scope.pwd_1.length < 8) {
+					notifyError('Пароль должен быть<br> длиннее 8 символов')
 					return
 				}
 				ajaxStart()
@@ -63,29 +68,22 @@
 				l.start()
 				$scope.in_process = true
 				$.post("/login/AjaxGetPwd", {
-					'email': $scope.email,
-					'mode': $scope.mode
+					'email': $scope.email
 				}, function(response) {
 					ajaxEnd()
 					l.stop()
 					$scope.in_process = false
-					if (response == -1) {
-						notifyError("Пользователь с таким email не найден")
-					}
-					else if (response == -2 && $scope.mode == 1) {
-						notifyError("Пароль уже установлен")
-					}
-					else if (response == -3) {
-						$scope.error = true
-						$scope.$apply()
+					if (response < 0) {
+						$scope.error = error_messages[response]
 					} else {
 						$scope.success = true
-						$scope.$apply()
 					}
+					$scope.$apply()
 				})
 			}
 		})
 		.controller("LoginCtrl", function($scope) {
+			$scope.error = false
 			angular.element(document).ready(function() {
 				set_scope("Login")
 				l = Ladda.create(document.querySelector('#login-submit'));
@@ -131,7 +129,9 @@
 						ajaxEnd()
 						$scope.in_process = false;
 						l.stop()
-						if (response == "banned") {
+						if (response < 0) {
+							$scope.error = error_messages[response]
+						} else if (response == "banned") {
 							notifyError("Пользователь заблокирован")
 						} else {
 							notifyError("Неправильная пара логин-пароль")

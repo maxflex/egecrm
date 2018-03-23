@@ -3,6 +3,13 @@
 		<div class="col-sm-6">
 			<input class="form-control" placeholder="поиск..." name="search" ng-keyup="filter()" ng-model="search">
 		</div>
+		<div class="col-sm-6">
+			<div class="form-group" style='width: 300px'>
+				<phones entity="{}" entity-type="Request"></phones>
+			</div>
+			<!-- СМС -->
+			<sms number='sms_number' templates="full"></sms>
+		</div>
 	</div>
 	<div ng-show="data === undefined" style="padding: 100px" class="small half-black center">
 		загрузка...

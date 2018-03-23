@@ -132,14 +132,8 @@
 		            </div>
 			    </div>
 				<div class="col-sm-3">
-		            <?php if (!empty($Request->Student->login)) :?>
-		            <h4 style="margin-top: 0" class="row-header">Данные для входа</h4>
-		            <div>
-			            <span style="width: 75px; display: inline-block">Логин: </span><i><?= $Request->Student->login ?></i>
-		            </div>
-		            <div>
-			            <span style="width: 75px; display: inline-block">Пароль:</span><i><?= $Request->Student->password ?></i>
-		            </div>
+		            <?php if (User::byType($Request->Student->id, Student::USER_TYPE, 'count')) :?>
+		            <h4 style="margin-top: 0" class="row-header">Данные по ЛК</h4>
 		            <div>
 			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
 		            </div>
@@ -148,15 +142,14 @@
 						<span ng-show="!student.is_banned">активен</span>
 						<span class="text-danger" ng-show="student.is_banned">заблокирован</span>
 		            </div>
-
-		            <div class="form-group" style='margin-top: 20px'>
+		            <?php endif ?>
+					<div class="form-group" style='margin-top: 20px'>
 			            <?= Branches::buildSvgSelector($Request->Student->branches, [
 				            "name" => "Student[branches][]",
 				            "ng-model" => "student.branches",
 				            "id" => "student-branches",
 				        ], true) ?>
 		            </div>
-		            <?php endif ?>
 		            <div class="form-group" style="white-space: nowrap">
 			            <span class="link-like" ng-click="showMap()"><span class="glyphicon glyphicon-map-marker"></span>Метки</span>
 			            <span class="text-primary">({{markers.length}})</span>

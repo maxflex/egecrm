@@ -49,9 +49,7 @@
 
 		public function actionPassword()
 		{
-			$this->render('password', [
-				'mode' => $_GET['mode'] ? 1 : 0
-			], 'login');
+			$this->render('password', [], 'login');
 		}
 
 
@@ -96,7 +94,14 @@
                 returnJSON($resp->getErrorCodes());
             }
 
-            $query = ["(login='$login' or email='$email')"];
+			// $logins_count = User::getByEmail($login, 'count');
+			// if (! $logins_count) {
+			// 	returnJSON(-1);
+			// } elseif ($logins_count > 1) {
+			// 	returnJSON(-2);
+			// }
+
+            $query = ["(email='$login' or login='$login')"];
 
             # проверка логина
             if (self::userExists($query)) {
@@ -204,10 +209,6 @@
 			if ($user) {
 				// если с таким email > 1
 				if (User::getByEmail($email, 'count') > 1) {
-					returnJsonAng(-3);
-				}
-				// по ссылке "получить пароль" пароль уже установлен
-				if ($user->password && $mode == 1) {
 					returnJsonAng(-2);
 				}
 				$user->resetPassword();
@@ -226,7 +227,7 @@
 				$user = User::findById($user_id);
 				$user->password = User::password($password);
 				$user->save('password');
-				// $client->del($key);
+				$client->del($key);
 			} else {
 				returnJsonAng(-1);
 			}

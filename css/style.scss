@@ -540,6 +540,8 @@ body {
 	padding: 6px;
 	text-align: center;
 	font-size: 12px;
+	display: flex;
+	justify-content: space-between;
 	& .btn {
 		padding: 3px 10px !important;
 	}
@@ -3648,7 +3650,4 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 	width: calc(100% - 100px);
 	box-sizing: border-box;
 	bottom: 15px;
-	a {
-		margin-right: 10px;
-	}
 }

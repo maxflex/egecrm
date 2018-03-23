@@ -532,12 +532,6 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
         case 'group':
           action = 'sendGroupSms';
           break;
-        case 'client':
-          action = 'sendGroupSmsClients';
-          break;
-        case 'teacher':
-          action = 'sendGroupSmsTeachers';
-          break;
         default:
           action = 'sendSms';
       }
@@ -555,12 +549,6 @@ app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
     if (entity) {
       if (entity.id) {
         params['id'] = entity.id;
-      }
-      if (entity.login) {
-        params['entity_login'] = entity.login;
-      }
-      if (entity.password) {
-        params['entity_password'] = entity.password;
       }
       if (entity.phone) {
         params['phone'] = entity.phone;
@@ -696,7 +684,4 @@ app.value('Workplaces', {
   1: 'преподаватели запаса',
   2: 'ведут занятия сейчас',
   3: 'ранее работал'
-}).value('TaskTypes', {
-  0: 'development',
-  1: 'seo'
 });

@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		public static $allowed_users = [User::USER_TYPE, User::SEO_TYPE];
+		public static $allowed_users = [User::USER_TYPE];
 
 		// Папка вьюх
 		protected $_viewsFolder	= "tasks";
@@ -20,21 +20,16 @@
 		public function actionList()
 		{
 			$list = $_GET["list"];
-			$type = $_GET["type"];
 
 			// dev only
 			$search = $_GET["search"];
 			$limit = $_GET["limit"];
 
-			if ($type == 0 && User::fromSession()->type == User::SEO_TYPE) {
-				$this->renderRestricted();
-			}
-
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 
 			if ($list) {
-				$condition = "type=$type AND html IS NOT NULL AND id_status=" . $list;
+				$condition = "html IS NOT NULL AND id_status=" . $list;
 				if (isset($search)) {
 					$condition .= " AND html LIKE '%{$search}%'";
 				}
@@ -44,7 +39,7 @@
 					"limit"		=> $list == 8 ? 50 : 50,
 				]);
 			} else {
-				$condition =  "type=$type AND html IS NOT NULL AND id_status!=" . TaskStatuses::CLOSED;
+				$condition =  "html IS NOT NULL AND id_status!=" . TaskStatuses::CLOSED;
 				if (isset($search)) {
 					$condition .= " AND html LIKE '%{$search}%'";
 				}
@@ -56,7 +51,6 @@
 			}
 
 			$ang_init_data = angInit([
-				"type"          => (int)$type, // так надо, без этого '0' каститьcz на []
 				"Tasks"         => $Tasks,
 				"task_statuses" => TaskStatuses::$all,
 				"user"          => User::fromSession()->dbData()

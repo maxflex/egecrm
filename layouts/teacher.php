@@ -1,10 +1,14 @@
 <?php if (User::inViewMode()) :?>
 <div class="view-as">
-	<span style="position: absolute; left: 10px">Режим просмотра преподавателя</span>
-	<span class='center'>
+	<div>
+		Режим просмотра преподавателя
+	</div>
+	<div>
 		<?= User::fromSession()->last_name." ".User::fromSession()->first_name." ".User::fromSession()->middle_name ?>
-	</span>
-	<a href="as/cancel" class="link-white" style="position: absolute; right: 10px">Выйти из режима просмотра</a>
+	</div>
+	<div>
+		<a href="as/cancel" class="link-white">Выйти из режима просмотра</a>
+	</div>
 </div>
 <?php endif ?>
 <div class="row">

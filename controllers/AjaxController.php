@@ -308,47 +308,6 @@
 			returnJSON($SMS);
 		}
 
-		public function actionAjaxSendGroupSmsTeachers()
-		{
-			extract($_POST);
-
-			$Teachers = Teacher::findAll();
-
-			foreach ($Teachers as $Teacher) {
-				foreach (Student::$_phone_fields as $phone_field) {
-					$number = $Teacher->{$phone_field};
-
-					if (!empty(trim($number))) {
-						$msg = $message;
-						if ($Teacher->login && $Teacher->password) {
-							$msg = str_replace('{entity_login}', $Teacher->login, $msg);
-							$msg = str_replace('{entity_password}', $Teacher->password, $msg);
-						}
-						$messages[] = [
-							"type"      => "Преподавателю #" . $Teacher->id,
-							'number' 	=> $number,
-							'message'	=> $msg,
-						];
-					}
-				}
-			}
-
-			$sent_to = [];
-			foreach ($messages as $message) {
-				if (!in_array($message['number'], $sent_to)) {
-					SMS::send($message['number'], $message['message']);
-					$sent_to[] = $message['number'];
-
-					// debug
-					$body .= "<h3>" . $message["type"] . "</h3>";
-					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
-					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
-				}
-			}
-
-			returnJSON(count($sent_to));
-		}
-
 		public function actionAjaxSendGroupSms()
 		{
 			extract($_POST);
@@ -364,10 +323,6 @@
 
 						if (!empty(trim($number))) {
 							$msg = $message;
-							if ($Student->login && $Student->password) {
-								$msg = str_replace('{entity_login}', $Student->login, $msg);
-								$msg = str_replace('{entity_password}', $Student->password, $msg);
-							}
 							$messages[] = [
 								"type"      => "Ученику #" . $Student->id,
 								'number' 	=> $number,
@@ -386,10 +341,6 @@
 
 							if (!empty(trim($number))) {
 								$msg = $message;
-								if ($Student->login && $Student->password) {
-									$msg = str_replace('{entity_login}', $Student->login, $msg);
-									$msg = str_replace('{entity_password}', $Student->password, $msg);
-								}
 								$messages[] = [
 									"type"      => "Представителю #" . $Student->Representative->id,
 									'number' 	=> $number,
@@ -404,10 +355,6 @@
 			if ($to_teachers == "true") {
 				$Teacher = Teacher::findById($Group->id_teacher);
 				$msg = $message;
-				if ($Teacher->login && $Teacher->password) {
-					$msg = str_replace('{entity_login}', $Teacher->login, $msg);
-					$msg = str_replace('{entity_password}', $Teacher->password, $msg);
-				}
 
 				foreach (Student::$_phone_fields as $phone_field) {
 					$number = $Teacher->{$phone_field};
@@ -434,76 +381,6 @@
 					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
 				}
 			}
-			returnJSON(count($sent_to));
-		}
-
-		public function actionAjaxSendGroupSmsClients()
-		{
-			extract($_POST);
-
-			$student_ids = implode(",", Student::getData(-1)['data']);
-
-			$Students = Student::findAll([
-				"condition" => "id IN ($student_ids)"
-			]);
-
-			if ($to_students == "true") {
-				foreach ($Students as $Student) {
-					foreach (Student::$_phone_fields as $phone_field) {
-						$number = $Student->{$phone_field};
-
-						if (!empty(trim($number))) {
-							$msg = $message;
-							if ($Student->login && $Student->password) {
-								$msg = str_replace('{entity_login}', $Student->login, $msg);
-								$msg = str_replace('{entity_password}', $Student->password, $msg);
-							}
-							$messages[] = [
-								"type"      => "Ученику #" . $Student->id,
-								'number' 	=> $number,
-								'message'	=> $msg,
-							];
-						}
-					}
-				}
-			}
-
-			if ($to_representatives == "true") {
-				foreach ($Students as $Student) {
-					if ($Student->Representative) {
-						foreach (Student::$_phone_fields as $phone_field) {
-							$number = $Student->Representative->{$phone_field};
-
-							if (!empty(trim($number))) {
-								$msg = $message;
-								if ($Student->login && $Student->password) {
-									$msg = str_replace('{entity_login}', $Student->login, $msg);
-									$msg = str_replace('{entity_password}', $Student->password, $msg);
-								}
-								$messages[] = [
-									"type"      => "Представителю #" . $Student->Representative->id,
-									'number' 	=> $number,
-									'message'	=> $msg,
-								];
-							}
-						}
-					}
-				}
-			}
-
-			$sent_to = [];
-			foreach ($messages as $message) {
-				if (!in_array($message['number'], $sent_to)) {
-					SMS::send($message['number'], $message['message']);
-					$sent_to[] = $message['number'];
-
-					// debug
-					$body .= "<h3>" . $message["type"] . "</h3>";
-					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
-					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
-				}
-			}
-
 			returnJSON(count($sent_to));
 		}
 
@@ -706,11 +583,7 @@
 		{
 			extract($_POST);
 
-			$Teacher = Teacher::find([
-				"condition" => "id=" . User::fromSession()->id_entity
-			]);
-
-			returnJsonAng($password == $Teacher->password);
+			returnJsonAng(User::password($password) == User::fromSession()->password);
 		}
 
 		public function actionAjaxStudentsWithNoGroup()

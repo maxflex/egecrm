@@ -2,7 +2,7 @@
 		<div class="panel-heading">
 			Редактирование профиля ученика №<?= $Request->Student->id ?>
 			<div class="pull-right">
-				<?php if (!empty($Request->Student->login)) :?>
+				<?php if (User::byType($Request->Student->id, Student::USER_TYPE, 'count')) :?>
 				<a style="margin-left: 10px" class="like-white" href="as/student/<?= $Request->Student->id ?>">режим просмотра</a>
 				<?php endif ?>
 

@@ -5,22 +5,6 @@
 		</div>
 	</div>
 	<div class="panel-body" style="position: relative">
-		<?php if (User::fromSession()->type == User::USER_TYPE) :?>
-			<div class="top-links pull-left">
-				<?php if ($_GET["type"] == 0 || empty($_GET["type"])) { ?>
-				<span style="margin-right: 15px; font-weight: bold">development</span>
-				<?php } else { ?>
-				<a href="tasks" style="margin-right: 15px">development</a>
-				<?php } ?>
-
-				<?php if ($_GET["type"] == 1) { ?>
-				<span style="margin-right: 15px; font-weight: bold">seo</span>
-				<?php } else { ?>
-				<a href="tasks/seo" style="margin-right: 15px">seo</a>
-				<?php } ?>
-			</div>
-		<?php endif ?>
-
 			<div class="top-links pull-right">
 				<?php if ($_GET["list"] != TaskStatuses::CLOSED) { ?>
 				<span style="margin-right: 15px; font-weight: bold">актуальные</span>
@@ -34,7 +18,6 @@
 				<a href="<?= $_SERVER['REQUEST_URI'] ?>/<?= TaskStatuses::CLOSED ?>" style="margin-right: 0">закрытые</a>
 				<?php } ?>
 			</div>
-
 		<div id="task-app">
 <!--
 				<div class="task-line" style="padding-bottom: 10px; text-align: right">
@@ -46,7 +29,7 @@
 					</select>
 				</div>
 -->
-				<div ng-repeat="Task in Tasks | filter: {type: type}" class="row task-line" ng-hide="Task.delete">
+				<div ng-repeat="Task in Tasks" class="row task-line" ng-hide="Task.delete">
 					<div class="col-sm-12">
 						<div class="task">
 							<div class="text-gray pull-right" ng-show="<?= allowed(Shared\Rights::IS_DEVELOPER, true) ?>">#{{Task.id}}</div>
@@ -74,7 +57,6 @@
 
 							<div class="task-status-div">
 								<span style="opacity: .8; color: {{Task.User.color}}">{{Task.User.login}}</span>
-								<span class="link-like" ng-hide="index == <?=$_GET['type'];?>" ng-repeat="(index, type) in TaskTypes" ng-click="toggleType(Task)">перенести в {{ type }}</span>
 								<span class="task-status task-status-{{Task.id_status}}" ng-click="toggleTaskStatus(Task)">
 									<span ng-show="Task.id_status==1">новое</span>
 									<!-- <span ng-show="Task.id_status==2">новое для Макса</span>

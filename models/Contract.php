@@ -49,41 +49,6 @@
             ContractInfo::updateById($Contract['info']['id_contract'], $Contract['info']);
             ContractSubject::addData($Contract['subjects'], $Contract['id']);
         }
-
-        /*====================================== ФУНКЦИИ КЛАССА ======================================*/
-
-        protected static function parseSearch()
-        {
-            return isset($_COOKIE['contracts']) ? json_decode($_COOKIE['contracts']) : (object)[];
-        }
-
-        protected static function _generateQuery($search, $select, $with_colors = false)
-        {
-            $main_query = "
-                         from " . static::$mysql_table . " c
-                         join   " . static::$info_table. " ci on ci.id_contract = c.id_contract
-                         join  students s on ci.id_student = s.id
-                         left join representatives r on r.id = s.id_representative
-                         where 1 ".
-                         (!isBlank($search->year) ? " and ci.year={$search->year} " : '') .
-                         (!isBlank($search->version) ? "
-                            and c.id = (
-                                SELECT " . ($search->version == 1 ? "MIN" : "MAX") . "(id) as min_id FROM " . static::$mysql_table . " c2
-                                JOIN " . static::$info_table. " ci2 on ci2.id_contract = c2.id_contract
-                                WHERE ci2.id_student=s.id AND ci2.year=ci.year
-                            )
-                         " : "") . "
-                         order by c.id desc";
-
-
-            $color_counts = " (select count(id_subject) from contract_subjects cs where cs.id_contract = c.id AND cs.status = 3) as green, " .
-                            " (select count(id_subject) from contract_subjects cs where cs.id_contract = c.id AND cs.status = 2) as yellow, " .
-                            " (select count(id_subject) from contract_subjects cs where cs.id_contract = c.id AND cs.status = 1) as red, " .
-                            " (select count(id) from contracts h
-                                where c.date_changed > h.date_changed and h.id_contract = if(c.id_contract, c.id_contract, c.id)) as version ";
-
-            return "select " . $select . ($with_colors ? $color_counts : ''). $main_query;
-        }
     }
 
     class ContractInfo extends BaseContractInfo

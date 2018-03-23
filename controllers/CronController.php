@@ -214,9 +214,7 @@
 				'subject'		=> Subjects::$dative[$GroupSchedule->Group->id_subject],
 				'address'		=> Branches::getField(Cabinet::getField($GroupSchedule->cabinet), 'address'),
 				'branch' 		=> Branches::getField(Cabinet::getField($GroupSchedule->cabinet), 'full'),
-				'cabinet'		=> trim(Cabinet::getField($GroupSchedule->cabinet, 'number')),
-				'entity_login'	=> $Entity->login,
-				'entity_password' => $Entity->password,
+				'cabinet'		=> trim(Cabinet::getField($GroupSchedule->cabinet, 'number'))
 			]);
 		}
 
@@ -232,8 +230,6 @@
 				'address'		=> Branches::getField(Cabinet::getField($GroupSchedule->cabinet), 'address'),
 				'branch' 		=> Branches::getField(Cabinet::getField($GroupSchedule->cabinet), 'full'),
 				'cabinet'		=> trim(Cabinet::getField($GroupSchedule->cabinet, 'number')),
-				'entity_login'	=> $Entity->login,
-				'entity_password' => $Entity->password,
 			]);
 		}
 
@@ -413,8 +409,6 @@
 				'address'		=> Branches::getField(Cabinet::getField($GroupSchedule->cabinet), 'address'),
 				'branch' 		=> Branches::getField(Cabinet::getField($GroupSchedule->cabinet), 'full'),
 				'cabinet'		=> trim(Cabinet::getField($GroupSchedule->cabinet, 'number')),
-				'entity_login'	=> $Entity->login,
-				'entity_password' => $Entity->password,
 			]);
 		}
 

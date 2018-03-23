@@ -26,10 +26,6 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
             switch @params.mode
                 when 'group'
                     action = 'sendGroupSms'
-                when 'client'
-                    action = 'sendGroupSmsClients'
-                when 'teacher'
-                    action = 'sendGroupSmsTeachers'
                 else
                     action = 'sendSms'
 
@@ -43,10 +39,8 @@ app.service 'SmsService', ($rootScope, $http, Sms, PusherService) ->
 
     @getTemplate = (id_template, entity) ->
         params = {}
-        if entity 
+        if entity
             params['id'] = entity.id if entity.id
-            params['entity_login'] = entity.login if entity.login
-            params['entity_password'] = entity.password if entity.password
             params['phone'] = entity.phone if entity.phone
 
         data = $.param

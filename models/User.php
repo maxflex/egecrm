@@ -5,7 +5,6 @@
 		const SALT 					= "32dg9823dldfg2o001-2134>?erj&*(&(*^";	// Для генерации кук
 
 		const USER_TYPE = "USER";
-		const SEO_TYPE = "SEO";
 
 		const LAST_REAL_USER_ID = 112;
 		const ONLINE_TIME_MINUTES = 15;
@@ -268,7 +267,7 @@
 		 */
 		public static function loggedIn()
 		{
-			return isset($_SESSION["user"]) // пользователь залогинен
+			return isset($_SESSION["user"]) && $_SESSION["user"] // пользователь залогинен
                 && ! User::isBlocked()      // и не заблокирован
                 && User::worldwideAccess() // и можно входить
                 && User::notChanged();      // и данные по пользователю не изменились
@@ -292,6 +291,13 @@
 
 			// Возвращаем пользователя
 			return $User;
+		}
+
+		public static function byType($id_entity, $type, $func = 'find')
+		{
+			return self::{$func}([
+				'condition' => "id_entity={$id_entity} AND type='{$type}'"
+			]);
 		}
 
 		public static function findTeacher($id_teacher)
@@ -352,9 +358,7 @@
 		{
 			$_SESSION["view_mode_user_id"] 	= User::fromSession()->id;
 			$_SESSION["view_mode_url"] 		= $_SERVER['HTTP_REFERER'];
-			$_SESSION["user"] = User::find([
-				"condition" => "type='$type' AND id_entity=$id"
-			]);
+			$_SESSION["user"] = User::byType($id, $type);
 		}
 
 		/*

@@ -1,6 +1,11 @@
 root = true
 
 # 4 space indentation
+[*.php]
+indent_style = tab
+indent_size = 4
+
+# 4 space indentation
 [*.coffee]
 indent_style = tab
 indent_size = 4

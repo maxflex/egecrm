@@ -114,55 +114,15 @@
 		})
 	}
 
-	function loginPasswordTemplate() {
-		login = '{entity_login}'
-		password = '{entity_password}'
-
-		// учитель/ученик?
-		if ($('[ng-app="Request"]').length) {
-			if ($('[ng-controller="EditCtrl"]').length) {
-				login = ang_scope.student.login
-				password = ang_scope.student.password
-			}
-		}
-
-		$.post("templates/ajax/get", {
-				number: 4,
-				params: {
-					entity_login: login,
-					entity_password: password,
-					number: $("#sms-number").text()
-				}
-			}, function(template) {
-				$("#sms-message").val(template).keyup()
-		});
-		//text = "Ваш логин: " + ang_scope.Teacher.login + "\nВаш пароль: " + ang_scope.Teacher.password
-		//$("#sms-message").val(text).keyup()
-	}
-
 	function newTestTemplate() {
-		login = '{entity_login}'
-		password = '{entity_password}'
-
-		// учитель/ученик?
-		if ($('[ng-app="Request"]').length) {
-			if ($('[ng-controller="EditCtrl"]').length) {
-				login = ang_scope.student.login
-				password = ang_scope.student.password
-			}
-		}
-
 		$.post("templates/ajax/get", {
 				number: 13,
 				params: {
-					entity_login: login,
-					entity_password: password,
 					number: $("#sms-number").text()
 				}
 			}, function(template) {
 				$("#sms-message").val(template).keyup()
 		});
-		//text = "Ваш логин: " + ang_scope.Teacher.login + "\nВаш пароль: " + ang_scope.Teacher.password
 		//$("#sms-message").val(text).keyup()
 	}
 
@@ -281,25 +241,6 @@
 			}, "json");
 		}
 
-		if (mode == 2) {
-			ajaxStart("sms");
-			console.log("here");
-			data = {
-				"message": message.val().trim(),
-				"id_place": ang_scope.Group.id,
-				"to_students": ang_scope.to_students,
-				"to_representatives": ang_scope.to_representatives,
-				"to_teacher": ang_scope.to_teacher,
-			};
-			console.log(data);
-			$.post("ajax/sendGroupSms", data, function(response) {
-				ajaxEnd("sms")
-				lightBoxHide();
-				notifySuccess("Отправлено " + response + " СМС");
-				message.val("")
-			});
-		}
-
 		if (mode == 3) {
 			ajaxStart("sms");
 			console.log("here");
@@ -310,21 +251,6 @@
 			};
 			console.log(data);
 			$.post("ajax/sendGroupSmsClients", data, function(response) {
-				ajaxEnd("sms")
-				lightBoxHide();
-				notifySuccess("Отправлено " + response + " СМС");
-				message.val("")
-			});
-		}
-
-		if (mode == 4) {
-			ajaxStart("sms");
-			data = {
-				"message": message.val().trim(),
-				"place": "TEACHERS",
-			};
-
-			$.post("ajax/sendGroupSmsTeachers", data, function(response) {
 				ajaxEnd("sms")
 				lightBoxHide();
 				notifySuccess("Отправлено " + response + " СМС");
