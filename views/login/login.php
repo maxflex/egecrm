@@ -4,13 +4,13 @@
 <!-- 		<h2 class="form-signin-heading">Вход в систему</h2> -->
 
     <div ng-show='!error'>
-      <div style='top: -25px; position: relative; text-align: left'>
+      <!-- <div style='top: -25px; position: relative; text-align: left'>
         <b>Уважаемые учителя и ученики!</b>
         <p style='margin-top: 5px'>
           С 22 марта 2018 года для входа в систему необходимо в качестве логина использовать Ваш email,
           указанный при регистрации или заключении договора.
         </p>
-      </div>
+      </div> -->
       <input ng-disabled="sms_verification" type="text" id="inputLogin" class="form-control" placeholder="Email" autofocus name="login" ng-model="login" autocomplete="off" ng-keyup="enter($event)">
       <input ng-disabled="sms_verification" type="password" id="inputPassword" class="form-control" placeholder="Пароль" name="password" ng-model="password" autocomplete="off" ng-keyup="enter($event)">
       <input type="text" id="sms-code" class="form-control" placeholder="код из смс" ng-model="$parent.code" autocomplete="off" ng-keyup="enter($event)" ng-if="sms_verification">
