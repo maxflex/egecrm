@@ -13,7 +13,7 @@
 		<span id='request-counter' class='pull-right' style="margin-right: 3px; opacity: 0; font-size: 13px; font-weight: bold">+1</span>
 	</a>
 	<a href="clients" class="list-group-item">Клиенты</a>
-	<a href="sms" class="list-group-item">История SMS</a>
+	<a href="sms" class="list-group-item">SMS</a>
 	<!-- @refactored -->
 	<a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count(['condition' => 'ended=0']) ?></span></a>
 	<a href="stats/visits/total" class="list-group-item">Посещаемость
