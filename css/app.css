@@ -16819,6 +16819,9 @@ a[href^="https://www.google.com/maps"] {
   box-sizing: border-box;
   bottom: 15px; }
 
+.cal-day-outmonth {
+  visibility: hidden; }
+
 .control-group {
   display: inline-block;
   vertical-align: top;
