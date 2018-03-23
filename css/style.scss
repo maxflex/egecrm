@@ -3652,6 +3652,29 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 	bottom: 15px;
 }
 
+// скрываем квадратики предыдущих месяцев
+// через белую тень
+
 .cal-day-outmonth {
-	visibility: hidden;
+	// visibility: hidden;
+	box-shadow: -1px -1px 0 0 white;
+	background: white !important;
+	& > * {
+		display: none;
+	}
+}
+
+.cal-month-box {
+	& > div {
+		&:first-child {
+			.cal-day-outmonth {
+				box-shadow: -1px -1px 0 1px white;
+			}
+		}
+		&:last-child {
+			.cal-day-outmonth {
+				box-shadow: 1px 1px 0 1px white;
+			}
+		}
+	}
 }
