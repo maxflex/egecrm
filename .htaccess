@@ -74,10 +74,6 @@ RewriteRule ^stats/groups[/]?$ index.php?controller=stats&action=groups [QSA,L]
 RewriteRule ^stats/payments[/]?$ index.php?controller=stats&action=payments [QSA,L]
 RewriteRule ^stats/payments/teachers[/]?$ index.php?controller=stats&action=payments&teachers=1 [QSA,L]
 RewriteRule ^stats/visits/total[/]?$ index.php?controller=stats&action=TotalVisits [QSA,L]
-RewriteRule ^stats/visits/teachers[/]?$ index.php?controller=stats&action=TotalVisitTeachers [QSA,L]
-RewriteRule ^stats/visits/students[/]?$ index.php?controller=stats&action=TotalVisitStudents [QSA,L]
-RewriteRule ^stats/visits/grades[/]?$ index.php?controller=stats&action=TotalVisitGrades [QSA,L]
-RewriteRule ^stats/visits/subjects[/]?$ index.php?controller=stats&action=TotalVisitSubjects [QSA,L]
 
 
 

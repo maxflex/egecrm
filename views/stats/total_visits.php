@@ -38,26 +38,6 @@
 		<a href="stats/visits/total?group=y" style="margin-right: 15px">годы</a>
 		<?php } ?>
 
-		<?php if ($_GET["group"] == "wd") { ?>
-		<span style="margin-right: 15px; font-weight: bold">дни недели</span>
-		<?php } else { ?>
-		<a href="stats/visits/total?group=wd" style="margin-right: 15px">дни недели</a>
-		<?php } ?>
-
-		<?php if ($_GET["group"] == "s") { ?>
-		<span style="margin-right: 15px; font-weight: bold">расписание</span>
-		<?php } else { ?>
-		<a href="stats/visits/total?group=s" style="margin-right: 15px">расписание</a>
-		<?php } ?>
-
-		<div class="top-links pull-right">
-			<span class="link-like active">хронологически</span>
-			<a href="stats/visits/students">ученики</a>
-			<a href="stats/visits/teachers">преподаватели</a>
-			<a href="stats/visits/grades">классы</a>
-			<a href="stats/visits/subjects" style="margin-right: 0">предметы</a>
-		</div>
-
 	</div>
 
 	<table class="table table-hover table-with-padding left-align">
