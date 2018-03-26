@@ -554,7 +554,7 @@
 			$total_students_paid = 0;
 
 			// сколько всего компания заплатила учителю
-			$total_paid_to_teacher = dbConnection()->query("select sum(teacher_price) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher}")->fetch_object()->s;
+			$total_paid_to_teacher = dbConnection()->query("select sum(price) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher}")->fetch_object()->s;
 
 			foreach($student_ids as $id_student) {
 				$payments = Payment::getByStudentId($id_student);
@@ -634,7 +634,7 @@
 				}
 				$group = $groups[$lesson->id_group];
 				$items[$lesson->year][$lesson->lesson_date][] = [
-					'sum' 		  => $lesson->teacher_price,
+					'sum' 		  => $lesson->price,
 					'comment'	  => "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label'],
 					'credentials' => User::findById($lesson->id_user_saved)->login . ' ' . dateFormat($lesson->date),
 					'date'		  => $lesson->date,

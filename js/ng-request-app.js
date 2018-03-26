@@ -479,6 +479,29 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			return group_ids
 		}
 
+		// БАЛАНС
+		$scope.reverseObjKeys = function(obj) {
+			return Object.keys(obj).reverse()
+		}
+
+		$scope.setYear = function(year) {
+			$scope.selected_year = year
+		}
+
+		$scope.totalSum = function(date) {
+			total_sum = 0
+			$.each($scope.Balance[$scope.selected_year], function(d, items) {
+				if (d > date) return
+				day_sum = 0
+				items.forEach(function(item) {
+					day_sum += item.sum
+				})
+				total_sum += day_sum
+			})
+			return total_sum
+		}
+		// \БАЛАНС
+
 		$scope.getVisitsByGroup = function(id_group) {
 			id_group = parseInt(id_group)
 			return _.where($scope.Journal, {id_group: id_group})
@@ -2196,6 +2219,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if ($scope.Reports === undefined && menu == 4) {
 				$.post("requests/ajax/LoadReports", {id_student: $scope.id_student}, function(response) {
 					$scope.Reports = response
+					$scope.$apply()
+				}, "json")
+			}
+			if ($scope.Balance === undefined && menu == 9) {
+				$.post("requests/ajax/LoadBalance", {id_student: $scope.id_student}, function(response) {
+					['Balance', 'years', 'selected_year'].forEach(function(field) {
+						$scope[field] = response[field]
+					})
 					$scope.$apply()
 				}, "json")
 			}

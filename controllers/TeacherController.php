@@ -70,10 +70,10 @@
 				$sum = 0;
                 $real_sum = 0;
 				foreach ($Data as $OneData) {
-                    $sum += $OneData->teacher_price;
-                    $total_sum += $OneData->teacher_price;
-                    $real_sum += $OneData->teacher_price;
-                    $real_total_sum += $OneData->teacher_price;
+                    $sum += $OneData->price;
+                    $total_sum += $OneData->price;
+                    $real_sum += $OneData->price;
+                    $real_total_sum += $OneData->price;
                 }
 
 				$additional_payments_sum = dbConnection()->query("select sum(`sum`) as s from teacher_additional_payments where id_teacher={$id_teacher} and year={$year}")->fetch_object()->s;

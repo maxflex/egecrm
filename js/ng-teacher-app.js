@@ -205,7 +205,7 @@ app = angular.module("Teacher", ["ngMap"]).config([
     lessons_sum = 0;
     if ($scope.Lessons) {
       $.each($scope.Lessons, function(index, value) {
-        return lessons_sum += parseInt(value.teacher_price);
+        return lessons_sum += parseInt(value.price);
       });
     }
     return lessons_sum;

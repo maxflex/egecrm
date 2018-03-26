@@ -167,7 +167,7 @@
 				lessons_sum = 0
 				if $scope.Lessons
 					$.each $scope.Lessons, (index, value) ->
-						lessons_sum += parseInt(value.teacher_price)
+						lessons_sum += parseInt(value.price)
 				lessons_sum
 
 			$scope.lessonsTotalPaid = (from_lessons)->

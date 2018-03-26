@@ -1082,4 +1082,74 @@
         {
             return static::getDebt();
         }
+
+		public static function getBalance($id_student)
+		{
+			$items = [];
+
+			// кешируем группы
+			$groups = [];
+
+			/* вычеты за проведенные занятия */
+			$lessons = VisitJournal::findAll([
+                "condition" => "id_entity=$id_student AND type_entity='" . self::USER_TYPE . "'"
+            ]);
+
+			foreach($lessons as $lesson) {
+				if (! isset($groups[$lesson->id_group])) {
+					$group = dbConnection()->query("select * from groups where id={$lesson->id_group}")->fetch_object();
+					$group->cabinet_ids = Group::getCabinetIds($group->id);
+					$group->cabinet = Cabinet::getBlock($group->cabinet_ids[0]);
+					$groups[$lesson->id_group] = $group;
+				}
+				$group = $groups[$lesson->id_group];
+				$items[$lesson->year][$lesson->lesson_date][] = [
+					'sum' 		  => intval($lesson->price) * -1,
+					'comment'	  => "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label'],
+					'credentials' => User::findById($lesson->id_user_saved)->login . ' ' . dateFormat($lesson->date),
+					'date'		  => $lesson->date,
+				];
+			}
+
+			/* платежи */
+			$payments = Payment::findAll([
+				"condition" => "entity_id={$id_student} and entity_type='" . self::USER_TYPE . "' "
+			]);
+
+			foreach($payments as $payment) {
+				$sum = intval($payment->sum);
+				$comment = Payment::$all[$payment->id_status];
+				if ($payment->id_type == PaymentTypes::RETURNN) {
+					$sum = $sum * -1;
+					$comment = PaymentTypes::$all[$payment->id_type];
+				}
+				$items[$payment->year][fromDotDate($payment->date)][] = [
+					'sum' 		  => $sum,
+					'comment' 	  => $comment,
+					'credentials' => $payment->user_login . ' ' . dateFormat($payment->first_save_date),
+					'date' 		  => $payment->first_save_date,
+				];
+			}
+
+			/* доп услуги */
+			// $additional_payments = TeacherAdditionalPayment::get($id_teacher);
+			//
+			// foreach($additional_payments as $payment) {
+			// 	$items[$payment->year][fromDotDate($payment->date)][] = [
+			// 		'sum' 		  => $payment->sum,
+			// 		'comment' 	  => $payment->purpose,
+			// 		'credentials' => $payment->user_login . ' ' . dateFormat($payment->created_at),
+			// 		'date' 		  => $payment->created_at,
+			// 	];
+			// }
+
+			ksort($items);
+            $items = array_reverse($items, true);
+
+			foreach($items as $year => $data) {
+				ksort($items[$year]);
+			}
+
+			return $items;
+		}
     }

@@ -21,6 +21,9 @@
 					    <span class="link-like" ng-click="setMenu(1)" ng-class="{'active': current_menu == 1}">
 					    	платежи
 					    </span>
+						<span class="link-like" ng-click="setMenu(9)" ng-class="{'active': current_menu == 9}">
+					    	баланс счета
+					    </span>
 					    <span class="link-like" ng-click="setMenu(2)" ng-class="{'active': current_menu == 2}">
 					    	посещаемость
 					    </span>
@@ -62,6 +65,7 @@
     <?= partial("tests") ?>
     <?= partial("photo") ?>
 	<?= partial("freetime") ?>
+	<?= partial("balance") ?>
 
     <?= partial("save_button", ["Request" => $Request]) ?>
 	<?= partial("bill_print") ?>

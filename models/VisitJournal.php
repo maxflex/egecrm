@@ -38,6 +38,8 @@
 
 			$Group = Group::findById($Schedule->id_group);
 
+			$prices = Prices::get();
+
 			foreach ($Group->students as $id_student)
 			{
 				$Student = Student::findById($id_student);
@@ -79,7 +81,18 @@
 						}
 					}
 				}
-				// @time-refactored @time-checked
+
+				// если занятие бесплатное
+				if ($Schedule->is_free) {
+					$price = 0;
+				} else {
+					$last_student_contract = $Student->getLastContract($Group->year);
+					$price = $prices[$last_student_contract->info->grade];
+					if ($last_student_contract->discount) {
+						$price = round($price - ($price * ($last_student_contract->discount / 100)));
+					}
+				}
+
 				self::add([
 					"id_entity" 			=> $id_student,
 					"type_entity"			=> Student::USER_TYPE,
@@ -97,6 +110,7 @@
 					"grade"					=> $Group->grade,
 					"duration"				=> $Group->duration,
 					"year"					=> static::_academicYear($Schedule->date),
+					"price"					=> $price
 				]);
 			}
 			// @time-refactored @time-checked
@@ -109,7 +123,7 @@
 				"lesson_date"			=> $Schedule->date,
 				"lesson_time"			=> $Schedule->time,
 				"date"					=> now(),
-				"teacher_price"			=> $Group->teacher_price,
+				"price"					=> $Group->teacher_price,
 				"id_user_saved"			=> User::fromSession()->id,
 				"grade"					=> $Group->grade,
 				"duration"				=> $Group->duration,

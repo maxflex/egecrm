@@ -475,6 +475,20 @@
 			);
 		}
 
+		public function actionAjaxLoadBalance()
+		{
+			extract($_POST);
+
+			$balance = Student::getBalance($id_student);
+			$years = array_reverse(array_keys($balance));
+
+			returnJsonAng([
+				'Balance' => $balance,
+				'years' => $years,
+				'selected_year' => end($years)
+			]);
+		}
+
 		public function actionAjaxLoadStudentTests()
 		{
 			extract($_POST);
