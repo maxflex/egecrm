@@ -599,6 +599,13 @@
 			$this->isUnplanned = $this->isUnplanned();
 		}
 
+		public function inProgress()
+		{
+			$start_time = (new DateTime($this->date_time))->getTimestamp();
+			$end_time = (new DateTime($this->date_time))->modify('+135 minutes')->getTimestamp();
+			return ((time() < $end_time) && (time() > $start_time));
+		}
+
         /**
          * Добавить группу занятия в экземпляр
          */

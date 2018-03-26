@@ -492,6 +492,7 @@
 				$S->Group->Teacher = Teacher::getLight($S->Group->id_teacher, ['phone']);
                 // @schedule-refactored
 				$S->is_unplanned = $S->isUnplanned();
+				$S->in_progress = $S->inProgress();
 
 				// номер урока
 				// @schedule-refactored

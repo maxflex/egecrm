@@ -11,7 +11,7 @@
 		text-align: left;
 	}
 </style>
-
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <div ng-app="Stats" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="top-links">
 		<?php if ($_GET["group"] == "d" || empty($_GET["group"])) { ?>
@@ -103,14 +103,14 @@
 							<td width="7%" ng-init="_cabinet = (Schedule.was_lesson ? Schedule.Lesson.cabinet : Schedule.cabinet)">
 								<span style='color: {{ _cabinet.color }}'>{{ _cabinet.label }}</span>
 							</td>
-							<td width="9%">
+							<td width="12%">
 								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
+								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule" style='margin-left: 3px'>
+									<i class="fa fa-calendar" aria-hidden="true"></i>
+								</a>
 							</td>
 							<td width="7%">
                                 {{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade_short : ''}}
-							</td>
-							<td width="10%">
-								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule">расписание</a>
 							</td>
 							<td width="10%">
 								{{Schedule.Group.students.length}} <ng-pluralize count="Schedule.Group.students.length" when="{
@@ -121,10 +121,9 @@
 							</td>
 							<td width="33%" ng-init="_Teacher = (Schedule.was_lesson ? Schedule.Lesson.Teacher : Schedule.Group.Teacher)">
 								<a class="pointer" target="_blank" href="teachers/edit/{{ _Teacher.id }}">
-									{{ _Teacher.last_name }} {{ _Teacher.first_name }} {{ _Teacher.middle_name }}
-								</a>
-								<span class="label label-danger pointer label-transparent" ng-click="PhoneService.call(_Teacher.phone)"
-									style="margin-left: 3px">позвонить</span>
+									{{ _Teacher.last_name }} {{ _Teacher.first_name }} {{ _Teacher.middle_name }}</a>
+								<i class="fa fa-phone-square opacity-pointer text-danger" aria-hidden="true" style="margin-left: 3px; font-size: 16px"
+									ng-click="PhoneService.call(_Teacher.phone)"></i>
 							</td>
 							<td width="11%">
 								<span ng-if='!Schedule.cancelled'>
@@ -135,7 +134,7 @@
 									}"></ng-pluralize>
 								</span>
 							</td>
-							<td width="2.5%">
+							<td width="2.5%" ng-class="{'blink': Schedule.in_progress}">
 								<span class="day-explain cancelled" ng-show="Schedule.cancelled" title="отменено"></span>
 								<span class="day-explain was-lesson" ng-show="!Schedule.cancelled && Schedule.was_lesson" title="проведено"></span>
 								<span class="day-explain" ng-show="!Schedule.cancelled && !Schedule.was_lesson" title="планируется"></span>
