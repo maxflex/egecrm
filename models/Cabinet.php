@@ -1,6 +1,8 @@
 <?php
 	class Cabinet extends Model
 	{
+		// удаленные кабинеты (скрыть)
+		const DELETED = [23];
 
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
@@ -104,7 +106,7 @@
             }
 
 			$branch = Branches::getOne($id_branch);
-			
+
 			return [
 				'id' 	=> $id_cabinet,
 				'color' => $branch->color,

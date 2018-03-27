@@ -88,6 +88,9 @@
 
 				$Cabinets = Cabinet::getBranchId($branch->id);
 				foreach($Cabinets as $Cabinet) {
+					if (in_array($Cabinet->id, Cabinet::DELETED)) {
+						continue;
+					}
 					// если это массив выбранных элементов (при $multiple = true)
 					if (is_array($selected)) {
 						$option_selected = in_array($branch->id, $selected);
