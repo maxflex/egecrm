@@ -215,10 +215,10 @@
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity, false);
                 foreach ($Groups as &$Group) {
-                    $counts = Group::getScheduleCountCachedStatic($Group->id);
+                    $counts = Group::getScheduleCount($Group->id);
                     $Group->schedule_count      = $counts['free'] + $counts['paid'];
                     $Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
-                    $Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
+                    $Group->past_lesson_count 	= Group::getPastScheduleCount($Group->id);;
 
                 }
 
@@ -240,10 +240,10 @@
 				$this->setTabTitle("Мои группы");
 				$Groups = Student::getGroupsStatic(User::fromSession()->id_entity, false, false);
                 foreach ($Groups as &$Group) {
-                    $counts = Group::getScheduleCountCachedStatic($Group->id);
+                    $counts = Group::getScheduleCount($Group->id);
                     $Group->schedule_count      = $counts['free'] + $counts['paid'];
                     $Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
-                    $Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
+                    $Group->past_lesson_count 	= Group::getPastScheduleCount($Group->id);;
                 }
 
 				$ang_init_data = angInit([
@@ -625,33 +625,6 @@
 						memcached()->set("JournalErrors", $errors, 3600 * 24);
 					}
 				}
-			}
-		}
-
-		/**
-		 * Обновить кеш групп.
-		 *
-		 */
-		public function actionAjaxUpdateCache()
-		{
-			extract($_POST);
-
-			$Group = Group::findById($id_group);
-
-			$return = $Group->countSchedule();
-
-			// @refactored @schedule-refactored
-			memcached()->set("GroupScheduleCount[{$Group->id}]", $return, 5 * 24 * 3600);
-		}
-
-		public function actionAjaxUpdateCacheAll()
-		{
-			$Groups = Group::findAll();
-
-			// @refactored @schedule-refactored
-			foreach ($Groups as $Group) {
-				memcached()->set("GroupScheduleCount[{$Group->id}]", $Group->countSchedule(), 5 * 24 * 3600);
-				memcached()->set("GroupPastScheduleCount[{$Group->id}]", VisitJournal::getLessonCount($Group->id), 5 * 24 * 3600);
 			}
 		}
 

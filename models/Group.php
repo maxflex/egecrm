@@ -35,8 +35,8 @@
 
 			if (!$this->isNewRecord) {
 				static::assignGrade($this);
-				$this->past_lesson_count 		= $this->getPastScheduleCountCached();;
-				$this->schedule_count = $this->getScheduleCountCached();
+				$this->past_lesson_count 		= $this->getPastScheduleCount($this->id);;
+				$this->schedule_count = $this->getScheduleCount($this->id);
 
 				if ($this->grade && $this->id_subject && !$this->ended && $this->schedule_count['paid']) {
 					$this->days_before_exam = $this->daysBeforeExam();
@@ -250,32 +250,10 @@
 			]);
 		}
 
-
         /**
          * @schedule-refactored
          */
-		public function countSchedule()
-		{
-			// @REFACTORED
-			$paid = GroupSchedule::count([
-				"condition" => "is_free=0 AND cancelled=0 AND id_group=".$this->id,
-			]);
-
-			// @REFACTORED
-			$free = GroupSchedule::count([
-				"condition" => "is_free=1 AND cancelled=0 AND id_group=".$this->id,
-			]);
-
-			return [
-				'free' => $free,
-				'paid' => $paid,
-			];
-		}
-
-        /**
-         * @schedule-refactored
-         */
-		public function countScheduleStatic($id)
+		public function countSchedule($id)
 		{
 			// @REFACTORED
 			$paid = GroupSchedule::count([
@@ -307,65 +285,15 @@
 		}
 */
 
-		public function getScheduleCountCached()
+		public function getPastScheduleCount($group_id)
 		{
-			if (LOCAL_DEVELOPMENT) {
-				return $this->countSchedule();
-			}
-
-			$return = memcached()->get("GroupScheduleCount[{$this->id}]");
-
-			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-				$return = $this->countSchedule();
-				memcached()->set("GroupScheduleCount[{$this->id}]", $return, 5 * 24 * 3600);
-			}
-			return $return;
+			return VisitJournal::getLessonCount($group_id);
 		}
 
-		public function getPastScheduleCountCached()
+		public static function getScheduleCount($id_group)
 		{
-			if (LOCAL_DEVELOPMENT) {
-				return VisitJournal::getLessonCount($this->id);
-			}
-
-			$return = memcached()->get("GroupPastScheduleCount[{$this->id}]");
-
-			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-				memcached()->set("GroupPastScheduleCount[{$this->id}]", VisitJournal::getLessonCount($this->id), 5 * 24 * 3600);
-			}
-			return $return;
+			return Group::countSchedule($id_group);
 		}
-
-		public static function getScheduleCountCachedStatic($id_group)
-		{
-			if (LOCAL_DEVELOPMENT) {
-				return ['paid' => 32, 'free' => 1];
-			}
-
-
-			$return = memcached()->get("GroupScheduleCount[{$id_group}]");
-
-			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-				$return = Group::countScheduleStatic($id_group);
-				memcached()->set("GroupScheduleCount[{$id_group}]", $return, 5 * 24 * 3600);
-			}
-			return $return;
-		}
-
-		public static function getPastScheduleCountCachedStatic($id_group)
-		{
-			if (LOCAL_DEVELOPMENT) {
-				return VisitJournal::getLessonCount($id_group);
-			}
-
-			$return = memcached()->get("GroupPastScheduleCount[{$id_group}]");
-
-			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-				memcached()->set("GroupPastScheduleCount[{$id_group}]", VisitJournal::getLessonCount($id_group), 5 * 24 * 3600);
-			}
-			return $return;
-		}
-
 
 
 		/**
@@ -487,8 +415,8 @@
 				$Group->students = empty($Group->students) ? [] : explode(',', $Group->students);
 
 				$Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
-				$Group->past_lesson_count 	= Group::getPastScheduleCountCachedStatic($Group->id);;
-				$Group->schedule_count 		= Group::getScheduleCountCachedStatic($Group->id);
+				$Group->past_lesson_count 	= Group::getPastScheduleCount($Group->id);;
+				$Group->schedule_count 		= Group::getScheduleCount($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTime($Group->id);
 				static::assignGrade($Group);
 

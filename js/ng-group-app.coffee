@@ -663,11 +663,6 @@
 				Group = (i for i in $scope.Groups when i.id is id_group)[0]
 
 		.controller "ListCtrl", ($scope, $timeout) ->
-			$scope.updateCache = ->
-				ajaxStart()
-				$.post "groups/ajax/UpdateCacheAll", {}, ->
-					redirect "groups"
-
 			# from newer version of angular
 			angular.merge = (s1,s2) ->
 				$.extend(true, s1, s2)
