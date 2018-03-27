@@ -2,6 +2,9 @@
     <div class="col-sm-12">
 	    <?= globalPartial('loading', ['model' => 'Journal']) ?>
 			<div ng-if="Groups !== undefined" ng-show="Journal !== undefined">
+				<div class="top-links">
+			        <span ng-click="setJournalYear(year)" class="link-like" ng-class="{'active': year == selected_journal_year}" ng-repeat="year in journal_years">{{ yearLabel(year) }}</span>
+			    </div>
 				<div ng-repeat="id_group in getStudentGroups()" class="visits-block"
 					ng-init='_Groups[id_group] = getGroup(id_group)'>
 

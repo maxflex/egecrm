@@ -471,8 +471,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			group_ids = $scope.getJournalGroups()
 			if ($scope.Groups)
 				$.each($scope.Groups, function(index, Group) {
-					if ($.inArray(Group.id.toString(), group_ids) < 0) {
-						group_ids.push(Group.id)
+					if (Group.year == $scope.selected_journal_year) {
+						if ($.inArray(Group.id.toString(), group_ids) < 0) {
+							group_ids.push(Group.id)
+						}
 					}
 				})
 
@@ -884,7 +886,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		$scope.deleteLesson = function() {
-			bootbox.confirm("Вы уверены, что хотите удалить договор?", function(result) {
+			bootbox.confirm("Вы уверены, что хотите удалить данные?", function(result) {
 				if (result === true) {
 					$scope.Journal = _.without($scope.Journal, $scope.modal_lesson_ref)
 					$.post("ajax/DeleteVisitJournal", {id: $scope.modal_lesson_ref.id })
@@ -2230,7 +2232,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.Journal === undefined && menu == 2) {
 				$.post("requests/ajax/LoadJournal", {id_student: $scope.id_student}, function(response) {
-					['Subjects', 'Journal', 'Groups', 'lesson_statuses'].forEach(function(field) {
+					['Subjects', 'Journal', 'Groups', 'lesson_statuses', 'journal_years', 'selected_journal_year'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()

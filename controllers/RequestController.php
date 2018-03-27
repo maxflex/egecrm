@@ -449,15 +449,23 @@
 
 			$Journal = Student::getVisitsStatic($id_student);
 
+			$years = [];
 			foreach($Journal as $J) {
 				$J->Teacher = Teacher::getLight($J->id_teacher);
+				if (! in_array($J->year, $years)) {
+					$years[] = $J->year;
+				}
 			}
+
+			sort($years);
 
 			returnJsonAng([
 				"Subjects"	=> Subjects::$three_letters,
 				"Groups"	=> Student::getGroupsStatic($id_student, true),
 				"Journal"	=> $Journal,
 				"lesson_statuses" => VisitJournal::$statuses,
+				"journal_years" => $years,
+				"selected_journal_year" => end($years)
 			]);
 		}
 
