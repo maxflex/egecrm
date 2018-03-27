@@ -99,6 +99,11 @@
 			return dbConnection()->query("SELECT $field FROM cabinets WHERE id={$id_cabinet}")->fetch_object()->{$field};
 		}
 
+		public function isDeleted()
+		{
+			return in_array($this->id, self::DELETED);
+		}
+
 		public static function getBlock($id_cabinet, $id_branch = false)
 		{
 		    if (!$id_branch) {

@@ -56,6 +56,9 @@
             foreach ($branches as &$branch) {
 				$branch->svg = Branches::metroSvg($branch->color);
                 foreach (Cabinet::getByBranch($branch->id) as $Cabinet) {
+					if ($Cabinet->isDeleted()) {
+						continue;
+					}
                     $Cabinet->bar = Freetime::getCabinetBar(null, $Cabinet->id);
                     $Cabinets[$branch->id][] = $Cabinet;
                 }

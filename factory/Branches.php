@@ -88,7 +88,7 @@
 
 				$Cabinets = Cabinet::getBranchId($branch->id);
 				foreach($Cabinets as $Cabinet) {
-					if (in_array($Cabinet->id, Cabinet::DELETED)) {
+					if ($Cabinet->isDeleted()) {
 						continue;
 					}
 					// если это массив выбранных элементов (при $multiple = true)
@@ -126,6 +126,9 @@
 			foreach ($branches as $branch) {
 				$Cabinets = Cabinet::getBranchId($branch->id);
 				foreach($Cabinets as $Cabinet) {
+					if ($Cabinet->isDeleted()) {
+						continue;
+					}
 					$return[] = [
 						'id' 	=> $Cabinet->id,
 						'color' => $branch->color,
