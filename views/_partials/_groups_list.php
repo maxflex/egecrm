@@ -54,8 +54,8 @@
 			<span ng-show="Group.first_schedule">
 				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}}</span></span><span ng-show="Group.first_schedule && Group.schedule_count.paid > 0"> из </span><span ng-show="Group.schedule_count.paid > 0">
                 {{Group.schedule_count.paid}} <ng-pluralize count="Group.schedule_count.paid" when="{
-					'one': 'урок',
-					'few': 'урока',
+					'one': 'урока',
+					'few': 'уроков',
 					'many': 'уроков'
 				}"></ng-pluralize>
             </span>
