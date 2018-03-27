@@ -42,7 +42,6 @@
 					$this->days_before_exam = $this->daysBeforeExam();
 				}
 
-				// @time-refactored @time-checked
 				static::_addCabinets($this);
 			}
 
@@ -66,7 +65,6 @@
 			}
 		}
 
-		// @time-refactored @time-checked
 		public static function getNotifiedStudentsCount($Group)
 		{
 			$FirstLesson = Group::getFirstLesson($Group->id, true);
@@ -194,7 +192,6 @@
 		/**
 		 * @param bool $withoutCancelled	whether cancelled lessons should be ignored.
 		 * @return GroupSchedule[]|bool		Schedule elems if found, false otherwise.
-		 * @time-refactored
 		 */
 		public function getSchedule($withoutCancelled=false)
 		{
@@ -442,7 +439,6 @@
 			];
 		}
 
-		// @time-refactored @time-checked
 		private static function _generateQuery($search, $select, $ending = '')
 		{
 			// " . ((! empty($search->time_ids) || !isBlank($search->id_branch) || $search->cabinet) ? " JOIN group_time gt ON (g.id = gt.id_group " . . ")" : "") . "
@@ -515,7 +511,7 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
-			// @time-refactored @time-checked
+
             $this->was_lesson = VisitJournal::count(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}' AND type_entity='TEACHER'"]) ? true : false;
 			if ($this->time) {
 				$this->time = mb_strimwidth($this->time, 0, 5);
@@ -523,6 +519,7 @@
 					$this->time = null; // чтобы отображало "не установлено"
 				}
 			}
+
             $this->date_time = $this->date . ' ' . $this->time;
 			$this->isUnplanned = $this->isUnplanned();
 		}
