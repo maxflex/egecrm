@@ -109,6 +109,33 @@
 	</div>
 	<!-- /СКЛЕЙКА КЛИЕНТОВ -->
 
+	<!-- Редактирование занятия -->
+	<div class="lightbox-new lightbox-edit-lesson">
+		<h4>Редактирование занятия</h4>
+			<div class="form-group inline-block">
+				<select class="form-control" ng-model="modal_lesson.presence" style="width: 150px; margin-right: 20px">
+					<option ng-repeat="(id, status) in lesson_statuses" value="{{ id }}">
+						{{status}}
+					</option>
+				</select>
+			</div>
+			<div class="form-group inline-block">
+				<input ng-model="modal_lesson.late" placeholder="опоздание" class="form-control digits-only"
+					style="width: 150px">
+			</div>
+			<div class="form-group inline-block" style="width: 100%">
+				<input ng-model="modal_lesson.price" placeholder="цена, руб." class="form-control">
+			</div>
+			<div class="form-group">
+				<textarea ng-model="modal_lesson.comment" placeholder="комментарий" class="form-control" rows="3" maxlength="1000"></textarea>
+			</div>
+		<center>
+			<button style='width: 100%; margin-bottom: 10px' class="btn btn-primary ajax-payment-button" ng-click="saveLesson()">Сохранить</button>
+			<button style="width: 100%" class="btn btn-danger ajax-payment-button" ng-click="deleteLesson()">Удалить</button>
+		</center>
+	</div>
+	<!-- /Редактирвоание занятия -->
+
 	<!-- СМС -->
 	<sms number='sms_number' templates="full"></sms>
 	<!-- /СМС -->

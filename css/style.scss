@@ -2067,6 +2067,12 @@ white-space: nowrap;
 	top: 25%;
 }
 
+.lightbox-edit-lesson {
+	width: 364px;
+	left: calc(50% - 182px);
+	top: 25%;
+}
+
 
 
 .lightbox-manualedit {
@@ -3675,6 +3681,19 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 			.cal-day-outmonth {
 				box-shadow: 1px 1px 0 1px white;
 			}
+		}
+	}
+}
+
+.visits-block {
+	margin-bottom: 30px;
+	&__elem {
+		display: flex;
+		&--planned {
+			color: $placeholder_gray;
+		}
+		& > div {
+			margin-right: 40px;
 		}
 	}
 }

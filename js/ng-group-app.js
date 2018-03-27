@@ -820,12 +820,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   };
 }).controller("ListCtrl", function($scope, $timeout) {
   var bindDraggable2, filterBranches;
-  $scope.updateCache = function() {
-    ajaxStart();
-    return $.post("groups/ajax/UpdateCacheAll", {}, function() {
-      return redirect("groups");
-    });
-  };
   angular.merge = function(s1, s2) {
     return $.extend(true, s1, s2);
   };

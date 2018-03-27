@@ -656,4 +656,17 @@
             dbEgerep()->query("UPDATE settings SET `value`=1 WHERE `key`='emergency_exit'");
             Socket::trigger('egerep', 'App\Events\EmergencyExit', [], 'egerep');
         }
+
+		public function actionAjaxUpdateVisitJournal()
+		{
+			extract($_POST);
+			VisitJournal::updateById($id, $_POST);
+			returnJsonAng($_POST);
+		}
+
+		public function actionAjaxDeleteVisitJournal()
+		{
+			VisitJournal::deleteById($_POST['id']);
+			returnJsonAng($_POST);
+		}
 	}

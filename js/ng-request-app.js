@@ -863,6 +863,36 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			lightBoxHide()
 		}
 
+		// Редактирование занятия
+		$scope.editLessonModal = function(lesson) {
+			$scope.modal_lesson_ref = lesson
+			$scope.modal_lesson = _.clone(lesson)
+			lightBoxShow('edit-lesson')
+		}
+
+		lesson_edit_fields = ['comment', 'price', 'presence', 'late']
+		$scope.saveLesson = function() {
+			update_obj = {id: $scope.modal_lesson.id}
+			lesson_edit_fields.forEach(function(field) {
+				console.log(field, $scope.modal_lesson_ref[field], $scope.modal_lesson[field])
+				$scope.modal_lesson_ref[field] = $scope.modal_lesson[field]
+				update_obj[field] = $scope.modal_lesson[field]
+				$scope.$apply()
+			})
+			$.post("ajax/UpdateVisitJournal", update_obj)
+			lightBoxHide()
+		}
+
+		$scope.deleteLesson = function() {
+			bootbox.confirm("Вы уверены, что хотите удалить договор?", function(result) {
+				if (result === true) {
+					$scope.Journal = _.without($scope.Journal, $scope.modal_lesson_ref)
+					$.post("ajax/DeleteVisitJournal", {id: $scope.modal_lesson_ref.id })
+					$scope.$apply()
+					lightBoxHide()
+				}
+			})
+		}
 
 		// Возвращаем структурированные данные по маркерам
 		// для передачи на сохранение
@@ -2200,7 +2230,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.Journal === undefined && menu == 2) {
 				$.post("requests/ajax/LoadJournal", {id_student: $scope.id_student}, function(response) {
-					['Subjects', 'Journal', 'Groups'].forEach(function(field) {
+					['Subjects', 'Journal', 'Groups', 'lesson_statuses'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()

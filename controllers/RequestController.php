@@ -447,10 +447,17 @@
 		{
 			extract($_POST);
 
+			$Journal = Student::getVisitsStatic($id_student);
+
+			foreach($Journal as $J) {
+				$J->Teacher = Teacher::getLight($J->id_teacher);
+			}
+
 			returnJsonAng([
 				"Subjects"	=> Subjects::$three_letters,
 				"Groups"	=> Student::getGroupsStatic($id_student, true),
-				"Journal"	=> Student::getVisitsStatic($id_student),
+				"Journal"	=> $Journal,
+				"lesson_statuses" => VisitJournal::$statuses,
 			]);
 		}
 
