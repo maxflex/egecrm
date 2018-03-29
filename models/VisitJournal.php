@@ -143,6 +143,7 @@
 				"duration"				=> $Group->duration,
 				"year"					=> static::_academicYear($Lesson->lesson_date),
 				"entry_id"				=> $Lesson->id,
+				"id_teacher"			=> $Group->id_teacher,
 			]);
 		}
 

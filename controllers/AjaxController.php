@@ -482,7 +482,7 @@
 
             // @schedule-refactored
 			$Lessons = VisitJournal::findAll([
-				"condition" => "lesson_date='$date'",
+				"condition" => "lesson_date='$date' AND type_entity!='STUDENT'",
 			]);
 
 			foreach ($Lessons as &$Lesson) {
