@@ -97,7 +97,7 @@
 	<?php endif ?>
 	<a href="settings/cabinet" class="list-group-item">Загрузка кабинетов</a>
 	<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_CALENDAR)) :?>
-		 <a href="settings/vocations" class="list-group-item">Календарь</a>
+		 <a href="settings/vacations" class="list-group-item">Календарь</a>
 	<?php endif ?>
 	<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_TEMPLATES)) :?>
 		 <a href="templates" class="list-group-item">Шаблоны</a>

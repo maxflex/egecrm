@@ -17,8 +17,7 @@ app = angular.module("Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar'])
     });
     return arr;
   };
-}).controller("VocationsCtrl", function($scope, $timeout) {
-  var getColor;
+}).controller("VacationsCtrl", function($scope, $timeout) {
   $scope.schedulde_loaded = false;
   $scope.menu = 1;
   $scope.exam_days = {
@@ -45,21 +44,21 @@ app = angular.module("Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar'])
       expires: 365,
       path: '/'
     });
-    return redirect("settings/vocations?year=" + year);
+    return redirect("settings/vacations?year=" + year);
   };
   $scope.months = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6];
   $timeout(function() {
-    var first_lesson_date, first_lesson_month, year;
+    return $scope.calendarLoaded = true;
+  });
+  $scope.formatDate = function(date) {
+    return moment(date).format("D MMMM YYYY г.");
+  };
+  $timeout(function() {
     $scope.viewDate = {};
     $scope.displayMonth = {};
-    first_lesson_month = moment($scope.Group.first_schedule).format("M");
-    year = $scope.Group.year;
-    if (first_lesson_month <= 8) {
-      year++;
-    }
-    first_lesson_date = new Date(year + "-" + first_lesson_month + "-01");
     $scope.months.forEach(function(month) {
-      year = $scope.Group.year;
+      var year;
+      year = $scope.current_year;
       if (month <= 8) {
         year++;
       }
@@ -70,90 +69,53 @@ app = angular.module("Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar'])
       return $scope.calendarLoaded = true;
     });
   });
-  $scope.calendarTitle = 'test';
-  $scope.events = {};
-  getColor = function(Schedule) {
-    if (Schedule.was_lesson) {
-      return '#337ab7';
-    }
-    if (Schedule.cancelled) {
-      return '#c0c0c0';
-    }
-    return '#5cb85c';
-  };
-  $scope.formatDate = function(date) {
-    return moment(date).format("D MMMM YYYY г.");
-  };
-  $scope.countNotCancelled = function(Schedule) {
-    return _.where(Schedule, {
-      cancelled: 0
-    }).length;
-  };
-  $scope.lessonCount = function() {
-    return Object.keys($scope.Group.day_and_time).length;
-  };
-  $scope.scheduleModal = function(schedule) {
-    if (schedule == null) {
-      schedule = null;
+  $scope.editVacation = function(vacation) {
+    if (vacation == null) {
+      vacation = null;
     }
     $('#schedule-modal').modal('show');
-    if (schedule === null) {
-      return $scope.modal_schedule = {
-        id_group: $scope.Group.id
+    if (vacation === null) {
+      return $scope.modal_vacation = {
+        year: $scope.current_year
       };
     } else {
-      $scope.modal_schedule = _.clone(schedule);
-      return $scope.modal_schedule.date = moment($scope.modal_schedule.date).format('DD.MM.YYYY');
+      $scope.modal_vacation = _.clone(vacation);
+      return $scope.modal_vacation.date = moment($scope.modal_vacation.date).format('DD.MM.YYYY');
     }
   };
-  $scope.saveSchedule = function() {
+  $scope.saveVacation = function() {
     ajaxStart();
     $('#schedule-modal').modal('hide');
-    $scope.modal_schedule.date = convertDate($scope.modal_schedule.date);
-    return $.post("groups/ajax/SaveSchedule", $scope.modal_schedule, function(response) {
+    $scope.modal_vacation.date = convertDate($scope.modal_vacation.date);
+    return $.post("ajax/SaveVacation", $scope.modal_vacation, function(response) {
       var index;
+      console.log('save complete', response);
       ajaxEnd();
-      if (!$scope.modal_schedule.id) {
-        $scope.modal_schedule.id = response.id;
-        $scope.Group.Schedule.push($scope.modal_schedule);
+      if (!$scope.modal_vacation.id) {
+        $scope.modal_vacation.id = response.id;
+        $scope.Vacations.push(response);
       } else {
-        index = _.findIndex($scope.Group.Schedule, {
-          id: $scope.modal_schedule.id
+        index = _.findIndex($scope.Vacations, {
+          id: $scope.modal_vacation.id
         });
-        $scope.Group.Schedule[index] = _.clone($scope.modal_schedule);
+        $scope.Vacations[index] = _.clone($scope.modal_vacation);
       }
       return $scope.$apply();
-    });
+    }, "json");
   };
-  $scope.getCabinet = function(id) {
-    return _.findWhere($scope.all_cabinets, {
-      id: parseInt(id)
-    });
-  };
-  $scope.deleteSchedule = function(Schedule) {
+  $scope.deleteVacation = function(Vacation) {
     ajaxStart();
-    return $.post("groups/ajax/DeleteSchedule", {
-      id: Schedule.id
+    return $.post("ajax/DeleteVacation", {
+      id: Vacation.id
     }, function(response) {
       var index;
-      index = _.findIndex($scope.Group.Schedule, {
-        id: Schedule.id
+      index = _.findIndex($scope.Vacations, {
+        id: Vacation.id
       });
-      $scope.Group.Schedule.splice(index, 1);
+      $scope.Vacations.splice(index, 1);
       $scope.$apply();
       return ajaxEnd();
     });
-  };
-  $scope.getPastLesson = function(Schedule) {
-    return _.findWhere($scope.past_lessons, {
-      lesson_date: Schedule.date,
-      lesson_time: Schedule.time
-    });
-  };
-  $scope.lessonStarted = function(Schedule) {
-    var lesson_time;
-    lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime();
-    return lesson_time < new Date().getTime();
   };
   $scope.monthName = function(month) {
     var month_name;

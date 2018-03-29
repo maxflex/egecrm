@@ -45,30 +45,17 @@ app = angular.module("Stats", ["ui.bootstrap"]).config([
     ajaxStart();
     return redirect("stats/payments?group=" + group + "&page=" + $scope.currentPage);
   };
-  $scope.Schedules = {};
+  $scope.Lessons = {};
   $scope.dateLoad = function(date) {
     if (!$scope.days_mode) {
       return false;
     }
     $("#" + date).toggle();
-    if ($scope.Schedules[date] === void 0) {
+    if ($scope.Lessons[date] === void 0) {
       return $.post("ajax/loadStatsSchedule", {
         date: date
       }, function(response) {
-        var d1, d2, i, j, len, len1;
-        for (i = 0, len = response.length; i < len; i++) {
-          d1 = response[i];
-          if (!d1.layered && !d1.cancelled) {
-            for (j = 0, len1 = response.length; j < len1; j++) {
-              d2 = response[j];
-              if ((d1.id !== d2.id) && (d1.time === d2.time) && (d1.id_branch === d2.id_branch) && (d1.cabinet === d2.cabinet) && !d2.cancelled) {
-                d1.cabinetLayered = true;
-                d2.cabinetLayered = true;
-              }
-            }
-          }
-        }
-        $scope.Schedules[date] = response;
+        $scope.Lessons[date] = response;
         return $scope.$apply();
       }, "json");
     }

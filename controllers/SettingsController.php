@@ -13,7 +13,7 @@
 			$this->addJs("ng-settings-app, vendor/angular-bootstrap-calendar-tpls");
 		}
 
-		public function actionVocations()
+		public function actionVacations()
 		{
             # @rights-refactored
             $this->checkRights(Shared\Rights::SHOW_CALENDAR);
@@ -21,28 +21,21 @@
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 
-			$id_group 	= $_GET['id'];
-			$year		= Years::getCurrent();
+			$year = Years::getCurrent();
 
-			$Group = new Group([
-				"id" 	=> 0,
-				"year"	=> $year,
-			]);
-
-			$Group->Schedule = $Group->getSchedule();
+			$Vacations = Vacation::getByYear($year);
 
 			$ang_init_data = angInit([
-				"Group" 		=> $Group,
+				"Vacations"		=> $Vacations,
 				"Subjects"		=> Subjects::$three_letters,
 				"current_year"	=> $year,
                 "exam_days" 	=> ExamDay::getData($year),
                 "special_dates"	=> [
-                    'vacations' => GroupSchedule::getVocationDates(),
+                    'vacations' => Vacation::getDates($year),
                 ],
 			]);
 
-			$this->render("vocations", [
-				"Group"			=> $Group,
+			$this->render("vacations", [
 				"ang_init_data" => $ang_init_data,
 			]);
 		}

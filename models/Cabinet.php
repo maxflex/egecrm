@@ -111,12 +111,14 @@
             }
 
 			$branch = Branches::getOne($id_branch);
+			$number = self::getField($id_cabinet, 'number');
 
 			return [
 				'id' 	=> $id_cabinet,
 				'color' => $branch->color,
-				'label'	=> $branch->short . "–" . self::getField($id_cabinet, 'number'),
+				'label'	=> $branch->short . "–" . $number,
                 'short' => $branch->short,
+				'number'	=> $number,
                 'id_branch' => $id_branch,
 			];
 		}

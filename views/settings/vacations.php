@@ -1,4 +1,4 @@
-<div ng-app="Settings" ng-controller="VocationsCtrl" ng-init="<?= $ang_init_data ?>">
+<div ng-app="Settings" ng-controller="VacationsCtrl" ng-init="<?= $ang_init_data ?>">
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Выходные дни и праздники
@@ -20,17 +20,17 @@
 			</div>
 			<div class="col-sm-6">
                 <table class="table table-divlike">
-					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date'" style="height: 30px">
+					<tr ng-repeat="Vacation in Vacations | orderBy:'date'" style="height: 30px">
 						<td>
-                            {{ formatDate(Schedule.date) }}
+                            {{ formatDate(Vacation.date) }}
 						</td>
                         <td style='text-align: right'>
-                            <span class='link-like link-offset-right' ng-click='scheduleModal(Schedule)'>редактировать</span>
-                            <span class='link-like red' ng-click='deleteSchedule(Schedule)'>удалить</span>
+                            <span class='link-like link-offset-right' ng-click='editVacation(Vacation)'>редактировать</span>
+                            <span class='link-like red' ng-click='deleteVacation(Vacation)'>удалить</span>
                         </td>
 					</tr>
 				</table>
-                <span class='link-like' ng-click='scheduleModal()'>добавить</span>
+                <span class='link-like' ng-click='editVacation()'>добавить</span>
                 <div class="exam-days-wrapper">
                     <h4 style="text-align: center; margin: 0 0 20px">Дни экзаменов</h4>
                     <div class="row">
@@ -141,20 +141,20 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title center">{{ modal_schedule.id ? 'Редактировать праздник' : 'Добавить праздник' }}</h4>
+        <h4 class="modal-title center">{{ modal_vacation.id ? 'Редактировать праздник' : 'Добавить праздник' }}</h4>
       </div>
       <div class="modal-body">
           <div class="form-group">
               <div class="input-group custom" style="position: relative">
                   <span class="input-group-addon">дата праздника - </span>
-                  <input class="form-control bs-date-clear pointer" readonly ng-model="modal_schedule.date">
+                  <input class="form-control bs-date-clear pointer" readonly ng-model="modal_vacation.date">
               </div>
           </div>
       </div>
       <div class="modal-footer center">
-        <button type="button" class="btn btn-primary" ng-click="saveSchedule()"
-            ng-disabled="!modal_schedule.date">
-            {{ modal_schedule.id ? 'редактировать' : 'добавить' }}</button>
+        <button type="button" class="btn btn-primary" ng-click="saveVacation()"
+            ng-disabled="!modal_vacation.date">
+            {{ modal_vacation.id ? 'редактировать' : 'добавить' }}</button>
       </div>
     </div>
   </div>

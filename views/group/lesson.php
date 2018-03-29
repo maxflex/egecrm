@@ -15,7 +15,7 @@
 							</td>
 						</thead>
 						<tbody>
-							<tr ng-repeat="Student in Schedule.Group.Students">
+							<tr ng-repeat="Student in Students">
 								<td width="300">
 									<div class="visit-div-circle" style='margin: 0 5px 0 0'>
 										<span class="circle-default"></span>
@@ -35,7 +35,7 @@
 									<span>{{LessonData[Student.id].comment}}</span>
 								</td>
 								<td ng-hide="<?= User::isStudent(true) ?>">
-									<span class="link-like" ng-click="editStudent(Student)" ng-show="!Schedule.was_lesson">редактировать</span>
+									<span class="link-like" ng-click="editStudent(Student)" ng-show="Lesson.is_planned">редактировать</span>
 								</td>
 							</tr>
 							<tr ng-repeat="Student in left_students">
@@ -58,9 +58,9 @@
 			</div>
 			<div class="row" ng-hide="<?= User::isStudent(true) ?>">
 				<div class="col-sm-12 center">
-					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true && !Schedule.was_lesson"
-						ng-disabled="Schedule.was_lesson || saving || students_not_filled">
-						<span ng-show="!Schedule.was_lesson">Записать в журнал</span>
+					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true && Lesson.is_planned"
+						ng-disabled="Lesson.is_conducted || saving || students_not_filled">
+						<span ng-show="Lesson.is_planned">Записать в журнал</span>
 <!--						<span >Записано</span>-->
 					</button>
 					<span ng-show="until_save !== true">

@@ -117,11 +117,10 @@
 				}
 			});
 
-            // @schedule-refactored
             $tobe_paid = dbConnection()->query(
-                "select format(sum(teacher_price), 0) as tobe_paid from group_schedule gs " .
-                "join groups g on g.id = gs.id_group " .
-                "where date > now() and gs.cancelled = 0 and gs.is_free = 0 and gs.id_group <> 0 "
+                "select format(sum(g.teacher_price), 0) as tobe_paid from visit_journal vj " .
+                "join groups g on g.id = vj.id_group " .
+                "where lesson_date > now() and vj.cancelled = 0 and vj.is_free = 0"
             )->fetch_object()->tobe_paid;
 
 			$ang_init_data = angInit([

@@ -421,15 +421,6 @@
 		public function getReportsStatic($id_student)
 		{
 			return Teacher::getReportData(1, [], $id_student);
-			// $Reports = Report::findAll([
-			// 	"condition" => "id_student=" . $id_student
-			// ]);
-			//
-			// foreach ($Reports as &$Report) {
-			// 	$Report->Teacher = Teacher::findById($Report->id_teacher);
-			// }
-			//
-			// return $Reports;
 		}
 
 		/**
@@ -456,52 +447,19 @@
 			]);
 		}
 
-		public static function getGroupsStatic($id_student, $with_schedule = false, $show_dump = true)
+		public static function groups($id_student, $func = 'findAll')
 		{
-			// @refactored
-			$Groups = Group::findAll([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%'" . ($show_dump ? '' : ' AND is_dump=0')
+			return Group::{$func}([
+				'condition' => "FIND_IN_SET({$id_student}, students)",
 			]);
-
-			if ($with_schedule) {
-				foreach ($Groups as &$Group) {
-					$Group->Schedule = $Group->getSchedule(true);
-				}
-			}
-
-			return $Groups;
-		}
-
-		public function getGroups($with_schedule = false)
-		{
-			// @refactored
-			$Groups = Group::findAll([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
-			]);
-
-			if ($with_schedule) {
-				foreach ($Groups as &$Group) {
-					$Group->Schedule = $Group->getSchedule(true);
-				}
-			}
-
-			return $Groups;
 		}
 
 		// Подсчитывает кол-во групп (кружочек в ЛК ученика)
-		public function countGroupsStatic($id_student)
+		public static function countGroups($id_student)
 		{
 			// @refactored
 			return Group::count([
 				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0 AND is_dump=0"
-			]);
-		}
-
-
-		public function countGroups()
-		{
-			return Group::count([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$this->id},%'"
 			]);
 		}
 
@@ -856,13 +814,6 @@
 			]);
 		}
 
-		public function getVisitsAndSchedule()
-		{
-			$visits = VisitJournal::findAll([
-				"condition" => "id_entity={$this->id} AND type_entity='STUDENT'"
-			]);
-		}
-
 		/**
 		 * Получить только список ID => ФИО. C договорами
 		 *
@@ -900,28 +851,6 @@
 				Marker::add($marker + ["id_owner" => $id_student, "owner" => self::MARKER_OWNER]);
 			}
 		}
-
-		/*
-		 * Планируются ли еще занятия у ученика?
-		 * (серые точки в профиле)
-		 *
-		 */
-		public function hasFutureLessons()
-		{
-			// получаем группы, в которых присутствует ученик
-			$group_ids = Group::getIds([
-				'condition' => "FIND_IN_SET({$this->id}, students)",
-			]);
-
-			foreach ($group_ids as $group_id) {
-				if (Group::countFutureScheduleStatic($group_id)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 
 		private static function _getPhoneNumbers($Object)
 		{

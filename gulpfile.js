@@ -5,7 +5,7 @@ var concat 		= require('gulp-concat');
 var sass        = require('gulp-sass');
 var addsrc      = require('gulp-add-src');
 
-var browserSync = require('browser-sync').create();
+// var browserSync = require('browser-sync').create();
 var coffee_cnf  = config.coffee;
 
 vendor_files = [
@@ -95,7 +95,7 @@ gulp.task('assets', function() {
 		.pipe(concat(coffee_cnf.assets.bundle))
 		.pipe(gulp.dest(coffee_cnf.assets.dest));
 
-	browserSync.reload();
+	// browserSync.reload();
 });
 
 gulp.task('ng-apps', function() {
@@ -103,11 +103,11 @@ gulp.task('ng-apps', function() {
 		.pipe(coffee(coffee_cnf.task.options))
 		.pipe(gulp.dest(coffee_cnf.ngapp.dest));
 
-	browserSync.reload();
+	// browserSync.reload();
 });
 
 gulp.task('watch', ['default'], function() {
-	browserSync.init(config.browsersync.options);
+	// browserSync.init(config.browsersync.options);
 
 	gulp.watch(coffee_cnf.assets.src, ['assets']);
 	gulp.watch(coffee_cnf.ngapp.src, ['ng-apps']);

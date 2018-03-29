@@ -6,8 +6,8 @@
 			<div class="pull-right">
 				<?php if ($Group->id): ?>
 					<a style="margin-right: 12px" class="link-reverse" href="groups/journal/<?= $Group->id ?>">посещаемость</a>
-					<a style="margin-right: 12px" class="link-reverse" href="groups/edit/<?= $Group->id ?>/schedule"><span ng-show="Group.schedule_count.paid">{{Group.schedule_count.paid}}<span ng-show='Group.schedule_count.free'>+{{Group.schedule_count.free}}</span>
-					<ng-pluralize count="Group.schedule_count.paid" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize></span><span ng-show="!Group.schedule_count.paid">установить расписание</span></a>
+					<a style="margin-right: 12px" class="link-reverse" href="groups/edit/<?= $Group->id ?>/schedule"><span ng-show="Group.lesson_count.all">{{Group.lesson_count.all}}
+					<ng-pluralize count="Group.lesson_count.all" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize></span><span ng-show="!Group.lesson_count.all">установить расписание</span></a>
 					<span style="margin-right: 12px" ng-click="dayAndTime()">
 						<span class="link-like link-reverse link-white" ng-show='hasDayAndTime() && Group.is_dump == 0'>
 							<span ng-repeat="(day, data) in Group.day_and_time">

@@ -63,7 +63,7 @@
         </div>
     </div>
     <div class="row">
-        <div ng-repeat="Lesson in FutureLessons" class="col-sm-12 text-gray" style='margin-bottom: 5px'>
+        <div ng-repeat="Lesson in PlannedLessons" class="col-sm-12 text-gray" style='margin-bottom: 5px'>
             <span class='inline-block' style='width: 200px'>
                 {{ formatDate(Lesson.date)}} в {{formatTime(Lesson.time) }}
             </span>

@@ -7,9 +7,25 @@
 
 		public static $statuses = ["не указано", "был", "не был"];
 
+		const PLANNED_CONDITION = "(type_entity='' or type_entity IS NULL)";
+
 		public function __construct($array)
 		{
 			parent::__construct($array);
+
+			$this->is_planned   = $this->type_entity ? false : true;
+			$this->is_conducted = $this->type_entity ? true  : false;
+
+			// занятие не зарегистрировано
+			$this->not_registered = $this->is_planned && ! $this->cancelled && $this->lesson_date < now(true);
+
+			// подтягиваем недостающие данные из группы, если занятие планируется
+			if ($this->is_planned) {
+				$Group = Group::getLight($this->id_group);
+				foreach(['id_teacher', 'id_subject', 'grade', 'year'] as $field) {
+					$this->{$field} = $Group->{$field};
+				}
+			}
 
             if (! $this->isNewRecord) {
                 if ($this->grade == Grades::EXTERNAL) {
@@ -27,16 +43,17 @@
 					$this->lesson_time = null; // чтобы отображало "не установлено"
 				}
 			}
+
+			$this->date_time = $this->lesson_date . ' ' . $this->lesson_time;
 		}
 
-        /**
-         * @schedule-refactored
-         */
-		public static function addData($id_schedule, $data)
-		{
-			$Schedule = GroupSchedule::findById($id_schedule);
 
-			$Group = Group::findById($Schedule->id_group);
+
+		public static function addData($id_lesson, $data)
+		{
+			$Lesson = self::findById($id_lesson);
+
+			$Group = Group::findById($Lesson->id_group);
 
 			$prices = Prices::get();
 
@@ -66,7 +83,7 @@
 						if ($data[$id_student]['late'] >= 5) {
 							// @sms-checked
 							$message = Template::get(6, [
-								"date" 			=> today_text($Schedule->date),
+								"date" 			=> today_text($Lesson->lesson_date),
 								"student_name"	=> $Student->last_name . " " . $Student->first_name,
 								"late_word"		=> ($Student->getGender() == 1 ? "опоздал" : "опоздала"),
 								"subject"		=> Subjects::$dative[$Group->id_subject],
@@ -83,7 +100,7 @@
 				}
 
 				// если занятие бесплатное
-				if ($Schedule->is_free) {
+				if ($Lesson->is_free) {
 					$price = 0;
 				} else {
 					$last_student_contract = $Student->getLastContract($Group->year);
@@ -96,11 +113,11 @@
 				self::add([
 					"id_entity" 			=> $id_student,
 					"type_entity"			=> Student::USER_TYPE,
-					"id_group"				=> $Schedule->id_group,
+					"id_group"				=> $Lesson->id_group,
 					"id_subject"			=> $Group->id_subject,
-					"cabinet"				=> $Schedule->cabinet,
-					"lesson_date"			=> $Schedule->date,
-					"lesson_time"			=> $Schedule->time,
+					"cabinet"				=> $Lesson->cabinet,
+					"lesson_date"			=> $Lesson->lesson_date,
+					"lesson_time"			=> $Lesson->lesson_time,
 					"date"					=> now(),
 					"presence"				=> $data[$id_student]['presence'],
 					"late"					=> $data[$id_student]['late'],
@@ -109,47 +126,51 @@
 					"id_teacher"			=> $Group->id_teacher,
 					"grade"					=> $Group->grade,
 					"duration"				=> $Group->duration,
-					"year"					=> static::_academicYear($Schedule->date),
-					"price"					=> $price
+					"year"					=> static::_academicYear($Lesson->lesson_date),
+					"price"					=> $price,
+					"entry_id"				=> $Lesson->id,
 				]);
 			}
 			// @time-refactored @time-checked
-			self::add([
+			self::updateById($Lesson->id, [
 				"id_entity" 			=> $Group->id_teacher,
 				"type_entity"			=> Teacher::USER_TYPE,
-				"id_group"				=> $Schedule->id_group,
 				"id_subject"			=> $Group->id_subject,
-				"cabinet"				=> $Schedule->cabinet,
-				"lesson_date"			=> $Schedule->date,
-				"lesson_time"			=> $Schedule->time,
 				"date"					=> now(),
 				"price"					=> $Group->teacher_price,
 				"id_user_saved"			=> User::fromSession()->id,
 				"grade"					=> $Group->grade,
 				"duration"				=> $Group->duration,
-				"year"					=> static::_academicYear($Schedule->date),
+				"year"					=> static::_academicYear($Lesson->lesson_date),
+				"entry_id"				=> $Lesson->id,
 			]);
+		}
+
+		public function afterFirstSave()
+		{
+			if (! $this->entity_type && ! $this->entry_id) {
+				$this->entry_id = $this->id;
+				$this->save('entry_id');
+			}
 		}
 
 		/**
 		 * Изменение истории журнала. Доступен только для админов.
-		 * @schedule-refactored
 		 */
-		public static function updateData($id_schedule, $data)
+		public static function updateData($id_lesson, $data)
 		{
-			$Schedule = GroupSchedule::findById($id_schedule);
+			$Lesson = self::findById($id_lesson);
 
-			$Group = Group::findById($Schedule->id_group);
+			$Group = Group::findById($Lesson->id_group);
 			$updatedElemCnt = 0;
 			foreach ($Group->students as $id_student)
 			{
 				$VisitJournal = VisitJournal::find([
-										'condition' => 	"id_entity = ".$id_student." AND ".
-														"type_entity = '".Student::USER_TYPE."' AND ".
-														"id_group = ".$Schedule->id_group." AND ".
-														"lesson_date = '".$Schedule->date."' AND ".
-														"lesson_time = '".$Schedule->time."' "
-								]);
+					'condition' =>
+						"id_entity = " . $id_student . " AND " .
+						"type_entity = '" . Student::USER_TYPE . "' AND " .
+						"entry_id = " . $Lesson->entry_id
+				]);
 
 				if ($VisitJournal) {
 					$res = $VisitJournal->update([
@@ -161,11 +182,6 @@
 				}
 			}
 			echo $updatedElemCnt;
-		}
-
-		public static function getLessonCount($id_group)
-		{
-			return dbConnection()->query("SELECT id as c FROM visit_journal WHERE true AND id_group=$id_group and type_entity = 'TEACHER'")->num_rows;
 		}
 
 		public static function lessonPresent($id_group)
@@ -293,4 +309,80 @@
 
             return $Lessons;
         }
+
+		/**
+         * незапланированное
+         */
+		public function isUnplanned()
+		{
+            $Time = Time::getLight();
+
+			$GroupTimeData = GroupTime::findAll([
+				"condition" => "id_group=" . $this->id_group,
+			]);
+
+			$day_of_the_week = date("w", strtotime($this->lesson_date));
+			if ($day_of_the_week == 0) {
+				$day_of_the_week = 7;
+			}
+
+			$is_planned = false;
+			foreach ($GroupTimeData as $GroupTime) {
+				if ($day_of_the_week == Time::getDay($GroupTime->id_time) && $this->lesson_time == $Time[$GroupTime->id_time]) {
+					$is_planned = true;
+					break;
+				}
+			}
+
+			return !$is_planned;
+		}
+
+		/**
+		 * Занятие в процессе
+		 */
+		public function inProgress()
+		{
+			if ($this->cancelled) {
+				return false;
+			}
+			$start_time = (new DateTime($this->date_time))->getTimestamp();
+			$end_time = (new DateTime($this->date_time))->modify('+135 minutes')->getTimestamp();
+			return ((time() < $end_time) && (time() > $start_time));
+		}
+
+		/**
+		 * Получить номер урока
+		 */
+		public function getLessonNumber()
+		{
+			return self::count([
+				"condition" => "id_group={$this->id_group}
+					AND CONCAT(`lesson_date`,' ',`lesson_time`) <= '{$this->lesson_date} {$this->lesson_time}:00'
+					AND (type_entity='TEACHER' or " . self::PLANNED_CONDITION . ")
+					AND cancelled = 0"
+			]);
+		}
+
+		/**
+		 * Get group past & planned lessons
+		 */
+		public static function getGroupLessons($id_group, $func = 'findAll', $order = 'ASC')
+		{
+			return self::{$func}([
+				'condition' => "id_group={$id_group} and (type_entity='TEACHER' or " . self::PLANNED_CONDITION . ")",
+				'order' => "CONCAT(lesson_date, ' ', lesson_time) {$order}"
+			]);
+		}
+
+		/**
+		 * Get student group past & planned lessons
+		 */
+		public static function getStudentGroupLessons($id_group, $id_student)
+		{
+			return self::findAll([
+				'condition' => "id_group={$id_group} and ((type_entity='STUDENT' and id_entity={$id_student}) or " . self::PLANNED_CONDITION . ")",
+				'order' => 'lesson_date asc, lesson_time asc'
+			]);
+		}
+
 	}

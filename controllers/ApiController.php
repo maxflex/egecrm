@@ -71,18 +71,6 @@
 		##################################### ПОЛУЧЕНИЕ ДАННЫХ #####################################
 		############################################################################################
 
-		// Расписание
-		public function actionGetSchedule()
-		{
-			extract($_POST);
-
-			$Groups = Group::findAll([
-				"condition" => ($id_branch > 0 ? "id_branch=$id_branch AND " : "" ) . "id_subject=$id_subject AND grade=$id_grade"
-			]);
-
-			returnJSON($Groups);
-		}
-
 		// Получить ученика по коду
 		// Возвращает имя ученика в родительном падеже
 		public function actionGetStudentByCode()

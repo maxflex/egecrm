@@ -467,20 +467,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			return Object.keys(_.chain($scope.Journal).groupBy('id_group').value())
 		}
 
-		$scope.getStudentGroups = function() {
-			group_ids = $scope.getJournalGroups()
-			if ($scope.Groups)
-				$.each($scope.Groups, function(index, Group) {
-					if (Group.year == $scope.selected_journal_year) {
-						if ($.inArray(Group.id.toString(), group_ids) < 0) {
-							group_ids.push(Group.id)
-						}
-					}
-				})
-
-			return group_ids
-		}
-
 		// БАЛАНС
 		$scope.reverseObjKeys = function(obj) {
 			return Object.keys(obj).reverse()
@@ -488,6 +474,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		$scope.setYear = function(year) {
 			$scope.selected_year = year
+		}
+
+		$scope.setLessonsYear = function(year) {
+			$scope.selected_lesson_year = year
 		}
 
 		$scope.totalSum = function(date) {
@@ -504,11 +494,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 		// \БАЛАНС
 
-		$scope.getVisitsByGroup = function(id_group) {
-			id_group = parseInt(id_group)
-			return _.where($scope.Journal, {id_group: id_group})
-		}
-
 		$scope.getVisit = function(id_group, date) {
 			id_group = parseInt(id_group)
 			return _.findWhere($scope.Journal, {id_group: id_group, lesson_date: date})
@@ -524,21 +509,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			id_group = parseInt(id_group)
 			return _.where($scope.Groups, {id: id_group}).length
 		}
-
-		$scope.getMaxVisits = function() {
-			max = -1;
-			$.each($scope.Groups, function(i, group) {
-				count = $scope.getVisitsByGroup(group.id).length
-				if ($scope.getGroup(group.id).Schedule) {
-					count += $scope.getGroup(group.id).Schedule.length
-				}
-				if (count > max) {
-					max = count
-				}
-			});
-			return max;
-		}
-
 
 		$scope.formatVisitDate = function (date) {
 			return moment(date).format("DD.MM.YY")
@@ -779,29 +749,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				html = $("#termination-ooo-print").html()
 				$scope.editBeforePrint(html);
 			});
-		}
-
-		$scope.getLastLessonDate = function() {
-			date = '0000-00-00'
-			// если есть активные группы
-			if ($scope.Groups && $scope.Groups.length) {
-			  $.each($scope.Groups, function(index, Group) {
-				new_date = _.last(Group.Schedule).date
-				if (new_date > date) {
-				  date = new_date
-				}
-			  })
-			} else {
-				// иначе берем группы которые были посещены
-				$.each($scope.getStudentGroups(), function(index, id_group) {
-					var last_lesson = _.last($scope.getVisitsByGroup(id_group));
-					new_date = last_lesson.lesson_date
-					if (new_date > date) {
-					  date = new_date;
-					}
-				})
-			}
-			return $scope.textDate(date)
 		}
 
 		$scope.todayDate = function() {
@@ -2230,9 +2177,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.$apply()
 				}, "json")
 			}
-			if ($scope.Journal === undefined && menu == 2) {
-				$.post("requests/ajax/LoadJournal", {id_student: $scope.id_student}, function(response) {
-					['Subjects', 'Journal', 'Groups', 'lesson_statuses', 'journal_years', 'selected_journal_year'].forEach(function(field) {
+			if ($scope.Lessons === undefined && menu == 2) {
+				$.post("requests/ajax/LoadLessons", {id_student: $scope.id_student}, function(response) {
+					['Subjects', 'Lessons', 'lesson_statuses', 'lesson_years', 'selected_lesson_year'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()
@@ -2323,24 +2270,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			// код подразделения
 			$("#code-podr").mask("999-999");
-
-			// генерируем массив цифр посещаемости
-			$scope.visit_data_counts = {}
-			$.each($scope.getStudentGroups(), function (index, id_group) {
-				if ($scope.getGroup(id_group)) {
-					$scope.visit_data_counts[id_group] = {}
-					change_index = 0
-					$.each($scope.getGroup(id_group).Schedule, function (index, Visit) {
-						if (index > 0) {
-							if ($scope.getVisitBoolean(id_group, $scope.getGroup(id_group).Schedule[index - 1].date) != $scope.getVisitBoolean(id_group, Visit.date)) {
-								$scope.visit_data_counts[id_group][index] = index - change_index
-								change_index = index
-							}
-						}
-					})
-					$scope.visit_data_counts[id_group]['last'] = $scope.getGroup(id_group).Schedule.length - change_index
-				}
-			})
 
 		  // promo-code-loading
 			$(".map-save-button, .bs-datetime").on("click", function() {

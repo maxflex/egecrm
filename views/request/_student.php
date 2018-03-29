@@ -58,7 +58,7 @@
 
 	<?= partial('general', compact('Request')) ?>
 	<?= partial('payments', compact('Request')) ?>
-	<?= partial("visits") ?>
+	<?= partial("lessons") ?>
     <?= partial("reviews") ?>
     <?= partial("reports") ?>
     <?= partial("comments") ?>

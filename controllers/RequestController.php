@@ -418,7 +418,7 @@
 				"contracts"		=> $Student->getContracts(),	// Договоры ученика
 				"contracts_test"	=> $Student->getContractsTest(),	// Договоры ученика
 				"student"		=> $Student,  // Данные по ученику для печати
-				"Groups"		=> $Student->getGroups(true),
+				"Groups"		=> Student::groups($Student->id),
 				"student_phone_level"	=> $Student->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"academic_year"			=> $search->year,
@@ -443,17 +443,24 @@
 			]);
 		}
 
-		public function actionAjaxLoadJournal()
+		public function actionAjaxLoadLessons()
 		{
 			extract($_POST);
 
-			$Journal = Student::getVisitsStatic($id_student);
+			$group_ids = Student::groups($id_student, 'getIds');
+
+			$Lessons = [];
+			foreach($group_ids as $group_id) {
+				$Lessons[$group_id] = VisitJournal::getStudentGroupLessons($group_id, $id_student);
+			}
 
 			$years = [];
-			foreach($Journal as $J) {
-				$J->Teacher = Teacher::getLight($J->id_teacher);
-				if (! in_array($J->year, $years)) {
-					$years[] = $J->year;
+			foreach($Lessons as $group_id => $GroupLessons) {
+				foreach($GroupLessons as $Lesson) {
+					$Lesson->Teacher = Teacher::getLight($Lesson->id_teacher);
+					if (! in_array($Lesson->year, $years)) {
+						$years[] = $Lesson->year;
+					}
 				}
 			}
 
@@ -461,11 +468,10 @@
 
 			returnJsonAng([
 				"Subjects"	=> Subjects::$three_letters,
-				"Groups"	=> Student::getGroupsStatic($id_student, true),
-				"Journal"	=> $Journal,
+				"Lessons"	=> $Lessons,
 				"lesson_statuses" => VisitJournal::$statuses,
-				"journal_years" => $years,
-				"selected_journal_year" => end($years)
+				"lesson_years" => $years,
+				"selected_lesson_year" => end($years)
 			]);
 		}
 

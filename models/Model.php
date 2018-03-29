@@ -448,7 +448,6 @@
 				 	}
 				}
 
-
 				$result = static::dbConnection()->query("UPDATE ".static::$mysql_table." SET ".implode(",", $query)." WHERE id=".$this->id);
 
 				if ($result) {
@@ -462,6 +461,7 @@
 					}
 					return $this->id;
 				} else {
+					error_log("Not saved: ". mysqli_error(static::dbConnection()));
 					return false;
 				}
 			}

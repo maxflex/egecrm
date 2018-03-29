@@ -7,7 +7,7 @@ app = angular.module "Schedule", ['mwl.calendar']
             $scope.displayMonth = {}
 
             # получить месяц первого занятия и отображать календарь начаная с него
-            first_lesson_month = moment($scope.Group.first_schedule).format("M")
+            first_lesson_month = moment($scope.Group.first_lesson_date).format("M")
             year = $scope.Group.year
             year++ if first_lesson_month <=8
             first_lesson_date = new Date("#{year}-#{first_lesson_month}-01")
@@ -22,91 +22,85 @@ app = angular.module "Schedule", ['mwl.calendar']
         $scope.calendarTitle = 'test'
         $scope.events = {}
 
-        $scope.$watchCollection 'Group.Schedule', (newVal, oldVal) ->
+        $scope.$watchCollection 'Lessons', (newVal, oldVal) ->
             $scope.events = {}
-            newVal.forEach (Schedule) ->
-                month = moment(Schedule.date).format('M')
+            newVal.forEach (Lesson) ->
+                month = moment(Lesson.lesson_date).format('M')
                 $scope.events[month] = [] if $scope.events[month] is undefined
                 $scope.events[month].push
-                    startsAt: new Date(Schedule.date)
+                    startsAt: new Date(Lesson.lesson_date)
                     color:
-                        primary: getColor(Schedule)
+                        primary: getColor(Lesson)
 
-        getColor = (Schedule) ->
-            return '#337ab7' if Schedule.was_lesson
-            return '#c0c0c0' if Schedule.cancelled
+        getColor = (Lesson) ->
+            return '#337ab7' if Lesson.is_conducted
+            return '#c0c0c0' if Lesson.cancelled
             return '#5cb85c'
 
         $scope.formatDate = (date) ->
             moment(date).format "DD.MM.YY"
 
-        $scope.countNotCancelled = (Schedule) ->
-            _.where(Schedule, { cancelled: 0 }).length
+        $scope.countNotCancelled = ->
+            _.where($scope.Lessons, { cancelled: 0 }).length
 
         $scope.lessonCount = ->
             Object.keys($scope.Group.day_and_time).length
 
-        $scope.duplicateSchedule = ->
+        $scope.duplicateLessons = ->
             date = (parseInt($scope.Group.year) + 1) + '-06-01'
             # date = '2016-10-05'
-            current_date = moment($scope.Group.Schedule[$scope.Group.Schedule.length - 1].date).add(7, 'days').format("YYYY-MM-DD")
+            current_date = moment($scope.Lessons[$scope.Lessons.length - 1].lesson_date).add(7, 'days').format("YYYY-MM-DD")
             index = 0
             bug_index = 0
             to_be_duplicated = {}
             while current_date < date
-                if $scope.special_dates.vacations.indexOf(current_date) is -1 && _.find($scope.Group.Schedule, {date: current_date}) is undefined
+                if $scope.special_dates.vacations.indexOf(current_date) is -1 && _.find($scope.Lessons, {lesson_date: current_date}) is undefined
                     index++
-                    to_be_duplicated[index] = _.clone($scope.Group.Schedule[$scope.Group.Schedule.length - 1])
+                    to_be_duplicated[index] = _.clone($scope.Lessons[$scope.Lessons.length - 1])
                     delete to_be_duplicated[index].id
-                    to_be_duplicated[index].date = current_date
-                    $.post "groups/ajax/SaveSchedule", to_be_duplicated[index], (response)->
+                    to_be_duplicated[index].lesson_date = current_date
+                    $.post "groups/ajax/SaveLesson", to_be_duplicated[index], (response)->
                         bug_index++
                         to_be_duplicated[bug_index].id = response.id
                         console.log(response.id, to_be_duplicated[bug_index])
-                        $scope.Group.Schedule.push(to_be_duplicated[bug_index])
+                        $scope.Lessons.push(to_be_duplicated[bug_index])
                         $scope.$apply()
                     , 'json'
                 current_date = moment(current_date).add(7, 'days').format("YYYY-MM-DD")
 
-        $scope.scheduleModal = (schedule = null) ->
+        $scope.lessonModal = (lesson = null) ->
             $('#schedule-modal').modal('show')
-            if schedule is null
-                $scope.modal_schedule = {id_group: $scope.Group.id}
+            if lesson is null
+                $scope.modal_lesson = {id_group: $scope.Group.id}
             else
-                $scope.modal_schedule = _.clone(schedule)
-                $scope.modal_schedule.date = moment($scope.modal_schedule.date).format('DD.MM.YYYY')
+                $scope.modal_lesson = _.clone(lesson)
+                $scope.modal_lesson.lesson_date = moment($scope.modal_lesson.lesson_date).format('DD.MM.YYYY')
 
-        $scope.saveSchedule = ->
+        $scope.saveLesson = ->
             ajaxStart()
             $('#schedule-modal').modal('hide')
-            $scope.modal_schedule.date = convertDate($scope.modal_schedule.date)
-            $.post "groups/ajax/SaveSchedule", $scope.modal_schedule, (response)->
+            $scope.modal_lesson.lesson_date = convertDate($scope.modal_lesson.lesson_date)
+            $.post "groups/ajax/SaveLesson", $scope.modal_lesson, (response)->
                 ajaxEnd()
-                if not $scope.modal_schedule.id
-                    $scope.modal_schedule.id = response.id
-                    $scope.Group.Schedule.push($scope.modal_schedule)
+                if not $scope.modal_lesson.id
+                    $scope.modal_lesson.id = response.id
+                    $scope.Lessons.push(response)
                 else
-                    index = _.findIndex($scope.Group.Schedule, {id: $scope.modal_schedule.id})
-                    $scope.Group.Schedule[index] = _.clone($scope.modal_schedule)
+                    index = _.findIndex($scope.Lessons, {id: $scope.modal_lesson.id})
+                    $scope.Lessons[index] = _.clone($scope.modal_lesson)
                 $scope.$apply()
+            , 'json'
 
         $scope.getCabinet = (id) ->
             _.findWhere($scope.all_cabinets, {id: parseInt(id)})
 
-        $scope.deleteSchedule = (Schedule) ->
+        $scope.deleteLesson = (lesson) ->
             ajaxStart()
-            $.post "groups/ajax/DeleteSchedule", {id: Schedule.id}, (response) ->
-                index = _.findIndex($scope.Group.Schedule, {id: Schedule.id})
-                $scope.Group.Schedule.splice(index, 1)
+            $.post "groups/ajax/DeleteLesson", {id: lesson.id}, (response) ->
+                index = _.findIndex($scope.Lessons, {id: lesson.id})
+                $scope.Lessons.splice(index, 1)
                 $scope.$apply()
                 ajaxEnd()
-
-        $scope.getPastLesson = (Schedule) ->
-            _.findWhere($scope.past_lessons, {lesson_date: Schedule.date, lesson_time: Schedule.time})
-
-        $scope.lessonStarted = (Schedule) ->
-            lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime()
-            lesson_time < new Date().getTime()
 
         $scope.monthName = (month) ->
             month_name = moment().month(month - 1).format "MMMM"

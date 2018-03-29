@@ -53,11 +53,10 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     d = parseInt(d);
     return d % 2 === 1;
   };
-  $scope.getInfo = function(id_student, Schedule) {
+  $scope.getInfo = function(id_student, Lesson) {
     return _.findWhere($scope.LessonData, {
       id_entity: id_student,
-      lesson_date: Schedule.date,
-      lesson_time: Schedule.time
+      entry_id: Lesson.entry_id
     });
   };
   $scope.formatDate = function(date) {
@@ -79,10 +78,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $scope.timeUntilSave = function() {
     var data, date_lesson, date_now, diff;
     date_now = new Date();
-    if (!$scope.Schedule.time) {
-      $scope.Schedule.time = '00:00';
-    }
-    date_lesson = new Date($scope.Schedule.date + " " + $scope.Schedule.time + ":00");
+    date_lesson = new Date($scope.Lesson.date_time + ":00");
     diff = date_now.getTime() - date_lesson.getTime();
     console.log('diff', diff);
     data = {
@@ -115,25 +111,26 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     $scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData;
     $scope.students_not_filled = _.filter($scope.LessonData, function(v) {
       return v && +v.presence;
-    }).length !== $scope.Schedule.Group.Students.length;
+    }).length !== $scope.Students.length;
     return lightBoxHide();
   };
   $scope.registerInJournal = function() {
     return bootbox.confirm("Записать запись в журнал?", function(result) {
       if (result === true) {
-        if (_.without($scope.LessonData, void 0).length !== $scope.Schedule.Group.Students.length) {
+        if (_.without($scope.LessonData, void 0).length !== $scope.Students.length) {
           return bootbox.alert("Заполните данные по всем ученикам перед записью в журнал");
         } else {
           $scope.saving = true;
           $scope.$apply();
           ajaxStart();
           return $.post("groups/ajax/registerInJournal", {
-            id_schedule: $scope.Schedule.id,
+            id_lesson: $scope.Lesson.id,
             data: $scope.LessonData
           }, function(response) {
             ajaxEnd();
             $scope.saving = false;
-            $scope.Schedule.was_lesson = true;
+            $scope.Lesson.is_conducted = true;
+            $scope.Lesson.is_planned = false;
             return $scope.$apply();
           });
         }
@@ -143,19 +140,20 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $scope.changeRegisterInJournal = function() {
     return bootbox.confirm("Сохранить изменения?", function(result) {
       if (result === true) {
-        if (_.without($scope.LessonData, void 0).length !== $scope.Schedule.Group.Students.length) {
+        if (_.without($scope.LessonData, void 0).length !== $scope.Students.length) {
           return bootbox.alert("Заполните данные по всем ученикам перед записью в журнал");
         } else {
           $scope.saving = true;
           $scope.$apply();
           ajaxStart();
           return $.post("groups/ajax/registerInJournalWithoutSMS", {
-            id_schedule: $scope.Schedule.id,
+            id_lesson: $scope.Lesson.id,
             data: $scope.LessonData
           }, function(response) {
             ajaxEnd();
             $scope.saving = false;
-            $scope.Schedule.was_lesson = true;
+            $scope.Lesson.is_conducted = true;
+            $scope.Lesson.is_planned = false;
             return $scope.$apply();
           });
         }
@@ -420,7 +418,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     });
   };
   $scope.enoughSmsParams = function() {
-    return $scope.Group.year > 0 && $scope.Group.id_subject > 0 && $scope.Group.cabinet_ids.length > 0 && $scope.Group.first_schedule && $scope.Group.id_subject > 0 && $scope.FirstLesson.cabinet;
+    return $scope.Group.year > 0 && $scope.Group.id_subject > 0 && $scope.Group.cabinet_ids.length > 0 && $scope.Group.first_lesson_date && $scope.Group.id_subject > 0 && $scope.FirstLesson.cabinet;
   };
   $scope.changeTeacher = function() {
     if (!$scope.Group.id) {
@@ -573,7 +571,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return $.post("groups/ajax/smsNotify", {
       id_student: Student.id,
       id_subject: $scope.Group.id_subject,
-      first_schedule: $scope.Group.first_schedule,
+      first_lesson_date: $scope.Group.first_lesson_date,
       id_group: $scope.Group.id,
       cabinet: $scope.FirstLesson.cabinet
     }, function(response) {
@@ -912,7 +910,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   };
   $scope.orderByFirstLesson = function() {
     $scope.Groups.sort(function(a, b) {
-      return a.first_schedule - b.first_schedule;
+      return a.first_lesson_date - b.first_lesson_date;
     });
     if ($scope.order_reverse) {
       $scope.Groups.reverse();

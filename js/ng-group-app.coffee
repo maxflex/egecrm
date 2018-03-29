@@ -31,101 +31,103 @@
 				d = moment(date).format("M")
 				d = parseInt d
 				return d % 2 is 1
-			$scope.getInfo = (id_student,  Schedule) ->
-				_.findWhere($scope.LessonData, {id_entity: id_student, lesson_date: Schedule.date, lesson_time: Schedule.time})
+			$scope.getInfo = (id_student,  Lesson) ->
+				_.findWhere($scope.LessonData, {id_entity: id_student, entry_id: Lesson.entry_id})
 			$scope.formatDate = (date) ->
 				moment(date).format "DD.MM.YY"
 			angular.element(document).ready ->
 				set_scope "Group"
+
 		.controller "LessonCtrl", ($scope) ->
-			$scope.formatDate = (date) ->
-				date = date.split "."
-				date = date.reverse()
-				date = date.join "-"
-				D = new Date(date)
-				moment(D).format "D MMMM YYYY г."
+		  $scope.formatDate = (date) ->
+		    date = date.split "."
+		    date = date.reverse()
+		    date = date.join "-"
+		    D = new Date(date)
+		    moment(D).format "D MMMM YYYY г."
 
-			$scope.timeUntilSave = ->
-				date_now = new Date()
-				$scope.Schedule.time = '00:00' if not $scope.Schedule.time
-				date_lesson = new Date($scope.Schedule.date + " " + $scope.Schedule.time + ":00")
-				diff = date_now.getTime() - date_lesson.getTime()
-				console.log('diff', diff)
-				data =
-					seconds: 59 - (Math.floor(diff / 1000) - (Math.floor(diff / 1000 / 60) * 60))
-					minutes: 40 - Math.floor(diff / 1000 / 60)
+		  $scope.timeUntilSave = ->
+		    date_now = new Date()
+		    date_lesson = new Date($scope.Lesson.date_time + ":00")
+		    diff = date_now.getTime() - date_lesson.getTime()
+		    console.log('diff', diff)
+		    data =
+		      seconds: 59 - (Math.floor(diff / 1000) - (Math.floor(diff / 1000 / 60) * 60))
+		      minutes: 40 - Math.floor(diff / 1000 / 60)
 
-				if data.minutes < 0
-					return true
+		    if data.minutes < 0
+		      return true
 
-				if data.minutes == 0 and data.seconds <=0
-					return true
-				else
-					data
+		    if data.minutes == 0 and data.seconds <=0
+		      return true
+		    else
+		      data
 
-			until_save_interval = setInterval ->
-				$scope.until_save = $scope.timeUntilSave()
-				clearInterval(until_save_interval) if $scope.until_save is true
-				$scope.$apply()
-			, 1000
+		  until_save_interval = setInterval ->
+		    $scope.until_save = $scope.timeUntilSave()
+		    clearInterval(until_save_interval) if $scope.until_save is true
+		    $scope.$apply()
+		  , 1000
 
 
-			$scope.editStudent = (Student) ->
-				$scope.EditStudent = Student
-				$scope.EditLessonData = angular.copy $scope.LessonData[$scope.EditStudent.id]
-				clearSelect()
-				lightBoxShow 'edit-student'
+		  $scope.editStudent = (Student) ->
+		    $scope.EditStudent = Student
+		    $scope.EditLessonData = angular.copy $scope.LessonData[$scope.EditStudent.id]
+		    clearSelect()
+		    lightBoxShow 'edit-student'
 
-			$scope.saveStudent = ->
-				$scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData
-				$scope.students_not_filled = _.filter($scope.LessonData, (v) ->
-												v and +(v.presence)
-											).length isnt $scope.Schedule.Group.Students.length
-				lightBoxHide()
+		  $scope.saveStudent = ->
+		    $scope.LessonData[$scope.EditStudent.id] = $scope.EditLessonData
+		    $scope.students_not_filled = _.filter($scope.LessonData, (v) ->
+		                    v and +(v.presence)
+		                  ).length isnt $scope.Students.length
+		    lightBoxHide()
 
-			$scope.registerInJournal = ->
-				bootbox.confirm "Записать запись в журнал?", (result) ->
-					if result is true
-						if _.without($scope.LessonData, undefined).length isnt $scope.Schedule.Group.Students.length
-							bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
-						else
-							$scope.saving = true
-							$scope.$apply()
-							ajaxStart()
-							$.post "groups/ajax/registerInJournal",
-								id_schedule: $scope.Schedule.id
-								data: $scope.LessonData
-							, (response) ->
-								ajaxEnd()
-								$scope.saving = false
-								$scope.Schedule.was_lesson = true
-								# $scope.form_changed = false
-								$scope.$apply()
+		  $scope.registerInJournal = ->
+		    bootbox.confirm "Записать запись в журнал?", (result) ->
+		      if result is true
+		        if _.without($scope.LessonData, undefined).length isnt $scope.Students.length
+		          bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
+		        else
+		          $scope.saving = true
+		          $scope.$apply()
+		          ajaxStart()
+		          $.post "groups/ajax/registerInJournal",
+		            id_lesson: $scope.Lesson.id
+		            data: $scope.LessonData
+		          , (response) ->
+		            ajaxEnd()
+		            $scope.saving = false
+		            $scope.Lesson.is_conducted = true
+		            $scope.Lesson.is_planned = false
+		            # $scope.form_changed = false
+		            $scope.$apply()
 
-			$scope.changeRegisterInJournal = ->
-				bootbox.confirm "Сохранить изменения?", (result) ->
-					if result is true
-						if _.without($scope.LessonData, undefined).length isnt $scope.Schedule.Group.Students.length
-							bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
-						else
-							$scope.saving = true
-							$scope.$apply()
-							ajaxStart()
-							$.post "groups/ajax/registerInJournalWithoutSMS",
-								id_schedule: $scope.Schedule.id
-								data:		$scope.LessonData
-							, (response) ->
-								ajaxEnd()
-								$scope.saving = false
-								$scope.Schedule.was_lesson = true
-								# $scope.form_changed = false
-								$scope.$apply()
+		  $scope.changeRegisterInJournal = ->
+		    bootbox.confirm "Сохранить изменения?", (result) ->
+		      if result is true
+		        if _.without($scope.LessonData, undefined).length isnt $scope.Students.length
+		          bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
+		        else
+		          $scope.saving = true
+		          $scope.$apply()
+		          ajaxStart()
+		          $.post "groups/ajax/registerInJournalWithoutSMS",
+		            id_lesson: $scope.Lesson.id
+		            data:		$scope.LessonData
+		          , (response) ->
+		            ajaxEnd()
+		            $scope.saving = false
+		            $scope.Lesson.is_conducted = true
+		            $scope.Lesson.is_planned = false
+		            # $scope.form_changed = false
+		            $scope.$apply()
 
-			angular.element(document).ready ->
-				$scope.until_save = $scope.timeUntilSave()
-				$scope.students_not_filled = true
-				$scope.$apply()
-				set_scope "Group"
+		  angular.element(document).ready ->
+		    $scope.until_save = $scope.timeUntilSave()
+		    $scope.students_not_filled = true
+		    $scope.$apply()
+		    set_scope "Group"
 
 		.controller "EditCtrl", ($scope, $timeout, $http, PhoneService, GroupService) ->
 			bindArguments $scope, arguments
@@ -336,7 +338,7 @@
 
 			# @time-refactored
 			$scope.enoughSmsParams = ->
-				($scope.Group.year > 0 and $scope.Group.id_subject > 0 and $scope.Group.cabinet_ids.length > 0 and $scope.Group.first_schedule and $scope.Group.id_subject > 0 and $scope.FirstLesson.cabinet)
+				($scope.Group.year > 0 and $scope.Group.id_subject > 0 and $scope.Group.cabinet_ids.length > 0 and $scope.Group.first_lesson_date and $scope.Group.id_subject > 0 and $scope.FirstLesson.cabinet)
 
 			$scope.changeTeacher = ->
 				return if not $scope.Group.id
@@ -467,7 +469,7 @@
 				$.post "groups/ajax/smsNotify",
 					id_student: Student.id
 					id_subject: $scope.Group.id_subject
-					first_schedule: $scope.Group.first_schedule
+					first_lesson_date: $scope.Group.first_lesson_date
 					id_group: $scope.Group.id
 					cabinet: $scope.FirstLesson.cabinet
 				, (response) ->
@@ -750,7 +752,7 @@
 
 			$scope.orderByFirstLesson = ->
 				$scope.Groups.sort (a, b) ->
-					a.first_schedule - b.first_schedule
+					a.first_lesson_date - b.first_lesson_date
 
 				if $scope.order_reverse
 					$scope.Groups.reverse()

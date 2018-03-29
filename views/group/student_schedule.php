@@ -44,42 +44,32 @@
 				<div style="margin: 15px 0; font-weight: bold">Расписание занятий:</div>
 
                 <table class="table table-divlike">
-					<tr ng-repeat="Schedule in Group.Schedule | orderBy:'date_time'">
+					<tr ng-repeat="Lesson in Lessons | orderBy:'date_time' track by $index">
 						<td style="padding:2px 4px 2px 0px;">
 							<span class="day-explain"
 								  ng-class="{
-									'was-lesson': Schedule.was_lesson,
-									'cancelled': Schedule.cancelled
+									'was-lesson': Lesson.is_conducted,
+									'cancelled': Lesson.cancelled
 								  }"
 							></span>
 						</td>
 						<td width="30%">
-							{{ formatDate(Schedule.date) }}
+							{{ formatDate(Lesson.lesson_date) }}
 						</td>
 						<td width="20%">
-                            <div ng-show="!Schedule.was_lesson">
-                                {{ Schedule.time }}
-							</div>
-							<div ng-show="Schedule.was_lesson">
-								{{ getPastLesson(Schedule).lesson_time }}
-							</div>
+							{{ Lesson.lesson_time }}
 						</td>
 						<td width="15%">
-                            <div ng-show="Schedule.was_lesson">
-                                {{ getCabinet(getPastLesson(Schedule).cabinet).label }}
-                            </div>
-                            <div ng-show="!Schedule.was_lesson">
-                                {{ getCabinet(Schedule.cabinet).label }}
-                            </div>
+                            {{ getCabinet(Lesson.cabinet).label }}
 						</td>
 						<td width="35%">
-                            <span ng-show="Schedule.was_lesson">урок проведен</span>
-							<span ng-show="Schedule.cancelled">урок отменен</span>
+                            <span ng-show="Lesson.is_conducted">урок проведен</span>
+							<span ng-show="Lesson.cancelled">урок отменен</span>
 						</td>
 					</tr>
 				</table>
 
-				<div style="margin: 15px 0; font-weight: bold">Итого: {{ countNotCancelled(Group.Schedule) }} <ng-pluralize count="countNotCancelled(Group.Schedule)" when="{
+				<div style="margin: 15px 0; font-weight: bold">Итого: {{ Group.lesson_count.all }} <ng-pluralize count="Group.lesson_count.all" when="{
 						'one': 'занятие',
 						'few': 'занятия',
 						'many': 'занятий'

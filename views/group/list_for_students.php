@@ -22,12 +22,17 @@
                         {{Subjects[Group.id_subject]}}-{{ Group.grade_short }}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
                     </td>
                     <td>
-						<span ng-show="Group.first_schedule">
-							<span ng-show="!Group.past_lesson_count">1-й урок {{ Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">был {{Group.past_lesson_count}} <ng-pluralize count="Group.past_lesson_count" when="{
-								'one': 'урок',
-								'few': 'урока',
-								'many': 'уроков'
-							}"></ng-pluralize></span></span><span ng-show="Group.first_schedule && Group.schedule_count > 0">, всего {{Group.schedule_count }}</span>
+						<span ng-show="Group.first_lesson_date">
+							<span ng-show="!Group.lesson_count.conducted">1-й урок {{Group.first_lesson_date | date:"dd.MM"}}</span>
+							<span ng-show="Group.lesson_count.conducted">
+								было {{Group.lesson_count.conducted}} из {{ Group.lesson_count.all }}
+								<ng-pluralize count="Group.lesson_count.all" when="{
+									'one': 'урока',
+									'few': 'уроков',
+									'many': 'уроков'
+								}"></ng-pluralize>
+							</span>
+			            </span>
                     </td>
                     <td width="20%">
                         <!-- @time-refactored @time-checked -->

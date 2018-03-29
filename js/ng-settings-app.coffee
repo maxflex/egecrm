@@ -11,7 +11,7 @@ app = angular.module "Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar']
             $.each obj, (index, value) ->
                 arr.push(value)
             return arr
-    .controller "VocationsCtrl", ($scope, $timeout) ->
+    .controller "VacationsCtrl", ($scope, $timeout) ->
         $scope.schedulde_loaded = false
         $scope.menu = 1
 
@@ -32,86 +32,60 @@ app = angular.module "Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar']
 
         $scope.setYear = (year) ->
             $.cookie("current_year", year, { expires: 365, path: '/' })
-            redirect "settings/vocations?year=#{year}"
+            redirect "settings/vacations?year=#{year}"
 
 
         # SCHEDULE COPY
         $scope.months = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]
 
+        $timeout -> $scope.calendarLoaded = true
+
+        $scope.formatDate = (date) ->
+            moment(date).format "D MMMM YYYY г."
+
         $timeout ->
             $scope.viewDate = {}
             $scope.displayMonth = {}
 
-            # получить месяц первого занятия и отображать календарь начаная с него
-            first_lesson_month = moment($scope.Group.first_schedule).format("M")
-            year = $scope.Group.year
-            year++ if first_lesson_month <=8
-            first_lesson_date = new Date("#{year}-#{first_lesson_month}-01")
             $scope.months.forEach (month) ->
-                year = $scope.Group.year
+                year = $scope.current_year
                 year++ if month <=8
                 $scope.viewDate[month] = new Date("#{year}-#{month}-01")
                 $scope.displayMonth[month] = true
 
             $timeout -> $scope.calendarLoaded = true
 
-
-        $scope.calendarTitle = 'test'
-        $scope.events = {}
-
-        getColor = (Schedule) ->
-            return '#337ab7' if Schedule.was_lesson
-            return '#c0c0c0' if Schedule.cancelled
-            return '#5cb85c'
-
-        $scope.formatDate = (date) ->
-            moment(date).format "D MMMM YYYY г."
-
-        $scope.countNotCancelled = (Schedule) ->
-            _.where(Schedule, { cancelled: 0 }).length
-
-        $scope.lessonCount = ->
-            Object.keys($scope.Group.day_and_time).length
-
-        $scope.scheduleModal = (schedule = null) ->
+        $scope.editVacation = (vacation = null) ->
             $('#schedule-modal').modal('show')
-            if schedule is null
-                $scope.modal_schedule = {id_group: $scope.Group.id}
+            if vacation is null
+                $scope.modal_vacation = {year: $scope.current_year}
             else
-                $scope.modal_schedule = _.clone(schedule)
-                $scope.modal_schedule.date = moment($scope.modal_schedule.date).format('DD.MM.YYYY')
+                $scope.modal_vacation = _.clone(vacation)
+                $scope.modal_vacation.date = moment($scope.modal_vacation.date).format('DD.MM.YYYY')
 
-        $scope.saveSchedule = ->
+        $scope.saveVacation = ->
             ajaxStart()
             $('#schedule-modal').modal('hide')
-            $scope.modal_schedule.date = convertDate($scope.modal_schedule.date)
-            $.post "groups/ajax/SaveSchedule", $scope.modal_schedule, (response)->
+            $scope.modal_vacation.date = convertDate($scope.modal_vacation.date)
+            $.post "ajax/SaveVacation", $scope.modal_vacation, (response)->
+                console.log('save complete', response)
                 ajaxEnd()
-                if not $scope.modal_schedule.id
-                    $scope.modal_schedule.id = response.id
-                    $scope.Group.Schedule.push($scope.modal_schedule)
+                if not $scope.modal_vacation.id
+                    $scope.modal_vacation.id = response.id
+                    $scope.Vacations.push(response)
                 else
-                    index = _.findIndex($scope.Group.Schedule, {id: $scope.modal_schedule.id})
-                    $scope.Group.Schedule[index] = _.clone($scope.modal_schedule)
+                    index = _.findIndex($scope.Vacations, {id: $scope.modal_vacation.id})
+                    $scope.Vacations[index] = _.clone($scope.modal_vacation)
                 $scope.$apply()
+            , "json"
 
-        $scope.getCabinet = (id) ->
-            _.findWhere($scope.all_cabinets, {id: parseInt(id)})
-
-        $scope.deleteSchedule = (Schedule) ->
+        $scope.deleteVacation = (Vacation) ->
             ajaxStart()
-            $.post "groups/ajax/DeleteSchedule", {id: Schedule.id}, (response) ->
-                index = _.findIndex($scope.Group.Schedule, {id: Schedule.id})
-                $scope.Group.Schedule.splice(index, 1)
+            $.post "ajax/DeleteVacation", {id: Vacation.id}, (response) ->
+                index = _.findIndex($scope.Vacations, {id: Vacation.id})
+                $scope.Vacations.splice(index, 1)
                 $scope.$apply()
                 ajaxEnd()
-
-        $scope.getPastLesson = (Schedule) ->
-            _.findWhere($scope.past_lessons, {lesson_date: Schedule.date, lesson_time: Schedule.time})
-
-        $scope.lessonStarted = (Schedule) ->
-            lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime()
-            lesson_time < new Date().getTime()
 
         $scope.monthName = (month) ->
             month_name = moment().month(month - 1).format "MMMM"

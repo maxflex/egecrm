@@ -7,7 +7,7 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
     var first_lesson_date, first_lesson_month, year;
     $scope.viewDate = {};
     $scope.displayMonth = {};
-    first_lesson_month = moment($scope.Group.first_schedule).format("M");
+    first_lesson_month = moment($scope.Group.first_lesson_date).format("M");
     year = $scope.Group.year;
     if (first_lesson_month <= 8) {
       year++;
@@ -27,27 +27,27 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
   });
   $scope.calendarTitle = 'test';
   $scope.events = {};
-  $scope.$watchCollection('Group.Schedule', function(newVal, oldVal) {
+  $scope.$watchCollection('Lessons', function(newVal, oldVal) {
     $scope.events = {};
-    return newVal.forEach(function(Schedule) {
+    return newVal.forEach(function(Lesson) {
       var month;
-      month = moment(Schedule.date).format('M');
+      month = moment(Lesson.lesson_date).format('M');
       if ($scope.events[month] === void 0) {
         $scope.events[month] = [];
       }
       return $scope.events[month].push({
-        startsAt: new Date(Schedule.date),
+        startsAt: new Date(Lesson.lesson_date),
         color: {
-          primary: getColor(Schedule)
+          primary: getColor(Lesson)
         }
       });
     });
   });
-  getColor = function(Schedule) {
-    if (Schedule.was_lesson) {
+  getColor = function(Lesson) {
+    if (Lesson.is_conducted) {
       return '#337ab7';
     }
-    if (Schedule.cancelled) {
+    if (Lesson.cancelled) {
       return '#c0c0c0';
     }
     return '#5cb85c';
@@ -55,35 +55,35 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
   $scope.formatDate = function(date) {
     return moment(date).format("DD.MM.YY");
   };
-  $scope.countNotCancelled = function(Schedule) {
-    return _.where(Schedule, {
+  $scope.countNotCancelled = function() {
+    return _.where($scope.Lessons, {
       cancelled: 0
     }).length;
   };
   $scope.lessonCount = function() {
     return Object.keys($scope.Group.day_and_time).length;
   };
-  $scope.duplicateSchedule = function() {
+  $scope.duplicateLessons = function() {
     var bug_index, current_date, date, index, results, to_be_duplicated;
     date = (parseInt($scope.Group.year) + 1) + '-06-01';
-    current_date = moment($scope.Group.Schedule[$scope.Group.Schedule.length - 1].date).add(7, 'days').format("YYYY-MM-DD");
+    current_date = moment($scope.Lessons[$scope.Lessons.length - 1].lesson_date).add(7, 'days').format("YYYY-MM-DD");
     index = 0;
     bug_index = 0;
     to_be_duplicated = {};
     results = [];
     while (current_date < date) {
-      if ($scope.special_dates.vacations.indexOf(current_date) === -1 && _.find($scope.Group.Schedule, {
-        date: current_date
+      if ($scope.special_dates.vacations.indexOf(current_date) === -1 && _.find($scope.Lessons, {
+        lesson_date: current_date
       }) === void 0) {
         index++;
-        to_be_duplicated[index] = _.clone($scope.Group.Schedule[$scope.Group.Schedule.length - 1]);
+        to_be_duplicated[index] = _.clone($scope.Lessons[$scope.Lessons.length - 1]);
         delete to_be_duplicated[index].id;
-        to_be_duplicated[index].date = current_date;
-        $.post("groups/ajax/SaveSchedule", to_be_duplicated[index], function(response) {
+        to_be_duplicated[index].lesson_date = current_date;
+        $.post("groups/ajax/SaveLesson", to_be_duplicated[index], function(response) {
           bug_index++;
           to_be_duplicated[bug_index].id = response.id;
           console.log(response.id, to_be_duplicated[bug_index]);
-          $scope.Group.Schedule.push(to_be_duplicated[bug_index]);
+          $scope.Lessons.push(to_be_duplicated[bug_index]);
           return $scope.$apply();
         }, 'json');
       }
@@ -91,68 +91,57 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
     }
     return results;
   };
-  $scope.scheduleModal = function(schedule) {
-    if (schedule == null) {
-      schedule = null;
+  $scope.lessonModal = function(lesson) {
+    if (lesson == null) {
+      lesson = null;
     }
     $('#schedule-modal').modal('show');
-    if (schedule === null) {
-      return $scope.modal_schedule = {
+    if (lesson === null) {
+      return $scope.modal_lesson = {
         id_group: $scope.Group.id
       };
     } else {
-      $scope.modal_schedule = _.clone(schedule);
-      return $scope.modal_schedule.date = moment($scope.modal_schedule.date).format('DD.MM.YYYY');
+      $scope.modal_lesson = _.clone(lesson);
+      return $scope.modal_lesson.lesson_date = moment($scope.modal_lesson.lesson_date).format('DD.MM.YYYY');
     }
   };
-  $scope.saveSchedule = function() {
+  $scope.saveLesson = function() {
     ajaxStart();
     $('#schedule-modal').modal('hide');
-    $scope.modal_schedule.date = convertDate($scope.modal_schedule.date);
-    return $.post("groups/ajax/SaveSchedule", $scope.modal_schedule, function(response) {
+    $scope.modal_lesson.lesson_date = convertDate($scope.modal_lesson.lesson_date);
+    return $.post("groups/ajax/SaveLesson", $scope.modal_lesson, function(response) {
       var index;
       ajaxEnd();
-      if (!$scope.modal_schedule.id) {
-        $scope.modal_schedule.id = response.id;
-        $scope.Group.Schedule.push($scope.modal_schedule);
+      if (!$scope.modal_lesson.id) {
+        $scope.modal_lesson.id = response.id;
+        $scope.Lessons.push(response);
       } else {
-        index = _.findIndex($scope.Group.Schedule, {
-          id: $scope.modal_schedule.id
+        index = _.findIndex($scope.Lessons, {
+          id: $scope.modal_lesson.id
         });
-        $scope.Group.Schedule[index] = _.clone($scope.modal_schedule);
+        $scope.Lessons[index] = _.clone($scope.modal_lesson);
       }
       return $scope.$apply();
-    });
+    }, 'json');
   };
   $scope.getCabinet = function(id) {
     return _.findWhere($scope.all_cabinets, {
       id: parseInt(id)
     });
   };
-  $scope.deleteSchedule = function(Schedule) {
+  $scope.deleteLesson = function(lesson) {
     ajaxStart();
-    return $.post("groups/ajax/DeleteSchedule", {
-      id: Schedule.id
+    return $.post("groups/ajax/DeleteLesson", {
+      id: lesson.id
     }, function(response) {
       var index;
-      index = _.findIndex($scope.Group.Schedule, {
-        id: Schedule.id
+      index = _.findIndex($scope.Lessons, {
+        id: lesson.id
       });
-      $scope.Group.Schedule.splice(index, 1);
+      $scope.Lessons.splice(index, 1);
       $scope.$apply();
       return ajaxEnd();
     });
-  };
-  $scope.getPastLesson = function(Schedule) {
-    return _.findWhere($scope.past_lessons, {
-      lesson_date: Schedule.date,
-      lesson_time: Schedule.time
-    });
-  };
-  $scope.lessonStarted = function(Schedule) {
-    var lesson_time;
-    lesson_time = new Date(Schedule.date + " " + Schedule.time).getTime();
-    return lesson_time < new Date().getTime();
   };
   $scope.monthName = function(month) {
     var month_name;

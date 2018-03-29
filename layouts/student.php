@@ -18,7 +18,7 @@
     <a href="#" class="list-group-item active">Меню</a>
     <a href="students/groups" class="list-group-item">Мои группы
 	    <?php
-			$groups_count = Student::countGroupsStatic(User::fromSession()->id_entity);
+			$groups_count = Student::countGroups(User::fromSession()->id_entity);
 
 			if ($groups_count) {
 				echo '<span class="badge pull-right">'. $groups_count .'</span>';

@@ -55,15 +55,15 @@
 		{
 			$FirstLesson = Group::getFirstLesson($Group->id, true);
 			
-			if (!count($Group->students) || !$Group->id_subject || !$Group->first_schedule || !$FirstLesson->cabinet) {
+			if (!count($Group->students) || !$Group->id_subject || !$Group->first_lesson_date || !$FirstLesson->cabinet) {
 				return 0;
 			}
 			
-			// preType([$id_student, $id_branch, $id_subject, $first_schedule, $cabinet]);
+			// preType([$id_student, $id_branch, $id_subject, $first_lesson_date, $cabinet]);
 			return self::count([
 				"condition" => "id_student={$id_student}
 								 AND id_subject={$Group->id_subject}
-								 AND first_schedule='{$Group->first_schedule}'
+								 AND first_lesson_date='{$Group->first_lesson_date}'
 								 AND cabinet={$FirstLesson->cabinet}"
 			]);
 		}

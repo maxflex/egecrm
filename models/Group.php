@@ -21,9 +21,9 @@
 				$this->students = [];
 			}
 
-            $this->first_schedule 		= $this->getFirstSchedule();
+            $this->first_lesson_date 		= self::getFirstLessonDate($this->id);
 
-            // @notice  порядок first_schedule - notified_students важен.
+            // @notice  порядок first_lesson_date - notified_students важен.
             if (!$light) {
                 $this->notified_students_count = static::getNotifiedStudentsCount($this);
             }
@@ -33,12 +33,11 @@
 				$this->Teacher = Teacher::getLight($this->id_teacher, ['comment']);
 			}
 
-			if (!$this->isNewRecord) {
+			if (! $this->isNewRecord) {
 				static::assignGrade($this);
-				$this->past_lesson_count 		= $this->getPastScheduleCount($this->id);;
-				$this->schedule_count = $this->getScheduleCount($this->id);
+				$this->lesson_count = $this->getLessonCount($this->id);
 
-				if ($this->grade && $this->id_subject && !$this->ended && $this->schedule_count['paid']) {
+				if ($this->grade && $this->id_subject && !$this->ended && $this->lesson_count->all) {
 					$this->days_before_exam = $this->daysBeforeExam();
 				}
 
@@ -54,6 +53,13 @@
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
+		public static function getLight($id_group)
+		{
+			$group = dbConnection()->query("select * from groups where id={$id_group}")->fetch_object();
+			$group->students = explode(',', $group->students);
+			return $group;
+		}
+
 		public static function assignGrade($group)
 		{
 			if ($group->grade == Grades::EXTERNAL) {
@@ -68,13 +74,14 @@
 		public static function getNotifiedStudentsCount($Group)
 		{
 			$FirstLesson = Group::getFirstLesson($Group->id, true);
-			if (!count($Group->students) || !$Group->id_subject || !$Group->first_schedule || !$FirstLesson->cabinet) {
+			if (!count($Group->students) || !$Group->id_subject || !$Group->first_lesson_date || !$FirstLesson->cabinet) {
 				return 0;
 			}
+
 			return dbConnection()->query("
 				SELECT COUNT(DISTINCT id_student) AS c FROM group_sms
 				WHERE id_student IN (" . implode(",", $Group->students) . ") AND id_subject = {$Group->id_subject}
-					AND first_schedule = '{$Group->first_schedule}' AND cabinet={$FirstLesson->cabinet}
+					AND first_lesson_date = '{$Group->first_lesson_date}' AND cabinet={$FirstLesson->cabinet}
 			")->fetch_object()->c;
 		}
 
@@ -88,17 +95,6 @@
                 }
             }
 			return $cabinet_ids;
-		}
-
-		/**
-		 * Получить даты проведенных занятий.
-		 * @time-refactored @time-checked @schedule-refactored
-		 */
-		public function getPastLessons()
-		{
-			return VisitJournal::findAll([
-				"condition" => "id_group={$this->id} AND type_entity='TEACHER'",
-			]);
 		}
 
 		/**
@@ -130,20 +126,19 @@
 		{
 			$date = date('Y-m-d', strtotime('yesterday'));
 
+			$total_missing_count = 0;
+			$return = [];
+
 			foreach(range(1, 10) as $i) {
-				$GroupSchedule = GroupSchedule::findAll([
-					"condition" => "date='$date' AND id_group > 0 AND cancelled=0"
+				$missing_count = VisitJournal::count([
+					"condition" => "lesson_date='$date' AND cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
 				]);
 
-				foreach ($GroupSchedule as $Schedule) {
-					// Проверяем было ли это занятие
-					// если занятия не было, добавляем в ошибки
-					// @schedule-refactored
-					if (! $Schedule->was_lesson) {
-						$return[$date]++;
-						$total_missing_count++;
-					}
+				if ($missing_count) {
+					$return[$date] = $missing_count;
+					$total_missing_count += $missing_count;
 				}
+
 				$date = date('Y-m-d', strtotime($date . "-$i day"));
 			}
 
@@ -168,10 +163,7 @@
 
             // Получаем дату последнего запланированного занятия
             // @refactored @schedule-refactored
-            $GroupSchedule = GroupSchedule::find([
-                "condition" => "id_group={$Group->id} AND cancelled=0",
-                "order"		=> "date DESC",
-            ]);
+            $LastPlanned = VisitJournal::getGroupLessons($Group->id, 'find', 'DESC');
 
             $exam_year = $Group->year + 1;
             // Дату экзамена
@@ -179,182 +171,63 @@
                 "condition" => "id_subject={$Group->id_subject} AND grade={$Group->grade} AND date like '%{$exam_year}'"
             ]);
 
-            /*
-                        $datetime1 = new DateTime(date("Y-m-d", strtotime($ExamDay->date)));
-                        $datetime2 = new DateTime(date("Y-m-d", strtotime($GroupSchedule->date)));
-                        $difference = $datetime1->diff($datetime2);
-                        return ($difference->d - 1);
-            */
-            $diff = strtotime($ExamDay->date) - strtotime($GroupSchedule->date);
+            $diff = strtotime($ExamDay->date) - strtotime($LastPlanned->lesson_date);
             return floor($diff/(60*60*24)) - 1;
         }
 
-		/**
-		 * @param bool $withoutCancelled	whether cancelled lessons should be ignored.
-		 * @return GroupSchedule[]|bool		Schedule elems if found, false otherwise.
-		 */
-		public function getSchedule($withoutCancelled=false)
+		// Получить запланированные уроки
+		public function getPlannedLessons()
 		{
-			return GroupSchedule::findAll([
-				"condition" => "date >= '{$this->year}-09-01' AND date <= '" . ($this->year + 1) . "-08-31'
-									AND id_group=".$this->id.($withoutCancelled ? ' AND cancelled = 0 ' : ''),
-				"order"		=> "date ASC, time ASC",
+			$Lessons = VisitJournal::findAll([
+				'condition' => "id_group=" . $this->id . " AND " . VisitJournal::PLANNED_CONDITION,
+				'order'		=> "lesson_date ASC, lesson_time ASC",
 			]);
 
-		}
-
-		// Получить будущее расписание
-		// @time-refactored
-		public function getFutureSchedule($with_cabinets = false)
-		{
-			$GroupSchedule = GroupSchedule::findAll([
-				"condition" => "id_group=" . $this->id . " AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW())",
-				"order"		=> "date ASC, time ASC",
-			]);
-            if ($with_cabinets) {
-                foreach($GroupSchedule as $GS) {
-                    $GS->cabinet_number = Cabinet::getField($GS->cabinet, 'number');
-                }
+            foreach($Lessons as &$Lesson) {
+                $Lesson->cabinet_number = Cabinet::getField($Lesson->cabinet, 'number');
             }
-            return $GroupSchedule;
-		}
 
-		// @refactored
-		// @schedule-refactored
-		public function countFutureSchedule()
-		{
-			// @refactored
-			return GroupSchedule::count([
-				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW()) AND cancelled=0",
-			]);
-		}
-
-		public function countFutureScheduleStatic($id)
-		{
-			// @refactored @schedule-refactored
-			return GroupSchedule::count([
-				"condition" => "id_group=".$id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) > UNIX_TIMESTAMP(NOW()) AND cancelled=0",
-			]);
-		}
-
-		// @depricated – нигде не используется, если использовать, то не забыть про cancelled
-		// @schedule-refactored
-		public function getPastSchedule()
-		{
-			return GroupSchedule::findAll([
-				"condition" => "id_group=".$this->id." AND UNIX_TIMESTAMP(CONCAT_WS(' ', date, time)) < UNIX_TIMESTAMP(NOW())",
-				"order"		=> "date ASC, time ASC",
-			]);
+            return $Lessons;
 		}
 
         /**
          * @schedule-refactored
          */
-		public function countSchedule($id)
+		public function getLessonCount($id)
 		{
-			// @REFACTORED
-			$paid = GroupSchedule::count([
-				"condition" => "is_free=0 AND cancelled=0 AND id_group=".$id,
+			$conducted = VisitJournal::count([
+				"condition" => "cancelled=0 AND type_entity='TEACHER' AND id_group=".$id,
 			]);
 
-			// @REFACTORED
-			$free = GroupSchedule::count([
-				"condition" => "is_free=1 AND cancelled=0 AND id_group=".$id,
+			$planned = VisitJournal::count([
+				"condition" => "cancelled=0 AND " . VisitJournal::PLANNED_CONDITION . " AND id_group=".$id,
 			]);
 
-			return [
-				'free' => $free,
-				'paid' => $paid,
-			];
+			$all = $conducted + $planned;
+
+			return (object)compact('conducted', 'planned', 'all');
 		}
-
-/*
-
-		public function getScheduleCached()
-		{
-			$return = memcached()->get("GroupSchedule[{$this->id}]");
-
-			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-				$return = $this->getSchedule();
-				memcached()->set("GroupSchedule[{$this->id}]", $return, 5 * 24 * 3600);
-			}
-			return $return;
-		}
-*/
-
-		public function getPastScheduleCount($group_id)
-		{
-			return VisitJournal::getLessonCount($group_id);
-		}
-
-		public static function getScheduleCount($id_group)
-		{
-			return Group::countSchedule($id_group);
-		}
-
 
 		/**
 		 * Получить дату первого занятия из расписания.
 		 */
-		public function getFirstSchedule($unix = true)
+		public static function getFirstLessonDate($id_group)
 		{
 			// @refactored
-			$GroupFirstSchedule =  GroupSchedule::find([
-				"condition" => "id_group={$this->id} AND cancelled = 0",
-				"order"		=> "date ASC, time ASC"
-			]);
+			$FirstLesson = self::getFirstLesson($id_group);
 
-			if ($unix) {
-				return $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date . " " . $GroupFirstSchedule->time) . "000" : false;
-			} else {
-				return $GroupFirstSchedule;
-			}
+			return $FirstLesson ? strtotime($FirstLesson->lesson_date . " " . $FirstLesson->lesson_time) . "000" : false;
 		}
-
-		/**
-		 * Получить дату первого занятия из расписания.
-		 */
-		public function getFirstScheduleStatic($id_group)
-		{
-			// @refactored
-			$GroupFirstSchedule =  GroupSchedule::find([
-				"condition" => "id_group={$id_group} AND cancelled = 0",
-				"order"		=> "date ASC, time ASC"
-			]);
-
-			return $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date . " " . $GroupFirstSchedule->time) . "000" : false;
-		}
-
-		/**
-		 * Получить дату первого занятия из расписания.
-		 *
-		 */
-/*
-		public function getFirstScheduleCached()
-		{
-			$return = memcached()->get("GroupFirstSchedule[{$this->id}]");
-
-			if (memcached()->getResultCode() != Memcached::RES_SUCCESS) {
-				$GroupFirstSchedule = $this->getFirstSchedule();
-				$return = $GroupFirstSchedule ? strtotime($GroupFirstSchedule->date) . "000" : false;
-				memcached()->set("GroupFirstSchedule[{$this->id}]", $return, 180 * 24 * 3600);
-			}
-
-			return $return;
-		}
-*/
 
 		/**
 		 * Получить первое занятие
 		 * $from_today – первое относительно сегодняшнего дня (ближайшее следующее)
-		 * @schedule-refactored
 		 */
 		public static function getFirstLesson($id_group, $from_today = false)
 		{
-			// @refactored
-			return GroupSchedule::find([
-				"condition" => "id_group={$id_group} AND cancelled=0 " . ($from_today ? " AND date >= '" . date("Y-m-d") . "'" : ""),
-				"order"		=> "date ASC, time ASC"
+			return VisitJournal::find([
+				"condition" => "id_group={$id_group} AND cancelled=0 " . ($from_today ? " AND lesson_date >= '" . now(true) . "'" : ""),
+				"order"		=> "lesson_date ASC, lesson_time ASC"
 			]);
 		}
 
@@ -411,9 +284,8 @@
 
 				$Group->students = empty($Group->students) ? [] : explode(',', $Group->students);
 
-				$Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
-				$Group->past_lesson_count 	= Group::getPastScheduleCount($Group->id);;
-				$Group->schedule_count 		= Group::getScheduleCount($Group->id);
+				$Group->first_lesson_date 		= Group::getFirstLessonDate($Group->id);
+				$Group->lesson_count 		= Group::getLessonCount($Group->id);
 				$Group->day_and_time 		= Group::getDayAndTime($Group->id);
 				static::assignGrade($Group);
 
@@ -501,103 +373,11 @@
         }
 	}
 
-	class GroupSchedule extends Model
-	{
-		public static $mysql_table	= "group_schedule";
-
-		const PER_PAGE = 100; // Сколько отображать на странице списка
 
 
-		public function __construct($array)
-		{
-			parent::__construct($array);
-
-            $this->was_lesson = VisitJournal::count(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}' AND type_entity='TEACHER'"]) ? true : false;
-			if ($this->time) {
-				$this->time = mb_strimwidth($this->time, 0, 5);
-				if ($this->time == "00:00") {
-					$this->time = null; // чтобы отображало "не установлено"
-				}
-			}
-
-            $this->date_time = $this->date . ' ' . $this->time;
-			$this->isUnplanned = $this->isUnplanned();
-		}
-
-		public function inProgress()
-		{
-			$start_time = (new DateTime($this->date_time))->getTimestamp();
-			$end_time = (new DateTime($this->date_time))->modify('+135 minutes')->getTimestamp();
-			return ((time() < $end_time) && (time() > $start_time));
-		}
-
-        /**
-         * Добавить группу занятия в экземпляр
-         */
-        public function getGroup()
-        {
-            $this->Group = Group::find([
-				"condition" => "id={$this->id_group} AND ended=0"
-			]);
-        }
-
-        /**
-         * Добавить занятие из журнала в экземпляр
-         */
-        public function getLesson()
-        {
-            $this->Lesson = VisitJournal::find(["condition" => "id_group={$this->id_group} AND lesson_date='{$this->date}' AND lesson_time='{$this->time}:00' AND type_entity='TEACHER'"]);
-        }
-
-        /**
-         * незапланированное @have-to-refactor
-         * @schedule-refactored
-         */
-		public function isUnplanned()
-		{
-            $Time = Time::getLight();
-
-			$GroupTimeData = GroupTime::findAll([
-				"condition" => "id_group=" . $this->id_group,
-			]);
-
-			$day_of_the_week = date("w", strtotime($this->date));
-			if ($day_of_the_week == 0) {
-				$day_of_the_week = 7;
-			}
-
-			$is_planned = false;
-			foreach ($GroupTimeData as $GroupTime) {
-				if ($day_of_the_week == Time::getDay($GroupTime->id_time) && $this->time == $Time[$GroupTime->id_time]) {
-					$is_planned = true;
-					break;
-				}
-			}
-
-			return !$is_planned;
-		}
-
-		/**
-		 * @param  bool $withoutCancelled		whether get cancelled lessons too.
-		 * @return GroupSchedule[]|bool		Found elems.
-		 */
-		public static function getVocationDates($withoutCancelled = false)
-		{
-			$Vocations = self::findAll([
-				"condition" => "id_group=0".($withoutCancelled ? ' AND cancelled = 0 ' : '')
-			]);
-
-			$vocation_dates = [];
-
-			foreach ($Vocations as $Vocation) {
-				$vocation_dates[] = $Vocation->date;
-			}
-
-			return $vocation_dates;
-		}
-    }
-
-
+	/**
+	 * GROUP TIME CLASS
+	 */
 	class GroupTime extends Model
 	{
 		public static $mysql_table	= "group_time";

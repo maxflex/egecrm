@@ -180,7 +180,7 @@
 			$ang_init_data = angInit([
 				'Student'         => $Student,
                 'Visits'          => $Visits,
-                'FutureLessons'   => $Group ? $Group->getFutureSchedule(true) : false,
+                'PlannedLessons'   => $Group ? $Group->getPlannedLessons() : false,
                 'id_group'        => $Group ? $Group->id : 0,
                 'Subject'         => [
                     'id'            => $id_subject,
@@ -242,7 +242,7 @@
 				'Student'         => $Student,
 				'Teacher'         => $Teacher,
                 'Visits'          => $Visits,
-                'FutureLessons'   => $Group ? $Group->getFutureSchedule(true) : false,
+                'PlannedLessons'   => $Group ? $Group->getPlannedLessons() : false,
                 'id_group'        => $Group ? $Group->id : 0,
                 'AllSubjects'     => Subjects::$dative,
                 'Subject'         => [

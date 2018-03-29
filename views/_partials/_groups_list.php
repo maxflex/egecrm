@@ -51,13 +51,16 @@
 		</td>
 -->
 		<td width="15%">
-			<span ng-show="Group.first_schedule">
-				<span ng-show="!Group.past_lesson_count">1-й урок {{Group.first_schedule | date:"dd.MM"}}</span><span ng-show="Group.past_lesson_count">было {{Group.past_lesson_count}}</span></span><span ng-show="Group.first_schedule && Group.schedule_count.paid > 0"> из </span><span ng-show="Group.schedule_count.paid > 0">
-                {{Group.schedule_count.paid}} <ng-pluralize count="Group.schedule_count.paid" when="{
-					'one': 'урока',
-					'few': 'уроков',
-					'many': 'уроков'
-				}"></ng-pluralize>
+			<span ng-show="Group.first_lesson_date">
+				<span ng-show="!Group.lesson_count.conducted">1-й урок {{Group.first_lesson_date | date:"dd.MM"}}</span>
+				<span ng-show="Group.lesson_count.conducted">
+					было {{Group.lesson_count.conducted}} из {{ Group.lesson_count.all }}
+					<ng-pluralize count="Group.lesson_count.all" when="{
+						'one': 'урока',
+						'few': 'уроков',
+						'many': 'уроков'
+					}"></ng-pluralize>
+				</span>
             </span>
 		</td>
 		<td width="15%">
@@ -81,10 +84,10 @@
 		<td width="13%">
 			<span ng-show='Group.ended'>заархивирована</span>
 			<span ng-show='!Group.ended'>
-				<span ng-show='!Group.past_lesson_count'>
+				<span ng-show='!Group.lesson_count.conducted'>
 					<span class='text-danger' ng-show='Group.ready_to_start'>требует запуска {{ Group.notified_students_count }}/{{ Group.students.length }}</span>
 				</span>
-				<span ng-show="Group.past_lesson_count && [9,11].indexOf(Group.grade) != -1">
+				<span ng-show="Group.lesson_count.conducted && [9,11].indexOf(Group.grade) != -1">
 					<span ng-show="Group.days_before_exam > 0">
 						запас {{Group.days_before_exam}} <ng-pluralize count="Group.days_before_exam" when="{
 							'one': 'день',

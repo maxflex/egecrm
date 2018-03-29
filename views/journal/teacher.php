@@ -16,9 +16,9 @@
         <thead>
             <tr>
                 <th style="border: none !important"></th>
-                <th ng-repeat="Schedule in Group.Schedule" style="height: 70px; position: relative" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
-                    <span>{{formatDate(Schedule.date)}}</span>
-                    <span class='lesson-cancelled-journal ng-hide' ng-show='Schedule.cancelled'>занятие отменено</span>
+                <th ng-repeat="Lesson in Lessons" style="height: 70px; position: relative" ng-class="{'gray-bg': grayMonth(Lesson.lesson_date)}">
+                    <span>{{formatDate(Lesson.lesson_date)}}</span>
+                    <span class='lesson-cancelled-journal ng-hide' ng-show='Lesson.cancelled'>занятие отменено</span>
                 </th>
             </tr>
             </thead>
@@ -27,12 +27,12 @@
                 <td style="text-align: left; width: 250px">
                     {{Student.first_name}} {{Student.last_name}}
                 </td>
-                <td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
+                <td ng-repeat="Lesson in Lessons" ng-class="{'gray-bg': grayMonth(Lesson.lesson_date)}">
                         <span class="circle-default"
                               ng-class="{
-                                'circle-red'	: getInfo(Student.id, Schedule).presence == 2,
-                                'circle-orange'	: getInfo(Student.id, Schedule).presence == 1 && getInfo(Student.id, Schedule).late > 0,
-                                'invisible'		: getInfo(Student.id, Schedule) === undefined,
+                                'circle-red'	: getInfo(Student.id, Lesson).presence == 2,
+                                'circle-orange'	: getInfo(Student.id, Lesson).presence == 1 && getInfo(Student.id, Lesson).late > 0,
+                                'invisible'		: getInfo(Student.id, Lesson) === undefined,
                             }"></span>
                 </td>
             </tr>
@@ -43,12 +43,12 @@
                 <td style="text-align: left; width: 250px">
                     {{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
                 </td>
-                <td ng-repeat="Schedule in Group.Schedule" ng-class="{'gray-bg': grayMonth(Schedule.date)}">
+                <td ng-repeat="Lesson in Lessons" ng-class="{'gray-bg': grayMonth(Lesson.lesson_date)}">
                         <span class="circle-default"
                               ng-class="{
-                                'circle-red'	: getInfo(Teacher.id, Schedule).presence == 2,
-                                'circle-orange'	: getInfo(Teacher.id, Schedule).presence == 1 && getInfo(Teacher.id, Schedule).late > 0,
-                                'invisible'		: getInfo(Teacher.id, Schedule) === undefined,
+                                'circle-red'	: getInfo(Teacher.id, Lesson).presence == 2,
+                                'circle-orange'	: getInfo(Teacher.id, Lesson).presence == 1 && getInfo(Teacher.id, Lesson).late > 0,
+                                'invisible'		: getInfo(Teacher.id, Lesson) === undefined,
                             }"></span>
                 </td>
             </tr>

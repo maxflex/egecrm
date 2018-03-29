@@ -481,94 +481,32 @@
 			extract($_POST);
 
             // @schedule-refactored
-			$Schedule = GroupSchedule::findAll([
-				"condition" => "date='$date' AND id_group!=0",
+			$Lessons = VisitJournal::findAll([
+				"condition" => "lesson_date='$date'",
 			]);
 
-            // returnJsonAng($Schedule);
-
-			foreach ($Schedule as &$S) {
-				$S->Group = Group::findById($S->id_group);
-				$S->Group->Teacher = Teacher::getLight($S->Group->id_teacher, ['phone']);
-                // @schedule-refactored
-				$S->is_unplanned = $S->isUnplanned();
-				$S->in_progress = $S->inProgress();
-
-				// номер урока
-				// @schedule-refactored
-				$S->lesson_number = GroupSchedule::count([
-					"condition" => "id_group={$S->id_group} AND CONCAT(`date`,' ',`time`) <= '{$date} {$S->time}:00' AND cancelled = 0"
-				]);
+			foreach ($Lessons as &$Lesson) {
+				$Lesson->Teacher = Teacher::getLight($Lesson->id_teacher, ['phone']);
+				$Lesson->Group = Group::getLight($Lesson->id_group);
+				$Lesson->is_unplanned = $Lesson->isUnplanned();
+				$Lesson->in_progress = $Lesson->inProgress();
+				$Lesson->number = $Lesson->getLessonNumber();
 
 				// общее кол-во уроков
-				$S->total_lessons = GroupSchedule::count([
-					"condition" => "id_group={$S->id_group} AND cancelled = 0"
-				]);
-
-				// данные по прошедшему занятию из журнала
-				if ($S->was_lesson) {
-                    // @schedule-refactored
-					$S->getLesson();
-					if ($S->Lesson->cabinet) {
-	                    $S->Lesson->cabinet = Cabinet::getBlock($S->Lesson->cabinet);
-	                }
-	                $S->Lesson->Teacher = Teacher::getLight($S->Lesson->id_entity, ['phone']);
-				}
+				$Lesson->total_lessons = Group::getLessonCount($Lesson->id_group)->all;
 
 				// @time-refactored @time-checked
-				if ($S->cabinet) {
-                    $S->cabinet = Cabinet::getBlock($S->cabinet);
-                }
+                $Lesson->cabinet = Cabinet::getBlock($Lesson->cabinet);
 			}
 
-            /*
-                проверка на признак наслоений. если найдено то ищем студентов на чьих расписаниях
-                оно появилось. насловение кабинетов на фронтэнде проверяется.
-
-                фор, а не форич, чтобы не проверить уже проверенные пары  (s2,s1) = (s1,s2)
-            */
-            if($Schedule) {
-                for ($i = 0; $i < count($Schedule); $i++) {
-                    $S1 = &$Schedule[$i];
-                    for ($j = $i + 1; $j < count($Schedule); $j++) {
-                        $S2 = &$Schedule[$j];
-
-                        if ($S1->id != $S2->id && $S1->time == $S2->time) {
-                            /* если найдены общие студенты, запоминаем их фамилии */
-                            if ($layerData = array_intersect($S1->Group->students, $S2->Group->students)) {
-                                $Students = Student::findAll([
-                                    "condition" => "id IN (" . implode(",", $layerData) . ")"
-                                ]);
-
-                                foreach ($Students as $Student) {
-                                    /* чтобы одного и того же студента не добавить 2 раза */
-                                    if (!in_array($Student->id, $S1->layerData)) {
-                                        $S1->studentLayered .= $S1->studentLayered ? ', ' : '';
-                                        $S1->studentLayered .= $Student->last_name . ' ' . $Student->first_name;
-                                    }
-
-                                    if (!in_array($Student->id, $S2->layerData)) {
-                                        $S2->studentLayered .= $S2->studentLayered ? ', ' : '';
-                                        $S2->studentLayered .= $Student->last_name . ' ' . $Student->first_name;
-                                    }
-                                }
-
-                                $S1->layerData = array_merge($S1->layerData ? $S1->layerData : [], $layerData);
-                                $S2->layerData = array_merge($S2->layerData ? $S2->layerData : [], $layerData);
-                            }
-                        }
-                    }
-                }
-            }
-
-            usort($Schedule, function($a, $b) {
-                if ($b->time == $a->time)
-                    return $a->cabinetNumber - $b->cabinetNumber;
+            usort($Lessons, function($a, $b) {
+                if ($b->lesson_time == $a->lesson_time)
+                    return $a->cabinet['number'] - $b->cabinet['number'];
                 else
                     return $b->time - $a->time;
             });
 
-			returnJsonAng($Schedule);
+			returnJsonAng($Lessons);
 		}
 
 		public function actionAjaxPlusDays()
@@ -668,5 +606,24 @@
 		{
 			VisitJournal::deleteById($_POST['id']);
 			returnJsonAng($_POST);
+		}
+
+		public function actionAjaxSaveVacation()
+		{
+			extract($_POST);
+
+            if (isset($id)) {
+                $response = Vacation::updateById($id, $_POST);
+            } else {
+                $response = Vacation::add($_POST);
+            }
+			returnJsonAng($response);
+		}
+
+		public function actionAjaxDeleteVacation()
+		{
+			extract($_POST);
+
+			Vacation::deleteById($id);
 		}
 	}

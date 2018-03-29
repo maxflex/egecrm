@@ -96,64 +96,59 @@
 			<tr id="{{stat.date}}" style="display: none" class="no-hover" ng-repeat-end>
 				<td colspan="7">
 					<table class="table table-divlike left-align" style="margin: 0; width: 95%">
-						<tr ng-repeat="Schedule in Schedules[stat.date]">
+						<tr ng-repeat="Lesson in Lessons[stat.date]">
 							<td width="5%">
-								{{ Schedule.was_lesson ? Schedule.Lesson.lesson_time : Schedule.time }}
+								{{ Lesson.lesson_time }}
 							</td>
-							<td width="7%" ng-init="_cabinet = (Schedule.was_lesson ? Schedule.Lesson.cabinet : Schedule.cabinet)">
-								<span style='color: {{ _cabinet.color }}'>{{ _cabinet.label }}</span>
+							<td width="7%">
+								<span style='color: {{ Lesson.cabinet.color }}'>{{ Lesson.cabinet.label }}</span>
 							</td>
 							<td width="12%">
-								<a href="groups/edit/{{Schedule.id_group}}" target="_blank">Группа {{Schedule.id_group}}</a>
-								<a target="_blank" href="groups/edit/{{Schedule.id_group}}/schedule" style='margin-left: 3px'>
+								<a href="groups/edit/{{ Lesson.id_group }}" target="_blank">Группа {{ Lesson.id_group }}</a>
+								<a target="_blank" href="groups/edit/{{ Lesson.id_group }}/schedule" style='margin-left: 3px'>
 									<i class="fa fa-calendar" aria-hidden="true"></i>
 								</a>
 							</td>
 							<td width="7%">
-                                {{Subjects[Schedule.Group.id_subject]}}{{Schedule.Group.grade ? '-' + Schedule.Group.grade_short : ''}}
+                                {{ Subjects[Lesson.id_subject] }}-{{ Lesson.grade_short }}
 							</td>
 							<td width="10%">
-								{{Schedule.Group.students.length}} <ng-pluralize count="Schedule.Group.students.length" when="{
+								{{Lesson.Group.students.length}} <ng-pluralize count="Lesson.Group.students.length" when="{
 									'one': 'ученик',
 									'few': 'ученика',
 									'many': 'учеников',
 								}"></ng-pluralize>
 							</td>
-							<td width="33%" ng-init="_Teacher = (Schedule.was_lesson ? Schedule.Lesson.Teacher : Schedule.Group.Teacher)">
+							<td width="33%">
 								<a class="pointer" target="_blank" href="teachers/edit/{{ _Teacher.id }}">
-									{{ _Teacher.last_name }} {{ _Teacher.first_name }} {{ _Teacher.middle_name }}</a>
+									{{ Lesson.Teacher.last_name }} {{ Lesson.Teacher.first_name }} {{ Lesson.Teacher.middle_name }}</a>
 								<i class="fa fa-phone-square opacity-pointer text-danger" aria-hidden="true" style="margin-left: 3px; font-size: 16px"
-									ng-click="PhoneService.call(_Teacher.phone)"></i>
+									ng-click="PhoneService.call(Lesson.Teacher.phone)"></i>
 							</td>
 							<td width="11%">
-								<span ng-if='!Schedule.cancelled'>
-									{{Schedule.lesson_number}} из {{Schedule.total_lessons}} <ng-pluralize count="Schedule.total_lessons" when="{
+								<span ng-if='!Lesson.cancelled'>
+									{{ Lesson.number }} из {{Lesson.total_lessons}} <ng-pluralize count="Lesson.total_lessons" when="{
 										'one': 'урока',
 										'few': 'уроков',
 										'many': 'уроков',
 									}"></ng-pluralize>
 								</span>
 							</td>
-							<td width="2.5%" ng-class="{'blink': Schedule.in_progress}">
-								<span class="day-explain cancelled" ng-show="Schedule.cancelled" title="отменено"></span>
-								<span class="day-explain was-lesson" ng-show="!Schedule.cancelled && Schedule.was_lesson" title="проведено"></span>
-								<span class="day-explain" ng-show="!Schedule.cancelled && !Schedule.was_lesson" title="планируется"></span>
+							<td width="2.5%" ng-class="{'blink': Lesson.in_progress}">
+								<span class="day-explain cancelled" ng-show="Lesson.cancelled" title="отменено"></span>
+								<span class="day-explain was-lesson" ng-show="!Lesson.cancelled && Lesson.is_conducted" title="проведено"></span>
+								<span class="day-explain" ng-show="!Lesson.cancelled && Lesson.is_planned" title="планируется"></span>
 							</td>
 							<td width="6.5%">
-								<span class="day-explain exam-day-subject" ng-show="Schedule.is_unplanned" title="внеплановое"></span>
-								<span class="day-explain exam-day" ng-show="Schedule.lesson_number == 1 && !Schedule.cancelled" title="старт группы"></span>
-								<span class="day-explain cancelled" ng-show="Schedule.is_free" title="бесплатное"></span>
-								<span class="day-explain vocation"
-                                      ng-show="Schedule.cabinetLayered || Schedule.studentLayered"
-                                      title="{{ (Schedule.cabinetLayered ? 'Наслоение кабинета:\nКабинет № ' + Schedule.cabinetNumber + '\n': '') +
-                                                (Schedule.studentLayered ? 'Наслоение студентов:\n' + Schedule.studentLayered : '') }}" title="наслоение">
-								</span>
-								<span class="day-explain vocation" ng-show="!Schedule.was_lesson && !Schedule.cancelled && !isFuture(Schedule.date)" title="не зарегистрирован"></span>
+								<span class="day-explain exam-day-subject" ng-show="Lesson.is_unplanned" title="внеплановое"></span>
+								<span class="day-explain exam-day" ng-show="Lesson.number == 1 && !Lesson.cancelled" title="старт группы"></span>
+								<span class="day-explain cancelled" ng-show="Lesson.is_free" title="бесплатное"></span>
+								<span class="day-explain vocation" ng-show="Lesson.not_registered" title="не зарегистрирован"></span>
 							</td>
 						</tr>
 					</table>
-					<span class="vertical-margin small" ng-show="Schedules[stat.date] === undefined">загрузка...</span>
-					<span class="vertical-margin small" ng-show="Schedules[stat.date] === false">нет групп на эту дату</span>
+					<span class="vertical-margin small" ng-show="Lessons[stat.date] === undefined">загрузка...</span>
+					<span class="vertical-margin small" ng-show="Lessons[stat.date] === false">нет групп на эту дату</span>
 				</td>
 			</tr>
 		</tbody>

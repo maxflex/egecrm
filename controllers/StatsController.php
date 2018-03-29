@@ -318,11 +318,10 @@
 
 			// кол-во запланированных занятий
 			if ($date_start >= date('Y-m-d') && !$date_end) {
-				$return['planned_lesson_count'] = GroupSchedule::count([
-					"condition" => "date='$date_start' AND id_group>0"
+				$return['planned_lesson_count'] = VisitJournal::count([
+					"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
+						. " AND " . VisitJournal::PLANNED_CONDITION
 				]);
-				// вычитаем кол-во прошедших занятий
-				$return['planned_lesson_count'] -= $return['lesson_count'];
 			}
 
 			$return['in_time'] = VisitJournal::count([

@@ -17,6 +17,7 @@
 
 		public function actionJournal()
 		{
+			$this->_viewsFolder = 'journal';
 			$id_group = $_GET['id'];
 
 			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
@@ -29,9 +30,6 @@
 			$this->setTabTitle("Посещаемость группы №" . $id_group);
 
 			$Group = Group::findById($id_group, true);
-
-			$Group->Schedule = $Group->getSchedule();
-
 
 			// get student ids
 			$result = dbConnection()->query("
@@ -71,7 +69,7 @@
 				}
 			} else {
 				// если пустой журнал
-				$this->render("journal_empty");
+				$this->render("empty");
 				return;
 			}
 			$Group->Students = $students;
@@ -83,6 +81,8 @@
                 }
 			}
 
+			$Lessons = VisitJournal::getGroupLessons($Group->id);
+
 			$LessonData = VisitJournal::findAll([
 				"condition" => "id_group=$id_group" //и преподы и студенты
 			]);
@@ -92,10 +92,10 @@
                     "Group" 		=> $Group,
                     "LessonData"	=> $LessonData,
                     "Teachers"		=> $Teachers,
+					"Lessons"		=> $Lessons,
                 ]);
 
-                $this->_viewsFolder = 'journal';
-                $this->render("teacher_journal", [
+                $this->render("teacher", [
                     "ang_init_data" => $ang_init_data
                 ]);
             } else {
@@ -103,37 +103,31 @@
                     "Group" 		=> $Group,
                     "LessonData"	=> $LessonData,
                     "Teachers"		=> $Teachers,
+					"Lessons"		=> $Lessons
                 ]);
 
-                $this->render("journal", [
+                $this->render("user", [
                     "ang_init_data" => $ang_init_data,
                 ]);
             }
 		}
 
-        /**
-         * @schedule-refactored
-         */
 		public function actionLesson()
 		{
 			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
 
-			$id_schedule = $_GET['id_schedule'];;
-
-            $Schedule = GroupSchedule::findById($id_schedule);
+            $Lesson = VisitJournal::findById($_GET['id']);
 
             /* третий парам чтобы не учитовать отменные занятия */
             // @refactored
-			if (! $Schedule) {
+			if (! $Lesson) {
 				$this->setTabTitle("Ошибка");
 				$this->render("no_lesson", [
 					"message" => "Занятие отсутствует"
 				]);
 			} else {
 				// если занятие еще не началось, нельзя переходить в функционал добавления в журнал
-				$schedule_date = $Schedule->date . " " . $Schedule->time;
-
-				if ($schedule_date > now()) {
+				if ($Lesson->date_time > now()) {
 					$this->setTabTitle("Ошибка");
 					$this->render("no_lesson", [
 						"message" => "Занятие еще не началось"
@@ -142,18 +136,16 @@
 					// если дошло досюда, всё хорошо, ошибок нет
 					$this->_custom_panel = true;
 
-                    $Schedule->getGroup();
-
 					// has-access-refactored
                     if (User::isTeacher()) {
-                        $this->hasAccess('groups', $Schedule->Group->id);
+                        $this->hasAccess('groups', $Lesson->id_group);
                     }
 
 					// если занятие уже зарегистрировано, берем данные из журнала
-					if ($Schedule->was_lesson) {
+					if ($Lesson->is_conducted) {
                         // @schedule-refactored
 						$LessonData = VisitJournal::findAll([
-							"condition" => "lesson_date='{$Schedule->date}' AND lesson_time='{$Schedule->time}:00' AND id_group={$Schedule->Group->id} AND type_entity='". Student::USER_TYPE ."'"
+							"condition" => "entry_id='{$Lesson->entry_id}' AND type_entity='". Student::USER_TYPE ."'"
 						]);
 
 						$student_ids = [];
@@ -161,31 +153,43 @@
 							$student_ids[] = $OneData->id_entity;
 							$OrderedLessonData[$OneData->id_entity] = $OneData;
 						}
-
-						$Schedule->Group->Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"], true);
 					} else {
-						$Schedule->Group->Students = $Schedule->Group->getStudents();
+						// если занятие еще не началось, берем учеников из настроек группы
+						$Group = Group::findById($Lesson->id_group);
+						$student_ids = $Group->students;
 					}
+
+					$Students = Student::findAll(["condition" => "id IN (". implode(",", $student_ids) .")"], true);
 
 					// получаем учеников, которые присутствовали в группе, но сейчас их по какой-то причине нет
 					// (перешли в другую группу или прекратили обучение)
 					$left_students_vj = VisitJournal::findAll([
-						'condition' => "id_group={$Schedule->Group->id} AND type_entity='". Student::USER_TYPE ."' AND id_entity NOT IN (" . implode(',', $Schedule->Group->students) . ")",
+						'condition' => "id_group={$Lesson->id_group} AND type_entity='". Student::USER_TYPE ."' AND id_entity NOT IN (" . implode(',', $student_ids) . ")",
 						'group' => 'id_entity'
 					]);
 
 					$left_students = [];
-					foreach($left_students_vj as $s) {
-						$student = Student::getLight($s->id_entity);
-						$student->id = $s->id_entity;
-						$student->status = VisitJournal::count([
-							'condition' => "id_group!={$Schedule->Group->id} AND type_entity='". Student::USER_TYPE ."' AND id_entity={$s->id_entity} AND year={$Schedule->Group->year}  AND id_subject={$Schedule->Group->id_subject}"
-						]);
-						$left_students[] = $student;
+					if ($left_students_vj) {
+						if ($Lesson->is_conducted) {
+							$year = $Lesson->year;
+							$id_subject = $Lesson->id_subject;
+						} else {
+							$year = $Group->year;
+							$id_subject = $Group->id_subject;
+						}
+						foreach($left_students_vj as $s) {
+							$student = Student::getLight($s->id_entity);
+							$student->id = $s->id_entity;
+							$student->status = VisitJournal::count([
+								'condition' => "id_group!={$Lesson->id_group} AND type_entity='". Student::USER_TYPE ."' AND id_entity={$s->id_entity} AND year={$year}  AND id_subject={$id_subject}"
+							]);
+							$left_students[] = $student;
+						}
 					}
 
 					$ang_init_data = angInit([
-                        "Schedule"        => $Schedule,
+						"Students"		  => $Students,
+                        "Lesson"          => $Lesson,
 						"LessonData"      => (object)$OrderedLessonData,
 						"lesson_statuses" => VisitJournal::$statuses,
 						"isAdmin"		  => User::isAdmin(),
@@ -214,13 +218,6 @@
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
 				$Groups = Teacher::getGroups(User::fromSession()->id_entity, false);
-                foreach ($Groups as &$Group) {
-                    $counts = Group::getScheduleCount($Group->id);
-                    $Group->schedule_count      = $counts['free'] + $counts['paid'];
-                    $Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
-                    $Group->past_lesson_count 	= Group::getPastScheduleCount($Group->id);;
-
-                }
 
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -238,13 +235,7 @@
 			} else
 			if (User::fromSession()->type == Student::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
-				$Groups = Student::getGroupsStatic(User::fromSession()->id_entity, false, false);
-                foreach ($Groups as &$Group) {
-                    $counts = Group::getScheduleCount($Group->id);
-                    $Group->schedule_count      = $counts['free'] + $counts['paid'];
-                    $Group->first_schedule 		= Group::getFirstScheduleStatic($Group->id);
-                    $Group->past_lesson_count 	= Group::getPastScheduleCount($Group->id);;
-                }
+				$Groups = Student::groups(User::fromSession()->id_entity);
 
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -292,47 +283,36 @@
 			$this->actionEdit($Group);
 		}
 
-		/**
-		 * getSchedule и getVocationDates c параметром true возвращает только активные(не отмененные) занятия.
-		 */
 		public function actionSchedule()
 		{
             // @cancelled_lesson_dates – удалить везде
             // @past_lessons – рассмотреть удаление у teachers & students
             $this->addJs("vendor/angular-bootstrap-calendar-tpls, ng-schedule-app");
-			if (User::fromSession()->type == Student::USER_TYPE) {
-                $id_group = $_GET['id'];
+			$id_group = $_GET['id'];
+			$Group = Group::findById($id_group);
 
+			if (User::fromSession()->type == Student::USER_TYPE) {
                 // has-access-refactored
                 $this->hasAccess('groups', $id_group, 'students', true);
 
 				// не надо панель рисовать
 				$this->_custom_panel = true;
-				$Group = Group::findById($id_group);
-
-				// @refactored
-				$Group->Schedule = $Group->getSchedule();
-
-				foreach ($Group->Schedule as &$Schedule) {
-					if ($Schedule->cabinet) {
-						$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
-					}
-				}
 
 				$Teacher = Teacher::findById($Group->id_teacher);
 
-				if (!$Teacher) {
+				if (! $Teacher) {
 					$Teacher = 0;
 				}
+
                 $exams = ExamDay::getExamDates($Group);
 				$ang_init_data = angInit([
+					"Lessons"				=> VisitJournal::getGroupLessons($id_group),
 					"Group" 				=> $Group,
 					"Teacher"				=> $Teacher,
 					"SubjectsDative"		=> Subjects::$dative,
-					"past_lessons" 	        => $Group->getPastLessons(), // @time-refactored @time-checked
                     "all_cabinets"			=> Branches::allCabinets(), // @to show past lesson cabinet number
                     "special_dates"	=> [
-                        'vacations' => GroupSchedule::getVocationDates(),
+                        'vacations' => Vacation::getDates($Group->year),
                         'exams' => $exams['this_subject'],
                         'other_exams' => $exams['other_subject'],
                     ],
@@ -344,23 +324,11 @@
 				]);
 			} else
 				if (User::fromSession()->type == Teacher::USER_TYPE) {
-					$id_group = $_GET['id'];
-					$Group = Group::findById($id_group);
-
-
 					// has-access-refactored
 					$this->hasAccess('groups', $id_group);
 
                     // не надо панель рисовать
 					$this->_custom_panel = true;
-
-					// @refactored
-					$Group->Schedule = $Group->getSchedule();
-					foreach ($Group->Schedule as &$Schedule) {
-						if ($Schedule->cabinet) {
-							$Schedule->Cabinet = Cabinet::findById($Schedule->cabinet);
-						}
-					}
 
                     $Group->Students = [];
                     foreach ($Group->students as $id_student) {
@@ -373,19 +341,19 @@
 
 					$Teacher = Teacher::findById($Group->id_teacher);
 
-					if (!$Teacher) {
+					if (! $Teacher) {
 						$Teacher = 0;
 					}
 
                     $exams = ExamDay::getExamDates($Group);
 					$ang_init_data = angInit([
+						"Lessons"				=> VisitJournal::getGroupLessons($id_group),
 						"Group" 				=> $Group,
 						"Teacher"				=> $Teacher,
 						"SubjectsDative"		=> Subjects::$dative,
-						"past_lessons" 			=> $Group->getPastLessons(), // @time-refactored @time-checked
                         "all_cabinets"			=> Branches::allCabinets(), // @to show past lesson cabinet number
                         "special_dates"	=> [
-                            'vacations' => GroupSchedule::getVocationDates(),
+                            'vacations' => Vacation::getDates($Group->year),
                             'exams' => $exams['this_subject'],
                             'other_exams' => $exams['other_subject'],
                         ],
@@ -399,20 +367,17 @@
 					// не надо панель рисовать
 					$this->_custom_panel = true;
 
-					$id_group = $_GET['id'];
-					$Group = Group::findById($id_group);
-					$Group->Schedule = $Group->getSchedule();
                     $exams = ExamDay::getExamDates($Group);
 
 					$ang_init_data = angInit([
 						"Group" 			=> $Group,
-						"past_lessons" => $Group->getPastLessons(), 		// @time-refactored @time-checked
-						"special_dates"	=> [
-                            'vacations' => GroupSchedule::getVocationDates(),
-                            'exams' => $exams['this_subject'],
-                            'other_exams' => $exams['other_subject'],
+						"Lessons" => VisitJournal::getGroupLessons($id_group),
+						"special_dates"		=> [
+                            'vacations' 	=> Vacation::getDates($Group->year),
+                            'exams' 		=> $exams['this_subject'],
+                            'other_exams' 	=> $exams['other_subject'],
                         ],
-						"all_cabinets"			=> Branches::allCabinets(), // @time-refactored @time-checked
+						"all_cabinets"		=> Branches::allCabinets(), // @time-refactored @time-checked
 						"Time"				=> Time::getLight(),
 					]);
 
@@ -478,31 +443,26 @@
             // @schedule-refactored
 			# Удаляем всё, что связано с группой
 			GroupTime::deleteAll($condition);
-			GroupSchedule::deleteAll($condition);
 		}
 
 
-		public function actionAjaxSaveSchedule()
+		public function actionAjaxSaveLesson()
 		{
 			extract($_POST);
 
-            if (isset($id)) {
-                GroupSchedule::updateById($id, $_POST);
+			if (isset($id)) {
+                $response = VisitJournal::updateById($id, $_POST);
             } else {
-                returnJsonAng(
-                    GroupSchedule::add($_POST)
-                );
+                $response = VisitJournal::add($_POST);
             }
+			returnJsonAng($response);
 		}
 
-        // @schedule-refactored
-		public function actionAjaxDeleteSchedule()
+		public function actionAjaxDeleteLesson()
 		{
 			extract($_POST);
 
-			GroupSchedule::deleteAll([
-				"condition" => "id={$id}"
-			]);
+			VisitJournal::deleteById($id);
 		}
 
 		public function actionAjaxInGroup()
@@ -577,23 +537,7 @@
 			User::rememberMeLogin();
 			$data = array_filter($data);
 
-			VisitJournal::addData($id_schedule, $data);
-
-			// Обновляем красные счетчики
-			if (! LOCAL_DEVELOPMENT) {
-                $Schedule = VisitJournal::findById($id_schedule);
-				$errors = memcached()->get("JournalErrors");
-
-				if (($key = array_search($Schedule->id_group, $errors[$Schedule->date])) !== false) {
-					unset($errors[$Schedule->date][$key]);
-					$errors[$Schedule->date] = array_values($errors[$Schedule->date]);
-					// if no errors now
-					if (!count($errors[$Schedule->date])) {
-						unset($errors[$Schedule->date]);
-					}
-				    memcached()->set("JournalErrors", $errors, 3600 * 24);
-				}
-			}
+			VisitJournal::addData($id_lesson, $data);
 		}
 
 		/**
@@ -606,25 +550,10 @@
 
 			// Дополнительный вход
 			User::rememberMeLogin();
+
 			if (User::fromSession()->type == User::USER_TYPE) {
 				$data = array_filter($data);
-				VisitJournal::updateData($id_schedule, $data);
-
-				// Обновляем красные счетчики
-				if (! LOCAL_DEVELOPMENT) {
-                    $Schedule = VisitJournal::findById($id_schedule);
-					$errors = memcached()->get("JournalErrors");
-
-					if (($key = array_search($Schedule->id_group, $errors[$Schedule->date])) !== false) {
-						unset($errors[$Schedule->date][$key]);
-						$errors[$Schedule->date] = array_values($errors[$Schedule->date]);
-						// if no errors now
-						if (!count($errors[$Schedule->date])) {
-							unset($errors[$Schedule->date]);
-						}
-						memcached()->set("JournalErrors", $errors, 3600 * 24);
-					}
-				}
+				VisitJournal::updateData($id_lesson, $data);
 			}
 		}
 
