@@ -484,7 +484,6 @@
             // @schedule-refactored
 			$Lessons = VisitJournal::findAll([
 				"condition" => "lesson_date='$date' and (type_entity='TEACHER' or " . VisitJournal::PLANNED_CONDITION . ")",
-				"order" => "CONCAT(lesson_date, ' ', lesson_time) asc"
 			]);
 
 			foreach ($Lessons as &$Lesson) {
@@ -505,7 +504,7 @@
                 if ($b->lesson_time == $a->lesson_time)
                     return $a->cabinet['number'] - $b->cabinet['number'];
                 else
-                    return $b->time - $a->time;
+                    return $b->lesson_time - $a->lesson_time;
             });
 
 			returnJsonAng($Lessons);
