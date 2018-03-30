@@ -121,7 +121,7 @@
 								}"></ng-pluralize>
 							</td>
 							<td width="33%">
-								<a class="pointer" target="_blank" href="teachers/edit/{{ _Teacher.id }}">
+								<a class="pointer" target="_blank" href="teachers/edit/{{ Lesson.Teacher.id }}">
 									{{ Lesson.Teacher.last_name }} {{ Lesson.Teacher.first_name }} {{ Lesson.Teacher.middle_name }}</a>
 								<i class="fa fa-phone-square opacity-pointer text-danger" aria-hidden="true" style="margin-left: 3px; font-size: 16px"
 									ng-click="PhoneService.call(Lesson.Teacher.phone)"></i>

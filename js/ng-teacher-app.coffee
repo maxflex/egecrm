@@ -66,6 +66,16 @@
 			$scope.setYear = (year) ->
 				$scope.selected_year = year
 
+			# дополнительные занятия
+			$scope.addAdditionalLessonDialog = ->
+				$scope.new_additional_lesson =
+					id_teacher: $scope.Teacher.id
+					year: getYear()
+					date: moment().format('DD.MM.YYYY')
+				lightBoxShow('additional-lesson')
+
+			# / дополнительные занятия
+
 			$scope.addAdditionalPaymentDialog = ->
 				$scope.new_additional_payment =
 					id_teacher: $scope.Teacher.id
