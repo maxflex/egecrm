@@ -14,12 +14,15 @@
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-9">
-					<div class="top-links">
+					<div class="top-links" style='white-space: nowrap'>
 						<span class="link-like" ng-click="setMenu(0)" ng-class="{'active': current_menu == 0}">
 					    	основные данные
 					    </span>
 					    <span class="link-like" ng-click="setMenu(1)" ng-class="{'active': current_menu == 1}">
 					    	платежи
+					    </span>
+						<span class="link-like" ng-click="setMenu(10)" ng-class="{'active': current_menu == 10}">
+					    	дополнительные услуги
 					    </span>
 						<span class="link-like" ng-click="setMenu(9)" ng-class="{'active': current_menu == 9}">
 					    	баланс счета
@@ -66,6 +69,7 @@
     <?= partial("photo") ?>
 	<?= partial("freetime") ?>
 	<?= partial("balance") ?>
+	<?= partial("additional_payments") ?>
 
     <?= partial("save_button", ["Request" => $Request]) ?>
 	<?= partial("bill_print") ?>

@@ -2005,15 +2005,17 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		// Удалить платеж
-		$scope.deletePayment = function(index, payment) {
-            if (payment.confirmed && $scope.user.rights.indexOf(11) === -1) {
-              return;
-            }
+		$scope.deletePayment = function() {
+        if ($scope.new_payment.confirmed && $scope.user.rights.indexOf(11) === -1) {
+          return;
+        }
     		bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
     			if (result === true) {
-    				$.post("ajax/deletePayment", {"id_payment": payment.id})
+    				$.post("ajax/deletePayment", {"id_payment": $scope.new_payment.id})
+						index = _.findIndex($scope.payments, {id: $scope.new_payment.id})
     				$scope.payments.splice(index, 1)
     				$scope.$apply()
+						lightBoxHide()
     			}
     		})
 		}
@@ -2222,8 +2224,75 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			} else {
 				clearInterval($scope.tests_interval)
 			}
+			if ($scope.StudentAdditionalPayments === undefined && menu == 10) {
+				$.post("requests/ajax/LoadAdditionalPayments", {id_student: $scope.id_student}, function(response) {
+					$scope.StudentAdditionalPayments = response
+					$scope.$apply()
+				}, "json")
+			}
 			$scope.current_menu = menu
 		}
+
+		// ADDITIONAL PAYMENTS
+		$scope.addAdditionalPaymentDialog = function() {
+			$scope.new_additional_payment = {
+				id_student: $scope.student.id,
+				year: getYear(),
+				date: moment().format('DD.MM.YYYY')
+			}
+			lightBoxShow('additional-payment')
+		}
+
+		$scope.addAdditionalPayment = function() {
+		  if ($scope.new_additional_payment.id) {
+		    ajaxStart();
+		    return $.post('ajax/PaymentAdditionalEdit', $scope.new_additional_payment, function(response) {
+		      angular.forEach($scope.StudentAdditionalPayments, function(payment, i) {
+		        if (payment.id === $scope.new_additional_payment.id) {
+		          $scope.StudentAdditionalPayments[i] = $scope.new_additional_payment;
+		          return $scope.$apply();
+		        }
+		      });
+		      ajaxEnd();
+		      return lightBoxHide();
+		    });
+		  } else {
+		    ajaxStart();
+		    return $.post('ajax/PaymentAdditionalAdd', $scope.new_additional_payment, function(response) {
+		      if (!$.isArray($scope.StudentAdditionalPayments)) {
+		        $scope.StudentAdditionalPayments = [];
+		      }
+		      $scope.StudentAdditionalPayments.push(response);
+		      $scope.$apply();
+		      ajaxEnd();
+		      return lightBoxHide();
+		    }, 'json');
+		  }
+		};
+
+		$scope.deletePaymentAdditional = function() {
+		  return bootbox.confirm('Вы уверены, что хотите удалить доп. услугу?', function(result) {
+		    if (result === true) {
+		      return $.post('ajax/deletePaymentAdditional', {
+		        'id_payment': $scope.new_additional_payment.id
+		      }, function() {
+		        $scope.StudentAdditionalPayments = _.without($scope.StudentAdditionalPayments, _.findWhere($scope.StudentAdditionalPayments, {
+		          id: $scope.new_additional_payment.id
+		        }));
+		        $timeout(function() {
+		          return $scope.$apply();
+		        });
+		        return lightBoxHide();
+		      });
+		    }
+		  });
+		};
+
+		$scope.editPaymentAdditional = function(payment) {
+			$scope.new_additional_payment = angular.copy(payment)
+			lightBoxShow('additional-payment')
+		}
+		// \ ADDITIONAL PAYMENTS
 
 		$(document).ready(function() {
 			switch(window.location.hash) {

@@ -175,7 +175,7 @@
 		</div>
 		<?= partial("day_and_time") ?>
 	</div>
-	<sms templates="short" mode="group" mass="1" group-id="Group.id"></sms>
+	<sms templates="group" mode="group" mass="1" group-id="Group.id"></sms>
 </div>
 
 <!-- ЛАЙТБОКС КАРТА -->

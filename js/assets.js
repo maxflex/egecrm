@@ -396,7 +396,7 @@ app.service('PhoneService', function($rootScope) {
     if (typeof number !== 'string') {
       number = '' + number;
     }
-    return location.href = "sip:" + number.replace(/[^0-9]/g, '');
+    return location.href = "tel:" + number.replace(/[^0-9]/g, '');
   };
   this.isMobile = function(number) {
     if (typeof number !== 'string') {

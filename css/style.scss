@@ -1738,7 +1738,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 .sms-template-list {
 	text-align: left;
 	margin-bottom: 10px;
-	& span > span {
+	& .template-link {
 		font-size: 12px;
 		color: $blue;
 		border-bottom: 1px dotted $blue;
@@ -3696,4 +3696,9 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 			margin-right: 40px;
 		}
 	}
+}
+
+.ajax-payment-delete {
+	width: 126px;
+	margin-right: 10px;
 }

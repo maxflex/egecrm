@@ -150,8 +150,9 @@
 
 		public function actionAjaxPaymentAdditionalAdd()
 		{
-			$id = TeacherAdditionalPayment::add($_POST)->id;
-			returnJson(TeacherAdditionalPayment::findById($id));
+			$class = (isset($_POST['id_teacher']) ? 'Teacher' : 'Student') . 'AdditionalPayment';
+			$id = $class::add($_POST)->id;
+			returnJson($class::findById($id));
 		}
 
 		public function actionAjaxConfirmPayment()
@@ -169,7 +170,8 @@
 
 		public function actionAjaxDeletePaymentAdditional()
 		{
-			TeacherAdditionalPayment::deleteById($_POST["id_payment"]);
+			$class = (isset($_POST['id_teacher']) ? 'Teacher' : 'Student') . 'AdditionalPayment';
+			$class::deleteById($_POST["id_payment"]);
 		}
 
 		public function actionAjaxPaymentEdit()
@@ -181,10 +183,9 @@
 		public function actionAjaxPaymentAdditionalEdit()
 		{
 			extract($_POST);
-			returnJson(TeacherAdditionalPayment::updateById($id, $_POST)->dbData());
+			$class = (isset($_POST['id_teacher']) ? 'Teacher' : 'Student') . 'AdditionalPayment';
+			returnJson($class::updateById($id, $_POST)->dbData());
 		}
-
-
 
 		public function actionAjaxContractSave()
 		{
@@ -483,6 +484,7 @@
             // @schedule-refactored
 			$Lessons = VisitJournal::findAll([
 				"condition" => "lesson_date='$date' and (type_entity='TEACHER' or " . VisitJournal::PLANNED_CONDITION . ")",
+				"order" => "CONCAT(lesson_date, ' ', lesson_time) asc"
 			]);
 
 			foreach ($Lessons as &$Lesson) {

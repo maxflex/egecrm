@@ -246,21 +246,26 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
       }, 'json');
     }
   };
-  $scope.deletePayment = function(index, payment) {
-    if (payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
+  $scope.deletePayment = function() {
+    if ($scope.new_payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
       return;
     }
     return bootbox.confirm("Вы уверены, что хотите удалить платеж?", function(result) {
       if (result === true) {
         ajaxStart();
         return $.post("ajax/deletePayment", {
-          id_payment: payment.id
+          id_payment: $scope.new_payment.id
         }, function() {
+          var index;
           ajaxEnd();
+          index = _.findIndex($scope.payments, {
+            id: $scope.new_payment.id
+          });
           $scope.payments.splice(index, 1);
-          return $timeout(function() {
+          $timeout(function() {
             return $scope.$apply();
           });
+          return lightBoxHide();
         });
       }
     });

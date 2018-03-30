@@ -5,7 +5,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
                 items.slice().reverse()
     .controller "LkTeacherCtrl", ($scope, $http) ->
         $scope.reverseObjKeys = (obj) -> Object.keys(obj).reverse()
-        
+
         $scope.yearLabel = (year) ->
             year + '-' + (parseInt(year) + 1) + ' уч. г.'
 
@@ -236,17 +236,19 @@ app = angular.module "Payments", ["ui.bootstrap"]
                 , 'json'
 
         # Удалить платеж
-        $scope.deletePayment = (index, payment) ->
-            return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
+        $scope.deletePayment = ->
+            return if $scope.new_payment.confirmed and $scope.user_rights.indexOf(11) is -1
             bootbox.confirm "Вы уверены, что хотите удалить платеж?", (result) ->
                 if result is true
                     ajaxStart()
                     $.post "ajax/deletePayment",
-                        id_payment: payment.id
+                        id_payment: $scope.new_payment.id
                     , ->
                         ajaxEnd()
-                        $scope.payments.splice index, 1
+                        index = _.findIndex($scope.payments, {id: $scope.new_payment.id})
+                        $scope.payments.splice(index, 1)
                         $timeout -> $scope.$apply()
+                        lightBoxHide()
 
         $scope.$watch 'new_payment.id_status', (newVal, oldVal) -> loadMutualAccounts(newVal)
 

@@ -67,6 +67,7 @@
 			</div>
 		</div>
 		<center>
+			<button ng-show="new_payment.id" class="btn btn-primary btn-danger ajax-payment-delete" ng-click="deletePayment()">Удалить</button>
 			<button class="btn btn-primary ajax-payment-button" ng-click="addPayment()">{{new_payment.id ? "Редактировать" : "Добавить"}}</button>
 		</center>
 	</div>

@@ -445,43 +445,45 @@ app = angular.module("Teacher", ["ngMap"]).config([
       }, 'json');
     }
   };
-  deletePayment = function(payment) {
+  deletePayment = function() {
     return bootbox.confirm('Вы уверены, что хотите удалить платеж?', function(result) {
       if (result === true) {
         return $.post('ajax/deletePayment', {
-          'id_payment': payment.id
+          'id_payment': $scope.new_payment.id
         }, function() {
           $scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {
-            id: payment.id
+            id: $scope.new_payment.id
           }));
           if ($scope.tobe_paid) {
-            $scope.tobe_paid += parseInt(payment.sum);
+            $scope.tobe_paid += parseInt($scope.new_payment.sum);
           }
-          return $timeout(function() {
+          $timeout(function() {
             return $scope.$apply();
           });
+          return lightBoxHide();
         });
       }
     });
   };
-  $scope.deletePayment = function(index, payment) {
-    if (payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
+  $scope.deletePayment = function() {
+    if ($scope.new_payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
       return;
     }
-    return deletePayment(payment);
+    return deletePayment();
   };
-  $scope.deletePaymentAdditional = function(index, payment) {
+  $scope.deletePaymentAdditional = function() {
     return bootbox.confirm('Вы уверены, что хотите удалить доп. услугу?', function(result) {
       if (result === true) {
         return $.post('ajax/deletePaymentAdditional', {
-          'id_payment': payment.id
+          'id_payment': $scope.new_additional_payment.id
         }, function() {
           $scope.TeacherAdditionalPayments = _.without($scope.TeacherAdditionalPayments, _.findWhere($scope.TeacherAdditionalPayments, {
-            id: payment.id
+            id: $scope.new_additional_payment.id
           }));
-          return $timeout(function() {
+          $timeout(function() {
             return $scope.$apply();
           });
+          return lightBoxHide();
         });
       }
     });

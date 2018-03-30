@@ -443,6 +443,12 @@
 			]);
 		}
 
+		public function actionAjaxLoadAdditionalPayments()
+		{
+			extract($_POST);
+			returnJsonAng(StudentAdditionalPayment::get($id_student));
+		}
+
 		public function actionAjaxLoadLessons()
 		{
 			extract($_POST);

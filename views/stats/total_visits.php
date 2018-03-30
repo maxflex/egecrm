@@ -75,7 +75,8 @@
 					{{formatDate(stat.date)}} <span ng-show='isToday(stat.date)'>(сегодня)</span>
 				</td>
 				<td>
-					{{stat.lesson_count ? stat.lesson_count : ''}}<span ng-show="missing[stat.date] > 0" class="text-danger">{{stat.lesson_count ? '+' : ''}}{{ missing[stat.date] }}</span><span ng-show="stat.planned_lesson_count" class="text-gray">{{ stat.lesson_count ? '+' : ''}}{{ stat.planned_lesson_count }}</span>
+					{{stat.lesson_count ? stat.lesson_count : ''}}
+					<span ng-show="stat.planned_lesson_count" class="text-gray">{{ stat.lesson_count ? '+' : ''}}{{ stat.planned_lesson_count }}</span>
 				</td>
 				<td>
 					{{stat.in_time || ''}}

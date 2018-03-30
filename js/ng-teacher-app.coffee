@@ -382,26 +382,28 @@
 			    , 'json'
 			  return
 
-			deletePayment = (payment) ->
+			deletePayment = ->
 				bootbox.confirm 'Вы уверены, что хотите удалить платеж?', (result) ->
 					if result is true
-						$.post 'ajax/deletePayment', 'id_payment': payment.id, ->
-							$scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: payment.id}))
-							$scope.tobe_paid += parseInt(payment.sum) if $scope.tobe_paid
+						$.post 'ajax/deletePayment', 'id_payment': $scope.new_payment.id, ->
+							$scope.payments = _.without($scope.payments, _.findWhere($scope.payments, {id: $scope.new_payment.id}))
+							$scope.tobe_paid += parseInt($scope.new_payment.sum) if $scope.tobe_paid
 							$timeout -> $scope.$apply()
+							lightBoxHide()
 
             # Удалить платеж
-			$scope.deletePayment = (index, payment) ->
-                return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
-                deletePayment payment
+			$scope.deletePayment = ->
+                return if $scope.new_payment.confirmed and $scope.user_rights.indexOf(11) is -1
+                deletePayment()
 
             # Удалить платеж
-			$scope.deletePaymentAdditional = (index, payment) ->
+			$scope.deletePaymentAdditional = ->
 				bootbox.confirm 'Вы уверены, что хотите удалить доп. услугу?', (result) ->
 					if result is true
-						$.post 'ajax/deletePaymentAdditional', 'id_payment': payment.id, ->
-							$scope.TeacherAdditionalPayments = _.without($scope.TeacherAdditionalPayments, _.findWhere($scope.TeacherAdditionalPayments, {id: payment.id}))
+						$.post 'ajax/deletePaymentAdditional', 'id_payment': $scope.new_additional_payment.id, ->
+							$scope.TeacherAdditionalPayments = _.without($scope.TeacherAdditionalPayments, _.findWhere($scope.TeacherAdditionalPayments, {id: $scope.new_additional_payment.id}))
 							$timeout -> $scope.$apply()
+							lightBoxHide()
 
 			$scope.formatDateMonthName = (date, full_year) ->
 				moment(date).format "D MMMM YY" + (if full_year then 'YY' else '')

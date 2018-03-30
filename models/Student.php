@@ -1061,16 +1061,16 @@
 			}
 
 			/* доп услуги */
-			// $additional_payments = TeacherAdditionalPayment::get($id_teacher);
-			//
-			// foreach($additional_payments as $payment) {
-			// 	$items[$payment->year][fromDotDate($payment->date)][] = [
-			// 		'sum' 		  => $payment->sum,
-			// 		'comment' 	  => $payment->purpose,
-			// 		'credentials' => $payment->user_login . ' ' . dateFormat($payment->created_at),
-			// 		'date' 		  => $payment->created_at,
-			// 	];
-			// }
+			$additional_payments = StudentAdditionalPayment::get($id_student);
+
+			foreach($additional_payments as $payment) {
+				$items[$payment->year][fromDotDate($payment->date)][] = [
+					'sum' 		  => intval($payment->sum) * -1,
+					'comment' 	  => $payment->purpose,
+					'credentials' => $payment->user_login . ' ' . dateFormat($payment->created_at),
+					'date' 		  => $payment->created_at,
+				];
+			}
 
 			ksort($items);
             $items = array_reverse($items, true);

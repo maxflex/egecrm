@@ -35,16 +35,22 @@
 
             <div class="sms-template-list">
                 <span ng-show="templates">
-                    <span ng-click="setTemplate(1)">подтверждение договоренности</span>
-                    <span ng-click="setTemplate(2)">нет связи с клиентом</span>
-                    <span ng-click="setTemplate(3)">нет связи с ожидающими и не решившими</span>
-                    <span ng-click="setTemplate(14)">ЕЦ-Аннино</span>
-                    <span ng-click="setTemplate(15)">ЕЦ-Вернадского</span>
-                    <span ng-click="setTemplate(16)">ЕЦ-Сокол</span>
-                    <span ng-click="setTemplate(17)">ЕЦ-Строгино</span>
-                    <span class="fake" ng-show="templates == 'full'">
-                        <span ng-click="setTemplate(13)">новый тест</span>
-                        <span ng-click="setTemplate(18)">оплата 2 семестра</span>
+                    <span ng-hide="templates == 'group'">
+                      <span class="template-link" ng-click="setTemplate(1)">подтверждение договоренности</span>
+                      <span class="template-link" ng-click="setTemplate(2)">нет связи с клиентом</span>
+                      <span class="template-link" ng-click="setTemplate(3)">нет связи с ожидающими и не решившими</span>
+                      <span class="template-link" ng-click="setTemplate(14)">ЕЦ-Аннино</span>
+                      <span class="template-link" ng-click="setTemplate(15)">ЕЦ-Вернадского</span>
+                      <span class="template-link" ng-click="setTemplate(16)">ЕЦ-Сокол</span>
+                      <span class="template-link" ng-click="setTemplate(17)">ЕЦ-Строгино</span>
+                      <span class="fake" ng-show="templates == 'full'">
+                          <span class="template-link" ng-click="setTemplate(13)">новый тест</span>
+                          <span class="template-link" ng-click="setTemplate(18)">оплата 2 семестра</span>
+                      </span>
+                    </span>
+                    <span ng-show="templates == 'group'">
+                      <span class="template-link" ng-click="setTemplate(12)">отмененное занятие</span>
+                      <span class="template-link" ng-click="setTemplate(10)">внеплановое занятие</span>
                     </span>
                 </span>
 
