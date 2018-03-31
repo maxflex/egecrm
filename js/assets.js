@@ -393,10 +393,12 @@ app.service('GroupService', function() {
 app.service('PhoneService', function($rootScope) {
   this.fields = ['phone', 'phone2', 'phone3'];
   this.call = function(number) {
+    var protocol;
     if (typeof number !== 'string') {
       number = '' + number;
     }
-    return location.href = "sip:" + number.replace(/[^0-9]/g, '');
+    protocol = typeof window.orientation !== 'undefined' ? 'tel' : 'sip';
+    return location.href = (protocol + ":") + number.replace(/[^0-9]/g, '');
   };
   this.isMobile = function(number) {
     if (typeof number !== 'string') {
