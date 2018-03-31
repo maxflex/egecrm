@@ -8,12 +8,6 @@
 			<div class="row">
 				<div class="col-sm-9">
 					<table class="table table-hover">
-						<thead>
-							<td colspan="2"></td>
-							<td>
-								<span class="quater-black" style="font-weight: normal">опоздание</span>
-							</td>
-						</thead>
 						<tbody>
 							<tr ng-repeat="Student in Students">
 								<td width="300">
@@ -21,15 +15,8 @@
 										<span class="circle-default"></span>
 									</div>
 									{{Student.last_name}} {{Student.first_name}}</td>
-								<td width="150">
-									<span>{{LessonData[Student.id].presence ? lesson_statuses[LessonData[Student.id].presence] : 'не указано'}}</span>
-								</td>
-								<td width="150">
-									<span ng-show="LessonData[Student.id].late">{{LessonData[Student.id].late}} <ng-pluralize count="LessonData[Student.id].late" when="{
-										'one': 'минута',
-										'few': 'минуты',
-										'many': 'минут',
-									}"></ng-pluralize></span>
+								<td width="300">
+									{{ getPresenceStatus(LessonData[Student.id]) }}
 								</td>
 								<td width="300">
 									<span>{{LessonData[Student.id].comment}}</span>
@@ -40,7 +27,7 @@
 							</tr>
 							<tr ng-repeat="Student in left_students">
 								<td width="300" class="text-gray">{{Student.last_name}} {{Student.first_name}}</td>
-								<td colspan='4' class="text-gray" >
+								<td colspan='3' class="text-gray" >
 									{{ Student.status ? 'перешел в другую группу' : 'прекратил обучение по предмету'}}
 								</td>
 							</tr>

@@ -3511,19 +3511,23 @@ div[name='calendarMonthView'] {
 mwl-calendar .event {
     border: none;
     box-shadow: none !important;
+		height: 10px !important;
+		width: 10px !important;
 }
 
 mwl-calendar .cal-year-box [class*="span"], mwl-calendar .cal-month-box [class*="cal-cell"] {
     min-height: 0 !important;
-    height: 37px !important;
+    height: 44px !important;
 }
 
 mwl-calendar .cal-month-day {
-    height: 37px !important;
+    height: 44px !important;
 }
 
 mwl-calendar .events-list {
-    padding-bottom: 1px;
+	top: 18px !important;
+	left: 27px !important;
+	padding: 0 !important;
 }
 
 .exam-days-wrapper {
@@ -3544,9 +3548,10 @@ mwl-calendar .events-list {
 }
 
 mwl-calendar span[data-cal-date] {
-    font-size: 14px;
-    margin-top: 0;
-    margin-right: 4px;
+    font-size: 14px !important;
+		float: left !important;
+		margin-left: 7px;
+    margin-top: 13px;
 }
 
 .calendar-block {

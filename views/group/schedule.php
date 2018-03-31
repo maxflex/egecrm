@@ -2,14 +2,6 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		Расписание группы <a href="groups/edit/<?= $Group->id ?>">№<?= $Group->id ?></a>
-
-			<span ng-show="Group.lesson_count.conducted" style="margin-bottom: 20px">
-				({{Group.lesson_count.all}}
-				<ng-pluralize count="Group.lesson_count.all" when="{'one': 'занятие','few': 'занятия','many': 'занятий'}"></ng-pluralize>, прошло {{ Group.lesson_count.conducted }} <ng-pluralize count="Group.lesson_count.conducted" when="{
-					'one': 'занятие',
-					'few': 'занятия',
-					'many': 'занятий'
-				}"></ng-pluralize>)</span>
 	</div>
 	<div class="panel-body" style="position: relative">
 		<div class="row">

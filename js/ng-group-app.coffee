@@ -46,6 +46,15 @@
 		    D = new Date(date)
 		    moment(D).format "D MMMM YYYY г."
 
+
+		  $scope.getPresenceStatus = (Lesson) ->
+		    return 'не указано' if not Lesson
+		    if parseInt(Lesson.presence) is 1
+		      console.log('hia')
+		      return if not Lesson.late then 'был' else "опоздал на #{Lesson.late} минут"
+		    else
+		      return "не был"
+
 		  $scope.timeUntilSave = ->
 		    date_now = new Date()
 		    date_lesson = new Date($scope.Lesson.date_time + ":00")

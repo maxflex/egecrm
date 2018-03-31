@@ -75,6 +75,21 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     D = new Date(date);
     return moment(D).format("D MMMM YYYY г.");
   };
+  $scope.getPresenceStatus = function(Lesson) {
+    if (!Lesson) {
+      return 'не указано';
+    }
+    if (parseInt(Lesson.presence) === 1) {
+      console.log('hia');
+      if (!Lesson.late) {
+        return 'был';
+      } else {
+        return "опоздал на " + Lesson.late + " минут";
+      }
+    } else {
+      return "не был";
+    }
+  };
   $scope.timeUntilSave = function() {
     var data, date_lesson, date_now, diff;
     date_now = new Date();

@@ -1,5 +1,4 @@
 <?php if (! isset($active)) :?>
-<div class="div-blocker"></div>
 <?php endif ?>
 <span ng-init="_year = Group ? Group.year : current_year"></span>
 <div class='ng-hide' ng-repeat="month in months" ng-show='calendarLoaded && displayMonth[month]'>

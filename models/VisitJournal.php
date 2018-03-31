@@ -123,11 +123,11 @@
 					"duration"				=> $Group->duration,
 					"year"					=> static::_academicYear($Lesson->lesson_date),
 					"price"					=> $price,
-					"entry_id"				=> $Lesson->id,
+					"entry_id"				=> $id_lesson,
 				]);
 			}
 			// @time-refactored @time-checked
-			self::updateById($Lesson->id, [
+			self::updateById($id_lesson, [
 				"id_entity" 			=> $Group->id_teacher,
 				"type_entity"			=> Teacher::USER_TYPE,
 				"id_subject"			=> $Group->id_subject,
@@ -137,7 +137,7 @@
 				"grade"					=> $Group->grade,
 				"duration"				=> $Group->duration,
 				"year"					=> static::_academicYear($Lesson->lesson_date),
-				"entry_id"				=> $Lesson->id,
+				"entry_id"				=> $id_lesson,
 				"id_teacher"			=> $Group->id_teacher,
 			]);
 		}
