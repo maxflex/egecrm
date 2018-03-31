@@ -58,6 +58,10 @@ RewriteRule ^groups/add[/]?$ index.php?controller=group&action=add [QSA,L]
 RewriteRule ^groups/ajax/([a-zA-Z]+)[/]?$ index.php?controller=group&action=Ajax$1 [QSA,L]
 RewriteRule ^(students/|teachers/)?groups[?page=(0-9)]?[/]?$ index.php?controller=group&action=list&page=$1 [QSA,L]
 
+RewriteRule ^students/schedule?[/]?$ index.php?controller=group&action=studentSchedule [QSA,L]
+
+
+
 # Настройки
 RewriteRule ^settings/([a-zA-Z]+)[/]?$ index.php?controller=settings&action=$1 [QSA,L]
 RewriteRule ^settings/([a-zA-Z]+)/([0-9]+)[/]?$ index.php?controller=settings&action=$1&id=$2 [QSA,L]

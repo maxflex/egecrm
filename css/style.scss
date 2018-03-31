@@ -3699,9 +3699,10 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 .visits-block {
 	margin-bottom: 30px;
 	&__elem {
-		display: flex;
+		// display: flex;
 		&--planned {
-			color: $placeholder_gray;
+			// color: $placeholder_gray;
+			opacity: .5;
 		}
 		& > div {
 			margin-right: 40px;

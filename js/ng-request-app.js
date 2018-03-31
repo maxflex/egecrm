@@ -2181,7 +2181,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.Lessons === undefined && menu == 2) {
 				$.post("requests/ajax/LoadLessons", {id_student: $scope.id_student}, function(response) {
-					['Subjects', 'Lessons', 'lesson_statuses', 'lesson_years', 'selected_lesson_year'].forEach(function(field) {
+					['Subjects', 'Lessons', 'lesson_statuses', 'lesson_years', 'selected_lesson_year', 'all_cabinets'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()
@@ -2269,6 +2269,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		    }, 'json');
 		  }
 		};
+
+		$scope.getCabinet = function(id) {
+			return _.findWhere($scope.all_cabinets, {id: parseInt(id)})
+		}
 
 		$scope.deletePaymentAdditional = function() {
 		  return bootbox.confirm('Вы уверены, что хотите удалить доп. услугу?', function(result) {

@@ -112,6 +112,46 @@
             }
 		}
 
+		public function actionStudentSchedule()
+		{
+			$this->setRights([Student::USER_TYPE]);
+
+			$this->setTabTitle("Расписание на год");
+
+			$group_ids = Student::groups(User::fromSession()->id_entity, 'getIds');
+
+			$Lessons = [];
+			foreach($group_ids as $group_id) {
+				$Lessons[$group_id] = VisitJournal::getStudentGroupLessons($group_id, User::fromSession()->id_entity);
+			}
+
+			$years = [];
+			foreach($Lessons as $group_id => $GroupLessons) {
+				foreach($GroupLessons as $Lesson) {
+					$Lesson->Teacher = Teacher::getLight($Lesson->id_teacher);
+					if (! in_array($Lesson->year, $years)) {
+						$years[] = $Lesson->year;
+					}
+				}
+			}
+
+			sort($years);
+
+			$ang_init_data = angInit([
+				"Subjects"	=> Subjects::$three_letters,
+				"Lessons"	=> $Lessons,
+				"lesson_statuses" => VisitJournal::$statuses,
+				"all_cabinets" =>  Branches::allCabinets(),
+				"lesson_years" => $years,
+				"selected_lesson_year" => end($years)
+			]);
+
+
+			$this->render("year_schedule", [
+				"ang_init_data" => $ang_init_data,
+			]);
+		}
+
 		public function actionLesson()
 		{
 			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);

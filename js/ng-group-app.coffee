@@ -26,6 +26,17 @@
 					input.push i
 				input
 
+		.controller "YearCtrl", ($scope, $timeout) ->
+			$scope.getCabinet = (id) ->
+				_.findWhere($scope.all_cabinets, {id: parseInt(id)})
+
+			$scope.setLessonsYear = (year) -> $scope.selected_lesson_year = year
+
+			$scope.yearLabel = (year) -> year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
+			angular.element(document).ready ->
+				set_scope 'Group'
+
 		.controller "JournalCtrl", ($scope) ->
 			$scope.grayMonth = (date) ->
 				d = moment(date).format("M")

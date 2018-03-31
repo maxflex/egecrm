@@ -46,6 +46,21 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     }
     return input;
   };
+}).controller("YearCtrl", function($scope, $timeout) {
+  $scope.getCabinet = function(id) {
+    return _.findWhere($scope.all_cabinets, {
+      id: parseInt(id)
+    });
+  };
+  $scope.setLessonsYear = function(year) {
+    return $scope.selected_lesson_year = year;
+  };
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
+  return angular.element(document).ready(function() {
+    return set_scope('Group');
+  });
 }).controller("JournalCtrl", function($scope) {
   $scope.grayMonth = function(date) {
     var d;
