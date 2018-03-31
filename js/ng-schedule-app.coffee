@@ -94,10 +94,11 @@ app = angular.module "Schedule", ['mwl.calendar']
         $scope.getCabinet = (id) ->
             _.findWhere($scope.all_cabinets, {id: parseInt(id)})
 
-        $scope.deleteLesson = (lesson) ->
+        $scope.deleteLesson = ->
             ajaxStart()
-            $.post "groups/ajax/DeleteLesson", {id: lesson.id}, (response) ->
-                index = _.findIndex($scope.Lessons, {id: lesson.id})
+            $('#schedule-modal').modal('hide')
+            $.post "groups/ajax/DeleteLesson", {id: $scope.modal_lesson.id}, (response) ->
+                index = _.findIndex($scope.Lessons, {id: $scope.modal_lesson.id})
                 $scope.Lessons.splice(index, 1)
                 $scope.$apply()
                 ajaxEnd()

@@ -129,14 +129,15 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
       id: parseInt(id)
     });
   };
-  $scope.deleteLesson = function(lesson) {
+  $scope.deleteLesson = function() {
     ajaxStart();
+    $('#schedule-modal').modal('hide');
     return $.post("groups/ajax/DeleteLesson", {
-      id: lesson.id
+      id: $scope.modal_lesson.id
     }, function(response) {
       var index;
       index = _.findIndex($scope.Lessons, {
-        id: lesson.id
+        id: $scope.modal_lesson.id
       });
       $scope.Lessons.splice(index, 1);
       $scope.$apply();

@@ -43,14 +43,10 @@
 						<td>
 							{{ getCabinet(Lesson.cabinet).label }}
 						</td>
-						<td>
-							<span ng-show='Lesson.is_free'>бесплатное</span>
-						</td>
 						<td style='text-align: right'>
                             <?php if (allowed(Shared\Rights::EDIT_GROUP_SCHEDULE)) :?>
                             <span ng-show="Lesson.is_planned">
                                 <span class='link-like link-offset-right' ng-click='lessonModal(Lesson)'>редактировать</span>
-                                <span class='link-like red' ng-click='deleteLesson(Lesson)'>удалить</span>
                             </span>
                             <?php endif ?>
                         </td>
@@ -92,18 +88,20 @@
               </select>
           </div>
           <div class="form-group">
-              <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="modal_lesson.is_free">
-              бесплатное занятие
-          </div>
-          <div class="form-group">
               <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="modal_lesson.cancelled">
               отмененное занятие
           </div>
       </div>
       <div class="modal-footer center">
-        <button type="button" class="btn btn-primary" ng-click="saveLesson()"
-            ng-disabled="!modal_lesson.lesson_date || !modal_lesson.lesson_time || !modal_lesson.cabinet">
-            {{ modal_lesson.id ? 'редактировать' : 'добавить' }}</button>
+		 <div style='margin-bottom: 10px'>
+			 <button type="button" class="btn btn-primary full-width" ng-click="saveLesson()"
+				 ng-disabled="!modal_lesson.lesson_date || !modal_lesson.lesson_time || !modal_lesson.cabinet">
+				 {{ modal_lesson.id ? 'редактировать' : 'добавить' }}</button>
+		 </div>
+
+		<button type="button" class="btn btn-danger full-width" ng-click="deleteLesson()">
+            удалить
+		</button>
       </div>
     </div>
   </div>

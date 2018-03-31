@@ -99,15 +99,10 @@
 					}
 				}
 
-				// если занятие бесплатное
-				if ($Lesson->is_free) {
-					$price = 0;
-				} else {
-					$last_student_contract = $Student->getLastContract($Group->year);
-					$price = $prices[$last_student_contract->info->grade];
-					if ($last_student_contract->discount) {
-						$price = round($price - ($price * ($last_student_contract->discount / 100)));
-					}
+				$last_student_contract = $Student->getLastContract($Group->year);
+				$price = $prices[$last_student_contract->info->grade];
+				if ($last_student_contract->discount) {
+					$price = round($price - ($price * ($last_student_contract->discount / 100)));
 				}
 
 				self::add([

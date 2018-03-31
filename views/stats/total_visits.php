@@ -143,7 +143,6 @@
 							<td width="6.5%">
 								<span class="day-explain exam-day-subject" ng-show="Lesson.is_unplanned" title="внеплановое"></span>
 								<span class="day-explain exam-day" ng-show="Lesson.number == 1 && !Lesson.cancelled" title="старт группы"></span>
-								<span class="day-explain cancelled" ng-show="Lesson.is_free" title="бесплатное"></span>
 								<span class="day-explain vocation" ng-show="Lesson.not_registered" title="не зарегистрирован"></span>
 							</td>
 						</tr>
