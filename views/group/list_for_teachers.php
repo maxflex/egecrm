@@ -62,4 +62,42 @@
 			<div ng-show="Groups.length == 0" class="center half-black small" style="margin-bottom: 30px">список групп пуст</div>
 		</div>
 	</div>
+
+	<div class="row" style="position: relative" ng-if="AdditionalLessons.length">
+		<div class="col-sm-12">
+			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;width: 100%">
+				<tr class="no-hover">
+					<td colspan="8" class="no-border-bottom">
+						<h4 class="row-header default-case no-margin">Дополнительные занятия</h4>
+					</td>
+				</tr>
+				<tr ng-repeat="Lesson in AdditionalLessons">
+					<td width='100'>
+						{{ Lesson.lesson_date_formatted }}
+					</td>
+					<td width='100'>
+						{{ Lesson.lesson_time }}
+					</td>
+					<td width='100'>
+						{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade_short : ''}}
+					</td>
+					<td width='100'>
+						<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>
+					</td>
+					<td>
+						{{ Lesson.students.length }} <ng-pluralize count="Lesson.students.length" when="{
+							'one': 'ученик',
+							'few': 'ученика',
+							'many': 'учеников'
+						}"></ng-pluralize>
+					</td>
+					<td style='text-align: right'>
+						<span ng-show="Lesson.is_conducted">урок проведен</span>
+						<span ng-show="Lesson.cancelled">урок отменен</span>
+						<a href='teachers/lesson/{{ Lesson.id }}' ng-show='Lesson.is_planned && !Lesson.cancelled'>зарегистрировать урок</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
 </div>

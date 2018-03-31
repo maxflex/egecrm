@@ -322,7 +322,7 @@
 					. ($search->cabinet ? " AND (gt.id_cabinet = {$search->cabinet})" : "")
 				. ')' : '' )
 				. ((! isBlank($search->id_branch)) ? " JOIN cabinets c ON (c.id = gt.id_cabinet AND c.id_branch={$search->id_branch})" : '')
-				. " WHERE true "
+				. " WHERE is_unplanned=0 "
 				. (! isBlank($search->contract_signed) ? " AND g.contract_signed={$search->contract_signed}" : "")
 				. (! isBlank($search->year) ? " AND g.year={$search->year}" : "")
 				. (! isBlank($search->id_teacher) ? " AND g.id_teacher={$search->id_teacher}" : "")

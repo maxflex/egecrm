@@ -294,7 +294,7 @@
 			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
 
 			return Group::findAll([
-				"condition" => "id_teacher=$id_teacher" . ($only_ended ? " AND ended=0" : ""),
+				"condition" => "id_teacher=$id_teacher AND is_unplanned=0" . ($only_ended ? " AND ended=0" : ""),
 			], true);
 		}
 
@@ -304,7 +304,7 @@
 
 			// @refactored
 			return Group::count([
-				"condition" => "id_teacher=$id_teacher AND ended = 0"
+				"condition" => "id_teacher=$id_teacher AND ended = 0 AND is_unplanned=0"
 			]);
 		}
 

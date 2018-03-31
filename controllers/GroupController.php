@@ -225,6 +225,8 @@
 					"Grades"		=> Grades::$all,
 					"GroupLevels"	=> GroupLevels::$short,
 					"Branches"		=> Branches::getAll(),
+					"all_cabinets"	=> Branches::allCabinets(), // @to show past lesson cabinet number
+					"AdditionalLessons" => AdditionalLesson::getByEntity(Teacher::USER_TYPE, User::fromSession()->id_entity)
 				]);
 
 				$this->render("list_for_teachers", [
@@ -243,6 +245,8 @@
 					"Grades"		=> Grades::$all,
 					"GroupLevels"	=> GroupLevels::$short,
 					"Branches"		=> Branches::getAll(),
+					"all_cabinets"	=> Branches::allCabinets(), // @to show past lesson cabinet number
+					"AdditionalLessons" => AdditionalLesson::getByEntity(Student::USER_TYPE, User::fromSession()->id_entity)
 				]);
 
 				$this->render("list_for_students", [

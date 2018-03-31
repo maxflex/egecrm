@@ -286,7 +286,12 @@
 					returnJsonAng($Bars);
 				}
 				case 7: {
-					returnJsonAng(TeacherAdditionalPayment::get($id_teacher));
+					returnJsonAng([
+						'TeacherAdditionalPayments' => TeacherAdditionalPayment::get($id_teacher),
+						"all_cabinets" => Branches::allCabinets(),
+						"Students" => Student::getAllList(),
+						"AdditionalLessons" => AdditionalLesson::getByEntity(Teacher::USER_TYPE, $id_teacher)
+					]);
 				}
 			}
 		}

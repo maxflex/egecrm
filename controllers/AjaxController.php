@@ -621,10 +621,27 @@
 			returnJsonAng($response);
 		}
 
-		public function actionAjaxDeleteVacation()
+		public function actionAjaxSaveAdditionalLesson()
 		{
 			extract($_POST);
 
+            if (isset($id)) {
+                $response = AdditionalLesson::updateById(intval($id), $_POST);
+            } else {
+                $response = AdditionalLesson::add($_POST);
+            }
+			returnJsonAng($response);
+		}
+
+		public function actionAjaxDeleteAdditionalLesson()
+		{
+			extract($_POST);
+			AdditionalLesson::deleteById($id);
+		}
+
+		public function actionAjaxDeleteVacation()
+		{
+			extract($_POST);
 			Vacation::deleteById($id);
 		}
 	}

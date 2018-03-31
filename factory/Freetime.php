@@ -65,7 +65,7 @@
 					    $result = dbConnection()->query("
 							SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
 							LEFT JOIN groups g ON g.id = gt.id_group
-							WHERE FIND_IN_SET({$id_student}, g.students) AND g.ended = 0 AND g.is_dump = 0 AND gt.id_time=$id_time
+							WHERE FIND_IN_SET({$id_student}, g.students) AND g.ended = 0 AND g.is_dump = 0 AND g.is_unplanned = 0 AND gt.id_time=$id_time
 						")->fetch_object();
 	                    static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
 						$previous_result = $result;
@@ -94,7 +94,7 @@
 						$result = dbConnection()->query("
 							SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
 							LEFT JOIN groups g ON g.id = gt.id_group
-							WHERE g.id_teacher={$id_teacher} AND g.ended = 0 AND g.is_dump = 0 AND gt.id_time=$id_time
+							WHERE g.id_teacher={$id_teacher} AND g.ended = 0 AND g.is_dump = 0 AND g.is_unplanned = 0 AND gt.id_time=$id_time
 						")->fetch_object();
 						static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
 						$previous_result = $result;
@@ -127,7 +127,7 @@
 						$result = dbConnection()->query("
 							SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
 							LEFT JOIN groups g ON g.id = gt.id_group
-							WHERE gt.id_cabinet={$id_cabinet} AND g.ended = 0 AND g.is_dump = 0 AND gt.id_time=$id_time
+							WHERE gt.id_cabinet={$id_cabinet} AND g.ended = 0 AND g.is_dump = 0 AND g.is_unplanned = 0 AND gt.id_time=$id_time
 						")->fetch_object();
 						static::_brushBar($result, $previous_result, $bar, $day, $id_time, $Group->id);
 						$previous_result = $result;
@@ -153,7 +153,7 @@
 						$result = dbConnection()->query("
 							SELECT COUNT(*) AS cnt, g.id as id_group, gt.id_cabinet FROM group_time gt
 							LEFT JOIN groups g ON g.id = gt.id_group
-							WHERE g.id={$id_group} AND g.ended = 0 AND g.is_dump = 0 AND gt.id_time=$id_time
+							WHERE g.id={$id_group} AND g.ended = 0 AND g.is_dump = 0 AND g.is_unplanned = 0 AND gt.id_time=$id_time
 						")->fetch_object();
 						static::_brushBar($result, $previous_result, $bar, $day, $id_time, $id_group);
 						$previous_result = $result;

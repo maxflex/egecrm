@@ -103,7 +103,7 @@
 	    <span class="link-like" ng-click="setMenu(6)" ng-class="{'active': current_menu == 6}">
 	    	ГРАФИК
 	    </span>
-	    <span class="link-like" ng-click="setMenu(7)" ng-class="{'active': current_menu == 7}">
+	    <span class="link-like" ng-click="setMenu(7, true)" ng-class="{'active': current_menu == 7}">
 	    	ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ
 	    </span>
     </div>

@@ -1894,8 +1894,8 @@ h4.row-header {
 }
 
 .lightbox-additional-lesson {
-	width: 300px;
-	left: calc(50% - 150px);
+	width: 600px;
+	left: calc(50% - 300px);
 	top: 20%;
 }
 
@@ -3707,4 +3707,14 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 .ajax-payment-delete {
 	width: 126px;
 	margin-right: 10px;
+}
+
+.show-on-hover {
+	cursor: pointer;
+	opacity: 0;
+	transition: all linear .3s;
+	text-decoration: none !important;
+	&:hover {
+		opacity: 1;
+	}
 }

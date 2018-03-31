@@ -1253,7 +1253,23 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return frontendLoadingEnd();
   });
 }).controller("StudentListCtrl", function($scope, GroupService) {
-  return bindArguments($scope, arguments);
+  bindArguments($scope, arguments);
+  $scope.getCabinet = function(id) {
+    return _.findWhere($scope.all_cabinets, {
+      id: parseInt(id)
+    });
+  };
+  return angular.element(document).ready(function() {
+    return set_scope("Group");
+  });
 }).controller("TeacherListCtrl", function($scope, GroupService) {
-  return bindArguments($scope, arguments);
+  bindArguments($scope, arguments);
+  $scope.getCabinet = function(id) {
+    return _.findWhere($scope.all_cabinets, {
+      id: parseInt(id)
+    });
+  };
+  return angular.element(document).ready(function() {
+    return set_scope("Group");
+  });
 });

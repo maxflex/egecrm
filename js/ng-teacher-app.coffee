@@ -1,4 +1,4 @@
-	app = angular.module "Teacher", ["ngMap"]
+	app = angular.module "Teacher", ["ngMap", 'angucomplete-alt']
 		.config [
 		  '$compileProvider'
 		  ($compileProvider) ->
@@ -58,6 +58,22 @@
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
+			# AUTOCOMPLETE
+			$scope.studentSelected = (Student) ->
+				student_id = Student.originalObject.id
+				return if $scope.modal_additional_lesson.students.indexOf(student_id) isnt -1
+				$scope.modal_additional_lesson.students.push(student_id)
+				console.log('selected student', Student)
+
+			$scope.getStudentName = (id) ->
+				student = _.findWhere($scope.Students, {id: id})
+				fio = student.name.split(' ')
+				fio[0] + ' ' + fio[1]
+
+			$scope.deleteStudent = (index) -> $scope.modal_additional_lesson.students.splice(index, 1)
+
+			#######
+
 			$scope.reverseObjKeys = (obj) -> Object.keys(obj).reverse()
 
 			$scope.yearLabel = (year) ->
@@ -66,15 +82,57 @@
 			$scope.setYear = (year) ->
 				$scope.selected_year = year
 
+			#
 			# дополнительные занятия
-			$scope.addAdditionalLessonDialog = ->
-				$scope.new_additional_lesson =
-					id_teacher: $scope.Teacher.id
-					year: getYear()
-					date: moment().format('DD.MM.YYYY')
+			#
+
+			$scope.addAdditionalLessonDialog = (additional_lesson = null) ->
+				if additional_lesson is null
+					$scope.modal_additional_lesson =
+						students: []
+						id_teacher: $scope.Teacher.id
+						year: getYear()
+						lesson_date: moment().format('DD.MM.YYYY')
+				else
+	                $scope.modal_additional_lesson = _.clone(additional_lesson)
+	                $scope.modal_additional_lesson.lesson_date = moment($scope.modal_additional_lesson.lesson_date).format('DD.MM.YYYY')
 				lightBoxShow('additional-lesson')
 
+			$scope.saveAdditionalLesson = ->
+				lightBoxHide()
+				$scope.modal_additional_lesson.lesson_date = convertDate($scope.modal_additional_lesson.lesson_date)
+				if $scope.modal_additional_lesson.id
+					ajaxStart()
+					$.post 'ajax/SaveAdditionalLesson', $scope.modal_additional_lesson, (response) ->
+						index = _.findIndex($scope.AdditionalLessons, {id: $scope.modal_additional_lesson.id})
+						$scope.AdditionalLessons[index] = response
+						$scope.$apply()
+						ajaxEnd()
+					, 'json'
+				else
+					ajaxStart()
+					$.post 'ajax/SaveAdditionalLesson', $scope.modal_additional_lesson, (response) ->
+						$scope.AdditionalLessons.push(response)
+						$scope.$apply()
+						ajaxEnd()
+					, 'json'
+
+			$scope.deleteAdditionalLesson = ->
+				bootbox.confirm 'Вы уверены, что хотите удалить доп. занятие?', (result) ->
+					if result is true
+						$.post 'ajax/deleteAdditionalLesson', 'id': $scope.modal_additional_lesson.id, ->
+							$scope.AdditionalLessons = _.without($scope.AdditionalLessons, _.findWhere($scope.AdditionalLessons, {id: $scope.modal_additional_lesson.id}))
+							$timeout -> $scope.$apply()
+							lightBoxHide()
+
+			$scope.getCabinet = (id) ->
+	            _.findWhere($scope.all_cabinets, {id: parseInt(id)})
+
+
+
+			#
 			# / дополнительные занятия
+			#
 
 			$scope.addAdditionalPaymentDialog = ->
 				$scope.new_additional_payment =

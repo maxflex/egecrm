@@ -1,6 +1,6 @@
 var app;
 
-app = angular.module("Teacher", ["ngMap"]).config([
+app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
   '$compileProvider', function($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip):/);
   }
@@ -75,6 +75,26 @@ app = angular.module("Teacher", ["ngMap"]).config([
   var _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
+  $scope.studentSelected = function(Student) {
+    var student_id;
+    student_id = Student.originalObject.id;
+    if ($scope.modal_additional_lesson.students.indexOf(student_id) !== -1) {
+      return;
+    }
+    $scope.modal_additional_lesson.students.push(student_id);
+    return console.log('selected student', Student);
+  };
+  $scope.getStudentName = function(id) {
+    var fio, student;
+    student = _.findWhere($scope.Students, {
+      id: id
+    });
+    fio = student.name.split(' ');
+    return fio[0] + ' ' + fio[1];
+  };
+  $scope.deleteStudent = function(index) {
+    return $scope.modal_additional_lesson.students.splice(index, 1);
+  };
   $scope.reverseObjKeys = function(obj) {
     return Object.keys(obj).reverse();
   };
@@ -84,13 +104,67 @@ app = angular.module("Teacher", ["ngMap"]).config([
   $scope.setYear = function(year) {
     return $scope.selected_year = year;
   };
-  $scope.addAdditionalLessonDialog = function() {
-    $scope.new_additional_lesson = {
-      id_teacher: $scope.Teacher.id,
-      year: getYear(),
-      date: moment().format('DD.MM.YYYY')
-    };
+  $scope.addAdditionalLessonDialog = function(additional_lesson) {
+    if (additional_lesson == null) {
+      additional_lesson = null;
+    }
+    if (additional_lesson === null) {
+      $scope.modal_additional_lesson = {
+        students: [],
+        id_teacher: $scope.Teacher.id,
+        year: getYear(),
+        lesson_date: moment().format('DD.MM.YYYY')
+      };
+    } else {
+      $scope.modal_additional_lesson = _.clone(additional_lesson);
+      $scope.modal_additional_lesson.lesson_date = moment($scope.modal_additional_lesson.lesson_date).format('DD.MM.YYYY');
+    }
     return lightBoxShow('additional-lesson');
+  };
+  $scope.saveAdditionalLesson = function() {
+    lightBoxHide();
+    $scope.modal_additional_lesson.lesson_date = convertDate($scope.modal_additional_lesson.lesson_date);
+    if ($scope.modal_additional_lesson.id) {
+      ajaxStart();
+      return $.post('ajax/SaveAdditionalLesson', $scope.modal_additional_lesson, function(response) {
+        var index;
+        index = _.findIndex($scope.AdditionalLessons, {
+          id: $scope.modal_additional_lesson.id
+        });
+        $scope.AdditionalLessons[index] = response;
+        $scope.$apply();
+        return ajaxEnd();
+      }, 'json');
+    } else {
+      ajaxStart();
+      return $.post('ajax/SaveAdditionalLesson', $scope.modal_additional_lesson, function(response) {
+        $scope.AdditionalLessons.push(response);
+        $scope.$apply();
+        return ajaxEnd();
+      }, 'json');
+    }
+  };
+  $scope.deleteAdditionalLesson = function() {
+    return bootbox.confirm('Вы уверены, что хотите удалить доп. занятие?', function(result) {
+      if (result === true) {
+        return $.post('ajax/deleteAdditionalLesson', {
+          'id': $scope.modal_additional_lesson.id
+        }, function() {
+          $scope.AdditionalLessons = _.without($scope.AdditionalLessons, _.findWhere($scope.AdditionalLessons, {
+            id: $scope.modal_additional_lesson.id
+          }));
+          $timeout(function() {
+            return $scope.$apply();
+          });
+          return lightBoxHide();
+        });
+      }
+    });
+  };
+  $scope.getCabinet = function(id) {
+    return _.findWhere($scope.all_cabinets, {
+      id: parseInt(id)
+    });
   };
   $scope.addAdditionalPaymentDialog = function() {
     $scope.new_additional_payment = {

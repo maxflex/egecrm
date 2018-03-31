@@ -450,7 +450,7 @@
 		public static function groups($id_student, $func = 'findAll')
 		{
 			return Group::{$func}([
-				'condition' => "FIND_IN_SET({$id_student}, students)",
+				'condition' => "FIND_IN_SET({$id_student}, students) AND is_unplanned=0",
 			]);
 		}
 
@@ -459,7 +459,7 @@
 		{
 			// @refactored
 			return Group::count([
-				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0 AND is_dump=0"
+				"condition" => "CONCAT(',', CONCAT(students, ',')) LIKE '%,{$id_student},%' AND ended = 0 AND is_dump=0 AND is_unplanned=0"
 			]);
 		}
 
@@ -823,6 +823,7 @@
             $query = dbConnection()->query("
 				SELECT s.id, CONCAT_WS(' ', s.last_name, s.first_name, s.middle_name) as name
 				FROM students s
+				WHERE EXISTS(SELECT 1 FROM contract_info WHERE id_student=s.id)
 				ORDER BY name ASC
 			");
 

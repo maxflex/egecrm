@@ -1049,6 +1049,13 @@
 				frontendLoadingEnd()
 		.controller "StudentListCtrl", ($scope, GroupService) ->
 			bindArguments $scope, arguments
-
+			$scope.getCabinet = (id) ->
+	            _.findWhere($scope.all_cabinets, {id: parseInt(id)})
+			angular.element(document).ready ->
+				set_scope "Group"
 		.controller "TeacherListCtrl", ($scope, GroupService) ->
 			bindArguments $scope, arguments
+			$scope.getCabinet = (id) ->
+	            _.findWhere($scope.all_cabinets, {id: parseInt(id)})
+			angular.element(document).ready ->
+				set_scope "Group"
