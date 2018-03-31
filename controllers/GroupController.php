@@ -712,6 +712,9 @@
 			$col = 'A';
 
 			foreach ($Cabinets as $Cabinet) {
+				if ($Cabinet->isDeleted()) {
+					continue;
+				}
 				$cursor = 'A';
 				$row++;
 
