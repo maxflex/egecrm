@@ -335,6 +335,10 @@
 			$id_group = $_GET['id'];
 			$Group = Group::findById($id_group);
 
+			if ($Group->is_unplanned) {
+				$this->renderRestricted('Группа не найдена');
+			}
+
 			if (User::fromSession()->type == Student::USER_TYPE) {
                 // has-access-refactored
                 $this->hasAccess('groups', $id_group, 'students', true);
@@ -444,6 +448,10 @@
 			if (!$Group) {
 				$this->addJs("dnd");
 				$Group = Group::findById($_GET['id']);
+			}
+
+			if ($Group->is_unplanned) {
+				$this->renderRestricted('Группа не найдена');
 			}
 
 			$Group->bar = Freetime::getGroupBar($Group->id);

@@ -16,7 +16,7 @@
 				<div class="col-sm-9">
 					<div class="top-links" style='white-space: nowrap'>
 						<span class="link-like" ng-click="setMenu(0)" ng-class="{'active': current_menu == 0}">
-					    	основные данные
+					    	основное
 					    </span>
 					    <span class="link-like" ng-click="setMenu(1)" ng-class="{'active': current_menu == 1}">
 					    	платежи
@@ -42,9 +42,6 @@
 					    <span class="link-like" ng-click="setMenu(6)" ng-class="{'active': current_menu == 6}">
 					    	тесты
 					    </span>
-						<span class="link-like" ng-click="setMenu(7)" ng-class="{'active': current_menu == 7}">
-					    	фото ученика
-					    </span>
 						<span class="link-like" ng-click="setMenu(8)" ng-class="{'active': current_menu == 8}">
 					    	график
 					    </span>
@@ -66,7 +63,6 @@
     <?= partial("reports") ?>
     <?= partial("comments") ?>
     <?= partial("tests") ?>
-    <?= partial("photo") ?>
 	<?= partial("freetime") ?>
 	<?= partial("balance") ?>
 	<?= partial("additional_payments") ?>

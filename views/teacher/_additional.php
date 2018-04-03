@@ -1,7 +1,7 @@
 <div class="row" style="position: relative" ng-show="current_menu == 7">
 	<div class="col-sm-12">
-		<?= globalPartial('loading', ['model' => 'TeacherAdditionalPayments', 'message' => 'дополнительных услуг нет']) ?>
-		<h4 style='margin-bottom: 10px' ng-show="TeacherAdditionalPayments">Дополнительные услуги</h4>
+		<?= globalPartial('loading', ['model' => 'TeacherAdditionalPayments']) ?>
+		<h4 style='margin-bottom: 10px'>Дополнительные услуги</h4>
 		<table class="table">
 			<tr ng-repeat="payment in TeacherAdditionalPayments">
 				<td width='150'>

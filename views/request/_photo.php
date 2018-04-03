@@ -1,6 +1,4 @@
-<div ng-show="current_menu == 7">
     <div class="row">
-        <?= globalPartial('loading', ['model' => 'student']) ?>
         <div class="col-sm-12 ng-hide" ng-show="student !== undefined">
             <div class="row">
                 <!--photo modal--> <!-- // @todo - all modals in one file -->
@@ -65,4 +63,3 @@
             </div>
         </div>
     </div>
-</div>

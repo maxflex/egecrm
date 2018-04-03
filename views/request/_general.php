@@ -134,6 +134,7 @@
 				<div class="col-sm-3">
 		            <?php if (User::byType($Request->Student->id, Student::USER_TYPE, 'count')) :?>
 		            <h4 style="margin-top: 0" class="row-header">Данные по ЛК</h4>
+					<?= partial('photo') ?>
 		            <div>
 			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
 		            </div>

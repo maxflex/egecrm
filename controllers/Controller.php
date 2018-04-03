@@ -52,14 +52,11 @@
 		/*
 		 * Отобразить "Недостаточно прав"
 		 */
-		public function renderRestricted($layout = false)
+		public function renderRestricted($message = null)
 		{
-			if (! $layout) {
-				$layout = strtolower(User::fromSession()->type);
-			}
+			$layout = strtolower(User::fromSession()->type);
 
             $this->_custom_panel = false;
-
 
 			$this->setTabTitle("Ошибка");
 

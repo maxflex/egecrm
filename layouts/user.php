@@ -71,7 +71,7 @@
 					</div>
 				</div>
 				<div v-if="response.tutors.length" class="resultRows">
-					<h4>Препдаватели</h4>
+					<h4>Преподавтели</h4>
 					<div v-for="(index, row) in response.tutors" class="resultRow" v-bind:class="{active : ((response.representatives.length + response.students.length + index + 1) ==  active)}">
 						<a v-bind:href="row.link">{{ row.last_name }} {{ row.first_name }} {{ row.middle_name }}</a>
 					</div>

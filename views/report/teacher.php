@@ -48,9 +48,11 @@
                     }"></ng-pluralize></span>
                 </span>
             </div>
-            <div ng-if='isReport(Visit)' class='link-padding'>
-				<i class="fa fa-paperclip text-primary" aria-hidden="true"></i>
-                <a href="students/reports/view/{{ Visit.id }}" style='font-weight: bold'>Отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}</a>
+            <div ng-if='isReport(Visit)' style='margin-top: 20px'>
+                <a href="students/reports/view/{{ Visit.id }}" class='link-report'>
+					<i class="fa fa-paperclip text-primary" aria-hidden="true"></i>
+					отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}
+				</a>
             </div>
         </div>
     </div>

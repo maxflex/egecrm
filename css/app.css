@@ -16937,6 +16937,22 @@ a[href^="https://www.google.com/maps"] {
     -webkit-transform: translate3d(0, 110%, 0);
     transform: translate3d(0, 110%, 0); } }
 
+.link-report {
+  font-weight: 500;
+  margin-top: 10px;
+  background: #337ab7;
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px 8px 8px;
+  border-radius: 20px; }
+  .link-report:hover {
+    color: white;
+    text-decoration: none; }
+  .link-report i {
+    color: white;
+    margin-right: 12px;
+    font-weight: bold; }
+
 .control-group {
   display: inline-block;
   vertical-align: top;
