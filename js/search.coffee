@@ -1,26 +1,33 @@
 #Vue.config.devtools = true
 $(document).ready ->
-#вешеаем событие по клику по кнопке
   $('#searchModalOpen').click ->
-    $('#searchModal').modal({keyboard: true})
-    delayFunction = ->
+    openModal('search')
+    setTimeout ->
       $('#searchQueryInput').focus()
-    setTimeout delayFunction, 500
-    $('body.modal-open .row').addClass('blur')
+    , 500
     false
-
-  $('#searchModal').on 'hidden.bs.modal', ->
-    delayFnc = ->
-      $('.blur').removeClass 'blur'
-    setTimeout delayFnc, 500
+#вешеаем событие по клику по кнопке
+  # $('#searchModalOpen').click ->
+  #   $('#searchModal').modal({keyboard: true})
+  #   delayFunction = ->
+  #     $('#searchQueryInput').focus()
+  #   setTimeout delayFunction, 500
+  #   $('body.modal-open .row').addClass('blur')
+  #   false
+  #
+  # $('#searchModal').on 'hidden.bs.modal', ->
+  #   delayFnc = ->
+  #     $('.blur').removeClass 'blur'
+  #   setTimeout delayFnc, 500
 
   # компонент поиска
-  viewVue = new Vue
-    el: '#searchModal'
+  window.viewVue = new Vue
+    el: '#modal-search'
     data:
       lists: []
       links: {}
       results: -1
+      response: {}
       active: 0
       query: ''
       oldquery: ''
@@ -37,6 +44,7 @@ $(document).ready ->
             this.links = {}
             if success.data.result > 0
               this.results = success.data.result
+              this.response = success.data.search
               # Cтуденты
               if success.data.search.students.length > 0
                 for item, i in success.data.search.students

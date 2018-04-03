@@ -1,30 +1,18 @@
 $(document).ready(function() {
-  var viewVue;
   $('#searchModalOpen').click(function() {
-    var delayFunction;
-    $('#searchModal').modal({
-      keyboard: true
-    });
-    delayFunction = function() {
+    openModal('search');
+    setTimeout(function() {
       return $('#searchQueryInput').focus();
-    };
-    setTimeout(delayFunction, 500);
-    $('body.modal-open .row').addClass('blur');
+    }, 500);
     return false;
   });
-  $('#searchModal').on('hidden.bs.modal', function() {
-    var delayFnc;
-    delayFnc = function() {
-      return $('.blur').removeClass('blur');
-    };
-    return setTimeout(delayFnc, 500);
-  });
-  return viewVue = new Vue({
-    el: '#searchModal',
+  return window.viewVue = new Vue({
+    el: '#modal-search',
     data: {
       lists: [],
       links: {},
       results: -1,
+      response: {},
       active: 0,
       query: '',
       oldquery: '',
@@ -47,6 +35,7 @@ $(document).ready(function() {
             _this.links = {};
             if (success.data.result > 0) {
               _this.results = success.data.result;
+              _this.response = success.data.search;
               if (success.data.search.students.length > 0) {
                 ref = success.data.search.students;
                 for (i = j = 0, len = ref.length; j < len; i = ++j) {

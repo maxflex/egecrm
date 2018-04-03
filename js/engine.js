@@ -7,10 +7,38 @@
 	var review_statuses_approved = ['не проверено', 'проверено']
 	var test_statuses 	= ['вступительный', 'промежуточный']
 	var payments_hash	= 'cbcb58ac2e496207586df2854b17995f';
-// 	var payments_hash = '202cb962ac59075b964b07152d234b70';
+	var active_modal = false
+
+function closeModal() {
+	$('.modal-new.active').removeClass('modal-animate-open').addClass('modal-animate-close')
+	setTimeout(function() {
+			$('.modal-new.active').removeClass('active')
+			$('body').removeClass('modal-open-new')
+	$("body").removeClass('open-modal-' + active_modal);
+			active_modal = false
+			$('.container').off('touchmove');
+			if(window.location.hash == "#modal") {
+					window.history.back()
+			}
+			console.log('close modal')
+	}, 300)
+}
+
+function openModal(id) {
+	modal = $(".modal-new#modal-" + id)
+	modal.removeClass('modal-animate-close').addClass('active').addClass('modal-animate-open')
+	$("body").addClass('modal-open-new open-modal-' + id);
+	active_modal = id
+	$('.container').on('touchmove', function(e){e.preventDefault();});
+}
 
 	// Основной скрипт
 	$(document).ready(function() {
+		$(document).on('keyup', function(event) {
+				if (event.keyCode == 27 && active_modal !== false) {
+						closeModal()
+				}
+		})
 		// ангуляровский scope по умолчанию
 		ang_scope = angular.element("[ng-app='Request']").scope()
 
