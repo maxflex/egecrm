@@ -6,9 +6,9 @@
 			        <span ng-click="setLessonsYear(year)" class="link-like" ng-class="{'active': year == selected_lesson_year}" ng-repeat="year in lesson_years">{{ yearLabel(year) }}</span>
 			    </div>
 
-				<div ng-repeat="(id_group, GroupLessons) in Lessons" class="visits-block">
+				<div ng-repeat="(id_group, GroupLessons) in Lessons[selected_lesson_year]" class="visits-block">
 					<table class="table table-hover border-reverse last-item-no-border">
-						<tr ng-repeat="Lesson in GroupLessons" class="visits-block__elem" ng-class="{
+						<tr ng-repeat="Lesson in GroupLessons | orderBy:'date_time'" class="visits-block__elem" ng-class="{
 							'visits-block__elem--planned': Lesson.is_planned || Lesson.canceleld
 						}">
 							<td style='width: 30px; margin-right: 0'>

@@ -470,11 +470,18 @@
 				}
 			}
 
+			$LessonsSorted = [];
+			foreach($Lessons as $group_id => $GroupLessons) {
+				foreach($GroupLessons as $Lesson) {
+					$LessonsSorted[$Lesson->year][$group_id][] = $Lesson;
+				}
+			}
+
 			sort($years);
 
 			returnJsonAng([
 				"Subjects"	=> Subjects::$three_letters,
-				"Lessons"	=> $Lessons,
+				"Lessons"	=> $LessonsSorted,
 				"lesson_statuses" => VisitJournal::$statuses,
 				"all_cabinets" =>  Branches::allCabinets(),
 				"lesson_years" => $years,

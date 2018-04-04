@@ -3,16 +3,20 @@
 		<span ng-click="setLessonsYear(year)" class="link-like" ng-class="{'active': year == selected_lesson_year}" ng-repeat="year in lesson_years">{{ yearLabel(year) }}</span>
 	</div>
 
-	<div ng-repeat="(id_group, GroupLessons) in Lessons" class="visits-block">
+	<div ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]" ng-if="Lessons[selected_lesson_year][month]" class="visits-block">
+		<h4>{{ months[month] }} {{ month >= 9 ? selected_lesson_year : selected_lesson_year + 1 }}</h4>
 		<table class="table table-hover border-reverse last-item-no-border">
-			<tr ng-repeat="Lesson in GroupLessons" class="visits-block__elem" ng-class="{
+			<tr ng-repeat="Lesson in Lessons[selected_lesson_year][month] | orderBy:'date_time'" class="visits-block__elem" ng-class="{
 				'visits-block__elem--planned': Lesson.is_planned || Lesson.canceleld
 			}">
-				<td style='width: 30px; margin-right: 0'>
-					{{ $index + 1}}
+				<td style='width: 50px; margin-right: 0'>
+					{{ $index + 1 }}
+				</td>
+				<td width='200'>
+					{{ Lesson.lesson_date  | date:"dd.MM.yy" }} в {{ Lesson.lesson_time }}
 				</td>
 				<td width='150'>
-					Группа {{id_group}}
+					Группа {{ Lesson.id_group }}
 				</td>
 				<td width='150'>
 					<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>
@@ -22,9 +26,6 @@
 				</td>
 				<td style='width: 150px; margin-right: 0'>
 					{{ Lesson.Teacher.last_name }} {{ Lesson.Teacher.first_name[0] }}. {{ Lesson.Teacher.middle_name[0] }}.
-				</td>
-				<td width='150'>
-					{{ Lesson.lesson_date  | date:"dd.MM.yy" }} в {{ Lesson.lesson_time }}
 				</td>
 				<td>
 					<span ng-show="!Lesson.cancelled">

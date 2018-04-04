@@ -135,13 +135,22 @@
 				}
 			}
 
+			// группирвка по месяцам
+			$LessonsSorted = [];
+			foreach($Lessons as $group_id => $GroupLessons) {
+				foreach ($GroupLessons as $Lesson) {
+					$LessonsSorted[$Lesson->year][date('n', strtotime($Lesson->lesson_date))][] = $Lesson;
+				}
+			}
+
 			sort($years);
 
 			$ang_init_data = angInit([
 				"Subjects"	=> Subjects::$three_letters,
-				"Lessons"	=> $Lessons,
+				"Lessons"	=> $LessonsSorted,
 				"lesson_statuses" => VisitJournal::$statuses,
 				"all_cabinets" =>  Branches::allCabinets(),
+				"months" => Months::get(),
 				"lesson_years" => $years,
 				"selected_lesson_year" => end($years)
 			]);
