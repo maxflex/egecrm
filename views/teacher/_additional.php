@@ -31,7 +31,8 @@
 		<table class="table">
 			<tr ng-repeat="Lesson in AdditionalLessons">
 				<td width='100'>
-					{{ Lesson.lesson_date_formatted }}
+					<span ng-show="!Lesson.is_conducted">{{ Lesson.lesson_date_formatted }}</span>
+					<a class="pointer" ng-show="Lesson.is_conducted" href="lesson/{{ Lesson.id }}">{{ Lesson.lesson_date_formatted }}</a>
 				</td>
 				<td width='100'>
 					{{ Lesson.lesson_time }}
@@ -50,7 +51,8 @@
 					}"></ng-pluralize>
 				</td>
 				<td style='text-align: right'>
-					<a class="pointer" ng-click="addAdditionalLessonDialog(Lesson)">редактировать</span>
+					<a class="pointer" ng-show="!Lesson.is_conducted" ng-click="addAdditionalLessonDialog(Lesson)">редактировать</a>
+					<span ng-show="Lesson.is_conducted">проведено</span>
 				</td>
 			</tr>
 			<tr>

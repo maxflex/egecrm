@@ -94,7 +94,7 @@
 					<td style='text-align: right'>
 						<span ng-show="Lesson.is_conducted">урок проведен</span>
 						<span ng-show="Lesson.cancelled">урок отменен</span>
-						<a href='teachers/lesson/{{ Lesson.id }}' ng-show='Lesson.is_planned && !Lesson.cancelled'>зарегистрировать урок</a>
+						<a href='teachers/lesson/{{ Lesson.id }}' ng-show='Lesson.is_planned && !Lesson.cancelled && !Lesson.is_conducted'>зарегистрировать урок</a>
 					</td>
 				</tr>
 			</table>

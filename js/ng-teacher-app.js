@@ -596,6 +596,10 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
   $scope.isMobilePhone = isMobilePhone;
   angular.element(document).ready(function() {
     set_scope("Teacher");
+    switch (window.location.hash) {
+      case '#additional':
+        $scope.setMenu(7, true);
+    }
     $.each($scope.Teacher.branches, function(index, branch) {
       return $scope.Teacher.branches[index] = branch.toString();
     });

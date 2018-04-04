@@ -501,6 +501,9 @@
 			angular.element(document).ready ->
 				set_scope "Teacher"
 
+				switch window.location.hash
+					when '#additional' then $scope.setMenu(7, true)
+
 				$.each $scope.Teacher.branches, (index, branch) ->
 					$scope.Teacher.branches[index] = branch.toString()
 
