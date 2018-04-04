@@ -168,7 +168,7 @@
             // ВНИМАНИЕ: ДОБАВЛЯЕМ ОТЧЕТЫ В МАССИВ visits!
             foreach ($Reports as $Report) {
                 // внимание!
-                $Report->lesson_date = date("Y-m-d", strtotime($Report->date));
+                $Report->lesson_date = $Report->date_original;
                 $Visits[] = $Report;
             }
 
@@ -229,7 +229,7 @@
             // ВНИМАНИЕ: ДОБАВЛЯЕМ ОТЧЕТЫ В МАССИВ visits!
             foreach ($Reports as $Report) {
                 // внимание!
-                $Report->lesson_date = date("Y-m-d", strtotime($Report->date));
+                $Report->lesson_date = $Report->date_original;
                 $Visits[] = $Report;
             }
 

@@ -76,13 +76,13 @@
                 $query = "SELECT COUNT(*) AS cnt FROM contracts c
                     JOIN contract_info ON contract_info.id_contract = c.id_contract
                     LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-                    JOIN (SELECT ci.id_student, ci.year, cs2.id_subject, c2.id, MIN(STR_TO_DATE(c2.date, '%d.%m.%Y')) FROM contracts c2
+                    JOIN (SELECT ci.id_student, ci.year, cs2.id_subject, c2.id, MIN(c2.date) FROM contracts c2
                             JOIN contract_info ci ON ci.id_contract = c2.id_contract
                             LEFT JOIN contract_subjects cs2 on cs2.id_contract = c2.id
                             WHERE cs2.status=3 AND ci.grade <> " . Grades::EXTERNAL . "
                             GROUP BY ci.id_student, ci.year, cs2.id_subject
                     ) mt ON mt.id_student = contract_info.id_student AND mt.year = contract_info.year AND mt.id_subject = cs.id_subject
-                    WHERE STR_TO_DATE(c.date, '%d.%m.%Y') = '{$start}' AND cs.status=3 AND contract_info.grade <> " . Grades::EXTERNAL . " AND c.id = mt.id
+                    WHERE c.date = '{$start}' AND cs.status=3 AND contract_info.grade <> " . Grades::EXTERNAL . " AND c.id = mt.id
                     " . ($subjects ? " AND cs.id_subject IN ($subject_ids) " : "") . "
                     " . ($grades ? " AND contract_info.grade IN ({$grade_ids}) " : "") . "
                     " . ($year ? " AND contract_info.year = {$year} " : "");

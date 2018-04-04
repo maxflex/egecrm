@@ -13,7 +13,7 @@
 					{{ payment.purpose }}
 				</td>
 				<td>
-	                {{payment.user_login}} {{formatDate(payment.created_at) | date:'dd.MM.yyyy в HH:mm'}}
+	                {{payment.user_login}} {{formatDate(payment.created_at) | date:'dd.MM.yy в HH:mm'}}
 	            </td>
 	            <td style="text-align: right">
 					<a class="link-like" ng-click="editPaymentAdditional(payment)" style='margin-right: 10px'>редактировать</a>

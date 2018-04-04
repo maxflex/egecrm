@@ -492,7 +492,7 @@
 	function dateFormat($date, $notime = false)
 	{
 		$date = date_create($date);
-		return date_format($date, $notime ? "d.m.Y" : "d.m.Y в H:i");
+		return date_format($date, $notime ? "d.m.y" : "d.m.y в H:i");
 	}
 
 
@@ -810,17 +810,26 @@
         });
     }
 
-    /**
-     * Деформатировать дату
-     */
-    function fromDotDate($date, $add_year = null)
-    {
-        $parts = explode('.', $date);
-        if ($add_year !== null) {
-            $parts[2] = $add_year . $parts[2];
-        }
-        return implode('-', array_reverse($parts));
-    }
+	/**
+	 * Деформатировать дату
+	 */
+	function fromDotDate($date)
+	{
+		if (strpos($date, '.') === false) {
+			return $date;
+		}
+		list($day, $month, $year) = explode('.', $date);
+		$year = $year < 30 ? sprintf('20%02d', $year) : sprintf('19%02d', $year);
+		return implode('-', [$year, $month, $day]);
+	}
+
+	function toDotDate($date)
+	{
+		if (strpos($date, '-') === false) {
+			return $date;
+		}
+		return date_format(date_create($date), "d.m.y");
+	}
 
     function findObjectInArray($array, $params) {
         foreach ($array as $item) {

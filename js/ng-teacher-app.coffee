@@ -92,10 +92,10 @@
 						students: []
 						id_teacher: $scope.Teacher.id
 						year: getYear()
-						lesson_date: moment().format('DD.MM.YYYY')
+						lesson_date: moment().format('DD.MM.YY')
 				else
 	                $scope.modal_additional_lesson = _.clone(additional_lesson)
-	                $scope.modal_additional_lesson.lesson_date = moment($scope.modal_additional_lesson.lesson_date).format('DD.MM.YYYY')
+	                $scope.modal_additional_lesson.lesson_date = moment($scope.modal_additional_lesson.lesson_date).format('DD.MM.YY')
 				lightBoxShow('additional-lesson')
 
 			$scope.saveAdditionalLesson = ->
@@ -138,7 +138,7 @@
 				$scope.new_additional_payment =
 					id_teacher: $scope.Teacher.id
 					year: getYear()
-					date: moment().format('DD.MM.YYYY')
+					date: moment().format('DD.MM.YY')
 				lightBoxShow('additional-payment')
 
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars', 'TeacherAdditionalPayments']

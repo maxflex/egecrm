@@ -12,13 +12,18 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
+
+			$this->date_original = $this->date;
+			if ($this->date) {
+				$this->date = toDotDate($this->date);
+			}
 		}
 
 
 		public static function addData($data, $year)
 		{
 			self::deleteAll([
-				"condition" => "YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = " . ($year + 1),
+				"condition" => "YEAR(`date`) = " . ($year + 1),
 			]);
 
 			foreach($data as $grade => $d) {
@@ -37,10 +42,17 @@
 			}
 		}
 
+		public function beforeSave()
+        {
+			if ($this->date) {
+				$this->date = fromDotDate($this->date);
+			}
+        }
+
 		public static function getData($year)
 		{
 			$data = self::findAll([
-				"condition" => "YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = " . ($year + 1),
+				"condition" => "YEAR(`date`) = " . ($year + 1),
 			]);
 
 			foreach($data as $d) {
@@ -53,7 +65,7 @@
 		public static function getExamDates($Group)
 		{
 			$data = self::findAll([
-				"condition" => "grade={$Group->grade} AND YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = " . ($Group->year + 1)
+				"condition" => "grade={$Group->grade} AND YEAR(`date`) = " . ($Group->year + 1)
 			]);
 
 			$return = [
@@ -63,9 +75,9 @@
 
 			foreach($data as $d) {
 				if ($d->id_subject == $Group->id_subject) {
-					$return['this_subject'][] = date("Y-m-d", strtotime($d->date));
+					$return['this_subject'][] = $d->date_original;
 				} else {
-					$return['other_subject'][] = date("Y-m-d", strtotime($d->date));
+					$return['other_subject'][] = $d->date_original;
 				}
 			}
 

@@ -28,6 +28,14 @@
 			} else {
 				$this->number = $this->number . ' '; // FORCE STRING
 			}
+
+			if ($this->date_issued) {
+				$this->date_issued = toDotDate($this->date_issued);
+			}
+
+			if ($this->date_birthday) {
+				$this->date_birthday = toDotDate($this->date_birthday);
+			}
 		}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
@@ -35,5 +43,15 @@
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
 
+		public function beforeSave()
+		{
+			if ($this->date_issued) {
+				$this->date_issued = fromDotDate($this->date_issued);
+			}
+
+			if ($this->date_birthday) {
+				$this->date_birthday = fromDotDate($this->date_birthday);
+			}
+		}
 
 	}

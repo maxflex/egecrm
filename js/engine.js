@@ -417,12 +417,14 @@ function openModal(id) {
 			$('.bs-date').datepicker({
 				language	: 'ru',
 				orientation	: 'top left',
+				format: 'dd.mm.yy',
 				autoclose	: true
 			})
 
 			// Дата, начиная с нынчашнего дня
 			$('.bs-date-now').datepicker({
 				language	: 'ru',
+				format: 'dd.mm.yy',
 				orientation	: 'top left',
 				startDate: '-0d',
 				autoclose	: true
@@ -430,6 +432,7 @@ function openModal(id) {
 
 			// Дата вверху
 			$(".bs-date-top").datepicker({
+				format: 'dd.mm.yy',
 				language	: 'ru',
 				autoclose	: true,
 				orientation	: 'bottom auto',
@@ -459,11 +462,12 @@ function openModal(id) {
 			$(".digits-only-float").inputmask("Regex", {regex: "[0-9]*[.]?[0-9]+"});
 			$(".digits-only-minus").inputmask("Regex", {regex: "[-]?[0-9]*"});
 			$(".digits-only").inputmask("Regex", {regex: "[0-9]*"});
-			$('.bs-date input, .bs-date-top input, input.bs-date, input.bs-date-top').mask("99.99.9999", {clearIfNotMatch: true});
+			$('.bs-date input, .bs-date-top input, input.bs-date, input.bs-date-top').mask("99.99.99", {clearIfNotMatch: true});
 
       $('#contracts-list .input-group-addon').on('click', function(){$(this).siblings('input').focus();});
       // С очисткой даты
       $(".bs-date-clear").datepicker({
+				format: 'dd.mm.yy',
         language	: 'ru',
         autoclose	: true,
         orientation	: 'top left',

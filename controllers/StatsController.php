@@ -31,13 +31,13 @@
             // @contract-refactored
 			$Contracts = Contract::findAll([
 				"condition" =>
-					$date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
+					$date_end 	? "`date` > '$date_start_formatted' AND `date` <= '$date_end_formatted'"
 								: "date='$date_start'"
 			]);
 
 			$Payments = Payment::findAll([
 				"condition" => "entity_type='" . Student::USER_TYPE . "' and ".
-					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
+					($date_end 	? "`date` > '$date_start_formatted' AND `date` <= '$date_end_formatted'"
 								: "date = '$date_start'")
 			]);
 
@@ -490,7 +490,7 @@
 
 			$Payments = Payment::findAll([
 				"condition" => "entity_type = '" . (isset($_GET['teachers']) ? Teacher::USER_TYPE : Student::USER_TYPE) . "' and ".
-					($date_end 	? "STR_TO_DATE(date, '%d.%m.%Y') > '$date_start_formatted' AND STR_TO_DATE(date, '%d.%m.%Y') <= '$date_end_formatted'"
+					($date_end 	? "`date` > '$date_start_formatted' AND `date` <= '$date_end_formatted'"
 								: "date = '$date_start'"),
 			]);
 
@@ -535,13 +535,10 @@
 
 
 			uksort($stats, function($a, $b) {
-				$d1 = date("Y-m-d", strtotime($a));
-				$d2 = date("Y-m-d", strtotime($b));
-
-				if ($d1 > $d2) {
+				if ($a->date_original > $b->date_original) {
 					return -1;
 				} else
-				if ($d1 < $d2) {
+				if ($a->date_original < $b->date_original) {
 					return 1;
 				} else {
 					return 0;

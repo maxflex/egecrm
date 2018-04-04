@@ -74,7 +74,7 @@ app = angular.module "Schedule", ['mwl.calendar']
                 $scope.modal_lesson = {id_group: $scope.Group.id}
             else
                 $scope.modal_lesson = _.clone(lesson)
-                $scope.modal_lesson.lesson_date = moment($scope.modal_lesson.lesson_date).format('DD.MM.YYYY')
+                $scope.modal_lesson.lesson_date = moment($scope.modal_lesson.lesson_date).format('DD.MM.YY')
 
         $scope.saveLesson = ->
             ajaxStart()

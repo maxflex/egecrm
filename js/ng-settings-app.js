@@ -80,7 +80,7 @@ app = angular.module("Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar'])
       };
     } else {
       $scope.modal_vacation = _.clone(vacation);
-      return $scope.modal_vacation.date = moment($scope.modal_vacation.date).format('DD.MM.YYYY');
+      return $scope.modal_vacation.date = moment($scope.modal_vacation.date).format('DD.MM.YY');
     }
   };
   $scope.saveVacation = function() {

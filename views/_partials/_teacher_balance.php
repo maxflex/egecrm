@@ -33,7 +33,7 @@
             </tr>
             <tr ng-repeat="item in Lessons[selected_year][date] | orderBy:'date':true" ng-class="{'last-date': $last}">
                 <td width='120'>
-                    <span ng-show="$last">{{ date | date:'dd.MM.yyyy' }}</span>
+                    <span ng-show="$last">{{ date | date:'dd.MM.yy' }}</span>
                 </td>
                 <td width='120'>
                     <span ng-show="item.sum >= 0" class="text-success">+{{ item.sum | number }} руб.</span>

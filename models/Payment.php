@@ -46,6 +46,11 @@
             if (!$flag) {
                 $this->user_login = User::findById($this->id_user)->login;
             }
+
+			$this->date_original = $this->date;
+			if ($this->date) {
+				$this->date = toDotDate($this->date);
+			}
 		}
 
 
@@ -191,10 +196,13 @@
             if ($this->id_status == self::PAID_CARD) {
                 $this->card_first_number = intval($this->card_first_number);
             }
+			if ($this->date) {
+				$this->date = fromDotDate($this->date);
+			}
             // наличные и платеж и не имеет номера и клиент
            if ($this->isNewRecord && $this->id_status == self::PAID_CASH && $this->id_type == PaymentTypes::PAYMENT && $this->entity_type == Student::USER_TYPE) {
                if (! $this->document_number) {
-                   $this->document_number = self::dbConnection()->query("select max(document_number) + 1 as last_doc_num from payments where YEAR(STR_TO_DATE(date, '%d.%m.%Y')) = YEAR(NOW())")->fetch_object()->last_doc_num;
+                   $this->document_number = self::dbConnection()->query("select max(document_number) + 1 as last_doc_num from payments where YEAR(`date`) = YEAR(NOW())")->fetch_object()->last_doc_num;
                }
            }
         }

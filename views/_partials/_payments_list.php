@@ -53,7 +53,7 @@
                 <span class="text-green pointer" ng-show="payment.confirmed" ng-click="confirmPayment(payment)">подтверждено</span>
             </td>
             <td class="col-sm-2">
-                {{payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yyyy в HH:mm'}}
+                {{payment.user_login}} {{formatDate(payment.first_save_date) | date:'dd.MM.yy в HH:mm'}}
             </td>
         </tr>
         <?php if ($student_page || $teacher_page) :?>

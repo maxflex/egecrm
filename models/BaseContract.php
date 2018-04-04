@@ -35,6 +35,10 @@
                     }
                 }
             }
+
+			if ($this->date) {
+				$this->date = toDotDate($this->date);
+			}
         }
 
         private static function setCurrentVersionToPrev($Contract)
@@ -162,6 +166,10 @@
                 // договор всегда создается новый, поэтому нет условия if ($this->isNewRecord) { ... }
                 $this->id_user = User::fromSession()->id;
             }
+
+			if ($this->date) {
+				$this->date = fromDotDate($this->date);
+			}
         }
 
         // @contract-refactored

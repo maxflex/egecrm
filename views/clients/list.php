@@ -85,7 +85,7 @@
 						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>
 					</td>
 					<td>
-						{{ Student.latest_payment_date | date:"dd.MM.yyyy"}}
+						{{ Student.latest_payment_date | date:"dd.MM.yy"}}
 					</td>
 					<td>
 						{{ student_payment_statuses[Student.payment_status] }}

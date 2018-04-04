@@ -61,7 +61,7 @@ app = angular.module "Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar']
                 $scope.modal_vacation = {year: $scope.current_year}
             else
                 $scope.modal_vacation = _.clone(vacation)
-                $scope.modal_vacation.date = moment($scope.modal_vacation.date).format('DD.MM.YYYY')
+                $scope.modal_vacation.date = moment($scope.modal_vacation.date).format('DD.MM.YY')
 
         $scope.saveVacation = ->
             ajaxStart()

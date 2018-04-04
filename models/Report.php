@@ -24,6 +24,11 @@
             $this->grade = VisitJournal::find([
                 "condition" => "id_entity = {$this->id_student} and type_entity = 'STUDENT' and id_teacher = {$this->id_teacher} and id_subject = {$this->id_subject} and year = {$year}"
             ])->grade;
+
+			$this->date_original = $this->date;
+			if ($this->date) {
+				$this->date = toDotDate($this->date);
+			}
         }
 
         public static function add($array)
@@ -47,6 +52,9 @@
 
         public function beforeSave()
         {
+			if ($this->date) {
+				$this->date = fromDotDate($this->date);
+			}
             if ($this->available_for_parents && $this->available_for_parents != $this->getOriginal('available_for_parents')) {
                 $Student = Student::findById($this->id_student);
                 $sms_message = Template::get(11, [
@@ -142,7 +150,7 @@
 		{
 			return [
 				'condition' => self::conditionString($id_student, $id_teacher, $id_subject, $year),
-				'order' 	=> $order ?: "STR_TO_DATE(date, '%d.%m.%Y') desc "
+				'order' 	=> $order ?: "`date` desc "
 			];
 		}
 
@@ -163,7 +171,7 @@
 			dbConnection()->query("TRUNCATE TABLE " . ReportHelper::$mysql_table);
 
 			$query = "
-				SELECT vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, STR_TO_DATE(r.date,'%d.%m.%Y') as date
+				SELECT vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.date as `date`
 				FROM visit_journal vj
 				LEFT JOIN reports r ON (r.id_student = vj.id_entity AND r.id_teacher = vj.id_teacher AND r.id_subject = vj.id_subject AND r.year = vj.year)
 				WHERE vj.type_entity='STUDENT'
@@ -186,13 +194,13 @@
 				if ($Object->id)	{
 					// отчет перед отчетом
 					$LatestReport = Report::find([
-						"condition" => $condition . " AND STR_TO_DATE(date,'%d.%m.%Y') < '{$Object->date}'",
-	                    "order" 	=> "STR_TO_DATE(date,'%d.%m.%Y') desc "
+						"condition" => $condition . " AND `date` < '{$Object->date}'",
+	                    "order" 	=> "`date` desc "
 					]);
 
 					// если перед отчетом был отчет
 					if ($LatestReport) {
-						$latest_report_date = date("Y-m-d", strtotime($LatestReport->date));
+						$latest_report_date = $LatestReport->date_original;
 					} else {
 						$latest_report_date = "0000-00-00";
 					}
@@ -223,11 +231,11 @@
 					// получаем кол-во занятий с последнего отчета по предмету
 					$LatestReport = Report::find([
 						"condition" => $condition,
-	                    "order" 	=> "STR_TO_DATE(date,'%d.%m.%Y') desc "
+	                    "order" 	=> "`date` desc "
 					]);
 
 					if ($LatestReport) {
-						$latest_report_date = date("Y-m-d", strtotime($LatestReport->date));
+						$latest_report_date = $LatestReport->date_original;
 					} else {
 						$latest_report_date = "0000-00-00";
 					}
@@ -283,7 +291,7 @@
 
 					$LastReport = Report::find([
 						"condition" => $condition,
-	                    "order" 	=> "STR_TO_DATE(date,'%d.%m.%Y') desc "
+	                    "order" 	=> "`date` desc "
 					]);
 
                     // создаем r.id null-запись с кол-вом занятий с момента последнего отчета в конфигурации
@@ -292,7 +300,7 @@
                     $lessons_count = VisitJournal::count([
 						"condition" => "id_subject={$Object->id_subject} AND id_entity={$Object->id_entity}
 							AND id_teacher=" . $Object->id_teacher . " AND year={$Object->year}
-							AND lesson_date > '" . date("Y-m-d", strtotime($LastReport->date)) . "'"
+							AND lesson_date > '" . $LastReport->date_original . "'"
 					]);
 
                     ReportHelper::add([

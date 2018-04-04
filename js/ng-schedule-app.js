@@ -102,7 +102,7 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
       };
     } else {
       $scope.modal_lesson = _.clone(lesson);
-      return $scope.modal_lesson.lesson_date = moment($scope.modal_lesson.lesson_date).format('DD.MM.YYYY');
+      return $scope.modal_lesson.lesson_date = moment($scope.modal_lesson.lesson_date).format('DD.MM.YY');
     }
   };
   $scope.saveLesson = function() {
