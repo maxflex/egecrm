@@ -142,7 +142,7 @@
                                     <td><b>Главный бухгалтер</b></td>
                                     <td style="border-bottom: 1px solid black"></td>
                                     <td cellpadding="10"></td>
-                                    <td style="border-bottom: 1px solid black">Эрдман К. А.</td>
+                                    <td style="border-bottom: 1px solid black">Шушлебина Н. А.</td>
                                 </tr>
                                 <tr style="font-size:8px;text-align: center;">
                                     <td></td>
@@ -222,7 +222,7 @@
                                 <tr>
                                     <td style="border-bottom: 1px solid black;"></td>
                                     <td width="20%"></td>
-                                    <td style="border-bottom: 1px solid black;">Эрдман К. А.</td>
+                                    <td style="border-bottom: 1px solid black;">Шушлебина Н. А.</td>
                                 </tr>
                                 <tr style="font-size:8px;text-align: center;">
                                     <td>подпись</td>

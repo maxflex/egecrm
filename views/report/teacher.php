@@ -48,7 +48,7 @@
                     }"></ng-pluralize></span>
                 </span>
             </div>
-            <div ng-if='isReport(Visit)' style='margin-top: 20px'>
+            <div ng-if='isReport(Visit)' style='margin: 20px 0'>
                 <a href="students/reports/view/{{ Visit.id }}" class='link-report'>
 					<i class="fa fa-paperclip text-primary" aria-hidden="true"></i>
 					отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}
@@ -64,10 +64,10 @@
     <div class="row">
         <div ng-repeat="Lesson in PlannedLessons" class="col-sm-12 text-gray" style='margin-bottom: 5px'>
             <span class='inline-block' style='width: 200px'>
-                {{ formatDate(Lesson.date)}} в {{formatTime(Lesson.time) }}
+                {{ formatDate(Lesson.lesson_date)}} в {{formatTime(Lesson.lesson_time) }}
             </span>
             <span class='inline-block' style='width: 150px'>
-                {{ getDay(Lesson.date) }}
+                {{ getDay(Lesson.lesson_date) }}
             </span>
             <span class='inline-block' style='width: 150px'>
                 кабинет {{ Lesson.cabinet_number }}

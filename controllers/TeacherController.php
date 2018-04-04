@@ -64,7 +64,7 @@
 				}
 
 				$Data = VisitJournal::findAll([
-					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER' and year={$year}"
+					"condition" => "id_entity=$id_teacher AND type_entity='TEACHER' and year={$year} and cancelled=0"
 				]);
 
 				$sum = 0;
