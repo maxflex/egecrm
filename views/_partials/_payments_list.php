@@ -22,7 +22,7 @@
 					</span>
 				</span>
 				<?php if ($student_page) :?>
-					<span ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">
+					<span class="remove-space" ng-show="payment.id_status == <?= Payment::PAID_BILL ?>">
                     	: <a class="link-like" ng-click="printLlcBill(payment)">печать</a>
 					</span>
                 <?php endif ?>

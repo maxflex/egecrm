@@ -505,9 +505,14 @@
 		{
 			extract($_POST);
 
-			returnJsonAng(
-				Student::getReportsStatic($id_student)
-			);
+			$Reports = Student::getReportsStatic($id_student);
+
+			$return = [];
+			foreach($Reports as $Report) {
+				 $return[$Report->year][] = $Report;
+			}
+
+			returnJsonAng($return);
 		}
 
 		public function actionAjaxLoadBalance()

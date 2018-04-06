@@ -2227,9 +2227,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					$scope.$apply()
 				}, "json")
 			}
-			if ($scope.Reports === undefined && menu == 4) {
+			if ($scope.ReportsByYear === undefined && menu == 4) {
 				$.post("requests/ajax/LoadReports", {id_student: $scope.id_student}, function(response) {
-					$scope.Reports = response
+					$scope.ReportsByYear = response
 					$scope.$apply()
 				}, "json")
 			}
