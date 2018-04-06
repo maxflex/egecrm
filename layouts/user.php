@@ -61,6 +61,12 @@
 				<div class="notFound" v-if="!error">cовпадений нет</div>
 			</div>
 			<div v-if="results > 0">
+				<div v-if="response.contracts.length" class="resultRows">
+					<h4>Договоры</h4>
+					<div v-for="(index, row) in response.contracts" class="resultRow" v-bind:class="{active : ((response.requests.length + response.tutors.length + response.representatives.length + response.students.length + index + 1) ==  active)}">
+						<a v-bind:href="row.link">№{{ row.id_contract }}</a>
+					</div>
+				</div>
 				<div v-if="response.students.length" class="resultRows">
 					<h4>Ученики</h4>
 					<div v-for="(index, row) in response.students" class="resultRow" v-bind:class="{active : ((index+1) ==  active)}">
@@ -83,12 +89,6 @@
 					<h4>Заявки</h4>
 					<div v-for="(index, row) in response.requests" class="resultRow" v-bind:class="{active : ((response.tutors.length + response.representatives.length + response.students.length + index + 1) ==  active)}">
 						<a v-bind:href="row.link">{{ row.name || 'имя не указано' }}</a>
-					</div>
-				</div>
-				<div v-if="response.contracts.length" class="resultRows">
-					<h4>Договоры</h4>
-					<div v-for="(index, row) in response.contracts" class="resultRow" v-bind:class="{active : ((response.requests.length + response.tutors.length + response.representatives.length + response.students.length + index + 1) ==  active)}">
-						<a v-bind:href="row.link">№{{ row.id_contract }}</a>
 					</div>
 				</div>
 			</div>
