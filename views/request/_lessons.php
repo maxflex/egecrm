@@ -7,7 +7,7 @@
 			    </div>
 
 				<div ng-repeat="(id_group, GroupLessons) in Lessons[selected_lesson_year]" class="visits-block">
-					<table class="table table-hover border-reverse last-item-no-border">
+					<table class="table small table-hover border-reverse last-item-no-border">
 						<tr ng-repeat="Lesson in GroupLessons | orderBy:'date_time'" class="visits-block__elem" ng-class="{
 							'visits-block__elem--planned': Lesson.is_planned || Lesson.canceleld
 						}">
