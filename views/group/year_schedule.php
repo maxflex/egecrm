@@ -25,7 +25,7 @@
 					<td width='100'>
 						<span>{{ Subjects[Lesson.id_subject] }}-{{ Lesson.grade_short }}</span>
 					</td>
-					<td style='width: 160px; margin-right: 0'>
+					<td style='width: 170px; margin-right: 0'>
 						{{ Lesson.Teacher.last_name }} {{ Lesson.Teacher.first_name[0] }}. {{ Lesson.Teacher.middle_name[0] }}.
 					</td>
 					<td>

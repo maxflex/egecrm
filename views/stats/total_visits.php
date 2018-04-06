@@ -105,13 +105,13 @@
 								<span style='color: {{ Lesson.cabinet.color }}'>{{ Lesson.cabinet.label }}</span>
 							</td>
 							<td width="12%">
-								<span ng-show="!Lesson.is_unplanned">
+								<span ng-show="!Lesson.Group.is_unplanned">
 									<a href="groups/edit/{{ Lesson.id_group }}" target="_blank">Группа {{ Lesson.id_group }}</a>
 									<a target="_blank" href="groups/edit/{{ Lesson.id_group }}/schedule" style='margin-left: 3px'>
 										<i class="fa fa-calendar" aria-hidden="true"></i>
 									</a>
 								</span>
-								<a ng-show="Lesson.is_unplanned" href="teachers/edit/{{ Lesson.Teacher.id }}#additional" target="_blank">доп. занятие</a>
+								<a ng-show="Lesson.Group.is_unplanned" href="teachers/edit/{{ Lesson.Teacher.id }}#additional" target="_blank">доп. занятие</a>
 							</td>
 							<td width="7%">
                                 {{ Subjects[Lesson.id_subject] }}-{{ Lesson.grade_short }}
