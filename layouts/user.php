@@ -74,7 +74,7 @@
 					</div>
 				</div>
 				<div v-if="response.tutors.length" class="resultRows">
-					<h4>Преподавтели</h4>
+					<h4>Преподаватели</h4>
 					<div v-for="(index, row) in response.tutors" class="resultRow" v-bind:class="{active : ((response.representatives.length + response.students.length + index + 1) ==  active)}">
 						<a v-bind:href="row.link">{{ row.last_name }} {{ row.first_name }} {{ row.middle_name }}</a>
 					</div>
@@ -83,6 +83,12 @@
 					<h4>Заявки</h4>
 					<div v-for="(index, row) in response.requests" class="resultRow" v-bind:class="{active : ((response.tutors.length + response.representatives.length + response.students.length + index + 1) ==  active)}">
 						<a v-bind:href="row.link">{{ row.name || 'имя не указано' }}</a>
+					</div>
+				</div>
+				<div v-if="response.contracts.length" class="resultRows">
+					<h4>Договоры</h4>
+					<div v-for="(index, row) in contracts.requests" class="resultRow" v-bind:class="{active : ((response.requests.length + response.tutors.length + response.representatives.length + response.students.length + index + 1) ==  active)}">
+						<a v-bind:href="row.link">№{{ row.id_contract }}</a>
 					</div>
 				</div>
 			</div>

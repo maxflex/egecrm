@@ -113,22 +113,23 @@ class SearchController extends Controller
             }
         }
 
-        // # запрос по поиску по номеру договора
-        // $sqlSearchContacts = "SELECT
-        //                         id_contract, id_student
-        //                       FROM
-        //                         contract_info
-        //                       WHERE
-        //                       " . $this->sqlLikeGenerator($queryArray, ['id_contract']) . "
-        //                        LIMIT " . self::$resultsInSearch;
-		//
-        // # обработка ответа по договорам
-        // $contractsResult = dbConnection()->query($sqlSearchContacts);
-        // if ($contractsResult->num_rows > 0) {
-        //     while ($row = $contractsResult->fetch_object()) {
-        //         $Contracts[] = $row;
-        //     }
-        // }
+        # запрос по поиску по номеру договора
+        $sqlSearchContacts = "SELECT
+                                id_contract, id_student
+                              FROM
+                                contract_info
+                              WHERE
+                              " . $this->sqlLikeGenerator($queryArray, ['id_contract']) . "
+                               LIMIT " . self::$resultsInSearch;
+
+        # обработка ответа по договорам
+        $contractsResult = dbConnection()->query($sqlSearchContacts);
+        if ($contractsResult->num_rows > 0) {
+            while ($row = $contractsResult->fetch_object()) {
+                $row->link = "student/{$row->id_student}";
+                $Contracts[] = $row;
+            }
+        }
 
         # окончание работы таймера
         $end = $this->microtime_float();
@@ -148,7 +149,7 @@ class SearchController extends Controller
                     "tutors" => $Tutors,
                     'requests' => $Requests,
                     'representatives' => $Representatives,
-                    // 'contracts' => $Contracts
+                    'contracts' => $Contracts
                 ]
             ]);
         }
