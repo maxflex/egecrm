@@ -677,6 +677,39 @@ body {
 	}
 }
 
+.report-grade-circle {
+	border: 1px solid $hr_gray;
+	height: 17px;
+	width: 17px;
+	border-radius: 50%;
+	color: white;
+	margin-right: 3px;
+	font-weight: 500;
+	font-size: 10px;
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&.active {
+		background-color: $green;
+	}
+	&.undefined {
+		color: black;
+		background: white;
+	}
+	& > span {
+		top: -1px;
+		position: relative;
+	}
+}
+
+.report-grade-line {
+	display: flex;
+	& > .report-grade-circle:last-of-type {
+		margin-right: none;
+	}
+}
+
 .fixed-menu {
     width: 16.66666667%;
     position: fixed;
@@ -2148,11 +2181,13 @@ white-space: nowrap;
 
 .lightbox-addcontract, .lightbox-addcontracttest {
 	width: 1100px;
-	left: calc(50% - 450px);
-    top: 10%;
+	left: calc(50% - 550px);
+	top: 10%;
+}
 
+#modal-contract, .lightbox-addcontract, .lightbox-addcontracttest {
 	& .input-group, input, select {
-		width: 232px;
+		width: 250px;
 		float: right;
 	}
 
@@ -3753,19 +3788,28 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 		background: #337ab7;
     display: flex;
     height: 50px;
-    justify-content: flex-end;
-    padding: 0 30px;
-		& > div {
-			background: #337ab7;
-	    display: inline-block;
-	    vertical-align: middle;
-	    display: flex;
-	    align-items: center;
-	    padding: 0 20px;
-	    color: white;
-			cursor: pointer;
-			&:hover {
-				background: darken(#337ab7, 10);
+    justify-content: space-between;
+		color: white;
+		align-items: center;
+		& > .header-title {
+			padding-left: 50px;
+		}
+		& > .header-buttons {
+			height: 100%;
+			display: flex;
+			& > div {
+				height: 100%;
+				background: #337ab7;
+				display: inline-block;
+				vertical-align: middle;
+				display: flex;
+				align-items: center;
+				padding: 0 20px;
+				color: white;
+				cursor: pointer;
+				&:hover {
+					background: darken(#337ab7, 10);
+				}
 			}
 		}
 	}
@@ -3846,4 +3890,35 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 		margin-right: 12px;
 		font-weight: bold;
 	}
+}
+
+.contract-payment-input-group {
+	& input {
+		&:first-of-type {
+			width: 85px !important;
+		}
+		&:last-of-type {
+			width: 86px !important;
+			border-left: none;
+		}
+	}
+}
+
+.add-contract-payment-controls {
+	& a {
+		margin-right: 20px;
+	}
+}
+
+.first-contract-payment {
+	width: 126px !important;
+  float: left;
+  left: -1px;
+  border-radius: 0 4px 4px 0 !important;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.slider-handle {
+	top: 1px;
 }

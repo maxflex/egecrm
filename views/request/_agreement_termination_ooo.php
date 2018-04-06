@@ -37,7 +37,7 @@
         <div style="text-align: right">
             <div>Приложение № 2</div>
             <div>к Договору №{{ term_contract_parent.id }}</div>
-            <div>от {{ formatContractDate2(term_contract_parent.date) }}</div>
+            <div>от {{ formatContractDate2(term_contract_parent.date_original) }}</div>
         </div>
 
         <h4 style="text-align:center;margin-bottom: 0">Соглашение</h4>
@@ -45,7 +45,7 @@
 
         <div style="display: inline-block; width: 100%; margin-bottom: 20px">
             <div style="float: left;">г. Москва</div>
-            <div style="float: right;">{{formatContractDate2(term_contract.date)}}</div>
+            <div style="float: right;">{{formatContractDate2(term_contract.date_original)}}</div>
         </div>
 
         <p class="no-ident">
@@ -55,7 +55,7 @@
             именуемого(ой) в дальнейшем «Обучающийся», с другой стороны, совместно именуемые «Стороны», подписали настоящий Акт о нижеследующем:
         <ol>
             <li>
-                Стороны прекращают оказание платных образовательных услуг по Договору №{{ term_contract_parent.id }} от {{ formatContractDate2(term_contract_parent.date) }} с {{ formatContractDate2(term_contract.date) }}
+                Стороны прекращают оказание платных образовательных услуг по Договору №{{ term_contract_parent.id }} от {{ formatContractDate2(term_contract_parent.date_original) }} с {{ formatContractDate2(term_contract.date_original) }}
             </li>
             <li>
                 По состоянию на дату прекращения оказания платных образовательных услуг размер вознаграждения Исполнителю за действия,

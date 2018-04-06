@@ -58,6 +58,39 @@
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
+			# REPORTS
+			_initReportsModule = ->
+				$scope.search = if $.cookie("reports") then JSON.parse($.cookie("reports")) else {}
+				$scope.search.id_teacher = $scope.Teacher.id
+				$scope.filter()
+				$(".single-select").selectpicker()
+
+			$scope.loadReports = ->
+				frontendLoadingStart()
+				$.post "reports/AjaxGetReports",
+					page: -1
+					teachers: []
+				, (response) ->
+					frontendLoadingEnd()
+					$scope.Reports  = response.data
+					$scope.counts = response.counts
+					$scope.$apply()
+					$scope.refreshCounts()
+				, "json"
+
+			$scope.filter = ->
+				delete $scope.Reports
+				$.cookie("reports", JSON.stringify($scope.search), { expires: 365, path: '/' });
+				$scope.loadReports()
+
+			$scope.refreshCounts = ->
+				$timeout ->
+					$('.watch-select option').each (index, el) ->
+		                $(el).data 'subtext', $(el).attr 'data-subtext'
+		                $(el).data 'content', $(el).attr 'data-content'
+		            $('.watch-select').selectpicker 'refresh'
+		        , 100
+
 			# AUTOCOMPLETE
 			$scope.studentSelected = (Student) ->
 				student_id = Student.originalObject.id
@@ -144,8 +177,11 @@
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars', 'TeacherAdditionalPayments']
 
 			$scope.setMenu = (menu, complex_data) ->
-				$.each menus, (index, value) ->
-					_loadData(index, menu, value, complex_data)
+				if menu == 4
+					_initReportsModule()
+				else
+					$.each menus, (index, value) ->
+						_loadData(index, menu, value, complex_data)
 				$scope.current_menu = menu
 
 			_postData = (menu) ->

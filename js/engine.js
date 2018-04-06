@@ -10,6 +10,7 @@
 	var active_modal = false
 
 function closeModal() {
+	$(".transition-control").addClass("no-transition")
 	$('.modal-new.active').removeClass('modal-animate-open').addClass('modal-animate-close')
 	setTimeout(function() {
 			$('.modal-new.active').removeClass('active')
@@ -25,6 +26,9 @@ function closeModal() {
 }
 
 function openModal(id) {
+	if (id == "contract") {
+		setTimeout(function(){$(".transition-control").removeClass("no-transition")}, 300)
+	}
 	modal = $(".modal-new#modal-" + id)
 	modal.removeClass('modal-animate-close').addClass('active').addClass('modal-animate-open')
 	$("body").addClass('modal-open-new open-modal-' + id);

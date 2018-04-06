@@ -79,7 +79,7 @@
 						</a>
 					</td>
 					<td>
-						{{ getPaymentLabel(splitPaymentsOptions(Student.contract_year)[Student.contract_split]) }}
+						
 					</td>
 					<td>
 						<span ng-show="Student.sum">{{ Student.sum | number }} руб.</span>

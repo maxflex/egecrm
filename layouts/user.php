@@ -46,8 +46,10 @@
 <!-- новое модальное окно тест -->
 <div class="modal-new" id="modal-search">
 	<div class="modal-new-header">
-		<div onclick="closeModal()">
-			закрыть
+		<div class="header-buttons">
+			<div onclick="closeModal()">
+				закрыть
+			</div>
 		</div>
 	</div>
 	<div class="modal-new-content">

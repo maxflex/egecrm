@@ -1,6 +1,6 @@
-<table class="table table-hover border-reverse">
+<table class="table table-hover border-reverse small">
 	<tr ng-repeat="Report in Reports">
-		<td style='width: 12%'>
+		<td style='width: 11%'>
 			<a ng-if='Report.id' href="reports/edit/{{Report.id}}">Отчёт №{{Report.id}}</a>
 			<span ng-show="!Report.id">
 				<span ng-show="!Report.force_noreport">
@@ -10,13 +10,22 @@
 				<span ng-show="Report.force_noreport" class="link-like-nocolor text-gray" ng-click="forceNoreport(Report)">отчет не требуется</span>
 			</span>
 		</td>
-		<td style="width: 25%" ng-init="_Teacher = (Report.Teacher || Teacher)">
+		<td style="width: 21%" ng-init="_Teacher = (Report.Teacher || Teacher)">
 			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
 		</td>
-		<td style='width: 8%'>
+		<td style='width: 6%'>
 			{{three_letters[Report.id_subject]}}
 		</td>
-		<td style='width: 20%'>
+		<td style='width: 10%'>
+			<div class="report-grade-line" ng-if="Report.id">
+				<?= globalPartial('report_circle', ['field' => 'homework_grade']) ?>
+				<?= globalPartial('report_circle', ['field' => 'activity_grade']) ?>
+				<?= globalPartial('report_circle', ['field' => 'behavior_grade']) ?>
+				<?= globalPartial('report_circle', ['field' => 'material_grade']) ?>
+				<?= globalPartial('report_circle', ['field' => 'tests_grade']) ?>
+			</div>
+		</td>
+		<td style='width: 18%'>
 			<a href="student/{{Report.Student.id}}">
 				<span ng-show='Report.Student.last_name'>{{Report.Student.last_name}} {{Report.Student.first_name}}</span>
 				<span ng-hide='Report.Student.last_name'>имя не указано</span>

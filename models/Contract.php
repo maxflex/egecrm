@@ -4,6 +4,18 @@
         public static $mysql_table      = 'contracts';
         protected static $info_table    = 'contract_info';
 
+		public function __construct($array)
+		{
+			parent::__construct($array);
+
+			if ($this->isNewRecord) {
+				$this->payments = [];
+			} else {
+				$payments = ContractPayment::findAll(['condition' => "id_contract={$this->id}"]);
+				$this->payments = $payments ? $payments : [];
+			}
+		}
+
         public function getSubjects()
         {
             return ContractSubject::getContractSubjects($this->id);
@@ -48,6 +60,7 @@
             Contract::updateById($Contract['id'], $Contract);
             ContractInfo::updateById($Contract['info']['id_contract'], $Contract['info']);
             ContractSubject::addData($Contract['subjects'], $Contract['id']);
+			ContractPayment::process($Contract['payments'], $Contract['id']);
         }
     }
 

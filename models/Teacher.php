@@ -169,7 +169,7 @@
 		 */
 		public static function getReportData($page, $Teachers, $id_student = false)
 		{
-			if (!$page) {
+			if (!$page && $page != -1) {
 				$page = 1;
 			}
 			// С какой записи начинать отображение, по формуле
@@ -183,14 +183,15 @@
 			}
 
 			// получаем данные
-			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, rh.id_report as id, r.date, r.available_for_parents, rh.lesson_count");
-			$result = dbConnection()->query($query . " LIMIT {$start_from}, " . Report::PER_PAGE);
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, rh.id_report as id, r.date, r.available_for_parents, rh.lesson_count, r.homework_grade, r.activity_grade, r.behavior_grade, r.material_grade, r.tests_grade");
+			$result = dbConnection()->query($query . ($page == -1 ? '' : " LIMIT {$start_from}, " . Report::PER_PAGE));
 
 			while ($row = $result->fetch_object()) {
 				$student_subject[] = $row;
 			}
 
 			foreach ($student_subject as &$ss) {
+				$ss->date = toDotDate($ss->date);
 				$ss->Student = Student::getLight($ss->id_entity);
 				$ss->Teacher = Teacher::getLight($ss->id_teacher);
 				$ss->force_noreport = ReportForce::check($ss->id_entity, $ss->id_teacher, $ss->id_subject, $ss->year);

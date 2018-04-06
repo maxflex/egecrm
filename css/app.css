@@ -14337,6 +14337,33 @@ body {
     background-color: #5cb85c;
     color: white !important; }
 
+.report-grade-circle {
+  border: 1px solid #eee;
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  color: white;
+  margin-right: 3px;
+  font-weight: 500;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+  .report-grade-circle.active {
+    background-color: #5cb85c; }
+  .report-grade-circle.undefined {
+    color: black;
+    background: white; }
+  .report-grade-circle > span {
+    top: -1px;
+    position: relative; }
+
+.report-grade-line {
+  display: flex; }
+  .report-grade-line > .report-grade-circle:last-of-type {
+    margin-right: none; }
+
 .fixed-menu {
   width: 16.66666667%;
   position: fixed;
@@ -15659,41 +15686,48 @@ h4.row-header {
 
 .lightbox-addcontract, .lightbox-addcontracttest {
   width: 1100px;
-  left: calc(50% - 450px);
+  left: calc(50% - 550px);
   top: 10%; }
-  .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select, .lightbox-addcontracttest .input-group, .lightbox-addcontracttest input, .lightbox-addcontracttest select {
-    width: 232px;
-    float: right; }
-  .lightbox-addcontract .input-label, .lightbox-addcontracttest .input-label {
-    margin-top: 7px;
-    display: inline-block; }
-  .lightbox-addcontract .contract-subject-list.subject-line, .lightbox-addcontracttest .contract-subject-list.subject-line {
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 10px;
-    height: 34px;
-    position: relative; }
-  .lightbox-addcontract .contract-subject-list .input-group, .lightbox-addcontracttest .contract-subject-list .input-group {
-    width: 160px;
-    top: -5px; }
-  .lightbox-addcontract .contract-subject-list .ios7-switch .switch, .lightbox-addcontracttest .contract-subject-list .ios7-switch .switch {
-    font-size: 24px;
-    margin-right: 15px; }
-  .lightbox-addcontract .contract-subject-list .ios7-switch .subject-name, .lightbox-addcontracttest .contract-subject-list .ios7-switch .subject-name {
-    font-weight: normal;
-    text-transform: capitalize;
-    opacity: .5; }
-  .lightbox-addcontract .contract-subject-list .dogavar-label, .lightbox-addcontracttest .contract-subject-list .dogavar-label {
-    position: absolute;
-    color: gray;
-    font-size: 12px;
-    top: 9px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.zero, .lightbox-addcontracttest .contract-subject-list .dogavar-label.zero {
-      right: 220px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.first, .lightbox-addcontracttest .contract-subject-list .dogavar-label.first {
-      right: 38px; }
-    .lightbox-addcontract .contract-subject-list .dogavar-label.second, .lightbox-addcontracttest .contract-subject-list .dogavar-label.second {
-      right: 10px; }
+
+#modal-contract .input-group, #modal-contract input, #modal-contract select, .lightbox-addcontract .input-group, .lightbox-addcontract input, .lightbox-addcontract select, .lightbox-addcontracttest .input-group, .lightbox-addcontracttest input, .lightbox-addcontracttest select {
+  width: 250px;
+  float: right; }
+
+#modal-contract .input-label, .lightbox-addcontract .input-label, .lightbox-addcontracttest .input-label {
+  margin-top: 7px;
+  display: inline-block; }
+
+#modal-contract .contract-subject-list.subject-line, .lightbox-addcontract .contract-subject-list.subject-line, .lightbox-addcontracttest .contract-subject-list.subject-line {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 10px;
+  height: 34px;
+  position: relative; }
+
+#modal-contract .contract-subject-list .input-group, .lightbox-addcontract .contract-subject-list .input-group, .lightbox-addcontracttest .contract-subject-list .input-group {
+  width: 160px;
+  top: -5px; }
+
+#modal-contract .contract-subject-list .ios7-switch .switch, .lightbox-addcontract .contract-subject-list .ios7-switch .switch, .lightbox-addcontracttest .contract-subject-list .ios7-switch .switch {
+  font-size: 24px;
+  margin-right: 15px; }
+
+#modal-contract .contract-subject-list .ios7-switch .subject-name, .lightbox-addcontract .contract-subject-list .ios7-switch .subject-name, .lightbox-addcontracttest .contract-subject-list .ios7-switch .subject-name {
+  font-weight: normal;
+  text-transform: capitalize;
+  opacity: .5; }
+
+#modal-contract .contract-subject-list .dogavar-label, .lightbox-addcontract .contract-subject-list .dogavar-label, .lightbox-addcontracttest .contract-subject-list .dogavar-label {
+  position: absolute;
+  color: gray;
+  font-size: 12px;
+  top: 9px; }
+  #modal-contract .contract-subject-list .dogavar-label.zero, .lightbox-addcontract .contract-subject-list .dogavar-label.zero, .lightbox-addcontracttest .contract-subject-list .dogavar-label.zero {
+    right: 220px; }
+  #modal-contract .contract-subject-list .dogavar-label.first, .lightbox-addcontract .contract-subject-list .dogavar-label.first, .lightbox-addcontracttest .contract-subject-list .dogavar-label.first {
+    right: 38px; }
+  #modal-contract .contract-subject-list .dogavar-label.second, .lightbox-addcontract .contract-subject-list .dogavar-label.second, .lightbox-addcontracttest .contract-subject-list .dogavar-label.second {
+    right: 10px; }
 
 .contract-recommended-price {
   font-size: 10px;
@@ -16883,19 +16917,26 @@ a[href^="https://www.google.com/maps"] {
     background: #337ab7;
     display: flex;
     height: 50px;
-    justify-content: flex-end;
-    padding: 0 30px; }
-    .modal-new .modal-new-header > div {
-      background: #337ab7;
-      display: inline-block;
-      vertical-align: middle;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      color: white;
-      cursor: pointer; }
-      .modal-new .modal-new-header > div:hover {
-        background: #285f8f; }
+    justify-content: space-between;
+    color: white;
+    align-items: center; }
+    .modal-new .modal-new-header > .header-title {
+      padding-left: 50px; }
+    .modal-new .modal-new-header > .header-buttons {
+      height: 100%;
+      display: flex; }
+      .modal-new .modal-new-header > .header-buttons > div {
+        height: 100%;
+        background: #337ab7;
+        display: inline-block;
+        vertical-align: middle;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        color: white;
+        cursor: pointer; }
+        .modal-new .modal-new-header > .header-buttons > div:hover {
+          background: #285f8f; }
 
 .modal-animate-close {
   -webkit-animation-name: modalClose;
@@ -16952,6 +16993,27 @@ a[href^="https://www.google.com/maps"] {
     color: white;
     margin-right: 12px;
     font-weight: bold; }
+
+.contract-payment-input-group input:first-of-type {
+  width: 85px !important; }
+
+.contract-payment-input-group input:last-of-type {
+  width: 86px !important;
+  border-left: none; }
+
+.add-contract-payment-controls a {
+  margin-right: 20px; }
+
+.first-contract-payment {
+  width: 126px !important;
+  float: left;
+  left: -1px;
+  border-radius: 0 4px 4px 0 !important;
+  font-size: 13px;
+  pointer-events: none; }
+
+.slider-handle {
+  top: 1px; }
 
 .control-group {
   display: inline-block;

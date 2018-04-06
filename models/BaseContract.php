@@ -36,6 +36,7 @@
                 }
             }
 
+            $this->date_original = $this->date;
 			if ($this->date) {
 				$this->date = toDotDate($this->date);
 			}

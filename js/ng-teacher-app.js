@@ -72,9 +72,45 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     return set_scope("Teacher");
   });
 }).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService, Workplaces) {
-  var _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
+  var _initReportsModule, _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
+  _initReportsModule = function() {
+    $scope.search = $.cookie("reports") ? JSON.parse($.cookie("reports")) : {};
+    $scope.search.id_teacher = $scope.Teacher.id;
+    $scope.filter();
+    return $(".single-select").selectpicker();
+  };
+  $scope.loadReports = function() {
+    frontendLoadingStart();
+    return $.post("reports/AjaxGetReports", {
+      page: -1,
+      teachers: []
+    }, function(response) {
+      frontendLoadingEnd();
+      $scope.Reports = response.data;
+      $scope.counts = response.counts;
+      $scope.$apply();
+      return $scope.refreshCounts();
+    }, "json");
+  };
+  $scope.filter = function() {
+    delete $scope.Reports;
+    $.cookie("reports", JSON.stringify($scope.search), {
+      expires: 365,
+      path: '/'
+    });
+    return $scope.loadReports();
+  };
+  $scope.refreshCounts = function() {
+    return $timeout(function() {
+      $('.watch-select option').each(function(index, el) {
+        $(el).data('subtext', $(el).attr('data-subtext'));
+        return $(el).data('content', $(el).attr('data-content'));
+      });
+      return $('.watch-select').selectpicker('refresh', 100);
+    });
+  };
   $scope.studentSelected = function(Student) {
     var student_id;
     student_id = Student.originalObject.id;
@@ -176,9 +212,13 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
   };
   menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars', 'TeacherAdditionalPayments'];
   $scope.setMenu = function(menu, complex_data) {
-    $.each(menus, function(index, value) {
-      return _loadData(index, menu, value, complex_data);
-    });
+    if (menu === 4) {
+      _initReportsModule();
+    } else {
+      $.each(menus, function(index, value) {
+        return _loadData(index, menu, value, complex_data);
+      });
+    }
     return $scope.current_menu = menu;
   };
   _postData = function(menu) {

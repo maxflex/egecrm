@@ -26,7 +26,7 @@
         <table width="100%">
             <tr>
                 <td>г. Москва</td>
-                <td align="right">{{formatContractDate2(contract_test.date)}}</td>
+                <td align="right">{{formatContractDate2(contract_test.date_original)}}</td>
             </tr>
         </table>
 
@@ -156,12 +156,12 @@
             }
         </style>
         <h4 class="centered-text" style="margin-bottom: 4px;">АКТ ОБ ОКАЗАННЫХ УСЛУГАХ</h4>
-        <h4 class="centered-text">ПО ДОГОВОРУ №{{contract_test.id}}Т от  {{formatContractDate2(first_contract_test.date)}}</h4>
+        <h4 class="centered-text">ПО ДОГОВОРУ №{{contract_test.id}}Т от  {{formatContractDate2(first_contract_test.date_original)}}</h4>
 
         <table width="100%">
             <tr>
                 <td>г. Москва</td>
-                <td align="right">{{formatContractDate2(contract_test.date)}}</td>
+                <td align="right">{{formatContractDate2(contract_test.date_original)}}</td>
             </tr>
         </table>
 
@@ -169,7 +169,7 @@
             Мы, нижеподписавшиеся: <br>
             От имени Заказчика: {{contractPrintName(representative, 'nominative')}},
             и от имени Исполнителя Генеральный директор Эрдман Константин Александрович, действующий на основании Устава,
-            составили акт о том, что в соответствии с обязательствами, предусмотренными Договором от  {{formatContractDate2(first_contract_test.date)}} №{{first_contract_test.date.id}}T
+            составили акт о том, что в соответствии с обязательствами, предусмотренными Договором от  {{formatContractDate2(first_contract_test.date_original)}} №{{first_contract_test.date.id}}T
             Исполнитель оказал Заказчику в полном объеме услуги на сумму: {{contract_test.sum | number}} ({{numToText(contract_test.sum)}}) <ng-pluralize count="contract_test.sum" when="{
                 'one'	: 'рубль',
                 'few'	: 'рубля',

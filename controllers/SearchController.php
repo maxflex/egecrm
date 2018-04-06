@@ -82,7 +82,7 @@ class SearchController extends Controller
                               FROM
                                 tutors
                               WHERE
-                                in_egecentr=2 AND " . $this->sqlLikeGenerator($queryArray) . "
+                                in_egecentr>0 AND " . $this->sqlLikeGenerator($queryArray) . "
                                LIMIT " . self::$resultsInSearch;
 
         #  обработка ответа по преподователям

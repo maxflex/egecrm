@@ -13,7 +13,7 @@
 				</td>
 			</tr>
 				<tr ng-repeat="contract in contracts | group_by_id_contract:id_contract | orderBy:'date_changed'">
-					<td width="20%">версия {{ $index + 1 }} от {{ formatContractDate(contract.date) }}</td>
+					<td width="20%">версия {{ $index + 1 }} от {{ formatContractDate(contract.date_original) }}</td>
 					<td width="25%">{{ getContractSum(contract) | number }} <ng-pluralize count="getContractSum(contract)" when="{
 						'one': 'рубль',
 						'few': 'рубя',

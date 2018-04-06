@@ -21,7 +21,7 @@
         <h4 style="text-align:center;margin-top: 0">ПО ДОГОВОРУ №{{service_contract_parent.id}} от {{service_contract_parent.date}}</h4>
 
         <div style="display: inline-block; width: 100%; margin-bottom: 20px">
-            <div>г. Москва {{formatContractDate2(service_contract.date)}}</div>
+            <div>г. Москва {{formatContractDate2(service_contract.date_original)}}</div>
             <div>Мы, нижеподписавшиеся:</div>
         </div>
 
@@ -30,7 +30,7 @@
             и от имени Исполнителя Генеральный директор ООО «ЕГЭ-ЦЕНТР» Эрдман Константин Александрович,
             действующий на основании Устава, составили акт о том,
             что в соответствии с обязательствами, предусмотренными
-            Договором от {{formatContractDate2(service_contract_parent.date)}} №{{service_contract_parent.id}}
+            Договором от {{formatContractDate2(service_contract_parent.date_original)}} №{{service_contract_parent.id}}
             Исполнитель оказал Заказчику в полном объеме услуги
             на сумму: {{service_contract.sum}} ({{numToText(service_contract.sum)}}) <ng-pluralize count="service_contract.sum" when="{'one': 'рубль', 'few': 'рубя', 'many': 'рублей'}"></ng-pluralize> 00 копеек.
             НДС не облагается. Заказчик претензий к Исполнителю не имеет.

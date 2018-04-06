@@ -10,24 +10,30 @@
 				{{Review.id ? 'отзыв ' + Review.id : 'создать'}}
 			</a>
 		</td>
-		<td style="width: 20%" ng-init="_Teacher = (Review.Teacher || Teacher)">
-			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
+		<td ng-init="_Teacher = (Review.Teacher || Teacher)">
+			<div style='width: 200px'>
+				<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
+			</div>
 		</td>
 		<td style="width: 5%">
 			{{three_letters[Review.id_subject]}}
 		</td>
-		<td style="width: 15%">
-			<a href="student/{{Review.Student.id}}">
-				<span ng-show='Review.Student.last_name'>{{Review.Student.last_name}} {{Review.Student.first_name}}</span>
-				<span ng-hide='Review.Student.last_name'>имя не указано</span>
-			</a>
+		<td>
+			<div style='width: 190px'>
+				<a href="student/{{Review.Student.id}}">
+					<span ng-show='Review.Student.last_name'>{{Review.Student.last_name}} {{Review.Student.first_name}}</span>
+					<span ng-hide='Review.Student.last_name'>имя не указано</span>
+				</a>
+			</div>
 		</td>
-		<td style="width: 10%">
-			{{Review.lesson_count}} <ng-pluralize count='Review.lesson_count' when="{
-				'one': 'занятие',
-				'few': 'занятия',
-				'many': 'занятий',
-			}"></ng-pluralize>
+		<td>
+			<div style='width: 125px'>
+				{{Review.lesson_count}} <ng-pluralize count='Review.lesson_count' when="{
+					'one': 'занятие',
+					'few': 'занятия',
+					'many': 'занятий',
+				}"></ng-pluralize>
+			</div>
 		</td>
 		<td style="width: 3%" class="vertical-gray vertical-gray-left">
 			<div ng-if="Review.comment" class="hint--bottom" data-hint="{{Review.comment}}"></div>

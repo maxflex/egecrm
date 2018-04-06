@@ -572,11 +572,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if (date == null) {
 				return
 			}
-			date = date.split('.')
-
-			// был баг. месяц делал автоматически +1
-			month = date[1] - 1;
-			date = new Date(date[2], month, date[0])
 			return moment(date).format("D MMMM YYYY г.")
 		}
 
@@ -584,11 +579,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if (date == null) {
 				return
 			}
-			date = date.split('.')
-
-			// был баг. месяц делал автоматически +1
-			month = date[1] - 1;
-			date = new Date(date[2], month, date[0])
 			date_str = moment(date).format("D MMMM YYYYг.")
 			date = date_str.split(' ');
 			date[0] = '«' + date[0] + '»'
@@ -1490,6 +1480,19 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("select[name='grades']").removeClass("has-error")
 			}
 
+			// если сумма платежей больше суммы по договору
+			payments_sum = 0
+			$scope.current_contract.payments.forEach(function(payment) {
+				payments_sum += parseInt(payment.sum)
+			})
+			contract_sum = $scope.getContractSum($scope.current_contract)
+
+			if (payments_sum > contract_sum) {
+				notifyError('сумма платежей больше суммы по договору')
+				return false
+			}
+
+
             if (error) {
                 return false
             }
@@ -1513,7 +1516,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$.post("ajax/contractEdit", $scope.current_contract, function(response) {
                     _.extend(_.find($scope.contracts, {id: $scope.current_contract.id}), $scope.current_contract, {show_actions: false})
 					ajaxEnd('contract')
-					lightBoxHide()
+					// lightBoxHide()
+					closeModal()
 					$scope.lateApply()
 				}, "json")
 			} else {
@@ -1524,7 +1528,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					    pushAndSetCurrentVersion($scope.current_contract)
                     }
 					ajaxEnd('contract')
-					lightBoxHide()
+					// lightBoxHide()
+					closeModal()
 					$scope.current_contract = response
 					$scope.current_contract.current_version = 1
 					$scope.current_contract.show_actions = false;
@@ -1665,6 +1670,26 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$scope.lateApplyShort()
 		}
 
+		// NE MAKA
+		$scope.addContractPayment = function(n) {
+			payments_count = $scope.current_contract.payments.length
+			if (n === undefined) {
+				n = payments_count + 1
+			}
+			for(i = payments_count; i < n; i++) {
+				$scope.current_contract.payments.push({
+					id_contract: $scope.current_contract.id
+				})
+			}
+			$timeout(function() {
+				rebindMasks()
+			})
+		}
+
+		$scope.deleteContractPayment = function(index) {
+			$scope.current_contract.payments.splice(index, 1)
+		}
+
 		// вызывает окно редактирования контракта
 		$scope.callContractEdit = function(contract)
 		{
@@ -1674,7 +1699,11 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.current_contract.info.grade = ""
 			}
 
-			lightBoxShow('addcontract')
+			// lightBoxShow('addcontract')
+			$scope.closeContexMenu()
+			openModal('contract')
+
+
 			$("select[name='grades']").removeClass("has-error")
 			$scope.lateApply()
 
@@ -1684,6 +1713,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					val = $(e).attr('data-slider-value');
 					$(e).slider('setValue', parseInt(val));
 				})
+				rebindMasks()
 			});
 		}
 
