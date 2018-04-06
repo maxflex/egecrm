@@ -259,8 +259,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 	.controller("EditCtrl", function ($scope, $log, $timeout, PhoneService, UserService, GroupService) {
 		bindArguments($scope, arguments);
 
-        $scope.yearLabel = function(year) {
-            return year + '-' + (parseInt(year) + 1) + ' уч. г.'
+        $scope.yearLabel = function(year, noLabel) {
+            return year + '-' + (parseInt(year) + 1) + (noLabel === undefined ? ' уч. г.' : '')
         }
 
 		/*** contex menu functions ***/
@@ -2299,6 +2299,12 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		    }, 'json');
 		  }
 		};
+
+		$scope.getReviewsYears = function() {
+			if ($scope.Reviews) {
+				return _.uniq(_.pluck($scope.Reviews, 'year'))
+			}
+		}
 
 		$scope.getCabinet = function(id) {
 			return _.findWhere($scope.all_cabinets, {id: parseInt(id)})

@@ -15407,7 +15407,8 @@ button:disabled, select:disabled {
 
 h4.row-header {
   font-size: 16px;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased; }
 
 .underline-hover {
   cursor: pointer; }

@@ -210,7 +210,7 @@
 					AND {$t}.id_subject = vj.id_subject AND {$t}.year = vj.year) AS lesson_count";
 		}
 
-		private static function _generateQuery($search, $select, $order = true, $ending)
+		private static function _generateQuery($search, $select, $order = true, $ending = '')
 		{
 			$main_query = "
 				FROM (select distinct id_entity, id_subject, id_teacher, `year` from visit_journal where type_entity='STUDENT') vj
