@@ -145,6 +145,7 @@
 							</td>
 							<td width="6.5%">
 								<span class="day-explain exam-day-subject" ng-show="Lesson.is_unplanned && !Lesson.Group.is_unplanned" title="внеплановое"></span>
+								<span class="day-explain" style='background-color: #f690e9' ng-show="Lesson.Group.is_unplanned" title="внеплановое"></span>
 								<span class="day-explain exam-day" ng-show="Lesson.number == 1 && !Lesson.cancelled && !Lesson.Group.is_unplanned" title="старт группы"></span>
 								<span class="day-explain vocation" ng-show="Lesson.not_registered" title="не зарегистрирован"></span>
 							</td>

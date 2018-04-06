@@ -1149,35 +1149,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             return count * parseInt($scope.Prices[contract.info.grade])
 		}
 
-        // опции выбора разбиения платежей
-        $scope.payment_options = {}
-        $scope.splitPaymentsOptions = function(year) {
-            if (! year) {
-                return;
-            }
-            // для кэша
-            if ($scope.payment_options[year] !== undefined) {
-                return $scope.payment_options[year]
-            }
-            year = parseInt(year)
-            options = {
-                '1-0': [],
-                '2-0': [_paymentDate(year + 1, '01-27')],
-                '3-0': [_paymentDate(year, '11-20'), _paymentDate(year + 1, '02-20')],
-                '3-1': [_paymentDate(year, '11-27'), _paymentDate(year + 1, '02-27')],
-                '8-0': [_paymentDate(year, '10-15'), _paymentDate(year, '11-15'), _paymentDate(year, '12-15'),
-                    _paymentDate(year + 1, '01-15'), _paymentDate(year + 1, '02-15'), _paymentDate(year + 1, '03-15'), _paymentDate(year + 1, '04-15')],
-            }
-            $scope.payment_options[year] = options // кэшируем
-            return options
-        }
 
         $scope.ceil = function(n) {
             return Math.ceil(n)
-        }
-
-        _paymentDate = function(year, date) {
-            return moment(parseInt(year) + '-' + date).format('DD.MM.YY')
         }
 
         $scope.getPaymentLabel = function(dates) {
