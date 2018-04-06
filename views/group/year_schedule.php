@@ -6,11 +6,11 @@
 	<div ng-repeat="year in lesson_years">
 		<div ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]" ng-if="Lessons[year][month]" class="visits-block">
 			<h4>{{ months[month] }} {{ month >= 9 ? year : year + 1 }}</h4>
-			<table class="table table-hover border-reverse last-item-no-border">
+			<table class="table small table-hover border-reverse last-item-no-border">
 				<tr ng-repeat="Lesson in Lessons[year][month] | orderBy:'date_time'" class="visits-block__elem" ng-class="{
 					'visits-block__elem--planned': Lesson.is_planned || Lesson.canceleld
 				}">
-					<td style='width: 50px; margin-right: 0'>
+					<td style='width: 30px; margin-right: 0'>
 						{{ $index + 1 }}
 					</td>
 					<td width='200'>
