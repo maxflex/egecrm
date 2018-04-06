@@ -87,7 +87,7 @@
 				</div>
 				<div v-if="response.contracts.length" class="resultRows">
 					<h4>Договоры</h4>
-					<div v-for="(index, row) in contracts.requests" class="resultRow" v-bind:class="{active : ((response.requests.length + response.tutors.length + response.representatives.length + response.students.length + index + 1) ==  active)}">
+					<div v-for="(index, row) in response.contracts" class="resultRow" v-bind:class="{active : ((response.requests.length + response.tutors.length + response.representatives.length + response.students.length + index + 1) ==  active)}">
 						<a v-bind:href="row.link">№{{ row.id_contract }}</a>
 					</div>
 				</div>
