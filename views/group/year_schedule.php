@@ -13,7 +13,7 @@
 					<td style='width: 30px; margin-right: 0'>
 						{{ $index + 1 }}
 					</td>
-					<td width='200'>
+					<td width='160'>
 						{{ Lesson.lesson_date  | date:"dd.MM.yy" }} в {{ Lesson.lesson_time }}
 					</td>
 					<td width='150'>
@@ -25,7 +25,7 @@
 					<td width='100'>
 						<span>{{ Subjects[Lesson.id_subject] }}-{{ Lesson.grade_short }}</span>
 					</td>
-					<td style='width: 150px; margin-right: 0'>
+					<td style='width: 160px; margin-right: 0'>
 						{{ Lesson.Teacher.last_name }} {{ Lesson.Teacher.first_name[0] }}. {{ Lesson.Teacher.middle_name[0] }}.
 					</td>
 					<td>
