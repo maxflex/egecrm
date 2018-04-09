@@ -1216,7 +1216,7 @@ body {
 .top-links {
 	margin-bottom: 20px;
 	& a, span.link-like {
-		margin-right: 15px;
+		margin-right: 18px;
 		display: inline-block;
 	}
 	& span.active, a.active {
@@ -3921,4 +3921,21 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 
 .slider-handle {
 	top: 1px;
+}
+
+.circle-label {
+	background-color: #A94442;
+	font-size: 11px;
+	height: 14px;
+	width: 14px;
+	color: white;
+	border-radius: 50%;
+	font-weight: normal;
+	margin: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	right: -15px;
+	top: -3px;
 }
