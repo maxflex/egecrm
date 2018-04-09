@@ -468,6 +468,14 @@
 				$Lessons[$group_id] = VisitJournal::getStudentGroupLessons($group_id, $id_student);
 			}
 
+			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, $id_student);
+
+			foreach($AdditionalLessons as $Lesson) {
+				if ($Lesson['is_planned']) {
+					$Lessons[-1][] = (object)$Lesson;
+				}
+			}
+
 			$years = [];
 			foreach($Lessons as $group_id => $GroupLessons) {
 				foreach($GroupLessons as $Lesson) {

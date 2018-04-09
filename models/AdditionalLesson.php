@@ -86,14 +86,13 @@ class AdditionalLesson
 			$Group = Group::findById($Group, true);
 		}
 		$Lesson = VisitJournal::getGroupLessons($Group->id, 'find');
-		error_log(json_encode($Lesson));
  		return [
 			'id' => $Lesson->id,
 			'teacher_price' => $Group->teacher_price,
 			'id_subject' => $Lesson->id_subject,
 			'grade' => $Lesson->grade,
 			'year' => $Lesson->year,
-			'id_teacher' => $Lesson->id_teacher,
+			'id_teacher' => $Group->id_teacher,
 			'students' => $Group->students,
 			'cabinet' => $Lesson->cabinet,
 			'lesson_date' => $Lesson->lesson_date,
@@ -101,9 +100,10 @@ class AdditionalLesson
 			'id_group' => $Lesson->id_group,
 			'grade' => $Lesson->grade,
 			'grade_short' => $Lesson->grade_short,
-			'is_planned' => $Lesson->grade_short,
+			'is_planned' => $Lesson->is_planned,
 			'cancelled' => $Lesson->cancelled,
 			'is_conducted' => $Lesson->is_conducted,
+			'entry_id' => $Lesson->entry_id,
 			'lesson_date_formatted' => date_format(date_create($Lesson->lesson_date), "d.m.y")
 		];
 	}

@@ -15,7 +15,8 @@
 								{{ $index + 1}}
 							</td>
 							<td width='150'>
-								Группа {{id_group}}
+								<span ng-show="id_group > 0">Группа {{id_group}}</span>
+								<span ng-show="id_group < 0">доп. занятие</span>
 							</td>
 							<td width='150'>
 								<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>

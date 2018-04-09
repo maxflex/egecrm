@@ -17,7 +17,8 @@
 						{{ Lesson.lesson_date  | date:"dd.MM.yy" }} в {{ Lesson.lesson_time }}
 					</td>
 					<td width='150'>
-						Группа {{ Lesson.id_group }}
+						<span ng-show="Lesson.id_group > 0">Группа {{Lesson.id_group}}</span>
+						<span ng-show="Lesson.id_group < 0">доп. занятие</span>
 					</td>
 					<td width='150'>
 						<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>

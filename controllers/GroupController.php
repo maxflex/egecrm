@@ -125,6 +125,18 @@
 				$Lessons[$group_id] = VisitJournal::getStudentGroupLessons($group_id, User::fromSession()->id_entity);
 			}
 
+			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, User::fromSession()->id_entity);
+			foreach($AdditionalLessons as $Lesson) {
+				$ConductedLesson = VisitJournal::find(['condition' => "type_entity='STUDENT' AND entry_id=" . $Lesson['entry_id']]);
+				if ($ConductedLesson) {
+					$L = $ConductedLesson;
+				} else {
+					$L = (object)$Lesson;
+				}
+				$L->id_group = -1;
+				$Lessons[-1][] = $L;
+			}
+
 			$years = [];
 			foreach($Lessons as $group_id => $GroupLessons) {
 				foreach($GroupLessons as $Lesson) {
