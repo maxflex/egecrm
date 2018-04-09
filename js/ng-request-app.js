@@ -2177,7 +2177,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.payments === undefined && menu == 1) {
 				$.post("requests/ajax/LoadPayments", {id_student: $scope.id_student}, function(response) {
-					['user', 'payments', 'payment_types', 'payment_statuses',  'tobe_paid'].forEach(function(field) {
+					['user', 'PaymentsByYear', 'payment_types', 'payment_statuses',  'tobe_paid'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()

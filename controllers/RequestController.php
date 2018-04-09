@@ -433,11 +433,19 @@
 		{
 			extract($_POST);
 
+			$payments = Payment::getByStudentId($id_student);
+
+			$PaymentsByYear = [];
+
+			foreach($payments as $payment) {
+				$PaymentsByYear[$payment->year][] = $payment;
+			}
+
 			returnJsonAng([
 				"user"				=> User::fromSession()->dbData(),
 				"payment_statuses"	=> Payment::$all,
 				"payment_types"		=> PaymentTypes::$all,
-				"payments"			=> Payment::getByStudentId($id_student),	// Платежи ученика
+				"PaymentsByYear"	=> $PaymentsByYear,	// Платежи ученика
                 "academic_year"     => academicYear(),
                 "tobe_paid"         => Student::getDebt($id_student),
 			]);

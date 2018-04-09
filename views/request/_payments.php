@@ -6,10 +6,19 @@
             <?php endforeach ?>
         </select>
     </div>
-    <div class="col-sm-12">
-	    <?= globalPartial('loading', ['model' => 'payments', 'message' => 'нет платежей']) ?>
-	    <div class="form-group payment-line">
-            <?= globalPartial("payments_list", ["student_page" => true]) ?>
-	    </div>
+    <div class="col-sm-12 student-payments">
+
+
+	    <?= globalPartial('loading', ['model' => 'PaymentsByYear', 'message' => 'нет платежей']) ?>
+
+		<div style='margin-bottom: 15px' ng-repeat="(year, payments) in PaymentsByYear">
+			<h4 class="row-header default-case">Платежи {{ yearLabel(year, true) }} учебного года</h4>
+			<?= globalPartial("payments_list", ["student_page" => true]) ?>
+		</div>
     </div>
 </div>
+<style>
+.student-payments .payments-table:last-of-type {
+
+}
+</style>

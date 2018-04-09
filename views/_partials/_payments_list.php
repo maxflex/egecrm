@@ -6,16 +6,16 @@
     <table class="table table-hover payments-table" style="font-size: 12px !important">
         <tr ng-repeat="payment in payments" <?= ($student_page ? 'ng-init="payment.Entity = student"' : '') ?>>
 	        <?php if (! $student_page) :?>
-            <td class="col-sm-2" ng-if="payment.Entity && payment.Entity.id">
+            <td style='width: 160px' ng-if="payment.Entity && payment.Entity.id">
                 <span ng-show="payment.Entity.id"><a href="{{ payment.Entity.profile_link }}">{{ payment.Entity.last_name }} {{ payment.Entity.first_name[0] }}. {{ payment.Entity.middle_name[0] }}.</a></span>
             </td>
             <?php endif ?>
-            <td>
+            <td style='width: 100px' >
 	            <a class="link-like" ng-class="{
 					'text-danger': payment.id_type == 2
 				}" ng-click="editPayment(payment)">{{payment.id_type == 2 ? 'возврат' : 'платеж'}}</a>
             </td>
-            <td>
+            <td style='width: 160px' >
 				<span class="">{{payment_statuses[payment.id_status]}}
 					<span ng-show="payment.id_status == <?= Payment::PAID_CARD ?>">
 						{{payment.card_number ? payment.card_first_number.replace('XXX','') + "*** " + payment.card_number.trim() : ""}}
@@ -36,16 +36,16 @@
 	                <?php endif ?>
 				</span>
             </td>
-            <td>
+            <td style='width: 100px' >
                 {{payment.sum | number}}
             </td>
-            <td>
+            <td style='width: 100px' >
                 {{payment.date}}
             </td>
-            <td>
+            <td style='width: 150px' >
                 {{ yearLabel(payment.year) }}
             </td>
-            <td>
+            <td style='width: 150px' >
                 {{ payment_categories[payment.category] }}
             </td>
             <td>
@@ -59,7 +59,7 @@
             </td>
         </tr>
         <?php if ($student_page || $teacher_page) :?>
-        <tr ng-show='payments !== undefined' ng-init="teacher_page = <?= $teacher_page ? 1 : 0 ?>">
+        <tr ng-show='payments !== undefined' ng-init="teacher_page = <?= $teacher_page ? 1 : 0 ?>" class="link-add-payment">
 	        <td colspan="11">
                 <a class="link-like link-reverse" ng-click="addPaymentDialog()">добавить</a>
 	        </td>
