@@ -33,9 +33,8 @@
 					    <span class="link-like" ng-click="setMenu(3)" ng-class="{'active': current_menu == 3}">
 					    	отзывы
 					    </span>
-					    <span class="link-like" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}" style="position: relative">
+					    <span class="link-like" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}">
 					    	отчеты
-							<label class="circle-label" ng-show="student.reports_needed">{{ student.reports_needed }}</label>
 					    </span>
 					    <span class="link-like" ng-click="setMenu(5)" ng-class="{'active': current_menu == 5}">
 					    	комментарии

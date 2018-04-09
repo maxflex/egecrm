@@ -163,13 +163,13 @@
 		{
 			$id_teacher = $_GET['id'];
 			$Teacher = Teacher::findById($id_teacher);
+			$Teacher->reports_needed = Teacher::redReportCountStatic($id_teacher);
 
 			$this->setTabTitle("Редактирование преподавателя " . $Teacher->getFullName());
 			$this->setRightTabTitle("
 				<a class='link-white' style='margin-right: 10px' href='https://lk.ege-repetitor.ru/tutors/{$id_teacher}/edit'>профиль в системе ЕГЭ-Репетитор</a>
 				<a class='link-white' href='as/teacher/{$id_teacher}'>режим просмотра</a>
 			");
-			$Teacher = Teacher::findById($id_teacher);
 
 			$ang_init_data = angInit([
 				"Teacher" => $Teacher,

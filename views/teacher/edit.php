@@ -94,8 +94,9 @@
 	    <span class="link-like" ng-click="setMenu(3, true)" ng-class="{'active': current_menu == 3}">
 	    	ПЛАТЕЖИ
 	    </span>
-	    <span class="link-like" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}">
+	    <span class="link-like" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}" style='position: relative'>
 	    	ОТЧЕТЫ
+			<label class="circle-label" ng-show="Teacher.reports_needed">{{ Teacher.reports_needed }}</label>
 	    </span>
 	    <span class="link-like" ng-click="setMenu(5)" ng-class="{'active': current_menu == 5}">
 	    	СТАТИСТИКА
