@@ -504,7 +504,7 @@
 			$scope.deletePaymentAdditional = ->
 				bootbox.confirm 'Вы уверены, что хотите удалить доп. услугу?', (result) ->
 					if result is true
-						$.post 'ajax/deletePaymentAdditional', 'id_payment': $scope.new_additional_payment.id, ->
+						$.post 'ajax/deletePaymentAdditional', {'id_payment': $scope.new_additional_payment.id, 'id_teacher': $scope.Teacher.id}, ->
 							$scope.TeacherAdditionalPayments = _.without($scope.TeacherAdditionalPayments, _.findWhere($scope.TeacherAdditionalPayments, {id: $scope.new_additional_payment.id}))
 							$timeout -> $scope.$apply()
 							lightBoxHide()

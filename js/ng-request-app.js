@@ -2290,7 +2290,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		  return bootbox.confirm('Вы уверены, что хотите удалить доп. услугу?', function(result) {
 		    if (result === true) {
 		      return $.post('ajax/deletePaymentAdditional', {
-		        'id_payment': $scope.new_additional_payment.id
+		        'id_payment': $scope.new_additional_payment.id,
+						'id_student': $scope.student.id,
 		      }, function() {
 		        $scope.StudentAdditionalPayments = _.without($scope.StudentAdditionalPayments, _.findWhere($scope.StudentAdditionalPayments, {
 		          id: $scope.new_additional_payment.id

@@ -597,7 +597,8 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     return bootbox.confirm('Вы уверены, что хотите удалить доп. услугу?', function(result) {
       if (result === true) {
         return $.post('ajax/deletePaymentAdditional', {
-          'id_payment': $scope.new_additional_payment.id
+          'id_payment': $scope.new_additional_payment.id,
+          'id_teacher': $scope.Teacher.id
         }, function() {
           $scope.TeacherAdditionalPayments = _.without($scope.TeacherAdditionalPayments, _.findWhere($scope.TeacherAdditionalPayments, {
             id: $scope.new_additional_payment.id
