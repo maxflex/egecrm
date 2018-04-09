@@ -17030,6 +17030,8 @@ a[href^="https://www.google.com/maps"] {
   position: absolute;
   right: -15px;
   top: -3px; }
+  .circle-label > span {
+    margin-left: -0.5px; }
 
 .control-group {
   display: inline-block;
