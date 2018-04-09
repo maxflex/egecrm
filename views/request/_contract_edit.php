@@ -104,8 +104,8 @@
 						<input type="text" class="form-control" placeholder="сумма"
 							ng-model="payment.sum" style='border-right: 0'>
 						<span class="input-group-addon rubble-addon">₽</span>
-						<input class="form-control first-contract-payment" ng-hide="$index" placeholder="при заключении" >
-						<input class="form-control bs-date" ng-show="$index"
+						<input class="form-control first-contract-payment" ng-hide="$index > 0" placeholder="при заключении" >
+						<input class="form-control bs-date" ng-show="$index > 0"
 							placeholder="дата" type="text" ng-model="payment.date" ng-value="current_contract.date">
 						<span ng-show="$index" class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
 					</div>

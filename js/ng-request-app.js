@@ -1662,6 +1662,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		$scope.deleteContractPayment = function(index) {
 			$scope.current_contract.payments.splice(index, 1)
+			$scope.$apply()
+			$timeout(function() { $scope.$apply() }, 25)
 		}
 
 		// вызывает окно редактирования контракта
