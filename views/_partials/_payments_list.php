@@ -26,13 +26,15 @@
                     	: <a class="link-like" ng-click="printLlcBill(payment)">печать</a>
 					</span>
                 <?php endif ?>
-            </td>
-            <td>
-                <?php if ($student_page) :?>
-                    <a style='margin-left: 10px' class="link-like" ng-click="printPKO(payment)" ng-show="payment.document_number > 0 && payment.id_status == <?= Payment::PAID_CASH ?>">{{ 'ПКО ' + payment.document_number }}</a>
-                <?php else :?>
-                    {{ payment.document_number ? 'ПКО ' + payment.document_number :  '' }}
-                <?php endif ?>
+
+				<span ng-show="payment.document_number > 0 && payment.id_status == <?= Payment::PAID_CASH ?>" class="remove-space">
+					:
+					<?php if ($student_page) :?>
+	                    <a class="link-like" ng-click="printPKO(payment)">{{ 'ПКО ' + payment.document_number }}</a>
+	                <?php else :?>
+						{{ 'ПКО ' + payment.document_number }}
+	                <?php endif ?>
+				</span>
             </td>
             <td>
                 {{payment.sum | number}}
