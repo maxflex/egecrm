@@ -3,6 +3,12 @@ app = angular.module "Reports", ["ui.bootstrap"]
         return (text) ->
             return $sce.trustAsHtml(text)
 	]
+    .filter 'toArray', ->
+        (obj) ->
+            arr = []
+            $.each obj, (index, value) ->
+                arr.push(value)
+            return arr
 	.filter 'range', () ->
 		return (input, total) ->
 			total = parseInt total
@@ -203,4 +209,21 @@ app = angular.module "Reports", ["ui.bootstrap"]
 			$(".form-change-control").on 'keyup change', 'input, select, textarea', ->
 				$scope.form_changed = true
 				$scope.$apply()
+			set_scope "Reports"
+
+	.controller "TeacherListCtrl", ($scope, $timeout) ->
+		$scope.yearLabel = (year) ->
+			year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
+		$scope.changeYear = ->
+			delete $scope.data
+			$.post "reports/AjaxLoadByYear",
+				year: $scope.year,
+			, (response) ->
+				 $scope.data = response
+				 $scope.$apply()
+			, 'json'
+
+		angular.element(document).ready ->
+			$scope.changeYear()
 			set_scope "Reports"

@@ -91,6 +91,34 @@
 		            $('.watch-select').selectpicker 'refresh'
 		        , 100
 
+			# REVIEWS
+			$scope.enum = review_statuses
+			$scope.enum_approved = review_statuses_approved
+
+			_initReviewsModule = ->
+				$scope.search_reviews = if $.cookie("reviews") then JSON.parse($.cookie("reviews")) else {}
+				$scope.search_reviews.id_teacher = $scope.Teacher.id
+				$scope.filterReviews()
+				$(".single-select").selectpicker()
+
+			$scope.loadReviews = ->
+				frontendLoadingStart()
+				$.post "ajax/GetReviews",
+					page: -1
+					teachers: []
+				, (response) ->
+					frontendLoadingEnd()
+					$scope.Reviews  = response.data
+					$scope.counts_review = response.counts
+					$scope.$apply()
+					$scope.refreshCounts()
+				, "json"
+
+			$scope.filterReviews = ->
+				delete $scope.Reviews
+				$.cookie("reviews", JSON.stringify($scope.search_reviews), { expires: 365, path: '/' });
+				$scope.loadReviews()
+
 			# AUTOCOMPLETE
 			$scope.studentSelected = (Student) ->
 				student_id = Student.originalObject.id
@@ -177,6 +205,8 @@
 			menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars', 'TeacherAdditionalPayments']
 
 			$scope.setMenu = (menu, complex_data) ->
+				if menu == 1
+					_initReviewsModule()
 				if menu == 4
 					_initReportsModule()
 				else

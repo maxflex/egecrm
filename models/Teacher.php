@@ -183,7 +183,7 @@
 			}
 
 			// получаем данные
-			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, rh.id_report as id, r.date, r.available_for_parents, rh.lesson_count, r.homework_grade, r.activity_grade, r.behavior_grade, r.material_grade, r.tests_grade");
+			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, rh.id_report as id, r.date, r.available_for_parents, rh.lesson_count, r.homework_grade, r.activity_grade, r.behavior_grade, r.material_grade, r.tests_grade, vj.grade");
 			$result = dbConnection()->query($query . ($page == -1 ? '' : " LIMIT {$start_from}, " . Report::PER_PAGE));
 
 			while ($row = $result->fetch_object()) {
@@ -220,6 +220,11 @@
 				$new_search = clone $search;
 				$new_search->available_for_parents = $available_for_parents;
 				$counts['available_for_parents'][$available_for_parents] = static::_count($new_search);
+			}
+			foreach(["", 9, 10, 11, 12, 13, 14] as $grade) {
+				$new_search = clone $search;
+				$new_search->grade = $grade;
+				$counts['grade'][$grade] = static::_count($new_search);
 			}
 
 			foreach(([''=>''] + Subjects::$all) as $id_subject => $name) {
@@ -263,6 +268,7 @@
 				. ($search->mode == 1 ? " AND rh.id_report IS NOT NULL" : "")
 				. (!isBlank($search->available_for_parents) ? " and if(r.available_for_parents = 1 and r.id > 0, 1, 0) = {$search->available_for_parents} " : "")
 				. ($search->year ? " AND vj.year={$search->year}" : "")
+				. ($search->grade ? " AND vj.grade={$search->grade}" : "")
 				. ($search->id_teacher ? " AND vj.id_teacher={$search->id_teacher}" : "")
 				. ($search->id_student ? " AND vj.id_entity={$search->id_student}" : "")
 				. (($search->id_subject) ? " AND vj.id_subject={$search->id_subject}" : "")

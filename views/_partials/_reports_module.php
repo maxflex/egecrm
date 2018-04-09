@@ -29,6 +29,13 @@
 		</select>
 	</div>
 	<div>
+		<select class="watch-select single-select form-control" ng-model="search.grade" ng-change='filter()'>
+			<option value=""  data-subtext="{{ counts.grade[''] || '' }}">все классы</option>
+			<option disabled>──────────────</option>
+			<option ng-hide='grade < 8' ng-repeat="(grade, label) in Grades | toArray" value="{{(grade + 1)}}" data-subtext="{{ counts.grade[grade + 1] || '' }}">{{label}}</option>
+		</select>
+	</div>
+	<div>
 		<select class="watch-select single-select form-control" ng-model="search.available_for_parents"  ng-change='filter()'>
 			<option value="" data-subtext="{{ counts.available_for_parents[''] || '' }}">любая доступность</option>
 			<option disabled>──────────────</option>

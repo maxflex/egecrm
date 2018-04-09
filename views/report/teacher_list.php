@@ -1,4 +1,4 @@
-<div class="panel panel-primary" ng-app="Reports" ng-controller="ListCtrl" ng-init="<?= $ang_init_data ?>">
+<div class="panel panel-primary" ng-app="Reports" ng-controller="TeacherListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="panel-heading">
 		Отчёты
 		<div class="pull-right">
@@ -14,11 +14,18 @@
 			Внимание!<br />
 			Каждый родитель хочет знать как проходит обучение не только со слов своего ребенка, но и преподавателя. Отчет преподавателя - один из главных факторов, дающий родителям понимание стоит ли продолжать обучение в ЕГЭ-Центре. Пожалуйста, заполняйте отчеты тщательно и развернуто.
 		</div>
-        <div class="top-links pull-left">
-			<a ng-class="{'active': year == <?= $year ?>}" href='teachers/reports/{{ year }}'
-                ng-repeat='year in <?= Years::json() ?>'>{{ year + '-' + (year + 1)  }}</a>
+		<div style='width: 300px'>
+			<select class="watch-select single-select form-control" ng-model="year" ng-change='changeYear()'>
+				<option ng-repeat="y in <?= Years::json() ?>" value="{{ y }}" ng-selected="y == year">{{ yearLabel(y) }}</option>
+			</select>
 		</div>
-		<table class="table table-hover">
+		<div ng-show="data === undefined" style="padding: 100px" class="small half-black center">
+			загрузка...
+		</div>
+		<div ng-show="data === false" style="padding: 100px" class="small half-black center">
+			нет отчетов в этом учебном году
+		</div>
+		<table class="table table-hover" style='margin-top: 30px'>
 			<tr ng-repeat="d in data">
 				<td style="width: 20%">
 					<a href="teachers/reports/student/{{ d.Student.id }}/{{ d.id_subject }}">{{d.Student.last_name}} {{d.Student.first_name}}</a>

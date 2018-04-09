@@ -72,7 +72,7 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     return set_scope("Teacher");
   });
 }).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService, Workplaces) {
-  var _initReportsModule, _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
+  var _initReportsModule, _initReviewsModule, _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
   _initReportsModule = function() {
@@ -110,6 +110,35 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
       });
       return $('.watch-select').selectpicker('refresh', 100);
     });
+  };
+  $scope["enum"] = review_statuses;
+  $scope.enum_approved = review_statuses_approved;
+  _initReviewsModule = function() {
+    $scope.search_reviews = $.cookie("reviews") ? JSON.parse($.cookie("reviews")) : {};
+    $scope.search_reviews.id_teacher = $scope.Teacher.id;
+    $scope.filterReviews();
+    return $(".single-select").selectpicker();
+  };
+  $scope.loadReviews = function() {
+    frontendLoadingStart();
+    return $.post("ajax/GetReviews", {
+      page: -1,
+      teachers: []
+    }, function(response) {
+      frontendLoadingEnd();
+      $scope.Reviews = response.data;
+      $scope.counts_review = response.counts;
+      $scope.$apply();
+      return $scope.refreshCounts();
+    }, "json");
+  };
+  $scope.filterReviews = function() {
+    delete $scope.Reviews;
+    $.cookie("reviews", JSON.stringify($scope.search_reviews), {
+      expires: 365,
+      path: '/'
+    });
+    return $scope.loadReviews();
   };
   $scope.studentSelected = function(Student) {
     var student_id;
@@ -212,6 +241,9 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
   };
   menus = ['Groups', 'Reviews', 'Lessons', 'payments', 'Reports', 'Stats', 'Bars', 'TeacherAdditionalPayments'];
   $scope.setMenu = function(menu, complex_data) {
+    if (menu === 1) {
+      _initReviewsModule();
+    }
     if (menu === 4) {
       _initReportsModule();
     } else {

@@ -13,8 +13,8 @@
 		<td style="width: 21%" ng-init="_Teacher = (Report.Teacher || Teacher)">
 			<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
 		</td>
-		<td style='width: 6%'>
-			{{three_letters[Report.id_subject]}}
+		<td style='width: 6.5%'>
+			{{three_letters[Report.id_subject]}}<span ng-show="Report.grade">-{{ grades_short[Report.grade] }}</span>
 		</td>
 		<td style='width: 10%'>
 			<div class="report-grade-line" ng-if="Report.id">

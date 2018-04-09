@@ -97,6 +97,7 @@
 				'three_letters' => Subjects::$three_letters,
 				'id_student'	=> false,
                 'Grades'		=> Grades::$all,
+                'grades_short'	=> Grades::$short,
                 'user'			=> User::fromSession()->dbData(),
 				'Teachers'		=> Teacher::getJournalTeachers(),
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,

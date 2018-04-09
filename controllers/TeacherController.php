@@ -183,6 +183,7 @@
 				"payment_types"	        => PaymentTypes::$all,
 				"user"				    => User::fromSession(),
 				"Grades"			    => Grades::$all,
+				"grades_short"		    => Grades::$short,
 				"academic_year"			=> Years::getAcademic(),
 			]);
 

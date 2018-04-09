@@ -53,34 +53,11 @@
 
 		private function _teacherList()
 		{
-            $year = isset($_GET['year']) ? $_GET['year'] : academicYear();
-            $id_teacher = User::fromSession()->id_entity;
 			$this->_custom_panel = true;
-
-            $data = ReportHelper::findAll([
-                'condition' => "year={$year} AND id_teacher={$id_teacher}",
-                'group' => 'id_student, id_subject, id_teacher, year'
-            ]);
-
-            foreach($data as $d) {
-                $d->Student = Student::getLight($d->id_student);
-                $d->lessons_count   = Report::getLessonsCount($d->id_student, $id_teacher, $d->id_subject, $year);
-                $d->reports_count   = Report::getCount($d->id_student, $id_teacher, $d->id_subject, $year);
-                $d->report_required = Report::required($d->id_student, $id_teacher, $d->id_subject, $year);
-
-                $result = dbConnection()->query(
-					"select id, grade from groups where FIND_IN_SET({$d->id_student}, students) AND id_subject={$d->id_subject}
-                        AND ended=0 AND id_teacher={$id_teacher}"
-				);
-				if ($result->num_rows) {
-					$d->group = $result->fetch_object();
-					Group::assignGrade($d->group);
-				}
-            }
-            // dd($data);
 
 			$ang_init_data = angInit([
 				'data'	=> $data,
+				'year' => academicYear(),
 				'Subjects' 	=> Subjects::$three_letters,
 			]);
 
@@ -97,6 +74,8 @@
 			$ang_init_data = angInit([
 				'Subjects' 		=> Subjects::$all,
 				'Teachers'		=> Teacher::getJournalTeachers(),
+				'Grades'		=> Grades::$all,
+				"grades_short"  => Grades::$short,
 				'three_letters' => Subjects::$three_letters,
 				'reports_updated' => Settings::get('reports_updated'),
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
@@ -361,6 +340,35 @@
 				'date' 		=> ReportHelper::recalc(),
 				'red_count'	=> Teacher::redReportCountAll()
 			]);
+		}
+
+		public function actionAjaxLoadByYear()
+		{
+			extract($_POST);
+			$id_teacher = User::fromSession()->id_entity;
+
+            $data = ReportHelper::findAll([
+                'condition' => "year={$year} AND id_teacher={$id_teacher}",
+                'group' => 'id_student, id_subject, id_teacher, year'
+            ]);
+
+            foreach($data as $d) {
+                $d->Student = Student::getLight($d->id_student);
+                $d->lessons_count   = Report::getLessonsCount($d->id_student, $id_teacher, $d->id_subject, $year);
+                $d->reports_count   = Report::getCount($d->id_student, $id_teacher, $d->id_subject, $year);
+                $d->report_required = Report::required($d->id_student, $id_teacher, $d->id_subject, $year);
+
+                $result = dbConnection()->query(
+					"select id, grade from groups where FIND_IN_SET({$d->id_student}, students) AND id_subject={$d->id_subject}
+                        AND ended=0 AND id_teacher={$id_teacher}"
+				);
+				if ($result->num_rows) {
+					$d->group = $result->fetch_object();
+					Group::assignGrade($d->group);
+				}
+            }
+
+			returnJsonAng($data);
 		}
 
         private static function lessonExists($id_teacher, $id_student, $id_subject)

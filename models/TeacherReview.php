@@ -96,9 +96,9 @@
 		 * Получить данные для основного модуля
 		 * $id_student – если просматриваем отзывы отдельного ученика
 		 */
-		public static function getData($page, $Teachers, $id_student)
+		public static function getData($page, $Teachers, $id_student = null)
 		{
-			if (!$page) {
+			if (!$page && $page != -1) {
 				$page = 1;
 			}
 			// С какой записи начинать отображение, по формуле
@@ -113,7 +113,7 @@
 			$query = static::_generateQuery($search, "vj.id_entity, vj.id_subject, vj.id_teacher, vj.year, r.id, r.rating, r.grade,
 				r.admin_rating, r.admin_rating_final, r.published, r.approved, r.score, r.max_score, r.comment, r.admin_comment, r.admin_comment_final, " . static::_countQuery('vj2'));
 			// exit($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
-			$result = dbConnection()->query($query . ($id_student ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
+			$result = dbConnection()->query($query . (($id_student || $page == -1) ? "" : " LIMIT {$start_from}, " . TeacherReview::PER_PAGE));
 
 			while ($row = $result->fetch_object()) {
 				$data[] = $row;

@@ -493,6 +493,65 @@ app.service('PusherService', function($http, $q, UserService) {
   return this;
 });
 
+app.service('ReviewsService', function($rootScope, UserService) {
+  this.UserService = UserService;
+  this["enum"] = review_statuses;
+  this.enum_approved = review_statuses_approved;
+  this.init = function(currentPage, id_teacher) {
+    if (id_teacher == null) {
+      id_teacher = null;
+    }
+    this.id_teacher = id_teacher;
+    this.search = $.cookie("reviews") ? JSON.parse($.cookie("reviews")) : {};
+    this.current_page = currentPage;
+    this.pageChanged();
+    return $(".single-select").selectpicker();
+  };
+  this.formatDateTime = function(date) {
+    return moment(date).format("DD.MM.YY в HH:mm");
+  };
+  this.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
+  this.refreshCounts = function() {
+    return $timeout(function() {
+      $('.watch-select option').each(function(index, el) {
+        $(el).data('subtext', $(el).attr('data-subtext'));
+        return $(el).data('content', $(el).attr('data-content'));
+      });
+      return $('.watch-select').selectpicker('refresh');
+    }, 100);
+  };
+  this.filter = function() {
+    $.cookie("reviews", JSON.stringify(this.search), {
+      expires: 365,
+      path: '/'
+    });
+    this.current_page = 1;
+    return this.getByPage(this.current_page);
+  };
+  this.pageChanged = function() {
+    if (this.current_page > 1) {
+      window.history.pushState({}, '', 'reviews/?page=' + this.current_page);
+    }
+    return this.getByPage(this.current_page);
+  };
+  return this.getByPage = function(page) {
+    frontendLoadingStart();
+    return $.post("ajax/GetReviews", {
+      page: page,
+      teachers: this.Teachers,
+      id_student: this.id_student
+    }, function(response) {
+      frontendLoadingEnd();
+      this.Reviews = response.data;
+      this.counts = response.counts;
+      this.$apply();
+      return this.refreshCounts();
+    }, "json");
+  };
+});
+
 app.service('SmsService', function($rootScope, $http, Sms, PusherService) {
   this.updates = [];
   this.mode = 'default';

@@ -6,7 +6,16 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
       return $sce.trustAsHtml(text);
     };
   }
-]).filter('range', function() {
+]).filter('toArray', function() {
+  return function(obj) {
+    var arr;
+    arr = [];
+    $.each(obj, function(index, value) {
+      return arr.push(value);
+    });
+    return arr;
+  };
+}).filter('range', function() {
   return function(input, total) {
     var i, j, ref;
     total = parseInt(total);
@@ -241,6 +250,23 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
       $scope.form_changed = true;
       return $scope.$apply();
     });
+    return set_scope("Reports");
+  });
+}).controller("TeacherListCtrl", function($scope, $timeout) {
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
+  $scope.changeYear = function() {
+    delete $scope.data;
+    return $.post("reports/AjaxLoadByYear", {
+      year: $scope.year
+    }, function(response) {
+      $scope.data = response;
+      return $scope.$apply();
+    }, 'json');
+  };
+  return angular.element(document).ready(function() {
+    $scope.changeYear();
     return set_scope("Reports");
   });
 });
