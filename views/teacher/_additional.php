@@ -2,7 +2,7 @@
 	<div class="col-sm-12">
 		<?= globalPartial('loading', ['model' => 'TeacherAdditionalPayments']) ?>
 		<h4 style='margin-bottom: 10px'>Дополнительные услуги</h4>
-		<table class="table small">
+		<table class="table">
 			<tr ng-repeat="payment in TeacherAdditionalPayments">
 				<td width='150'>
 					{{ payment.date }}
@@ -31,7 +31,7 @@
 		</table>
 
 		<h4 style='margin-bottom: 10px' ng-show="AdditionalLessons">Дополнительные занятия</h4>
-		<table class="table small">
+		<table class="table">
 			<tr ng-repeat="Lesson in AdditionalLessons">
 				<td width='150'>
 					{{ Lesson.lesson_date_formatted }} в {{ Lesson.lesson_time }}

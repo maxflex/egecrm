@@ -15405,9 +15405,7 @@ button:disabled, select:disabled {
   text-transform: capitalize; }
 
 h4.row-header {
-  font-size: 16px;
-  text-transform: uppercase;
-  -webkit-font-smoothing: antialiased; }
+  -webkit-font-smoothing: auto; }
 
 .underline-hover {
   cursor: pointer; }
@@ -16338,9 +16336,6 @@ select.has-error:focus, input.has-error:focus, button.has-error:focus {
     margin: 15% auto; }
   .modal-rounded .modal-content {
     overflow: hidden; } }
-
-#teacher-edit h4.row-header {
-  cursor: pointer; }
 
 .fakeInput {
   border: 1px solid #ccc;

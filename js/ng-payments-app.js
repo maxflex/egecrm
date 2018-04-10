@@ -34,44 +34,14 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     return total_sum;
   };
   return angular.element(document).ready(function() {
-    return bootbox.prompt({
-      title: "Для доступа к странице введите ваш пароль",
-      className: "modal-password-bigger",
-      callback: function(result) {
-        return $.ajax({
-          url: "ajax/checkTeacherPass",
-          data: {
-            password: result
-          },
-          dataType: "json",
-          method: "post",
-          success: function(response) {
-            if (response === true) {
-              $scope.password_correct = true;
-              $.post("payments/ajaxLkTeacher", {}, function(response) {
-                $scope.Lessons = response.Lessons;
-                $scope.selected_year = response.selected_year;
-                $scope.years = response.years;
-                $scope.loaded = true;
-                return $scope.$apply();
-              }, "json");
-            } else {
-              $scope.password_correct = false;
-            }
-            return $scope.$apply();
-          },
-          async: false
-        });
-      },
-      buttons: {
-        confirm: {
-          label: "Подтвердить"
-        },
-        cancel: {
-          className: "display-none"
-        }
-      }
-    });
+    $scope.password_correct = true;
+    return $.post("payments/ajaxLkTeacher", {}, function(response) {
+      $scope.Lessons = response.Lessons;
+      $scope.selected_year = response.selected_year;
+      $scope.years = response.years;
+      $scope.loaded = true;
+      return $scope.$apply();
+    }, "json");
   });
 }).controller("ListCtrl", function($scope, $timeout) {
   var loadMutualAccounts;

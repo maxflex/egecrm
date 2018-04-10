@@ -23,42 +23,43 @@ app = angular.module "Payments", ["ui.bootstrap"]
             total_sum
 
         angular.element(document).ready ->
-            bootbox.prompt {
-                title: "Для доступа к странице введите ваш пароль",
-                className: "modal-password-bigger",
-                callback: (result) ->
-                    $.ajax {
-                        url: "ajax/checkTeacherPass",
-                        data: {password: result},
-                        dataType: "json",
-                        method: "post",
-                        success: (response) ->
-                            if response == true
-                                $scope.password_correct = true;
-                                $.post "payments/ajaxLkTeacher", {}, (response) ->
-                                    $scope.Lessons 	= response.Lessons
-                                    $scope.selected_year = response.selected_year
-                                    $scope.years = response.years
-                                    $scope.loaded	= true # data loaded
-                                    $scope.$apply()
-                                , "json"
-                            else
-                                $scope.password_correct = false
-                            $scope.$apply();
-                        ,
-                        async: false,
-                    }
-
-                ,
-                buttons: {
-                    confirm: {
-                        label: "Подтвердить"
-                    },
-                    cancel: {
-                        className: "display-none"
-                    }
-                }
-            }
+            $scope.password_correct = true;
+            $.post "payments/ajaxLkTeacher", {}, (response) ->
+                $scope.Lessons 	= response.Lessons
+                $scope.selected_year = response.selected_year
+                $scope.years = response.years
+                $scope.loaded	= true # data loaded
+                $scope.$apply()
+            , "json"
+            # bootbox.prompt {
+            #     title: "Для доступа к странице введите ваш пароль",
+            #     className: "modal-password-bigger",
+            #     callback: (result) ->
+            #         $.ajax {
+            #             url: "ajax/checkTeacherPass",
+            #             data: {password: result},
+            #             dataType: "json",
+            #             method: "post",
+            #             success: (response) ->
+            #                 if response == true
+            # 
+            #                 else
+            #                     $scope.password_correct = false
+            #                 $scope.$apply();
+            #             ,
+            #             async: false,
+            #         }
+            #
+            #     ,
+            #     buttons: {
+            #         confirm: {
+            #             label: "Подтвердить"
+            #         },
+            #         cancel: {
+            #             className: "display-none"
+            #         }
+            #     }
+            # }
     # @rights-refactored
     .controller "ListCtrl", ($scope, $timeout) ->
         $scope.initSearch = ->
