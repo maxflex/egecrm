@@ -62,7 +62,7 @@
 			]);
 
 			foreach ($TomorrowLessons as $Lesson) {
-				if ($Lesson->isUnplanned()) {
+				if ($Lesson->isUnplanned() || Group::getLight($Lesson->id_group)->is_unplanned) {
                     $Lesson->Group = Group::getLight($Lesson->id_group);
                     if ($Lesson->id_teacher) {
                         $Teacher = Teacher::getLight($Lesson->id_teacher);
