@@ -71,7 +71,7 @@
 						<h4 class="row-header default-case no-margin">Дополнительные занятия</h4>
 					</td>
 				</tr>
-				<tr ng-repeat="Lesson in AdditionalLessons">
+				<tr ng-repeat="Lesson in AdditionalLessons" class='group-list'>
 					<td width='150'>
 						{{ Lesson.lesson_date_formatted }} в {{ Lesson.lesson_time }}
 					</td>
@@ -111,7 +111,7 @@
 						<h4 class="row-header default-case no-margin">Дополнительные услуги</h4>
 					</td>
 				</tr>
-				<tr ng-repeat="payment in TeacherAdditionalPayments">
+				<tr ng-repeat="payment in TeacherAdditionalPayments" class='group-list'>
 					<td width='150'>
 						{{ payment.date }}
 					</td>

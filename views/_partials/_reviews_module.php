@@ -1,4 +1,4 @@
-<div class="row flex-list" style="margin-bottom: 15px">
+<div class="row flex-list" style="margin-bottom: 10px">
 	<div>
 		<select class="watch-select single-select form-control" ng-model="search.published" ng-change='filter()'>
 			<option value=""  data-subtext="{{ counts.published[''] || '' }}">все типы</option>
@@ -49,6 +49,8 @@
 			<option ng-repeat="admin_rating in [1, 2, 3, 4, 5, 0]" value="{{admin_rating}}" data-subtext="{{ counts.admin_rating[admin_rating] || '' }}">{{admin_rating || 'пусто'}}</option>
 		</select>
 	</div>
+</div>
+<div class="row flex-list" style="margin-bottom: 25px">
 	<div>
 		<select class="watch-select single-select form-control" ng-model="search.admin_rating_final" ng-change='filter()'>
 			<option value=""  data-subtext="{{ counts.admin_rating_final[''] || '' }}">оценка по окончании курса</option>
@@ -99,6 +101,8 @@
 				data-subtext="{{ counts.year[year] || '' }}"
 				value="{{year}}">{{ yearLabel(year) }}</option>
 		</select>
+	</div>
+	<div>
 	</div>
 </div>
 
