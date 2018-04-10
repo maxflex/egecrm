@@ -4,7 +4,7 @@
 			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;width: 100%" ng-repeat="group_year in GroupService.getYears(Groups)">
 				<tr class="no-hover" ng-if="group_year">
 					<td colspan="8" class="no-border-bottom">
-						<h4 class="row-header default-case no-margin">Группы {{ group_year + '-' + (group_year + 1) }} учебного года</h4>
+						<h4 class="row-header">Группы {{ group_year + '-' + (group_year + 1) }} учебного года</h4>
 					</td>
 				</tr>
 				<tr ng-repeat="Group in Groups|byYear:group_year"
@@ -68,7 +68,7 @@
 			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;width: 100%">
 				<tr class="no-hover">
 					<td colspan="8" class="no-border-bottom">
-						<h4 class="row-header default-case no-margin">Дополнительные занятия</h4>
+						<h4 class="row-header">Дополнительные занятия</h4>
 					</td>
 				</tr>
 				<tr ng-repeat="Lesson in AdditionalLessons" class='group-list'>
@@ -111,7 +111,7 @@
 			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;width: 100%">
 				<tr class="no-hover">
 					<td colspan="8" class="no-border-bottom">
-						<h4 class="row-header default-case no-margin">Дополнительные услуги</h4>
+						<h4 class="row-header">Дополнительные услуги</h4>
 					</td>
 				</tr>
 				<tr ng-repeat="payment in TeacherAdditionalPayments" class='group-list'>
