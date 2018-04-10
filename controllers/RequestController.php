@@ -422,7 +422,7 @@
 				"student_phone_level"	=> $Student->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"academic_year"			=> $search->year,
-                "Prices"                => Prices::get(),
+                "Prices"                => Prices::getRecommended(),
 				# Данные представителя
 				"representative_phone_level"	=> ($Student->Representative ? $Student->Representative->phoneLevel() : 1), // уровень телефона 1, если нет представителя
 				"representative"				=> ($Student->Representative ? $Student->Representative : new Representative()),  // для печати
@@ -471,9 +471,14 @@
 			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, $id_student);
 
 			foreach($AdditionalLessons as $Lesson) {
-				if ($Lesson['is_planned']) {
-					$Lessons[-1][] = (object)$Lesson;
+				$ConductedLesson = VisitJournal::find(['condition' => "type_entity='STUDENT' AND entry_id=" . $Lesson['entry_id']]);
+				if ($ConductedLesson) {
+					$L = $ConductedLesson;
+				} else {
+					$L = (object)$Lesson;
 				}
+				$L->id_group = -1;
+				$Lessons[-1][] = $L;
 			}
 
 			$years = [];

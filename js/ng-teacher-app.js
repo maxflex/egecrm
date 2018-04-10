@@ -75,6 +75,13 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
   var _initReportsModule, _initReviewsModule, _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
+  $scope.getStudentsHint = function(Lesson) {
+    var student_names;
+    student_names = Lesson.students.map(function(student_id) {
+      return $scope.getStudentName(student_id);
+    });
+    return student_names.join("\n");
+  };
   _initReportsModule = function() {
     $scope.search = $.cookie("reports") ? JSON.parse($.cookie("reports")) : {};
     $scope.search.id_teacher = $scope.Teacher.id;

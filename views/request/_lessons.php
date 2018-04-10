@@ -12,7 +12,7 @@
 							'visits-block__elem--planned': Lesson.is_planned || Lesson.canceleld
 						}">
 							<td style='width: 30px; margin-right: 0'>
-								{{ $index + 1}}
+								<span ng-show="!Lesson.cancelled">{{ getLessonIndex($index, GroupLessons) }}</span>
 							</td>
 							<td width='150'>
 								<span ng-show="id_group > 0">Группа {{id_group}}</span>

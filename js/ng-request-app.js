@@ -2183,6 +2183,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 						$scope[field] = response[field]
 					})
 					$scope.$apply()
+					$('.link-add-payment:not(:last)').remove()
 				}, "json")
 			}
 			if ($scope.Lessons === undefined && menu == 2) {
@@ -2433,6 +2434,18 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 						ajaxEnd()
 					}
 				})
+		}
+
+		$scope.getLessonIndex = function(index, GroupLessons) {
+			result = index + 1
+			current_index = 0
+			while (current_index < index) {
+				if (GroupLessons[current_index].cancelled) {
+					result--
+				}
+				current_index++
+			}
+			return result
 		}
 
 		// photo functions

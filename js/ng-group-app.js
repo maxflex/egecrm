@@ -1299,6 +1299,9 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       id: parseInt(id)
     });
   };
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
   return angular.element(document).ready(function() {
     return set_scope("Group");
   });

@@ -15,7 +15,7 @@
 	<a href="clients" class="list-group-item">Клиенты</a>
 	<a href="sms" class="list-group-item">SMS</a>
 	<!-- @refactored -->
-	<a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count(['condition' => 'ended=0']) ?></span></a>
+	<a href="groups" class="list-group-item">Группы <span class="badge pull-right"><?= Group::count(['condition' => 'ended=0 and is_unplanned=0']) ?></span></a>
 	<a href="stats/visits/total" class="list-group-item">Посещаемость
 		<?php
 			if (!LOCAL_DEVELOPMENT) {

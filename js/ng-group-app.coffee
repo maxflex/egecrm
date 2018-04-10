@@ -1077,5 +1077,7 @@
 			bindArguments $scope, arguments
 			$scope.getCabinet = (id) ->
 	            _.findWhere($scope.all_cabinets, {id: parseInt(id)})
+			$scope.yearLabel = (year) ->
+				year + '-' + (parseInt(year) + 1) + ' уч. г.'
 			angular.element(document).ready ->
 				set_scope "Group"

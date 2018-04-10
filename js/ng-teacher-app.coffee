@@ -58,6 +58,10 @@
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
+			$scope.getStudentsHint = (Lesson) ->
+				student_names = Lesson.students.map (student_id) -> $scope.getStudentName(student_id)
+				student_names.join("\n")
+
 			# REPORTS
 			_initReportsModule = ->
 				$scope.search = if $.cookie("reports") then JSON.parse($.cookie("reports")) else {}

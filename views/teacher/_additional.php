@@ -2,10 +2,13 @@
 	<div class="col-sm-12">
 		<?= globalPartial('loading', ['model' => 'TeacherAdditionalPayments']) ?>
 		<h4 style='margin-bottom: 10px'>Дополнительные услуги</h4>
-		<table class="table">
+		<table class="table small">
 			<tr ng-repeat="payment in TeacherAdditionalPayments">
 				<td width='150'>
 					{{ payment.date }}
+				</td>
+				<td width='150'>
+					{{ yearLabel(payment.year) }}
 				</td>
 				<td width='150'>
 					{{ payment.sum | number }} руб.
@@ -21,21 +24,23 @@
 	            </td>
 			</tr>
 			<tr>
-				<td colspan="5">
+				<td colspan="6">
 					<span class="link-like" ng-click="addAdditionalPaymentDialog()">добавить услугу</span>
 				</td>
 			</tr>
 		</table>
 
 		<h4 style='margin-bottom: 10px' ng-show="AdditionalLessons">Дополнительные занятия</h4>
-		<table class="table">
+		<table class="table small">
 			<tr ng-repeat="Lesson in AdditionalLessons">
-				<td width='100'>
-					<span ng-show="!Lesson.is_conducted">{{ Lesson.lesson_date_formatted }}</span>
-					<a class="pointer" ng-show="Lesson.is_conducted" href="lesson/{{ Lesson.id }}">{{ Lesson.lesson_date_formatted }}</a>
+				<td width='150'>
+					{{ Lesson.lesson_date_formatted }} в {{ Lesson.lesson_time }}
 				</td>
-				<td width='100'>
-					{{ Lesson.lesson_time }}
+				<td width='150'>
+					{{ yearLabel(Lesson.year) }}
+				</td>
+				<td width='150'>
+					{{ Lesson.teacher_price | number }} руб.
 				</td>
 				<td width='100'>
 					{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade_short : ''}}
@@ -43,20 +48,23 @@
 				<td width='100'>
 					<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>
 				</td>
-				<td>
+				<td style='cursor: default' title='{{ getStudentsHint(Lesson) }}'>
 					{{ Lesson.students.length }} <ng-pluralize count="Lesson.students.length" when="{
 						'one': 'ученик',
 						'few': 'ученика',
 						'many': 'учеников'
 					}"></ng-pluralize>
 				</td>
+				<td>
+					<a class="pointer" ng-show="Lesson.is_conducted" href="lesson/{{ Lesson.id }}">проведено</a>
+					<span ng-show="Lesson.is_planned">планируется</span>
+				</td>
 				<td style='text-align: right'>
-					<a class="pointer" ng-show="!Lesson.is_conducted" ng-click="addAdditionalLessonDialog(Lesson)">редактировать</a>
-					<span ng-show="Lesson.is_conducted">проведено</span>
+					<a class="pointer" ng-show="Lesson.is_planned" ng-click="addAdditionalLessonDialog(Lesson)">редактировать</a>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="6">
+				<td colspan="8">
 					<span class="link-like" ng-click="addAdditionalLessonDialog()">добавить занятие</span>
 				</td>
 			</tr>
