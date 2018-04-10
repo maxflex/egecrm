@@ -71,7 +71,7 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
   return angular.element(document).ready(function() {
     return set_scope("Teacher");
   });
-}).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService, Workplaces) {
+}).controller("EditCtrl", function($scope, $timeout, PhoneService, GroupService, Workplaces, UserService) {
   var _initReportsModule, _initReviewsModule, _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;

@@ -11,11 +11,11 @@
 			</a>
 		</td>
 		<td ng-init="_Teacher = (Review.Teacher || Teacher)">
-			<div style='width: 190px'>
+			<div style='width: 150px'>
 				<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
 			</div>
 		</td>
-		<td style="width: 6%">
+		<td style="width: 7.5%">
 			{{three_letters[Review.id_subject]}}-{{grades_short[Review.grade]}}
 		</td>
 		<td>

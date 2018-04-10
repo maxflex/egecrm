@@ -54,7 +54,7 @@
 
 			angular.element(document).ready ->
 				set_scope "Teacher"
-		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService, Workplaces) ->
+		.controller "EditCtrl", ($scope, $timeout, PhoneService, GroupService, Workplaces, UserService) ->
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
