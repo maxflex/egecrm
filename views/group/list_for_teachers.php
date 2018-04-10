@@ -78,6 +78,9 @@
 					<td width='150'>
 						{{ yearLabel(Lesson.year) }}
 					</td>
+					<td width='150'>
+						{{ Lesson.teacher_price | number }} руб.
+					</td>
 					<td width='100'>
 						{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade_short : ''}}
 					</td>

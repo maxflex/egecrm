@@ -13,7 +13,7 @@
 				<td width='150'>
 					{{ payment.sum | number }} руб.
 				</td>
-				<td>
+				<td width='100'>
 					{{ payment.purpose }}
 				</td>
 				<td>
@@ -45,6 +45,9 @@
 				<td width='100'>
 					{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade_short : ''}}
 				</td>
+				<td>
+					<span ng-show='Lesson.is_conducted'>{{ Lesson.credentials }}</span>
+				</td>
 				<td width='100'>
 					<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>
 				</td>
@@ -56,15 +59,14 @@
 					}"></ng-pluralize>
 				</td>
 				<td>
-					<a class="pointer" ng-show="Lesson.is_conducted" href="lesson/{{ Lesson.id }}">проведено</a>
-					<span ng-show="Lesson.is_planned">планируется</span>
+					<a class="pointer" href="lesson/{{ Lesson.id }}">{{ Lesson.is_conducted ? 'проведено' : 'зарегистрировать урок' }}</a>
 				</td>
 				<td style='text-align: right'>
-					<a class="pointer" ng-show="Lesson.is_planned" ng-click="addAdditionalLessonDialog(Lesson)">редактировать</a>
+					<a class="pointer" ng-click="addAdditionalLessonDialog(Lesson)">{{ Lesson.is_planned ? 'редактировать' : 'посмотреть' }}</a>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="8">
+				<td colspan="9">
 					<span class="link-like" ng-click="addAdditionalLessonDialog()">добавить занятие</span>
 				</td>
 			</tr>
@@ -76,7 +78,8 @@
 <!-- ЛАЙТБОКС ДОБАВЛЕНИЕ ВНЕПЛАНОВОГО -->
 <div class="lightbox-new lightbox-additional-lesson">
 	<h4 style="display: inline-block">{{ modal_additional_lesson.id ? "Редактировать" : "Добавить" }} занятие</h4>
-	<div class="row">
+	<div class="row" style='position: relative'>
+		<div class="div-blocker"></div>
 		<div class="col-sm-6">
 			<div class="form-group">
 				<div class="input-group custom" style="position: relative">
@@ -150,7 +153,7 @@
 			</div>
 		</div>
 	</div>
-	<center>
+	<center ng-hide="modal_additional_lesson.is_conducted">
 		<button class="btn btn-primary ajax-payment-button full-width" ng-click="saveAdditionalLesson()">{{modal_additional_lesson.id ? "Редактировать" : "Добавить"}}</button>
 		<button class="btn btn-primary btn-danger full-width" ng-show="modal_additional_lesson.id"
 			style="margin-top: 10px" ng-click="deleteAdditionalLesson()">Удалить</button>
