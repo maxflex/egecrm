@@ -1,6 +1,6 @@
 <table class="table table-hover border-reverse" style='font-size: 12px' <?= ($review_by_year ? ' ng-repeat="review_year in getReviewsYears()"' : '') ?>>
 	<tr class="no-hover" ng-if="review_year">
-		<td colspan="8" style='padding-top: 0'>
+		<td colspan="8" class="no-border-bottom">
 			<h4 class="row-header">Отзывы {{ review_year + '-' + (review_year + 1) }} учебного года</h4>
 		</td>
 	</tr>
