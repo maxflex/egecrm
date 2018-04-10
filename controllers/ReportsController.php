@@ -88,10 +88,22 @@
 
 		private function _studentList()
 		{
-            $this->_custom_panel = true;
-            $year = isset($_GET['year']) ? $_GET['year'] : academicYear();
             $id_student = User::fromSession()->id_entity;
 
+			if (! Student::getReportCount($id_student)) {
+				$this->renderRestricted('Нет отчетов');
+			}
+
+			$years = [];
+			foreach(Years::$all as $y) {
+				if (Student::getReportCount($id_student, $y)) {
+					$years[] = $y;
+				}
+			}
+
+			$year = (isset($_GET['year']) && in_array($_GET['year'], $years)) ? $_GET['year'] : end($years);
+
+			$this->_custom_panel = true;
             $data = ReportHelper::findAll([
                 'condition' => "year={$year} AND id_student={$id_student}",
                 'group' => 'id_student, id_subject, id_teacher, year'
@@ -109,6 +121,7 @@
 
 			$ang_init_data = angInit([
 				'data'	=> $data,
+				'years' => $years,
 				'Subjects' 	=> Subjects::$three_letters,
 			]);
 

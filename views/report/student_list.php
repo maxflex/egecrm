@@ -13,7 +13,7 @@
 	<div class="panel-body">
         <div class="top-links pull-left">
 			<a ng-class="{'active': year == <?= $year ?>}" href='students/reports/{{ year }}'
-                ng-repeat='year in <?= Years::json() ?>'>{{ year + '-' + (year + 1)  }}</a>
+                ng-repeat='year in years'>{{ year + '-' + (year + 1)  }}</a>
 		</div>
 		<table class="table table-hover">
 			<tr ng-repeat="d in data">

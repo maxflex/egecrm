@@ -1315,7 +1315,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			contract.subjects.splice(index, 1);
 		}
 
-
 		/**
 		 * Проверка на пустой договор. Если пустой, появляется функционал удаления
 		 *
@@ -2188,8 +2187,22 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 			if ($scope.Lessons === undefined && menu == 2) {
 				$.post("requests/ajax/LoadLessons", {id_student: $scope.id_student}, function(response) {
-					['Subjects', 'Lessons', 'lesson_statuses', 'lesson_years', 'selected_lesson_year', 'all_cabinets'].forEach(function(field) {
+					['Subjects', 'Lessons', 'lesson_statuses', 'lesson_years', 'selected_lesson_year', 'all_cabinets', 'months'].forEach(function(field) {
 						$scope[field] = response[field]
+					})
+					// сгруппировать по месяцам
+					$scope.LessonsSorted = {}
+					$scope.lesson_years.forEach(function(year) {
+						$scope.LessonsSorted[year] = {}
+						$.each($scope.Lessons[year], function(i, GroupLessons) {
+							GroupLessons.forEach(function(Lesson) {
+								month = moment(Lesson.lesson_date).format('M')
+								if (! $scope.LessonsSorted[year][month]) {
+									$scope.LessonsSorted[year][month] = []
+								}
+								$scope.LessonsSorted[year][month].push(Lesson)
+							})
+						})
 					})
 					$scope.$apply()
 				}, "json")

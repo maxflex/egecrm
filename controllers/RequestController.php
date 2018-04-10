@@ -506,6 +506,7 @@
 				"lesson_statuses" => VisitJournal::$statuses,
 				"all_cabinets" =>  Branches::allCabinets(),
 				"lesson_years" => $years,
+				"months" => Months::get(),
 				"selected_lesson_year" => end($years)
 			]);
 		}

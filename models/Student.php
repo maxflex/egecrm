@@ -109,10 +109,10 @@
 				}
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
-		public static function getReportCount($id_student)
+		public static function getReportCount($id_student, $year = null)
 		{
 			return Report::count([
-				"condition" => "id_student=$id_student AND available_for_parents=1"
+				"condition" => "id_student=$id_student AND available_for_parents=1" . ($year ? " AND year={$year}" : '')
 			]);
 		}
 
