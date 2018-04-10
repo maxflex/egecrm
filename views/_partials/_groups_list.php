@@ -8,7 +8,7 @@
 ?>
 <table class="table table-hover border-reverse last-item-no-border" style="position: relative" <?= ($group_by_year ? ' ng-repeat="group_year in GroupService.getYears(Groups)"' : '') ?>>
 	<tr class="no-hover" ng-if="group_year">
-		<td colspan="8">
+		<td colspan="8" style='padding-top: 0'>
 			<h4 class="row-header">Группы {{ group_year + '-' + (group_year + 1) }} учебного года</h4>
 		</td>
 	</tr>
