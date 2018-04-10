@@ -1,7 +1,7 @@
 <div class="row" ng-show="current_menu == 5">
 	<?= globalPartial('loading', ['model' => 'Stats', 'message' => 'нет статистики']) ?>
 	<div ng-show='Stats'>
-		<div class="col-sm-5">
+		<div class="col-sm-12">
 			<h4>Статистика в системе ЕГЭ-Репетитор</h4>
 			<div ng-show="!Stats.clients_count">
 				Данные отсутствуют
@@ -20,7 +20,7 @@
 				<div ng-show="Teacher.margin">Группа маржинальности: М{{ Teacher.margin }}</div>
 			</div>
 		</div>
-		<div class="col-sm-5">
+		<div class="col-sm-12" style='margin-top: 14px'>
 			<h4>Статистика в системе ЕГЭ-Центр</h4>
 			<div ng-show="!Stats.ec_lesson_count">данные отсутствуют</div>
 			<div ng-show="Stats.ec_lesson_count">
