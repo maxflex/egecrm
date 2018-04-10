@@ -519,6 +519,7 @@
 				'Reviews' 		 => TeacherReview::getData(null, null, $id_student)['data'],
 				"user"				=> User::fromSession()->dbData(),
 				"users"				=> User::getCached(true), // с system
+				"grades_short"  => Grades::$short,
 				'id_user_review' => dbConnection()->query("SELECT id_user_review FROM students WHERE id = {$id_student}")->fetch_object()->id_user_review,
 			]);
 		}

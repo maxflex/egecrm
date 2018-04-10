@@ -2211,7 +2211,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$scope.enum = review_statuses
 
 				$.post("requests/ajax/LoadReviews", {id_student: $scope.id_student}, function(response) {
-					['Reviews', 'id_user_review', 'user', 'users'].forEach(function(field) {
+					['Reviews', 'id_user_review', 'user', 'users', 'grades_short'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 					$scope.$apply()

@@ -16,7 +16,7 @@
 			</div>
 		</td>
 		<td style="width: 7.5%">
-			{{three_letters[Review.id_subject]}}-{{grades_short[Review.grade]}}
+			{{ three_letters[Review.id_subject] }}-{{ grades_short[Review.grade] }}
 		</td>
 		<td>
 			<div style='width: 190px'>
