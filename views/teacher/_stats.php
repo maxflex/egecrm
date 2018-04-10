@@ -2,7 +2,7 @@
 	<?= globalPartial('loading', ['model' => 'Stats', 'message' => 'нет статистики']) ?>
 	<div ng-show='Stats'>
 		<div class="col-sm-5">
-			<h4 class="row-header default-case text-thin">Статистика в системе ЕГЭ-Репетитор</h4>
+			<h4>Статистика в системе ЕГЭ-Репетитор</h4>
 			<div ng-show="!Stats.clients_count">
 				Данные отсутствуют
 			</div>
@@ -21,7 +21,7 @@
 			</div>
 		</div>
 		<div class="col-sm-5">
-			<h4 class="row-header default-case text-thin">Статистика в системе ЕГЭ-Центр</h4>
+			<h4>Статистика в системе ЕГЭ-Центр</h4>
 			<div ng-show="!Stats.ec_lesson_count">данные отсутствуют</div>
 			<div ng-show="Stats.ec_lesson_count">
 				<div>Проведено всего занятий: {{ Stats.ec_lesson_count }}</div>
