@@ -307,7 +307,7 @@
 			// всего занятий без учета отмененных и доп.занятий
 			$return['lesson_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-					. " AND (type_entity='TEACHER' OR ' . VisitJournal::PLANNED_CONDITION . ') AND cancelled=0"
+					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=0"
 			]);
 
 			// кол-во запланированных занятий
@@ -321,7 +321,7 @@
 			// всего отмененных занятий
 			$return['cancelled_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-					. " AND (type_entity='TEACHER' OR ' . VisitJournal::PLANNED_CONDITION . ') AND cancelled=1"
+					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=1"
 			]);
 
 			//всего доп.занятий
@@ -329,7 +329,7 @@
 				SELECT COUNT(*) AS cnt FROM visit_journal vj
 				JOIN groups g ON g.id = vj.id_group
 				WHERE " . ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'")
-					. " AND (vj.type_entity='TEACHER' OR ' . VisitJournal::PLANNED_CONDITION . ') AND vj.cancelled=0 AND g.is_unplanned=1
+					. " AND (vj.type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND vj.cancelled=0 AND g.is_unplanned=1
 			")->fetch_object()->cnt;
 
 			// всего занятий без учета отмененных и доп.занятий
@@ -337,7 +337,7 @@
 
 			VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-					. " AND (type_entity='TEACHER' OR ' . VisitJournal::PLANNED_CONDITION . ') AND cancelled=0"
+					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=0"
 			]);
 
 			$students_total = VisitJournal::count([
