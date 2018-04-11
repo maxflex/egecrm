@@ -5,7 +5,7 @@
 		<table class="table">
 			<tr ng-repeat="payment in TeacherAdditionalPayments">
 				<td width='150'>
-					{{ payment.date }}
+					<a class="link-like" ng-click="editPaymentAdditional(payment)">{{ payment.date }}</a>
 				</td>
 				<td width='150'>
 					{{ yearLabel(payment.year) }}
@@ -18,9 +18,6 @@
 				</td>
 				<td>
 	                {{payment.user_login}} {{formatDate(payment.created_at) | date:'dd.MM.yy в HH:mm'}}
-	            </td>
-	            <td style="text-align: right">
-					<a class="link-like" ng-click="editPaymentAdditional(payment)">редактировать</a>
 	            </td>
 			</tr>
 			<tr>
