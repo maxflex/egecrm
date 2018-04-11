@@ -76,7 +76,8 @@
 					{{stat.cancelled_count || ''}}
 				</td>
 				<td>
-					{{stat.additional_count || ''}}
+					{{stat.additional_count ? stat.additional_count : ''}}
+					<span ng-show="stat.planned_additional_count" class="text-gray">{{ stat.additional_count ? '+' : ''}}{{ stat.planned_additional_count }}</span>
 				</td>
 				<td>
 					{{stat.abscent_percent ? (stat.abscent_percent + '%') : ''}}
