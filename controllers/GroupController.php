@@ -29,86 +29,23 @@
 
 			$this->setTabTitle("Посещаемость группы №" . $id_group);
 
-			$Group = Group::findById($id_group, true);
-
-			// get student ids
-			$result = dbConnection()->query("
-				SELECT id_entity FROM visit_journal
+			$student_count = dbConnection()->query("
+				SELECT COUNT(*) AS cnt FROM visit_journal
 				WHERE id_group=$id_group AND type_entity='STUDENT'
-				GROUP BY id_entity
-			");
+			")->fetch_object()->cnt;
 
-			$student_ids = [];
-			while ($row = $result->fetch_object()) {
-				$student_ids[] = $row->id_entity;
-			}
-
-			// get teacher ids
-			$result = dbConnection()->query("
-				SELECT DISTINCT id_entity FROM visit_journal
-				WHERE id_group=$id_group AND type_entity='TEACHER'
-			");
-
-			$teacher_ids = [];
-			while ($row = $result->fetch_object()) {
-				$teacher_ids[] = $row->id_entity;
-			}
-
-
-			if (count($student_ids)) {
-				// get students from journal
-				$result = dbConnection()->query("
-					SELECT id, first_name, last_name FROM students
-					WHERE id IN (". implode(",", $student_ids) .")
-				");
-
-
-				$students = [];
-				while ($row = $result->fetch_object()) {
-					$students[] = $row;
-				}
-			} else {
-				// если пустой журнал
+			// если пустой журнал
+			if (! $student_count) {
 				$this->render("empty");
 				return;
 			}
-			$Group->Students = $students;
 
-			$Teachers = [];
-			if (count($teacher_ids)) {
-				foreach (array_unique($teacher_ids) as $id) {
-                    $Teachers[] = Teacher::getLight($id);
-                }
-			}
-
-			$Lessons = VisitJournal::getGroupLessons($Group->id);
-
-			$LessonData = VisitJournal::findAll([
-				"condition" => "id_group=$id_group" //и преподы и студенты
-			]);
+			$ang_init_data = angInit(compact('id_group'));
 
             if (User::fromSession()->type == Teacher::USER_TYPE) {
-                $ang_init_data = angInit([
-                    "Group" 		=> $Group,
-                    "LessonData"	=> $LessonData,
-                    "Teachers"		=> $Teachers,
-					"Lessons"		=> $Lessons,
-                ]);
-
-                $this->render("teacher", [
-                    "ang_init_data" => $ang_init_data
-                ]);
+                $this->render("teacher", compact('ang_init_data'));
             } else {
-                $ang_init_data = angInit([
-                    "Group" 		=> $Group,
-                    "LessonData"	=> $LessonData,
-                    "Teachers"		=> $Teachers,
-					"Lessons"		=> $Lessons
-                ]);
-
-                $this->render("user", [
-                    "ang_init_data" => $ang_init_data,
-                ]);
+                $this->render("user", compact('ang_init_data'));
             }
 		}
 

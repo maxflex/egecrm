@@ -54,4 +54,7 @@
             </tr>
         </tbody>
     </table>
+	<div ng-show="Lessons === undefined" style="padding: 100px" class="small half-black center">
+		загрузка журнала...
+	</div>
 </div>

@@ -644,4 +644,71 @@
 			extract($_POST);
 			Vacation::deleteById($id);
 		}
+
+		public function actionAjaxLoadJournal()
+		{
+			extract($_POST);
+
+			$Group = Group::findById($id_group, true);
+
+			// get student ids
+			$result = dbConnection()->query("
+				SELECT id_entity FROM visit_journal
+				WHERE id_group=$id_group AND type_entity='STUDENT'
+				GROUP BY id_entity
+			");
+
+			$student_ids = [];
+			while ($row = $result->fetch_object()) {
+				$student_ids[] = $row->id_entity;
+			}
+
+			// get teacher ids
+			$result = dbConnection()->query("
+				SELECT DISTINCT id_entity FROM visit_journal
+				WHERE id_group=$id_group AND type_entity='TEACHER'
+			");
+
+			$teacher_ids = [];
+			while ($row = $result->fetch_object()) {
+				$teacher_ids[] = $row->id_entity;
+			}
+
+
+			if (count($student_ids)) {
+				// get students from journal
+				$result = dbConnection()->query("
+					SELECT id, first_name, last_name FROM students
+					WHERE id IN (". implode(",", $student_ids) .")
+				");
+
+
+				$students = [];
+				while ($row = $result->fetch_object()) {
+					$students[] = $row;
+				}
+			}
+
+			$Group->Students = $students;
+
+			$Teachers = [];
+			if (count($teacher_ids)) {
+				foreach (array_unique($teacher_ids) as $id) {
+                    $Teachers[] = Teacher::getLight($id);
+                }
+			}
+
+			$Lessons = VisitJournal::getGroupLessons($Group->id);
+
+			$LessonData = VisitJournal::findAll([
+				"condition" => "id_group=$id_group" //и преподы и студенты
+			]);
+
+			returnJsonAng([
+				"Group" 		=> $Group,
+				"LessonData"	=> $LessonData,
+				"Teachers"		=> $Teachers,
+				"Lessons"		=> $Lessons,
+			]);
+		}
 	}

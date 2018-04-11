@@ -742,7 +742,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		$scope.todayDate = function() {
-			return moment().format("DD.MM.YYYY");
+			return moment().format("DD.MM.YY");
 		}
 
 		$scope.textDate = function(date) {
@@ -1724,7 +1724,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.createNewContract = function(contract) {
 			new_contract = angular.copy($scope.lastContractInChain(contract))
 			delete new_contract.id
-			new_contract.date = moment().format("DD.MM.YYYY")
+			new_contract.date = moment().format("DD.MM.YY")
 			$scope.callContractEdit(disableContractFields(new_contract))
 		}
 
@@ -1732,7 +1732,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.createNewContractTest = function(contract_test) {
 			new_contract = angular.copy($scope.lastContractInChainTest(contract_test))
 			delete new_contract.id
-			new_contract.date = moment().format("DD.MM.YYYY")
+			new_contract.date = moment().format("DD.MM.YY")
 			$scope.callContractTestEdit(disableContractFields(new_contract))
 		}
 
@@ -1758,19 +1758,19 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.addContractDialog = function() {
 			$scope.current_contract = {
                 subjects : [],
+								payments : [],
                 info: {year: 2018},
-                payments_info: '2-0',
-                payments_split: 3,
-                payments_queue: 0,
                 discount: 0
             }
-			$scope.current_contract.date = moment().format("DD.MM.YYYY")
+			$scope.current_contract.date = moment().format("DD.MM.YY")
             $timeout(function(){
                 $scope.$apply();
             });
 			$('.triple-switch').slider('setValue', 0)
 
-			lightBoxShow('addcontract')
+			$scope.closeContexMenu()
+			openModal('contract')
+
 			$("select[name='grades']").removeClass("has-error")
 			$scope.lateApply()
 		}
@@ -1778,7 +1778,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		// Показать окно добавления контракта
 		$scope.addContractDialogTest = function() {
 			$scope.current_contract_test = {subjects : [], info: {year: getYear()}}
-			$scope.current_contract_test.date = moment().format("DD.MM.YYYY")
+			$scope.current_contract_test.date = moment().format("DD.MM.YY")
             $timeout(function(){
                 $scope.$apply();
             });
@@ -2258,7 +2258,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$scope.new_additional_payment = {
 				id_student: $scope.student.id,
 				year: getYear(),
-				date: moment().format('DD.MM.YYYY')
+				date: moment().format('DD.MM.YY')
 			}
 			lightBoxShow('additional-payment')
 		}
