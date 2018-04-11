@@ -13,7 +13,7 @@
 				<td width='150'>
 					{{ payment.sum | number }} руб.
 				</td>
-				<td width='550'>
+				<td width='500'>
 					{{ payment.purpose }}
 				</td>
 				<td>
@@ -36,16 +36,16 @@
 				<td width='150'>
 					{{ yearLabel(Lesson.year) }}
 				</td>
-				<td width='150'>
+				<td width='120'>
 					{{ Lesson.teacher_price | number }} руб.
 				</td>
-				<td width='100'>
+				<td width='90'>
 					{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade_short : ''}}
 				</td>
 				<td width='100'>
 					<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>
 				</td>
-				<td width='150' style='cursor: default' title='{{ getStudentsHint(Lesson) }}'>
+				<td width='120' style='cursor: default' title='{{ getStudentsHint(Lesson) }}'>
 					{{ Lesson.students.length }} <ng-pluralize count="Lesson.students.length" when="{
 						'one': 'ученик',
 						'few': 'ученика',
