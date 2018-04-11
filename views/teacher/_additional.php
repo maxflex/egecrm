@@ -13,7 +13,7 @@
 				<td width='150'>
 					{{ payment.sum | number }} руб.
 				</td>
-				<td width='100'>
+				<td width='350'>
 					{{ payment.purpose }}
 				</td>
 				<td>
@@ -45,18 +45,18 @@
 				<td width='100'>
 					{{Subjects[Lesson.id_subject]}}{{Lesson.grade ? '-' + Lesson.grade_short : ''}}
 				</td>
-				<td>
-					<span ng-show='Lesson.is_conducted'>{{ Lesson.credentials }}</span>
-				</td>
 				<td width='100'>
 					<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>
 				</td>
-				<td style='cursor: default' title='{{ getStudentsHint(Lesson) }}'>
+				<td width='150' style='cursor: default' title='{{ getStudentsHint(Lesson) }}'>
 					{{ Lesson.students.length }} <ng-pluralize count="Lesson.students.length" when="{
 						'one': 'ученик',
 						'few': 'ученика',
 						'many': 'учеников'
 					}"></ng-pluralize>
+				</td>
+				<td>
+					<span ng-show='Lesson.is_conducted'>{{ Lesson.credentials }}</span>
 				</td>
 				<td>
 					<a class="pointer" href="lesson/{{ Lesson.id }}">{{ Lesson.is_conducted ? 'проведено' : 'зарегистрировать урок' }}</a>
