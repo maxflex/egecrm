@@ -13,7 +13,7 @@
 				<td width='120'>
 					{{ payment.sum | number }} руб.
 				</td>
-				<td width='510'>
+				<td width='505'>
 					{{ payment.purpose }}
 				</td>
 				<td>
@@ -99,7 +99,7 @@
 					<input type="text" class="form-control digits-only" ng-model="modal_additional_lesson.duration">
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group" ng-hide="modal_additional_lesson.is_conducted">
 				<angucomplete-alt
 				  placeholder="добавить ученика"
 				  clear-selected="true"
@@ -149,7 +149,7 @@
 			<div class="" ng-repeat="id_student in modal_additional_lesson.students">
 				{{ $index + 1}}.
 				<a href="/student/{{ id_student}}">{{ getStudentName(id_student) }}</a>
-				<a ng-click="deleteStudent($index)" style='margin-left: 5px' class="show-on-hover text-danger">удалить</a>
+				<a ng-click="deleteStudent($index)" style='margin-left: 5px' class="show-on-hover text-danger" ng-hide="modal_additional_lesson.is_conducted">удалить</a>
 			</div>
 		</div>
 	</div>
