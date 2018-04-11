@@ -34,6 +34,14 @@
 
 			$scope.yearLabel = (year) -> year + '-' + (parseInt(year) + 1) + ' уч. г.'
 
+			$scope.getLessonIndex = (index, GroupLessons) ->
+				result = index + 1
+				current_index = 0
+				while current_index < index
+					result-- if GroupLessons[current_index].cancelled
+					current_index++
+				return result
+
 			angular.element(document).ready ->
 				set_scope 'Group'
 

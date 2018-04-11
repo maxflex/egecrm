@@ -58,6 +58,18 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $scope.yearLabel = function(year) {
     return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };
+  $scope.getLessonIndex = function(index, GroupLessons) {
+    var current_index, result;
+    result = index + 1;
+    current_index = 0;
+    while (current_index < index) {
+      if (GroupLessons[current_index].cancelled) {
+        result--;
+      }
+      current_index++;
+    }
+    return result;
+  };
   return angular.element(document).ready(function() {
     return set_scope('Group');
   });

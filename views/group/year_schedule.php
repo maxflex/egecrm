@@ -11,7 +11,7 @@
 					'visits-block__elem--planned': Lesson.is_planned || Lesson.canceleld
 				}">
 					<td style='width: 30px; margin-right: 0'>
-						{{ $index + 1 }}
+						{{ getLessonIndex($index, Lessons[year][month]) }}
 					</td>
 					<td width='160'>
 						{{ Lesson.lesson_date  | date:"dd.MM.yy" }} в {{ Lesson.lesson_time }}
