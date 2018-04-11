@@ -79,7 +79,7 @@
 <div class="lightbox-new lightbox-additional-lesson">
 	<h4 style="display: inline-block">{{ modal_additional_lesson.id ? "Редактировать" : "Добавить" }} занятие</h4>
 	<div class="row" style='position: relative'>
-		<div class="div-blocker"></div>
+		<div class="div-blocker" ng-show="modal_additional_lesson.is_conducted"></div>
 		<div class="col-sm-6">
 			<div class="form-group">
 				<div class="input-group custom" style="position: relative">
@@ -97,6 +97,12 @@
 				<div class="input-group custom" style="position: relative">
 					<span class="input-group-addon">время занятия - </span>
 					<input type="text" class="form-control timemask" ng-model="modal_additional_lesson.lesson_time">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group custom" style="position: relative">
+					<span class="input-group-addon">длительность урока - </span>
+					<input type="text" class="form-control digits-only" ng-model="modal_additional_lesson.duration">
 				</div>
 			</div>
 			<div class="form-group">

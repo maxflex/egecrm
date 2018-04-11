@@ -47,19 +47,13 @@
 					<span ng-show="days_mode" ng-click="plusDays()" class="half-black pointer" style="font-weight: normal">+3 дня</span>
 				</td>
 				<td>
-					занятия
+					всего занятий
 				</td>
 				<td>
-					пришли вовремя
+					всего отмененных занятий
 				</td>
 				<td>
-					опоздали
-				</td>
-				<td>
-					отсутствовали
-				</td>
-				<td>
-					не установлено
+					всего доп.занятий
 				</td>
 				<td>
 					доля пропуска
@@ -79,16 +73,10 @@
 					<span ng-show="stat.planned_lesson_count" class="text-gray">{{ stat.lesson_count ? '+' : ''}}{{ stat.planned_lesson_count }}</span>
 				</td>
 				<td>
-					{{stat.in_time || ''}}
+					{{stat.cancelled_count || ''}}
 				</td>
 				<td>
-					{{stat.late_count || ''}}
-				</td>
-				<td>
-					{{stat.abscent_count || ''}}
-				</td>
-				<td>
-					{{stat.unset_count || ''}}
+					{{stat.unplanned_count || ''}}
 				</td>
 				<td>
 					{{stat.abscent_percent ? (stat.abscent_percent + '%') : ''}}

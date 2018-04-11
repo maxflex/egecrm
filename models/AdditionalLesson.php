@@ -23,7 +23,8 @@ class AdditionalLesson
 		VisitJournal::add(array_merge(compact(
 			'lesson_date',
 			'lesson_time',
-			'cabinet'
+			'cabinet',
+			'duration'
 		), [
 			'id_group' => $Group->id
 		]));
@@ -40,7 +41,8 @@ class AdditionalLesson
 		$Lesson->update(compact(
 			'lesson_date',
 			'lesson_time',
-			'cabinet'
+			'cabinet',
+			'duration'
 		));
 
 		Group::updateById($Lesson->id_group, compact(
@@ -91,6 +93,7 @@ class AdditionalLesson
 			'teacher_price' => $Group->teacher_price,
 			'id_subject' => $Lesson->id_subject,
 			'grade' => $Lesson->grade,
+			'duration' => $Lesson->duration,
 			'year' => $Lesson->year,
 			'id_teacher' => $Group->id_teacher,
 			'students' => $Group->students,
