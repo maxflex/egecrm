@@ -144,7 +144,7 @@
                 $this->renderRestricted();
             }
 
-			$Student = Student::findById($id_student, true);
+			$Student = Student::findById($id_student);
 			$Visits = $Student->getVisits(compact('id_teacher', 'id_subject'));
             $Reports = Report::get($id_student, $id_teacher, $id_subject);
 
