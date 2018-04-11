@@ -307,7 +307,7 @@
 			// всего занятий без учета отмененных и доп.занятий
 			$return['lesson_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=0"
+					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=0 AND lesson_date < CURDATE()"
 			]);
 
 			// кол-во запланированных занятий
