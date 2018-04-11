@@ -63,6 +63,32 @@
 		</div>
 	</div>
 
+	<div class="row" style="position: relative" ng-if="TeacherAdditionalPayments && TeacherAdditionalPayments.length">
+		<div class="col-sm-12">
+			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;width: 100%">
+				<tr class="no-hover">
+					<td colspan="8" class="no-border-bottom">
+						<h4 class="row-header">Дополнительные услуги</h4>
+					</td>
+				</tr>
+				<tr ng-repeat="payment in TeacherAdditionalPayments" class='group-list'>
+					<td width='150'>
+						{{ payment.date }}
+					</td>
+					<td width='150'>
+						{{ yearLabel(payment.year) }}
+					</td>
+					<td width='150'>
+						{{ payment.sum | number }} руб.
+					</td>
+					<td>
+						{{ payment.purpose }}
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
 	<div class="row" style="position: relative" ng-if="AdditionalLessons.length">
 		<div class="col-sm-12">
 			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;width: 100%">
@@ -99,34 +125,6 @@
 						<a href='teachers/lesson/{{ Lesson.id }}' ng-show='!Lesson.cancelled'>
 							{{ Lesson.is_conducted ? 'урок проведен' : 'зарегистрировать урок' }}
 						</a>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
-
-
-
-	<div class="row" style="position: relative" ng-if="TeacherAdditionalPayments && TeacherAdditionalPayments.length">
-		<div class="col-sm-12">
-			<table class="table table-hover border-reverse last-item-no-border" style="position: relative;width: 100%">
-				<tr class="no-hover">
-					<td colspan="8" class="no-border-bottom">
-						<h4 class="row-header">Дополнительные услуги</h4>
-					</td>
-				</tr>
-				<tr ng-repeat="payment in TeacherAdditionalPayments" class='group-list'>
-					<td width='150'>
-						{{ payment.date }}
-					</td>
-					<td width='150'>
-						{{ yearLabel(payment.year) }}
-					</td>
-					<td width='150'>
-						{{ payment.sum | number }} руб.
-					</td>
-					<td>
-						{{ payment.purpose }}
 					</td>
 				</tr>
 			</table>
