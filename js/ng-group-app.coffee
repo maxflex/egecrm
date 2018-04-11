@@ -47,6 +47,11 @@
 			$scope.formatDate = (date) ->
 				moment(date).format "DD.MM.YY"
 			angular.element(document).ready ->
+				$.post 'ajax/LoadJournal', {id_group: $scope.id_group}, (response) ->
+					$.each response, (field, data) ->
+						$scope[field] = data
+					$scope.$apply()
+				, 'json'
 				set_scope "Group"
 
 		.controller "LessonCtrl", ($scope) ->

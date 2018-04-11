@@ -12,7 +12,7 @@
         }
     </style>
 
-    <table class="table table-journal">
+    <table class="table table-journal" ng-show="Lessons !== undefined">
         <thead>
             <tr>
                 <th style="border: none !important"></th>

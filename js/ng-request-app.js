@@ -1180,14 +1180,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             return str
         }
 
-        $scope.$watch('current_contract.payments_info', function(newVal, oldVal) {
-            if (newVal) {
-                parts = newVal.split('-')
-                $scope.current_contract.payments_split = parts[0]
-                $scope.current_contract.payments_queue = parts[1]
-            }
-        })
-
         // splitAlmostEvenly
         // разделить number на parts почти равных частей
         // 32, 3 = 11, 11, 10

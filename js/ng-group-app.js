@@ -78,6 +78,14 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return moment(date).format("DD.MM.YY");
   };
   return angular.element(document).ready(function() {
+    $.post('ajax/LoadJournal', {
+      id_group: $scope.id_group
+    }, function(response) {
+      $.each(response, function(field, data) {
+        return $scope[field] = data;
+      });
+      return $scope.$apply();
+    }, 'json');
     return set_scope("Group");
   });
 }).controller("LessonCtrl", function($scope) {
