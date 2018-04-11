@@ -10,10 +10,10 @@
 				<td width='150'>
 					{{ yearLabel(payment.year) }}
 				</td>
-				<td width='150'>
+				<td width='120'>
 					{{ payment.sum | number }} руб.
 				</td>
-				<td width='500'>
+				<td width='510'>
 					{{ payment.purpose }}
 				</td>
 				<td>
