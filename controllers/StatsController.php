@@ -325,15 +325,24 @@
 			]);
 
 			//всего доп.занятий
-			$return['unplanned_count'] = dbConnection()->query("
+			$return['additional_count'] = dbConnection()->query("
 				SELECT COUNT(*) AS cnt FROM visit_journal vj
 				JOIN groups g ON g.id = vj.id_group
 				WHERE " . ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'")
-					. " AND (vj.type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND vj.cancelled=0 AND g.is_unplanned=1
+					. " AND (vj.type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND vj.cancelled=0 AND g.is_unplanned=1 AND vj.lesson_date < CURDATE()
 			")->fetch_object()->cnt;
 
+			$planned_additional_count = dbConnection()->query("
+				SELECT COUNT(*) AS cnt FROM visit_journal vj
+				JOIN groups g ON g.id = vj.id_group
+				WHERE " . ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'")
+					. " AND (vj.type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND vj.cancelled=0 AND g.is_unplanned=1 AND vj.lesson_date >= CURDATE()
+			")->fetch_object()->cnt;
+
+			$return['planned_lesson_count'] = intval($return['planned_lesson_count']) + intval($planned_additional_count);
+
 			// всего занятий без учета отмененных и доп.занятий
-			$return['lesson_count'] = intval($return['lesson_count']) - intval($return['unplanned_count']);
+			$return['lesson_count'] = intval($return['lesson_count']) - intval($return['additional_count']);
 
 			VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")

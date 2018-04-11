@@ -76,7 +76,7 @@
 					{{stat.cancelled_count || ''}}
 				</td>
 				<td>
-					{{stat.unplanned_count || ''}}
+					{{stat.additional_count || ''}}
 				</td>
 				<td>
 					{{stat.abscent_percent ? (stat.abscent_percent + '%') : ''}}
