@@ -640,9 +640,14 @@
 					$groups[$lesson->id_group] = $group;
 				}
 				$group = $groups[$lesson->id_group];
+				if ($group->is_unplanned) {
+					$comment = "дополнительное занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time} (" . Subjects::$three_letters[$lesson->id_subject] . "-" . Grades::$short[$lesson->grade] . "), кабинет " . Cabinet::getBlock($lesson->cabinet)['label'];
+				} else {
+					$comment = "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label'];
+				}
 				$items[$lesson->year][$lesson->lesson_date][] = [
 					'sum' 		  => $lesson->price,
-					'comment'	  => "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label'],
+					'comment'	  => $comment,
 					'credentials' => User::findById($lesson->id_user_saved)->login . ' ' . dateFormat($lesson->date),
 					'date'		  => $lesson->date,
 				];
