@@ -31,7 +31,7 @@
 		<table class="table">
 			<tr ng-repeat="Lesson in AdditionalLessons">
 				<td width='150'>
-					{{ Lesson.lesson_date_formatted }} в {{ Lesson.lesson_time }}
+					<a class="pointer" ng-click="addAdditionalLessonDialog(Lesson)">{{ Lesson.lesson_date_formatted }} в {{ Lesson.lesson_time }}</a>
 				</td>
 				<td width='150'>
 					{{ yearLabel(Lesson.year) }}
@@ -57,9 +57,6 @@
 				</td>
 				<td>
 					<a class="pointer" href="lesson/{{ Lesson.id }}">{{ Lesson.is_conducted ? 'проведено' : 'зарегистрировать урок' }}</a>
-				</td>
-				<td style='text-align: right'>
-					<a class="pointer" ng-click="addAdditionalLessonDialog(Lesson)">{{ Lesson.is_planned ? 'редактировать' : 'посмотреть' }}</a>
 				</td>
 			</tr>
 			<tr>
