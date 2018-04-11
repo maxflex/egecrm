@@ -333,7 +333,7 @@
 			")->fetch_object()->cnt;
 
 			// всего занятий без учета отмененных и доп.занятий
-			$return['lesson_count'] -= $return['unplanned_count'];
+			$return['lesson_count'] = intval($return['lesson_count']) - intval($return['unplanned_count']);
 
 			VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
