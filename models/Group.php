@@ -168,7 +168,7 @@
             $exam_year = $Group->year + 1;
             // Дату экзамена
             $ExamDay = ExamDay::find([
-                "condition" => "id_subject={$Group->id_subject} AND grade={$Group->grade} AND date like '%{$exam_year}'"
+                "condition" => "id_subject={$Group->id_subject} AND grade={$Group->grade} AND YEAR(`date`)='{$exam_year}'"
             ]);
 
             $diff = strtotime($ExamDay->date) - strtotime($LastPlanned->lesson_date);
