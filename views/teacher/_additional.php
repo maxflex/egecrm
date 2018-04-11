@@ -13,7 +13,7 @@
 				<td width='150'>
 					{{ payment.sum | number }} руб.
 				</td>
-				<td width='350'>
+				<td width='550'>
 					{{ payment.purpose }}
 				</td>
 				<td>
@@ -52,11 +52,11 @@
 						'many': 'учеников'
 					}"></ng-pluralize>
 				</td>
-				<td>
-					<span ng-show='Lesson.is_conducted'>{{ Lesson.credentials }}</span>
+				<td width='200'>
+					<a class="pointer" href="lesson/{{ Lesson.id }}">{{ Lesson.is_conducted ? 'проведено' : 'зарегистрировать урок' }}</a>
 				</td>
 				<td>
-					<a class="pointer" href="lesson/{{ Lesson.id }}">{{ Lesson.is_conducted ? 'проведено' : 'зарегистрировать урок' }}</a>
+					<span ng-show='Lesson.is_conducted'>{{ Lesson.credentials }}</span>
 				</td>
 			</tr>
 			<tr>
