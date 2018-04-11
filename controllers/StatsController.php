@@ -329,14 +329,14 @@
 				SELECT COUNT(*) AS cnt FROM visit_journal vj
 				JOIN groups g ON g.id = vj.id_group
 				WHERE " . ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'")
-					. " AND (vj.type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND vj.cancelled=0 AND g.is_unplanned=1 AND vj.lesson_date < CURDATE()
+					. " AND vj.type_entity='TEACHER' AND vj.cancelled=0 AND g.is_unplanned=1
 			")->fetch_object()->cnt;
 
 			$planned_additional_count = dbConnection()->query("
 				SELECT COUNT(*) AS cnt FROM visit_journal vj
 				JOIN groups g ON g.id = vj.id_group
 				WHERE " . ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'")
-					. " AND (vj.type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND vj.cancelled=0 AND g.is_unplanned=1 AND vj.lesson_date >= CURDATE()
+					. " AND " . VisitJournal::PLANNED_CONDITION . " AND vj.cancelled=0 AND g.is_unplanned=1
 			")->fetch_object()->cnt;
 
 			$return['planned_lesson_count'] = intval($return['planned_lesson_count']) + intval($planned_additional_count);
