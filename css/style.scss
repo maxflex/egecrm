@@ -28,7 +28,7 @@
     src: url('../fonts/Helvetica/HelveticaRegular.eot');
 }
 
-.row.flex-list {
+.flex-list {
 	display: flex;
 	margin-left: 0;
 	margin-right: 0;
@@ -3936,4 +3936,8 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 	& > span {
 		margin-left: -0.5px;
 	}
+}
+
+.payment-line > .form-group:first-child select {
+	margin-left: 0 !important;
 }

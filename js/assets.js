@@ -128,6 +128,18 @@ app.directive('comments', function() {
   };
 });
 
+app.directive('ngPhone', function() {
+  return {
+    restrict: 'A',
+    link: function($scope, element) {
+      return $(element).inputmask("+7 (999) 999-99-99", {
+        autoclear: false,
+        showMaskOnHover: false
+      });
+    }
+  };
+});
+
 app.directive('phones', function() {
   return {
     restrict: 'E',

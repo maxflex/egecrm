@@ -125,7 +125,8 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
   $scope.addPaymentDialog = function() {
     $scope.new_payment = {
       id_status: 0,
-      year: $scope.academic_year
+      year: $scope.academic_year,
+      extra: {}
     };
     return lightBoxShow('addpayment');
   };
@@ -196,23 +197,9 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
         return lightBoxHide();
       });
     } else {
-      $scope.new_payment.user_login = $scope.user.login;
-      $scope.new_payment.first_save_date = moment().format('YYYY-MM-DD HH:mm:ss');
-      $scope.new_payment.entity_id = $scope.student.id;
-      $scope.new_payment.entity_type = $scope.new_payment.Entity.type;
-      $scope.new_payment.id_user = $scope.user.id;
       ajaxStart();
       return $.post('ajax/paymentAdd', $scope.new_payment, function(response) {
-        $scope.new_payment.id = response.id;
-        $scope.new_payment.document_number = response.document_number;
-        $scope.payments = initIfNotSet($scope.payments);
-        $scope.payments.push($scope.new_payment);
-        $scope.new_payment = {
-          id_status: 0
-        };
-        $scope.$apply();
-        ajaxEnd();
-        return lightBoxHide();
+        return location.reload();
       }, 'json');
     }
   };

@@ -9,6 +9,9 @@
             <td style='width: 160px' ng-if="payment.Entity && payment.Entity.id">
                 <span ng-show="payment.Entity.id"><a href="{{ payment.Entity.profile_link }}">{{ payment.Entity.last_name }} {{ payment.Entity.first_name[0] }}. {{ payment.Entity.middle_name[0] }}.</a></span>
             </td>
+			<td style='width: 160px' ng-if="!payment.entity_id">
+                {{ payment.extra.last_name }} {{ payment.extra.first_name[0] }}. {{ payment.extra.middle_name[0] }}.
+            </td>
             <?php endif ?>
             <td style='width: 100px' >
 	            <a class="link-like" ng-class="{

@@ -17,6 +17,7 @@
 
 		public function actionList()
 		{
+			$this->_custom_panel = true;
             $this->checkRights(Shared\Rights::SHOW_PAYMENTS);
 			$this->setRights([User::USER_TYPE]);
 			$this->setTabTitle("Платежи");
@@ -24,6 +25,8 @@
 			$ang_init_data = angInit([
 				'payment_types'		=> PaymentTypes::$all,
 				'payment_statuses'	=> Payment::$all,
+				'Subjects'			=> Subjects::$all,
+				'academic_year'		=> academicYear(),
                 'user_rights'       => User::fromSession()->rights,
 				'current_page'		=> $_GET['page'] ? $_GET['page'] : 1
 			]);
@@ -61,7 +64,11 @@
 			$condition['id_type'] = $search['type'] ? "id_type = {$search['type']}" : '1';
 			$condition['category'] = $search['category'] ? "category = {$search['category']}" : '1';
 			$condition['year'] = $search['year'] ? "year = {$search['year']}" : '1';
-			$condition['entity_type'] = $search['mode'] ? "entity_type = '{$search['mode']}'" : '1';
+			if ($search['mode'] == 'ANONYMOUS') {
+				$condition['entity_type'] = "(entity_type IS NULL OR entity_type='')";
+			} else {
+				$condition['entity_type'] = $search['mode'] ? "entity_type = '{$search['mode']}'" : '1';
+			}
 
 			$query['limit'] = ($search['current_page'] - 1)*Payment::PER_PAGE.',' . Payment::PER_PAGE;
 			$query['condition'] = implode(' and ', $condition);;
@@ -74,9 +81,9 @@
 			}
 
 			/* каунтеры */
-			foreach ([Student::USER_TYPE, Teacher::USER_TYPE] as $entity_type) {
+			foreach ([Student::USER_TYPE, Teacher::USER_TYPE, 'ANONYMOUS'] as $entity_type) {
 				$count_cond = $condition;
-				$count_cond['entity_type'] = "entity_type = '".$entity_type."'";
+				$count_cond['entity_type'] = $entity_type == 'ANONYMOUS' ? "(entity_type is null or entity_type='')" : "entity_type = '".$entity_type."'";
 				$counts['mode'][$entity_type] = Payment::count(['condition' => implode(' and ', $count_cond)]);
 			}
 

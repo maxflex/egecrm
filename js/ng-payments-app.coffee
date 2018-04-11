@@ -42,7 +42,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
             #             method: "post",
             #             success: (response) ->
             #                 if response == true
-            # 
+            #
             #                 else
             #                     $scope.password_correct = false
             #                 $scope.$apply();
@@ -126,7 +126,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
 
         # Показать окно добавления платежа
         $scope.addPaymentDialog = ->
-            $scope.new_payment = {id_status : 0, year: $scope.academic_year}
+            $scope.new_payment = {id_status : 0, year: $scope.academic_year, extra: {}}
             lightBoxShow 'addpayment'
 
         # Добавить платеж
@@ -208,32 +208,11 @@ app = angular.module "Payments", ["ui.bootstrap"]
                     ajaxEnd()
                     lightBoxHide()
             else
-                # иначе сохранение платежа
-                # Добавляем дополнительные данные в new_payment
-                $scope.new_payment.user_login		= $scope.user.login
-                $scope.new_payment.first_save_date	= moment().format('YYYY-MM-DD HH:mm:ss')
-                $scope.new_payment.entity_id		= $scope.student.id
-                $scope.new_payment.entity_type		= $scope.new_payment.Entity.type
-                $scope.new_payment.id_user			= $scope.user.id
-
                 ajaxStart()
                 $.post 'ajax/paymentAdd',
                     $scope.new_payment
                 , (response) ->
-                    $scope.new_payment.id = response.id
-                    $scope.new_payment.document_number = response.document_number
-
-                    # Инициализация если не установлено
-                    $scope.payments = initIfNotSet $scope.payments
-
-                    $scope.payments.push $scope.new_payment
-
-                    $scope.new_payment = {id_status : 0}
-
-                    $scope.$apply()
-
-                    ajaxEnd()
-                    lightBoxHide()
+                    location.reload()
                 , 'json'
 
         # Удалить платеж

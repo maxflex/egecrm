@@ -4,6 +4,8 @@
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 		public static $mysql_table	= "payments";
 
+		protected $_json = ['extra'];
+
 		# Список статусов
 		const PAID_CARD		= 1;
 		const PAID_CASH		= 2;
@@ -108,9 +110,12 @@
 			if ($this->entity_type == Teacher::USER_TYPE) {
 				$entity = Teacher::getLight($this->entity_id);
 				$entity->profile_link = "teachers/edit/{$this->entity_id}";
-			} else {
+			} else if ($this->entity_type == Student::USER_TYPE) {
 				$entity = Student::getLight($this->entity_id);
 				$entity->profile_link = "student/{$this->entity_id}";
+			} else {
+				$entity = $this->extra;
+				$entity->profile_link = null;
 			}
 			return $entity;
 		}
@@ -205,6 +210,11 @@
                    $this->document_number = self::dbConnection()->query("select max(document_number) + 1 as last_doc_num from payments where YEAR(`date`) = YEAR(NOW())")->fetch_object()->last_doc_num;
                }
            }
+
+		   if ($this->isNewRecord) {
+			   $this->first_save_date = now();
+			   $this->id_user = User::fromSession()->id;
+		   }
         }
 
         /**
