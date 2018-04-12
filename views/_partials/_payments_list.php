@@ -1,5 +1,5 @@
 <?= $student_page ? globalPartial("bill_print") : '' ?>
-<?= $student_page ? globalPartial("pko_print") : '' ?>
+<?= !$teacher_page ? globalPartial(($student_page ? "pko_print" : "pko_print_anonymous")) : '' ?>
 <?= $student_page ? globalPartial("llc_bill_print") : '' ?>
 
 <div class="form-group payment-line" style="margin-bottom: 40px;">
@@ -32,7 +32,7 @@
 
 				<span ng-show="payment.document_number > 0 && payment.id_status == <?= Payment::PAID_CASH ?>" class="remove-space">
 					:
-					<?php if ($student_page) :?>
+					<?php if (! $teacher_page) :?>
 	                    <a class="link-like" ng-click="printPKO(payment)">{{ 'ПКО ' + payment.document_number }}</a>
 	                <?php else :?>
 						{{ 'ПКО ' + payment.document_number }}

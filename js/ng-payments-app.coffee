@@ -245,9 +245,14 @@ app = angular.module "Payments", ["ui.bootstrap"]
         $scope.printPKO = (payment) ->
             $scope.print_mode = 'pko'
             $scope.PrintPayment = payment
-            $scope.Representative = $scope.representative
             $scope.$apply()
             printDiv $scope.print_mode + "-print"
+
+        $scope.formatPkoDate = (date) ->
+            return if date is null
+            return moment(convertDate(date)).format("D MMMM YYYY г.")
+
+        $scope.numToText = numToText
 
 #         $scope.printBill = (payment) ->
 #             $scope.print_mode = 'bill'

@@ -244,10 +244,16 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
   $scope.printPKO = function(payment) {
     $scope.print_mode = 'pko';
     $scope.PrintPayment = payment;
-    $scope.Representative = $scope.representative;
     $scope.$apply();
     return printDiv($scope.print_mode + "-print");
   };
+  $scope.formatPkoDate = function(date) {
+    if (date === null) {
+      return;
+    }
+    return moment(convertDate(date)).format("D MMMM YYYY г.");
+  };
+  $scope.numToText = numToText;
   return $scope.formatDate = function(date) {
     var dateOut;
     dateOut = new Date(date);
