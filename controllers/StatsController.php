@@ -33,7 +33,7 @@
 			]);
 
 			$Payments = Payment::findAll([
-				"condition" => "entity_type='" . Student::USER_TYPE . "' and ".
+				"condition" => "(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null)) and ".
 					($date_end 	? "`date` > '$date_start' AND `date` <= '$date_end'"
 								: "date = '$date_start'")
 			]);
