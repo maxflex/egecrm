@@ -2,7 +2,17 @@
 <div class="lightbox-new lightbox-addpayment">
 
     <h4 style="display: inline-block">{{new_payment.id ? "Редактировать" : "Добавить"}} платеж</h4>
-    <span class="small" ng-show="new_payment.entity_type == 'STUDENT' && new_payment.id_status == <?= Payment::PAID_CASH ?> && new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">{{ new_payment.document_number ? 'номер ПКО: ' + new_payment.document_number : 'будет присвоен номер ПКО' }}</span>
+	<span class="small" ng-if="new_payment.entity_type == 'STUDENT' || !new_payment.entity_id"
+		ng-show="new_payment.id_status == <?= Payment::PAID_CASH ?> && new_payment.id_type == <?= PaymentTypes::PAYMENT ?>">
+		<span ng-show="new_payment.id">
+			номер ПКО: {{ new_payment.document_number }}
+		</span>
+
+		<span ng-show="!new_payment.id">
+			будет присвоен номер ПКО
+		</span>
+	</span>
+
 
     <div class="form-group payment-line">
 		<div class="form-group inline-block">
@@ -11,7 +21,7 @@
                 "style" => "width: 180px"
             ]) ?>
 	    </div>
-		<div class="form-group inline-block" ng-show="new_payment.Entity.type == 'STUDENT'">
+		<div class="form-group inline-block" ng-show="new_payment.entity_type == 'STUDENT' || !new_payment.entity_id">
 			<?= PaymentTypes::buildSelector(false, false, ["ng-model" => "new_payment.id_type"]) ?>
 	    </div>
 		<div class="form-group inline-block">
@@ -74,6 +84,9 @@
 				<input class="form-control" ng-model="new_payment.extra.phone" ng-phone placeholder="телефон">
 			</div>
 			<div>
+				<input class="form-control" ng-model="new_payment.extra.email" placeholder="email">
+			</div>
+			<div>
 				<select class="form-control" ng-model="new_payment.extra.id_subject">
 					<option value="">выберите предмет</option>
 					<option disabled>──────────────</option>
@@ -83,7 +96,7 @@
 		</div>
 	</div>
 
-	<center>
+	<center style='margin-top: 20px'>
 		<button ng-show="new_payment.id" class="btn btn-primary btn-danger ajax-payment-delete" ng-click="deletePayment()">Удалить</button>
 		<button class="btn btn-primary" ng-click="addPayment()">{{new_payment.id ? "Редактировать" : "Добавить"}}</button>
 	</center>

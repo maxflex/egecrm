@@ -14,15 +14,15 @@
 		        }
 		    </style>
 		    <div class="col-sm-12">
-				<div class="row" style="margin-bottom: 15px">
-					<div class="col-sm-2">
+				<div class="row flex-list" style="margin-bottom: 15px">
+					<div>
 						<select class="watch-select single-select form-control" ng-model="search.mode" ng-change='filter()'>
 							<option value="STUDENT"  data-subtext="{{ counts.mode.STUDENT || '' }}">клиенты</option>
 							<option value="TEACHER" data-subtext="{{ counts.mode.TEACHER || '' }}">преподаватели</option>
 							<option value="ANONYMOUS" data-subtext="{{ counts.mode.ANONYMOUS || '' }}">анонимные</option>
 						</select>
 					</div>
-					<div class="col-sm-2">
+					<div>
 						<select class="watch-select single-select form-control" ng-model="search.payment_type"  ng-change='filter()'>
 							<option value="" data-subtext="{{ counts.payment_type.all || ''}}">все виды платежей</option>
 							<option disabled>──────────────</option>
@@ -33,7 +33,7 @@
 									data-subtext="{{ counts.payment_type[-1] || '' }}">неассоциированные взаимозачеты</option>
 						</select>
 					</div>
-					<div class="col-sm-2">
+					<div>
 						<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.confirmed" ng-change='filter()'>
 							<option value="" data-subtext="{{ counts.confirmed.all || ''}}" >все типы платежей</option>
 							<option disabled>──────────────</option>
@@ -41,7 +41,7 @@
 							<option data-subtext="{{ counts.confirmed[0] || '' }}" value="0">не подтвержденные</option>
 						</select>
 					</div>
-					<div class="col-sm-2">
+					<div>
 						<select id='subjects-select' class="watch-select form-control single-select" ng-model="search.type" ng-change='filter()'>
 							<option value="" data-subtext="{{ counts.type.all || ''}}" >все операции</option>
 							<option disabled>──────────────</option>
@@ -49,7 +49,7 @@
 							<option data-subtext="{{ counts.type[2] || '' }}" value="2">возврат</option>
 						</select>
 					</div>
-					<div class="col-sm-2">
+					<div>
 						<select id='years-select' class="watch-select form-control single-select" ng-model="search.year" ng-change='filter()'>
 							<option value="" data-subtext="{{ counts.year.all || ''}}" >все годы</option>
 							<option disabled>──────────────</option>
@@ -58,7 +58,7 @@
 		                        value="{{year}}">{{ yearLabel(year) }}</option>
 						</select>
 					</div>
-		            <div class="col-sm-2">
+		            <div>
 						<select id='years-select' class="watch-select form-control single-select year-fix" ng-model="search.category" ng-change='filter()'>
 							<option value="" data-subtext="{{ counts.category.all || ''}}" >все категории</option>
 							<option disabled>──────────────</option>

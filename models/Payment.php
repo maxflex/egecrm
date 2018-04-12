@@ -204,8 +204,8 @@
 			if ($this->date) {
 				$this->date = fromDotDate($this->date);
 			}
-            // наличные и платеж и не имеет номера и клиент
-           if ($this->isNewRecord && $this->id_status == self::PAID_CASH && $this->id_type == PaymentTypes::PAYMENT && $this->entity_type == Student::USER_TYPE) {
+            // наличные и платеж и не имеет номера и (клиент или анонимный)
+           if ($this->isNewRecord && $this->id_status == self::PAID_CASH && $this->id_type == PaymentTypes::PAYMENT && $this->entity_type != Teacher::USER_TYPE) {
                if (! $this->document_number) {
                    $this->document_number = self::dbConnection()->query("select max(document_number) + 1 as last_doc_num from payments where YEAR(`date`) = YEAR(NOW())")->fetch_object()->last_doc_num;
                }
