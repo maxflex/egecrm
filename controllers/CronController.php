@@ -112,7 +112,7 @@
 
             $sent_to = [];
 			foreach ($messages as $message) {
-				if (!in_array($message['number'], $sent_to)) {
+				// if (!in_array($message['number'], $sent_to)) {
 					SMS::send($message['number'], $message['message']);
 					$sent_to[] = $message['number'];
 
@@ -120,7 +120,7 @@
 					$body .= "<h3>" . $message["type"] . "</h3>";
 					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
 					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
-				}
+				// }
 			}
 		}
 
@@ -189,14 +189,14 @@
 
 			$sent_to = [];
 			foreach ($messages as $message) {
-				if (! in_array($message['number'], $sent_to)) {
+				// if (! in_array($message['number'], $sent_to)) {
 					SMS::send($message['number'], $message['message']);
 					$sent_to[] = $message['number'];
 					// debug
 					// $body .= "<h3>" . $message["type"] . "</h3>";
 					// $body .= "<b>Номер: </b>" . $message['number']."<br><br>";
 					// $body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
-				}
+				// }
 			}
 
 		}
@@ -379,7 +379,7 @@
 
 			$sent_to = [];
 			foreach ($messages as $message) {
-				if (!in_array($message['number'], $sent_to)) {
+				// if (!in_array($message['number'], $sent_to)) {
 					SMS::send($message['number'], $message['message']);
 					$sent_to[] = $message['number'];
 
@@ -387,7 +387,7 @@
 					$body .= "<h3>" . $message["type"] . "</h3>";
 					$body .= "<b>Номер: </b>" . $message['number']."<br><br>";
 					$body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
-				}
+				// }
 			}
 		}
 
