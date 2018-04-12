@@ -851,3 +851,8 @@
         $allowed = User::fromSession()->allowed($right);
         return $return_int ? (int)$allowed : $allowed;
     }
+
+	function debugLog($message)
+	{
+		error_log("DEBUG: " . $message);
+	}

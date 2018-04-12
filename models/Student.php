@@ -1095,4 +1095,102 @@
 			}
 			return $group_ids;
 		}
+
+		/**
+		 * Получить даты первого и последнего неотмененного занятия
+		 */
+		public static function getFirstAndLastLessonDates($Lessons)
+		{
+			$max_date = '0000-00-00';
+			$min_date = '9999-99-99';
+
+			foreach($Lessons as $Lesson) {
+				if (! $Lesson->cancelled && $Lesson->is_conducted) {
+					if ($Lesson->lesson_date > $max_date) {
+						$max_date = $Lesson->lesson_date;
+					}
+					if ($Lesson->lesson_date < $min_date) {
+						$min_date = $Lesson->lesson_date;
+					}
+				}
+			}
+
+			return [$min_date, $max_date];
+		}
+
+		/**
+		 * Ученик состоит в группе в данный момент
+		 */
+		public static function isInGroup($id_student, $id_group)
+		{
+			return dbConnection()->query("select count(*) as cnt from groups where FIND_IN_SET({$id_student}, students) AND id={$id_group}")
+				->fetch_object()->cnt ? true : false;
+		}
+
+		/**
+		 * Получить все уроки ученика
+		 */
+		public static function getFullSchedule($id_student)
+		{
+			$group_ids = self::getGroupIdsEverVisited($id_student);
+
+			$Lessons = [];
+			foreach($group_ids as $group_id) {
+				$StudentGroupLessons = VisitJournal::getStudentGroupLessons($group_id, $id_student);
+				list($first_lesson_date, $last_lesson_date) = Student::getFirstAndLastLessonDates($StudentGroupLessons);
+				$student_is_in_group = Student::isInGroup($id_student, $group_id);
+
+				// нужно не отображать:
+				// 1) отмененные занятия до 1го занятия ученика в группе
+				// 2) планируемые занятия, если ученик больше не присутствует в группе
+				// 3) отмененные занятия после последнего занятия ученика в группе
+				// $Lessons[$group_id] = $StudentGroupLessons;
+				$Lessons[$group_id] = array_filter($StudentGroupLessons, function($Lesson) use ($student_is_in_group, $first_lesson_date, $last_lesson_date) {
+					if ($Lesson->cancelled && ($Lesson->lesson_date < $first_lesson_date) || ($Lesson->lesson_date > $last_lesson_date)) {
+						return false;
+					}
+					if ($Lesson->is_planned && ! $student_is_in_group) {
+						return false;
+					}
+					return true;
+				});
+			}
+
+			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, $id_student);
+
+			foreach($AdditionalLessons as $Lesson) {
+				$ConductedLesson = VisitJournal::find(['condition' => "type_entity='STUDENT' AND entry_id=" . $Lesson['entry_id']]);
+				if ($ConductedLesson) {
+					$L = $ConductedLesson;
+				} else {
+					$L = (object)$Lesson;
+				}
+				$L->id_group = -1;
+				$Lessons[-1][] = $L;
+			}
+
+			$years = [];
+			foreach($Lessons as $group_id => $GroupLessons) {
+				foreach($GroupLessons as $Lesson) {
+					$Lesson->Teacher = Teacher::getLight($Lesson->id_teacher);
+					if (! in_array($Lesson->year, $years)) {
+						$years[] = $Lesson->year;
+					}
+				}
+			}
+
+			$LessonsSorted = [];
+			foreach($Lessons as $group_id => $GroupLessons) {
+				foreach($GroupLessons as $Lesson) {
+					$LessonsSorted[$Lesson->year][$group_id][] = $Lesson;
+				}
+			}
+
+			sort($years);
+
+			return (object)[
+				'Lessons' => $LessonsSorted,
+				'years' => $years,
+			];
+		}
     }

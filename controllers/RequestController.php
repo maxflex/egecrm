@@ -461,53 +461,16 @@
 		{
 			extract($_POST);
 
-			$group_ids = Student::getGroupIdsEverVisited($id_student);
-
-			$Lessons = [];
-			foreach($group_ids as $group_id) {
-				$Lessons[$group_id] = VisitJournal::getStudentGroupLessons($group_id, $id_student);
-			}
-
-			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, $id_student);
-
-			foreach($AdditionalLessons as $Lesson) {
-				$ConductedLesson = VisitJournal::find(['condition' => "type_entity='STUDENT' AND entry_id=" . $Lesson['entry_id']]);
-				if ($ConductedLesson) {
-					$L = $ConductedLesson;
-				} else {
-					$L = (object)$Lesson;
-				}
-				$L->id_group = -1;
-				$Lessons[-1][] = $L;
-			}
-
-			$years = [];
-			foreach($Lessons as $group_id => $GroupLessons) {
-				foreach($GroupLessons as $Lesson) {
-					$Lesson->Teacher = Teacher::getLight($Lesson->id_teacher);
-					if (! in_array($Lesson->year, $years)) {
-						$years[] = $Lesson->year;
-					}
-				}
-			}
-
-			$LessonsSorted = [];
-			foreach($Lessons as $group_id => $GroupLessons) {
-				foreach($GroupLessons as $Lesson) {
-					$LessonsSorted[$Lesson->year][$group_id][] = $Lesson;
-				}
-			}
-
-			sort($years);
+			$Schedule = Student::getFullSchedule($id_student);
 
 			returnJsonAng([
 				"Subjects"	=> Subjects::$three_letters,
-				"Lessons"	=> $LessonsSorted,
+				"Lessons"	=> $Schedule->Lessons,
 				"lesson_statuses" => VisitJournal::$statuses,
 				"all_cabinets" =>  Branches::allCabinets(),
-				"lesson_years" => $years,
+				"lesson_years" => $Schedule->years,
 				"months" => Months::get(),
-				"selected_lesson_year" => end($years)
+				"selected_lesson_year" => end($Schedule->years)
 			]);
 		}
 

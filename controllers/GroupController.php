@@ -55,53 +55,16 @@
 
 			$this->setTabTitle("Расписание на год");
 
-			$group_ids = Student::groups(User::fromSession()->id_entity, 'getIds');
-
-			$Lessons = [];
-			foreach($group_ids as $group_id) {
-				$Lessons[$group_id] = VisitJournal::getStudentGroupLessons($group_id, User::fromSession()->id_entity);
-			}
-
-			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, User::fromSession()->id_entity);
-			foreach($AdditionalLessons as $Lesson) {
-				$ConductedLesson = VisitJournal::find(['condition' => "type_entity='STUDENT' AND entry_id=" . $Lesson['entry_id']]);
-				if ($ConductedLesson) {
-					$L = $ConductedLesson;
-				} else {
-					$L = (object)$Lesson;
-				}
-				$L->id_group = -1;
-				$Lessons[-1][] = $L;
-			}
-
-			$years = [];
-			foreach($Lessons as $group_id => $GroupLessons) {
-				foreach($GroupLessons as $Lesson) {
-					$Lesson->Teacher = Teacher::getLight($Lesson->id_teacher);
-					if (! in_array($Lesson->year, $years)) {
-						$years[] = $Lesson->year;
-					}
-				}
-			}
-
-			// группирвка по месяцам
-			$LessonsSorted = [];
-			foreach($Lessons as $group_id => $GroupLessons) {
-				foreach ($GroupLessons as $Lesson) {
-					$LessonsSorted[$Lesson->year][date('n', strtotime($Lesson->lesson_date))][] = $Lesson;
-				}
-			}
-
-			sort($years);
+			$Schedule = Student::getFullSchedule(User::fromSession()->id_entity);
 
 			$ang_init_data = angInit([
 				"Subjects"	=> Subjects::$three_letters,
-				"Lessons"	=> $LessonsSorted,
+				"Lessons"	=> $Schedule->Lessons,
 				"lesson_statuses" => VisitJournal::$statuses,
 				"all_cabinets" =>  Branches::allCabinets(),
 				"months" => Months::get(),
-				"lesson_years" => $years,
-				"selected_lesson_year" => end($years)
+				"lesson_years" => $Schedule->years,
+				"selected_lesson_year" => end($Schedule->years)
 			]);
 
 
