@@ -65,14 +65,6 @@
 					возвраты<br>
 					по счетам
 				</td>
-				<td>
-					платежи<br>
-					онлайн
-				</td>
-				<td>
-					возвраты<br>
-					онлайн
-				</td>
 				<td style="border-left: 1px solid #ddd">
 					итого<br>
 					платежи
@@ -124,18 +116,6 @@
 					<?= $stat[Payment::PAID_BILL]['return_confirmed'] ?>
 					<?php if ($stat[Payment::PAID_BILL]['return_unconfirmed'] > 0) :?>
 						<span class="quater-black"><?= ($stat[Payment::PAID_BILL]['return_confirmed'] > 0 ? ' + ' : '')?><?= $stat[Payment::PAID_BILL]['return_unconfirmed'] ?></span>
-					<?php endif ?>
-				</td>
-				<td>
-					<?= $stat[Payment::CARD_ONLINE]['payment_confirmed'] ?>
-					<?php if ($stat[Payment::CARD_ONLINE]['payment_unconfirmed'] > 0) :?>
-						<span class="quater-black"><?= ($stat[Payment::CARD_ONLINE]['payment_confirmed'] > 0 ? ' + ' : '')?><?= $stat[Payment::CARD_ONLINE]['payment_unconfirmed'] ?></span>
-					<?php endif ?>
-				</td>
-				<td>
-					<?= $stat[Payment::CARD_ONLINE]['return_confirmed'] ?>
-					<?php if ($stat[Payment::CARD_ONLINE]['return_unconfirmed'] > 0) :?>
-						<span class="quater-black"><?= ($stat[Payment::CARD_ONLINE]['return_confirmed'] > 0 ? ' + ' : '')?><?= $stat[Payment::CARD_ONLINE]['return_unconfirmed'] ?></span>
 					<?php endif ?>
 				</td>
 				<td style="border-left: 1px solid #ddd">

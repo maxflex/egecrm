@@ -671,7 +671,8 @@
 
 		public function actionPayments()
 		{
-			$this->setTabTitle(isset($_GET['teachers']) ? 'Детализация по платежам преподавателей' : 'Детализация по платежам');
+			$mode = isset($_GET['teachers']) ? 'teachers' : 'students';
+			$this->setTabTitle($mode == 'teachers' ? 'Платежи преподавателям' : 'Платежи клиентов');
 
 			switch ($_GET["group"]) {
 				case "w": {
@@ -696,7 +697,7 @@
 				"currentPage" => $_GET['page'],
 			]);
 
-			$this->render("payments", [
+			$this->render("payments_{$mode}", [
 				"ang_init_data" => $ang_init_data,
 				"stats" 		=> $stats,
 			]);
