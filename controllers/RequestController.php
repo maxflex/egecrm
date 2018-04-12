@@ -461,7 +461,7 @@
 		{
 			extract($_POST);
 
-			$group_ids = Student::groups($id_student, 'getIds');
+			$group_ids = Student::getGroupIdsEverVisited($id_student);
 
 			$Lessons = [];
 			foreach($group_ids as $group_id) {

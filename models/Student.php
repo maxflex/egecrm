@@ -1082,4 +1082,17 @@
 
 			return $items;
 		}
+
+		/**
+		 * Получить ID групп, которые ученик когда-либо посещал
+		 */
+		public static function getGroupIdsEverVisited($id_student)
+		{
+			$query = dbConnection()->query("select id_group from visit_journal where type_entity='STUDENT' and id_entity={$id_student} group by id_group");
+			$group_ids = [];
+			while ($row = $query->fetch_object()) {
+				$group_ids[] = $row->id_group;
+			}
+			return $group_ids;
+		}
     }
