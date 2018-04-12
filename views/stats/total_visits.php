@@ -58,6 +58,12 @@
 				<td>
 					доля пропуска
 				</td>
+				<td>
+					профориентация
+				</td>
+				<td>
+					пробный ЕГЭ
+				</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -81,6 +87,12 @@
 				</td>
 				<td>
 					{{stat.abscent_percent ? (stat.abscent_percent + '%') : ''}}
+				</td>
+				<td>
+					{{stat.payments_prof || ''}}
+				</td>
+				<td>
+					{{stat.payments_ege || ''}}
 				</td>
 			</tr>
 			<tr id="{{stat.date}}" style="display: none" class="no-hover" ng-repeat-end>

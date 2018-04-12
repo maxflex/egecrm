@@ -304,6 +304,18 @@
         // @schedule-refactored
 		private function _totalVisits($date_start, $date_end = false)
 		{
+			// профориентация
+			$return['payments_prof'] = Payment::count([
+				'condition' => ($date_end ? "date > '$date_start' AND date <= '$date_end'" : "date='$date_start'")
+					. " AND category=2"
+			]);
+
+			// пробный ЕГЭ
+			$return['payments_ege'] = Payment::count([
+				'condition' => ($date_end ? "date > '$date_start' AND date <= '$date_end'" : "date='$date_start'")
+					. " AND category=3"
+			]);
+
 			// всего занятий без учета отмененных и доп.занятий
 			$return['lesson_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
