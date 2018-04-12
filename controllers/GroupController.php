@@ -55,19 +55,11 @@
 
 			$this->setTabTitle("Расписание на год");
 
-			$Schedule = Student::getFullSchedule(User::fromSession()->id_entity);
-
-			// группирвка по месяцам
-			$LessonsSorted = [];
-			foreach($Schedule->Lessons as $group_id => $GroupLessons) {
-				foreach ($GroupLessons as $Lesson) {
-					$LessonsSorted[$Lesson->year][date('n', strtotime($Lesson->lesson_date))][] = $Lesson;
-				}
-			}
+			$Schedule = Student::getFullSchedule(User::fromSession()->id_entity, true);
 
 			$ang_init_data = angInit([
 				"Subjects"	=> Subjects::$three_letters,
-				"Lessons"	=> $LessonsSorted,
+				"Lessons"	=> $Schedule->Lessons,
 				"lesson_statuses" => VisitJournal::$statuses,
 				"all_cabinets" =>  Branches::allCabinets(),
 				"months" => Months::get(),

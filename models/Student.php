@@ -1130,7 +1130,7 @@
 		/**
 		 * Получить все уроки ученика
 		 */
-		public static function getFullSchedule($id_student)
+		public static function getFullSchedule($id_student, $sort_by_month = false)
 		{
 			$group_ids = self::getGroupIdsEverVisited($id_student);
 
@@ -1182,7 +1182,11 @@
 			$LessonsSorted = [];
 			foreach($Lessons as $group_id => $GroupLessons) {
 				foreach($GroupLessons as $Lesson) {
-					$LessonsSorted[$Lesson->year][$group_id][] = $Lesson;
+					if ($sort_by_month) {
+						$LessonsSorted[$Lesson->year][date('n', strtotime($Lesson->lesson_date))][] = $Lesson;
+					} else {
+						$LessonsSorted[$Lesson->year][$group_id][] = $Lesson;
+					}
 				}
 			}
 
