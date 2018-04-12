@@ -14,16 +14,18 @@
 			self::RETURNN 	=> "возврат",
 		];
 
+		static $categories = [
+			1 => 'обучение',
+			2 => 'профориентация',
+			3 => 'пробный ЕГЭ'
+		];
+
 		# Заголовок
 		static $title = "тип";
 
 
         public static function categories()
         {
-            return json_encode([
-                '1' => 'обучение',
-                '2' => 'профориентация',
-                '3' => 'пробный ЕГЭ',
-            ]);
+            return json_encode(self::$categories);
         }
 	}

@@ -1053,6 +1053,10 @@
 					$sum = $sum * -1;
 					$comment = PaymentTypes::$all[$payment->id_type];
 				}
+				if ($payment->category > 1) {
+					$comment .= ' (' . PaymentTypes::$categories[$payment->category] . ')';
+				}
+				
 				$items[$payment->year][fromDotDate($payment->date)][] = [
 					'sum' 		  => $sum,
 					'comment' 	  => $comment,

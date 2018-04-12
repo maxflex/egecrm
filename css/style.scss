@@ -3941,3 +3941,7 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 .payment-line > .form-group:first-child select {
 	margin-left: 0 !important;
 }
+
+.dropdown-viewport-fix .dropdown-menu {
+	left: -70px;
+}

@@ -64,11 +64,19 @@
 			$condition['id_type'] = $search['type'] ? "id_type = {$search['type']}" : '1';
 			$condition['category'] = $search['category'] ? "category = {$search['category']}" : '1';
 			$condition['year'] = $search['year'] ? "year = {$search['year']}" : '1';
-			if ($search['mode'] == 'ANONYMOUS') {
-				$condition['entity_type'] = "(entity_type IS NULL OR entity_type='')";
-			} else {
-				$condition['entity_type'] = $search['mode'] ? "entity_type = '{$search['mode']}'" : '1';
+
+			$mode_conditions = [];
+			if ($search['mode']) {
+				foreach($search['mode'] as $mode) {
+					if ($mode == 'ANONYMOUS') {
+						$mode_conditions[] = "(entity_type IS NULL OR entity_type='')";
+					} else {
+						$mode_conditions[] = "(entity_type = '{$mode}')";
+					}
+				}
 			}
+			$condition['mode'] = count($mode_conditions) ? "(" . implode(' OR ', $mode_conditions) . ")" : "1";
+			debugLog($search['mode']);
 
 			$query['limit'] = ($search['current_page'] - 1)*Payment::PER_PAGE.',' . Payment::PER_PAGE;
 			$query['condition'] = implode(' and ', $condition);;

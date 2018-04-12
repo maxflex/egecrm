@@ -16,10 +16,11 @@
 		    <div class="col-sm-12">
 				<div class="row flex-list" style="margin-bottom: 15px">
 					<div>
-						<select class="watch-select single-select form-control" ng-model="search.mode" ng-change='filter()'>
-							<option value="STUDENT"  data-subtext="{{ counts.mode.STUDENT || '' }}">клиенты</option>
-							<option value="TEACHER" data-subtext="{{ counts.mode.TEACHER || '' }}">преподаватели</option>
-							<option value="ANONYMOUS" data-subtext="{{ counts.mode.ANONYMOUS || '' }}">анонимные</option>
+						<select multiple data-none-selected-text="все плательщики" data-multiple-separator=", " class="watch-select single-select form-control" ng-model="search.mode" ng-change='filter()'>
+							<!-- <option value="STUDENT"  data-subtext="{{ counts.mode.STUDENT || '' }}">клиенты</option> -->
+							<option value="STUDENT">клиенты</option>
+							<option value="TEACHER">преподаватели</option>
+							<option value="ANONYMOUS">анонимные</option>
 						</select>
 					</div>
 					<div>
@@ -59,7 +60,7 @@
 						</select>
 					</div>
 		            <div>
-						<select id='years-select' class="watch-select form-control single-select year-fix" ng-model="search.category" ng-change='filter()'>
+						<select id='years-select' class="watch-select form-control single-select dropdown-viewport-fix" ng-model="search.category" ng-change='filter()'>
 							<option value="" data-subtext="{{ counts.category.all || ''}}" >все категории</option>
 							<option disabled>──────────────</option>
 		                    <option ng-repeat="(id, category) in payment_categories"

@@ -114,7 +114,12 @@
 
                     <tr><td style="padding:10px;"></td></tr>
 
-                    <tr><td>Основание: <br>Договор на оказание платных образовательных услуг <br>№{{ firstInLastChain().id_contract }} от {{ firstInLastChain().date }}г.</td></tr>
+                    <tr><td>Основание: <br>
+						<span ng-show="PrintPayment.category == 1">Договор на оказание платных образовательных услуг <br>№{{ firstInLastChain().id_contract }} от {{ firstInLastChain().date }}г.</span>
+						<span ng-show="PrintPayment.category > 1">
+							Публичная оферта на проведение {{ PrintPayment.category == 2 ? 'профориентации' : 'пробного ЕГЭ' }}
+						</span>
+					</td></tr>
 
                     <tr><td style="padding:10px;"></td></tr>
 
@@ -184,7 +189,11 @@
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr><td colspan="2">
 	                    <div style="height: 72px !important">
-	                    Основание <br>Договор на оказание платных образовательных услуг № {{ firstInLastChain().id}} от {{ firstInLastChain().date}}г.
+	                    Основание <br>
+							<span ng-show="PrintPayment.category == 1">Договор на оказание платных образовательных услуг <br>№{{ firstInLastChain().id_contract }} от {{ firstInLastChain().date }}г.</span>
+							<span ng-show="PrintPayment.category > 1">
+								Публичная оферта на проведение {{ PrintPayment.category == 2 ? 'профориентации' : 'пробного ЕГЭ' }}
+							</span>
 	                    </div>
 	                 </td></tr>
 
