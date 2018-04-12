@@ -1148,7 +1148,7 @@
 					if ($Lesson->cancelled && ($Lesson->lesson_date < $first_lesson_date)) {
 						return false;
 					}
-					if ($Lesson->is_planned && ! $student_is_in_group) {
+					if ($Lesson->is_planned && ! $student_is_in_group && ($Lesson->lesson_date > $last_lesson_date)) {
 						return false;
 					}
 					return true;
