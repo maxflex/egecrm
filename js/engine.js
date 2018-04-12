@@ -988,6 +988,7 @@ function ExpandSelect(select, maxOptionsVisible)
 	function convertDate(date) {
 		date = date.split(".")
 		date = date.reverse()
+		date[0] = '20' + date[0]
 		date = date.join("-")
 		return date
 	}
