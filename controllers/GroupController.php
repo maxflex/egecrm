@@ -57,9 +57,17 @@
 
 			$Schedule = Student::getFullSchedule(User::fromSession()->id_entity);
 
+			// группирвка по месяцам
+			$LessonsSorted = [];
+			foreach($Schedule->Lessons as $group_id => $GroupLessons) {
+				foreach ($GroupLessons as $Lesson) {
+					$LessonsSorted[$Lesson->year][date('n', strtotime($Lesson->lesson_date))][] = $Lesson;
+				}
+			}
+
 			$ang_init_data = angInit([
 				"Subjects"	=> Subjects::$three_letters,
-				"Lessons"	=> $Schedule->Lessons,
+				"Lessons"	=> $LessonsSorted,
 				"lesson_statuses" => VisitJournal::$statuses,
 				"all_cabinets" =>  Branches::allCabinets(),
 				"months" => Months::get(),
