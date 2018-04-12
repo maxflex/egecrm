@@ -172,7 +172,7 @@
                 <table>
                     <tr><td colspan="2" align="center"><h3><b>Квитанция</b></h3></td></tr>
                     <tr><td colspan="2" align="center" style="border-bottom: 1px solid black;">к приходному кассовому ордеру №{{PrintPayment.document_number}}</td></tr>
-                    <tr><td align="right" width="40%">от </td><td align="left" style="border-bottom: 1px solid black"><b>{{ formatContractDate(PrintPayment.date) }}</b></td></tr>
+                    <tr><td align="right" width="40%">от </td><td align="left" style="border-bottom: 1px solid black"><b>{{ formatContractDate(convertDate(PrintPayment.date)) }}</b></td></tr>
 
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr><td colspan="2">
@@ -211,7 +211,7 @@
                     <tr style="padding:10px;"><td colspan="2"></td></tr>
                     <tr>
                         <td width="30%"></td>
-                        <td style="border-bottom: 1px solid black;"><b>{{ formatContractDate(PrintPayment.date) }}</b></td>
+                        <td style="border-bottom: 1px solid black;"><b>{{ formatContractDate(convertDate(PrintPayment.date)) }}</b></td>
                     </tr>
                     <tr>
                         <td colspan="2"><b>М.П. (штампа)<br>Главный бухгалтер</b></td>

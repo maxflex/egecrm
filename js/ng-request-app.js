@@ -568,6 +568,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			lightBoxShow('email')
 		}
 
+		$scope.convertDate = convertDate
+
 		$scope.formatContractDate = function(date) {
 			if (date == null) {
 				return
