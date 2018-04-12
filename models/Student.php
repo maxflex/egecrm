@@ -1142,11 +1142,10 @@
 
 				// нужно не отображать:
 				// 1) отмененные занятия до 1го занятия ученика в группе
-				// 2) планируемые занятия, если ученик больше не присутствует в группе
-				// 3) отмененные занятия после последнего занятия ученика в группе
+				// 2) планируемые и отмененные занятия, если ученик больше не присутствует в группе
 				// $Lessons[$group_id] = $StudentGroupLessons;
 				$Lessons[$group_id] = array_filter($StudentGroupLessons, function($Lesson) use ($student_is_in_group, $first_lesson_date, $last_lesson_date) {
-					if ($Lesson->cancelled && (($Lesson->lesson_date < $first_lesson_date) || ($Lesson->lesson_date > $last_lesson_date))) {
+					if ($Lesson->cancelled && ($Lesson->lesson_date < $first_lesson_date)) {
 						return false;
 					}
 					if ($Lesson->is_planned && ! $student_is_in_group) {
