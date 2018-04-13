@@ -316,17 +316,17 @@
 					. " AND category=3"
 			]);
 
-			// всего занятий без учета отмененных и доп.занятий
+			// всего занятий без учета отмененных и доп.занятий (доп. занятия вычитаются ниже)
 			$return['lesson_count'] = VisitJournal::count([
 				"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=0 AND lesson_date < CURDATE()"
+					. " AND type_entity='TEACHER' AND cancelled=0"
 			]);
 
 			// кол-во запланированных занятий
 			if ($date_start >= date('Y-m-d') && !$date_end) {
 				$return['planned_lesson_count'] = VisitJournal::count([
 					"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
-						. " AND lesson_date >= CURDATE() AND cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
+						. " AND cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
 				]);
 			}
 
