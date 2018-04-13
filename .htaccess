@@ -59,6 +59,7 @@ RewriteRule ^groups/ajax/([a-zA-Z]+)[/]?$ index.php?controller=group&action=Ajax
 RewriteRule ^(students/|teachers/)?groups[?page=(0-9)]?[/]?$ index.php?controller=group&action=list&page=$1 [QSA,L]
 
 RewriteRule ^students/schedule?[/]?$ index.php?controller=group&action=studentSchedule [QSA,L]
+RewriteRule ^students/balance?[/]?$ index.php?controller=StudentsProfile&action=balance [QSA,L]
 
 
 

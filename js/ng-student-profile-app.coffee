@@ -1,4 +1,25 @@
 app = angular.module "StudentProfile", []
+    .controller "BalanceCtrl", ($scope) ->
+		$scope.yearLabel = (year) -> year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
+		$scope.reverseObjKeys = (obj) -> Object.keys(obj).reverse()
+
+		$scope.setYear = (year) -> $scope.selected_year = year
+
+		$scope.totalSum = (date) ->
+			total_sum = 0
+			$.each $scope.Balance[$scope.selected_year], (d, items) ->
+				return if (d > date)
+				day_sum = 0
+				items.forEach (item) -> day_sum += item.sum
+				total_sum += day_sum
+			total_sum
+
+		angular.element(document).ready ->
+			$.post "requests/ajax/LoadBalance", {id_student: $scope.id_student}, (response) ->
+				['Balance', 'years', 'selected_year'].forEach (field) -> $scope[field] = response[field]
+				$scope.$apply()
+			, "json"
     .controller "PhotoCtrl", ($scope, $timeout) ->
         $scope.picture_version = 1
 

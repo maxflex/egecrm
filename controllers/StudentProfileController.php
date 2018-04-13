@@ -15,6 +15,19 @@ class StudentsProfileController extends Controller
         $this->addJs("ng-student-profile-app");
     }
 
+	public function actionBalance()
+	{
+		$this->setTabTitle('Баланс счета');
+
+		$ang_init_data = angInit([
+            "id_student" => User::fromSession()->id_entity,
+        ]);
+
+		$this->render("balance", [
+            "ang_init_data" => $ang_init_data
+        ]);
+	}
+
     public function actionPhoto()
     {
         $id_student = User::fromSession()->id_entity;

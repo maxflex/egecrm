@@ -8,6 +8,8 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "request";
 
+		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+
 		/**
 		 * BEFORE ACTION.
 		 *
@@ -24,6 +26,8 @@
 		 */
 		public function actionEdit($id_student = false)
 		{
+			$this->setRights([User::USER_TYPE]);
+
 			// Находим заявку по ID
 			$Request = Request::findById($_GET["id"]);
 
@@ -69,6 +73,7 @@
 		 */
 		public function actionList()
 		{
+			$this->setRights([User::USER_TYPE]);
 			$this->setTabTitle("Заявки ");
             $this->setRightTabTitle('<a href="requests/add" class="link-reverse link-white">создать заявку</a>');
 
@@ -110,6 +115,8 @@
 		 */
 		public function actionRelevant()
 		{
+			$this->setRights([User::USER_TYPE]);
+
 			extract($_GET);
 
 			$this->addCss("bootstrap-select");
@@ -167,6 +174,8 @@
 		 */
 		public function actionAdd()
 		{
+			$this->setRights([User::USER_TYPE]);
+
 			$default_params = [
 				"id_user_created"	=> User::fromSession()->id,
 			//	"id_status"			=> RequestStatuses::CUSTOM,
@@ -205,6 +214,8 @@
 		 */
 		public function actionAjaxSave()
 		{
+			$this->setRights([User::USER_TYPE]);
+			
 			# ЗАЯВКА
 			// Получаем ID заявки
 			$id_request = $_POST["id_request"];

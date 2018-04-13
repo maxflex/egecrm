@@ -483,7 +483,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.totalSum = function(date) {
 			total_sum = 0
 			$.each($scope.Balance[$scope.selected_year], function(d, items) {
-				if (d > date) return
+				if (d > date) { return }
 				day_sum = 0
 				items.forEach(function(item) {
 					day_sum += item.sum
