@@ -26,6 +26,7 @@ class Log extends Model
             'data'      => json_encode($data),
             'type'      => $type,
             'ip'        => @$_SERVER['HTTP_X_REAL_IP'],
+			'view_mode_user_id' => isset($_SESSION["view_mode_user_id"]) ? $_SESSION["view_mode_user_id"] : null
         ]);
     }
 
@@ -45,6 +46,7 @@ class Log extends Model
                 'table'     => $model->getTable(),
                 'type'      => $action ? $action : static::_getType($model),
                 'ip'        => @$_SERVER['HTTP_X_REAL_IP'],
+				'view_mode_user_id' => isset($_SESSION["view_mode_user_id"]) ? $_SESSION["view_mode_user_id"] : null
             ]);
 
             if ($model->isNewRecord) { // to update entity_id afted adding;
@@ -142,6 +144,9 @@ class Log extends Model
                     $d->teacher = Teacher::getLight($d->user->id_entity);
                 }
             }
+			if ($d->view_mode_user_id) {
+				$d->view_mode_user = User::getLogin($d->view_mode_user_id);
+			}
         }
 
         // $counts = static::counts($search);

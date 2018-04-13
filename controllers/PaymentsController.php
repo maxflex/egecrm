@@ -46,7 +46,8 @@
 				"Branches" => Branches::getAll(),
 				"payment_statuses"	=> Payment::$all,
                 'payment_types'		=> PaymentTypes::$all,
-				"id_teacher" => User::fromSession()->id_entity
+				"id_teacher" => User::fromSession()->id_entity,
+				'view_mode' => isset($_SESSION['view_mode_user_id']),
 			]);
 
 			$this->render("lk_teacher", [

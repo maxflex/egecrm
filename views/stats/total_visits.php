@@ -47,22 +47,22 @@
 					<span ng-show="days_mode" ng-click="plusDays()" class="half-black pointer" style="font-weight: normal">+3 дня</span>
 				</td>
 				<td>
-					всего занятий
+					факт. занятий
 				</td>
 				<td>
-					всего отмененных занятий
+					отменено
 				</td>
 				<td>
-					всего доп.занятий
+					доп.занятий
 				</td>
 				<td>
 					доля пропуска
 				</td>
 				<td>
-					профориентация
+					профориентаций
 				</td>
 				<td>
-					пробный ЕГЭ
+					пробных ЕГЭ
 				</td>
 			</tr>
 		</thead>

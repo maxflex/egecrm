@@ -22,7 +22,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
                 total_sum += day_sum
             total_sum
 
-        angular.element(document).ready ->
+        _loadPayments = ->
             $scope.password_correct = true;
             $.post "payments/ajaxLkTeacher", {}, (response) ->
                 $scope.Lessons 	= response.Lessons
@@ -31,35 +31,41 @@ app = angular.module "Payments", ["ui.bootstrap"]
                 $scope.loaded	= true # data loaded
                 $scope.$apply()
             , "json"
-            # bootbox.prompt {
-            #     title: "Для доступа к странице введите ваш пароль",
-            #     className: "modal-password-bigger",
-            #     callback: (result) ->
-            #         $.ajax {
-            #             url: "ajax/checkTeacherPass",
-            #             data: {password: result},
-            #             dataType: "json",
-            #             method: "post",
-            #             success: (response) ->
-            #                 if response == true
-            #
-            #                 else
-            #                     $scope.password_correct = false
-            #                 $scope.$apply();
-            #             ,
-            #             async: false,
-            #         }
-            #
-            #     ,
-            #     buttons: {
-            #         confirm: {
-            #             label: "Подтвердить"
-            #         },
-            #         cancel: {
-            #             className: "display-none"
-            #         }
-            #     }
-            # }
+
+        angular.element(document).ready ->
+            set_scope "Payments"
+            if $scope.view_mode
+                _loadPayments()
+            else
+                bootbox.prompt {
+                    title: "Для доступа к странице введите ваш пароль",
+                    className: "modal-password-bigger",
+                    callback: (result) ->
+                        $.ajax {
+                            url: "ajax/checkTeacherPass",
+                            data: {password: result},
+                            dataType: "json",
+                            method: "post",
+                            success: (response) ->
+                                if response == true
+                                    _loadPayments()
+                                else
+                                    $scope.password_correct = false
+                                $scope.$apply();
+                            ,
+                            async: false,
+                        }
+
+                    ,
+                    buttons: {
+                        confirm: {
+                            label: "Подтвердить"
+                        },
+                        cancel: {
+                            className: "display-none"
+                        }
+                    }
+                }
     # @rights-refactored
     .controller "ListCtrl", ($scope, $timeout) ->
         $scope.initSearch = ->
