@@ -1040,7 +1040,7 @@
 				}
 				$items[$lesson->year][$lesson->lesson_date][] = [
 					'sum' 		  => intval($lesson->price) * -1,
-					'comment'	  => "занятие " . date("d.m.y", strtotime($lesson->lesson_date)) . " в {$lesson->lesson_time}, группа {$lesson->id_group} (" . Subjects::$three_letters[$group->id_subject] . "-" . Grades::$short[$group->grade] . "), кабинет " . $group->cabinet['label'],
+					'comment'	  => $comment,
 					'credentials' => User::findById($lesson->id_user_saved)->login . ' ' . dateFormat($lesson->date),
 					'date'		  => $lesson->date,
 				];
