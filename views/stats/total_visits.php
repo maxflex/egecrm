@@ -76,14 +76,18 @@
 				</td>
 				<td>
 					{{stat.lesson_count ? stat.lesson_count : ''}}
-					<span ng-show="stat.planned_lesson_count" class="text-gray">{{ stat.lesson_count ? '+' : ''}}{{ stat.planned_lesson_count }}</span>
+					<span ng-show="stat.planned_lesson_count" class="text-gray" ng-class="{
+						'remove-space': stat.lesson_count
+					}">{{ stat.lesson_count ? '+' : ''}}{{ stat.planned_lesson_count }}</span>
 				</td>
 				<td>
 					{{stat.cancelled_count || ''}}
 				</td>
 				<td>
 					{{stat.additional_count ? stat.additional_count : ''}}
-					<span ng-show="stat.planned_additional_count" class="text-gray">{{ stat.additional_count ? '+' : ''}}{{ stat.planned_additional_count }}</span>
+					<span ng-show="stat.planned_additional_count" class="text-gray" ng-class="{
+						'remove-space': stat.additional_count
+					}">{{ stat.additional_count ? '+' : ''}}{{ stat.planned_additional_count }}</span>
 				</td>
 				<td>
 					{{stat.abscent_percent ? (stat.abscent_percent + '%') : ''}}
