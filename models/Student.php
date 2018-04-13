@@ -236,7 +236,7 @@
 				))
 				JOIN contracts c on c.id_contract = ci.id_contract
 				LEFT JOIN contract_subjects cs on cs.id_contract = c.id
-				WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1 and ci.year=2017
+				WHERE c.current_version=1 AND cs.id_subject > 0 AND cs.status > 1
 			");
 
 			while ($row = $result->fetch_assoc()) {
