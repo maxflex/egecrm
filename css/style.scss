@@ -2185,7 +2185,7 @@ white-space: nowrap;
 
 #modal-contract, .lightbox-addcontract, .lightbox-addcontracttest {
 	& .input-group, input, select {
-		width: 250px;
+		width: 270px;
 		float: right;
 	}
 
@@ -3890,10 +3890,10 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 .contract-payment-input-group {
 	& input {
 		&:first-of-type {
-			width: 85px !important;
+			width: 59px !important;
 		}
 		&:last-of-type {
-			width: 86px !important;
+			width: 84px !important;
 			border-left: none;
 		}
 	}
@@ -3906,7 +3906,8 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 }
 
 .first-contract-payment {
-	width: 126px !important;
+	width: 123px !important;
+	padding-right: 0;
   float: left;
   left: -1px;
   border-radius: 0 4px 4px 0 !important;

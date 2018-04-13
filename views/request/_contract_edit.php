@@ -42,7 +42,7 @@
 						<span class="input-label">дата создания версии</span>
 						<div class="input-group date bs-date">
 							<input id="contract-date" class="form-control"
-								style='width: 210px'
+								style='width: 230px'
 								placeholder="дата" type="text" ng-model="current_contract.date" ng-value="current_contract.date">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
 						</div>
@@ -75,7 +75,7 @@
 						рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
 					</span>
 					<div class="input-group">
-						<input id="contract-sum" type="text" placeholder="сумма" style='padding-right: 4px; width: 89px'
+						<input id="contract-sum" type="text" placeholder="сумма" style='padding-right: 4px; width: 109px'
 							class="form-control digits-only" ng-model="current_contract.sum" ng-value="current_contract.sum">
 						<span class="input-group-addon rubble-addon">₽, цена без скидки</span>
 					</div>
@@ -101,9 +101,9 @@
 						<a ng-click="deleteContractPayment($index)" style='margin-left: 5px' class="show-on-hover text-danger">удалить</a>
 					</span>
 					<div class="input-group contract-payment-input-group">
-						<input type="text" class="form-control" placeholder="сумма"
-							ng-model="payment.sum" style='border-right: 0'>
-						<span class="input-group-addon rubble-addon">₽</span>
+						<input type="text" class="form-control"
+							ng-model="payment.lesson_count" style='border-right: 0'>
+						<span class="input-group-addon rubble-addon">занятий</span>
 						<input class="form-control first-contract-payment" ng-hide="$index > 0" placeholder="при заключении" >
 						<input class="form-control bs-date" ng-show="$index > 0"
 							placeholder="дата" type="text" ng-model="payment.date" ng-value="current_contract.date">
@@ -115,9 +115,6 @@
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12 add-contract-payment-controls">
 					<a class='pointer' ng-click='addContractPayment()'>добавить платеж</a>
-					<a class='pointer' ng-click='addContractPayment(2)'>2 платежа</a>
-					<a class='pointer' ng-click='addContractPayment(3)'>3 платежа</a>
-					<a class='pointer' ng-click='addContractPayment(8)'>8 платежей</a>
 				</div>
 			</div>
 		</div>
