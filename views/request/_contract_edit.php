@@ -109,12 +109,16 @@
 							placeholder="дата" type="text" ng-model="payment.date" ng-value="current_contract.date">
 						<span ng-show="$index" class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
 					</div>
+					<div ng-if="current_contract.info.grade && payment.lesson_count" class="contract-payment-sum text-gray">
+						{{ lessonPrice(current_contract) * payment.lesson_count | number }} руб.
+					</div>
 				</div>
 			</div>
 
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12 add-contract-payment-controls">
 					<a class='pointer' ng-click='addContractPayment()'>добавить платеж</a>
+					<a class='pointer' ng-click='contractPaymentAutofill()'>автозаполнение</a>
 				</div>
 			</div>
 		</div>

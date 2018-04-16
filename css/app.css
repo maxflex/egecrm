@@ -16909,11 +16909,11 @@ a[href^="https://www.google.com/maps"] {
     position: relative;
     overflow: scroll; }
   .modal-new .modal-new-header {
-    background: #337ab7;
+    background: #f2f2f2;
     display: flex;
     height: 50px;
     justify-content: space-between;
-    color: white;
+    color: black;
     align-items: center; }
     .modal-new .modal-new-header > .header-title {
       padding-left: 50px; }
@@ -16922,16 +16922,14 @@ a[href^="https://www.google.com/maps"] {
       display: flex; }
       .modal-new .modal-new-header > .header-buttons > div {
         height: 100%;
-        background: #337ab7;
+        background: #f2f2f2;
         display: inline-block;
         vertical-align: middle;
         display: flex;
         align-items: center;
         padding: 0 20px;
-        color: white;
+        color: black;
         cursor: pointer; }
-        .modal-new .modal-new-header > .header-buttons > div:hover {
-          background: #285f8f; }
 
 .modal-animate-close {
   -webkit-animation-name: modalClose;
@@ -17034,6 +17032,12 @@ a[href^="https://www.google.com/maps"] {
 
 .dropdown-viewport-fix .dropdown-menu {
   left: -70px; }
+
+.contract-payment-sum {
+  position: absolute;
+  right: -100px;
+  top: 7px;
+  width: 100px; }
 
 .control-group {
   display: inline-block;

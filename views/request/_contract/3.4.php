@@ -1,14 +1,14 @@
 Оплата Услуг по настоящему Договору <span ng-show='contract.discount > 0'>с учетом скидки {{ contract.discount }}%</span> производится Заказчиком следующим образом:
 <ul style='margin: 0'>
-    <li ng-repeat="n in [] | range:contract.payments_split">
-        {{ contract.payments_split == 1 ? 'единовременный' : '' }} платеж в размере {{ getPaymentPrice(contract, n) | number }} руб.  ({{ splitLessons(contract, n) }} <ng-pluralize count="splitLessons(contract, n)" when="{
+    <li ng-repeat="payment in contract.payments">
+        {{ contract.payments.length == 1 ? 'единовременный' : '' }} платеж в размере {{ lessonPrice(contract) * payment.lesson_count | number }} руб.  ({{ payment.lesson_count }} <ng-pluralize count="payment.lesson_count" when="{
             'one' 	: 'занятие',
             'few'	: 'занятия',
             'many'	: 'занятий',
         }"></ng-pluralize>) производится
-        <span ng-if='!n'> при заключении договора</span>
-        <span ng-if='n'>
-             до {{ splitPaymentsOptions(contract.info.year)[contract.payments_info][n - 1] }}
+        <span ng-if='!$index'> при заключении договора</span>
+        <span ng-if='$index'>
+             до {{ payment.date }}
         </span>
     </li>
 </ul>

@@ -1156,56 +1156,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             return Math.ceil(n)
         }
 
-        $scope.getPaymentLabel = function(dates) {
-            len = dates.length + 1
-            payment = 'платеж'
-            if (len > 1 && len <= 4) {
-                payment += 'а'
-            }
-            if (len > 4) {
-                payment += 'ей'
-            }
-            str = len + ' ' + payment
-            if (dates.length > 0) {
-                 str += ': '
-                 if (len == 8) {
-                     str += 'ежемесячно 15 числа'
-                 } else {
-                     dates.forEach(function(date, index) {
-                         str += date
-                         if ((index + 1) != dates.length) {
-                             str += ', '
-                         }
-                     })
-                 }
-            }
-            return str
-        }
-
-        // splitAlmostEvenly
-        // разделить number на parts почти равных частей
-        // 32, 3 = 11, 11, 10
-        $scope.splitLessons = function(contract, part) {
-            subject_count = $scope.subjectCount(contract)
-            parts = contract.payments_split
-
-            x = Math.floor(subject_count / parts)
-            y = subject_count % parts
-
-            arr = []
-
-            for (i = 1; i <= parts; i++) {
-                arr.push(y-- > 0 ? (x + 1) : x)
-            }
-
-            return arr[part]
-        }
-
-        // получить ценник
-        $scope.getPaymentPrice = function(contract, part) {
-            // ценник за 1 занятие * кол-во занятий
-            return parseFloat($scope.splitLessons(contract, part) * $scope.oneSubjectPrice(contract)).toFixed(2)
-        }
 
         $scope.getContractSum = function(contract) {
             if (!contract) return 0;
@@ -1222,16 +1172,18 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             return $scope.getContractSum(contract) / $scope.subjectCount(contract)
         }
 
+				$scope.lessonPrice = function(contract) {
+					lesson_price = $scope.Prices[contract.info.grade]
+					if (contract.discount > 0) {
+							return $scope.getDiscountedPrice(lesson_price, contract.discount)
+					} else {
+							return lesson_price
+					}
+				}
+
         $scope.getDiscountedPrice = function(price, discount) {
             return Math.round(price - (price * (discount / 100)))
         }
-
-		$scope.getSubjectPrice = function(contract, price) {
-			if (contract) {
-				coeff = contract.sum / $scope.recommendedPrice(contract)
-				return Math.round(price * coeff)
-			} else return false;
-		}
 
 		// @time-refactored
 		$scope.toggleStudentFreetime = function(day, id_time) {
@@ -1405,6 +1357,15 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("#contract-date").removeClass("has-error")
 			}
 
+			// количество занятий не должно в конкретном предмете превышать количество занятий по программе
+			$.each($scope.current_contract.subjects, function(subject_id, data) {
+				if (data.count > data.count_program) {
+					error = true
+					notifyError('кол-во занятий не должно превышать кол-во по программе')
+					return
+				}
+			})
+
             if (!$scope.current_contract.info.year) {
                 $("#contract-year").addClass("has-error").focus()
                 return false
@@ -1417,14 +1378,14 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
                 if (subject === undefined) {
                     return
                 }
-                if (!parseInt(subject.count_program)) {
+                if (subject.count_program=='') {
                     $("#subject-program-" + subject_id).addClass("has-error").focus()
                     error = true
                     return false
                 } else {
                     $("#subject-program-" + subject_id).removeClass("has-error")
                 }
-                if ((subject.status == 2 || subject.status == 3) && !parseInt(subject.count)) {
+                if ((subject.status == 2 || subject.status == 3) && subject.count=='') {
                     $("#subject-" + subject_id).addClass("has-error").focus()
                     error = true
                     return false
@@ -1447,15 +1408,29 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("select[name='grades']").removeClass("has-error")
 			}
 
+			if (!$scope.current_contract.payments || !$scope.current_contract.payments.length) {
+				notifyError('должен быть как минимум 1 платеж')
+				return false
+			}
+
 			// если сумма платежей больше суммы по договору
 			payments_sum = 0
-			$scope.current_contract.payments.forEach(function(payment) {
-				payments_sum += parseInt(payment.sum)
+			payment_date = '0000-00-00'
+			$scope.current_contract.payments.forEach(function(payment, index) {
+				if (index) {
+					if (convertDate(payment.date) < payment_date) {
+						error = true
+						notifyError('даты платежей должны возрастать')
+						return
+					}
+					payment_date = convertDate(payment.date)
+				}
+				payments_sum += $scope.lessonPrice($scope.current_contract) * payment.lesson_count
 			})
 			contract_sum = $scope.getContractSum($scope.current_contract)
 
-			if (payments_sum > contract_sum) {
-				notifyError('сумма платежей больше суммы по договору')
+			if (payments_sum != contract_sum) {
+				notifyError('сумма платежей должна быть равна сумме по договору (' + payments_sum + ' и ' + contract_sum + ')')
 				return false
 			}
 
@@ -1638,19 +1613,69 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		// NE MAKA
-		$scope.addContractPayment = function(n) {
-			payments_count = $scope.current_contract.payments.length
-			if (n === undefined) {
-				n = payments_count + 1
-			}
-			for(i = payments_count; i < n; i++) {
-				$scope.current_contract.payments.push({
-					id_contract: $scope.current_contract.id
-				})
-			}
+		$scope.addContractPayment = function() {
+			$scope.current_contract.payments.push({
+				id_contract: $scope.current_contract.id
+			})
+
 			$timeout(function() {
 				rebindMasks()
 			})
+		}
+
+		$scope.contractPaymentAutofill = function() {
+			// обнуляем дату первого платежа
+			$scope.current_contract.payments[0].date = null
+
+			current_date_month = moment().format("MM-DD")
+			// current_date_month = "09-13"
+
+			next_year = moment().add(1, 'years').format("YY")
+			current_year = moment().format("YY")
+			payments_count = $scope.current_contract.payments.length
+
+			switch(payments_count) {
+				case 2:
+					// если 2 платежа, и дата от 2 марта до 12 сентября, то ставить платеж до даты 20 января 2019
+					if (current_date_month >= '03-02' && current_date_month <= '09-12') {
+						$scope.current_contract.payments[1].date = "20.01." + next_year
+					} else
+					// от 13 сентября до 31 декабря, то ставить дату платежа на середине между текущей датой и 25 мая 2019
+					if (current_date_month >= '09-13' && current_date_month <= '12-31') {
+						start_timestamp = moment().unix()
+						end_timestamp = moment("20" + next_year + "-05-25").unix()
+						middle_timestamp = (end_timestamp - start_timestamp) / 2
+						$scope.current_contract.payments[1].date = moment.unix(start_timestamp + middle_timestamp).format("YY.MM.DD")
+					}
+					break;
+				case 3:
+					// если 3 платежа, и дата от 2 марта до 1 сентября, то ставить платежи 19 ноября 2018 и до 18 февраля 2019
+					if (current_date_month >= '03-02' && current_date_month <= '09-01') {
+						$scope.current_contract.payments[1].date = "19.11." + current_year
+						$scope.current_contract.payments[2].date = "18.02." + next_year
+					} else
+					// от 2 сентября до 25 сентября, то ставить платежи до 26 ноября 2018 и до 25 февраля 2019
+					if (current_date_month >= '09-02' && current_date_month <= '09-25') {
+						$scope.current_contract.payments[1].date = "26.11." + current_year
+						$scope.current_contract.payments[2].date = "25.02." + next_year
+					} else
+					// от 26 сентября до 15 октября, то ставить платежи до 3 декабря 2018 и до 4 марта 2019
+					if (current_date_month >= '09-26' && current_date_month <= '10-15') {
+						$scope.current_contract.payments[1].date = "03.12." + current_year
+						$scope.current_contract.payments[2].date = "04.03." + next_year
+					}
+					break;
+				default:
+					if (payments_count > 3) {
+						index = 1
+						d = moment()
+						while(index < payments_count) {
+							d.add(1, 'month')
+							$scope.current_contract.payments[index].date = d.format('YY.MM.DD')
+							index++
+						}
+					}
+			}
 		}
 
 		$scope.deleteContractPayment = function(index) {
@@ -2444,15 +2469,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		}
 
 		$scope.getLessonIndex = function(index, GroupLessons) {
-			result = index + 1
-			current_index = 0
-			while (current_index < index) {
-				if (GroupLessons[current_index].cancelled) {
-					result--
-				}
-				current_index++
-			}
-			return result
+			index++
+			cancelled_count = _.where(GroupLessons.slice(0, index), {cancelled: 1}).length
+			return (index - cancelled_count)
 		}
 
 		// photo functions
