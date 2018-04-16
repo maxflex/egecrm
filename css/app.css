@@ -16916,7 +16916,9 @@ a[href^="https://www.google.com/maps"] {
     color: black;
     align-items: center; }
     .modal-new .modal-new-header > .header-title {
-      padding-left: 50px; }
+      padding-left: 50px;
+      font-size: 20px;
+      font-weight: bold; }
     .modal-new .modal-new-header > .header-buttons {
       height: 100%;
       display: flex; }
