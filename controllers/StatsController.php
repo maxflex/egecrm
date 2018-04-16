@@ -508,10 +508,11 @@
 
 		private function _getPayments($date_start, $date_end = false)
 		{
+			// "(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null))
 			$Payments = Payment::findAll([
-				"condition" => "entity_type = '" . (isset($_GET['teachers']) ? Teacher::USER_TYPE : Student::USER_TYPE) . "' and ".
+				"condition" => (isset($_GET['teachers']) ? "entity_type='" . Teacher::USER_TYPE . "'" : "(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null))") .
 					($date_end 	? "`date` > '$date_start' AND `date` <= '$date_end'"
-								: "date = '$date_start'"),
+								: "date = '$date_start'")
 			]);
 
 			foreach ($Payments as $Payment) {
@@ -553,19 +554,7 @@
 				$stats[$date] = self::_getPayments($date);
 			}
 
-
-			uksort($stats, function($a, $b) {
-				if ($a->date_original > $b->date_original) {
-					return -1;
-				} else
-				if ($a->date_original < $b->date_original) {
-					return 1;
-				} else {
-					return 0;
-				}
-			});
-
-			return $stats;
+			return array_reverse($stats, true);
 		}
 
 
