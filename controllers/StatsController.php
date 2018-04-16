@@ -508,9 +508,11 @@
 
 		private function _getPayments($date_start, $date_end = false)
 		{
-			// "(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null))
 			$Payments = Payment::findAll([
-				"condition" => (isset($_GET['teachers']) ? "entity_type='" . Teacher::USER_TYPE . "'" : "(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null))") .
+				"condition" =>
+					(isset($_GET['teachers']) ?
+						"entity_type='" . Teacher::USER_TYPE . "'" :
+						"(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null))") . " AND " .
 					($date_end 	? "`date` > '$date_start' AND `date` <= '$date_end'"
 								: "date = '$date_start'")
 			]);
