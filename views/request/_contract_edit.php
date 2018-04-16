@@ -48,6 +48,7 @@
 						</div>
 					</div>
 				</div>
+				<?php if (in_array(User::fromSession()->id, [1, 69])): ?>
 				<div class="row" style="margin-bottom: 10px">
 					<div class="col-sm-12">
 						<span class="input-label">сегодняшняя дата</span>
@@ -59,6 +60,7 @@
 						</div>
 					</div>
 				</div>
+				<?php endif; ?>
 				<div class="row" style="margin-bottom: 10px">
 					<div class="col-sm-12">
 						<span class="input-label">класс</span>

@@ -1174,7 +1174,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
         }
 
 				$scope.lessonPrice = function(contract) {
-					lesson_price = $scope.Prices[contract.info.grade]
+					lesson_price = $scope.oneSubjectPrice(contract)
 					if (contract.discount > 0) {
 							return $scope.getDiscountedPrice(lesson_price, contract.discount)
 					} else {
@@ -1352,16 +1352,16 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 
 			// реальная сумма отклоняется не более 5% от рекомендуемой
-			recommended_price = $scope.recommendedPrice($scope.current_contract)
-			min_price = Math.round(recommended_price * 0.95)
-			max_price = Math.round(recommended_price * 1.05)
-			if ($scope.current_contract.sum > max_price || $scope.current_contract.sum < min_price) {
-				$("#contract-sum").addClass("has-error").focus()
-				notifyError('реальная сумма отклоняется от рекомендуемой на более чем 5%')
-				return false
-			} else {
-				$("#contract-sum").removeClass("has-error")
-			}
+			// recommended_price = $scope.recommendedPrice($scope.current_contract)
+			// min_price = Math.round(recommended_price * 0.95)
+			// max_price = Math.round(recommended_price * 1.05)
+			// if ($scope.current_contract.sum > max_price || $scope.current_contract.sum < min_price) {
+			// 	$("#contract-sum").addClass("has-error").focus()
+			// 	notifyError('реальная сумма отклоняется от рекомендуемой на более чем 5%')
+			// 	return false
+			// } else {
+			// 	$("#contract-sum").removeClass("has-error")
+			// }
 
 			if (!$scope.current_contract.date) {
 				$("#contract-date").addClass("has-error").focus()
