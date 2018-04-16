@@ -50,6 +50,17 @@
 				</div>
 				<div class="row" style="margin-bottom: 10px">
 					<div class="col-sm-12">
+						<span class="input-label">сегодняшняя дата</span>
+						<div class="input-group date bs-date">
+							<input class="form-control"
+								style='width: 230px'
+								placeholder="дата" type="text" ng-model="test_today_date">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="row" style="margin-bottom: 10px">
+					<div class="col-sm-12">
 						<span class="input-label">класс</span>
 						<?= Grades::buildSelector(false, false, [
 						"ng-model" => "current_contract.info.grade",
@@ -118,7 +129,7 @@
 			<div class="row" style="margin-bottom: 10px">
 				<div class="col-sm-12 add-contract-payment-controls">
 					<a class='pointer' ng-click='addContractPayment()'>добавить платеж</a>
-					<a class='pointer' ng-click='contractPaymentAutofill()'>автозаполнение</a>
+					<a class='pointer' style='margin-right: 0; float: right' ng-click='contractPaymentAutofill()'>автозаполнение</a>
 				</div>
 			</div>
 		</div>

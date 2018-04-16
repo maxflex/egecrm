@@ -289,7 +289,7 @@
 					"id_student" => $id_student,
 					"id_subject" => $id_subject,
 					"id_teacher" => User::fromSession()->id_entity,
-					"date"       => date('d.m.Y'),
+					"date"       => now(true),
 				]);
 
 				$Report->Student = Student::findById($id_student);

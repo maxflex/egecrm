@@ -16930,6 +16930,8 @@ a[href^="https://www.google.com/maps"] {
         padding: 0 20px;
         color: black;
         cursor: pointer; }
+        .modal-new .modal-new-header > .header-buttons > div:hover {
+          background: #e5e5e5; }
 
 .modal-animate-close {
   -webkit-animation-name: modalClose;

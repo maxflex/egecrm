@@ -5,7 +5,7 @@
     class Discount {
         public static function get()
         {
-            return [4, 10, 20, 30, 40, 50, 70, 98];
+            return [4, 10, 20, 30, 40, 50, 70, 90];
         }
         public static function json()
         {

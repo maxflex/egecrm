@@ -443,6 +443,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		// анимация загрузки RENDER ANGULAR
 		angular.element(document).ready(function() {
 			$scope.setMode($scope.mode)
+			$scope.test_today_date = moment().format('YY.MM.DD')
 		})
 
 		$scope.getGroup = function(id) {
@@ -1350,6 +1351,18 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("#contract-sum").removeClass("has-error")
 			}
 
+			// реальная сумма отклоняется не более 5% от рекомендуемой
+			recommended_price = $scope.recommendedPrice($scope.current_contract)
+			min_price = Math.round(recommended_price * 0.95)
+			max_price = Math.round(recommended_price * 1.05)
+			if ($scope.current_contract.sum > max_price || $scope.current_contract.sum < min_price) {
+				$("#contract-sum").addClass("has-error").focus()
+				notifyError('реальная сумма отклоняется от рекомендуемой на более чем 5%')
+				return false
+			} else {
+				$("#contract-sum").removeClass("has-error")
+			}
+
 			if (!$scope.current_contract.date) {
 				$("#contract-date").addClass("has-error").focus()
 				return false
@@ -1416,6 +1429,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			// если сумма платежей больше суммы по договору
 			payments_sum = 0
 			payment_date = '0000-00-00'
+			total_lessons = 0
 			$scope.current_contract.payments.forEach(function(payment, index) {
 				if (index) {
 					if (convertDate(payment.date) < payment_date) {
@@ -1426,11 +1440,18 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					payment_date = convertDate(payment.date)
 				}
 				payments_sum += $scope.lessonPrice($scope.current_contract) * payment.lesson_count
+				total_lessons += payment.lesson_count
 			})
 			contract_sum = $scope.getContractSum($scope.current_contract)
 
 			if (payments_sum != contract_sum) {
-				notifyError('сумма платежей должна быть равна сумме по договору (' + payments_sum + ' и ' + contract_sum + ')')
+				notifyError('сумма платежей должна быть равна сумме по договору')
+				return false
+			}
+
+			// суммарное количество занятий в платежах равно суммарному количеству занятий в предметах
+			if (total_lessons != $scope.subjectCount($scope.current_contract)) {
+				notifyError('суммарное количество занятий в платежах не равно суммарному количеству занятий в предметах')
 				return false
 			}
 
@@ -1627,12 +1648,25 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			// обнуляем дату первого платежа
 			$scope.current_contract.payments[0].date = null
 
-			current_date_month = moment().format("MM-DD")
+			// удалить после тестирования
+			// заменить m на moment()
+			m = moment(convertDate($scope.test_today_date))
+
+			current_date_month = m.format("MM-DD")
 			// current_date_month = "09-13"
 
-			next_year = moment().add(1, 'years').format("YY")
-			current_year = moment().format("YY")
+			next_year = m.add(1, 'years').format("YY")
+			current_year = m.format("YY")
 			payments_count = $scope.current_contract.payments.length
+
+			// автозаполнение кол-ва занятий
+			subject_count = $scope.subjectCount($scope.current_contract)
+			lesson_count = Math.floor(subject_count / payments_count)
+			$scope.current_contract.payments.forEach(function(payment) {
+				payment.lesson_count = lesson_count
+				subject_count -= lesson_count
+			})
+			$scope.current_contract.payments[0].lesson_count += subject_count
 
 			switch(payments_count) {
 				case 2:
@@ -1642,7 +1676,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					} else
 					// от 13 сентября до 31 декабря, то ставить дату платежа на середине между текущей датой и 25 мая 2019
 					if (current_date_month >= '09-13' && current_date_month <= '12-31') {
-						start_timestamp = moment().unix()
+						start_timestamp = m.unix()
 						end_timestamp = moment("20" + next_year + "-05-25").unix()
 						middle_timestamp = (end_timestamp - start_timestamp) / 2
 						$scope.current_contract.payments[1].date = moment.unix(start_timestamp + middle_timestamp).format("YY.MM.DD")
@@ -1668,7 +1702,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				default:
 					if (payments_count > 3) {
 						index = 1
-						d = moment()
+						d = m
 						while(index < payments_count) {
 							d.add(1, 'month')
 							$scope.current_contract.payments[index].date = d.format('YY.MM.DD')
