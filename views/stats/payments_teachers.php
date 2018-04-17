@@ -87,7 +87,11 @@
 			<?php foreach($stats as $date => $stat): ?>
 			<tr>
 				<td>
-					<?= strftime("%d %b %Y", strtotime($date)) ?>
+					<?php if ($_GET["group"] == "y") { ?>
+						<?= strftime("%Y", strtotime($date)) ?>–<?= strftime("%Y", strtotime($date)) + 1 ?> уч. г.
+					<?php } else { ?>
+						<?= strftime("%d %b %Y", strtotime($date)) ?>
+					<?php } ?>
 				</td>
 				<td>
 					<?= $stat[Payment::PAID_CASH]['payment_confirmed'] ?>
