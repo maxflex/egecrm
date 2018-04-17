@@ -1,7 +1,7 @@
 Оплата Услуг по настоящему Договору <span ng-show='contract.discount > 0'>с учетом скидки {{ contract.discount }}%</span> производится Заказчиком следующим образом:
 <ul style='margin: 0'>
     <li ng-repeat="payment in contract.payments">
-        {{ contract.payments.length == 1 ? 'единовременный' : '' }} платеж в размере {{ lessonPrice(contract) * payment.lesson_count | number }} руб.  ({{ payment.lesson_count }} <ng-pluralize count="payment.lesson_count" when="{
+        {{ contract.payments.length == 1 ? 'единовременный' : '' }} платеж в размере {{ oneSubjectPrice(contract) * payment.lesson_count | number }} руб.  ({{ payment.lesson_count }} <ng-pluralize count="payment.lesson_count" when="{
             'one' 	: 'занятие',
             'few'	: 'занятия',
             'many'	: 'занятий',

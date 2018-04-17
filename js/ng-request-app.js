@@ -11,7 +11,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			}
 		};
 	})
-	.config( [
+	.config([
 		'$compileProvider', function($compileProvider) {
 			$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip):/);
 		}
@@ -423,7 +423,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		// анимация загрузки RENDER ANGULAR
 		angular.element(document).ready(function() {
 			$scope.setMode($scope.mode)
-			$scope.test_today_date = moment().format('YY.MM.DD')
+			$scope.test_today_date = moment().format('DD.MM.YY')
 		})
 
 		$scope.getGroup = function(id) {
@@ -1130,15 +1130,6 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
             return $scope.getContractSum(contract) / $scope.subjectCount(contract)
         }
 
-				$scope.lessonPrice = function(contract) {
-					lesson_price = $scope.oneSubjectPrice(contract)
-					if (contract.discount > 0) {
-							return $scope.getDiscountedPrice(lesson_price, contract.discount)
-					} else {
-							return lesson_price
-					}
-				}
-
         $scope.getDiscountedPrice = function(price, discount) {
             return Math.round(price - (price * (discount / 100)))
         }
@@ -1396,7 +1387,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					}
 					payment_date = convertDate(payment.date)
 				}
-				payments_sum += $scope.lessonPrice($scope.current_contract) * payment.lesson_count
+				payments_sum += $scope.oneSubjectPrice($scope.current_contract) * payment.lesson_count
 				total_lessons += parseInt(payment.lesson_count)
 			})
 			contract_sum = $scope.getContractSum($scope.current_contract)
@@ -1518,8 +1509,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			current_date_month = m.format("MM-DD")
 			// current_date_month = "09-13"
 
-			next_year = m.add(1, 'years').format("YY")
 			current_year = m.format("YY")
+			next_year = _.clone(m).add(1, 'years').format("YY")
+
 			payments_count = $scope.current_contract.payments.length
 
 			// автозаполнение кол-ва занятий
@@ -1564,12 +1556,22 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					break;
 				default:
 					if (payments_count > 3) {
-						index = 1
-						d = m
-						while(index < payments_count) {
-							d.add(1, 'month')
-							$scope.current_contract.payments[index].date = d.format('YY.MM.DD')
-							index++
+						if (current_date_month >= '03-02' && current_date_month <= '09-14') {
+							index = 1
+							d = moment(m.format("YYYY") + '-10-15')
+							while(index < payments_count) {
+								$scope.current_contract.payments[index].date = d.format('YY.MM.DD')
+								d.add(1, 'month')
+								index++
+							}
+						} else {
+							index = 1
+							d = m
+							while(index < payments_count) {
+								d.add(1, 'month')
+								$scope.current_contract.payments[index].date = d.format('YY.MM.DD')
+								index++
+							}
 						}
 					}
 			}

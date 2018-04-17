@@ -233,14 +233,10 @@
         {
             $date_end = date("Y-m-d", time());
 
-            //определяем текущий учебный год
-            if (date("j", time()) > 1 && date("n", time()) >= 5) {
-                $current_year = date("Y", time());
-            } else {
-                $current_year = date("Y", time()) - 1;
-            }
+			//определяем текущий учебный год
+			$current_year = end(Years::$all);
 
-            for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
+            for ($i = 1; $i <= count(Years::$all); $i++) {
                 $year = $current_year - $i;
                 $date_start = date("Y-m-d", mktime(0, 0, 0, 4, 2, $year));
                 if ($i == 0) {
@@ -339,8 +335,14 @@
 			// кол-во запланированных занятий
 			if ($date_start >= date('Y-m-d') && !$date_end) {
 				$return['planned_lesson_count'] = VisitJournal::count([
-					"condition" => ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'")
+					"condition" => "lesson_date='$date_start'"
 						. " AND cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
+				]);
+			}
+
+			if ($by_year && $date_end == now(true)) {
+				$return['planned_lesson_count'] = VisitJournal::count([
+					"condition" => "cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
 				]);
 			}
 
@@ -655,13 +657,9 @@
             $date_end = date("Y-m-d", time());
 
             //определяем текущий учебный год
-            if (date("j", time()) > 1 && date("n", time()) >= 5) {
-                $current_year = date("Y", time());
-            } else {
-                $current_year = date("Y", time()) - 1;
-            }
+			$current_year = end(Years::$all);
 
-            for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
+            for ($i = 1; $i <= count(Years::$all); $i++) {
                 $year = $current_year - $i;
                 $date_start = date("Y-m-d", mktime(0, 0, 0, 5, 1, $year));
 

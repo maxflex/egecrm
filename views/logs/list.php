@@ -104,7 +104,7 @@
                             </tr>
                         </table>
                     </td>
-                    <td width="9%">
+                    <td width="10%">
                         {{ formatDateTime(log.created_at) }}
                     </td>
                 </tr>

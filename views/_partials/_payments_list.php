@@ -33,7 +33,12 @@
 				<span ng-show="payment.document_number > 0 && payment.id_status == <?= Payment::PAID_CASH ?>" class="remove-space">
 					:
 					<?php if (! $teacher_page) :?>
-	                    <a class="link-like" ng-click="printPKO(payment)">{{ 'ПКО ' + payment.document_number }}</a>
+						<span ng-hide="<?= $student_page ? 'true' : 'false' ?> || payment.category > 1">
+							{{ 'ПКО ' + payment.document_number }}
+						</span>
+	                    <a class="link-like" ng-click="printPKO(payment)" ng-show="<?= $student_page ? 'true' : 'false' ?> || payment.category > 1">
+							{{ 'ПКО ' + payment.document_number }}
+						</a>
 	                <?php else :?>
 						{{ 'ПКО ' + payment.document_number }}
 	                <?php endif ?>

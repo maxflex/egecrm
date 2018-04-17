@@ -21,9 +21,11 @@
 				<td>
 					комментарий
 				</td>
+				<?php if (isset($credentials)) :?>
 				<td>
 					реквизиты
 				</td>
+				<?php endif ?>
 			</thead>
 			<tbody ng-repeat="date in reverseObjKeys(Balance[selected_year])">
 				<tr>
@@ -47,9 +49,11 @@
 					<td>
 						{{ item.comment }}
 					</td>
+					<?php if (isset($credentials)) :?>
 					<td class="text-gray">
 						<span class="item-credentials">{{ item.credentials }}</span>
 					</td>
+					<?php endif ?>
 				</tr>
 			</tbody>
 		</table>
