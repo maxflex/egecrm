@@ -83,10 +83,16 @@
 				<div class="row" style="margin-bottom: 10px">
 					<div class="col-sm-12">
 						<span class="input-label" style="max-width: 320px; top: -2px; position: absolute">общая сумма оказанных и планируемых услуг</span>
-						<span class="half-black contract-recommended-price" ng-show="recommendedPrice(current_contract) && current_contract.info.
-						grade >= 9">
-						рекомендуемая цена: {{recommendedPrice(current_contract) | number}}
-					</span>
+						<span class="half-black contract-recommended-price"
+							ng-show="recommendedPrice(current_contract) && current_contract.info.grade >= 9"
+						>
+							<span ng-show="recommendedPrice(current_contract) != current_contract.sum" class="text-danger">
+								отличается от рекомендуемой цены {{ recommendedPrice(current_contract) | number }}
+							</span>
+							<span ng-show="recommendedPrice(current_contract) == current_contract.sum">
+								рекомендуемая цена: {{ recommendedPrice(current_contract) | number }}
+							</span>
+						</span>
 					<div class="input-group">
 						<input id="contract-sum" type="text" placeholder="сумма" style='padding-right: 4px; width: 109px'
 							class="form-control digits-only" ng-model="current_contract.sum" ng-value="current_contract.sum">

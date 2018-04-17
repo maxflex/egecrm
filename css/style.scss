@@ -2177,13 +2177,13 @@ white-space: nowrap;
 	}
 }
 
-.lightbox-addcontract, .lightbox-addcontracttest {
+.lightbox-addcontract {
 	width: 1100px;
 	left: calc(50% - 550px);
 	top: 10%;
 }
 
-#modal-contract, .lightbox-addcontract, .lightbox-addcontracttest {
+#modal-contract, .lightbox-addcontract {
 	& .input-group, input, select {
 		width: 270px;
 		float: right;
