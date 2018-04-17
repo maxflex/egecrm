@@ -147,6 +147,8 @@
             // Добавляем предметы договора
             $NewContract->subjects = static::addSubjects($Contract["subjects"], $NewContract->id);
 
+			ContractPayment::process($Contract['payments'], $NewContract->id);
+
             return $NewContract;
         }
 
