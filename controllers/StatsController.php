@@ -347,7 +347,7 @@
 			// всего отмененных занятий
 			$return['cancelled_count'] = VisitJournal::count([
 				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
-					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=1"
+					. " AND cancelled=1"
 			]);
 
 			//всего доп.занятий
@@ -458,8 +458,6 @@
 		private function getTotalVisitsByYears()
 		{
 			$date_end = date("Y-m-d", time());
-
-			// preType(VisitJournal::fromFirstLesson('years'));
 
 			for ($i = 1; $i <= VisitJournal::fromFirstLesson('years'); $i++) {
 				$last_day_of_july = strtotime("-$i years last day of july");
