@@ -23,17 +23,26 @@
 		# ============================= #
 
 
-		private function _getStats($date_start, $date_end = false)
+		private function _getStats($date_start, $date_end = false, $by_year = false)
 		{
-            // @contract-refactored
-			$Contracts = Contract::findAll([
-				"condition" =>
+			if ($by_year) {
+				$year = date('Y', strtotime($date_start));
+			}
+
+			if ($by_year) {
+				$Contracts = Contract::findAllByYear($year);
+			} else {
+				$Contracts = Contract::findAll([
+					"condition" =>
 					$date_end 	? "`date` > '$date_start' AND `date` <= '$date_end'"
-								: "date='$date_start'"
-			]);
+					: "date='$date_start'"
+				]);
+			}
+
 
 			$Payments = Payment::findAll([
 				"condition" => "(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null)) and ".
+					$by_year ? "`year`={$year}" :
 					($date_end 	? "`date` > '$date_start' AND `date` <= '$date_end'"
 								: "date = '$date_start'")
 			]);
@@ -238,10 +247,10 @@
                 if ($i == 0) {
                     $date_end = date("Y-m-d");
                 } else {
-                    $date_end = date("Y-m-d", mktime(0, 0, 0, 4, 30, $year + 1));
+                    $date_end = date("Y-m-d", mktime(0, 0, 0, 4, 1, $year + 1));
                 }
 
-                $stats[$date_end] = self::_getStats($date_start, $date_end);
+                $stats[$date_end] = self::_getStats($date_start, $date_end, true);
 
                 $date_end = $date_start;
             }

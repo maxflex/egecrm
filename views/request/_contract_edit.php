@@ -76,7 +76,6 @@
 						<select id="contract-year" class="form-control"  ng-model="current_contract.info.year" ng-disabled="isDisabledField(current_contract, 'year')">
 							<option ng-repeat="year in <?= Years::json() ?>"
 								value="{{year}}">{{ year + '-' + ((1*year) + 1) + ' уч. г.' }}</option>
-							</select>
 						</select>
 					</div>
 				</div>

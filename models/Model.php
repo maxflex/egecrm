@@ -474,6 +474,16 @@
 		 {
 		 }
 
+		 /**
+		  * Найти все в группе ID
+		  */
+		 public static function whereIn($ids)
+		 {
+		 	return static::findAll([
+				'condition' => "id IN (" . implode(",", $ids) . ")"
+			]);
+		 }
+
 		 public static function beforeDelete($ids)
 		 {
 		 	if (!is_array($ids)) {

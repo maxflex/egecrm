@@ -16,6 +16,26 @@
 			}
 		}
 
+		/**
+		 * Найти все договоры года
+		 */
+		public static function findAllByYear($year)
+		{
+			$result = dbConnection()->query("
+				select id_contract
+				from contract_info
+				where `year`={$year}
+			");
+
+			$ids = [];
+
+			while ($row = $result->fetch_object()) {
+				$ids[] = $row->id_contract;
+			}
+
+			return self::whereIn($ids);
+		}
+
         public function getSubjects()
         {
             return ContractSubject::getContractSubjects($this->id);
