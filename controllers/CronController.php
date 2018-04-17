@@ -455,27 +455,11 @@
 						$grade 			= dbConnection()->query("SELECT grade from contract_info where id_contract=" . $contract->id_contract)->fetch_object()->grade;
 						$lesson_count   = dbConnection()->query("SELECT count(*) as cnt from visit_journal where id_entity={$row->id_student} and type_entity='STUDENT' and year={$year}")->fetch_object()->cnt;
 
-						$contract_test_sum = dbConnection()->query("SELECT c.sum FROM contracts_test c
-							JOIN (select max(id_contract), grade, id_student, year from contract_info_test group by grade, id_student, year) ci ON c.id_contract = ci.id_contract
-							where ci.id_student={$row->id_student} and ci.year={$year}
-							limit 1
-						");
-
 						$price = $prices[$grade];
 						if ($contract->discount) {
 							$price = $price * ((100 - $contract->discount) * 0.01);
 						}
 						$sum = $payment_sum - $returns_sum - ($lesson_count * $price);
-
-						// минус договоры тестирования
-						$contract_test = dbConnection()->query("SELECT c.* FROM contracts_test c
-							JOIN (select max(id_contract), grade, id_student, year from contract_info_test group by grade, id_student, year) ci ON c.id_contract = ci.id_contract
-							where ci.id_student={$row->id_student} and ci.year={$year}
-							limit 1
-						");
-						if ($contract_test->num_rows) {
-							$sum -= $contract_test->fetch_object()->sum;
-						}
 
 						dbConnection()->query("INSERT INTO student_sums (id_student, year, sum) VALUES ({$row->id_student}, {$year}, {$sum})");
 					}
