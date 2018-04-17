@@ -477,10 +477,10 @@
 		 /**
 		  * Найти все в группе ID
 		  */
-		 public static function whereIn($ids)
+		 public static function whereIn($ids, $field = 'id')
 		 {
 		 	return static::findAll([
-				'condition' => "id IN (" . implode(",", $ids) . ")"
+				'condition' => "`{$field}` IN (" . implode(",", $ids) . ")"
 			]);
 		 }
 

@@ -33,7 +33,7 @@
 				$ids[] = $row->id_contract;
 			}
 
-			return self::whereIn($ids);
+			return self::whereIn($ids, 'id_contract');
 		}
 
         public function getSubjects()
