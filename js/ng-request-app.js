@@ -1392,10 +1392,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			})
 			contract_sum = $scope.getContractSum($scope.current_contract)
 
-			if (payments_sum != contract_sum) {
-				notifyError('сумма платежей должна быть равна сумме по договору')
-				return false
-			}
+			// if (payments_sum != contract_sum) {
+			// 	notifyError('сумма платежей должна быть равна сумме по договору')
+			// 	return false
+			// }
 
 			// суммарное количество занятий в платежах равно суммарному количеству занятий в предметах
 			if (total_lessons != $scope.subjectCount($scope.current_contract)) {
