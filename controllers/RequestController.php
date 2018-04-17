@@ -215,7 +215,7 @@
 		public function actionAjaxSave()
 		{
 			$this->setRights([User::USER_TYPE]);
-			
+
 			# ЗАЯВКА
 			// Получаем ID заявки
 			$id_request = $_POST["id_request"];
@@ -427,7 +427,6 @@
 				"GroupsBar"			=> Freetime::getStudentBar($id_student),
 				"server_markers"=> $Student->getMarkers(),		// Метки ученика
 				"contracts"		=> $Student->getContracts(),	// Договоры ученика
-				"contracts_test"	=> $Student->getContractsTest(),	// Договоры ученика
 				"student"		=> $Student,  // Данные по ученику для печати
 				"Groups"		=> Student::groups($Student->id),
 				"student_phone_level"	=> $Student->phoneLevel(),
