@@ -41,9 +41,9 @@
 
 			$Payments = Payment::findAll([
 				"condition" => "(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null)) and ".
-					$by_year ? "`year`={$year}" :
+					($by_year ? "`year`={$year}" :
 					($date_end 	? "`date` > '$date_start' AND `date` <= '$date_end'"
-								: "date = '$date_start'")
+								: "date = '$date_start'"))
 			]);
 
 			foreach ($Contracts as $index => $Contract) {
@@ -531,9 +531,9 @@
 					(isset($_GET['teachers']) ?
 						"entity_type='" . Teacher::USER_TYPE . "'" :
 						"(entity_type='" . Student::USER_TYPE . "' or  (entity_type='' or entity_type is null))") . " AND " .
-					$by_year ? "`year`={$year}" :
+					($by_year ? "`year`={$year}" :
 					($date_end 	? "`date` > '$date_start' AND `date` <= '$date_end'"
-								: "date = '$date_start'")
+								: "date = '$date_start'"))
 			]);
 
 			foreach ($Payments as $Payment) {
