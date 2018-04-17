@@ -243,7 +243,7 @@
 
             for ($i = 0; $i <= Request::timeFromFirst('years') - 1; $i++) {
                 $year = $current_year - $i;
-                $date_start = date("Y-m-d", mktime(0, 0, 0, 5, 1, $year));
+                $date_start = date("Y-m-d", mktime(0, 0, 0, 4, 2, $year));
                 if ($i == 0) {
                     $date_end = date("Y-m-d");
                 } else {
