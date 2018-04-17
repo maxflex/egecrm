@@ -1440,7 +1440,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					payment_date = convertDate(payment.date)
 				}
 				payments_sum += $scope.lessonPrice($scope.current_contract) * payment.lesson_count
-				total_lessons += payment.lesson_count
+				total_lessons += parseInt(payment.lesson_count)
 			})
 			contract_sum = $scope.getContractSum($scope.current_contract)
 
@@ -1452,6 +1452,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			// суммарное количество занятий в платежах равно суммарному количеству занятий в предметах
 			if (total_lessons != $scope.subjectCount($scope.current_contract)) {
 				notifyError('суммарное количество занятий в платежах не равно суммарному количеству занятий в предметах')
+				console.log(total_lessons, $scope.subjectCount($scope.current_contract))
 				return false
 			}
 
