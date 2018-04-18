@@ -36,7 +36,6 @@
 		</div>
 
 	</div>
-
 	<table class="table table-hover">
 		<thead style="font-size: 10px" class="half-black">
 			<tr>
@@ -76,11 +75,12 @@
 			</tr>
 		</thead>
 		<tbody>
+			<?php $index = count(Years::$all) - 1; ?>
 			<?php foreach($stats as $date => $stat): ?>
 			<tr>
 				<td>
 					<?php if ($_GET["group"] == "y") { ?>
-						<?= strftime("%Y", strtotime($date)) ?>–<?= strftime("%Y", strtotime($date)) + 1 ?> уч. г.
+						<?= Years::$all[$index] ?>–<?= Years::$all[$index] + 1 ?> уч. г.
 					<?php } else { ?>
 						<?= strftime("%d %b %Y", strtotime($date)) ?>
 					<?php } ?>
@@ -135,6 +135,7 @@
 					<?php endif ?>
 				</td>
 			</tr>
+				<?php $index--; ?>
 			<?php endforeach; ?>
 		</tbody>
 	</table>
