@@ -68,7 +68,7 @@
                     <td width="8%">
                         {{ log.table }}
                     </td>
-                    <td width="8%">
+                    <td width="9%">
                         {{ LogTypes[log.type] || log.type }}
                     </td>
                     <td width="6%">
@@ -88,7 +88,7 @@
                         </span>
                     </td>
                     <td>
-                        <table style="font-size: 12px">
+                        <table style="font-size: 12px; margin-top: -5px">
                             <tr ng-repeat="(key, data) in log.data track by $index">
                                 <td style="vertical-align: top; width: 150px">{{ key }}</td>
                                 <td class="text-gray">

@@ -147,6 +147,14 @@ class Log extends Model
 			if ($d->view_mode_user_id) {
 				$d->view_mode_user = User::getLogin($d->view_mode_user_id);
 			}
+
+            foreach($d->data as $field => &$changes_array) {
+                if ($field == "rights") {
+                    foreach($changes_array as $index => &$change) {
+                        $change = implode(', ', $change);
+                    }
+                }
+            }
         }
 
         // $counts = static::counts($search);

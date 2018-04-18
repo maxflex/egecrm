@@ -1,6 +1,21 @@
 app = angular.module "Logs", ["ui.bootstrap"]
+	.filter 'cut', ->
+		(value, wordwise, max, nothing = '', tail = '…') ->
+			return nothing if !value or value is ''
+			max = parseInt(max, 10)
+			return value if !max
+			return value if value.length <= max
+			value = value.substr(0, max)
+			if wordwise
+				lastspace = value.lastIndexOf(' ')
+				if lastspace != -1
+					#Also remove . and , so its gives a cleaner result.
+					if value.charAt(lastspace - 1) == '.' or value.charAt(lastspace - 1) == ','
+						lastspace = lastspace - 1
+					value = value.substr(0, lastspace)
+			value + tail
 	.controller "ListCtrl", ($scope, $timeout, UserService) ->
-		$scope.UserService = UserService 
+		$scope.UserService = UserService
 		$scope.LogTypes =
 			create: 'создание'
 			update: 'обновление'

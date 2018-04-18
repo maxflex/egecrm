@@ -1,6 +1,37 @@
 var app;
 
-app = angular.module("Logs", ["ui.bootstrap"]).controller("ListCtrl", function($scope, $timeout, UserService) {
+app = angular.module("Logs", ["ui.bootstrap"]).filter('cut', function() {
+  return function(value, wordwise, max, nothing, tail) {
+    var lastspace;
+    if (nothing == null) {
+      nothing = '';
+    }
+    if (tail == null) {
+      tail = '…';
+    }
+    if (!value || value === '') {
+      return nothing;
+    }
+    max = parseInt(max, 10);
+    if (!max) {
+      return value;
+    }
+    if (value.length <= max) {
+      return value;
+    }
+    value = value.substr(0, max);
+    if (wordwise) {
+      lastspace = value.lastIndexOf(' ');
+      if (lastspace !== -1) {
+        if (value.charAt(lastspace - 1) === '.' || value.charAt(lastspace - 1) === ',') {
+          lastspace = lastspace - 1;
+        }
+        value = value.substr(0, lastspace);
+      }
+    }
+    return value + tail;
+  };
+}).controller("ListCtrl", function($scope, $timeout, UserService) {
   var load;
   $scope.UserService = UserService;
   $scope.LogTypes = {
