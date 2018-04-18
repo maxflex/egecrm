@@ -11,6 +11,11 @@ app = angular.module "Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar']
             $.each obj, (index, value) ->
                 arr.push(value)
             return arr
+    .controller "RecommendedCtrl", ($scope) ->
+        $scope.yearLabel = (year) ->
+            year + '-' + (parseInt(year) + 1) + ' уч. г.'
+        angular.element(document).ready ->
+            set_scope 'Settings'
     .controller "VacationsCtrl", ($scope, $timeout) ->
         $scope.schedulde_loaded = false
         $scope.menu = 1

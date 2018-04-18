@@ -1570,7 +1570,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 							}
 						} else {
 							index = 1
-							d = m
+							d = moment(convertDate($scope.test_today_date))
 							while(index < payments_count) {
 								d.add(1, 'month')
 								$scope.current_contract.payments[index].date = d.format('DD.MM.YY')

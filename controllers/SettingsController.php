@@ -3,6 +3,8 @@
 	// Контроллер
 	class SettingsController extends Controller
 	{
+		public static $allowed_users = [User::USER_TYPE];
+
 		public $defaultAction = "vocations";
 
 		// Папка вьюх
@@ -11,6 +13,22 @@
 		public function beforeAction()
 		{
 			$this->addJs("ng-settings-app, vendor/angular-bootstrap-calendar-tpls");
+		}
+
+		public function actionPrices()
+		{
+			$this->setTabTitle("Рекомендуемые цены");
+
+			$prices = json_decode(Settings::get("recommended_prices"));
+
+			$ang_init_data = angInit([
+				"years" => Years::get(),
+				"prices" => $prices,
+			]);
+
+			$this->render("recommended_price", [
+				"ang_init_data" => $ang_init_data,
+			]);
 		}
 
 		public function actionVacations()

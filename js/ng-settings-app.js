@@ -17,6 +17,13 @@ app = angular.module("Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar'])
     });
     return arr;
   };
+}).controller("RecommendedCtrl", function($scope) {
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
+  return angular.element(document).ready(function() {
+    return set_scope('Settings');
+  });
 }).controller("VacationsCtrl", function($scope, $timeout) {
   $scope.schedulde_loaded = false;
   $scope.menu = 1;
