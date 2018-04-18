@@ -21,6 +21,21 @@ app = angular.module("Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar'])
   $scope.yearLabel = function(year) {
     return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };
+  $scope.save = function() {
+    console.log('saving');
+    $scope.saving = true;
+    ajaxStart();
+    return $.post("settings/AjaxSavePrices", {
+      data: $scope.prices
+    }, function(response) {
+      ajaxEnd();
+      $scope.saving = false;
+      return $scope.$apply();
+    });
+  };
+  $scope.setYear = function(year) {
+    return $scope.selected_year = year;
+  };
   return angular.element(document).ready(function() {
     return set_scope('Settings');
   });

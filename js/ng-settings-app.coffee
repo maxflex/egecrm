@@ -14,6 +14,18 @@ app = angular.module "Settings", ["ui.bootstrap", 'ngSanitize', 'mwl.calendar']
     .controller "RecommendedCtrl", ($scope) ->
         $scope.yearLabel = (year) ->
             year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
+        $scope.save = ->
+            console.log('saving')
+            $scope.saving = true
+            ajaxStart()
+            $.post "settings/AjaxSavePrices", {data: $scope.prices}, (response) ->
+                ajaxEnd()
+                $scope.saving = false
+                $scope.$apply()
+
+        $scope.setYear = (year) ->
+            $scope.selected_year = year
         angular.element(document).ready ->
             set_scope 'Settings'
     .controller "VacationsCtrl", ($scope, $timeout) ->

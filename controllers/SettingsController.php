@@ -19,11 +19,12 @@
 		{
 			$this->setTabTitle("Рекомендуемые цены");
 
-			$prices = json_decode(Settings::get("recommended_prices"));
+			$prices = Prices::getRecommended();;
 
 			$ang_init_data = angInit([
-				"years" => Years::get(),
+				"years" => Years::$all,
 				"prices" => $prices,
+				"selected_year" => end(Years::$all),
 			]);
 
 			$this->render("recommended_price", [
@@ -100,5 +101,14 @@
 			])[0];
 
 			$Cabinet->delete();
+		}
+
+		public function actionAjaxSavePrices()
+		{
+			extract($_POST);
+
+			Settings::set('recommended_prices', json_encode($data));
+
+			returnJsonAng($data);
 		}
 	}

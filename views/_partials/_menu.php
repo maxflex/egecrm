@@ -102,6 +102,7 @@
 	<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_TEMPLATES)) :?>
 		 <a href="templates" class="list-group-item">Шаблоны</a>
 	<?php endif ?>
+	 <a href="settings/prices" class="list-group-item">Рекомендованные цены</a>
 	<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_FAQ)) :?>
 		 <a href="teachers/html" class="list-group-item">FAQ</a>
 	<?php endif ?>

@@ -1106,7 +1106,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 		$scope.recommendedPrice = function(contract) {
 			if (!contract || !contract.info) return false;
 			count = $scope.subjectCount(contract)
-            return count * parseInt($scope.Prices[contract.info.grade])
+            return count * parseInt($scope.Prices[contract.info.year][contract.info.grade])
 		}
 
 

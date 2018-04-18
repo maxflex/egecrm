@@ -23,7 +23,10 @@
 				$Settings->value = $value;
 				$Settings->save('value');
 			} else {
-				Settings::add(compact('key', 'value'));
+				Settings::add([
+					'name' => $key,
+					'value' => $value,
+				]);
 			}
 			return $value;
 		}

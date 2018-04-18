@@ -5,20 +5,9 @@
     class Prices {
         public static function getRecommended()
         {
-            $prices = [];
-            foreach(Grades::$all as $grade => $label) {
-                switch($grade) {
-                    case 11:
-                        $prices[$grade] = 1900;
-                        break;
-                    default:
-                        $prices[$grade] = 1700;
-                        break;
-                }
-            }
-            return $prices;
+			return (object)json_decode(Settings::get("recommended_prices"));
         }
-		
+
 		public static function get()
         {
             $prices = [];
