@@ -1519,7 +1519,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				payment.lesson_count = lesson_count
 				subject_count -= lesson_count
 			})
-			$scope.current_contract.payments[0].lesson_count += subject_count
+			// размазываем остаток
+			$scope.current_contract.payments.forEach(function(payment) {
+				if (subject_count > 0) {
+					payment.lesson_count++
+					subject_count--
+				}
+			})
 
 			switch(payments_count) {
 				case 2:
