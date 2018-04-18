@@ -1503,14 +1503,12 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			$scope.current_contract.payments[0].date = null
 
 			// удалить после тестирования
-			// заменить m на moment()
-			m = moment(convertDate($scope.test_today_date))
+			// заменить moment(convertDate($scope.test_today_date)) на moment()
 
-			current_date_month = m.format("MM-DD")
-			// current_date_month = "09-13"
+			current_date_month = moment(convertDate($scope.test_today_date)).format("MM-DD")
 
-			current_year = m.format("YY")
-			next_year = _.clone(m).add(1, 'years').format("YY")
+			current_year = moment(convertDate($scope.test_today_date)).format("YY")
+			next_year = moment(convertDate($scope.test_today_date)).add(1, 'years').format("YY")
 
 			payments_count = $scope.current_contract.payments.length
 
@@ -1531,10 +1529,10 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					} else
 					// от 13 сентября до 31 декабря, то ставить дату платежа на середине между текущей датой и 25 мая 2019
 					if (current_date_month >= '09-13' && current_date_month <= '12-31') {
-						start_timestamp = m.unix()
+						start_timestamp = moment(convertDate($scope.test_today_date)).unix()
 						end_timestamp = moment("20" + next_year + "-05-25").unix()
 						middle_timestamp = (end_timestamp - start_timestamp) / 2
-						$scope.current_contract.payments[1].date = moment.unix(start_timestamp + middle_timestamp).format("YY.MM.DD")
+						$scope.current_contract.payments[1].date = moment.unix(start_timestamp + middle_timestamp).format("DD.MM.YY")
 					}
 					break;
 				case 3:
@@ -1558,9 +1556,9 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 					if (payments_count > 3) {
 						if (current_date_month >= '03-02' && current_date_month <= '09-14') {
 							index = 1
-							d = moment(m.format("YYYY") + '-10-15')
+							d = moment(moment(convertDate($scope.test_today_date)).format("YYYY") + '-10-15')
 							while(index < payments_count) {
-								$scope.current_contract.payments[index].date = d.format('YY.MM.DD')
+								$scope.current_contract.payments[index].date = d.format('DD.MM.YY')
 								d.add(1, 'month')
 								index++
 							}
@@ -1569,7 +1567,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 							d = m
 							while(index < payments_count) {
 								d.add(1, 'month')
-								$scope.current_contract.payments[index].date = d.format('YY.MM.DD')
+								$scope.current_contract.payments[index].date = d.format('DD.MM.YY')
 								index++
 							}
 						}
