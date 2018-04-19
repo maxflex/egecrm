@@ -113,7 +113,7 @@
         </table>
 
         <div style="font-weight: bold; font-size: 16px; padding-left:5px;margin-top:10px; margin-bottom: 5px; border-bottom: 2px solid black; padding-bottom: 5px">
-            Счет на оплату №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}
+            Счет на оплату №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date_original)}}
         </div>
 
         <table width="100%">
@@ -346,7 +346,7 @@
         </table>
 
         <div style="font-weight: bold; font-size: 16px; padding-left:5px;margin-top:10px; margin-bottom: 5px; border-bottom: 2px solid black; padding-bottom: 5px">
-            Счет на оплату №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}
+            Счет на оплату №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date_original)}}
         </div>
 
         <table width="100%">
@@ -411,7 +411,7 @@
                 <tr>
                     <td align="center" style="font-size: 12px">1</td>
 
-                    <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date)}}г.</td>
+                    <td align="left" style="font-size: 12px" class="bordered">Платные образовательные услуги согласно договору №{{ firstInLastChain().id }} от {{formatContractDate(PrintPayment.date_original)}}г.</td>
                     <td align="right" style="font-size: 12px;text-align:center;" class="bordered">1</td>
 
                     <td align="left" style="font-size: 12px;text-align:center;" class="bordered">услуга</td>
