@@ -121,7 +121,7 @@
             "source": {
                 "type": "git",
                 "url": "https://mkolyadin@bitbucket.org/mkolyadin/ege-shared.git",
-                "reference": "bb3d14249605920ce6cb5d6169c92eedb75eac57"
+                "reference": "e6185dfcf06df3b4e0123606dba5c1a700125b89"
             },
             "type": "library",
             "autoload": {
@@ -129,7 +129,7 @@
                     "Shared\\": "src/"
                 }
             },
-            "time": "2017-10-04 11:26:19"
+            "time": "2018-04-19T11:20:55+00:00"
         },
         {
             "name": "elfet/pure",
@@ -1217,6 +1217,7 @@
             "keywords": [
                 "Socket"
             ],
+            "abandoned": "react/socket",
             "time": "2016-03-27T18:31:39+00:00"
         },
         {

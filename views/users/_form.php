@@ -176,6 +176,7 @@
         <?= partial('right', ['right' => Shared\Rights::ER_REQUEST_ERRORS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_ATTENDANCE]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_ACTIVITY]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_APPROVE_BACKGROUND]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
