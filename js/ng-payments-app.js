@@ -154,9 +154,6 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
     });
   };
   $scope.editPayment = function(payment) {
-    if (payment.confirmed && $scope.user_rights.indexOf(11) === -1) {
-      return;
-    }
     $scope.new_payment = angular.copy(payment);
     loadMutualAccounts($scope.new_payment.id_status);
     return lightBoxShow('addpayment');

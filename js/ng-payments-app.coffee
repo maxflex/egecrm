@@ -125,7 +125,7 @@ app = angular.module "Payments", ["ui.bootstrap"]
 
         # Окно редактирования платежа
         $scope.editPayment = (payment) ->
-            return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
+            # return if payment.confirmed and $scope.user_rights.indexOf(11) is -1
             $scope.new_payment = angular.copy payment
             loadMutualAccounts($scope.new_payment.id_status)
             lightBoxShow 'addpayment'

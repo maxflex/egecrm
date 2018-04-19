@@ -1369,39 +1369,41 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				$("select[name='grades']").removeClass("has-error")
 			}
 
-			if (!$scope.current_contract.payments || !$scope.current_contract.payments.length) {
-				notifyError('должен быть как минимум 1 платеж')
-				return false
-			}
-
-			// если сумма платежей больше суммы по договору
-			payments_sum = 0
-			payment_date = '0000-00-00'
-			total_lessons = 0
-			$scope.current_contract.payments.forEach(function(payment, index) {
-				if (index) {
-					if (convertDate(payment.date) < payment_date) {
-						error = true
-						notifyError('даты платежей должны возрастать')
-						return
-					}
-					payment_date = convertDate(payment.date)
-				}
-				payments_sum += $scope.oneSubjectPrice($scope.current_contract) * payment.lesson_count
-				total_lessons += parseInt(payment.lesson_count)
-			})
-			contract_sum = $scope.getContractSum($scope.current_contract)
-
-			// if (payments_sum != contract_sum) {
-			// 	notifyError('сумма платежей должна быть равна сумме по договору')
+			// if (!$scope.current_contract.payments || !$scope.current_contract.payments.length) {
+			// 	notifyError('должен быть как минимум 1 платеж')
 			// 	return false
 			// }
 
-			// суммарное количество занятий в платежах равно суммарному количеству занятий в предметах
-			if (total_lessons != $scope.subjectCount($scope.current_contract)) {
-				notifyError('суммарное количество занятий в платежах не равно суммарному количеству занятий в предметах')
-				console.log(total_lessons, $scope.subjectCount($scope.current_contract))
-				return false
+			if ($scope.current_contract.payments && $scope.current_contract.payments.length) {
+				// если сумма платежей больше суммы по договору
+				payments_sum = 0
+				payment_date = '0000-00-00'
+				total_lessons = 0
+				$scope.current_contract.payments.forEach(function(payment, index) {
+					if (index) {
+						if (convertDate(payment.date) < payment_date) {
+							error = true
+							notifyError('даты платежей должны возрастать')
+							return
+						}
+						payment_date = convertDate(payment.date)
+					}
+					payments_sum += $scope.oneSubjectPrice($scope.current_contract) * payment.lesson_count
+					total_lessons += parseInt(payment.lesson_count)
+				})
+				contract_sum = $scope.getContractSum($scope.current_contract)
+
+				// if (payments_sum != contract_sum) {
+				// 	notifyError('сумма платежей должна быть равна сумме по договору')
+				// 	return false
+				// }
+
+				// суммарное количество занятий в платежах равно суммарному количеству занятий в предметах
+				if (total_lessons != $scope.subjectCount($scope.current_contract)) {
+					notifyError('суммарное количество занятий в платежах не равно суммарному количеству занятий в предметах')
+					console.log(total_lessons, $scope.subjectCount($scope.current_contract))
+					return false
+				}
 			}
 
 
