@@ -115,7 +115,7 @@
 	<?php if (allowed(Shared\Rights::EC_ACTIVITY)) :?>
 		<a href="activity" class="cursor list-group-item">Активность</a>
 	<?php endif ?>
-	<?php if (in_array(\App\Models\User::fromSession()->id, [1, 69])) :?>
+	<?php if (in_array(User::fromSession()->id, [1, 69])) :?>
 	<a href="https://lk.ege-repetitor.ru/background" class="list-group-item">Календарь заставок <sup class="text-danger" style='font-weight: bold'>new</sup></a>
 	<?php endif ?>
 	<?php if (allowed(Shared\Rights::EMERGENCY_EXIT)) :?>
