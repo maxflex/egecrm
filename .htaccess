@@ -193,3 +193,7 @@ RewriteRule ^get/comments/([a-zA-Z]+)/([0-9]+)[/]?$ index.php?controller=comment
 RewriteRule ^get/users[/]?([0-9]+)?[/]?$ index.php?controller=users&action=get&id=$1 [QSA,L]
 RewriteRule ^get/sms/([0-9]+)?[/]?$ index.php?controller=sms&action=get&number=$1 [QSA,L]
 RewriteRule ^directives/([a-zA-Z]+)[/]?$ views/directives/$1.html [QSA,L]
+
+# Договора
+RewriteRule ^contracts[?page=(0-9)]?[/]?$ index.php?controller=contracts&page=$1 [QSA,L]
+RewriteRule ^contracts/ajax/([a-zA-Z]+)[/]?$ index.php?controller=contracts&action=Ajax$1 [QSA,L]

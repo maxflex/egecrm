@@ -123,7 +123,7 @@
 							ng-model="payment.lesson_count" style='border-right: 0'>
 						<span class="input-group-addon rubble-addon">занятий</span>
 						<input class="form-control first-contract-payment" ng-hide="$index > 0" placeholder="при заключении" >
-						<input class="form-control bs-date" ng-show="$index > 0"
+						<input class="form-control bs-date contract-payment-date-{{ $index }}" ng-show="$index > 0"
 							placeholder="дата" type="text" ng-model="payment.date" ng-value="current_contract.date">
 						<span ng-show="$index" class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
 					</div>

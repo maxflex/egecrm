@@ -1381,6 +1381,13 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 				total_lessons = 0
 				$scope.current_contract.payments.forEach(function(payment, index) {
 					if (index) {
+						if (! payment.date) {
+							$(".contract-payment-date-" + index).addClass("has-error").focus()
+							error = true
+							return false
+						} else {
+							$(".contract-payment-date-" + index).removeClass("has-error")
+						}
 						if (convertDate(payment.date) < payment_date) {
 							error = true
 							notifyError('даты платежей должны возрастать')
@@ -1517,7 +1524,8 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			// автозаполнение кол-ва занятий
 			subject_count = $scope.subjectCount($scope.current_contract)
 			lesson_count = Math.floor(subject_count / payments_count)
-			$scope.current_contract.payments.forEach(function(payment) {
+			$scope.current_contract.payments.forEach(function(payment, index) {
+				$('.contract-payment-date-' + index).removeClass('has-error')
 				payment.lesson_count = lesson_count
 				subject_count -= lesson_count
 			})

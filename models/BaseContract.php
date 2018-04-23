@@ -335,6 +335,43 @@
         {
             throw new Exception(get_class() . ': method should be overriden');
         }
+
+        /*
+        * Получить данные для основного модуля
+        * $page==-1 – получить без лимита
+        */
+       public static function getData($page)
+       {
+           if (!$page) {
+               $page = 1;
+           }
+           // С какой записи начинать отображение, по формуле
+           $start_from = ($page - 1) * Contract::PER_PAGE;
+
+           $search = static::parseSearch();
+
+
+           // получаем данные
+           $query = static::_generateQuery($search, "s.id as id_student, r.first_name, r.last_name, r.middle_name, c.sum, c.discount, c.date, ci.year, c.id, ", true);
+           $result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Contract::PER_PAGE));
+
+           while ($row = $result->fetch_object()) {
+               $data[] = ($page == -1 ? $row->id : $row);
+           }
+
+           return [
+               'data' => $data,
+               'counts' => ['all' => static::_count($search)]
+           ];
+       }
+
+	   protected static function _count($search)
+	   {
+	    	return dbConnection()
+	        	->query(static::_generateQuery($search, "COUNT(*) AS cnt"))
+	        	->fetch_object()
+	        	->cnt;
+		}
     }
 
     class BaseContractInfo extends Model
