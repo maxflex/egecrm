@@ -65,7 +65,7 @@
 				if ($Lesson->isUnplanned() || Group::getLight($Lesson->id_group)->is_unplanned) {
                     $Lesson->Group = Group::getLight($Lesson->id_group);
                     if ($Lesson->id_teacher) {
-                        $Teacher = Teacher::getLight($Lesson->id_teacher);
+                        $Teacher = Teacher::findById($Lesson->id_teacher);
                         if ($Teacher) {
                             foreach (Student::$_phone_fields as $phone_field) {
                                 $teacher_number = $Teacher->{$phone_field};
