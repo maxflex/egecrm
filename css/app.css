@@ -16845,14 +16845,6 @@ a[href^="https://maps.google.com/maps"] {
 a[href^="https://www.google.com/maps"] {
   display: none !important; }
 
-.password-controls {
-  font-size: 12px;
-  text-align: center;
-  width: calc(100% - 100px);
-  box-sizing: border-box;
-  margin-top: 16px;
-  line-height: 16px; }
-
 .cal-day-outmonth {
   box-shadow: -1px -1px 0 0 white;
   background: white !important; }

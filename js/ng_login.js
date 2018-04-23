@@ -21,12 +21,13 @@
 			}
 
 			$scope.go = function() {
+				$scope.error = false
 				if ($scope.pwd_1 != $scope.pwd_2) {
-					notifyError('Пароли не совпадают')
+					$scope.error = 'Пароли не совпадают'
 					return
 				}
 				if ($scope.pwd_1.length < 8) {
-					notifyError('Пароль должен быть<br> длиннее 8 символов')
+					$scope.error = 'Пароль должен быть длиннее 8 символов'
 					return
 				}
 				ajaxStart()
@@ -40,11 +41,11 @@
 					l.stop()
 					$scope.in_process = false
 					if (response == -1) {
-						notifyError("Произошла ошибка")
+						$scope.error = "Произошла ошибка"
 					} else {
 						$scope.success = true
-						$scope.$apply()
 					}
+					$scope.$apply()
 				})
 			}
 		})
@@ -65,13 +66,12 @@
 			}
 
 			$scope.go = function() {
-				ajaxStart()
+				$scope.error = false
 				l.start()
 				$scope.in_process = true
 				$.post("/login/AjaxGetPwd", {
 					'email': $scope.email
 				}, function(response) {
-					ajaxEnd()
 					l.stop()
 					$scope.in_process = false
 					if (response < 0) {
@@ -126,8 +126,6 @@
 			}
 
             $scope.goLogin = function() {
-                // ajaxStart()
-				$('center').removeClass('invalid')
                 $.post("index.php?controller=login&action=AjaxLogin", {
 					'login'		: $scope.login,
 					'password'	: $scope.password,
@@ -136,32 +134,38 @@
 				}, function(response) {
                     grecaptcha.reset()
 					if (response === true) {
-						// window.location = "requests";
 						$.removeCookie('login_data')
 						location.reload()
 					} else if (response === 'sms') {
-                        // ajaxEnd()
 						$scope.in_process = false;
 						l.stop()
                         $scope.sms_verification = true
                         $.cookie("login_data", JSON.stringify({login: $scope.login, password: $scope.password}), { expires: 1 / (24 * 60) * 2, path: '/' })
                     } else {
 						$scope.in_process = false;
-						$('center').addClass('invalid')
+						l.stop()
+						if (response == "banned") {
+							$scope.error = "Пользователь заблокирован"
+						} else {
+							$scope.error = "Неправильная пара логин-пароль"
+						}
+						$scope.$apply()
+						return false
 					}
 				}, "json")
             }
 
 			// Отправка формы
 			$scope.checkFields = function() {
+				$scope.error = false
 				if (!$scope.login) {
 					angular.element('#inputLogin').focus()
-					$scope.form_errors = "Укажите логин"
+					$scope.error = "Укажите логин"
 					return false
 				}
 				if (!$scope.password) {
 					angular.element('#inputPassword').focus()
-					$scope.form_errors = "Укажите пароль"
+					$scope.error = "Укажите пароль"
 					return false
 				}
 

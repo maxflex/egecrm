@@ -1,25 +1,26 @@
 <div ng-show="image_loaded">
-	<center ng-app="Login" ng-controller="ResetPwdCtrl" ng-init="code = '<?= $_GET['code'] ?>'">
-		<div id='center' class="animated fadeIn" autocomplete="off">
+	<center id='center' class="animated fadeIn" ng-app="Login" ng-controller="ResetPwdCtrl" ng-init="code = '<?= $_GET['code'] ?>'">
+		<div class="login-logo group">
+			<img src="../img/svg/logo.svg" />
+		</div>
 	<!-- 		<h2 class="form-signin-heading">Вход в систему</h2> -->
 			<div ng-show="!success">
-				<div class="group">
-					<input type="password" autofocus name="login" ng-model="pwd_1"
-						autocomplete="off" ng-keyup="enter($event)" ng-model-options="{ allowInvalid: true }" required>
-					<span class="bar"></span>
-					<label>введите новый пароль</label>
-	            </div>
+				<div class="input-groups">
+					<div class="group">
+						<input type="password" autofocus name="login" ng-model="pwd_1" placeholder="введите новый пароль"
+							autocomplete="off" ng-keyup="enter($event)">
+		            </div>
 
-				<div class="group">
-					<input type="password" autofocus name="login" ng-model="pwd_2" autocomplete="off" ng-keyup="enter($event)" ng-model-options="{ allowInvalid: true }" required>
-					<span class="bar"></span>
-					<label>повторите пароль</label>
-	            </div>
+					<div class="group">
+						<input type="password" autofocus name="login" ng-model="pwd_2" autocomplete="off"
+							ng-keyup="enter($event)" placeholder="повторите пароль">
+		            </div>
 
-				<button id="login-submit" data-style="zoom-in" class="btn btn-submit ladda-button"
-					ng-disabled="in_process" type="submit" ng-click="go()">
-					<span>далее</span>
-				</button>
+					<button id="login-submit" data-style="zoom-in" class="btn btn-submit ladda-button"
+						ng-disabled="in_process" type="submit" ng-click="go()">
+						<span>далее</span>
+					</button>
+				</div>
 			</div>
 			<div ng-show="success">
 				<span class="text-success">Пароль успешно изменен!</span>
@@ -27,7 +28,9 @@
 					<a href="/login" class="btn btn-submit ladda-button">Войти</a>
 				</div>
 			</div>
-		</div>
+			<div ng-show="error" class="login-errors">
+	  		  {{ error }}
+		  	</div>
 	</center>
   <?php if(@$wallpaper->user_id) :?>
   <span class="wallpaper-by animated fadeInRight">by <?= $wallpaper->user->login ?></span>
