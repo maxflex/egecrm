@@ -338,7 +338,7 @@
 		 */
 		public function inProgress()
 		{
-			if ($this->cancelled || $this->is_conducted) {
+			if ($this->cancelled) {
 				return false;
 			}
 			$start_time = (new DateTime($this->date_time))->getTimestamp();
