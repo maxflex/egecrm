@@ -18,7 +18,7 @@ class SMS extends Model
 		parent::__construct($array);
 
         if (!$light) {
-			$this->getCoordinates();
+			$this->coordinates = $this->getCoordinates();
         	$this->status = $this->getStatus();
 			$this->number_formatted = formatNumber($this->number);
         }
@@ -131,16 +131,15 @@ class SMS extends Model
 	public function getCoordinates()
 	{
 		if ($this->id_user) {
-            $this->user_login = User::getLogin($this->id_user);
+			if ($user = findObjectInArray(User::getCached(), ['id' => $this->id_user])) {
+ 				$this->user_login = $user['login'];
+			} else {
+				$this->user_login = User::getLogin($this->id_user);
+			}
 		} else {
 			$this->user_login = "system";
 		}
-		$this->coordinates = $this->user_login. " ". dateFormat($this->date);
-
-		$this->coordinates .= '
-		<svg class="sms-status ' . ($this->id_status == 103 ? 'delivered' : ($this->id_status == 102 ? 'inway' : 'not-delivered') ) .'">
-			<circle r="3" cx="7" cy="7"></circle>
-		</svg>';
+		return $this->user_login. " ". dateFormat($this->date);
 	}
 
 	public function getStatus()

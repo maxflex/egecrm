@@ -13,8 +13,7 @@
                 <div class="from-them">
                     {{ sms.message }}
                     <div class="sms-coordinates" data-id="{{ sms.id }}">
-                        {{ UserService.getLogin(sms.id_user) }}
-                        {{ sms.date | formatDateTime }}
+                        {{ sms.coordinates }}
                         {{ sms.mass ? '(массовое)' : '' }}
                         <svg class="sms-status" ng-class="SmsService.getStatus(sms)">
                             <circle r="3" cx="7" cy="7"></circle>
