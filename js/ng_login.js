@@ -8,6 +8,7 @@
 			$scope.success = false
 
 			angular.element(document).ready(function() {
+				loadImage()
 				set_scope("Login")
 				l = Ladda.create(document.querySelector('#login-submit'));
 			})
@@ -83,8 +84,28 @@
 			}
 		})
 		.controller("LoginCtrl", function($scope) {
+
+			loadImage = function() {
+				console.log('loading image')
+			  $scope.image_loaded = false;
+			  img = new Image;
+			  img.addEventListener("load", function() {
+				  console.log('image loaded')
+			    $('body').css({
+			      'background-image': "url(" + $scope.wallpaper.image_url + ")"
+			    });
+			    $scope.image_loaded = true;
+			    $scope.$apply();
+			    setTimeout(function() {
+			      $('#center').removeClass('animated').removeClass('fadeIn').removeAttr('style');
+			    }, 2000);
+			  });
+			  img.src = $scope.wallpaper.image_url;
+			};
+
 			$scope.error = false
 			angular.element(document).ready(function() {
+				loadImage()
 				set_scope("Login")
 				l = Ladda.create(document.querySelector('#login-submit'));
                 login_data = $.cookie("login_data")
@@ -105,39 +126,28 @@
 			}
 
             $scope.goLogin = function() {
-                ajaxStart()
+                // ajaxStart()
+				$('center').removeClass('invalid')
                 $.post("index.php?controller=login&action=AjaxLogin", {
 					'login'		: $scope.login,
 					'password'	: $scope.password,
                     'code'      : $scope.code,
                     'captcha'   : grecaptcha.getResponse()
 				}, function(response) {
-					console.log(response)
                     grecaptcha.reset()
 					if (response === true) {
 						// window.location = "requests";
 						$.removeCookie('login_data')
 						location.reload()
 					} else if (response === 'sms') {
-                        ajaxEnd()
+                        // ajaxEnd()
 						$scope.in_process = false;
 						l.stop()
                         $scope.sms_verification = true
-                        $scope.$apply()
                         $.cookie("login_data", JSON.stringify({login: $scope.login, password: $scope.password}), { expires: 1 / (24 * 60) * 2, path: '/' })
                     } else {
-						ajaxEnd()
 						$scope.in_process = false;
-						l.stop()
-						if (response < 0) {
-							$scope.error = error_messages[response]
-						} else if (response == "banned") {
-							notifyError("Пользователь заблокирован")
-						} else {
-							notifyError("Неправильная пара логин-пароль")
-						}
-						$scope.$apply()
-						return false
+						$('center').addClass('invalid')
 					}
 				}, "json")
             }
@@ -168,5 +178,6 @@
 
 
 function captchaChecked() {
+	console.log('go login')
     ang_scope.goLogin()
 }

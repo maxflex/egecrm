@@ -44,12 +44,12 @@
 		// Страница входа
 		public function actionLogin()
 		{
-			$this->render("login", array(), "login");
+			$this->render("login", ['wallpaper' => Background::get()], "login");
 		}
 
 		public function actionPassword()
 		{
-			$this->render('password', [], 'login');
+			$this->render('password', ['wallpaper' => Background::get()], 'login');
 		}
 
 
@@ -191,9 +191,9 @@
 			$user_id = User::getIdFromCode($code);
 			$key = "egecrm:reset-password:{$user_id}";
 			if ($client->exists($key) && $client->get($key) == $code) {
-				$this->render('reset', [], 'login');
+				$this->render('reset', ['wallpaper' => Background::get()], 'login');
 			} else {
-				$this->render('link_timeout', [], 'login');
+				$this->render('link_timeout', ['wallpaper' => Background::get()], 'login');
 			}
 			// $code = $_GET['code'];
 			// $user_id = base64_decode(substr($code, 32, 999));

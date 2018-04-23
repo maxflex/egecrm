@@ -32,10 +32,6 @@
 				$layout = strtolower(User::fromSession()->type);
 			}
 
-			// Рендер лэйаута
-			include_once(BASE_ROOT."/layouts/header.php");
-			include_once(BASE_ROOT."/layouts/{$layout}.php");
-
 			// Если передаем переменные в рендер, то объявляем их здесь (иначе будут недоступны)
 			if (!empty($vars)) {
 				// Объявляем переменные, соответсвующие элементам массива
@@ -43,6 +39,13 @@
 					$$key = $value;
 				}
 			}
+
+			// Рендер лэйаута
+			if ($layout != 'login') {
+				include_once(BASE_ROOT."/layouts/header.php");
+			}
+			include_once(BASE_ROOT."/layouts/{$layout}.php");
+
 			include_once(BASE_ROOT."/views/".(!empty($this->_viewsFolder) ? $this->_viewsFolder."/" : "")."{$view}.php");
 
 			// Рендер лэйаута

@@ -2860,11 +2860,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   }
 }
 
-.fadeIn {
-  -webkit-animation-name: fadeIn07;
-  animation-name: fadeIn07;
-}
-
 @-webkit-keyframes fadeOut07 {
   0% {
     opacity: .75;

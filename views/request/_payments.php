@@ -11,6 +11,8 @@
 
 	    <?= globalPartial('loading', ['model' => 'PaymentsByYear', 'message' => 'нет платежей']) ?>
 
+		<a class="link-like link-reverse small" ng-click="addPaymentDialog()" ng-show="PaymentsByYear && PaymentsByYear.length == 0">добавить</a>
+
 		<div style='margin-bottom: 15px' ng-repeat="(year, payments) in PaymentsByYear">
 			<h4 class="row-header default-case">Платежи {{ yearLabel(year, true) }} учебного года</h4>
 			<?= globalPartial("payments_list", ["student_page" => true]) ?>
