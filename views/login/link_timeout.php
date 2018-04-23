@@ -1,5 +1,5 @@
 <div ng-show="image_loaded">
-	<center autocomplete="off" id='center' class="animated fadeIn" style='animation-duration: 1.5s'>
+	<center autocomplete="off" id='center' class="animated fadeIn">
 		<div class="login-logo group">
 			<img src="../img/svg/logo.svg" />
 		</div>

@@ -1,5 +1,5 @@
 <div ng-show="image_loaded">
-	<center autocomplete="off" id='center' class="animated fadeIn" style='animation-duration: 1.5s'>
+	<center autocomplete="off" id='center' class="animated fadeIn">
 		<div class="g-recaptcha" data-sitekey="<?= RECAPTCHA_SITE ?>" data-size="invisible" data-callback="captchaChecked"></div>
 		<div class="login-logo group">
 			<img src="../img/svg/logo.svg" />
