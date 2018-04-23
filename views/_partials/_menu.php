@@ -59,6 +59,7 @@
 		?>
 	</a>
 	<a href="map" class="list-group-item">Карта клиентов</a>
+	<a href="https://lk.ege-repetitor.ru/background" class="list-group-item">Календарь заставок <sup class="text-danger" style='font-weight: bold'>new</sup></a>
 	<?php if (
 		User::fromSession()->allowed(Shared\Rights::SHOW_PAYMENTS) ||
 		User::fromSession()->allowed(Shared\Rights::SHOW_TEACHER_PAYMENTS) ||
@@ -114,9 +115,6 @@
 	<?php endif ?>
 	<?php if (allowed(Shared\Rights::EC_ACTIVITY)) :?>
 		<a href="activity" class="cursor list-group-item">Активность</a>
-	<?php endif ?>
-	<?php if (in_array(User::fromSession()->id, [1, 69])) :?>
-	<a href="https://lk.ege-repetitor.ru/background" class="list-group-item">Календарь заставок <sup class="text-danger" style='font-weight: bold'>new</sup></a>
 	<?php endif ?>
 	<?php if (allowed(Shared\Rights::EMERGENCY_EXIT)) :?>
 		<a onclick="emergency()" class="cursor list-group-item">Экстренный выход</a>
