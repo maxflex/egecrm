@@ -98,7 +98,7 @@
 			    $scope.$apply();
 			    setTimeout(function() {
 			      $('#center').removeClass('animated').removeClass('fadeIn').removeAttr('style');
-			    }, 2000);
+			  }, 4000);
 			  });
 			  img.src = $scope.wallpaper.image_url;
 			};
