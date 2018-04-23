@@ -18,7 +18,6 @@ class SMS extends Model
 		parent::__construct($array);
 
         if (!$light) {
-			$this->coordinates = $this->getCoordinates();
         	$this->status = $this->getStatus();
 			$this->number_formatted = formatNumber($this->number);
         }
@@ -26,6 +25,7 @@ class SMS extends Model
 		if (mb_strlen($this->message) > self::INLINE_SMS_LENGTH) {
 			$this->message_short = mb_strimwidth($this->message, 0, self::INLINE_SMS_LENGTH, '...', 'utf-8');
 		}
+		$this->coordinates = $this->getCoordinates();
 	}
 
 	public static function applySearchFilters($search)
