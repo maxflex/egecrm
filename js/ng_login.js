@@ -149,9 +149,9 @@
 						} else {
 							$scope.error = "Неправильная пара логин-пароль"
 						}
-						$scope.$apply()
 						return false
 					}
+					$scope.$apply()
 				}, "json")
             }
 
