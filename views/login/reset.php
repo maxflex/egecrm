@@ -24,7 +24,7 @@
 			<div ng-show="success">
 				<span class="text-success">Пароль успешно изменен!</span>
 				<div style='margin-top: 30px; text-align: center'>
-					<a href="/login" class="btn btn-lg btn-primary btn-block ladda-button">Войти</a>
+					<a href="/login" class="btn btn-submit ladda-button">Войти</a>
 				</div>
 			</div>
 		</div>
