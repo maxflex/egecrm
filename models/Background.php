@@ -18,23 +18,24 @@
 
 		public static function get()
 		{
-			$wallpaper = Background::find([
-				"condition" => "status=1 AND date=CURDATE()"
-			]);
-            if (! $wallpaper) {
+			// эта страница логин-пароль в системе ECCRM должна работать только в случае
+			// если это наш IP офиса и разрешение как на iMac или MacBook Pro 15 inch.
+			// Для остальных синий фон
+			if (User::fromOffice()) {
 				$wallpaper = Background::find([
-					"condition" => "status=1 AND date<CURDATE()",
-					"order" => "id asc"
+					"condition" => "status=1 AND date=CURDATE()"
 				]);
-                // если не найден, делаем dummy-объект с зеленым фоном
-                if (! $wallpaper) {
-                    $wallpaper = (object)[
-                        'image_url' => 'img/background/green.png'
-                    ];
-                }
-            }
+	            if (! $wallpaper) {
+					$wallpaper = Background::find([
+						"condition" => "status=1 AND date<CURDATE()",
+						"order" => "id asc"
+					]);
+	            }
+			}
 
-			return $wallpaper;
+			return $wallpaper ? $wallpaper : (object)[
+				'image_url' => 'img/background/blue.png'
+			];
 		}
 
 		public static function dbConnection()
