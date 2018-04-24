@@ -28,7 +28,12 @@
 	</div>
 	</center>
 	<?php if(@$wallpaper->user_id) :?>
-    <span class="wallpaper-by animated fadeInRight">by <?= $wallpaper->user->login ?></span>
+    <span class="wallpaper-by animated fadeInRight">
+		<?php if($wallpaper->title) :?>
+  		  <?= $wallpaper->title ?> –
+  	  <?php endif ?>
+		by <?= $wallpaper->user->login ?>
+	</span>
   <?php endif ?>
 </div>
 <div ng-show="!image_loaded">
