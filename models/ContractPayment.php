@@ -84,7 +84,7 @@
 				join contracts c on c.id = cp.id_contract
 				join contract_info ci on ci.id_contract = c.id_contract
 				join students s on s.id = ci.id_student
-				where (cp.date is not null and cp.date != '0000-00-00')
+				where (cp.date is not null and cp.date != '0000-00-00') and c.current_version=1
 				order by cp.date asc
 		   ";
 
