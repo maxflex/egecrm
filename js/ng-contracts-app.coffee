@@ -6,6 +6,34 @@ app = angular.module "Contracts", ["ui.bootstrap"]
 	.filter 'hideZero', ->
 		(item) ->
 			if item > 0 then item else null
+	.controller "PaymentsCtrl", ($scope, $timeout) ->
+		$scope.filter = ->
+			$scope.current_page = 1
+			$scope.getByPage($scope.current_page)
+
+		$scope.pageChanged = ->
+			window.history.pushState {}, '', 'contracts/payments?page=' + $scope.current_page if $scope.current_page > 1
+			$scope.getByPage($scope.current_page)
+
+		$scope.getByPage = (page) ->
+			frontendLoadingStart()
+			$.post "contracts/ajax/GetPayments",
+				page: page
+			, (response) ->
+				frontendLoadingEnd()
+				$scope.Payments  = response.data
+				$scope.counts = response.counts
+				$scope.$apply()
+			, "json"
+
+		$scope.keyFilter = (event) ->
+			$scope.filter() if event.keyCode is 13
+
+		angular.element(document).ready ->
+			set_scope "Contracts"
+			$scope.current_page = $scope.currentPage
+			$scope.pageChanged()
+
 	.controller "ListCtrl", ($scope, $timeout) ->
 		$scope.getNumber = (index) ->
 			(($scope.current_page - 1) * 30) + (index + 1)

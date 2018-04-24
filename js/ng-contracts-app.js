@@ -14,6 +14,38 @@ app = angular.module("Contracts", ["ui.bootstrap"]).filter('to_trusted', [
       return null;
     }
   };
+}).controller("PaymentsCtrl", function($scope, $timeout) {
+  $scope.filter = function() {
+    $scope.current_page = 1;
+    return $scope.getByPage($scope.current_page);
+  };
+  $scope.pageChanged = function() {
+    if ($scope.current_page > 1) {
+      window.history.pushState({}, '', 'contracts/payments?page=' + $scope.current_page);
+    }
+    return $scope.getByPage($scope.current_page);
+  };
+  $scope.getByPage = function(page) {
+    frontendLoadingStart();
+    return $.post("contracts/ajax/GetPayments", {
+      page: page
+    }, function(response) {
+      frontendLoadingEnd();
+      $scope.Payments = response.data;
+      $scope.counts = response.counts;
+      return $scope.$apply();
+    }, "json");
+  };
+  $scope.keyFilter = function(event) {
+    if (event.keyCode === 13) {
+      return $scope.filter();
+    }
+  };
+  return angular.element(document).ready(function() {
+    set_scope("Contracts");
+    $scope.current_page = $scope.currentPage;
+    return $scope.pageChanged();
+  });
 }).controller("ListCtrl", function($scope, $timeout) {
   $scope.getNumber = function(index) {
     return (($scope.current_page - 1) * 30) + (index + 1);

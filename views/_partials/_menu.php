@@ -60,6 +60,7 @@
 		?>
 	</a>
 	<a href="map" class="list-group-item">Карта клиентов</a>
+	<a href="contracts/payments" class="cursor list-group-item">График платежей</a>
 	<a href="https://lk.ege-repetitor.ru/background" class="list-group-item">Календарь заставок <sup class="text-danger" style='font-weight: bold'>new</sup></a>
 	<?php if (
 		User::fromSession()->allowed(Shared\Rights::SHOW_PAYMENTS) ||

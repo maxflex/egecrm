@@ -196,4 +196,5 @@ RewriteRule ^directives/([a-zA-Z]+)[/]?$ views/directives/$1.html [QSA,L]
 
 # Договора
 RewriteRule ^contracts[?page=(0-9)]?[/]?$ index.php?controller=contracts&page=$1 [QSA,L]
+RewriteRule ^contracts/payments[?page=(0-9)]?[/]?$ index.php?controller=contracts&action=payments&page=$1 [QSA,L]
 RewriteRule ^contracts/ajax/([a-zA-Z]+)[/]?$ index.php?controller=contracts&action=Ajax$1 [QSA,L]
