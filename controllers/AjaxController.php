@@ -484,6 +484,40 @@
                 $Lesson->cabinet = Cabinet::getBlock($Lesson->cabinet);
 			}
 
+			if($Lessons) {
+                for ($i = 0; $i < count($Lessons); $i++) {
+                    $S1 = &$Lessons[$i];
+                    for ($j = $i + 1; $j < count($Lessons); $j++) {
+                        $S2 = &$Lessons[$j];
+
+                        if ($S1->id != $S2->id && $S1->time == $S2->time) {
+                            /* если найдены общие студенты, запоминаем их фамилии */
+                            if ($layerData = array_intersect($S1->Group->students, $S2->Group->students)) {
+                                $Students = Student::findAll([
+                                    "condition" => "id IN (" . implode(",", $layerData) . ")"
+                                ]);
+
+                                foreach ($Students as $Student) {
+                                    /* чтобы одного и того же студента не добавить 2 раза */
+                                    if (!in_array($Student->id, $S1->layerData)) {
+                                        $S1->studentLayered .= $S1->studentLayered ? ', ' : '';
+                                        $S1->studentLayered .= $Student->last_name . ' ' . $Student->first_name;
+                                    }
+
+                                    if (!in_array($Student->id, $S2->layerData)) {
+                                        $S2->studentLayered .= $S2->studentLayered ? ', ' : '';
+                                        $S2->studentLayered .= $Student->last_name . ' ' . $Student->first_name;
+                                    }
+                                }
+
+                                $S1->layerData = array_merge($S1->layerData ? $S1->layerData : [], $layerData);
+                                $S2->layerData = array_merge($S2->layerData ? $S2->layerData : [], $layerData);
+                            }
+                        }
+                    }
+                }
+            }
+
             usort($Lessons, function($a, $b) {
                 if ($b->lesson_time == $a->lesson_time)
                     return $a->cabinet['number'] - $b->cabinet['number'];
