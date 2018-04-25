@@ -55,6 +55,19 @@ app = angular.module("Stats", ["ui.bootstrap"]).config([
       return $.post("ajax/loadStatsSchedule", {
         date: date
       }, function(response) {
+        var d1, d2, i, j, len, len1;
+        for (i = 0, len = response.length; i < len; i++) {
+          d1 = response[i];
+          if (!d1.layered && !d1.cancelled) {
+            for (j = 0, len1 = response.length; j < len1; j++) {
+              d2 = response[j];
+              if ((d1.id !== d2.id) && (d1.lesson_time === d2.lesson_time) && (d1.cabinet === d2.cabinet) && !d2.cancelled) {
+                d1.cabinetLayered = true;
+                d2.cabinetLayered = true;
+              }
+            }
+          }
+        }
         $scope.Lessons[date] = response;
         return $scope.$apply();
       }, "json");

@@ -490,7 +490,7 @@
                     for ($j = $i + 1; $j < count($Lessons); $j++) {
                         $S2 = &$Lessons[$j];
 
-                        if ($S1->id != $S2->id && $S1->time == $S2->time) {
+                        if ($S1->id != $S2->id && $S1->lesson_time == $S2->lesson_time) {
                             /* если найдены общие студенты, запоминаем их фамилии */
                             if ($layerData = array_intersect($S1->Group->students, $S2->Group->students)) {
                                 $Students = Student::findAll([

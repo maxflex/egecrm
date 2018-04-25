@@ -50,6 +50,12 @@ app = angular.module "Stats", ["ui.bootstrap"]
 
 			if $scope.Lessons[date] is undefined
 				$.post "ajax/loadStatsSchedule", {date: date}, (response) ->
+					for d1 in response
+						if !d1.layered and !d1.cancelled
+							for d2 in response
+								if (d1.id isnt d2.id) and (d1.lesson_time is d2.lesson_time) and (d1.cabinet is d2.cabinet) and !d2.cancelled
+									d1.cabinetLayered = true
+									d2.cabinetLayered = true
 					$scope.Lessons[date] = response
 					$scope.$apply()
 				, "json"
