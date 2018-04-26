@@ -14,48 +14,15 @@
 		</div>
 	</div>
 
-    <div class="row" ng-repeat='year in getYears()'>
-        <div class="col-sm-12 link-padding">
-            <b>Занятия {{ year }}–{{ year + 1}} учебного года</b>
-        </div>
-        <div ng-repeat="Visit in getByYears(year)" class="col-sm-12" style='margin-bottom: 5px'>
-            <div ng-if='!isReport(Visit)'>
-                <span class='inline-block' style='width: 200px'>
-                    {{ formatDate(Visit.lesson_date)}} в {{formatTime(Visit.lesson_time) }}
-                </span>
-                <span class='inline-block' style='width: 150px'>
-                    {{ getDay(Visit.lesson_date) }}
-                </span>
-                <span class='inline-block' style='width: 150px'>
-                    кабинет {{ Visit.cabinet_number }}
-                </span>
-                <span class='inline-block' style='width: 150px'>
-                    группа {{ Visit.id_group }}
-                </span>
-                <span class='inline-block' style='width: 100px'>
-                    {{ Subject.three_letters }}
-                </span>
-                <span class='inline-block' style='width: 150px'>
-                    {{ Visit.grade_label }}
-                </span>
-                <span class='inline-block' style='width: 150px'>
-                    <span ng-show="Visit.presence == 2">не был</span>
-                    <span ng-show="Visit.presence == 1 && !Visit.late">был</span>
-                    <span ng-show="Visit.presence == 1 && Visit.late">опоздал на {{Visit.late}} <ng-pluralize count="Visit.late" when="{
-                        'one': 'минута',
-                        'few': 'минуты',
-                        'many': 'минут',
-                    }"></ng-pluralize></span>
-                </span>
-            </div>
-			<div ng-if='isReport(Visit)' style='margin: 20px 0'>
-                <a href="teachers/reports/edit/{{ Visit.id }}" class='link-report'>
-					<i class="fa fa-paperclip text-primary" aria-hidden="true"></i>
-					отчет по {{ Subject.dative }} от {{formatDate(Visit.lesson_date)}}
-				</a>
-            </div>
-        </div>
-    </div>
+	<div ng-repeat="year in years">
+		<div ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]" ng-if="Lessons[year][month]" class="visits-block">
+			<h4>{{ months[month] }} {{ month >= 9 ? year : year + 1 }}</h4>
+			<table class="table small table-hover border-reverse last-item-no-border">
+				<?= partial('lessons_line', ['Lessons' => 'Lessons[year][month]']) ?>
+			</table>
+		</div>
+	</div>
+
     <div class="row">
         <div class="col-sm-12 link-padding" ng-if='!id_group'>
             <span style='margin-bottom: 0'>Ученик прекратил обучение в группе</span>
@@ -65,31 +32,17 @@
             <span class="text-danger" ng-show="<?= $report_required ?>" style="margin-left: 20px">требуется создание отчета</span>
         </div>
     </div>
-    <div class="row">
-        <div ng-repeat="Lesson in PlannedLessons" class="col-sm-12 text-gray" style='margin-bottom: 5px'>
-            <span class='inline-block' style='width: 200px'>
-                {{ formatDate(Lesson.lesson_date)}} в {{formatTime(Lesson.lesson_time) }}
-            </span>
-            <span class='inline-block' style='width: 150px'>
-                {{ getDay(Lesson.lesson_date) }}
-            </span>
-            <span class='inline-block' style='width: 150px'>
-                кабинет {{ Lesson.cabinet_number }}
-            </span>
-            <span class='inline-block' style='width: 150px'>
-                группа {{ Lesson.id_group }}
-            </span>
-            <span class='inline-block' style='width: 100px'>
-                {{ Subject.three_letters }}
-            </span>
-            <span class='inline-block' style='width: 150px'>
-                {{ Student.grade_label }}
-            </span>
-            <span class='inline-block' style='width: 150px'>
-                планируется
-            </span>
-        </div>
-    </div>
+
+	<div ng-if="PlannedLessonsByMonth">
+		<div ng-repeat="year in years">
+			<div ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]" ng-if="PlannedLessonsByMonth[year][month]" class="visits-block">
+				<h4>{{ months[month] }} {{ month >= 9 ? year : year + 1 }}</h4>
+				<table class="table small table-hover border-reverse last-item-no-border">
+					<?= partial('lessons_line', ['Lessons' => 'PlannedLessonsByMonth[year][month]']) ?>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 
 <style>

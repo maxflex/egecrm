@@ -87,6 +87,15 @@ app = angular.module "Reports", ["ui.bootstrap"]
 
 
 	.controller "ListCtrl", ($scope) ->
+		$scope.getCabinet = (id) ->
+			_.findWhere($scope.all_cabinets, {id: parseInt(id)})
+
+		$scope.getLessonIndex = (index, GroupLessons) ->
+			index++
+			GroupLessons = _.sortBy(GroupLessons, 'date_time')
+			cancelled_count = _.where(GroupLessons.slice(0, index), {cancelled: 1}).length
+			return (index - cancelled_count)
+
 		$scope.getReports = (id_student) ->
 			_.where($scope.Reports, {id_student: id_student})
 

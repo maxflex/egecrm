@@ -153,15 +153,25 @@
                     AND ended=0 AND id_teacher={$id_teacher}"
             ]);
 
+			$years = [];
 			foreach ($Visits as $Visit) {
                 $Visit->cabinet_number = Cabinet::getField($Visit->cabinet, 'number');
+				if (! in_array($Visit->year, $years)) {
+					$years[] = $Visit->year;
+				}
             }
 
             // ВНИМАНИЕ: ДОБАВЛЯЕМ ОТЧЕТЫ В МАССИВ visits!
             foreach ($Reports as $Report) {
                 // внимание!
+				$Report->is_report = true;
                 $Report->lesson_date = $Report->date_original;
+				$Report->label = sprintf("отчет по %s", Subjects::$dative[$Report->id_subject]);
+				$Report->date_time = sprintf("%s 00:00:00", $row->date);
                 $Visits[] = $Report;
+				if (! in_array($Report->year, $years)) {
+					$years[] = $Report->year;
+				}
             }
 
             // Sort visits by SO CALLED lesson_date
@@ -169,11 +179,28 @@
                 return $a->lesson_date > $b->lesson_date;
             });
 
+			$LessonsByMonth = [];
+			foreach($Visits as $Visit) {
+				$LessonsByMonth[$Visit->year][date('n', strtotime($Visit->lesson_date))][] = $Visit;
+			}
+
+			$PlannedLessons = $Group ? $Group->getPlannedLessons() : false;
+			if ($PlannedLessons) {
+				$PlannedLessonsByMonth = [];
+				foreach($PlannedLessons as $PlannedLesson) {
+					$PlannedLessonsByMonth[$PlannedLesson->year][date('n', strtotime($PlannedLesson->lesson_date))][] = $PlannedLesson;
+				}
+			}
+
 			$ang_init_data = angInit([
 				'Student'         => $Student,
-                'Visits'          => $Visits,
-                'PlannedLessons'   => $Group ? $Group->getPlannedLessons() : false,
+                'Lessons'          => $LessonsByMonth,
+                'PlannedLessons'   => $PlannedLessons ? $PlannedLessonsByMonth : false,
                 'id_group'        => $Group ? $Group->id : 0,
+				"all_cabinets" =>  Branches::allCabinets(),
+				"years"	=> $years,
+				"months" => Months::get(),
+				"Subjects"	=> Subjects::$three_letters,
                 'Subject'         => [
                     'id'            => $id_subject,
                     'three_letters' => Subjects::$three_letters[$id_subject],

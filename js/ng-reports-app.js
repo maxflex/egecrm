@@ -99,6 +99,20 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
     return $(".single-select").selectpicker();
   });
 }).controller("ListCtrl", function($scope) {
+  $scope.getCabinet = function(id) {
+    return _.findWhere($scope.all_cabinets, {
+      id: parseInt(id)
+    });
+  };
+  $scope.getLessonIndex = function(index, GroupLessons) {
+    var cancelled_count;
+    index++;
+    GroupLessons = _.sortBy(GroupLessons, 'date_time');
+    cancelled_count = _.where(GroupLessons.slice(0, index), {
+      cancelled: 1
+    }).length;
+    return index - cancelled_count;
+  };
   $scope.getReports = function(id_student) {
     return _.where($scope.Reports, {
       id_student: id_student
