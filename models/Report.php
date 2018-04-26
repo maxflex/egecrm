@@ -163,7 +163,7 @@
 		{
 			$query = dbConnection()->query("
 				select id, `date`, id_teacher, id_subject from reports
-				where id_student={$id_student} and DATE_FORMAT(`date`, '%Y-%m') = '{$year_month}'
+				where id_student={$id_student} and DATE_FORMAT(`date`, '%Y-%m') = '{$year_month}' and available_for_parents=1
 			");
 
 			$reports = [];

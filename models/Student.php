@@ -1174,7 +1174,7 @@
 			if ($with_reports) {
 				foreach($LessonsByMonth as $year => $month_data) {
 					foreach(array_keys($month_data) as $month) {
-						$year_month = sprintf("%04d-%02d", $year, $month);
+						$year_month = sprintf("%04d-%02d", $year + 1, $month);
 						$LessonsByMonth[$year][$month] = array_merge($LessonsByMonth[$year][$month], Report::getForStudent($id_student, $year_month));
 					}
 				}
