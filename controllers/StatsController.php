@@ -301,23 +301,26 @@
 
 
 
-		private function _totalVisits($date_start, $date_end = false, $year = false)
+		private function _totalVisits($date_start, $date_end = false, $by_year = false)
 		{
+			if ($by_year) {
+				$year = date('Y', strtotime($date_start));
+			}
 			// профориентация
 			$return['payments_prof'] = Payment::count([
-				'condition' => ($year ? "`year`={$year}" :
+				'condition' => ($by_year ? "`year`={$year}" :
 					($date_end ? "date > '$date_start' AND date <= '$date_end'" : "date='$date_start'"))
 					. " AND category=2"
 			]);
 			// пробный ЕГЭ
 			$return['payments_ege'] = Payment::count([
-				'condition' => ($year ? "`year`={$year}" :
+				'condition' => ($by_year ? "`year`={$year}" :
 					($date_end ? "date > '$date_start' AND date <= '$date_end'" : "date='$date_start'"))
 					. " AND category=3"
 			]);
 			// всего занятий без учета отмененных и доп.занятий (доп. занятия вычитаются ниже)
 			$return['lesson_count'] = VisitJournal::count([
-				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND type_entity='TEACHER' AND cancelled=0"
 			]);
 			// кол-во запланированных занятий
@@ -327,41 +330,41 @@
 						. " AND cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
 				]);
 			}
-			if ($year && $date_end == now(true)) {
+			if ($by_year && $date_end == now(true)) {
 				$return['planned_lesson_count'] = VisitJournal::count([
 					"condition" => "cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
 				]);
 			}
 			// всего отмененных занятий
 			$return['cancelled_count'] = VisitJournal::count([
-				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND cancelled=1"
 			]);
 			//всего доп.занятий
 			$return['additional_count'] = dbConnection()->query("
 				SELECT COUNT(*) AS cnt FROM visit_journal vj
 				JOIN groups g ON g.id = vj.id_group
-				WHERE " . ($year ? "vj.year={$year}" : ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'"))
+				WHERE " . ($by_year ? "vj.year={$year}" : ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'"))
 					. " AND vj.type_entity='TEACHER' AND vj.cancelled=0 AND g.is_unplanned=1
 			")->fetch_object()->cnt;
 			$return['planned_additional_count'] = dbConnection()->query("
 				SELECT COUNT(*) AS cnt FROM visit_journal vj
 				JOIN groups g ON g.id = vj.id_group
-				WHERE " . ($year ? "vj.year={$year}" : ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'"))
+				WHERE " . ($by_year ? "vj.year={$year}" : ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'"))
 					. " AND " . VisitJournal::PLANNED_CONDITION . " AND vj.cancelled=0 AND g.is_unplanned=1
 			")->fetch_object()->cnt;
 			// всего занятий без учета отмененных и доп.занятий
 			$return['lesson_count'] = intval($return['lesson_count']) - intval($return['additional_count']);
 			VisitJournal::count([
-				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=0"
 			]);
 			$students_total = VisitJournal::count([
-				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND type_entity='STUDENT'"
 			]);
 			$students_skipped = VisitJournal::count([
-				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND type_entity='STUDENT' AND presence=2"
 			]);
 			$return['abscent_percent'] = $students_total ? round($students_skipped / $students_total * 100) : 0;
@@ -437,23 +440,14 @@
 
 		private function getTotalVisitsByYears()
 		{
-		 	$date_end = date("Y-m-d", time());
-
-			//определяем текущий учебный год
-			$current_year = end(Years::$all);
-
-            for ($i = 0; $i < count(Years::$all); $i++) {
-                $year = $current_year - $i;
-                $date_start = date("Y-m-d", mktime(0, 0, 0, 7, 31, $year));
-                $date_end = date("Y-m-d", mktime(0, 0, 0, 7, 31, $year + 1));
-
-                $stats[$date_end] = self::_totalVisits($date_start, $date_end, $year);
-
-                $date_end = $date_start;
-            }
-
-            return $stats;
-
+			$date_end = date("Y-m-d", time());
+			for ($i = 1; $i <= VisitJournal::fromFirstLesson('years'); $i++) {
+				$last_day_of_july = strtotime("-$i years last day of july");
+				$date_start = date("Y-m-d", $last_day_of_july);
+				$stats[$date_end] = self::_totalVisits($date_start, $date_end, true);
+				$date_end = $date_start;
+			}
+			return $stats;
 		}
 
 		public function actionTotalVisits()
@@ -488,7 +482,6 @@
 				"stats"			=> $stats,
 				"missing"		=> Group::getLastWeekMissing(),
 				"days_mode"		=> $days_mode,
-				"years"			=> Years::$all,
 			]);
 
 			$this->render("total_visits", [
