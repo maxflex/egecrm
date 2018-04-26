@@ -38,7 +38,8 @@
 				index++
 				GroupLessons = _.sortBy(GroupLessons, 'date_time')
 				cancelled_count = _.where(GroupLessons.slice(0, index), {cancelled: 1}).length
-				return (index - cancelled_count)
+				report_count = _.where(GroupLessons.slice(0, index), {is_report: true}).length
+				return (index - cancelled_count - report_count)
 
 			angular.element(document).ready ->
 				set_scope 'Group'

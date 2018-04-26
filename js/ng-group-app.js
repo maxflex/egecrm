@@ -59,13 +59,16 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };
   $scope.getLessonIndex = function(index, GroupLessons) {
-    var cancelled_count;
+    var cancelled_count, report_count;
     index++;
     GroupLessons = _.sortBy(GroupLessons, 'date_time');
     cancelled_count = _.where(GroupLessons.slice(0, index), {
       cancelled: 1
     }).length;
-    return index - cancelled_count;
+    report_count = _.where(GroupLessons.slice(0, index), {
+      is_report: true
+    }).length;
+    return index - cancelled_count - report_count;
   };
   return angular.element(document).ready(function() {
     return set_scope('Group');

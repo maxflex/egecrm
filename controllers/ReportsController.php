@@ -42,9 +42,7 @@
 		public function actionList()
 		{
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
-				$this->_teacherList();			}
-			if (User::fromSession()->type == Student::USER_TYPE) {
-				$this->_studentList();
+				$this->_teacherList();
 			}
 			if (User::fromSession()->type == User::USER_TYPE) {
 				$this->_userList();
@@ -83,51 +81,6 @@
 
 			$this->render("user_list", [
 				"ang_init_data" => $ang_init_data,
-			]);
-		}
-
-		private function _studentList()
-		{
-            $id_student = User::fromSession()->id_entity;
-
-			if (! Student::getReportCount($id_student)) {
-				$this->renderRestricted('Нет отчетов');
-			}
-
-			$years = [];
-			foreach(Years::$all as $y) {
-				if (Student::getReportCount($id_student, $y)) {
-					$years[] = $y;
-				}
-			}
-
-			$year = (isset($_GET['year']) && in_array($_GET['year'], $years)) ? $_GET['year'] : end($years);
-
-			$this->_custom_panel = true;
-            $data = ReportHelper::findAll([
-                'condition' => "year={$year} AND id_student={$id_student}",
-                'group' => 'id_student, id_subject, id_teacher, year'
-            ]);
-
-			foreach($data as $d) {
-				$d->Teacher = Teacher::getLight($d->id_teacher);
-                $d->lessons_count   = Report::getLessonsCount($id_student, $d->id_teacher, $d->id_subject, $year);
-                $d->reports_count   = Report::getCount($id_student, $d->id_teacher, $d->id_subject, $year, true);
-                $d->Group = Group::find([
-                    "condition" => "FIND_IN_SET({$id_student}, students) AND id_subject={$d->id_subject}
-                        AND ended=0 AND id_teacher={$d->id_teacher}"
-                ]);
-			}
-
-			$ang_init_data = angInit([
-				'data'	=> $data,
-				'years' => $years,
-				'Subjects' 	=> Subjects::$three_letters,
-			]);
-
-			$this->render("student_list", [
-				'ang_init_data' => $ang_init_data,
-                'year'          => $year,
 			]);
 		}
 
@@ -211,69 +164,6 @@
 			$this->setTabTitle('Добавление отчета');
 
 			$this->render('add_student', [
-				'ang_init_data'   => $ang_init_data,
-                'report_required' => Report::required($id_student, $id_teacher, $id_subject, academicYear()),
-			]);
-		}
-
-		public function actionTeacher()
-		{
-            // has-access-refactored
-            $this->setRights([Student::USER_TYPE]);
-
-			$id_student = User::fromSession()->id_entity;
-            $id_subject = $_GET['id_subject'];
-            $id_teacher = $_GET['id_teacher'];
-
-            if (! static::lessonExists($id_teacher, $id_student, $id_subject)) {
-                $this->renderRestricted();
-            }
-
-			$Student = Student::findById($id_student, true);
-			$Teacher = Teacher::findById($id_teacher, true);
-			$Visits = $Student->getVisits(compact('id_teacher', 'id_subject'));
-            $Reports = Report::get($id_student, $id_teacher, $id_subject, [
-	            'available_for_parents' => 1
-            ]);
-
-            $Group = Group::find([
-                "condition" => "FIND_IN_SET($id_student, students) AND id_subject={$id_subject}
-                    AND ended=0 AND id_teacher={$id_teacher}"
-            ]);
-
-			foreach ($Visits as $Visit) {
-                $Visit->cabinet_number = Cabinet::getField($Visit->cabinet, 'number');
-            }
-
-            // ВНИМАНИЕ: ДОБАВЛЯЕМ ОТЧЕТЫ В МАССИВ visits!
-            foreach ($Reports as $Report) {
-                // внимание!
-                $Report->lesson_date = $Report->date_original;
-                $Visits[] = $Report;
-            }
-
-            // Sort visits by SO CALLED lesson_date
-            usort($Visits, function($a, $b) {
-                return $a->lesson_date > $b->lesson_date;
-            });
-
-			$ang_init_data = angInit([
-				'Student'         => $Student,
-				'Teacher'         => $Teacher,
-                'Visits'          => $Visits,
-                'PlannedLessons'   => $Group ? $Group->getPlannedLessons() : false,
-                'id_group'        => $Group ? $Group->id : 0,
-                'AllSubjects'     => Subjects::$dative,
-                'Subject'         => [
-                    'id'            => $id_subject,
-                    'three_letters' => Subjects::$three_letters[$id_subject],
-                    'dative'        => Subjects::$dative[$id_subject]
-                ]
-			]);
-
-			$this->setTabTitle('Отчетность');
-
-			$this->render('teacher', [
 				'ang_init_data'   => $ang_init_data,
                 'report_required' => Report::required($id_student, $id_teacher, $id_subject, academicYear()),
 			]);

@@ -105,13 +105,16 @@ app = angular.module("Reports", ["ui.bootstrap"]).filter('to_trusted', [
     });
   };
   $scope.getLessonIndex = function(index, GroupLessons) {
-    var cancelled_count;
+    var cancelled_count, report_count;
     index++;
     GroupLessons = _.sortBy(GroupLessons, 'date_time');
     cancelled_count = _.where(GroupLessons.slice(0, index), {
       cancelled: 1
     }).length;
-    return index - cancelled_count;
+    report_count = _.where(GroupLessons.slice(0, index), {
+      is_report: true
+    }).length;
+    return index - cancelled_count - report_count;
   };
   $scope.getReports = function(id_student) {
     return _.where($scope.Reports, {
