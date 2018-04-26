@@ -105,7 +105,7 @@
                 </div>
 				<i>Преподаватель по {{Subjects[Report.id_subject]}}<br>
 					{{Report.Teacher.last_name}} {{Report.Teacher.first_name}} {{Report.Teacher.middle_name}}<br>
-					Дата составления данного отчета: {{formatDate2(Report.date)}}<br>
+					Дата составления данного отчета: {{ Report.date }}<br>
 				</i>
 			</div>
 		</div>
