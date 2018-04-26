@@ -303,22 +303,21 @@
 
 		private function _totalVisits($date_start, $date_end = false, $year = false)
 		{
-			preType([$date_start, $date_end, $year]);
 			// профориентация
 			$return['payments_prof'] = Payment::count([
-				'condition' => ($by_year ? "`year`={$year}" :
+				'condition' => ($year ? "`year`={$year}" :
 					($date_end ? "date > '$date_start' AND date <= '$date_end'" : "date='$date_start'"))
 					. " AND category=2"
 			]);
 			// пробный ЕГЭ
 			$return['payments_ege'] = Payment::count([
-				'condition' => ($by_year ? "`year`={$year}" :
+				'condition' => ($year ? "`year`={$year}" :
 					($date_end ? "date > '$date_start' AND date <= '$date_end'" : "date='$date_start'"))
 					. " AND category=3"
 			]);
 			// всего занятий без учета отмененных и доп.занятий (доп. занятия вычитаются ниже)
 			$return['lesson_count'] = VisitJournal::count([
-				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND type_entity='TEACHER' AND cancelled=0"
 			]);
 			// кол-во запланированных занятий
@@ -328,41 +327,41 @@
 						. " AND cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
 				]);
 			}
-			if ($by_year && $date_end == now(true)) {
+			if ($year && $date_end == now(true)) {
 				$return['planned_lesson_count'] = VisitJournal::count([
 					"condition" => "cancelled=0 AND " . VisitJournal::PLANNED_CONDITION
 				]);
 			}
 			// всего отмененных занятий
 			$return['cancelled_count'] = VisitJournal::count([
-				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND cancelled=1"
 			]);
 			//всего доп.занятий
 			$return['additional_count'] = dbConnection()->query("
 				SELECT COUNT(*) AS cnt FROM visit_journal vj
 				JOIN groups g ON g.id = vj.id_group
-				WHERE " . ($by_year ? "vj.year={$year}" : ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'"))
+				WHERE " . ($year ? "vj.year={$year}" : ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'"))
 					. " AND vj.type_entity='TEACHER' AND vj.cancelled=0 AND g.is_unplanned=1
 			")->fetch_object()->cnt;
 			$return['planned_additional_count'] = dbConnection()->query("
 				SELECT COUNT(*) AS cnt FROM visit_journal vj
 				JOIN groups g ON g.id = vj.id_group
-				WHERE " . ($by_year ? "vj.year={$year}" : ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'"))
+				WHERE " . ($year ? "vj.year={$year}" : ($date_end ? "vj.lesson_date > '$date_start' AND vj.lesson_date <= '$date_end'" : "vj.lesson_date='$date_start'"))
 					. " AND " . VisitJournal::PLANNED_CONDITION . " AND vj.cancelled=0 AND g.is_unplanned=1
 			")->fetch_object()->cnt;
 			// всего занятий без учета отмененных и доп.занятий
 			$return['lesson_count'] = intval($return['lesson_count']) - intval($return['additional_count']);
 			VisitJournal::count([
-				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") AND cancelled=0"
 			]);
 			$students_total = VisitJournal::count([
-				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND type_entity='STUDENT'"
 			]);
 			$students_skipped = VisitJournal::count([
-				"condition" => ($by_year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
+				"condition" => ($year ? "`year`={$year}" : ($date_end ? "lesson_date > '$date_start' AND lesson_date <= '$date_end'" : "lesson_date='$date_start'"))
 					. " AND type_entity='STUDENT' AND presence=2"
 			]);
 			$return['abscent_percent'] = $students_total ? round($students_skipped / $students_total * 100) : 0;
