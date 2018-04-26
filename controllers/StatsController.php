@@ -441,13 +441,19 @@
 		private function getTotalVisitsByYears()
 		{
 			$date_end = date("Y-m-d", time());
-			for ($i = 1; $i <= VisitJournal::fromFirstLesson('years'); $i++) {
-				$last_day_of_july = strtotime("-$i years last day of july");
-				$date_start = date("Y-m-d", $last_day_of_july);
-				$stats[$date_end] = self::_totalVisits($date_start, $date_end, true);
-				$date_end = $date_start;
-			}
-			return $stats;
+
+			//определяем текущий учебный год
+			$current_year = end(Years::$all);
+
+            for ($i = 0; $i < count(Years::$all); $i++) {
+                $year = $current_year - $i;
+                $date_start = date("Y-m-d", mktime(0, 0, 0, 7, 31, $year));
+                $date_end = date("Y-m-d", mktime(0, 0, 0, 7, 31, $year + 1));
+                $stats[$date_end] = self::_totalVisits($date_start, $date_end, $year);
+                $date_end = $date_start;
+            }
+
+            return $stats;
 		}
 
 		public function actionTotalVisits()
@@ -482,6 +488,7 @@
 				"stats"			=> $stats,
 				"missing"		=> Group::getLastWeekMissing(),
 				"days_mode"		=> $days_mode,
+				"years"			=> Years::$all,
 			]);
 
 			$this->render("total_visits", [

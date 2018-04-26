@@ -71,9 +71,15 @@
 				'pointer': days_mode,
 				'visits-weekend': isWeekend(stat.date) && days_mode
 			}" ng-click="dateLoad(stat.date)">
-				<td ng-class="{'text-gray': isFuture(stat.date), 'bold-red': missing[stat.date] > 0}">
-					{{formatDate(stat.date)}} <span ng-show='isToday(stat.date)'>(сегодня)</span>
-				</td>
+				<?php if ($_GET["group"] == "y") { ?>
+					<td>
+						{{ years[years.length - $index - 1] }}–{{ years[years.length - $index - 1] + 1 }} уч. г.
+					</td>
+				<?php } else { ?>
+					<td ng-class="{'text-gray': isFuture(stat.date), 'bold-red': missing[stat.date] > 0}">
+						{{formatDate(stat.date)}} <span ng-show='isToday(stat.date)'>(сегодня)</span>
+					</td>
+				<?php } ?>
 				<td>
 					{{stat.lesson_count ? stat.lesson_count : ''}}
 					<span ng-show="stat.planned_lesson_count" class="text-gray" ng-class="{
