@@ -33,12 +33,12 @@
         </div>
     </div>
 
-	<div ng-if="PlannedLessonsByMonth">
+	<div ng-if="PlannedLessons">
 		<div ng-repeat="year in years">
-			<div ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]" ng-if="PlannedLessonsByMonth[year][month]" class="visits-block">
+			<div ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]" ng-if="PlannedLessons[year][month]" class="visits-block">
 				<h4>{{ months[month] }} {{ month >= 9 ? year : year + 1 }}</h4>
 				<table class="table small table-hover border-reverse last-item-no-border">
-					<?= partial('lessons_line', ['Lessons' => 'PlannedLessonsByMonth[year][month]']) ?>
+					<?= partial('lessons_line', ['Lessons' => 'PlannedLessons[year][month]']) ?>
 				</table>
 			</div>
 		</div>
