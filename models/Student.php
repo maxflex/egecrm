@@ -405,20 +405,7 @@
 			}
 		}
 
-		public function getReports()
-		{
-			$Reports = Report::findAll([
-				"condition" => "id_student=" . $this->id
-			]);
-
-			foreach ($Reports as &$Report) {
-				$Report->Teacher = Teacher::findById($Report->id_teacher);
-			}
-
-			return $Reports;
-		}
-
-		public function getReportsStatic($id_student)
+		public function getReports($id_student)
 		{
 			return Teacher::getReportData(1, [], $id_student);
 		}
@@ -1122,7 +1109,7 @@
 		/**
 		 * Получить все уроки ученика
 		 */
-		public static function getFullSchedule($id_student, $sort_by_month = false)
+		public static function getFullSchedule($id_student, $with_reports = false)
 		{
 			$group_ids = self::getGroupIdsEverVisited($id_student);
 
@@ -1145,6 +1132,11 @@
 					}
 					return true;
 				});
+
+				// добавить отчеты
+				if ($with_reports) {
+
+				}
 			}
 
 			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, $id_student);
@@ -1170,13 +1162,20 @@
 				}
 			}
 
-			$LessonsSorted = [];
+			$LessonsByYear = [];
+			$LessonsByMonth = [];
 			foreach($Lessons as $group_id => $GroupLessons) {
 				foreach($GroupLessons as $Lesson) {
-					if ($sort_by_month) {
-						$LessonsSorted[$Lesson->year][date('n', strtotime($Lesson->lesson_date))][] = $Lesson;
-					} else {
-						$LessonsSorted[$Lesson->year][$group_id][] = $Lesson;
+					$LessonsByMonth[$Lesson->year][date('n', strtotime($Lesson->lesson_date))][] = $Lesson;
+					$LessonsByYear[$Lesson->year][$group_id][] = $Lesson;
+				}
+			}
+
+			if ($with_reports) {
+				foreach($LessonsByMonth as $year => $month_data) {
+					foreach(array_keys($month_data) as $month) {
+						$year_month = sprintf("%04d-%02d", $year, $month);
+						$LessonsByMonth[$year][$month] = array_merge($LessonsByMonth[$year][$month], Report::getForStudent($id_student, $year_month));
 					}
 				}
 			}
@@ -1184,7 +1183,10 @@
 			sort($years);
 
 			return (object)[
-				'Lessons' => $LessonsSorted,
+				'Lessons' => [
+					'by_year' 	=> $LessonsByYear,
+					'by_month'	=> $LessonsByMonth,
+				],
 				'years' => $years,
 			];
 		}

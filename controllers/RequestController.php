@@ -501,7 +501,7 @@
 		{
 			extract($_POST);
 
-			$Reports = Student::getReportsStatic($id_student);
+			$Reports = Student::getReports($id_student);
 
 			$return = [];
 			foreach($Reports as $Report) {

@@ -26,7 +26,7 @@
 		?>
     </a>
 	<a href="students/balance" class="list-group-item">Баланс счета</a>
-	<a href="students/schedule" class="list-group-item">Расписание на год</a>
+	<a href="students/schedule" class="list-group-item">Расписание и отчеты</a>
 	<a href="students/reports" class="list-group-item">Отчеты
 		<?php
 			$report_count = Student::getReportCount(User::fromSession()->id_entity);

@@ -158,6 +158,25 @@
 		{
 			return "id_student = {$id_student} AND id_teacher = {$id_teacher} AND id_subject = {$id_subject}" . ($year ? " AND year = {$year}" : '');
 		}
+
+		public static function getForStudent($id_student, $year_month)
+		{
+			$query = dbConnection()->query("
+				select id, `date`, id_teacher, id_subject from reports
+				where id_student={$id_student} and DATE_FORMAT(`date`, '%Y-%m') = '{$year_month}'
+			");
+
+			$reports = [];
+			while($row = $query->fetch_object()) {
+				$row->is_report = true;
+				$Teacher = Teacher::getLight($row->id_teacher);
+				$teacher_name = $Teacher->last_name . ' ' . mb_substr($Teacher->first_name, 0, 1) . '. ' . mb_substr($Teacher->middle_name, 0, 1) . '.';
+				$row->label = sprintf("отчет %s по %s", $teacher_name, Subjects::$dative[$row->id_subject]);
+				$row->date_time = sprintf("%s 00:00:00", $row->date);
+				$reports[] = $row;
+			}
+			return $reports;
+		}
 	}
 
 	class ReportHelper extends Model

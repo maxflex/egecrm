@@ -49,11 +49,11 @@
             }
 		}
 
-		public function actionStudentSchedule()
+		public function actionYearSchedule()
 		{
 			$this->setRights([Student::USER_TYPE]);
 
-			$this->setTabTitle("Расписание на год");
+			$this->setTabTitle("Расписание и отчеты");
 
 			$Schedule = Student::getFullSchedule(User::fromSession()->id_entity, true);
 
