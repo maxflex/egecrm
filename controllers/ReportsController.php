@@ -43,9 +43,10 @@
 		{
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$this->_teacherList();
-			}
-			if (User::fromSession()->type == User::USER_TYPE) {
+			} else if (User::fromSession()->type == User::USER_TYPE) {
 				$this->_userList();
+			} else {
+				$this->renderRestricted();
 			}
 		}
 
