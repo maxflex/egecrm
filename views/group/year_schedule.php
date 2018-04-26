@@ -39,7 +39,7 @@
 								<span ng-show="Lesson.presence == 2">не был</span>
 							</span>
 							<span ng-show="Lesson.is_planned">
-								опоздал на 20 мин.
+								планируется
 							</span>
 						</span>
 						<span ng-show="Lesson.cancelled">отменено</span>
