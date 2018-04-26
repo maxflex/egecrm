@@ -27,15 +27,6 @@
     </a>
 	<a href="students/balance" class="list-group-item">Баланс счета</a>
 	<a href="students/schedule" class="list-group-item">Расписание и отчеты</a>
-	<a href="students/reports" class="list-group-item">Отчеты
-		<?php
-			$report_count = Student::getReportCount(User::fromSession()->id_entity);
-
-			if ($report_count) {
-				echo '<span class="badge pull-right">' . $report_count . '</span>';
-			}
-		?>
-	</a>
     <a href="students/reviews" class="list-group-item">Оставить отзыв
 	    <?php
 			$reviews_count = Student::reviewsNeeded();
