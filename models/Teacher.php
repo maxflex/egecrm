@@ -195,6 +195,9 @@
 				$ss->Student = Student::getLight($ss->id_entity);
 				$ss->Teacher = Teacher::getLight($ss->id_teacher);
 				$ss->force_noreport = ReportForce::check($ss->id_entity, $ss->id_teacher, $ss->id_subject, $ss->year);
+				if ($ss->grade) {
+					$ss->grade_label = Grades::$short[$ss->grade];
+				}
 			}
 
 			if ($id_student) {
