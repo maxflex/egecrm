@@ -2,13 +2,15 @@
 	'visits-block__elem--planned': Lesson.is_planned || Lesson.canceleld
 }">
 	<td style='width: 30px; margin-right: 0'>
-		<span ng-show="!Lesson.cancelled">{{ getLessonIndex($index, <?= $Lessons ?>) }}</span>
+		<span ng-show="!Lesson.cancelled" ng-class="{
+			'link-like': Lesson.is_conducted
+		}" ng-click="editLessonModal(Lesson)">{{ getLessonIndex($index, <?= $Lessons ?>) }}</span>
 	</td>
-	<td width='150'>
+	<td width='110'>
 		<span ng-show="Lesson.id_group > 0">Группа {{ Lesson.id_group }}</span>
 		<span ng-show="Lesson.id_group < 0">доп. занятие</span>
 	</td>
-	<td width='150'>
+	<td width='100'>
 		<span style='color: {{ getCabinet(Lesson.cabinet).color }}'>{{ getCabinet(Lesson.cabinet).label }}</span>
 	</td>
 	<td width='100'>
@@ -39,6 +41,6 @@
 		<span ng-show="Lesson.is_conducted">{{ Lesson.price }} руб.</span>
 	</td>
 	<td>
-		<span ng-if="Lesson.is_conducted" class="link-like" ng-click="editLessonModal(Lesson)">редактировать</span>
+		{{ Lesson.comment }}
 	</td>
 </tr>

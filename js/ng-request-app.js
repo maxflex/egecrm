@@ -764,9 +764,11 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 		// Редактирование занятия
 		$scope.editLessonModal = function(lesson) {
-			$scope.modal_lesson_ref = lesson
-			$scope.modal_lesson = _.clone(lesson)
-			lightBoxShow('edit-lesson')
+			if (lesson.is_conducted) {
+				$scope.modal_lesson_ref = lesson
+				$scope.modal_lesson = _.clone(lesson)
+				lightBoxShow('edit-lesson')
+			}
 		}
 
 		lesson_edit_fields = ['comment', 'price', 'presence', 'late']
