@@ -45,7 +45,7 @@
 							</span>
 			            </span>
 					</td>
-					<td width="100">
+					<td width="200">
 						<!-- @time-refactored @time-checked -->
 						<span ng-repeat="data in Group.day_and_time">
 							<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}

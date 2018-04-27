@@ -853,17 +853,15 @@
 
 			$Group = Group::findById($id);
 
-			//if (! LOCAL_DEVELOPMENT) {
-	            $Teachers = Teacher::getLight(false, ['subjects']);
+            $Teachers = Teacher::getLight(false, ['subjects']);
 
-				if ($Group->id_teacher) {
-					foreach ($Teachers as &$Teacher) {
-						if ($Teacher->id == $Group->id_teacher) {
-							$Teacher->bar = Freetime::getTeacherBar($Teacher->id);
-						}
+			if ($Group->id_teacher) {
+				foreach ($Teachers as &$Teacher) {
+					if ($Teacher->id == $Group->id_teacher) {
+						$Teacher->bar = Freetime::getTeacherBar($Teacher->id);
 					}
 				}
-			//}
+			}
 
 			$Students = [];
 			foreach ($Group->students as $id_student) {
