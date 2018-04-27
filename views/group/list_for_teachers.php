@@ -56,7 +56,7 @@
 							{{ Group.head_teacher_label }}
 						</span>
 					</td>
-					<td width="200" style='text-align: right'>
+					<td style='text-align: right'>
 						<span ng-show="Group.ended">заархивировано</span>
 					</td>
 				</tr>
