@@ -32,7 +32,7 @@
 							'many': 'учеников',
 						}"></ng-pluralize>
 					</td>
-					<td width='160'>
+					<td width='180'>
 						<span ng-show="Group.first_lesson_date">
 							<span ng-show="!Group.lesson_count.conducted">1-й урок {{Group.first_lesson_date | date:"dd.MM"}}</span>
 							<span ng-show="Group.lesson_count.conducted">
