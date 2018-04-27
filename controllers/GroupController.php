@@ -307,10 +307,11 @@
 
                     $Group->Students = [];
                     foreach ($Group->students as $id_student) {
-                        $Student = Student::getLight($id_student);
+                        $Student = Student::getLight($id_student, ['id_head_teacher']);
                         if ($Group->grade && $Group->id_subject) {
                             $Student->Test = TestStudent::getForGroup($id_student, $Group->id_subject, $Group->grade);
                         }
+						$Student->is_head_teacher = $Student->id_head_teacher == User::fromSession()->id_entity;
                         $Group->Students[] = $Student;
                     }
 

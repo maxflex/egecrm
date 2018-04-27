@@ -696,7 +696,7 @@
 			if (count($student_ids)) {
 				// get students from journal
 				$result = dbConnection()->query("
-					SELECT id, first_name, last_name FROM students
+					SELECT id, first_name, last_name, id_head_teacher FROM students
 					WHERE id IN (". implode(",", $student_ids) .")
 				");
 
@@ -728,5 +728,38 @@
 				"Teachers"		=> $Teachers,
 				"Lessons"		=> $Lessons,
 			]);
+		}
+
+		public function actionAjaxTeacherLkMenu()
+		{
+			extract($_POST);
+			switch ($menu) {
+				case 0: {
+					$Schedule = Student::getFullSchedule($id_student, true);
+					returnJsonAng([
+						"Subjects"	=> Subjects::$three_letters,
+						"Lessons"	=> $Schedule->Lessons,
+						"lesson_statuses" => VisitJournal::$statuses,
+						"all_cabinets" =>  Branches::allCabinets(),
+						"months" => Months::get(),
+						"lesson_years" => $Schedule->years,
+						"selected_lesson_year" => end($Schedule->years)
+					]);
+				}
+				case 1: {
+					returnJsonAng(Teacher::getReviews($id_teacher));
+				}
+				case 3: {
+					returnJsonAng([
+                        'payments'      => Payment::findAll(['condition' => "entity_id = $id_teacher and entity_type = '" . Teacher::USER_TYPE . "'", 'order' =>'first_save_date asc']),
+                        'tobe_paid' => Payment::tobePaid($id_teacher, Teacher::USER_TYPE),
+                        'academic_year' => academicYear(),
+                        'user_rights' => User::fromSession()->rights,
+                    ]);
+				}
+				case 4: {
+					returnJsonAng(Teacher::getReportsStatic($id_teacher));
+				}
+			}
 		}
 	}

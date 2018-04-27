@@ -1,5 +1,46 @@
 app = angular.module "StudentProfile", []
-    .controller "BalanceCtrl", ($scope) ->
+    .controller "TeacherLk", ($scope) ->
+        $scope.getCabinet = (id) ->
+            _.findWhere($scope.all_cabinets, {id: parseInt(id)})
+
+        $scope.setLessonsYear = (year) -> $scope.selected_lesson_year = year
+
+        $scope.yearLabel = (year) -> year + '-' + (parseInt(year) + 1) + ' уч. г.'
+
+        $scope.getLessonIndex = (index, GroupLessons) ->
+            index++
+            GroupLessons = _.sortBy(GroupLessons, 'date_time')
+            cancelled_count = _.where(GroupLessons.slice(0, index), {cancelled: 1}).length
+            report_count = _.where(GroupLessons.slice(0, index), {is_report: true}).length
+            return (index - cancelled_count - report_count)
+
+        menus = ['Lessons']
+
+        $scope.setMenu = (menu, complex_data) ->
+            $scope.current_menu = menu
+            $.each menus, (index, value) ->
+                _loadData(index, menu, value, complex_data)
+
+        _postData = (menu) ->
+            menu: menu
+            id_student: $scope.id_student
+
+        _loadData = (menu, selected_menu, ngModel, complex_data) ->
+            if $scope[ngModel] is undefined and menu is selected_menu
+                $.post "ajax/TeacherLkMenu", _postData(menu), (response) ->
+                    if complex_data
+                        _.each response, (value, field) ->
+                            $scope[field] = value
+                    else
+                        $scope[ngModel] = response
+                    $scope.$apply()
+                , "json"
+        angular.element(document).ready ->
+            set_scope "StudentProfile"
+            $scope.setMenu(0, true)
+            $scope.$apply()
+
+	.controller "BalanceCtrl", ($scope) ->
 		$scope.yearLabel = (year) -> year + '-' + (parseInt(year) + 1) + ' уч. г.'
 
 		$scope.reverseObjKeys = (obj) -> Object.keys(obj).reverse()

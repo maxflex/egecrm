@@ -2015,7 +2015,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				$.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
 					['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'Prices', 'server_markers', 'contracts', 'student', 'Groups', 'student_phone_level',
-						'branches_brick', 'representative_phone_level', 'representative'].forEach(function(field) {
+						'branches_brick', 'representative_phone_level', 'representative', 'Teachers'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 

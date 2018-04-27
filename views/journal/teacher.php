@@ -25,7 +25,8 @@
             <tbody>
             <tr ng-repeat="Student in Group.Students">
                 <td style="text-align: left; width: 250px">
-                    {{Student.first_name}} {{Student.last_name}}
+					<a ng-show="<?= User::fromSession()->id_entity ?> == Student.id_head_teacher" href="/teachers/student/{{ Student.id }}">{{Student.last_name}} {{Student.first_name}}</a>
+					<span ng-show="!<?= User::fromSession()->id_entity ?> == Student.id_head_teacher">{{Student.last_name}} {{Student.first_name}}</span>
                 </td>
                 <td ng-repeat="Lesson in Lessons" ng-class="{'gray-bg': grayMonth(Lesson.lesson_date)}">
                         <span class="circle-default"

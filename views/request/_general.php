@@ -133,7 +133,7 @@
 			    </div>
 				<div class="col-sm-3">
 		            <?php if (User::byType($Request->Student->id, Student::USER_TYPE, 'count')) :?>
-		            <h4 style="margin-top: 0" class="row-header">Данные по ЛК</h4>
+		            <h4 style="margin-top: 0" class="row-header">Прочее</h4>
 					<?= partial('photo') ?>
 		            <div>
 			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
@@ -145,6 +145,15 @@
 		            </div>
 		            <?php endif ?>
 					<div class="form-group" style='margin-top: 20px'>
+						<select class="form-control" ng-model="student.id_head_teacher" name="Student[id_head_teacher]">
+							<option selected value="0">классный руководитель</option>
+							<option disabled>──────────────</option>
+							<option ng-repeat="Teacher in Teachers" value="{{Teacher.id}}" ng-selected="Teacher.id == student.id_head_teacher">
+								{{Teacher.last_name}} {{Teacher.first_name[0]}}. {{Teacher.middle_name[0]}}.
+							</option>
+						</select>
+					</div>
+					<div class="form-group">
 			            <?= Branches::buildSvgSelector($Request->Student->branches, [
 				            "name" => "Student[branches][]",
 				            "ng-model" => "student.branches",

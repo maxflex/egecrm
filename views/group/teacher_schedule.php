@@ -42,7 +42,10 @@
 				<div style="margin-bottom: 15px; font-weight: bold">Текущий состав группы учеников:</div>
 				<table width="100%">
 					<tr ng-repeat="Student in Group.Students">
-						<td width="40%">{{$index + 1}}. {{Student.last_name}} {{Student.first_name}}</td>
+						<td width="40%">{{$index + 1}}.
+							<a ng-show="Student.is_head_teacher" href="/teachers/student/{{ Student.id }}">{{Student.last_name}} {{Student.first_name}}</a>
+							<span ng-show="!Student.is_head_teacher">{{Student.last_name}} {{Student.first_name}}</span>
+						</td>
 						<td style="padding-left: 10px;">
 							<span ng-show="Student && Student.Test">
 								<span ng-show="Student.Test.notStarted" class="quater-black">к тесту не приступал</span>

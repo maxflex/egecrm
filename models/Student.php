@@ -844,11 +844,11 @@
 		/*
 		 * Получить легкую версию (имя + id)
 		 */
-		public static function getLight($id)
+		public static function getLight($id, $additional = [])
 		{
 			return dbConnection()->query("
-				SELECT s.id, s.first_name, s.last_name, s.middle_name, s.id_user_review, s.grade, u.login as user_login, u.color
-				FROM " . static::$mysql_table . " s
+				SELECT s.id, s.first_name, s.last_name, s.middle_name, s.id_user_review, s.grade, u.login as user_login, u.color" . (count($additional) ? ', ' . implode(',', $additional) : '') .
+				" FROM " . static::$mysql_table . " s
 				LEFT JOIN users u ON u.id = s.id_user_review
 				WHERE s.id = " . $id . "
 				ORDER BY s.last_name, s.first_name, s.middle_name ASC")

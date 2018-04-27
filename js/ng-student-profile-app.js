@@ -1,6 +1,63 @@
 var app;
 
-app = angular.module("StudentProfile", []).controller("BalanceCtrl", function($scope) {
+app = angular.module("StudentProfile", []).controller("TeacherLk", function($scope) {
+  var _loadData, _postData, menus;
+  $scope.getCabinet = function(id) {
+    return _.findWhere($scope.all_cabinets, {
+      id: parseInt(id)
+    });
+  };
+  $scope.setLessonsYear = function(year) {
+    return $scope.selected_lesson_year = year;
+  };
+  $scope.yearLabel = function(year) {
+    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
+  };
+  $scope.getLessonIndex = function(index, GroupLessons) {
+    var cancelled_count, report_count;
+    index++;
+    GroupLessons = _.sortBy(GroupLessons, 'date_time');
+    cancelled_count = _.where(GroupLessons.slice(0, index), {
+      cancelled: 1
+    }).length;
+    report_count = _.where(GroupLessons.slice(0, index), {
+      is_report: true
+    }).length;
+    return index - cancelled_count - report_count;
+  };
+  menus = ['Lessons'];
+  $scope.setMenu = function(menu, complex_data) {
+    $scope.current_menu = menu;
+    return $.each(menus, function(index, value) {
+      return _loadData(index, menu, value, complex_data);
+    });
+  };
+  _postData = function(menu) {
+    return {
+      menu: menu,
+      id_student: $scope.id_student
+    };
+  };
+  _loadData = function(menu, selected_menu, ngModel, complex_data) {
+    if ($scope[ngModel] === void 0 && menu === selected_menu) {
+      return $.post("ajax/TeacherLkMenu", _postData(menu), function(response) {
+        if (complex_data) {
+          _.each(response, function(value, field) {
+            return $scope[field] = value;
+          });
+        } else {
+          $scope[ngModel] = response;
+        }
+        return $scope.$apply();
+      }, "json");
+    }
+  };
+  return angular.element(document).ready(function() {
+    set_scope("StudentProfile");
+    $scope.setMenu(0, true);
+    return $scope.$apply();
+  });
+}).controller("BalanceCtrl", function($scope) {
   $scope.yearLabel = function(year) {
     return year + '-' + (parseInt(year) + 1) + ' уч. г.';
   };
