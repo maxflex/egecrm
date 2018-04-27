@@ -113,7 +113,14 @@
 		    $scope.students_not_filled = _.filter($scope.LessonData, (v) ->
 		                    v and +(v.presence)
 		                  ).length isnt $scope.Students.length
+		    saveEditedStudent() if $scope.Lesson.is_conducted
 		    lightBoxHide()
+
+
+		  saveEditedStudent = ->
+			  ajaxStart()
+			  $.post "groups/ajax/saveEditedStudent", $scope.EditLessonData, (response) ->
+				  ajaxEnd()
 
 		  $scope.registerInJournal = ->
 		    bootbox.confirm "Записать запись в журнал?", (result) ->
@@ -127,26 +134,6 @@
 		          $.post "groups/ajax/registerInJournal",
 		            id_lesson: $scope.Lesson.id
 		            data: $scope.LessonData
-		          , (response) ->
-		            ajaxEnd()
-		            $scope.saving = false
-		            $scope.Lesson.is_conducted = true
-		            $scope.Lesson.is_planned = false
-		            # $scope.form_changed = false
-		            $scope.$apply()
-
-		  $scope.changeRegisterInJournal = ->
-		    bootbox.confirm "Сохранить изменения?", (result) ->
-		      if result is true
-		        if _.without($scope.LessonData, undefined).length isnt $scope.Students.length
-		          bootbox.alert "Заполните данные по всем ученикам перед записью в журнал"
-		        else
-		          $scope.saving = true
-		          $scope.$apply()
-		          ajaxStart()
-		          $.post "groups/ajax/registerInJournalWithoutSMS",
-		            id_lesson: $scope.Lesson.id
-		            data:		$scope.LessonData
 		          , (response) ->
 		            ajaxEnd()
 		            $scope.saving = false

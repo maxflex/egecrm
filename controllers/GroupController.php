@@ -153,7 +153,7 @@
                         "Lesson"          => $Lesson,
 						"LessonData"      => (object)$OrderedLessonData,
 						"lesson_statuses" => VisitJournal::$statuses,
-						"isAdmin"		  => User::isAdmin(),
+						"isAdmin"		  => User::isAdmin() ? 1 : 0,
 						"left_students"   => $left_students,
 						'Teacher'		  => Teacher::getLight(User::fromSession()->id_entity)
 					]);
@@ -514,23 +514,6 @@
 			VisitJournal::addData($id_lesson, $data);
 		}
 
-		/**
-		 * Изменение данных журнала без отправки СМС. Доступен только админам.
-		 *
-		 */
-		public function actionAjaxRegisterInJournalWithoutSMS()
-		{
-			extract($_POST);
-
-			// Дополнительный вход
-			User::rememberMeLogin();
-
-			if (User::fromSession()->type == User::USER_TYPE) {
-				$data = array_filter($data);
-				VisitJournal::updateData($id_lesson, $data);
-			}
-		}
-
 		public function actionAjaxSmsNotify()
 		{
 			extract($_POST);
@@ -852,6 +835,11 @@
 			Group::updateById($id, [
 				$field => $value
 			]);
+		}
+
+		public function actionAjaxSaveEditedStudent()
+		{
+			VisitJournal::updateById($_POST['id'], $_POST);
 		}
 
 		public function actionAjaxGetEditData()

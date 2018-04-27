@@ -80,7 +80,7 @@
                             {{ getCabinet(Lesson.cabinet).label }}
 						</td>
 						<td width="35%">
-							<span ng-show="Lesson.is_conducted">урок проведен</span>
+							<a href='teachers/lesson/{{ Lesson.id }}' ng-show="Lesson.is_conducted">урок проведен</a>
 							<span ng-show="Lesson.cancelled">урок отменен</span>
 							<a href='teachers/lesson/{{ Lesson.id }}' ng-show='Lesson.is_planned && !Lesson.cancelled'>зарегистрировать урок</a>
 						</td>

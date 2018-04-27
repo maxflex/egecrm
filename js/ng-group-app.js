@@ -101,7 +101,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return set_scope("Group");
   });
 }).controller("LessonCtrl", function($scope) {
-  var until_save_interval;
+  var saveEditedStudent, until_save_interval;
   $scope.formatDate = function(date) {
     var D;
     date = date.split(".");
@@ -162,7 +162,16 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     $scope.students_not_filled = _.filter($scope.LessonData, function(v) {
       return v && +v.presence;
     }).length !== $scope.Students.length;
+    if ($scope.Lesson.is_conducted) {
+      saveEditedStudent();
+    }
     return lightBoxHide();
+  };
+  saveEditedStudent = function() {
+    ajaxStart();
+    return $.post("groups/ajax/saveEditedStudent", $scope.EditLessonData, function(response) {
+      return ajaxEnd();
+    });
   };
   $scope.registerInJournal = function() {
     return bootbox.confirm("Записать запись в журнал?", function(result) {
@@ -174,29 +183,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
           $scope.$apply();
           ajaxStart();
           return $.post("groups/ajax/registerInJournal", {
-            id_lesson: $scope.Lesson.id,
-            data: $scope.LessonData
-          }, function(response) {
-            ajaxEnd();
-            $scope.saving = false;
-            $scope.Lesson.is_conducted = true;
-            $scope.Lesson.is_planned = false;
-            return $scope.$apply();
-          });
-        }
-      }
-    });
-  };
-  $scope.changeRegisterInJournal = function() {
-    return bootbox.confirm("Сохранить изменения?", function(result) {
-      if (result === true) {
-        if (_.without($scope.LessonData, void 0).length !== $scope.Students.length) {
-          return bootbox.alert("Заполните данные по всем ученикам перед записью в журнал");
-        } else {
-          $scope.saving = true;
-          $scope.$apply();
-          ajaxStart();
-          return $.post("groups/ajax/registerInJournalWithoutSMS", {
             id_lesson: $scope.Lesson.id,
             data: $scope.LessonData
           }, function(response) {

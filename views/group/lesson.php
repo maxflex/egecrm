@@ -1,7 +1,6 @@
 <div class="panel panel-primary" ng-app="Group" ng-controller="LessonCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="panel-heading">
-<!-- 		Группа №{{id_group}}, занятие {{formatDate(date)}} -->
-		<?= User::isStudent(true) ? "Просмотр" : "Редактирование" ?> занятия
+ 		Просмотр занятия {{ Lesson.is_conducted ? 'true' : 'false' }}
 	</div>
 	<div class="panel-body">
 		<div>
@@ -15,14 +14,14 @@
 										<span class="circle-default"></span>
 									</div>
 									{{Student.last_name}} {{Student.first_name}}</td>
-								<td width="300">
+								<td width="250">
 									{{ getPresenceStatus(LessonData[Student.id]) }}
 								</td>
-								<td width="300">
-									<span>{{LessonData[Student.id].comment}}</span>
+								<td width="400">
+									{{LessonData[Student.id].comment}}
 								</td>
-								<td ng-hide="<?= User::isStudent(true) ?>">
-									<span class="link-like" ng-click="editStudent(Student)" ng-show="Lesson.is_planned">редактировать</span>
+								<td>
+									<span class="link-like" ng-click="editStudent(Student)">редактировать</span>
 								</td>
 							</tr>
 							<tr ng-repeat="Student in left_students">
@@ -43,12 +42,11 @@
 					</div>, просьба сообщить об этом в администрацию
 				</div>
 			</div>
-			<div class="row" ng-hide="<?= User::isStudent(true) ?>">
+			<div class="row">
 				<div class="col-sm-12 center">
 					<button class="btn btn-primary ajax-payment-button" ng-click="registerInJournal()" ng-show="until_save === true && Lesson.is_planned"
 						ng-disabled="Lesson.is_conducted || saving || students_not_filled">
 						<span ng-show="Lesson.is_planned">Записать в журнал</span>
-<!--						<span >Записано</span>-->
 					</button>
 					<span ng-show="until_save !== true">
 						<button disabled class="btn btn-default">
