@@ -10,7 +10,7 @@
 				</tr>
 				<tr ng-repeat="Group in Groups|byYear:group_year"
 					class="group-list" data-id="{{Group.id}}">
-					<td width='90'>
+					<td width='100'>
 						{{Group.id}}
 						<a style='margin-left: 5px' href="teachers/groups/edit/{{Group.id}}/schedule"><i class="fa fa-calendar-o" aria-hidden="true"></i></a>
 						<a style='margin-left: 5px' href="teachers/groups/journal/{{Group.id}}"><i class="fa fa-users" aria-hidden="true"></i></a>
