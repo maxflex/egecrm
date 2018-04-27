@@ -10,22 +10,22 @@
 				</tr>
 				<tr ng-repeat="Group in Groups|byYear:group_year"
 					class="group-list" data-id="{{Group.id}}">
-					<td width='80'>
+					<td width='90'>
 						{{Group.id}}
 						<a style='margin-left: 5px' href="teachers/groups/edit/{{Group.id}}/schedule"><i class="fa fa-calendar-o" aria-hidden="true"></i></a>
 						<a style='margin-left: 5px' href="teachers/groups/journal/{{Group.id}}"><i class="fa fa-users" aria-hidden="true"></i></a>
 					</td>
-					<td width='80'>
+					<td width='90'>
 						<!-- @time-refactored @time-checked -->
 						<span ng-repeat='cabinet in Group.cabinets'>
 							<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
 							<span class="remove-space">{{$last ? '' : ', '}}</span>
 						</span>
 					</td>
-					<td width="100">
+					<td width="110">
 						{{Subjects[Group.id_subject]}}-{{ Group.grade_short }}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
 					</td>
-					<td width="110">
+					<td width="120">
 						{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
 							'one': 'ученик',
 							'few': 'ученика',
