@@ -56,6 +56,7 @@ RewriteRule ^(students/|teachers/)?groups/journal/([0-9]+)$ index.php?controller
 RewriteRule ^groups/schedule/download[/]?$ index.php?controller=group&action=DownloadSchedule [QSA,L]
 RewriteRule ^groups/add[/]?$ index.php?controller=group&action=add [QSA,L]
 RewriteRule ^groups/ajax/([a-zA-Z]+)[/]?$ index.php?controller=group&action=Ajax$1 [QSA,L]
+RewriteRule ^teachers/groups/extended[/]?$ index.php?controller=group&action=list&extended=1 [QSA,L]
 RewriteRule ^(students/|teachers/)?groups[?page=(0-9)]?[/]?$ index.php?controller=group&action=list&page=$1 [QSA,L]
 
 RewriteRule ^students/schedule?[/]?$ index.php?controller=group&action=yearSchedule [QSA,L]

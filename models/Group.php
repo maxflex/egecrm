@@ -41,6 +41,9 @@
 					$this->days_before_exam = $this->daysBeforeExam();
 				}
 
+				if ($this->id_head_teacher) {
+					$this->head_teacher_label = getShortName(Teacher::getLight($this->id_head_teacher));
+				}
 				static::_addCabinets($this);
 			}
 

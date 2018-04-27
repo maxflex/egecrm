@@ -611,6 +611,13 @@
 					$scope.updateGroup
 						teacher_price: newVal
 
+			$scope.$watch "Group.id_head_teacher", (newVal, oldVal) ->
+				return if not $scope.Group.id
+
+				if newVal isnt oldVal
+					$scope.updateGroup
+						id_head_teacher: newVal
+
 			$scope.$watch "Group.level", (newVal, oldVal) ->
 				return if not $scope.Group.id
 

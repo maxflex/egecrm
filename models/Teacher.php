@@ -135,14 +135,27 @@
 		/*
 		 * Получить легкую версию (имя + id)
 		 */
-		public static function getLight($id, $additional = [])
+		public static function getLight($id = false, $additional = [])
 		{
-			return dbEgerep()->query("
+
+			$result = dbEgerep()->query("
 				SELECT id, first_name, last_name, middle_name " . (count($additional) ? ', ' . implode(',', $additional) : '') .
                 " FROM " . static::$mysql_table . "
-				WHERE id = " . $id . "
-				ORDER BY last_name, first_name, middle_name ASC")
-			->fetch_object();
+				WHERE in_egecentr > 0 AND " . ($id === false ? "true" : (is_array($id) ? " id IN (" . implode(',', $id) . ")" : "id={$id}"))  . "
+				ORDER BY last_name, first_name, middle_name ASC");
+
+			if ($id === false || is_array($id)) {
+				$Teachers = [];
+				while($row = $result->fetch_object()) {
+					if (isset($row->subjects)) {
+						$row->subjects = explode(',', $row->subjects);
+					}
+					$Teachers[] = $row;
+				}
+				return $Teachers;
+			} else {
+				return $result->fetch_object();
+			}
 		}
 
 				/*
@@ -298,23 +311,23 @@
 			return $Teachers;
 		}
 
-		public static function getGroups($id_teacher = false, $only_ended = true)
+		public static function getGroups($id_teacher = false, $only_ended = true, $where_head = false)
 		{
 			// @refactored
 			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
 
 			return Group::findAll([
-				"condition" => "id_teacher=$id_teacher AND is_unplanned=0" . ($only_ended ? " AND ended=0" : ""),
+				"condition" => ($where_head ? "id_head_teacher" : "id_teacher") . "=$id_teacher AND is_unplanned=0" . ($only_ended ? " AND ended=0" : ""),
 			], true);
 		}
 
-		public static function countGroups($id_teacher = false)
+		public static function countGroups($id_teacher = false, $where_head = false)
 		{
 			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
 
 			// @refactored
 			return Group::count([
-				"condition" => "id_teacher=$id_teacher AND ended = 0 AND is_unplanned=0"
+				"condition" => ($where_head ? "id_head_teacher" : "id_teacher") . "={$id_teacher} AND ended = 0 AND is_unplanned=0"
 			]);
 		}
 

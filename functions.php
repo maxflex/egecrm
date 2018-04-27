@@ -711,6 +711,11 @@
 	    return $randomString;
 	}
 
+	function getShortName($person)
+	{
+		return $person->last_name . ' ' . mb_strimwidth($person->first_name, 0, 1) . '. ' . mb_strimwidth($person->middle_name, 0, 1) . '. ';
+	}
+
 	function getName($last_name, $first_name, $middle_name, $order = 'fio')
 	{
 		if (empty(trim($last_name)) && empty(trim($first_name)) && empty(trim($middle_name))) {

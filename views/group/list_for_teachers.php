@@ -1,3 +1,4 @@
+<?= globalPartial('font_awesome') ?>
 <div ng-app="Group" ng-controller="TeacherListCtrl" ng-init="<?= $ang_init_data ?>">
 	<div class="row" style="position: relative">
 		<div class="col-sm-12">
@@ -9,27 +10,29 @@
 				</tr>
 				<tr ng-repeat="Group in Groups|byYear:group_year"
 					class="group-list" data-id="{{Group.id}}">
-					<td width="5%">
+					<td width='80'>
 						{{Group.id}}
+						<a style='margin-left: 5px' href="teachers/groups/edit/{{Group.id}}/schedule"><i class="fa fa-calendar-o" aria-hidden="true"></i></a>
+						<a style='margin-left: 5px' href="teachers/groups/journal/{{Group.id}}"><i class="fa fa-users" aria-hidden="true"></i></a>
 					</td>
-					<td width="8%">
+					<td width='75'>
 						<!-- @time-refactored @time-checked -->
 						<span ng-repeat='cabinet in Group.cabinets'>
 							<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
 							<span class="remove-space">{{$last ? '' : ', '}}</span>
 						</span>
 					</td>
-					<td width="100">
+					<td width="80">
 						{{Subjects[Group.id_subject]}}-{{ Group.grade_short }}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
 					</td>
-					<td width="10%">
+					<td width="90">
 						{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
 							'one': 'ученик',
 							'few': 'ученика',
 							'many': 'учеников',
 						}"></ng-pluralize>
 					</td>
-					<td>
+					<td width='150'>
 						<span ng-show="Group.first_lesson_date">
 							<span ng-show="!Group.lesson_count.conducted">1-й урок {{Group.first_lesson_date | date:"dd.MM"}}</span>
 							<span ng-show="Group.lesson_count.conducted">
@@ -42,19 +45,18 @@
 							</span>
 			            </span>
 					</td>
-					<td width="16%">
+					<td width="100">
 						<!-- @time-refactored @time-checked -->
 						<span ng-repeat="data in Group.day_and_time">
 							<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
 						</span>
 					</td>
-					<td width="100px">
-						<a href="teachers/groups/edit/{{Group.id}}/schedule">расписание</a>
+					<td width='200'>
+						<span ng-if="Group.id_head_teacher">
+							{{ Group.head_teacher_label }}
+						</span>
 					</td>
-					<td width="100px">
-						<a href="teachers/groups/journal/{{Group.id}}">посещаемость</a>
-					</td>
-					<td width="13%">
+					<td width="200" style='text-align: right'>
 						<span ng-show="Group.ended">заархивировано</span>
 					</td>
 				</tr>

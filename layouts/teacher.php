@@ -25,6 +25,12 @@
 			}
 		?>
     </a>
+	<?php
+		$groups_head_count = Teacher::countGroups(false, true);
+		if ($groups_head_count) {
+			echo '<a href="teachers/groups/extended" class="list-group-item">Расширенный доступ<span class="badge pull-right">'. $groups_head_count .'</span></a>';
+		}
+	?>
     <a href="teachers/reports" class="list-group-item">Отчеты
 	    <?php
 		    $red_report_count = Teacher::redReportCountStatic(User::fromSession()->id_entity);

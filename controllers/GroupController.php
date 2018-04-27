@@ -24,7 +24,9 @@
 
             // has-access-refactored
             if (User::isTeacher()) {
-                $this->hasAccess('groups', $id_group);
+				if (! $this->hasAccess('groups', $id_group, null, null , true) && ! $this->hasAccess('groups', $id_group, 'id_head_teacher', null, true)) {
+					$this->renderRestricted();
+				}
             }
 
 			$this->setTabTitle("Посещаемость группы №" . $id_group);
@@ -177,8 +179,9 @@
 		public function actionList()
 		{
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
-				$this->setTabTitle("Мои группы");
-				$Groups = Teacher::getGroups(User::fromSession()->id_entity, false);
+				$extended = isset($_GET['extended']) && $_GET['extended'];
+				$this->setTabTitle($extended ? "Расширенный доступ" : "Мои группы");
+				$Groups = Teacher::getGroups(User::fromSession()->id_entity, false, $extended);
 
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -187,12 +190,13 @@
 					"GroupLevels"	=> GroupLevels::$short,
 					"Branches"		=> Branches::getAll(),
 					"all_cabinets"	=> Branches::allCabinets(), // @to show past lesson cabinet number
-					"AdditionalLessons" => AdditionalLesson::getByEntity(Teacher::USER_TYPE, User::fromSession()->id_entity),
-					"TeacherAdditionalPayments" => TeacherAdditionalPayment::get(User::fromSession()->id_entity),
+					"AdditionalLessons" => $extended ? null : AdditionalLesson::getByEntity(Teacher::USER_TYPE, User::fromSession()->id_entity),
+					"TeacherAdditionalPayments" => $extended ? null: TeacherAdditionalPayment::get(User::fromSession()->id_entity),
 				]);
 
 				$this->render("list_for_teachers", [
 					"Groups" 		=> $Groups,
+					"extended" => $extended,
 					"ang_init_data" => $ang_init_data
 				]);
 
@@ -294,8 +298,9 @@
 				]);
 			} else
 				if (User::fromSession()->type == Teacher::USER_TYPE) {
-					// has-access-refactored
-					$this->hasAccess('groups', $id_group);
+					if (! $this->hasAccess('groups', $id_group, null, null , true) && ! $this->hasAccess('groups', $id_group, 'id_head_teacher', null, true)) {
+						$this->renderRestricted();
+					}
 
                     // не надо панель рисовать
 					$this->_custom_panel = true;
@@ -848,8 +853,8 @@
 
 			$Group = Group::findById($id);
 
-			if (! LOCAL_DEVELOPMENT) {
-                $Teachers = Teacher::findAll(["select" => ['id', 'last_name', 'first_name', 'subjects', 'middle_name']], true);
+			//if (! LOCAL_DEVELOPMENT) {
+	            $Teachers = Teacher::getLight(false, ['subjects']);
 
 				if ($Group->id_teacher) {
 					foreach ($Teachers as &$Teacher) {
@@ -858,7 +863,7 @@
 						}
 					}
 				}
-			}
+			//}
 
 			$Students = [];
 			foreach ($Group->students as $id_student) {

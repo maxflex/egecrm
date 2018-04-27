@@ -78,7 +78,7 @@
         /**
          * Logged user has access
          */
-        protected function hasAccess($table, $id, $column = null, $array = null)
+        protected function hasAccess($table, $id, $column = null, $array = null, $return_boolean = false)
         {
             if (! $column) {
                 $column = 'id_' . strtolower(User::fromSession()->type);
@@ -89,6 +89,10 @@
             $query = "SELECT 1 FROM {$table} WHERE id={$id} AND {$condition}";
 
             $has_access = dbConnection()->query($query)->num_rows;
+
+			if ($return_boolean) {
+				return $has_access;
+			}
 
             if (! $has_access) {
                 $this->renderRestricted();

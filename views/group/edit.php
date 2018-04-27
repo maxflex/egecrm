@@ -51,6 +51,15 @@
 						</select>
 					</div>
 					<div class="form-group">
+						<select class="form-control" ng-model="Group.id_head_teacher">
+							<option selected value="">классный руководитель</option>
+							<option disabled>──────────────</option>
+							<option ng-repeat="Teacher in Teachers" value="{{Teacher.id}}" ng-selected="Teacher.id == Group.id_head_teacher">
+								{{Teacher.last_name}} {{Teacher.first_name[0]}}. {{Teacher.middle_name[0]}}.
+							</option>
+						</select>
+					</div>
+					<div class="form-group">
 						<input class="form-control digits-only"
 							ng-model="Group.teacher_price" ng-model-options="{debounce: 1000}" placeholder="цена преподавателя">
 					</div>
