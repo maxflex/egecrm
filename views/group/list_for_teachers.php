@@ -15,24 +15,24 @@
 						<a style='margin-left: 5px' href="teachers/groups/edit/{{Group.id}}/schedule"><i class="fa fa-calendar-o" aria-hidden="true"></i></a>
 						<a style='margin-left: 5px' href="teachers/groups/journal/{{Group.id}}"><i class="fa fa-users" aria-hidden="true"></i></a>
 					</td>
-					<td width='75'>
+					<td width='80'>
 						<!-- @time-refactored @time-checked -->
 						<span ng-repeat='cabinet in Group.cabinets'>
 							<span style='color: {{ cabinet.color }}'>{{ cabinet.label }}</span>
 							<span class="remove-space">{{$last ? '' : ', '}}</span>
 						</span>
 					</td>
-					<td width="80">
+					<td width="100">
 						{{Subjects[Group.id_subject]}}-{{ Group.grade_short }}<span ng-show="Group.level">-{{ GroupLevels[Group.level] }}</span>
 					</td>
-					<td width="90">
+					<td width="110">
 						{{Group.students.length}} <ng-pluralize count="Group.students.length" when="{
 							'one': 'ученик',
 							'few': 'ученика',
 							'many': 'учеников',
 						}"></ng-pluralize>
 					</td>
-					<td width='150'>
+					<td width='160'>
 						<span ng-show="Group.first_lesson_date">
 							<span ng-show="!Group.lesson_count.conducted">1-й урок {{Group.first_lesson_date | date:"dd.MM"}}</span>
 							<span ng-show="Group.lesson_count.conducted">
