@@ -18,7 +18,7 @@
 			<input ng-model="EditLessonData.price" placeholder="цена" class="form-control digits-only">
 		</div>
 		<div class="form-group">
-			<textarea ng-model="EditLessonData.comment" placeholder="комментарий" class="form-control" rows="3" maxlength="1000"></textarea>
+			<textarea ng-model="EditLessonData.comment" placeholder="комментарий" class="form-control" rows="3" maxlength="70"></textarea>
 		</div>
 	<center>
 		<button class="btn btn-primary ajax-payment-button" ng-click="saveStudent()">Сохранить</button>
