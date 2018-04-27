@@ -52,9 +52,7 @@
 						</span>
 					</td>
 					<td width='200'>
-						<span ng-if="Group.id_head_teacher">
-							{{ Group.head_teacher_label }}
-						</span>
+						{{ Group.Teacher.last_name }} {{ Group.Teacher.first_name[0] }}. {{ Group.Teacher.middle_name[0] }}.
 					</td>
 					<td style='text-align: right'>
 						<span ng-show="Group.ended">заархивировано</span>
