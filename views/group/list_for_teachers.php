@@ -32,7 +32,7 @@
 							'many': 'учеников',
 						}"></ng-pluralize>
 					</td>
-					<td width='180'>
+					<td width='185'>
 						<span ng-show="Group.first_lesson_date">
 							<span ng-show="!Group.lesson_count.conducted">1-й урок {{Group.first_lesson_date | date:"dd.MM"}}</span>
 							<span ng-show="Group.lesson_count.conducted">
@@ -45,7 +45,7 @@
 							</span>
 			            </span>
 					</td>
-					<td width="200">
+					<td width="210">
 						<!-- @time-refactored @time-checked -->
 						<span ng-repeat="data in Group.day_and_time">
 							<span ng-repeat="d in data">{{ d.time.weekday_name }} в {{ d.time.time }}{{$last ? '' : ', '}}</span>{{ $last ? '' : ', '}}
