@@ -859,7 +859,7 @@
 				if ($Group->id_teacher) {
 					foreach ($Teachers as &$Teacher) {
 						if ($Teacher->id == $Group->id_teacher) {
-							$Teacher->bar = $Teacher->getBar();
+							$Teacher->bar = Freetime::getTeacherBar($Teacher->id);
 						}
 					}
 				}

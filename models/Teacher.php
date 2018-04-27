@@ -57,11 +57,6 @@
 			return dbEgerep();
 		}
 
-		public function getBar()
-		{
-			return Freetime::getTeacherBar($this->id);
-		}
-
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
 		/**
