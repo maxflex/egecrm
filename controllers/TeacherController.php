@@ -345,6 +345,8 @@
 		public function actionAjaxSaveHeadTeacher()
 		{
 			extract($_POST);
-			Teacher::updateById($id_teacher, compact('id_head_teacher'));
+			$Teacher = Teacher::findById($id_teacher);
+			$Teacher->id_head_teacher = $id_head_teacher;
+			$Teacher->save("id_head_teacher");
 		}
 	}
