@@ -16,7 +16,7 @@
 	<h4>Занятия в группах</h4>
 	<div ng-repeat="(id_group, GroupLessons) in Lessons.by_year[selected_lesson_year]" ng-show="id_group != -1" class="visits-block">
 		<table class="table small table-hover border-reverse last-item-no-border">
-			<?= partial('lessons_line', ['Lessons' => 'GroupLessons', 'is_teacher' => $is_teacher]) ?>
+			<?= partial('lessons_line', ['Lessons' => 'GroupLessons']) ?>
 		</table>
 	</div>
 </div>
@@ -26,7 +26,7 @@
 		<div ng-repeat="month in [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]" ng-if="Lessons.by_month[year][month]" class="visits-block">
 			<h4>{{ months[month] }} {{ month >= 9 ? year : year + 1 }}</h4>
 			<table class="table small table-hover border-reverse last-item-no-border">
-				<?= partial('lessons_line', ['Lessons' => 'Lessons.by_month[year][month]']) ?>
+				<?= partial('lessons_line', ['Lessons' => 'Lessons.by_month[year][month]', 'is_teacher' => $is_teacher]) ?>
 			</table>
 		</div>
 	</div>
