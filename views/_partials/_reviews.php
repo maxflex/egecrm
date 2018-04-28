@@ -20,7 +20,9 @@
 		</td>
 		<td>
 			<div style='width: 190px'>
-				<a href="student/{{Review.Student.id}}">
+				<a href="<?= User::isTeacher() ? "teachers/" : '' ?>student/{{Review.Student.id}}" ng-class="{
+					'no-link': is_teacher && headed_students.indexOf(Review.Student.id) === -1
+				}">
 					<span ng-show='Review.Student.last_name'>{{Review.Student.last_name}} {{Review.Student.first_name}}</span>
 					<span ng-hide='Review.Student.last_name'>имя не указано</span>
 				</a>

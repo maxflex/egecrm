@@ -3950,3 +3950,8 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 .td-light-green {
 	background: #d9eee5;
 }
+
+.no-link {
+	color: black !important;
+	pointer-events: none;
+}

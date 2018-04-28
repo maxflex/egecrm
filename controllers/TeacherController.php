@@ -197,6 +197,7 @@
 				"academic_year"			=> Years::getAcademic(),
 				"Teachers"				=> Teacher::getLight(false),
 				"is_teacher"			=> User::isTeacher() ? 1 : 0,
+				"headed_students"		=> User::isTeacher() ? Student::getIds(['condition' => "id_head_teacher=" . User::id()]) : []
 			]);
 
 			$this->render("edit", [

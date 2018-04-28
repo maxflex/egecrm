@@ -26,7 +26,9 @@
 			</div>
 		</td>
 		<td style='width: 18%'>
-			<a href="student/{{Report.Student.id}}">
+			<a href="<?= User::isTeacher() ? "teachers/" : '' ?>student/{{Report.Student.id}}" ng-class="{
+				'no-link': is_teacher && headed_students.indexOf(Report.Student.id) === -1
+			}">
 				<span ng-show='Report.Student.last_name'>{{Report.Student.last_name}} {{Report.Student.first_name}}</span>
 				<span ng-hide='Report.Student.last_name'>имя не указано</span>
 			</a>
