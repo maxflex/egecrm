@@ -2,7 +2,7 @@
 	<div class="col-sm-12">
 		<?= globalPartial('loading', ['model' => 'Lessons', 'message' => 'занятий нет']) ?>
 		<div ng-show="Lessons">
-			<?= globalPartial('lessons_and_reports') ?>
+			<?= globalPartial('lessons_and_reports', ['is_teacher' => true]) ?>
 		</div>
 	</div>
 </div>

@@ -16,7 +16,7 @@
 	<h4>Занятия в группах</h4>
 	<div ng-repeat="(id_group, GroupLessons) in Lessons.by_year[selected_lesson_year]" ng-show="id_group != -1" class="visits-block">
 		<table class="table small table-hover border-reverse last-item-no-border">
-			<?= partial('lessons_line', ['Lessons' => 'GroupLessons']) ?>
+			<?= partial('lessons_line', ['Lessons' => 'GroupLessons', 'is_teacher' => $is_teacher]) ?>
 		</table>
 	</div>
 </div>

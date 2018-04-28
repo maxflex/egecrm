@@ -46,6 +46,6 @@
 		{{ Lesson.date | date:"dd.MM.yy" }}
 	</td>
 	<td ng-if="Lesson.is_report" colspan="6" class="td-light-green">
-		<a href="students/reports/view/{{ Lesson.id }}">{{ Lesson.label }}</a>
+		<a href="<?= (isset($is_teacher) && $is_teacher) ? "teachers" : "students" ?>/reports/view/{{ Lesson.id }}">{{ Lesson.label }}</a>
 	</td>
 </tr>
