@@ -4,7 +4,7 @@
     pointer-events: none;
 }
 
-.menu-link {
+.menu-link, .btn-phone-more-info, btn-phone-call {
     display: none !important;
 }
 
