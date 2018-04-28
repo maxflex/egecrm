@@ -20,7 +20,16 @@
 
             // has-access-refactored
             if (User::isTeacher() || User::isStudent()) {
-                $this->hasAccess('reports', $id_report);
+				if (User::isTeacher()) {
+					// проверяем, является ли препод классным руководителем ученика в отчете
+					$Report = Report::getLight($id_report, ['id_student']);
+					$Student = Student::getLight($Report->id_student, ['id_head_teacher']);
+					if (! $this->hasAccess('reports', $id_report, null, null , true) && ! ($Student->id_head_teacher == User::fromSession()->id_entity)) {
+						$this->renderRestricted();
+					}
+	            } else {
+					$this->hasAccess('reports', $id_report);
+				}
             }
 
 			$Report				= Report::findById($id_report);
