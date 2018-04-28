@@ -433,7 +433,7 @@
 				"branches_brick"		=> Branches::getShortColored(),
 				"academic_year"			=> $search->year,
                 "Prices"                => Prices::getRecommended(),
-				"Teachers"				=> Teacher::getLight(false, ['subjects']),
+				"Teachers"				=> Teacher::getLight(false),
 				# Данные представителя
 				"representative_phone_level"	=> ($Student->Representative ? $Student->Representative->phoneLevel() : 1), // уровень телефона 1, если нет представителя
 				"representative"				=> ($Student->Representative ? $Student->Representative : new Representative()),  // для печати

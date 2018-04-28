@@ -31,6 +31,12 @@
 			echo '<a href="teachers/groups/extended" class="list-group-item">Расширенный доступ<span class="badge pull-right">'. $groups_head_count .'</span></a>';
 		}
 	?>
+	<?php
+		$teacher_head_count = Teacher::getHead(User::id(), 'count');
+		if ($teacher_head_count) {
+			echo '<a href="teachers/list" class="list-group-item">Преподаватели<span class="badge pull-right">'. $teacher_head_count .'</span></a>';
+		}
+	?>
     <a href="teachers/reports" class="list-group-item">Отчеты
 	    <?php
 		    $red_report_count = Teacher::redReportCountStatic(User::fromSession()->id_entity);

@@ -3,7 +3,7 @@
 	// Контроллер
 	class SmsController extends Controller
 	{
-		public static $allowed_users = [User::USER_TYPE];
+		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE];
 
 		public $defaultAction = 'history';
 
@@ -28,7 +28,7 @@
 				'ang_init_data' => $ang_init_data,
 			]);
 		}
-		
+
         public function actionGet()
         {
             $number = filter_var($_GET['number'], FILTER_SANITIZE_NUMBER_INT);
@@ -36,7 +36,7 @@
 
             if ($number) {
                 if ($data = SMS::findAll([
-                    'condition' => 'number = ' . $number,
+                    'condition' => 'number = ' . $number . (User::isTeacher() ? " AND id_user=" . User::id() : ''),
                     'order' => 'date desc'
                 ], true)) {
                     $result = $data;

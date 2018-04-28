@@ -58,6 +58,12 @@
 			bindArguments $scope, arguments
 			$scope.enum = review_statuses
 
+			$scope.$watch "Teacher.id_head_teacher", (newVal, oldVal) ->
+				if newVal isnt oldVal
+					$.post "teachers/ajax/saveHeadTeacher",
+						id_teacher: $scope.Teacher.id
+						id_head_teacher: newVal
+
 			$scope.getStudentsHint = (Lesson) ->
 				student_names = Lesson.students.map (student_id) -> $scope.getStudentName(student_id)
 				student_names.join("\n")

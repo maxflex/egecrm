@@ -22,9 +22,10 @@
             if (User::isTeacher() || User::isStudent()) {
 				if (User::isTeacher()) {
 					// проверяем, является ли препод классным руководителем ученика в отчете
-					$Report = Report::getLight($id_report, ['id_student']);
+					$Report = Report::getLight($id_report, ['id_student', 'id_teacher']);
 					$Student = Student::getLight($Report->id_student, ['id_head_teacher']);
-					if (! $this->hasAccess('reports', $id_report, null, null , true) && ! ($Student->id_head_teacher == User::fromSession()->id_entity)) {
+					$Teacher = Teacher::getLight($Report->id_teacher, ['id_head_teacher']);
+					if (! $this->hasAccess('reports', $id_report, null, null , true) && ! ($Student->id_head_teacher == User::fromSession()->id_entity) && ! ($Teacher->id_head_teacher == User::fromSession()->id_entity)) {
 						$this->renderRestricted();
 					}
 	            } else {

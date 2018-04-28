@@ -82,9 +82,12 @@
                 Log::custom('url', User::fromSession()->id, ['url' => @$_SERVER['REQUEST_URI']]);
             }
 			if (User::fromSession()->type == Teacher::USER_TYPE || User::fromSession()->type == Student::USER_TYPE) {
-				if (strpos($_SERVER['REQUEST_URI'], BASE_ADDON . strtolower(User::fromSession()->type)) === false) {
-					$IndexController = new $_controllerName;	// Создаем объект контроллера
-					$IndexController->renderRestricted();
+				// sms может отправлять учитель
+				if ($_controller != 'sms') {
+					if (strpos($_SERVER['REQUEST_URI'], BASE_ADDON . strtolower(User::fromSession()->type)) === false) {
+						$IndexController = new $_controllerName;	// Создаем объект контроллера
+						$IndexController->renderRestricted();
+					}
 				}
 			}
 		}

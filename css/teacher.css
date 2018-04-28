@@ -1,0 +1,21 @@
+/* скрываем пункты в ЛК преподавателя */
+.group-id-link {
+    color: black;
+    pointer-events: none;
+}
+
+.menu-link {
+    display: none !important;
+}
+
+.menu-0, .menu-1, .menu-4 {
+    display: inline-block !important;
+}
+
+.sms-template-list > * {
+    display: none;
+}
+
+/* .flex-list {
+    display: none !important;
+} */

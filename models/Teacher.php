@@ -369,63 +369,6 @@
 			]);
 		}
 
-		public function beforeSave()
-		{
-			// Очищаем номера телефонов
-			foreach (Student::$_phone_fields as $phone_field) {
-				$this->{$phone_field} = cleanNumber($this->{$phone_field});
-			}
-
-			if ($this->isNewRecord) {
-				$this->login 	= $this->_generateLogin();
-				$this->password	= $this->_generatePassword();
-
-				$this->User = User::add([
-					"login" 		=> empty($this->login) 		? $this->_generateLogin() 	: $this->login,
-					"password"		=> empty($this->password) 	? $this->_generatePassword(): $this->password,
-					"first_name"	=> $this->first_name,
-					"last_name"		=> $this->last_name,
-					"middle_name"	=> $this->middle_name,
-					"phone"			=> $this->phone,
-					"email"			=> $this->email,
-					"type"			=> self::USER_TYPE,
-				]);
-			} else {
-				$User = User::findTeacher($this->id);
-				if ($User) {
-					$User->login 	= $this->login;
-					$User->password = User::password($this->password);
-					$User->banned = $this->allowed(Shared\Rights::EC_BANNED) === "true" ? 1 : 0;
-					$User->save();
-				}
-			}
-		}
-
-		public function afterFirstSave()
-		{
-			$this->User->id_entity = $this->id;
-			$this->User->save("id_entity");
-		}
-
-		public function _generateLogin()
-		{
-			$last_name 	= mb_strtolower($this->last_name, "UTF-8");
-			$last_name = translit($last_name);
-
-			$first_name = mb_strtolower($this->first_name, "UTF-8");
-			$first_name = translit($first_name);
-
-			$middle_name= mb_strtolower($this->middle_name, "UTF-8");
-			$middle_name= translit($middle_name);
-
-			return mb_strimwidth($last_name, 0, 3) . "_" . $first_name[0] . $middle_name[0];
-		}
-
-		public function _generatePassword()
-		{
-			return mt_rand(10000000, 99999999);
-		}
-
 		/**
 		 * Сколько номеров установлено.
 		 *
@@ -517,12 +460,13 @@
 			}
 		}
 
-		public function lessonCount()
+		public static function getHead($id_teacher, $func = 'findAll')
 		{
-			return VisitJournal::count([
-				'condition' => ''
+			return Teacher::{$func}([
+				'condition' => "id_head_teacher={$id_teacher}"
 			]);
 		}
+
 
 		/**
 		 * Получить статистику преподавателя

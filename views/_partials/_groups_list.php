@@ -21,7 +21,7 @@
 		}"
 		class="group-list" data-id="{{Group.id}}">
 		<td width="5%">
-			<a href="groups/edit/{{Group.id}}">{{Group.id}}</a>
+			<a href="groups/edit/{{Group.id}}" class="group-id-link">{{Group.id}}</a>
 		</td>
 		<td width="8%">
 			<span ng-repeat='cabinet in Group.cabinets'>

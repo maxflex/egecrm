@@ -1,7 +1,7 @@
 <table class="table table-hover border-reverse small">
 	<tr ng-repeat="Report in Reports">
 		<td style='width: 11%'>
-			<a ng-if='Report.id' href="reports/edit/{{Report.id}}">Отчёт №{{Report.id}}</a>
+			<a ng-if='Report.id' href="<?= User::isTeacher() ? "teachers/reports/view" : "reports/edit" ?>/{{Report.id}}">Отчёт №{{Report.id}}</a>
 			<span ng-show="!Report.id">
 				<span ng-show="!Report.force_noreport">
 					<span class="link-like-nocolor text-gray" ng-show="Report.lesson_count < <?= Report::LESSON_COUNT ?>" ng-click="forceNoreport(Report)">мало занятий</span>

@@ -446,6 +446,11 @@
             return false;
         }
 
+		public static function id()
+		{
+			return User::fromSession()->type == User::USER_TYPE ? User::fromSession()->id : User::fromSession()->id_entity;
+		}
+
         /**
          * Вход из офиса или включена настройка «доступ отовсюду»
          */

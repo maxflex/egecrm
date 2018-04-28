@@ -5,6 +5,8 @@
 	{
 		public $defaultAction = "list";
 
+		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE];
+
 		// Папка вьюх
 		protected $_viewsFolder	= "teacher";
 
@@ -165,11 +167,19 @@
 			$Teacher = Teacher::findById($id_teacher);
 			$Teacher->reports_needed = Teacher::redReportCountStatic($id_teacher);
 
-			$this->setTabTitle("Редактирование преподавателя " . $Teacher->getFullName());
-			$this->setRightTabTitle("
-				<a class='link-white' style='margin-right: 10px' href='https://lk.ege-repetitor.ru/tutors/{$id_teacher}/edit'>профиль в системе ЕГЭ-Репетитор</a>
-				<a class='link-white' href='as/teacher/{$id_teacher}'>режим просмотра</a>
-			");
+			if (User::isTeacher()) {
+				if ($Teacher->id_head_teacher != User::id()) {
+					$this->renderRestricted();
+				}
+				$this->addCss('teacher');
+				$this->setTabTitle("Просмотр преподавателя " . $Teacher->getFullName());
+			} else {
+				$this->setTabTitle("Редактирование преподавателя " . $Teacher->getFullName());
+				$this->setRightTabTitle("
+					<a class='link-white' style='margin-right: 10px' href='https://lk.ege-repetitor.ru/tutors/{$id_teacher}/edit'>профиль в системе ЕГЭ-Репетитор</a>
+					<a class='link-white' href='as/teacher/{$id_teacher}'>режим просмотра</a>
+				");
+			}
 
 			$ang_init_data = angInit([
 				"Teacher" => $Teacher,
@@ -185,6 +195,8 @@
 				"Grades"			    => Grades::$all,
 				"grades_short"		    => Grades::$short,
 				"academic_year"			=> Years::getAcademic(),
+				"Teachers"				=> Teacher::getLight(false),
+				"is_teacher"			=> User::isTeacher(),
 			]);
 
 			$this->render("edit", [
@@ -225,7 +237,11 @@
                     ]);
 				}
 				case 4: {
-					returnJsonAng(Teacher::getReportsStatic($id_teacher));
+					if (User::isTeacher()) {
+						returnJsonAng(Report::getForTeacherLk($id_teacher, User::id()));
+					} else {
+						returnJsonAng(Teacher::getReportsStatic($id_teacher));
+					}
 				}
 				case 5: {
 					$Teacher = Teacher::findById($id_teacher);
@@ -324,5 +340,11 @@
 			// }
 
 			returnJsonAng($Teachers);
+		}
+
+		public function actionAjaxSaveHeadTeacher()
+		{
+			extract($_POST);
+			Teacher::updateById($id_teacher, compact('id_head_teacher'));
 		}
 	}

@@ -189,6 +189,21 @@
 				WHERE id = " . $id . "
 			")->fetch_object();
 		}
+
+		public static function getForTeacherLk($id_teacher, $id_head_teacher)
+		{
+			$student_ids = Student::getIds(['condition' => "id_head_teacher={$id_teacher}"]);
+			
+			$Reports = Report::findAll([
+				"condition" => "id_teacher=" . $id_teacher
+			]);
+
+			foreach ($Reports as &$Report) {
+				$Report->Student = Student::findById($Report->id_student);
+			}
+
+			return $Reports;
+		}
 	}
 
 	class ReportHelper extends Model

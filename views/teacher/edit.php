@@ -54,6 +54,15 @@
 				</select>
 			</div>
 			<div class="form-group">
+				<select class="form-control" ng-model="Teacher.id_head_teacher" ng-disabled="is_teacher">
+					<option selected value="0">доступность информации в профиле классного руководителя</option>
+					<option disabled>──────────────</option>
+					<option ng-repeat="T in Teachers" value="{{T.id}}" ng-selected="T.id == Teacher.id_head_teacher">
+						{{T.last_name}} {{T.first_name[0]}}. {{T.middle_name[0]}}.
+					</option>
+				</select>
+			</div>
+			<div class="form-group">
 				<?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches", 'readonly' => 'true']) ?>
 			</div>
 		</div>
@@ -82,31 +91,31 @@
 	<!-- /Публичная информация -->
 	<?php if ($Teacher->id) :?>
 	<div class="top-links wide" style="margin-top: 20px">
-	    <span class="link-like" ng-click="setMenu(0)" ng-class="{'active': current_menu == 0}">
+	    <span class="link-like menu-link menu-0" ng-click="setMenu(0)" ng-class="{'active': current_menu == 0}">
 	    	ГРУППЫ
 	    </span>
-	    <span class="link-like" ng-click="setMenu(1)" ng-class="{'active': current_menu == 1}">
+	    <span class="link-like menu-link menu-1" ng-click="setMenu(1)" ng-class="{'active': current_menu == 1}">
 	    	ОТЗЫВЫ
 	    </span>
-	    <span class="link-like" ng-click="setMenu(2, true)" ng-class="{'active': current_menu == 2}">
+	    <span class="link-like menu-link menu-2" ng-click="setMenu(2, true)" ng-class="{'active': current_menu == 2}">
 			БАЛАНС СЧЕТА
 	    </span>
-	    <span class="link-like" ng-click="setMenu(3, true)" ng-class="{'active': current_menu == 3}">
+	    <span class="link-like menu-link menu-3" ng-click="setMenu(3, true)" ng-class="{'active': current_menu == 3}">
 	    	ПЛАТЕЖИ
 	    </span>
-	    <span class="link-like" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}" style='position: relative'>
+	    <span class="link-like menu-link menu-4" ng-click="setMenu(4)" ng-class="{'active': current_menu == 4}" style='position: relative'>
 	    	ОТЧЕТЫ
 			<label class="circle-label" ng-show="Teacher.reports_needed">
 				<span>{{ Teacher.reports_needed }}</span>
 			</label>
 	    </span>
-	    <span class="link-like" ng-click="setMenu(5)" ng-class="{'active': current_menu == 5}">
+	    <span class="link-like menu-link menu-5" ng-click="setMenu(5)" ng-class="{'active': current_menu == 5}">
 	    	СТАТИСТИКА
 	    </span>
-	    <span class="link-like" ng-click="setMenu(6)" ng-class="{'active': current_menu == 6}">
+	    <span class="link-like menu-link menu-6" ng-click="setMenu(6)" ng-class="{'active': current_menu == 6}">
 	    	ГРАФИК
 	    </span>
-	    <span class="link-like" ng-click="setMenu(7, true)" ng-class="{'active': current_menu == 7}">
+	    <span class="link-like menu-link menu-7" ng-click="setMenu(7, true)" ng-class="{'active': current_menu == 7}">
 	    	ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ
 	    </span>
     </div>
@@ -118,7 +127,10 @@
 	<?= partial('reports') ?>
 	<?= partial('stats') ?>
 	<?= partial("freetime") ?>
-	<?= partial("additional") ?>
+	<?= partial('additional') ?>
+
+	<?= User::isTeacher() ? globalPartial('email') : '' ?>
+
 	<?php endif ?>
 	<!-- СМС -->
 	<sms number='sms_number' templates="full"></sms>

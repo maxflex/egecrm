@@ -75,6 +75,14 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
   var _initReportsModule, _initReviewsModule, _loadData, _postData, bindFileUpload, deletePayment, loadMutualAccounts, menus;
   bindArguments($scope, arguments);
   $scope["enum"] = review_statuses;
+  $scope.$watch("Teacher.id_head_teacher", function(newVal, oldVal) {
+    if (newVal !== oldVal) {
+      return $.post("teachers/ajax/saveHeadTeacher", {
+        id_teacher: $scope.Teacher.id,
+        id_head_teacher: newVal
+      });
+    }
+  });
   $scope.getStudentsHint = function(Lesson) {
     var student_names;
     student_names = Lesson.students.map(function(student_id) {
