@@ -182,7 +182,7 @@
 			}
 
 			$ang_init_data = angInit([
-				"Teacher" => $Teacher,
+				"Teacher" 				=> $Teacher,
 				"teacher_phone_level"	=> $Teacher->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"GroupLevels"			=> GroupLevels::$all,
@@ -196,7 +196,7 @@
 				"grades_short"		    => Grades::$short,
 				"academic_year"			=> Years::getAcademic(),
 				"Teachers"				=> Teacher::getLight(false),
-				"is_teacher"			=> User::isTeacher(),
+				"is_teacher"			=> User::isTeacher() ? 1 : 0,
 			]);
 
 			$this->render("edit", [
