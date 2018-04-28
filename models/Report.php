@@ -177,6 +177,18 @@
 			}
 			return $reports;
 		}
+
+		/*
+		 * Получить легкую версию (имя + id)
+		 */
+		public static function getLight($id, $additional = [])
+		{
+			return dbConnection()->query("
+				SELECT id" . (count($additional) ? ', ' . implode(',', $additional) : '') .
+				" FROM " . static::$mysql_table . "
+				WHERE id = " . $id . "
+			")->fetch_object();
+		}
 	}
 
 	class ReportHelper extends Model
@@ -339,18 +351,6 @@
 		public static function getLessonCount($id_student, $id_teacher, $id_subject, $year)
 		{
 			return ReportHelper::find(Report::condition($id_student, $id_teacher, $id_subject, $year))->lesson_count;
-		}
-
-		/*
-		 * Получить легкую версию (имя + id)
-		 */
-		public static function getLight($id, $additional = [])
-		{
-			return dbConnection()->query("
-				SELECT id" . (count($additional) ? ', ' . implode(',', $additional) : '') .
-				" FROM " . static::$mysql_table . "
-				WHERE id = " . $id . "
-			")->fetch_object();
 		}
 	}
 
