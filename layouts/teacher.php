@@ -27,7 +27,7 @@
     </a>
 	<?php
 		$groups_head_count = Teacher::countGroups(false, true);
-		if ($groups_head_count) {
+		if (User::inViewMode() && $groups_head_count) {
 			echo '<a href="teachers/groups/extended" class="list-group-item">Расширенный доступ<span class="badge pull-right">'. $groups_head_count .'</span></a>';
 		}
 	?>
