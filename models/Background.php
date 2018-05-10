@@ -28,7 +28,7 @@
 	            if (! $wallpaper) {
 					$wallpaper = Background::find([
 						"condition" => "status=1 AND date<CURDATE()",
-						"order" => "id asc"
+						"order" => "id desc"
 					]);
 	            }
 			}
