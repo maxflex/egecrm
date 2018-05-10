@@ -350,7 +350,7 @@
 
 			$handle = new upload($task_file);
 
-			if ($handle->uploaded) {
+			// if ($handle->uploaded) {
 				$handle->file_overwrite = true;
 
 				// Временный файл
@@ -381,8 +381,8 @@
 				} else {
 					returnJson(self::ERROR);
 				}
-			} else {
-				returnJson(self::ERROR);
-			}
+			// } else {
+			// 	returnJson(self::ERROR);
+			// }
 		}
 	}
