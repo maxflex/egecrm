@@ -28,7 +28,7 @@
             >
                 <span class="glyphicon glyphicon-earphone no-margin-right small"></span>
             </button>
-            <button class="btn btn-default" type="button"
+            <button class="btn btn-default" type="button" style='z-index: 100'
                 ng-if="PhoneService.isFull(entity[phone]) && PhoneService.isMobile(entity[phone])"
                 ng-class="{'addon-bordered' : level > $index + 1 || !PhoneService.isFull(entity[phone])}"
                 ng-click="PhoneService.sms(entity[phone])"

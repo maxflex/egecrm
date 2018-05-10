@@ -54,21 +54,21 @@ class StudentsProfileController extends Controller
         ]);
     }
 
-	public function actionTeacherLk()
-	{
-		$this->setRights([Teacher::USER_TYPE]);
-
-		$id_student = $_GET["id_student"];
-		$this->hasAccess('students', $id_student, 'id_head_teacher');
-
-		$Student = Student::getLight($id_student);
-
-		$this->setTabTitle("Профиль ученика – {$Student->last_name} {$Student->first_name}");
-
-		$ang_init_data = angInit(compact('id_student'));
-
-		$this->render("teacher_lk", compact('ang_init_data'));
-	}
+	// public function actionTeacherLk()
+	// {
+	// 	$this->setRights([Teacher::USER_TYPE]);
+	//
+	// 	$id_student = $_GET["id_student"];
+	// 	$this->hasAccess('students', $id_student, 'id_head_teacher');
+	//
+	// 	$Student = Student::getLight($id_student);
+	//
+	// 	$this->setTabTitle("Профиль ученика – {$Student->last_name} {$Student->first_name}");
+	//
+	// 	$ang_init_data = angInit(compact('id_student'));
+	//
+	// 	$this->render("teacher_lk", compact('ang_init_data'));
+	// }
 
 
     ##################################################

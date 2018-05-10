@@ -6798,6 +6798,71 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+.list-group-item .search_icon {
+  float: right;
+  cursor: pointer; }
+
+body.modal-open, body.modal-open-new {
+  overflow: hidden !important;
+  height: 100% !important; }
+
+#modal-search.modal {
+  overflow-y: hidden; }
+
+#modal-search .modal-new-content {
+  height: 100% !important;
+  overflow: hidden; }
+  #modal-search .modal-new-content input, #modal-search .modal-new-content input:focus {
+    border: none;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    height: 40px;
+    font-size: 24px;
+    color: #707070;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    outline: 0;
+    margin-bottom: 15px; }
+  #modal-search .modal-new-content input::-webkit-input-placeholder {
+    color: #9d9d9d; }
+
+#modal-search .resultRow {
+  margin: 0px;
+  padding: 4px 2px;
+  color: #9d9d9d; }
+
+#modal-search .active {
+  background: #f5f5f5; }
+
+#modal-search .resultRow a {
+  text-decoration: underline;
+  font-size: 16px; }
+
+#searchResult {
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 80px; }
+  #searchResult h4 {
+    color: black; }
+  #searchResult .resultRows {
+    margin-bottom: 30px; }
+
+.searchResultWraper {
+  position: relative;
+  height: 90%; }
+  .searchResultWraper .notFound {
+    position: absolute;
+    left: 0px;
+    top: 47%;
+    font-size: 18px;
+    text-align: center;
+    color: #9d9d9d;
+    width: 100%; }
+
+.hide {
+  display: none !important; }
+
 /*!
  * Datepicker for Bootstrap v1.4.0 (https://github.com/eternicode/bootstrap-datepicker)
  *
@@ -10438,71 +10503,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   -webkit-animation-name: fadeOut07;
   animation-name: fadeOut07;
 }
-
-.list-group-item .search_icon {
-  float: right;
-  cursor: pointer; }
-
-body.modal-open, body.modal-open-new {
-  overflow: hidden !important;
-  height: 100% !important; }
-
-#modal-search.modal {
-  overflow-y: hidden; }
-
-#modal-search .modal-new-content {
-  height: 100% !important;
-  overflow: hidden; }
-  #modal-search .modal-new-content input, #modal-search .modal-new-content input:focus {
-    border: none;
-    border-bottom: 1px solid #eee;
-    width: 100%;
-    height: 40px;
-    font-size: 24px;
-    color: #707070;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    outline: 0;
-    margin-bottom: 15px; }
-  #modal-search .modal-new-content input::-webkit-input-placeholder {
-    color: #9d9d9d; }
-
-#modal-search .resultRow {
-  margin: 0px;
-  padding: 4px 2px;
-  color: #9d9d9d; }
-
-#modal-search .active {
-  background: #f5f5f5; }
-
-#modal-search .resultRow a {
-  text-decoration: underline;
-  font-size: 16px; }
-
-#searchResult {
-  overflow-y: scroll;
-  width: 100%;
-  height: 100%;
-  padding-bottom: 80px; }
-  #searchResult h4 {
-    color: black; }
-  #searchResult .resultRows {
-    margin-bottom: 30px; }
-
-.searchResultWraper {
-  position: relative;
-  height: 90%; }
-  .searchResultWraper .notFound {
-    position: absolute;
-    left: 0px;
-    top: 47%;
-    font-size: 18px;
-    text-align: center;
-    color: #9d9d9d;
-    width: 100%; }
-
-.hide {
-  display: none !important; }
 
 /* Make clicks pass-through */
 #nprogress {
@@ -15447,7 +15447,7 @@ h4.row-header {
 
 .lightbox-new {
   position: fixed;
-  z-index: 100;
+  z-index: 102;
   background-color: white;
   border-radius: 5px;
   padding: 10px 20px;
@@ -15935,7 +15935,7 @@ a.link-white {
   top: 0;
   height: 100%;
   width: 100%;
-  z-index: 99;
+  z-index: 101;
   background: rgba(0, 0, 0, 0.5);
   display: none; }
 

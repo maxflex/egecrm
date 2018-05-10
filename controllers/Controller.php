@@ -84,7 +84,7 @@
                 $column = 'id_' . strtolower(User::fromSession()->type);
             }
 
-            $condition = $array ? "FIND_IN_SET(" . User::fromSession()->id_entity . ", {$column})" : "{$column} = " . User::fromSession()->id_entity;
+            $condition = $array ? "FIND_IN_SET(" . User::id() . ", {$column})" : "{$column} = " . User::id();
 
             $query = "SELECT 1 FROM {$table} WHERE id={$id} AND {$condition}";
 

@@ -12,7 +12,9 @@
 		</td>
 		<td ng-init="_Teacher = (Review.Teacher || Teacher)">
 			<div style='width: 150px'>
-				<a href="teachers/edit/{{_Teacher.id}}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
+				<a href="teachers/edit/{{_Teacher.id}}" ng-class="{
+					'no-link': is_teacher && headed_teachers.indexOf(_Teacher.id) === -1
+				}">{{_Teacher.last_name}} {{_Teacher.first_name[0]}}. {{_Teacher.middle_name[0]}}.</a>
 			</div>
 		</td>
 		<td style="width: 7.5%">

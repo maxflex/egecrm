@@ -2,6 +2,7 @@
 	<div class="row">
 		<?= globalPartial('loading', ['model' => 'student']) ?>
 	    <div class="col-sm-12 ng-hide" ng-show="student !== undefined">
+			<div class="div-blocker"></div>
 		    <div class="row">
 			    <div class="col-sm-3">
 				    <h4 class="row-header" style="margin-top: 0">Ученик</h4>
@@ -73,7 +74,7 @@
 			            <div class="input-group" ng-class="{'input-group-with-hidden-span': !emailFull(representative.email)}">
 			                <input type="text" placeholder="e-mail" class="form-control email" name="Representative[email]" ng-model="representative.email">
 								<div class="input-group-btn">
-					                <button class="btn btn-default" ng-show="emailFull(representative.email)" ng-click="emailDialog(representative.email)">
+					                <button class="btn btn-default" ng-show="emailFull(representative.email)" ng-click="emailDialog(representative.email)" style='z-index: 100'>
 					                	<span class="glyphicon glyphicon-envelope no-margin-right small"></span>
 					                </button>
 								</div>
@@ -138,38 +139,41 @@
 		            <div>
 			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
 		            </div>
-		            <div>
-						<span style="width: 73px; display: inline-block">Статус:</span>
-						<span ng-show="!student.is_banned">активен</span>
-						<span class="text-danger" ng-show="student.is_banned">заблокирован</span>
-		            </div>
-		            <?php endif ?>
-					<div class="form-group" style='margin-top: 20px'>
-						<select class="form-control" ng-model="student.id_head_teacher" name="Student[id_head_teacher]">
-							<option selected value="0">классный руководитель</option>
-							<option disabled>──────────────</option>
-							<option ng-repeat="Teacher in Teachers" value="{{Teacher.id}}" ng-selected="Teacher.id == student.id_head_teacher">
-								{{Teacher.last_name}} {{Teacher.first_name[0]}}. {{Teacher.middle_name[0]}}.
-							</option>
-						</select>
+					<div ng-hide="is_teacher">
+						<div>
+							<span style="width: 73px; display: inline-block">Статус:</span>
+							<span ng-show="!student.is_banned">активен</span>
+							<span class="text-danger" ng-show="student.is_banned">заблокирован</span>
+						</div>
+						<div class="form-group" style='margin-top: 20px'>
+							<select class="form-control" ng-model="student.id_head_teacher" name="Student[id_head_teacher]">
+								<option selected value="0">классный руководитель</option>
+								<option disabled>──────────────</option>
+								<option ng-repeat="Teacher in Teachers" value="{{Teacher.id}}" ng-selected="Teacher.id == student.id_head_teacher">
+									{{Teacher.last_name}} {{Teacher.first_name[0]}}. {{Teacher.middle_name[0]}}.
+								</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<?= Branches::buildSvgSelector($Request->Student->branches, [
+								"name" => "Student[branches][]",
+								"ng-model" => "student.branches",
+								"id" => "student-branches",
+							], true) ?>
+						</div>
+						<div class="form-group" style="white-space: nowrap">
+							<span class="link-like" ng-click="showMap()"><span class="glyphicon glyphicon-map-marker"></span>Метки</span>
+							<span class="text-primary">({{markers.length}})</span>
+						</div>
 					</div>
-					<div class="form-group">
-			            <?= Branches::buildSvgSelector($Request->Student->branches, [
-				            "name" => "Student[branches][]",
-				            "ng-model" => "student.branches",
-				            "id" => "student-branches",
-				        ], true) ?>
-		            </div>
-		            <div class="form-group" style="white-space: nowrap">
-			            <span class="link-like" ng-click="showMap()"><span class="glyphicon glyphicon-map-marker"></span>Метки</span>
-			            <span class="text-primary">({{markers.length}})</span>
-		            </div>
+					<?php endif ?>
 			    </div>
 		    </div>
 	    </div>
 	</div>
 
-	<?= partial('contracts', compact('Request')) ?>
-	<?= partial('groups', compact('Request')) ?>
-
+	<?php if (! User::isTeacher()) :?>
+		<?= partial('contracts', compact('Request')) ?>
+		<?= partial('groups', compact('Request')) ?>
+	<?php endif ?>
 </div>

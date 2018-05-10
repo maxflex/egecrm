@@ -1901,7 +1901,7 @@ h4.row-header {
 
 .lightbox-new {
   position: fixed;
-  z-index: 100;
+  z-index: 102;
   background-color: white;
   border-radius: $modal-border-radius;
   padding: 10px 20px;
@@ -2541,7 +2541,7 @@ a.link-white {
 	top: 0;
 	height: 100%;
 	width: 100%;
-	z-index: 99;
+	z-index: 101;
 	background: rgba(0, 0, 0, 0.5);
 	display: none;
 }

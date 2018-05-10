@@ -26,7 +26,7 @@
 		 */
 		public function actionEdit($id_student = false)
 		{
-			$this->setRights([User::USER_TYPE]);
+			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
 
 			// Находим заявку по ID
 			$Request = Request::findById($_GET["id"]);
@@ -44,6 +44,10 @@
 			$this->addJs("//maps.google.ru/maps/api/js?libraries=places", true);
 			$this->addJs("maps.controller");
 
+			if (User::isTeacher()) {
+				$this->addCss('teacher');
+			}
+
 			# Генерируем данные для ангуляра
 			$ang_init_data = angInit([
 				'mode' 			=> $mode,
@@ -55,6 +59,9 @@
                 "Request"		=> $Request,
                 "request_duplicates"=> $Request->getDuplicates(true),	// получить дубликаты, включая свой ID
                 "Grades"        => Grades::$all,
+				"is_teacher"	=> User::isTeacher(),
+				"headed_students" => User::isTeacher() ? Student::getIds(['condition' => "id_head_teacher=" . User::id()]) : [],
+				"headed_teachers" => User::isTeacher() ? Teacher::getIds(['condition' => "id_head_teacher=" . User::id()]) : []
 			]);
 
 			# Передача во view

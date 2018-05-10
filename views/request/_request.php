@@ -35,7 +35,7 @@
 					<span class="tab-link" ng-class="{'active' : <?= ($Request->adding && $Request->id_student) ? 'true' : 'false' ?>}">
 						<a href="requests/add?id_student=<?= $Request->id_student ?>">добавить заявку</a>
 					</span>
-					<div class="top-links pull-right">
+					<div class="top-links pull-right top-links-request">
 						<span class="link-like active">заявки</span>
 						<span class="link-like" ng-click="setMode('student')">клиент</span>
 					</div>

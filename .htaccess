@@ -43,7 +43,7 @@ RewriteRule ^requests[/]?$ index.php?controller=request&action=list [QSA,L]
 RewriteRule ^teachers/salary[/]?([0-9]+)?[/]?$ index.php?controller=teacher&action=Salary&year=$1 [QSA,L]
 # RewriteRule ^teachers/salary/([0-9]+)?$ index.php?controller=teacher&action=Salary&id_teacher=$1 [QSA,L]
 RewriteRule ^teachers/edit/([0-9]+)?$ index.php?controller=teacher&action=edit&id=$1 [QSA,L]
-RewriteRule ^teachers/student/([0-9]+)?$ index.php?controller=StudentsProfile&action=TeacherLk&id_student=$1 [QSA,L]
+# RewriteRule ^teachers/student/([0-9]+)?$ index.php?controller=StudentsProfile&action=TeacherLk&id_student=$1 [QSA,L]
 RewriteRule ^teachers/add[/]?$ index.php?controller=teacher&action=add [QSA,L]
 RewriteRule ^teachers/html[/]?$ index.php?controller=teacher&action=faq [QSA,L]
 RewriteRule ^teachers/ajax/([a-zA-Z]+)[/]?$ index.php?controller=teacher&action=Ajax$1 [QSA,L]
@@ -90,7 +90,7 @@ RewriteRule ^clients/ajax/([a-zA-Z]+)[/]?$ index.php?controller=clients&action=A
 
 RewriteRule ^payments[/]?$ index.php?controller=payments [QSA,L]
 RewriteRule ^(teachers/)?payments/([a-zA-Z]+)[/]?$ index.php?controller=payments&action=$2 [QSA,L]
-RewriteRule ^student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$1 [QSA,L]
+RewriteRule ^(teachers/)?student/([0-9]+)?$ index.php?controller=students&action=findById&id_student=$2 [QSA,L]
 
 RewriteRule ^(teachers/|students/)?faq[/]?$ index.php?controller=faq&action=faq [QSA,L]
 RewriteRule ^students/reviews[/]?$ index.php?controller=TeacherReviews&action=list [QSA,L]
