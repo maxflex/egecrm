@@ -2,7 +2,9 @@
 	<div class="row">
 		<?= globalPartial('loading', ['model' => 'student']) ?>
 	    <div class="col-sm-12 ng-hide" ng-show="student !== undefined">
+			<?php if (User::isTeacher()) :?>
 			<div class="div-blocker"></div>
+			<?php endif ?>
 		    <div class="row">
 			    <div class="col-sm-3">
 				    <h4 class="row-header" style="margin-top: 0">Ученик</h4>
