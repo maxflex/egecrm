@@ -16,7 +16,7 @@
 					<td width="20%">версия {{ $index + 1 }} от {{ formatContractDate(contract.date_original) }}</td>
 					<td width="25%">{{ getContractSum(contract) | number }} <ng-pluralize count="getContractSum(contract)" when="{
 						'one': 'рубль',
-						'few': 'рубя',
+						'few': 'рубля',
 						'many': 'рублей'
 					}"></ng-pluralize><span class='text-gray' ng-show='contract.discount > 0'> (с учетом скидки {{ contract.discount }}%)</span>
 					</td>

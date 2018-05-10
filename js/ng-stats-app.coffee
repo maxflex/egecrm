@@ -39,7 +39,7 @@ app = angular.module "Stats", ["ui.bootstrap"]
 
 		$scope.pagePaymentChanged = (group)->
 			ajaxStart()
-			redirect "stats/payments?group=#{group}&page=#{$scope.currentPage}"
+			redirect "stats/payments" + (if $scope.mode is 'teachers' then '/teachers' else '') + "?group=#{group}&page=#{$scope.currentPage}"
 
 		$scope.Lessons = {}
 

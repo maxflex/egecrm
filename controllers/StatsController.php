@@ -676,6 +676,7 @@
 
 			$ang_init_data = angInit([
 				"currentPage" => $_GET['page'],
+				"mode" => $mode,
 			]);
 
 			$this->render("payments_{$mode}", [

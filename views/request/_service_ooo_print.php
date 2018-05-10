@@ -32,7 +32,7 @@
             что в соответствии с обязательствами, предусмотренными
             Договором от {{formatContractDate2(service_contract_parent.date_original)}} №{{service_contract_parent.id}}
             Исполнитель оказал Заказчику в полном объеме услуги
-            на сумму: {{service_contract.sum}} ({{numToText(service_contract.sum)}}) <ng-pluralize count="service_contract.sum" when="{'one': 'рубль', 'few': 'рубя', 'many': 'рублей'}"></ng-pluralize> 00 копеек.
+            на сумму: {{service_contract.sum}} ({{numToText(service_contract.sum)}}) <ng-pluralize count="service_contract.sum" when="{'one': 'рубль', 'few': 'рубля', 'many': 'рублей'}"></ng-pluralize> 00 копеек.
             НДС не облагается. Заказчик претензий к Исполнителю не имеет.
         </p>
 

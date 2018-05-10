@@ -60,7 +60,7 @@
             <li>
                 По состоянию на дату прекращения оказания платных образовательных услуг размер вознаграждения Исполнителю за действия,
                 совершенные им до прекращения Договора,
-                составил {{ term_contract.sum }} ({{numToText(term_contract.sum)}}) <ng-pluralize count="term_contract.sum" when="{'one': 'рубль', 'few': 'рубя', 'many': 'рублей'}"></ng-pluralize> 00 копеек., без НДС.
+                составил {{ term_contract.sum }} ({{numToText(term_contract.sum)}}) <ng-pluralize count="term_contract.sum" when="{'one': 'рубль', 'few': 'рубля', 'many': 'рублей'}"></ng-pluralize> 00 копеек., без НДС.
             </li>
             <li>
                 Финансовых претензий Стороны друг к другу не имеют.

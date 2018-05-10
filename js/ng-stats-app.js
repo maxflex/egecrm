@@ -43,7 +43,7 @@ app = angular.module("Stats", ["ui.bootstrap"]).config([
   };
   $scope.pagePaymentChanged = function(group) {
     ajaxStart();
-    return redirect("stats/payments?group=" + group + "&page=" + $scope.currentPage);
+    return redirect("stats/payments" + ($scope.mode === 'teachers' ? '/teachers' : '') + ("?group=" + group + "&page=" + $scope.currentPage));
   };
   $scope.Lessons = {};
   $scope.dateLoad = function(date) {
