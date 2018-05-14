@@ -3759,7 +3759,7 @@ a[href^="https://www.google.com/maps"]{display:none !important}
   border-radius: 0;
   display: none;
   overflow: hidden;
-  z-index: 99;
+  z-index: 101;
   box-shadow: 0 0 15px 7px rgba(0, 0, 0, 0.5);
   &.active {
       display: block;
