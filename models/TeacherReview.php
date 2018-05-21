@@ -55,6 +55,7 @@
 				"score" 				=> $rating['score'],
 				"signature" 			=> $rating['signature'],
 				"max_score" 			=> $rating['max_score'],
+				"expressive_title" 		=> $rating['expressive_title'],
 				"date"					=> now(),
 			];
 
