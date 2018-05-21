@@ -39,7 +39,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row mb">
 				<div class="col-sm-12">
 					<textarea maxlength="1024" class="teacher-review-textarea form-control" rows="5" ng-model="RatingInfo.comment"></textarea>
 				</div>
@@ -48,7 +48,8 @@
 			<?php if (User::fromSession()->isUser()) :?>
 				<div class="row">
 					<div class="col-sm-12">
-						<textarea placeholder="Экспрессивный заголовок" maxlength="1024" class="teacher-review-textarea form-control" rows="5" ng-model="RatingInfo.expressive_title"></textarea>
+						<b>Экспрессивный заголовок</b>
+						<textarea maxlength="1024" class="teacher-review-textarea form-control" rows="5" ng-model="RatingInfo.expressive_title"></textarea>
 					</div>
 				</div>
 
