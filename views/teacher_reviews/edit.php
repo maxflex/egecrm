@@ -48,7 +48,7 @@
 			<?php if (User::fromSession()->isUser()) :?>
 				<div class="row">
 					<div class="col-sm-12">
-						<b>Экспрессивный заголовок</b>
+						<b style="display: block; margin-bottom: 10px">Экспрессивный заголовок</b>
 						<textarea maxlength="1024" class="teacher-review-textarea form-control" rows="5" ng-model="RatingInfo.expressive_title"></textarea>
 					</div>
 				</div>
