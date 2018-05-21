@@ -47,6 +47,13 @@
 
 			<?php if (User::fromSession()->isUser()) :?>
 				<div class="row">
+					<div class="col-sm-12">
+						<textarea placeholder="Экспрессивный заголовок" maxlength="1024" class="teacher-review-textarea form-control" rows="5" ng-model="RatingInfo.expressive_title"></textarea>
+					</div>
+				</div>
+
+
+				<div class="row">
 					<div class="col-sm-8">
 						<b style="top: 14px; position: relative">Предварительная оценка и отзыв ученика (заполняется администратором)</b>
 					</div>
