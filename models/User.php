@@ -121,18 +121,21 @@
 			}
 			$this->save('last_action_time');
 
-			Job::dispatch(
-				LogoutNotifyJob::class,
-				['user_id' => $this->id],
-				$this->type == User::USER_TYPE ? (self::ADMIN_SESSION_DURATION - 1) : (self::OTHER_SESSION_DURATION - 1)
-			);
+			// не логаутить меня
+			if ($this->id != 69) {
+				Job::dispatch(
+					LogoutNotifyJob::class,
+					['user_id' => $this->id],
+					$this->type == User::USER_TYPE ? (self::ADMIN_SESSION_DURATION - 1) : (self::OTHER_SESSION_DURATION - 1)
+				);
 
-			// создать отложенную задачу на логаут
-			Job::dispatch(
-				LogoutJob::class,
-				['session_id' => session_id()],
-				$this->type == User::USER_TYPE ? self::ADMIN_SESSION_DURATION : self::OTHER_SESSION_DURATION
-			);
+				// создать отложенную задачу на логаут
+				Job::dispatch(
+					LogoutJob::class,
+					['session_id' => session_id()],
+					$this->type == User::USER_TYPE ? self::ADMIN_SESSION_DURATION : self::OTHER_SESSION_DURATION
+				);
+			}
 		}
 
 		public static function isUser($return_string = false)
