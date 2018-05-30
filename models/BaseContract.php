@@ -132,7 +132,8 @@
                     "id_entity" => $Student->id
                 ]);
 
-                $Representative = $Student->Representative;
+                $Representative = Representative::findById($Student->id_representative);
+
                 User::add([
                     "email" => $Representative->email,
                     "phone" => $Representative->phone,
