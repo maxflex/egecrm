@@ -192,7 +192,7 @@
 		}
 
 		/**
-		 * разрешен вход только тем, у кого последняя версия договора в этом году имеет зеленый или желтый предмет
+		 * разрешен вход только тем, у кого последняя версия договора в этом году (или в грядущем) имеет зеленый или желтый предмет
 		 * @param  [type]  $id_student [description]
 		 * @return boolean             [description]
 		 */
@@ -201,8 +201,8 @@
 			$query = dbConnection()->query("
                 SELECT id FROM contracts c
                 JOIN contract_info ci ON ci.id_contract = c.id_contract
-                WHERE ci.id_student={$id_student} AND c.current_version=1 AND ci.year=" . academicYear() . "
-                ORDER BY id DESC
+                WHERE ci.id_student={$id_student} AND c.current_version=1 AND ci.year in (" . implode(',', [academicYear(), academicYear() + 1]) . ")
+                ORDER BY c.id, ci.year DESC
                 LIMIT 1
             ");
 			if ($query->num_rows) {
