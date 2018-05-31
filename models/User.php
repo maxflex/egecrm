@@ -486,12 +486,12 @@
 				{
 					$code = md5(mt_rand(1, 99999)) . base64_encode($this->id);
 					$client = new Predis\Client();
-	        $client->set("egecrm:reset-password:{$this->id}", $code, 'EX', 5 * 60);
-
+	        		$client->set("egecrm:reset-password:{$this->id}", $code, 'EX', 5 * 60);
+					$link = "https://lk.ege-centr.ru/login/reset?code={$code}";
 					$set_or_reset = $this->password ? ['Восстановление', 'восстановления'] : ['Установка', 'установки'];
 					Email::send($this->email, $set_or_reset[0] . ' пароля', "
 						Ссылка для {$set_or_reset[1]} пароля:
-						https://lk.ege-centr.ru/login/reset?code={$code}
+						<a href='{$link}'>{$link}</a>
 					");
 				}
 
