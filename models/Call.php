@@ -134,7 +134,7 @@
 		/**
 		 * Определить номер для ЕГЭ-Центра
 		 */
-		private static function determineEgecrm($phone)
+		public static function determineEgecrm($phone)
 		{
 			# Ищем ученика с таким же номером телефона
             $student = dbConnection()->query("
@@ -283,4 +283,5 @@
 		        return $name;
 	        }
         }
+
 	}

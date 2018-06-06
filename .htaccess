@@ -137,6 +137,7 @@ RewriteRule ^tests/ajax/([a-zA-Z]+)[/]?$ index.php?controller=tests&action=Ajax$
 
 # Пропущенные
 RewriteRule ^calls/missed[/]?$ index.php?controller=calls&action=missed [QSA,L]
+RewriteRule ^calls/rating[/]?$ index.php?controller=calls&action=rating [QSA,L]
 RewriteRule ^calls/ajax/([a-zA-Z]+)[/]?$ index.php?controller=calls&action=Ajax$1 [QSA,L]
 
 # as
