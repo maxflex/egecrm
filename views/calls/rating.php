@@ -4,8 +4,11 @@
 	</div>
 	<table class="table border-reverse">
 		<tr ng-repeat='d in data'>
-			<td width="200">
+			<td width="150">
 				{{ d.call_date | formatDateTime }}
+			</td>
+			<td width="150">
+				{{ callDuration(d.seconds) }}
 			</td>
 			<td width="200">
 				{{ PhoneService.format(d.number) }}
