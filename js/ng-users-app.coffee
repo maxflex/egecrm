@@ -244,6 +244,3 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 			, (response) ->
 				ajaxEnd()
 				redirect "users/edit/#{response}"
-
-	.controller "ContractCtrl", ($scope) ->
-		set_scope "Users"

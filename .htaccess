@@ -122,7 +122,6 @@ RewriteRule ^users[/]?$ index.php?controller=users [QSA,L]
 RewriteRule ^users/edit/([0-9]+)[/]?$ index.php?controller=users&action=edit&id=$1 [QSA,L]
 RewriteRule ^users/ajax/([a-zA-Z]+)[/]?$ index.php?controller=users&action=Ajax$1 [QSA,L]
 RewriteRule ^users/create[/]?$ index.php?controller=users&action=create [QSA,L]
-RewriteRule ^users/contract[/]?$ index.php?controller=users&action=contract [QSA,L]
 
 # Внутренние тестирования
 RewriteRule students/tests[/]?$ index.php?controller=tests&action=StudentList [QSA,L]

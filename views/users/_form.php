@@ -184,7 +184,6 @@
         </div>
         <?= partial('right', ['right' => Shared\Rights::PHONE_NOTIFICATIONS]) ?>
         <?= partial('right', ['right' => Shared\Rights::IS_DEVELOPER]) ?>
-        <?= partial('right', ['right' => Shared\Rights::SHOW_CONTRACT]) ?>
         <?= partial('right', ['right' => Shared\Rights::EC_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::ECC_BANNED]) ?>

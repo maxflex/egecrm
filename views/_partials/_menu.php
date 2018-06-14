@@ -95,9 +95,6 @@
 	<?php if (User::fromSession()->allowed(Shared\Rights::LOGS)) :?>
 		<a href="logs" class="list-group-item">Логи</a>
 	<?php endif ?>
-	<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_CONTRACT)) :?>
-		<a href="users/contract" class="list-group-item">Договор</a>
-	<?php endif ?>
 	<a href="settings/cabinet" class="list-group-item">Загрузка кабинетов</a>
 	<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_CALENDAR)) :?>
 		 <a href="settings/vacations" class="list-group-item">Календарь</a>
