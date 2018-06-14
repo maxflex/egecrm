@@ -109,10 +109,12 @@
 				}
 			}
 
+			$request_condition = "AND adding=0 AND id_status NOT IN (" . implode(',', [RequestStatuses::SPAM, RequestStatuses::DUPLICATE]) . ")";
+
 			$requests_count = Request::count([
 				"condition" =>
-					$date_end 	? "DATE(date) > '". $date_start ."' AND DATE(date) <= '". $date_end ."' AND adding=0"
-								: "DATE(date) = '". $date_start ."' AND adding=0"
+					$date_end 	? "DATE(date) > '". $date_start ."' AND DATE(date) <= '". $date_end ."' {$request_condition}"
+								: "DATE(date) = '". $date_start ."' {$request_condition}"
 			]);
 
 			$stats['requests'] = $requests_count;
