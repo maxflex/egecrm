@@ -172,7 +172,6 @@
         <?= partial('right', ['right' => Shared\Rights::ER_ACCEPT_ACCOUNTS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_STREAM]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_TEMPLATES]) ?>
-        <?= partial('right', ['right' => Shared\Rights::EDIT_CONTRACT]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_REQUEST_ERRORS]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_ATTENDANCE]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_ACTIVITY]) ?>
