@@ -7,7 +7,7 @@
 			<td width='20'>
 				<img src="/img/calls/{{ d.is_incoming ? 'incoming' : 'outgoing' }}.png" style='height: 15px' />
 			</td>
-			<td width="150">
+			<td width="200">
 				{{ d.call_date | formatDateTime }}
 			</td>
 			<td width="150">
