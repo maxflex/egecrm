@@ -1132,11 +1132,6 @@
 					}
 					return true;
 				});
-
-				// добавить отчеты
-				if ($with_reports) {
-
-				}
 			}
 
 			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, $id_student);
@@ -1172,10 +1167,16 @@
 			}
 
 			if ($with_reports) {
+				$all_reports = [];
 				foreach($LessonsByMonth as $year => $month_data) {
 					foreach(array_keys($month_data) as $month) {
 						$year_month = sprintf("%04d-%02d", $year + 1, $month);
-						$LessonsByMonth[$year][$month] = array_merge($LessonsByMonth[$year][$month], Report::getForStudent($id_student, $year_month));
+						$reports = Report::getForStudent($id_student, $year_month);
+						$LessonsByMonth[$year][$month] = array_merge($LessonsByMonth[$year][$month], $reports);
+						if (! isset($all_reports[$year])) {
+							$all_reports[$year] = [];
+						}
+						$all_reports[$year] = array_merge($all_reports[$year], $reports);
 					}
 				}
 			}
@@ -1186,6 +1187,7 @@
 				'Lessons' => [
 					'by_year' 	=> $LessonsByYear,
 					'by_month'	=> $LessonsByMonth,
+					'reports'	=> $all_reports,
 				],
 				'years' => $years,
 			];
