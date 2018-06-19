@@ -7,7 +7,7 @@
 
 		public static $statuses = ["не указано", "был", "не был"];
 
-		const PLANNED_CONDITION = "(type_entity='' or type_entity IS NULL and cancelled=0)";
+		const PLANNED_CONDITION = "((type_entity='' or type_entity IS NULL) and cancelled=0)";
 
 		public function __construct($array)
 		{
