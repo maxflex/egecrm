@@ -27,6 +27,8 @@
 						<td>Начислено</td>
 						<td>Выплачено</td>
 						<td>К выплате</td>
+						<td>Планируемый дебет</td>
+						<td>Планируется занятий</td>
 					</tr>
 				</thead>
 				<tbody>
@@ -53,6 +55,12 @@
 						<td class="center">
 							<span ng-hide="(d.real_sum - d.payment_sum) == 0">{{ (d.real_sum - d.payment_sum).toFixed(2) | number }}</span>
 						</td>
+						<td class="center">
+							<span ng-hide="!d.planned_debt">{{ d.planned_debt | number }}</span>
+						</td>
+						<td class="center">
+							<span ng-hide="!d.planned_lessons">{{ d.planned_lessons | number }}</span>
+						</td>
 					</tr>
 
 					<tr>
@@ -70,6 +78,12 @@
 						</td>
 						<td class="center">
 							<b>{{ toBePaid() | number}}</b>
+						</td>
+						<td class="center">
+							<b>{{planned_debt_sum | number}}</b>
+						</td>
+						<td class="center">
+							<b>{{planned_lessons_sum | number}}</b>
 						</td>
 					</tr>
 				</tbody>

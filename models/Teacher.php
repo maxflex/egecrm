@@ -316,6 +316,13 @@
 			], true);
 		}
 
+		public static function getGroupIds($id_teacher, $year = false)
+		{
+			return Group::getIds([
+				"condition" => "id_teacher=$id_teacher AND is_unplanned=0" . ($year ? " AND year={$year}" : ''),
+			]);
+		}
+
 		public static function countGroups($id_teacher = false, $where_head = false)
 		{
 			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;

@@ -52,6 +52,10 @@
 			$total_sum = 0;
 			$total_payment_sum = 0;
 			$lesson_count = 0;
+
+			$planned_lessons_sum = 0;
+			$planned_debt_sum = 0;
+
 			foreach ($teacher_ids as $id_teacher) {
 				$Teacher = Teacher::getLight($id_teacher);
 
@@ -80,9 +84,30 @@
 
 				$additional_payments_sum = dbConnection()->query("select sum(`sum`) as s from teacher_additional_payments where id_teacher={$id_teacher} and year={$year}")->fetch_object()->s;
 				$sum += $additional_payments_sum;
+
+				// получаем планируемые занятия преподавателя
+				$teacher_group_ids = implode(',', Teacher::getGroupIds($id_teacher, $year));
+
+				$planned_lessons = VisitJournal::findAll([
+					'condition' => VisitJournal::PLANNED_CONDITION . " AND id_group IN ({$teacher_group_ids})"
+				]);
+
+				$planned_debt = 0;
+				foreach($planned_lessons as $planned_lesson) {
+					$planned_debt += dbConnection()->query("select teacher_price from groups where id={$planned_lesson->id_group}")->fetch_object()->teacher_price;
+				}
+
+				// \получаем планируемые занятия преподавателя
+
+
 				$total_sum += $additional_payments_sum;
 				$real_sum += $additional_payments_sum;
 				$real_total_sum += $additional_payments_sum;
+
+				if ($planned_lessons) {
+					$planned_lessons_sum += count($planned_lessons);
+				}
+				$planned_debt_sum += $planned_debt;
 
 				$lesson_count += count($Data);
 
@@ -91,6 +116,8 @@
 					"sum"		=> $sum,
 					"real_sum"  => $real_sum,
 					"payment_sum" => $payment_sum,
+					'planned_lessons' => ($planned_lessons ? count($planned_lessons) : 0),
+					'planned_debt' => $planned_debt,
 					"count"		=> ($Data ? count($Data) : 0),
 				];
 
@@ -119,24 +146,19 @@
 				}
 			});
 
-            $tobe_paid = dbConnection()->query(
-                "select format(sum(g.teacher_price), 0) as tobe_paid from visit_journal vj " .
-                "join groups g on g.id = vj.id_group " .
-                "where lesson_date > now() and vj.cancelled = 0"
-            )->fetch_object()->tobe_paid;
-
 			$ang_init_data = angInit([
 				"Data" 		                     => $return,
 				"total_sum"			             => $total_sum,
 				"real_total_sum"			     => $real_total_sum,
 				"total_payment_sum"	             => $total_payment_sum,
 				"lesson_count"		             => $lesson_count,
+				"planned_lessons_sum"			 => $planned_lessons_sum,
+				"planned_debt_sum"			 	 => $planned_debt_sum,
 				"subjects"	                     => Subjects::$short,
 				"active_year"                    => $year,
 			]);
 
 			$this->setTabTitle('Дебет преподавателей');
-            $this->setRightTabTitle('Планируемый дебет: ' . str_replace(',', ' ', $tobe_paid) . ' руб.');
 
 			$this->render("salary", [
 				"ang_init_data" => $ang_init_data,
