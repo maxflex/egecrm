@@ -27,8 +27,6 @@
 						<td>Начислено</td>
 						<td>Выплачено</td>
 						<td>К выплате</td>
-						<td>Планируемый дебет</td>
-						<td>Планируется занятий</td>
 					</tr>
 				</thead>
 				<tbody>
@@ -45,21 +43,17 @@
 						</td>
 						<td class="center">
 							<span ng-show='d.count'>{{d.count | number}}</span>
+							<span ng-show="d.planned_lessons" class="quater-black"> + {{ d.planned_lessons | number }}</span>
 						</td>
 						<td class="center">
 							<span ng-hide="!d.sum">{{d.sum | number}}</span>
+							<span ng-show="d.planned_debt" class="quater-black"> + {{ d.planned_debt | number }}</span>
 						</td>
 						<td class="center">
 							<span ng-hide="!d.payment_sum">{{d.payment_sum | number}}</span>
 						</td>
 						<td class="center">
 							<span ng-hide="(d.real_sum - d.payment_sum) == 0">{{ (d.real_sum - d.payment_sum).toFixed(2) | number }}</span>
-						</td>
-						<td class="center">
-							<span ng-hide="!d.planned_debt">{{ d.planned_debt | number }}</span>
-						</td>
-						<td class="center">
-							<span ng-hide="!d.planned_lessons">{{ d.planned_lessons | number }}</span>
 						</td>
 					</tr>
 
@@ -68,22 +62,22 @@
 
 						</td>
 						<td class="center">
-							<b>{{lesson_count}}</b>
+							<b>
+								{{lesson_count}}
+								<span ng-show="planned_lessons_sum" class="quater-black"> + {{ planned_lessons_sum | number }}</span>
+							</b>
 						</td>
 						<td class="center">
-							<b>{{total_sum | number}}</b>
+							<b>
+								{{total_sum | number}}
+								<span ng-show="planned_debt_sum" class="quater-black"> + {{ planned_debt_sum | number }}</span>
+							</b>
 						</td>
 						<td class="center">
 							<b>{{total_payment_sum | number}}</b>
 						</td>
 						<td class="center">
 							<b>{{ toBePaid() | number}}</b>
-						</td>
-						<td class="center">
-							<b>{{planned_debt_sum | number}}</b>
-						</td>
-						<td class="center">
-							<b>{{planned_lessons_sum | number}}</b>
 						</td>
 					</tr>
 				</tbody>

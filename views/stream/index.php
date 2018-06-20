@@ -77,6 +77,7 @@
                         {{ s.google_id }}
                     </td>
                     <td width='15%'>
+						<span ng-show="['client_request', 'client_request_attempt'].indexOf(s.action) !== -1" class="glyphicon glyphicon-envelope"></span>
                         <span ng-show='!s.href'>{{ s.action }}</span>
                         <a ng-show='s.href' href='{{ s.href}}' target="_blank">{{ s.action }}</a>
                     </td>
