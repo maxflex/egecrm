@@ -1,9 +1,9 @@
 <?php
 	class Call
 	{
-		const TEST_NUMBER		= '74955653170';
-		const EGEREP_NUMBER 	= '74956461080';
-		const EGECENTR_NUMBER 	= '74956468592';
+		const TEST_NUMBERS		= ['74955653170'];
+		const EGEREP_NUMBERS 	= ['74956461080'];
+		const EGECENTR_NUMBERS 	= ['74956468592', '799999999'];
 
 		/*
 			Алгоритм: сначала получаем все сегодняшние пропущенные, затем исключаем по условиям
@@ -25,7 +25,7 @@
                     FROM (
                         SELECT entry_id, from_number, start
                         FROM `mango`
-                        WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0 and line_number='" . self::EGECENTR_NUMBER . "' {$excluded_sql}
+                        WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0 and line_number IN (" . implode(',', self::EGECENTR_NUMBERS) . ") {$excluded_sql}
                         GROUP BY entry_id
                         HAVING sum(answer) = 0
                     ) missed
@@ -39,7 +39,7 @@
         /**
 		 * Выбираем пропущенные за сегодня звонки, на которые потом не перезвонили
 		 */
-		public static function missed($get_caller = true, $line = self::EGECENTR_NUMBER)
+		public static function missed($get_caller = true, $line = self::EGECENTR_NUMBERS)
         {
             $result = dbEgerep()->query("SELECT *" . self::getMissedCallsSql());
 			$missed = [];
@@ -75,14 +75,14 @@
 		 * Номер ЕГЭ-Центра
 		 */
 		public static function isEgecentr($number) {
-            return $number == self::EGECENTR_NUMBER;
+            return in_array($number, self::EGECENTR_NUMBERS);
         }
 
         /*
 		 * Номер ЕГЭ-Репетитора
 		 */
 		public static function isEgerep($number) {
-            return $number == self::EGEREP_NUMBER;
+            return in_array($number, self::EGEREP_NUMBERS);
         }
 
         /*

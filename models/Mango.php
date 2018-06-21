@@ -9,7 +9,7 @@ class Mango {
 	const COMMAND_HANGUP        = 'call/hangup';
     const COMMAND_REQUEST_STATS = 'stats/request';
     const COMMAND_GET_STATS     = 'stats/result';
-    
+
     # состояния
     const STATE_APPEARED	= 'Appeared';
     const STATE_CONNECTED	= 'Connected';
@@ -18,9 +18,6 @@ class Mango {
     # константы
     const TRIALS = 5; // попыток запроса статистики
     const SLEEP  = 2; // секунд между попытками
-
-	# номер
-	const NUMBER_EGE_REPETITOR = '74956461080';
 
     public static function run($command, $data)
     {
@@ -88,11 +85,11 @@ class Mango {
                         ];
                     }
                 }
-                
+
 				usort($return, function($a, $b) {
 					return $a['start'] > $b['start'];
 				});
-				
+
                 return $return;
             }
             $trial++;

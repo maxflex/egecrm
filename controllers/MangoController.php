@@ -31,7 +31,7 @@
 			}
 
 			// входящий звонок в ЕГЭ-Центр или ЕГЭ-Репетитор
-			if (in_array($data->to->line_number, [Call::EGEREP_NUMBER, Call::EGECENTR_NUMBER])) {
+			if (in_array($data->to->line_number, array_merge(Call::EGEREP_NUMBERS, Call::EGECENTR_NUMBERS))) {
 				// @рассмотреть добавление определения в appeared
 				switch ($data->call_state) {
 					case Mango::STATE_APPEARED:
