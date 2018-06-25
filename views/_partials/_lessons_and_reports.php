@@ -26,7 +26,7 @@
 </div>
 
 <div ng-show="selected_lesson_year != -1">
-	<div ng-if="Lessons[selected_lesson_year][-1]">
+	<div ng-if="Lessons.by_year[selected_lesson_year][-1]">
 		<h4>Дополнительные занятия</h4>
 		<div class="visits-block">
 			<table class="table small table-hover border-reverse last-item-no-border">
