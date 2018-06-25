@@ -1064,10 +1064,16 @@
 
 		/**
 		 * Получить ID групп, которые ученик когда-либо посещал
+		 * без учета дополнительных занятий
 		 */
 		public static function getGroupIdsEverVisited($id_student)
 		{
-			$query = dbConnection()->query("select id_group from visit_journal where type_entity='STUDENT' and id_entity={$id_student} group by id_group");
+			$query = dbConnection()->query("SELECT vj.id_group
+				from visit_journal vj
+				where vj.type_entity='STUDENT' and vj.id_entity={$id_student}
+					and not exists (select 1 from groups g where g.is_unplanned=1 and g.id=visit_journal.id_group)
+				group by vj.id_group
+			");
 			$group_ids = [];
 			while ($row = $query->fetch_object()) {
 				$group_ids[] = $row->id_group;
