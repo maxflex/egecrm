@@ -346,7 +346,7 @@
 			$query = dbEgerep()->query("
 				select id, first_name, last_name, middle_name, branches, subjects, in_egecentr,
 					IF(LENGTH(photo_desc) > 0, 1, 0) as photo_desc_exists,
-					IF(LENGTH(public_desc) > 0, 1, 0) as public_desc_exists
+					IF(LENGTH(description) > 0, 1, 0) as description_exists
 				from tutors
 				where in_egecentr > 0
 				order by last_name ASC
@@ -366,8 +366,8 @@
 					}
 
 					// есть ли опубликованное описание?
-					if (! $row->public_desc_exists) {
-						$row->alerts[] = '• поле опубликованное описание на сайте ЕГЭ-Центра" пусто';
+					if (! $row->description_exists) {
+						$row->alerts[] = '• поле "опубликованное описание на сайте ЕГЭ-Центра" пусто';
 					}
 
 					// есть ли фото?
