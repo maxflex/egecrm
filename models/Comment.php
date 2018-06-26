@@ -54,6 +54,9 @@
 		{
 			$this->date 	= now();
 			$this->id_user 	= User::fromSession()->id;
+			if ($this->place == 'TASK') {
+				Task::reloadNotification();
+			}
 		}
 
 
