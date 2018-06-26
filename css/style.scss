@@ -3955,3 +3955,10 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 	color: black !important;
 	pointer-events: none;
 }
+
+.teacher-alert {
+	color: $orange;
+	top: 2px;
+	margin-left: 3px;
+	position: relative;
+}

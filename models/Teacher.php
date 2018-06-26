@@ -22,6 +22,8 @@
 		const EXTERNAL_PHOTO_PATH = 'http://static.a-perspektiva.ru/img/tutors/';
 		const PLACE = 'teacher';
 
+		const ACTIVE_NOW = 2; // ведут занятия сейчас
+
 		/*====================================== СИСТЕМНЫЕ ФУНКЦИИ ======================================*/
 
 		public function __construct($array)
@@ -70,7 +72,7 @@
 		}
 
 		/*
-		 * Проверить, есть ли фото у преподавателя
+		 * Проверить, есть ли фото у преподавателя (DEPRICATED? Потому что эти данные теперь есть в tutor_data)
 		 */
 		public function photoExists()
 		{
@@ -81,6 +83,14 @@
 			// $retcode >= 400 -> not found, $retcode = 200, found.
 			curl_close($ch);
 			return $retcode == 200;
+		}
+
+		/**
+		 * Проверить, есть ли фото у преподавателя
+		 */
+		public static function hasPhoto($id)
+		{
+			return dbEgerep()->query("select photo_exists from tutor_data where tutor_id={$id}")->fetch_object()->photo_exists;
 		}
 
 		// 	количество красных меток "требуется создание отчета"

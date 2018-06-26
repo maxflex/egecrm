@@ -344,7 +344,9 @@
 			// ]);
 
 			$query = dbEgerep()->query("
-				select id, first_name, last_name, middle_name, branches, subjects, in_egecentr
+				select id, first_name, last_name, middle_name, branches, subjects, in_egecentr,
+					IF(LENGTH(photo_desc) > 0, 1, 0) as photo_desc_exists,
+					IF(LENGTH(public_desc) > 0, 1, 0) as public_desc_exists
 				from tutors
 				where in_egecentr > 0
 				order by last_name ASC
@@ -355,6 +357,24 @@
 				$row->subjects = explode(',', $row->subjects);
 				$row->branches = explode(',', $row->branches);
 				$row->bar = Freetime::getTeacherBar($row->id, true);
+				if ($row->in_egecentr == Teacher::ACTIVE_NOW) {
+					$row->alerts = [];
+
+					// есть ли подпись под фото?
+					if (! $row->photo_desc_exists) {
+						$row->alerts[] = '• поле "подпись под фото на сайте ЕГЭ-Центра" пусто';
+					}
+
+					// есть ли опубликованное описание?
+					if (! $row->public_desc_exists) {
+						$row->alerts[] = '• поле опубликованное описание на сайте ЕГЭ-Центра" пусто';
+					}
+
+					// есть ли фото?
+					if (! Teacher::hasPhoto($row->id)) {
+						$row->alerts[] = '• отсутствует обрезанное фото';
+					}
+				}
 				$Teachers[] = $row;
 			}
 

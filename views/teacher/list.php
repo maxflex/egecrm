@@ -57,6 +57,9 @@
 									Неизвестно
 								</span>
 							</a>
+							<span ng-show="Teacher.alerts && Teacher.alerts.length"
+								title="{{ Teacher.alerts.join('\n\n') }}"
+								class="teacher-alert glyphicon glyphicon-exclamation-sign"></span>
 						</td>
 						<td>
 							<span ng-repeat="id_subject in Teacher.subjects">{{three_letters[id_subject]}}{{$last ? "" : "+"}}</span>

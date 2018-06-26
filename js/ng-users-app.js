@@ -296,6 +296,4 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
       return redirect("users/edit/" + response);
     });
   };
-}).controller("ContractCtrl", function($scope) {
-  return set_scope("Users");
 });
