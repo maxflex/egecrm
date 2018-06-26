@@ -58,7 +58,7 @@
 								</span>
 							</a>
 							<span ng-show="Teacher.alerts && Teacher.alerts.length"
-								title="{{ Teacher.alerts.join('\n\n') }}"
+								title="{{ 'ПРЕПОДАВАТЕЛЬ НЕ ОПУБЛИКОВАН. ПОЖАЛУЙСТА, ИСПРАВЬТЕ:\n\n' + Teacher.alerts.join('\n\n') }}"
 								class="teacher-alert glyphicon glyphicon-exclamation-sign"></span>
 						</td>
 						<td>
