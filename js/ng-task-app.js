@@ -139,8 +139,18 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
     });
   };
   angular.element(document).ready(function() {
-    return $.each($scope.Tasks, function(i, Task) {
+    var channel, pusher;
+    $.each($scope.Tasks, function(i, Task) {
       return $scope.bindFileUpload(Task);
+    });
+    pusher = new Pusher('a9e10be653547b7106c0', {
+      encrypted: true
+    });
+    channel = pusher.subscribe('tasks');
+    return channel.bind('reload', function(data) {
+      if (parseInt(data.user_id) !== parseInt($scope.user.id)) {
+        return $('.reload-badge').show().addClass('animated fadeIn');
+      }
     });
   });
   return $(document).ready(function() {

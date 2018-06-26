@@ -689,6 +689,17 @@
 			return static::dbConnection()->query("UPDATE ".static::$mysql_table." SET id=$newId WHERE id=$oldId");
 		}
 
+		public function changed($fields = [])
+		{
+			foreach($fields as $field) {
+				$old_value = static::dbConnection()->query("select {$field} from " . static::$mysql_table . " where id={$this->id}")->fetch_object()->{$field};
+				if ($this->{$field} != $old_value) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public function getTable()
 		{
 			return static::$mysql_table;

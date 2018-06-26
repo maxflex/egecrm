@@ -123,5 +123,12 @@
 				$.each $scope.Tasks, (i, Task) ->
 					$scope.bindFileUpload Task
 
+				pusher = new Pusher 'a9e10be653547b7106c0',
+					encrypted: true
+
+				channel = pusher.subscribe('tasks')
+				channel.bind 'reload', (data) ->
+					$('.reload-badge').show().addClass('animated fadeIn') if parseInt(data.user_id) isnt parseInt($scope.user.id)
+
 			$(document).ready ->
 				set_scope 'Task'

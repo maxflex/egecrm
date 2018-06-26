@@ -34,6 +34,11 @@ class Task extends Model
 		if ($this->isNewRecord) {
 			$this->date_created = now();
 			$this->id_user = User::fromSession()->id;
+			Task::reloadNotification();
+		} else {
+			if ($this->changed(['html', 'id_status'])) {
+				Task::reloadNotification();
+			}
 		}
 	}
 
@@ -44,5 +49,10 @@ class Task extends Model
         return self::count([
             "condition" => "id_status IN (". $taskStatusesToShow .") AND html!=''"
 		]);
+	}
+
+	public static function reloadNotification()
+	{
+		Socket::trigger('tasks', 'reload', ['user_id' => User::id()]);
 	}
 }

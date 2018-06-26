@@ -17034,6 +17034,21 @@ a[href^="https://www.google.com/maps"] {
   margin-left: 3px;
   position: relative; }
 
+.reload-badge {
+  position: fixed;
+  top: 26px;
+  z-index: 999;
+  left: 50%;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background-color: #fbaa33;
+  color: white;
+  box-shadow: 0 0 10px #fbaa33;
+  display: none; }
+  .reload-badge span {
+    position: relative;
+    top: 2px; }
+
 .control-group {
   display: inline-block;
   vertical-align: top;

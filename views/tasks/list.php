@@ -4,6 +4,10 @@
 			<span class="link-reverse pointer" ng-click="addTask()">добавить задачу</span>
 		</div>
 	</div>
+	<div class="reload-badge">
+		<span class="glyphicon glyphicon-refresh"></span>
+		please reload
+	</div>
 	<div class="panel-body" style="position: relative">
 			<div class="top-links pull-right">
 				<?php if ($_GET["list"] != TaskStatuses::CLOSED) { ?>
