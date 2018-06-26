@@ -373,7 +373,7 @@
 					// есть ли фото?
 					// (если нет опубликованного описания, то запись в tutor_data не будет создана
 					// соответственно ошибка всегда будет возникать)
-					if ($row->photo_desc_exists && ! Teacher::hasPhoto($row->id)) {
+					if ($row->description_exists && ! Teacher::hasPhoto($row->id)) {
 						$row->alerts[] = '• отсутствует обрезанное фото';
 					}
 				}
