@@ -42,6 +42,11 @@ class Task extends Model
 		}
 	}
 
+	public static function beforeDelete($id)
+	{
+		Task::reloadNotification();
+	}
+
 	public static function countNew()
 	{
         $taskStatusesToShow = implode(',',[TaskStatuses::NEWR]);
