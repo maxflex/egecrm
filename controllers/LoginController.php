@@ -149,7 +149,7 @@
 
 			if ($worldwide_access) {
                 // Дополнительная СМС-проверка, если пользователь логинится если не из офиса
-                if (! User::fromOffice() && $User->type == User::USER_TYPE) {
+                if (! User::fromOffice() && $User->type == User::USER_TYPE && ! User::fromMaldives()) {
                     $client = new Predis\Client();
                     $sent_code = $client->get("egecrm:codes:{$User->id}");
                     // если уже был отправлен – проверяем
