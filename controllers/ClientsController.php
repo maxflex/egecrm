@@ -149,7 +149,7 @@
 				$marker = dbEgerep()->query("SELECT * FROM markers WHERE markerable_type='App\\\Models\\\Client' AND markerable_id=" . $row->client_id)->fetch_object();
 				$has_attachment = dbEgerep()->query("SELECT 1 FROM attachments WHERE client_id=" . $row->client_id)->num_rows;
 				if ($has_attachment) {
-					$marker->type = 'home';
+					$marker->type = 'school';
 				}
 				if ($marker) {
 					$Markers[] = $marker;
