@@ -147,7 +147,7 @@
 
 			while($row = $query->fetch_object()) {
 				$Marker = Marker::find([
-					'condition' => "owner='STUDENT' AND id_owner=" . $row->id
+					'condition' => "owner='STUDENT' AND id_owner=" . $row->id_student
 				]);
 
 				if ($Marker) {
