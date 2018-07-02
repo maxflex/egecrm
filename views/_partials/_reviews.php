@@ -6,9 +6,16 @@
 	</tr>
 	<tr ng-repeat="Review in Reviews <?= ($review_by_year ? '|byYear:review_year' : '')?>">
 		<td style="width: 9%">
+			<?php if (User::isTeacher()) :?>
+				<a ng-show="Review.id" href="/teachers/reviews/{{Review.id}}">
+					отзыв {{ Review.id }}
+				</a>
+				<span ng-show="!Review.id">создать</span>
+			<?php else :?>
 			<a href="{{ <?= User::fromSession()->isStudent(true) ?> ? 'students/' : ''}}reviews/{{Review.id_teacher}}/{{Review.id_subject}}/{{Review.year}}{{<?= User::fromSession()->isStudent(true) ?> ? '' : '/' + (Review.id_entity || Review.id_student)}}">
 				{{Review.id ? 'отзыв ' + Review.id : 'создать'}}
 			</a>
+			<?php endif ?>
 		</td>
 		<td ng-init="_Teacher = (Review.Teacher || Teacher)">
 			<div style='width: 150px'>

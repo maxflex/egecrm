@@ -415,6 +415,11 @@
             return User::fromSession()->type == self::USER_TYPE;
         }
 
+		public static function is($who = [])
+		{
+			return in_array(User::fromSession()->type, $who);
+		}
+
         public static function isBlocked()
         {
             return dbConnection()->query('

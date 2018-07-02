@@ -2,7 +2,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			Отзыв
-			<?php if (User::fromSession()->isUser()) :?>
+			<?php if (User::is(['USER', 'TEACHER'])) :?>
 			 ученика {{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}
 			 <?php endif ?> по преподавателю {{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
 			(проведено {{lesson_count}} <ng-pluralize count="lesson_count" when="{
@@ -10,16 +10,19 @@
 						'few': 'занятия',
 						'many': 'занятий',
 					}"></ng-pluralize> по {{subject_name}})
-			<?php if (User::fromSession()->isUser()) :?>
+			<?php if (User::is(['USER', 'TEACHER'])) :?>
 			<div class="pull-right">
 				<a href="student/{{Student.id}}#reviews">все отзывы ученика</a>
 			</div>
 			<?php endif ?>
 		</div>
 		<div class="panel-body">
+			<?php if (User::isTeacher()) :?>
+			<div class="div-blocker"></div>
+			<?php endif ?>
 			<div class="row">
 				<div class="col-sm-8">
-					<?php if (User::fromSession()->isUser()) :?>
+					<?php if (User::is(['USER', 'TEACHER'])) :?>
 					<b style="top: 14px; position: relative">Оценка и отзыв ученика (заполняется учеником из его личного кабинета)</b>
 					<?php else :?>
 					<span style="top: 14px; position: relative">Напишите что понравилось/не понравилось (текст отзыва доступен только для администрации)</span>
@@ -45,13 +48,15 @@
 				</div>
 			</div>
 
-			<?php if (User::fromSession()->isUser()) :?>
+			<?php if (User::is(['USER', 'TEACHER'])) :?>
+				<?php if (User::isAdmin()) :?>
 				<div class="row">
 					<div class="col-sm-12">
 						<b style="display: block; margin-bottom: 10px">Экспрессивный заголовок</b>
 						<textarea maxlength="1024" class="teacher-review-textarea form-control" rows="5" ng-model="RatingInfo.expressive_title"></textarea>
 					</div>
 				</div>
+				<?php endif ?>
 
 
 				<div class="row">
@@ -141,6 +146,7 @@
                 }
             </style>
 
+			<?php if (! User::isTeacher()) :?>
 			<div class="row" style="margin-top: 30px">
 				<div class="col-sm-12 center">
 					<button class="btn btn-primary" ng-disabled="!form_changed" ng-click="saveReviews()">
@@ -150,6 +156,7 @@
 					</button>
 				</div>
 			</div>
+			<?php endif ?>
 		</div>
 	</div>
 </div>

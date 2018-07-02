@@ -27,4 +27,17 @@ class TeacherProfileController extends Controller
             "ang_init_data" => $ang_init_data
         ]);
 	}
+
+	public function actionStudents()
+	{
+		$this->setTabTitle('Ученики');
+
+		$ang_init_data = angInit([
+            "Students" => Teacher::getHeadStudents(User::id()),
+        ]);
+
+		$this->render("students", [
+            "ang_init_data" => $ang_init_data
+        ]);
+	}
 }

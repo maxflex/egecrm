@@ -298,7 +298,7 @@
 				]);
 			} else
 				if (User::fromSession()->type == Teacher::USER_TYPE) {
-					if (! $this->hasAccess('groups', $id_group, null, null , true) && ! $this->hasAccess('groups', $id_group, 'id_head_teacher', null, true)) {
+					if (! $this->hasAccess('groups', $id_group, null, null , true)) {
 						$this->renderRestricted();
 					}
 

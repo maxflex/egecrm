@@ -12,7 +12,9 @@
 					class="group-list" data-id="{{Group.id}}">
 					<td width='100'>
 						{{Group.id}}
+						<?php if (! $extended) :?>
 						<a style='margin-left: 5px' href="teachers/groups/edit/{{Group.id}}/schedule"><i class="fa fa-calendar" aria-hidden="true"></i></a>
+						<?php endif ?>
 						<a style='margin-left: 5px' href="teachers/groups/journal/{{Group.id}}"><i class="fa fa-list-ol" aria-hidden="true"></i></a>
 					</td>
 					<td width='90'>

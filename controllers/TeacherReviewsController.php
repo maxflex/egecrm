@@ -8,7 +8,7 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "teacher_reviews";
 
-		public static $allowed_users = [User::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [User::USER_TYPE, Student::USER_TYPE, Teacher::USER_TYPE];
 
 		public function beforeAction()
 		{
@@ -50,6 +50,7 @@
 		 */
 		public function actionView()
 		{
+			// $this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
     		$Review = TeacherReview::findById($_GET['id']);
 
             $id_student = $Review->id_student;

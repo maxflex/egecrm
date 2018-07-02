@@ -94,7 +94,7 @@ RewriteRule ^(teachers/)?student/([0-9]+)?$ index.php?controller=students&action
 
 RewriteRule ^(teachers/|students/)?faq[/]?$ index.php?controller=faq&action=faq [QSA,L]
 RewriteRule ^students/reviews[/]?$ index.php?controller=TeacherReviews&action=list [QSA,L]
-RewriteRule ^reviews/([0-9]+)[/]?$ index.php?controller=TeacherReviews&action=view&id=$1 [QSA,L]
+RewriteRule ^(teachers/)?reviews/([0-9]+)[/]?$ index.php?controller=TeacherReviews&action=view&id=$2 [QSA,L]
 RewriteRule ^(students/)?reviews/([0-9]+)/([0-9]+)/([0-9]+)[/]?([0-9]*)[/]?$ index.php?controller=TeacherReviews&action=admins&id_teacher=$2&id_subject=$3&year=$4&id_student=$5 [QSA,L]
 RewriteRule ^reviews[?page=(0-9)]?[/]?$ index.php?controller=TeacherReviews&action=reviews&page=$1 [QSA,L]
 
@@ -201,3 +201,4 @@ RewriteRule ^contracts/ajax/([a-zA-Z]+)[/]?$ index.php?controller=contracts&acti
 
 # Препод ЛК
 RewriteRule ^teachers/list[/]?$ index.php?controller=TeacherProfile [QSA,L]
+RewriteRule ^teachers/students[/]?$ index.php?controller=TeacherProfile&action=students [QSA,L]

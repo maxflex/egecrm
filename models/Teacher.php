@@ -484,6 +484,13 @@
 			]);
 		}
 
+		public static function getHeadStudents($id_teacher, $func = 'findAll')
+		{
+			return Student::{$func}([
+				'condition' => "id_head_teacher={$id_teacher}"
+			]);
+		}
+
 
 		/**
 		 * Получить статистику преподавателя

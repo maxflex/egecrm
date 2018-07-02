@@ -25,18 +25,6 @@
 			}
 		?>
     </a>
-	<?php
-		$groups_head_count = Teacher::countGroups(false, true);
-		if (User::inViewMode() && $groups_head_count) {
-			echo '<a href="teachers/groups/extended" class="list-group-item">Расширенный доступ<span class="badge pull-right">'. $groups_head_count .'</span></a>';
-		}
-	?>
-	<?php
-		$teacher_head_count = Teacher::getHead(User::id(), 'count');
-		if ($teacher_head_count) {
-			echo '<a href="teachers/list" class="list-group-item">Преподаватели<span class="badge pull-right">'. $teacher_head_count .'</span></a>';
-		}
-	?>
     <a href="teachers/reports" class="list-group-item">Отчеты
 	    <?php
 		    $red_report_count = Teacher::redReportCountStatic(User::fromSession()->id_entity);
@@ -48,6 +36,25 @@
     </a>
     <a href="teachers/payments/teacher" class="list-group-item">Оплата</a>
     <a href="teachers/faq" class="list-group-item">Необходимая информация</a>
+	<?php
+		$groups_head_count = Teacher::countGroups(false, true);
+		$teacher_head_count = Teacher::getHead(User::id(), 'count');
+		$student_head_count = Teacher::getHeadStudents(User::id(), 'count');
+
+		if ($groups_head_count || $teacher_head_count || $student_head_count) {
+			echo '<a href="#" class="list-group-item active">КР</a>';
+		}
+
+		if ($groups_head_count) {
+			echo '<a href="teachers/groups/extended" class="list-group-item">Группы<span class="badge pull-right">'. $groups_head_count .'</span></a>';
+		}
+		if ($student_head_count) {
+			echo '<a href="teachers/students" class="list-group-item">Ученики<span class="badge pull-right">'. $student_head_count .'</span></a>';
+		}
+		if ($teacher_head_count) {
+			echo '<a href="teachers/list" class="list-group-item">Преподаватели<span class="badge pull-right">'. $teacher_head_count .'</span></a>';
+		}
+	?>
     <a href="#" class="list-group-item active">Настройки</a>
     <a href="logout" class="list-group-item">Выход</a>
   </div>
