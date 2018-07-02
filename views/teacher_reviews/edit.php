@@ -10,7 +10,7 @@
 						'few': 'занятия',
 						'many': 'занятий',
 					}"></ng-pluralize> по {{subject_name}})
-			<?php if (User::is(['USER', 'TEACHER'])) :?>
+			<?php if (User::isAdmin()) :?>
 			<div class="pull-right">
 				<a href="student/{{Student.id}}#reviews">все отзывы ученика</a>
 			</div>
