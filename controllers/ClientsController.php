@@ -147,7 +147,11 @@
 
 			while($row = $query->fetch_object()) {
 				$marker = dbEgerep()->query("SELECT * FROM markers WHERE markerable_type='App\\\Models\\\Client' AND markerable_id=" . $row->client_id)->fetch_object();
-				$has_attachment = dbEgerep()->query("SELECT 1 FROM attachments WHERE client_id=" . $row->client_id)->num_rows;
+				$has_attachment = dbEgerep()->query("SELECT 1 FROM requests r
+					join request_lists rl on rl.request_id = r.id
+					join attachments a on a.request_list_id = rl.id
+					WHERE r.`created_at` >= DATE(NOW() - INTERVAL 365 DAY)
+				")->num_rows;
 				if ($has_attachment) {
 					$marker->type = 'school';
 				}
