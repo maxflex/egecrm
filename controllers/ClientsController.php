@@ -148,7 +148,7 @@
 			while($row = $query->fetch_object()) {
 				$marker = dbEgerep()->query("SELECT * FROM markers WHERE markerable_type='App\\\Models\\\Client' AND markerable_id=" . $row->client_id)->fetch_object();
 				if ($marker) {
-					$Markers[] = $Marker;
+					$Markers[] = $marker;
 				}
 			}
 

@@ -33,7 +33,7 @@ app = angular.module("Test", ["ngMap"]).filter('range', function() {
       marker_location = new google.maps.LatLng(marker.lat, marker.lng);
       new_marker = newMarker(marker.id, marker_location, map, marker.type);
       return new_marker.addListener('click', function() {
-        return window.open('https://lk.ege-centr.ru/student/' + marker.id_owner, '_blank');
+        return window.open('https://lk.ege-repetitor.ru/client/' + marker.markerable_id, '_blank');
       });
     });
   };

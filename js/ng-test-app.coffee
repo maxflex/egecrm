@@ -24,7 +24,7 @@ app = angular.module "Test", ["ngMap"]
 					marker_location = new google.maps.LatLng(marker.lat, marker.lng)
 					new_marker = newMarker(marker.id, marker_location, map, marker.type)
 					new_marker.addListener 'click', ->
-						window.open('https://lk.ege-centr.ru/student/' + marker.id_owner, '_blank')
+						window.open('https://lk.ege-repetitor.ru/client/' + marker.markerable_id, '_blank')
 
 		.controller "Egecentr", ($scope) ->
 			$scope.formatDate = (d) ->
