@@ -141,16 +141,13 @@
 			$this->setTabTitle('Карта клиентов за последние 12 месяцев');
 
 			// заявки за последние 12 месяцев
-			$query = dbConnection()->query("SELECT id_student FROM requests WHERE `date` >= DATE(NOW() - INTERVAL 365 DAY) GROUP BY id_student");
+			$query = dbEgerep()->query("SELECT client_id FROM requests WHERE `created_at` >= DATE(NOW() - INTERVAL 365 DAY) GROUP BY client_id");
 
 			$Markers = [];
 
 			while($row = $query->fetch_object()) {
-				$Marker = Marker::find([
-					'condition' => "owner='STUDENT' AND id_owner=" . $row->id_student
-				]);
-
-				if ($Marker) {
+				$marker = dbEgerep()->query("SELECT * FROM markers WHERE markerable_type='App\\\Models\\\Client' AND markerable_id=" . $row->client_id)->fetch_object();
+				if ($marker) {
 					$Markers[] = $Marker;
 				}
 			}
