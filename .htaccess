@@ -202,3 +202,6 @@ RewriteRule ^contracts/ajax/([a-zA-Z]+)[/]?$ index.php?controller=contracts&acti
 # Препод ЛК
 RewriteRule ^teachers/list[/]?$ index.php?controller=TeacherProfile [QSA,L]
 RewriteRule ^teachers/students[/]?$ index.php?controller=TeacherProfile&action=students [QSA,L]
+
+# map-test tmp
+RewriteRule ^clients-map$ index.php?controller=Clients&action=map [QSA,L]

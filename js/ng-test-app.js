@@ -9,6 +9,34 @@ app = angular.module("Test", ["ngMap"]).filter('range', function() {
     }
     return input;
   };
+}).controller("TmpCtrl", function($scope, $timeout) {
+  $timeout(function() {
+    return $scope.initMap();
+  });
+  return $scope.initMap = function() {
+    var map;
+    map = new google.maps.Map(document.getElementById("gmap"), {
+      center: new google.maps.LatLng(55.7387, 37.6032),
+      scrollwheel: false,
+      zoom: 11,
+      disableDefaultUI: true,
+      clickableLabels: false,
+      clickableIcons: false,
+      zoomControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM,
+        scaleControl: true
+      }
+    });
+    return $scope.Markers.forEach(function(marker) {
+      var marker_location, new_marker;
+      marker_location = new google.maps.LatLng(marker.lat, marker.lng);
+      new_marker = newMarker(marker.id, marker_location, map, marker.type);
+      return new_marker.addListener('click', function() {
+        return window.open('https://lk.ege-centr.ru/student/' + marker.id_owner, '_blank');
+      });
+    });
+  };
 }).controller("Egecentr", function($scope) {
   $scope.formatDate = function(d) {
     return moment(d).format("DD MMM");

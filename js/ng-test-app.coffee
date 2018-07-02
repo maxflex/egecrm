@@ -5,6 +5,27 @@ app = angular.module "Test", ["ngMap"]
 				for i in [1...total + 1] by 1
 					input.push i
 				input
+		.controller "TmpCtrl", ($scope, $timeout) ->
+			$timeout -> $scope.initMap()
+
+			$scope.initMap = ->
+				map = new google.maps.Map document.getElementById("gmap"),
+				center: new google.maps.LatLng(55.7387, 37.6032)
+				scrollwheel: false,
+				zoom: 11
+				disableDefaultUI: true
+				clickableLabels: false
+				clickableIcons: false
+				zoomControl: true
+				zoomControlOptions:
+					position: google.maps.ControlPosition.LEFT_BOTTOM
+					scaleControl: true
+				$scope.Markers.forEach (marker) ->
+					marker_location = new google.maps.LatLng(marker.lat, marker.lng)
+					new_marker = newMarker(marker.id, marker_location, map, marker.type)
+					new_marker.addListener 'click', ->
+						window.open('https://lk.ege-centr.ru/student/' + marker.id_owner, '_blank')
+
 		.controller "Egecentr", ($scope) ->
 			$scope.formatDate = (d) ->
 				moment(d).format "DD MMM"
@@ -17,7 +38,7 @@ app = angular.module "Test", ["ngMap"]
 		.controller "MapCtrl", ($scope) ->
 			$scope.$on 'mapInitialized', (event, map) ->
 				map.setCenter MAP_CENTER
-				
+
 				google.maps.event.addListener map, 'click', (event) ->
 					marker = addMarker map, event.latLng
 					getDistance event.latLng, (response) ->
@@ -25,21 +46,21 @@ app = angular.module "Test", ["ngMap"]
 						$scope.$apply()
 		.controller "MapNewCtrl", ($scope) ->
 			markers = []
-			
+
 			unsetAllMarkers = ->
 				console.log 'unsetting', markers
 				$.each markers, (index, marker) ->
 					marker.setMap null
 				markers = []
-			
+
 			setClosestMetroMarkers = (data, map) ->
 				$.each data, (index, metro) ->
 					marker = addMarker map, new google.maps.LatLng(metro.lat, metro.lng), ICON_SEARCH
 					markers.push marker
-			
+
 			$scope.$on 'mapInitialized', (event, map) ->
 				map.setCenter MAP_CENTER
-				
+
 				google.maps.event.addListener map, 'click', (event) ->
 					unsetAllMarkers()
 					marker = addMarker map, event.latLng
