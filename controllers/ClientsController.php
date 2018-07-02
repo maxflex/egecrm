@@ -133,40 +133,4 @@
 
 			return compact('data', 'count', 'visits');
 		}
-
-		public function actionMap()
-		{
-			$this->addJs("//maps.google.ru/maps/api/js?key=AIzaSyAXXZZwXMG5yNxFHN7yR4GYJgSe9cKKl7o&libraries=places&language=ru", true);
-			$this->addJs('maps.controller, ng-test-app');
-			$this->setTabTitle('Карта клиентов за последние 12 месяцев');
-
-			// заявки за последние 12 месяцев
-			$query = dbEgerep()->query("SELECT client_id FROM requests WHERE `created_at` >= DATE(NOW() - INTERVAL 365 DAY) GROUP BY client_id");
-
-			$Markers = [];
-
-			while($row = $query->fetch_object()) {
-				$marker = dbEgerep()->query("SELECT * FROM markers WHERE markerable_type='App\\\Models\\\Client' AND markerable_id=" . $row->client_id)->fetch_object();
-				$has_attachment = dbEgerep()->query("SELECT 1 FROM requests r
-					join request_lists rl on rl.request_id = r.id
-					join attachments a on a.request_list_id = rl.id
-					WHERE r.`created_at` >= DATE(NOW() - INTERVAL 365 DAY) and a.client_id = {$row->client_id}
-				")->num_rows;
-				if ($has_attachment) {
-					$marker->type = 'school';
-				}
-				if ($marker) {
-					$Markers[] = $marker;
-				}
-			}
-
-
-			$ang_init_data = angInit([
-	            "Markers" => $Markers,
-	        ]);
-
-			$this->render("map", [
-	            "ang_init_data" => $ang_init_data
-	        ]);
-		}
 	}

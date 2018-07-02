@@ -5,27 +5,6 @@ app = angular.module "Test", ["ngMap"]
 				for i in [1...total + 1] by 1
 					input.push i
 				input
-		.controller "TmpCtrl", ($scope, $timeout) ->
-			$timeout -> $scope.initMap()
-
-			$scope.initMap = ->
-				map = new google.maps.Map document.getElementById("gmap"),
-				center: new google.maps.LatLng(55.7387, 37.6032)
-				scrollwheel: false,
-				zoom: 11
-				disableDefaultUI: true
-				clickableLabels: false
-				clickableIcons: false
-				zoomControl: true
-				zoomControlOptions:
-					position: google.maps.ControlPosition.LEFT_BOTTOM
-					scaleControl: true
-				$scope.Markers.forEach (marker) ->
-					marker_location = new google.maps.LatLng(marker.lat, marker.lng)
-					new_marker = newMarker(marker.id, marker_location, map, marker.type)
-					new_marker.addListener 'click', ->
-						window.open('https://lk.ege-repetitor.ru/client/' + marker.markerable_id, '_blank')
-
 		.controller "Egecentr", ($scope) ->
 			$scope.formatDate = (d) ->
 				moment(d).format "DD MMM"
