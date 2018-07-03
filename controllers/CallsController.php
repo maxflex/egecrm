@@ -30,6 +30,7 @@
 
 		public function actionRating()
 		{
+			$this->checkRights(Shared\Rights::EC_CALLS_RATING);
 			$this->setTabTitle("Оценка качества обслуживания");
 
 			$ang_init_data = angInit([

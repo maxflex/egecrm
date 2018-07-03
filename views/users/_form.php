@@ -141,6 +141,7 @@
         <?= partial('right', ['right' => Shared\Rights::LOGS]) ?>
         <?= partial('right', ['right' => Shared\Rights::EC_STREAM]) ?>
         <?= partial('right', ['right' => Shared\Rights::EC_ACTIVITY]) ?>
+        <?= partial('right', ['right' => Shared\Rights::EC_CALLS_RATING]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">

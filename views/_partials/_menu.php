@@ -61,7 +61,10 @@
 	</a>
 	<a href="map" class="list-group-item">Карта клиентов</a>
 	<a href="contracts/payments" class="cursor list-group-item">График платежей</a>
-	<a href="https://lk.ege-repetitor.ru/background" class="list-group-item">Календарь заставок <sup class="text-danger" style='font-weight: bold'>new</sup></a>
+	<a href="https://lk.ege-repetitor.ru/background" class="list-group-item">Календарь заставок</a>
+	<?php if (User::fromSession()->allowed(Shared\Rights::EC_CALLS_RATING)) :?>
+		<a href="/calls/rating" class="list-group-item">Оценка качества</a>
+	<?php endif ?>
 	<?php if (
 		User::fromSession()->allowed(Shared\Rights::SHOW_PAYMENTS) ||
 		User::fromSession()->allowed(Shared\Rights::SHOW_TEACHER_PAYMENTS) ||
