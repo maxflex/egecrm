@@ -445,7 +445,7 @@
 
 			# @time-refactored было условие Group.id_branch in Teacher.branches @time-checked
 			$scope.teachersFilter = (Teacher) ->
-				return (parseInt($scope.Group.id_subject) in Teacher.subjects or not $scope.Group.id_subject)
+				return (parseInt($scope.Group.id_subject) in Teacher.subjects_ec or not $scope.Group.id_subject)
 
 			$scope.emptyDayFilter = (day_and_time) ->
 				return _.filter day_and_time, (d) ->

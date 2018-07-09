@@ -783,10 +783,10 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     if (has_errors) {
       return false;
     }
-    $scope.Teacher.subjects = [];
+    $scope.Teacher.subjects_ec = [];
     $("#subjects-select option:selected").each(function() {
       if ($(this).val()) {
-        return $scope.Teacher.subjects.push($(this).val());
+        return $scope.Teacher.subjects_ec.push($(this).val());
       }
     });
     $scope.Teacher.branches = [];
@@ -886,14 +886,14 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     var branches, subjects;
     subjects = [$scope.id_subject];
     branches = [$scope.filter_branch];
-    return ($scope.in_egecentr === '' ? true : Teacher.in_egecentr === parseInt($scope.in_egecentr)) && (!$scope.id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
+    return ($scope.in_egecentr === '' ? true : Teacher.in_egecentr === parseInt($scope.in_egecentr)) && (!$scope.id_subject ? true : _.intersection(Teacher.subjects_ec, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
   };
   $scope.getCount = function(state, id_subject) {
     var branches, subjects;
     subjects = [id_subject];
     branches = [$scope.filter_branch];
     return _.filter($scope.Teachers, function(Teacher) {
-      return (state === '' ? true : Teacher.in_egecentr === parseInt(state)) && (!id_subject ? true : _.intersection(Teacher.subjects, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
+      return (state === '' ? true : Teacher.in_egecentr === parseInt(state)) && (!id_subject ? true : _.intersection(Teacher.subjects_ec, subjects.map(Number)).length) && (!$scope.filter_branch ? true : _.intersection(Teacher.branches, branches.map(Number)).length);
     }).length;
   };
   $scope.refreshCounts = function() {

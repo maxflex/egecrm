@@ -23,7 +23,7 @@
                 }">лет</ng-pluralize></span>
 			</div>
 			<div class="form-group">
-				<?= Subjects::buildMultiSelector($Teacher->subjects, ["id" => "subjects-select", 'disabled' => 'disabled'], 'three_letters') ?>
+				<?= Subjects::buildMultiSelector($Teacher->subjects_ec, ["id" => "subjects-select", 'disabled' => 'disabled'], 'three_letters') ?>
 			</div>
 			<div class="form-group">
 				<?= Grades::buildMultiSelector($Teacher->grades, ["id" => "public-grades", 'disabled' => 'disabled']) ?>
@@ -66,26 +66,6 @@
 				<?= Branches::buildMultiSelector($Teacher->branches, ["id" => "teacher-branches", 'readonly' => 'true']) ?>
 			</div>
 		</div>
-<!--
-		<div class="col-sm-3">
-			<div class="form-group">
-				<?= Subjects::buildMultiSelector($Teacher->subjects, ["id" => "subjects-select"]) ?>
-			</div>
-			<div class="form-group">
-				<input placeholder="оценка эксперта" ng-model="Teacher.expert_mark" class="form-control">
-			</div>
-			<div class="form-group">
-				<div class="input-group">
-					<input placeholder="ID в базе" ng-model="Teacher.id_a_pers" class="form-control digits-only">
-					<span class="input-group-btn">
-			        	<button class="btn btn-default" type="button" ng-disabled="!Teacher.id_a_pers" ng-click="goToTutor()">
-			        		<span class="glyphicon glyphicon-user no-margin-right"></span>
-			        	</button>
-					</span>
-				</div>
-			</div>
-		</div>
--->
 	</div>
 
 	<!-- /Публичная информация -->

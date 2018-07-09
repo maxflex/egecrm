@@ -854,7 +854,7 @@
 
 			$Group = Group::findById($id);
 
-            $Teachers = Teacher::getLight(false, ['subjects']);
+            $Teachers = Teacher::getLight(false, ['subjects_ec']);
 
 			if ($Group->id_teacher) {
 				foreach ($Teachers as &$Teacher) {

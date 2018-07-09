@@ -62,7 +62,7 @@
 								class="teacher-alert glyphicon glyphicon-exclamation-sign"></span>
 						</td>
 						<td>
-							<span ng-repeat="id_subject in Teacher.subjects">{{three_letters[id_subject]}}{{$last ? "" : "+"}}</span>
+							<span ng-repeat="id_subject in Teacher.subjects_ec">{{three_letters[id_subject]}}{{$last ? "" : "+"}}</span>
 						</td>
 						<td>
 							<span ng-repeat="branch in Teacher.branches">

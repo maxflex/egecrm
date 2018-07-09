@@ -100,7 +100,7 @@
 				$id_subject = array_search($subject, Subjects::$short_eng);
 			}
 
-			$condition = "description!='' " . (isset($id_subject) ? " AND FIND_IN_SET($id_subject, subjects)" : "") ;
+			$condition = "description!='' " . (isset($id_subject) ? " AND FIND_IN_SET($id_subject, subjects_ec)" : "") ;
 /*
 			returnJSON($condition);
 			exit();
@@ -143,7 +143,7 @@
             if (($id_subject = intval($id_subject)) && ($grade = intval($grade) )) {
                 $Teachers = Teacher::findAll([
                     "condition" => "description!='' ".
-                        "AND CONCAT(',', CONCAT(subjects, ',')) LIKE '%,{$id_subject},%' ".
+                        "AND CONCAT(',', CONCAT(subjects_ec, ',')) LIKE '%,{$id_subject},%' ".
                         "AND CONCAT(',', CONCAT(grades, ',')) LIKE '%,{$grade},%' "
                 ]);
 

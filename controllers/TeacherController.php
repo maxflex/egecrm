@@ -344,7 +344,7 @@
 			// ]);
 
 			$query = dbEgerep()->query("
-				select id, first_name, last_name, middle_name, branches, subjects, in_egecentr,
+				select id, first_name, last_name, middle_name, branches, subjects_ec, in_egecentr,
 					IF(LENGTH(photo_desc) > 0, 1, 0) as photo_desc_exists,
 					IF(LENGTH(description) > 0, 1, 0) as description_exists
 				from tutors
@@ -354,7 +354,7 @@
 
 			$Teachers = [];
 			while ($row = $query->fetch_object()) {
-				$row->subjects = explode(',', $row->subjects);
+				$row->subjects_ec = explode(',', $row->subjects_ec);
 				$row->branches = explode(',', $row->branches);
 				$row->bar = Freetime::getTeacherBar($row->id, true);
 				if ($row->in_egecentr == Teacher::ACTIVE_NOW) {

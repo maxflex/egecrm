@@ -6,14 +6,14 @@
 // 		public static $mysql_table	= "teachers";
 		public static $mysql_table = "tutors";
 
-		protected $_inline_data = ["branches", "subjects", "grades", "public_grades"];
+		protected $_inline_data = ["branches", "subjects_ec", "grades", "public_grades"];
 		protected $_additional_vars = ["banned"];
 
         public static $api_fields = [
             'id', 'photo_extension',
             'first_name', 'last_name', 'middle_name',
             'description',  'has_photo',
-            'subjects', 'public_grades', 'start_career_year',
+            'subjects_ec', 'public_grades', 'start_career_year',
             'video_link',
         ];
 
@@ -152,8 +152,8 @@
 			if ($id === false || is_array($id)) {
 				$Teachers = [];
 				while($row = $result->fetch_object()) {
-					if (isset($row->subjects)) {
-						$row->subjects = explode(',', $row->subjects);
+					if (isset($row->subjects_ec)) {
+						$row->subjects_ec = explode(',', $row->subjects_ec);
 					}
 					$Teachers[] = $row;
 				}
@@ -458,7 +458,7 @@
 				$object['grades_interval'] = $object['public_grades'][0] . (count($object['public_grades']) > 1 ? '-' . end($object['public_grades']) : '');
 				$object['public_seniority'] = date('Y') - $Teacher->start_career_year;
 				$subject_string = [];
-				foreach ($Teacher->subjects as $index => $id_subject) {
+				foreach ($Teacher->subjects_ec as $index => $id_subject) {
 					$subject_string[] = Subjects::$dative[$id_subject];
 				}
 				$object['subjects_dative'] = implode(', ', $subject_string);

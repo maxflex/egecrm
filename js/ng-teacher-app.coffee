@@ -670,10 +670,10 @@
 					if has_errors
 						return false
 
-					$scope.Teacher.subjects = []
+					$scope.Teacher.subjects_ec = []
 					$("#subjects-select option:selected").each ->
 						if $(@).val()
-							$scope.Teacher.subjects.push $(@).val()
+							$scope.Teacher.subjects_ec.push $(@).val()
 
 					$scope.Teacher.branches = []
 					$("#teacher-branches option:selected").each ->
@@ -758,13 +758,13 @@
 			$scope.teachersFilter = (Teacher) ->
 				subjects	= [$scope.id_subject]
 				branches	= [$scope.filter_branch]
-				(if $scope.in_egecentr is '' then true else Teacher.in_egecentr is parseInt($scope.in_egecentr)) and (if not $scope.id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length) and (if not $scope.filter_branch then true else _.intersection(Teacher.branches, branches.map(Number)).length)
+				(if $scope.in_egecentr is '' then true else Teacher.in_egecentr is parseInt($scope.in_egecentr)) and (if not $scope.id_subject then true else _.intersection(Teacher.subjects_ec, subjects.map(Number)).length) and (if not $scope.filter_branch then true else _.intersection(Teacher.branches, branches.map(Number)).length)
 
 			$scope.getCount = (state, id_subject) ->
 				subjects = [id_subject]
 				branches = [$scope.filter_branch]
 				_.filter($scope.Teachers, (Teacher) ->
-					(if state is '' then true else Teacher.in_egecentr is parseInt(state)) and (if not id_subject then true else _.intersection(Teacher.subjects, subjects.map(Number)).length) and (if not $scope.filter_branch then true else _.intersection(Teacher.branches, branches.map(Number)).length)
+					(if state is '' then true else Teacher.in_egecentr is parseInt(state)) and (if not id_subject then true else _.intersection(Teacher.subjects_ec, subjects.map(Number)).length) and (if not $scope.filter_branch then true else _.intersection(Teacher.branches, branches.map(Number)).length)
 				).length
 
 			$scope.refreshCounts = ->

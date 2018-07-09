@@ -566,7 +566,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   });
   $scope.teachersFilter = function(Teacher) {
     var ref;
-    return (ref = parseInt($scope.Group.id_subject), indexOf.call(Teacher.subjects, ref) >= 0) || !$scope.Group.id_subject;
+    return (ref = parseInt($scope.Group.id_subject), indexOf.call(Teacher.subjects_ec, ref) >= 0) || !$scope.Group.id_subject;
   };
   $scope.emptyDayFilter = function(day_and_time) {
     return _.filter(day_and_time, function(d) {
