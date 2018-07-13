@@ -20,6 +20,7 @@
 		public function actionList()
 		{
 			$list = $_GET["list"];
+			$id = $_GET["id"];
 
 			// dev only
 			$search = $_GET["search"];
@@ -28,26 +29,30 @@
 			// не надо панель рисовать
 			$this->_custom_panel = true;
 
-			if ($list) {
-				$condition = "html IS NOT NULL AND id_status=" . $list;
-				if (isset($search)) {
-					$condition .= " AND html LIKE '%{$search}%'";
-				}
-				$Tasks = Task::findAll([
-					"condition" => $condition,
-					"order"		=> "id DESC",
-					"limit"		=> $list == 8 ? 50 : 50,
-				]);
+			if ($id) {
+				$Tasks = [Task::findById($id)];
 			} else {
-				$condition =  "html IS NOT NULL AND id_status!=" . TaskStatuses::CLOSED;
-				if (isset($search)) {
-					$condition .= " AND html LIKE '%{$search}%'";
+				if ($list) {
+					$condition = "html IS NOT NULL AND id_status=" . $list;
+					if (isset($search)) {
+						$condition .= " AND html LIKE '%{$search}%'";
+					}
+					$Tasks = Task::findAll([
+						"condition" => $condition,
+						"order"		=> "id DESC",
+						"limit"		=> $list == 8 ? 50 : 50,
+					]);
+				} else {
+					$condition =  "html IS NOT NULL AND id_status!=" . TaskStatuses::CLOSED;
+					if (isset($search)) {
+						$condition .= " AND html LIKE '%{$search}%'";
+					}
+					$Tasks = Task::findAll([
+						"condition" => $condition,
+						"order"		=> "id DESC",
+	                    "limit"     => $_GET["limit"] ? $_GET["limit"] : 100,
+					]);
 				}
-				$Tasks = Task::findAll([
-					"condition" => $condition,
-					"order"		=> "id DESC",
-                    "limit"     => $_GET["limit"] ? $_GET["limit"] : 100,
-				]);
 			}
 
 			$ang_init_data = angInit([
