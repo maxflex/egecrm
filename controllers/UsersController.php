@@ -21,13 +21,13 @@
 			$this->setTabTitle("Пользователи");
 			$this->setRightTabTitle('<a href="users/create" class="link-reverse link-white">добавить  нового пользователя</a>');
 
-			$ActiveUsers = User::findAll([
-				"condition" => "type='USER' AND NOT (FIND_IN_SET(" . Shared\Rights::EC_BANNED . ", rights) AND FIND_IN_SET(" . Shared\Rights::ER_BANNED . ", rights))",
+			$ActiveUsers = Admin::findAll([
+				"condition" => "NOT (FIND_IN_SET(" . Shared\Rights::EC_BANNED . ", rights) AND FIND_IN_SET(" . Shared\Rights::ER_BANNED . ", rights))",
 				"order"     => "id ASC"
 			]);
 
-			$BannedUsers = User::findAll([
-				"condition" => "type ='USER' AND (FIND_IN_SET(" . Shared\Rights::EC_BANNED . ", rights) AND FIND_IN_SET(" . Shared\Rights::ER_BANNED . ", rights))",
+			$BannedUsers = Admin::findAll([
+				"condition" => "(FIND_IN_SET(" . Shared\Rights::EC_BANNED . ", rights) AND FIND_IN_SET(" . Shared\Rights::ER_BANNED . ", rights))",
 				"order"     => "id ASC"
 			]);
 
@@ -118,7 +118,7 @@
 				User::updateById($User['id'], $User);
 			}
 
-            if (User::fromSession()->id == $User['id']) {
+            if (User::id() == $User['id']) {
                 User::findById($User['id'])->toSession();
             }
 
@@ -161,9 +161,9 @@
 		public function actionGet()
         {
             $id = isset($_GET['id']) ? intval($_GET['id']) : false;
-            $data = $id ? User::findById($id)->dbData() : User::getCached();
+            $data = $id ? User::findById($id) : User::getCached();
             foreach ($data as &$user) {
-                if ($user->id == User::fromSession()->id) {
+                if ($user->id == User::id()) {
                     $user->is_current = 1;
                 }
             }

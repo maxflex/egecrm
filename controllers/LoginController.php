@@ -13,12 +13,12 @@
 		{
 			// Если пользователь уже вошел, либо была галка "запомнить",
 			// то редиректим на ту страницу, куда пользователь шел изначально
-			if (User::loggedIn() || User::rememberMeLogin()) {
+			if (User::loggedIn()) {
 				// Если пользователь залогинен и пытается перейти на страницу логина,
 				// то редиректим его на страницу заявок
 				if ($_GET["controller"] == "login") {
 					switch (User::fromSession()->type) {
-						case User::USER_TYPE: {
+						case Admin::USER_TYPE: {
 							$this->redirect("requests");
 							break;
 						}
@@ -59,7 +59,7 @@
 		 */
 		public function actionLogout()
 		{
-            self::log(User::fromSession()->id, 'logout');
+            self::log(User::id(), 'logout');
 
 			// Удаляем сессию
 			session_destroy();
@@ -94,14 +94,7 @@
                 returnJSON($resp->getErrorCodes());
             }
 
-			// $logins_count = User::getByEmail($login, 'count');
-			// if (! $logins_count) {
-			// 	returnJSON(-1);
-			// } elseif ($logins_count > 1) {
-			// 	returnJSON(-2);
-			// }
-
-            $query = ["(email='$login' or login='$login')"];
+            $query = ["email='$login'"];
 
             # проверка логина
             if (self::userExists($query)) {
@@ -128,7 +121,7 @@
 			}
 
             // Пользователь заблокирован?
-            if ($User->type == User::USER_TYPE && $User->allowed(Shared\Rights::EC_BANNED)) {
+            if ($User->type == Admin::USER_TYPE && $User->allowed(Shared\Rights::EC_BANNED)) {
                 self::log($user_id, 'failed_login', 'пользователь заблокирован');
                 returnJSON('banned');
             }
@@ -145,11 +138,11 @@
                 returnJSON('banned');
             }
 
-            $worldwide_access = $User->type == User::USER_TYPE ? (User::fromOffice() || $User->allowed(Shared\Rights::WORLDWIDE_ACCESS)) : true;
+			$allowed_to_login = $User->allowedToLogin();
 
-			if ($worldwide_access) {
-                // Дополнительная СМС-проверка, если пользователь логинится если не из офиса
-                if (! User::fromOffice() && $User->type == User::USER_TYPE && ! User::fromMaldives()) {
+			if ($allowed_to_login) {
+                // Нужна ли дополнительная смс-проверка для этого IP
+                if ($allowed_to_login->confirm_by_sms) {
                     $client = new Predis\Client();
                     $sent_code = $client->get("egecrm:codes:{$User->id}");
                     // если уже был отправлен – проверяем
@@ -170,11 +163,12 @@
 
                 self::log($user_id, 'success_login');
 
-                $User->toSession(true, true); 	// Входим в сессию
+                $User->toSession(true); 	// Входим в сессию
 
-				if ($User->isStudent() || $User->isTeacher()) {
-					$User->login_count++;
-					$User->save("login_count");
+				if (User::isStudent() || User::isTeacher() || User::isRepresentative()) {
+					$Entity = User::getEntity();
+					$Entity->login_count++;
+					$Entity->save("login_count");
 				}
 
 				returnJson(true);					// Ответ АЯКСУ, мол, вошли нормально
@@ -239,7 +233,6 @@
          */
         private static function userExists($query)
         {
-            // echo implode(' AND ', $query) . "\n";
             return User::count([
                 'condition' => implode(' AND ', $query)
             ]);

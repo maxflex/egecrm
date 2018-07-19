@@ -8,7 +8,7 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "request";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		/**
 		 * BEFORE ACTION.
@@ -26,7 +26,7 @@
 		 */
 		public function actionEdit($id_student = false)
 		{
-			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE, Teacher::USER_TYPE]);
 
 			// Находим заявку по ID
 			$Request = Request::findById($_GET["id"]);
@@ -54,7 +54,7 @@
 				"id_request"	=> $Request->id,					    // ID текущей заявки
 				"id_student"	=> $Request->Student->id,
 				'three_letters'	=> Subjects::$three_letters,
-                "user"			=> User::fromSession()->dbData(),
+                "user"			=> User::fromSession(),
                 'academic_year' => academicYear(),
                 "Request"		=> $Request,
                 "request_duplicates"=> $Request->getDuplicates(true),	// получить дубликаты, включая свой ID
@@ -80,7 +80,7 @@
 		 */
 		public function actionList()
 		{
-			$this->setRights([User::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE]);
 			$this->setTabTitle("Заявки ");
             $this->setRightTabTitle('<a href="requests/add" class="link-reverse link-white">создать заявку</a>');
 
@@ -107,7 +107,7 @@
                     'users' => Request::getUserCounts($search),
                     'requests' => Request::getAllStatusesCount($search)
                 ],
-                "user"					=> User::fromSession()->dbData()
+                "user"					=> User::fromSession()
             ]);
 
 			$this->render("list", [
@@ -122,7 +122,7 @@
 		 */
 		public function actionRelevant()
 		{
-			$this->setRights([User::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE]);
 
 			extract($_GET);
 
@@ -181,10 +181,10 @@
 		 */
 		public function actionAdd()
 		{
-			$this->setRights([User::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE]);
 
 			$default_params = [
-				"id_user_created"	=> User::fromSession()->id,
+				"id_user_created"	=> User::id(),
 			//	"id_status"			=> RequestStatuses::CUSTOM,
 				"adding" 			=> 1,
 			];
@@ -221,7 +221,7 @@
 		 */
 		public function actionAjaxSave()
 		{
-			$this->setRights([User::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE]);
 
 			# ЗАЯВКА
 			// Получаем ID заявки
@@ -409,8 +409,8 @@
 
 			returnJsonAng([
 				# Основные данные
-				"responsible_user"	=> $Request->id_user ? User::findById($Request->id_user)->dbData() : [],	// ответственный
-				"user"				=> User::fromSession()->dbData(),
+				"responsible_user"	=> $Request->id_user ? User::findById($Request->id_user) : [],	// ответственный
+				"user"				=> User::fromSession(),
 				"users"				=> User::getCached(true), // с system
 				"request_phone_level"	=> $Request->phoneLevel(),
 			]);
@@ -460,7 +460,7 @@
 			}
 
 			returnJsonAng([
-				"user"				=> User::fromSession()->dbData(),
+				"user"				=> User::fromSession(),
 				"payment_statuses"	=> Payment::$all,
 				"payment_types"		=> PaymentTypes::$all,
 				"PaymentsByYear"	=> $PaymentsByYear,	// Платежи ученика
@@ -498,7 +498,7 @@
 
 			returnJsonAng([
 				'Reviews' 		 => TeacherReview::getData(null, null, $id_student)['data'],
-				"user"				=> User::fromSession()->dbData(),
+				"user"				=> User::fromSession(),
 				"users"				=> User::getCached(true), // с system
 				"grades_short"  => Grades::$short,
 				'id_user_review' => dbConnection()->query("SELECT id_user_review FROM students WHERE id = {$id_student}")->fetch_object()->id_user_review,

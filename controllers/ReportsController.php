@@ -4,7 +4,7 @@
 	{
 		public $defaultAction = "add";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		// Папка вьюх
 		protected $_viewsFolder	= "report";
@@ -25,7 +25,7 @@
 					$Report = Report::getLight($id_report, ['id_student', 'id_teacher']);
 					$Student = Student::getLight($Report->id_student, ['id_head_teacher']);
 					$Teacher = Teacher::getLight($Report->id_teacher, ['id_head_teacher']);
-					if (! $this->hasAccess('reports', $id_report, null, null , true) && ! ($Student->id_head_teacher == User::fromSession()->id_entity) && ! ($Teacher->id_head_teacher == User::fromSession()->id_entity)) {
+					if (! $this->hasAccess('reports', $id_report, null, null , true) && ! ($Student->id_head_teacher == User::id()) && ! ($Teacher->id_head_teacher == User::id())) {
 						$this->renderRestricted();
 					}
 	            } else {
@@ -53,7 +53,7 @@
 		{
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$this->_teacherList();
-			} else if (User::fromSession()->type == User::USER_TYPE) {
+			} else if (User::fromSession()->type == Admin::USER_TYPE) {
 				$this->_userList();
 			} else {
 				$this->renderRestricted();
@@ -102,7 +102,7 @@
 
             $id_student = $_GET['id_student'];
             $id_subject = $_GET['id_subject'];
-            $id_teacher = User::fromSession()->id_entity;
+            $id_teacher = User::id();
 
             if (! static::lessonExists($id_teacher, $id_student, $id_subject)) {
                 $this->renderRestricted();
@@ -182,7 +182,7 @@
 
 		public function actionEdit()
 		{
-			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE, Teacher::USER_TYPE]);
 
             $id_report = $_GET['id'];
 
@@ -198,7 +198,7 @@
 
 		public function actionAdd($Report = false)
 		{
-            $this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+            $this->setRights([Admin::USER_TYPE, Teacher::USER_TYPE]);
 
 			$this->_custom_panel = true;
 
@@ -209,19 +209,19 @@
 				$id_student = $_GET["id_student"];
 				$id_subject = $_GET["id_subject"];
 
-                if (! static::lessonExists(User::fromSession()->id_entity, $id_student, $id_subject)) {
+                if (! static::lessonExists(User::id(), $id_student, $id_subject)) {
                     $this->renderRestricted();
                 }
 
 				$Report = new Report([
 					"id_student" => $id_student,
 					"id_subject" => $id_subject,
-					"id_teacher" => User::fromSession()->id_entity,
+					"id_teacher" => User::id(),
 					"date"       => now(true),
 				]);
 
 				$Report->Student = Student::findById($id_student);
-				$Report->Teacher = Teacher::findById(User::fromSession()->id_entity);
+				$Report->Teacher = Teacher::findById(User::id());
 			}
 
 			$ang_init_data = angInit([
@@ -286,7 +286,7 @@
 		public function actionAjaxLoadByYear()
 		{
 			extract($_POST);
-			$id_teacher = User::fromSession()->id_entity;
+			$id_teacher = User::id();
 
             $data = ReportHelper::findAll([
                 'condition' => "year={$year} AND id_teacher={$id_teacher}",

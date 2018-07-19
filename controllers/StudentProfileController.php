@@ -5,7 +5,7 @@ class StudentsProfileController extends Controller
 {
     public $defaultAction = "photo";
 
-    public static $allowed_users = [User::USER_TYPE, Student::USER_TYPE, Teacher::USER_TYPE];
+    public static $allowed_users = [Admin::USER_TYPE, Student::USER_TYPE, Teacher::USER_TYPE];
 
     // Папка вьюх
     protected $_viewsFolder	= "students";
@@ -20,7 +20,7 @@ class StudentsProfileController extends Controller
 		$this->setTabTitle('Баланс счета');
 
 		$ang_init_data = angInit([
-            "id_student" => User::fromSession()->id_entity,
+            "id_student" => User::id(),
         ]);
 
 		$this->render("balance", [
@@ -30,7 +30,7 @@ class StudentsProfileController extends Controller
 
     public function actionPhoto()
     {
-        $id_student = User::fromSession()->id_entity;
+        $id_student = User::id();
 
         if ($Student = Student::findById($id_student)) {
             $StudentProfile = [];
@@ -77,7 +77,7 @@ class StudentsProfileController extends Controller
 
     public function actionAjaxDeletePhoto() {
         extract($_POST);
-        if ($student_id == User::fromSession()->id_entity || User::isUser()) {
+        if ($student_id == User::id() || User::isAdmin()) {
             $Student = Student::findById($student_id);
 
             unlink($Student->photoPath());
@@ -86,7 +86,7 @@ class StudentsProfileController extends Controller
             $User = User::find(['condition' => 'id_entity = '.$student_id]);
             $User->update(['photo_extension'=>'','has_photo_cropped'=>0]);
 
-            if (!User::isUser()) {
+            if (!User::isAdmin()) {
                 $User->toSession();
             }
         }

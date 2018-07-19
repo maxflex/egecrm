@@ -53,7 +53,7 @@
 		public function beforeSave()
 		{
 			$this->date 	= now();
-			$this->id_user 	= User::fromSession()->id;
+			$this->id_user 	= User::id();
 			if ($this->place == 'TASK') {
 				Task::reloadNotification();
 			}

@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		public static $allowed_users = [User::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE];
 
 		// Папка вьюх
 		protected $_viewsFolder	= "tasks";
@@ -58,7 +58,7 @@
 			$ang_init_data = angInit([
 				"Tasks"         => $Tasks,
 				"task_statuses" => TaskStatuses::$all,
-				"user"          => User::fromSession()->dbData()
+				"user"          => User::fromSession()
 			]);
 
 			$this->render("list", [

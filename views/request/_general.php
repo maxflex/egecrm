@@ -139,7 +139,7 @@
 		            <h4 style="margin-top: 0" class="row-header">Прочее</h4>
 					<?= partial('photo') ?>
 		            <div>
-			           <span style="width: 75px; display: inline-block">Входов:</span><?= User::getLoginCount($Request->Student->id, Student::USER_TYPE) ?>
+			           <span style="width: 75px; display: inline-block">Входов:</span><?= $Request->Student->login_count ?>
 		            </div>
 					<div ng-hide="is_teacher">
 						<div>

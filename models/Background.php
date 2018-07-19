@@ -9,7 +9,7 @@
 
 			if ($this->user_id) {
 				$this->user = (object)[
-					'login' => User::getLogin($this->user_id)
+					'login' => Admin::getLogin($this->user_id)
 				];
 			}
 
@@ -21,7 +21,7 @@
 			// эта страница логин-пароль в системе ECCRM должна работать только в случае
 			// если это наш IP офиса и разрешение как на iMac или MacBook Pro 15 inch.
 			// Для остальных синий фон
-			if (User::fromOffice()) {
+			if (true) {
 				$wallpaper = Background::find([
 					"condition" => "status=1 AND date=CURDATE()"
 				]);

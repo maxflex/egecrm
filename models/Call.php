@@ -100,7 +100,7 @@
 			if ($result->num_rows) {
 				$return = $result->fetch_object();
 				$id_user = $return->from_extension ?: $return->to_extension;
-				$return->user_login = User::getLogin($id_user);
+				$return->user_login = Admin::getLogin($id_user);
 				$return->user_busy	= User::isCallBusy($id_user);
 				return $return;
 			} else {
@@ -251,7 +251,7 @@
 
 	        foreach($user_ids as $id) {
 		    	Socket::trigger('user_' . $id, 'answered', [
-			    	'answered_user' => User::getLogin($id_user),
+			    	'answered_user' => Admin::getLogin($id_user),
 			    	'call_id'		=> $call_id,
 		    	], static::_getCrmByNumber($number));
 	        }

@@ -37,13 +37,7 @@
 			// Было ли занятие?
 			if (! $this->isNewRecord) {
 				$this->had_lesson = $this->hadLesson();
-
-
 				$this->has_photo = $this->photoExists();
-
-                // @rights-need-to-refactor
-                $User = User::findTeacher($this->id);
-				$this->banned = $User ? $User->allowed(Shared\Rights::EC_BANNED) : false;
 			}
 
 			foreach ($this->branches as $id_branch) {
@@ -319,7 +313,7 @@
 		public static function getGroups($id_teacher = false, $only_ended = true, $where_head = false)
 		{
 			// @refactored
-			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
+			$id_teacher = !$id_teacher ? User::id() : $id_teacher;
 
 			return Group::findAll([
 				"condition" => ($where_head ? "id_head_teacher" : "id_teacher") . "=$id_teacher AND is_unplanned=0" . ($only_ended ? " AND ended=0" : ""),
@@ -335,7 +329,7 @@
 
 		public static function countGroups($id_teacher = false, $where_head = false)
 		{
-			$id_teacher = !$id_teacher ? User::fromSession()->id_entity : $id_teacher;
+			$id_teacher = !$id_teacher ? User::id() : $id_teacher;
 
 			// @refactored
 			return Group::count([

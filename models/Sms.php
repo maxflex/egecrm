@@ -124,7 +124,7 @@ class SMS extends Model
 	{
 		if ($this->isNewRecord) {
 			$this->date = now();
-			$this->id_user = User::fromSession() ? User::fromSession()->id : 0; // если смс отправлено системой (без сесссии), то 0
+			$this->id_user = User::fromSession() ? User::id() : 0; // если смс отправлено системой (без сесссии), то 0
 		}
 	}
 
@@ -134,7 +134,7 @@ class SMS extends Model
 			if ($user = findObjectInArray(User::getCached(), ['id' => $this->id_user])) {
  				$this->user_login = $user['login'];
 			} else {
-				$this->user_login = User::getLogin($this->id_user);
+				$this->user_login = Admin::getLogin($this->id_user);
 			}
 		} else {
 			$this->user_login = "system";

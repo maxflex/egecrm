@@ -137,7 +137,7 @@
 					$Payment = new self($one_payment);
 					$Payment->entity_id 	  = $entity_id;
 					$Payment->entity_type 	  = $entity_type;
-					$Payment->id_user		  = User::fromSession()->id;
+					$Payment->id_user		  = User::id();
 					$Payment->first_save_date = now();
 					$Payment->save();
 				}
@@ -213,7 +213,7 @@
 
 		   if ($this->isNewRecord) {
 			   $this->first_save_date = now();
-			   $this->id_user = User::fromSession()->id;
+			   $this->id_user = User::id();
 		   }
         }
 

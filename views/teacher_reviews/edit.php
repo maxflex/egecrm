@@ -2,7 +2,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			Отзыв
-			<?php if (User::is(['USER', 'TEACHER'])) :?>
+			<?php if (User::is(['ADMIN', 'TEACHER'])) :?>
 			 ученика {{Student.last_name}} {{Student.first_name}} {{Student.middle_name}}
 			 <?php endif ?> по преподавателю {{Teacher.last_name}} {{Teacher.first_name}} {{Teacher.middle_name}}
 			(проведено {{lesson_count}} <ng-pluralize count="lesson_count" when="{
@@ -22,7 +22,7 @@
 			<?php endif ?>
 			<div class="row">
 				<div class="col-sm-8">
-					<?php if (User::is(['USER', 'TEACHER'])) :?>
+					<?php if (User::is(['ADMIN', 'TEACHER'])) :?>
 					<b style="top: 14px; position: relative">Оценка и отзыв ученика (заполняется учеником из его личного кабинета)</b>
 					<?php else :?>
 					<span style="top: 14px; position: relative">Напишите что понравилось/не понравилось (текст отзыва доступен только для администрации)</span>
@@ -48,7 +48,7 @@
 				</div>
 			</div>
 
-			<?php if (User::is(['USER', 'TEACHER'])) :?>
+			<?php if (User::is(['ADMIN', 'TEACHER'])) :?>
 				<?php if (User::isAdmin()) :?>
 				<div class="row">
 					<div class="col-sm-12">

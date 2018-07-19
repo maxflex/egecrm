@@ -33,7 +33,7 @@ class Task extends Model
 
 		if ($this->isNewRecord) {
 			$this->date_created = now();
-			$this->id_user = User::fromSession()->id;
+			$this->id_user = User::id();
 			Task::reloadNotification();
 		} else {
 			if ($this->changed(['html', 'id_status'])) {

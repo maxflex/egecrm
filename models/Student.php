@@ -1,6 +1,7 @@
 <?php
 	class Student extends Model
 	{
+		use HasPhoto;
 
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
@@ -29,15 +30,7 @@
                 // Добавляем связи
                 $this->Representative = Representative::findById($this->id_representative);
                 $this->Passport = Passport::findById($this->id_passport);
-                if ($this->id) {
-                    $user_data = self::dbConnection()->query('select photo_extension, has_photo_cropped from users where id_entity = ' . $this->id)->fetch_object();
-                    $this->photo_extension = $user_data->photo_extension;
-                    $this->has_photo_cropped = $user_data->has_photo_cropped;
-                    $this->has_photo_original = $this->hasPhotoOriginal();
-                    $this->photo_original_size = $this->photoOriginalSize();
-                    $this->photo_cropped_size = $this->photoCroppedSize();
-                    $this->photo_url = $this->photoUrl();
-                }
+                $this->bindPhoto();
             }
 
             if ($this->grade == Grades::EXTERNAL) {
@@ -160,7 +153,7 @@
 		public static function reviewsNeeded()
 		{
 
-			$VisitJournal = self::getExistedTeachers(User::fromSession()->id_entity);
+			$VisitJournal = self::getExistedTeachers(User::id());
 
 			$count = 0;
 			if ($VisitJournal) {

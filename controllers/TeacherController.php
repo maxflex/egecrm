@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE];
 
 		// Папка вьюх
 		protected $_viewsFolder	= "teacher";
@@ -174,7 +174,7 @@
 				"three_letters"	=> Subjects::$three_letters,
 				"Branches"		=> Branches::getAll('*'),
 				"subjects" 		=> Subjects::$short,
-                "user"          => User::fromSession()->dbData()
+                "user"          => User::fromSession()
 			]);
 
 			$this->render("list", [

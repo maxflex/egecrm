@@ -23,7 +23,7 @@
             if (! $light) {
                 // логин пользователя
                 if (! $this->isNewRecord) {
-                    $this->user_login = User::getLogin($this->id_user);
+                    $this->user_login = Admin::getLogin($this->id_user);
                     $this->info = $this->getInfo();
                     $this->payments_info = implode('-', [$this->payments_split, $this->payments_queue]);
                     if ($this->info->grade == Grades::EXTERNAL) {
@@ -168,7 +168,7 @@
                 // дата изменения и пользователь МЕНЯЮТСЯ ТОЛЬКО В СЛУЧАЕ ЕСЛИ ЭТО НЕ ПОДВЕРСИЯ
                 $this->date_changed = now();
                 // договор всегда создается новый, поэтому нет условия if ($this->isNewRecord) { ... }
-                $this->id_user = User::fromSession()->id;
+                $this->id_user = User::id();
             }
 
 			if ($this->date) {

@@ -83,7 +83,7 @@
 			ответственный:
             <span id="request-user-display-{{ request.id }}"
                   class="user-pick"
-                  ng-click="pickUser(request, <?= User::fromSession()->id ?>)" style="color: {{ UserService.getColor(request.id_user, 'rgba(0, 0, 0, 0.5)') }}"
+                  ng-click="pickUser(request, <?= User::id() ?>)" style="color: {{ UserService.getColor(request.id_user, 'rgba(0, 0, 0, 0.5)') }}"
             >
                 {{ UserService.getLogin(request.id_user) }}
             </span>

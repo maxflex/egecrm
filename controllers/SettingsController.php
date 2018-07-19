@@ -3,7 +3,7 @@
 	// Контроллер
 	class SettingsController extends Controller
 	{
-		public static $allowed_users = [User::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE];
 
 		public $defaultAction = "vocations";
 

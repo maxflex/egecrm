@@ -50,7 +50,7 @@
 		function beforeSave()
 		{
 			if ($this->isNewRecord) {
-				$this->id_user = User::fromSession()->id;
+				$this->id_user = User::id();
 				$this->created_at = now();
 			}
 		}
@@ -145,7 +145,7 @@
 		public static function countNeeded() {
 			// @todo: брошеные тесты здесь не засчитываются
 			return TestStudent::count([
-				'condition' => 'id_student=' . User::fromSession()->id_entity . ' AND date_finish="' . EMPTY_DATETIME .'"'
+				'condition' => 'id_student=' . User::id() . ' AND date_finish="' . EMPTY_DATETIME .'"'
 			]);
 		}
 

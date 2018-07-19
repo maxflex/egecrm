@@ -1,7 +1,7 @@
 <?php
 	class AsController extends Controller
 	{
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 		
 		public function actionMain()
 		{

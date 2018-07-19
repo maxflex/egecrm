@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		// Папка вьюх
 		protected $_viewsFolder	= "tests";
@@ -65,7 +65,7 @@
 			$this->_custom_panel = true;
 
 			$Tests = TestStudent::findAll([
-				"condition" => "id_student=" . User::fromSession()->id_entity,
+				"condition" => "id_student=" . User::id(),
 			]);
 
 			foreach($Tests as &$Test) {
@@ -96,7 +96,7 @@
 			$Test->Problems = TestProblem::findByTest($Test->id);
 
 			$StudentTest = TestStudent::find([
-				"condition" => "id_student=" . User::fromSession()->id_entity . " AND id_test={$id}",
+				"condition" => "id_student=" . User::id() . " AND id_test={$id}",
 			]);
 
 			$data = [
@@ -245,7 +245,7 @@
 		{
 			extract($_POST);
 
-			$Test = TestStudent::get(User::fromSession()->id_entity, $id);
+			$Test = TestStudent::get(User::id(), $id);
 			$Test->finish();
 
 			echo $Test->finalScoreString();
@@ -268,7 +268,7 @@
 		{
 			extract($_POST);
 
-			$Test = TestStudent::get(User::fromSession()->id_entity, $id);
+			$Test = TestStudent::get(User::id(), $id);
 
 			$Test->answers = $answers;
             $Test->calcScore();

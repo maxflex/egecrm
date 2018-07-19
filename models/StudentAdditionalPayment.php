@@ -24,7 +24,7 @@ class StudentAdditionalPayment extends Model
 	public function beforeSave()
 	{
 		if ($this->isNewRecord) {
-			$this->id_user = User::fromSession()->id;
+			$this->id_user = User::id();
 		}
 		$this->date = fromDotDate($this->date);
 	}

@@ -20,7 +20,7 @@
 		// Дополнительный CSS
 		protected $_css_additional = "";
 
-		public static $allowed_users = [User::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE];
 
 		/*
 		 * Отобразить view
@@ -103,10 +103,10 @@
 		 * Установить права доступа к контроллеру.
 		 *
 		 * @access protected
-		 * @param mixed $allowed_users (default: [User::USER_TYPE]) Только пользователям по умолчанию
+		 * @param mixed $allowed_users (default: [Admin::USER_TYPE]) Только пользователям по умолчанию
 		 * @return void
 		 */
-		protected function setRights($allowed_users = [User::USER_TYPE])
+		protected function setRights($allowed_users = [Admin::USER_TYPE])
 		{
 			if (! in_array(User::fromSession()->type, $allowed_users)) {
 				$this->renderRestricted();

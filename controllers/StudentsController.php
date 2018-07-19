@@ -3,7 +3,7 @@
 	// Контроллер
 	class StudentsController extends Controller
 	{
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE];
 
 		public $defaultAction = "findById";
 

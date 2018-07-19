@@ -27,7 +27,7 @@
     </a>
     <a href="teachers/reports" class="list-group-item">Отчеты
 	    <?php
-		    $red_report_count = Teacher::redReportCountStatic(User::fromSession()->id_entity);
+		    $red_report_count = Teacher::redReportCountStatic(User::id());
 
 			if ($red_report_count) {
 				echo '<span class="badge badge-danger pull-right">'. $red_report_count .'</span>';

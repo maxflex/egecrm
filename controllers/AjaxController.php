@@ -9,7 +9,7 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		##################################################
 		###################### AJAX ######################
@@ -24,7 +24,7 @@
 
 		public function actionAjaxContinueSession()
 		{
-			Socket::trigger('user_' . User::fromSession()->id, 'continue_session', []);
+			Socket::trigger('user_' . User::id(), 'continue_session', []);
 		}
 
 		public function actionDefault()
@@ -433,7 +433,7 @@
 			$Users = User::findAll();
 
 			foreach ($Users as $User) {
-				$return[] = $User->dbData();
+				$return[] = $User;
 			}
 
 			$Users = $return;

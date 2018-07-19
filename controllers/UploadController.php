@@ -20,7 +20,7 @@
 		// Временная директория электронных версий договоров
 		const EMAIL_TMP_DIR = "files/email/tmp/";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		##################################################
 		###################### AJAX ######################
@@ -157,7 +157,7 @@
                     $Student->photo_extension = $handle->file_src_name_ext;
                     $Student->save('photo_extension');
 
-                    if (!User::isUser()) {
+                    if (!User::isAdmin()) {
                         $Student->toSession();
                     }
                     returnJson([
@@ -193,7 +193,7 @@
             $User = User::findById($user_id);
             $User->update(['has_photo_cropped' => 1]);
 
-            if (User::fromSession()->id == $user_id) {
+            if (User::id() == $user_id) {
                 $User->toSession();
             }
 
@@ -206,7 +206,7 @@
             extract($_POST);
             extract($_FILES);
 
-            if ($student_id == User::fromSession()->id_entity || User::isUser()) {
+            if ($student_id == User::id() || User::isAdmin()) {
 
                 $Student = Student::findById($student_id);
                 $this->handleCropped($croppedImage, $student_id, $Student->photo_extension, Student::UPLOAD_DIR);
@@ -214,7 +214,7 @@
                 $User = User::find(["condition"=>"id_entity = $student_id and type='".Student::USER_TYPE."'"]);
                 $User->update(['has_photo_cropped'=>1]);
 
-                if (!User::isUser()) {
+                if (!User::isAdmin()) {
                     $User->toSession();
                 }
 

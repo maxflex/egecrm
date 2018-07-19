@@ -4,7 +4,7 @@
     {
         public $defaultAction = "index";
 
-        public static $allowed_users = [User::USER_TYPE];
+        public static $allowed_users = [Admin::USER_TYPE];
 
         // Папка вьюх
         protected $_viewsFolder	= "map";

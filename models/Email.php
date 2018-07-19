@@ -82,7 +82,7 @@ class Email extends Model
 	public function beforeSave()
 	{
 		$this->date = now();
-		$this->id_user = User::fromSession() ? User::fromSession()->id : 0; // если смс отправлено системой (без сесссии), то 0
+		$this->id_user = User::fromSession() ? User::id() : 0; // если смс отправлено системой (без сесссии), то 0
 	}
 
 	public function getCoordinates()

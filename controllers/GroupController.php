@@ -8,7 +8,7 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "group";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE, Student::USER_TYPE];
 
 		public function beforeAction()
 		{
@@ -20,7 +20,7 @@
 			$this->_viewsFolder = 'journal';
 			$id_group = $_GET['id'];
 
-			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE, Teacher::USER_TYPE]);
 
             // has-access-refactored
             if (User::isTeacher()) {
@@ -57,7 +57,7 @@
 
 			$this->setTabTitle("Расписание и отчеты");
 
-			$Schedule = Student::getFullSchedule(User::fromSession()->id_entity, true);
+			$Schedule = Student::getFullSchedule(User::id(), true);
 
 			$ang_init_data = angInit([
 				"Subjects"	=> Subjects::$three_letters,
@@ -77,7 +77,7 @@
 
 		public function actionLesson()
 		{
-			$this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE, Teacher::USER_TYPE]);
 
             $Lesson = VisitJournal::findById($_GET['id']);
 
@@ -157,7 +157,7 @@
 						"lesson_statuses" => VisitJournal::$statuses,
 						"isAdmin"		  => User::isAdmin() ? 1 : 0,
 						"left_students"   => $left_students,
-						'Teacher'		  => Teacher::getLight(User::fromSession()->id_entity)
+						'Teacher'		  => Teacher::getLight(User::id())
 					]);
 
 					//изменение исторических данных: доступен только админам
@@ -181,7 +181,7 @@
 			if (User::fromSession()->type == Teacher::USER_TYPE) {
 				$extended = isset($_GET['extended']) && $_GET['extended'];
 				$this->setTabTitle($extended ? "Расширенный доступ" : "Мои группы");
-				$Groups = Teacher::getGroups(User::fromSession()->id_entity, false, $extended);
+				$Groups = Teacher::getGroups(User::id(), false, $extended);
 
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -190,8 +190,8 @@
 					"GroupLevels"	=> GroupLevels::$short,
 					"Branches"		=> Branches::getAll(),
 					"all_cabinets"	=> Branches::allCabinets(), // @to show past lesson cabinet number
-					"AdditionalLessons" => $extended ? null : AdditionalLesson::getByEntity(Teacher::USER_TYPE, User::fromSession()->id_entity),
-					"TeacherAdditionalPayments" => $extended ? null: TeacherAdditionalPayment::get(User::fromSession()->id_entity),
+					"AdditionalLessons" => $extended ? null : AdditionalLesson::getByEntity(Teacher::USER_TYPE, User::id()),
+					"TeacherAdditionalPayments" => $extended ? null: TeacherAdditionalPayment::get(User::id()),
 				]);
 
 				$this->render("list_for_teachers", [
@@ -203,7 +203,7 @@
 			} else
 			if (User::fromSession()->type == Student::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
-				$Groups = Student::groups(User::fromSession()->id_entity);
+				$Groups = Student::groups(User::id());
 
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
@@ -212,7 +212,7 @@
 					"GroupLevels"	=> GroupLevels::$short,
 					"Branches"		=> Branches::getAll(),
 					"all_cabinets"	=> Branches::allCabinets(), // @to show past lesson cabinet number
-					"AdditionalLessons" => AdditionalLesson::getByEntity(Student::USER_TYPE, User::fromSession()->id_entity)
+					"AdditionalLessons" => AdditionalLesson::getByEntity(Student::USER_TYPE, User::id())
 				]);
 
 				$this->render("list_for_students", [
@@ -311,7 +311,7 @@
                         if ($Group->grade && $Group->id_subject) {
                             $Student->Test = TestStudent::getForGroup($id_student, $Group->id_subject, $Group->grade);
                         }
-						$Student->is_head_teacher = $Student->id_head_teacher == User::fromSession()->id_entity;
+						$Student->is_head_teacher = $Student->id_head_teacher == User::id();
                         $Group->Students[] = $Student;
                     }
 
@@ -513,8 +513,6 @@
 		{
 			extract($_POST);
 
-			// Дополнительный вход
-			User::rememberMeLogin();
 			$data = array_filter($data);
 
 			VisitJournal::addData($id_lesson, $data);
@@ -590,7 +588,7 @@
 		// DOWNLOAD SCHEDULE
 		public function actionDownloadSchedule()
 		{
-            $this->setRights([User::USER_TYPE]);
+            $this->setRights([Admin::USER_TYPE]);
 
 			header('Content-Type: application/vnd.ms-excel');
 			header('Content-Disposition: attachment;filename="расписание.xls"');
@@ -911,7 +909,7 @@
 				"weekdays"		 => Time::WEEKDAYS,
 				"free_cabinets"  => Freetime::checkFreeCabinets($Group->id, $Group->year, $Group->day_and_time),
                 "FirstLesson"    => Group::getFirstLesson($Group->id),
-                "user"			 => User::fromSession()->dbData()
+                "user"			 => User::fromSession()
 			]);
 		}
 	}

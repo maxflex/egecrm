@@ -8,7 +8,7 @@
 		// Папка вьюх
 		protected $_viewsFolder	= "teacher_reviews";
 
-		public static $allowed_users = [User::USER_TYPE, Student::USER_TYPE, Teacher::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Student::USER_TYPE, Teacher::USER_TYPE];
 
 		public function beforeAction()
 		{
@@ -17,7 +17,7 @@
 
 		private function _studentId()
 		{
-			return User::isStudent() ? User::fromSession()->id_entity : $_GET['id_student'];
+			return User::isStudent() ? User::id() : $_GET['id_student'];
 		}
 
 		/**
@@ -33,7 +33,7 @@
 				'Subjects' 		=> Subjects::$all,
 				'three_letters' => Subjects::$three_letters,
 				'id_student'	=> $id_student,
-				'user'			=> User::fromSession()->dbData(),
+				'user'			=> User::fromSession(),
 				'users'			=> User::getCached(true),
 				'Teachers'		=> Teacher::getJournalTeachers(),
 				'Student'		=> Student::getLight($id_student),
@@ -50,7 +50,7 @@
 		 */
 		public function actionView()
 		{
-			// $this->setRights([User::USER_TYPE, Teacher::USER_TYPE]);
+			// $this->setRights([Admin::USER_TYPE, Teacher::USER_TYPE]);
     		$Review = TeacherReview::findById($_GET['id']);
 
             $id_student = $Review->id_student;
@@ -99,7 +99,7 @@
 				'id_student'	=> false,
                 'Grades'		=> Grades::$all,
                 'grades_short'	=> Grades::$short,
-                'user'			=> User::fromSession()->dbData(),
+                'user'			=> User::fromSession(),
 				'Teachers'		=> Teacher::getJournalTeachers(),
 				'currentPage'	=> $_GET['page'] ? $_GET['page'] : 1,
 			]);
@@ -133,7 +133,7 @@
  				"RatingInfo"	=> $RatingInfo ? $RatingInfo : (object)['published' => 0],
  				"subject_name" 	=> Subjects::$dative[$id_subject],
  				"id_subject"	=> $id_subject,
- 				"user"			=> User::fromSession()->dbData(),
+ 				"user"			=> User::fromSession(),
 				"users"			=> User::getCached(true), // с system
  				'id_user_review' => dbConnection()->query("SELECT id_user_review FROM students WHERE id = {$id_student}")->fetch_object()->id_user_review,
  				"year"			=> $year,

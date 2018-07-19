@@ -11,7 +11,7 @@
 
 			if (! $this->isNewRecord) {
 				$this->caller = Call::determineEgecrm($this->number);
-				$this->user_login = User::getLogin($this->user_id);
+				$this->user_login = Admin::getLogin($this->user_id);
 			}
 		}
 

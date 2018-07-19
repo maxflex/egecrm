@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		public static $allowed_users = [User::USER_TYPE, Teacher::USER_TYPE];
+		public static $allowed_users = [Admin::USER_TYPE, Teacher::USER_TYPE];
 
 		// Папка вьюх
 		protected $_viewsFolder	= "payments";
@@ -19,7 +19,7 @@
 		{
 			$this->_custom_panel = true;
             $this->checkRights(Shared\Rights::SHOW_PAYMENTS);
-			$this->setRights([User::USER_TYPE]);
+			$this->setRights([Admin::USER_TYPE]);
 			$this->setTabTitle("Платежи");
 
 			$ang_init_data = angInit([
@@ -46,7 +46,7 @@
 				"Branches" => Branches::getAll(),
 				"payment_statuses"	=> Payment::$all,
                 'payment_types'		=> PaymentTypes::$all,
-				"id_teacher" => User::fromSession()->id_entity,
+				"id_teacher" => User::id(),
 				'view_mode' => isset($_SESSION['view_mode_user_id']),
 			]);
 
@@ -146,7 +146,7 @@
 
 		public function actionAjaxLkTeacher()
 		{
-            $id_teacher = User::fromSession()->id_entity;
+            $id_teacher = User::id();
 			$payments = Teacher::getPayments($id_teacher);
 			$years = array_reverse(array_keys($payments));
 			returnJsonAng([

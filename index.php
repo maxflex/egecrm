@@ -49,9 +49,6 @@
 
 	$external_requests = ["ApiController", "CronController", "MangoController"];
 
-	// Пытаемся войти
-	User::rememberMeLogin();
-
 	if (! LOCAL_DEVELOPMENT) {
 		if ($_SERVER['HTTP_HOST'] != 'lk.ege-centr.ru' && !in_array($_controllerName, $external_requests)) {
 			header("Location: https://lk.ege-centr.ru" . $_SERVER['REQUEST_URI']);
@@ -59,7 +56,7 @@
 		}
 	}
 
-	if ((!User::loggedIn() || !User::rememberMeLogin()) && !in_array($_controllerName, $bypass_login)) {
+	if ((!User::loggedIn()) && !in_array($_controllerName, $bypass_login)) {
 	//	$this->redirect(BASE_ADDON . "login"); // Можно сделать так же редирект на страницу входа
 		$_controllerName	= "LoginController";
 		$_actionName		= "actionLogin";
@@ -79,7 +76,7 @@
             // логируем проход по URL
             if (User::loggedIn() && $_SERVER['REQUEST_METHOD'] === 'GET' && !($_controller == 'users' && $_action == 'get')) {
                 // error_log($_controller . " | " . $_action . " | " . @$_SERVER['REQUEST_URI']);
-                Log::custom('url', User::fromSession()->id, ['url' => @$_SERVER['REQUEST_URI']]);
+                Log::custom('url', User::id(), ['url' => @$_SERVER['REQUEST_URI']]);
             }
 			if (User::fromSession()->type == Teacher::USER_TYPE || User::fromSession()->type == Student::USER_TYPE) {
 				// sms может отправлять учитель
