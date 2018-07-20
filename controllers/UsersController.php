@@ -21,21 +21,19 @@
 			$this->setTabTitle("Пользователи");
 			$this->setRightTabTitle('<a href="users/create" class="link-reverse link-white">добавить  нового пользователя</a>');
 
-			$ActiveUsers = Admin::findAll([
-				"condition" => "NOT (FIND_IN_SET(" . Shared\Rights::EC_BANNED . ", rights) AND FIND_IN_SET(" . Shared\Rights::ER_BANNED . ", rights))",
+			$Users = User::findAll([
+				"condition" => "type = '" . Admin::USER_TYPE . "'",
 				"order"     => "id ASC"
 			]);
 
-			$BannedUsers = Admin::findAll([
-				"condition" => "(FIND_IN_SET(" . Shared\Rights::EC_BANNED . ", rights) AND FIND_IN_SET(" . Shared\Rights::ER_BANNED . ", rights))",
-				"order"     => "id ASC"
-			]);
-
-			foreach ($ActiveUsers as &$User) {
-				$User = $User->dbData(["id", "login", "rights"]);
-			}
-			foreach ($BannedUsers as &$User) {
-				$User = $User->dbData(["id", "login", "rights"]);
+			$ActiveUsers = [];
+			$BannedUsers = [];
+			foreach($Users as $User) {
+				if ($User->allowed(Shared\Rights::EC_BANNED)) {
+					$BannedUsers[] = $User->only('id', 'login', 'rights', 'id_entity');
+				} else {
+					$ActiveUsers[] = $User->only('id', 'login', 'rights', 'id_entity');
+				}
 			}
 
 			$ang_init_data = angInit([
@@ -60,6 +58,7 @@
             }
 
 			$User = User::findById($id);
+			$User->ips = AdminIp::getAll($User->id_entity) ?: [];
 
             // если пытаемся отредактировать суперпользователя
             if ($User->allowed(Shared\Rights::IS_SUPERUSER) && ! allowed(Shared\Rights::IS_SUPERUSER)) {
@@ -100,27 +99,19 @@
             $this->checkRights(Shared\Rights::SHOW_USERS);
 
 			$Users = $_POST["Users"];
-			foreach ($Users as $User) {
-                # суперпользователя нельзя редактировать
-                if (in_array(Shared\Rights::IS_SUPERUSER, $User['rights'])) {
-                    exit('superuser');
-                }
-				if (! empty($User['new_password'])) {
-					$User['password'] = User::password($User['new_password']);
-				}
-                unset($User['photo_extension']);
-                unset($User['has_photo_cropped']);
-                // если убрали все права
-                if (! isset($User['rights'])) {
-                    $User['rights'] = [];
-                }
-                $User['updated_at'] = now();
-				User::updateById($User['id'], $User);
-			}
 
-            if (User::id() == $User['id']) {
-                User::findById($User['id'])->toSession();
-            }
+			foreach($Users as $User) {
+				# суперпользователя нельзя редактировать
+	            if (in_array(Shared\Rights::IS_SUPERUSER, $User['rights'])) {
+	                exit('superuser');
+	            }
+
+				Admin::edit($User);
+
+	            if (User::id() == $User['id_entity']) {
+	                User::findById($User['id'])->toSession();
+	            }
+			}
 
 			# обновить кеш
 			User::updateCache();
@@ -128,10 +119,13 @@
             exit('success');
 		}
 
-        public function actionAjaxCreate() {
-
+        public function actionAjaxCreate()
+		{
+			unset($_POST["user"]['mysql_vars']); // иначе админу присваивается mysql_vars от передаваемого new User
+			$Admin = Admin::add($_POST["user"]);
             $User = new User($_POST["user"]);
-            $User->password = User::password($User->password);
+			$User->id_entity = $Admin->id;
+			$User->type = Admin::USER_TYPE;
             echo $User->save();
 
             # обновить кеш
@@ -153,7 +147,7 @@
 		public function actionAjaxExists() {
 			extract($_POST);
 			if ($login) {
-				$cnt = User::count(["condition" => "login = '{$login}'"]);
+				$cnt = Admin::count(["condition" => "login = '{$login}'"]);
 				echo $cnt;
 			}
 		}

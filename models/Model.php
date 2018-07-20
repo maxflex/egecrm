@@ -592,6 +592,17 @@
 			return $return;
 		}
 
+		/**
+		 * Вернуть только нужные поля
+		 */
+		public function only(...$fields)
+		{
+			$result = [];
+			foreach($fields as $field) {
+				$result[$field] = $this->{$field};
+			}
+			return $result;
+		}
 
 		/**
 		 * Создать и сохранить объект текущего класса + сохранить.

@@ -67,11 +67,14 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
     return set_scope('Users');
   });
 }).controller("EditCtrl", function($scope, $timeout, PhoneService) {
-  var bindCropper, bindFileUpload;
+  var bindCropper, bindFileUpload, bindIpMask;
   $scope.PhoneService = PhoneService;
-  $scope.has_pswd_error = false;
-  $scope.psw_filled = false;
   $scope.picture_version = 1;
+  bindIpMask = function() {
+    return $(".ip-mask").inputmask("Regex", {
+      regex: "[0-9]{1,3}[\.][0-9]{1,3}[\.][0-9]{1,3}[\.][0-9]{1,3}"
+    });
+  };
   $scope.toggleRights = function(right) {
     if ($scope.allowed(right)) {
       return $scope.User.rights = _.reject($scope.User.rights, function(val) {
@@ -81,40 +84,29 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
       return $scope.User.rights.push(right);
     }
   };
+  $scope.addIp = function() {
+    $scope.User.ips.push({
+      ip_from: '',
+      ip_to: '',
+      confirm_by_sms: false
+    });
+    return $timeout(function() {
+      return bindIpMask();
+    });
+  };
+  $scope.removeIp = function(index) {
+    return $scope.User.ips.splice(index, 1);
+  };
   $scope.allowed = function(right) {
     return $scope.User.rights.indexOf(right) !== -1;
   };
   $scope.clone_user = function() {
-    return $scope.old_data = angular.copy($.extend($scope.User, {
-      new_password: '',
-      new_password_repeat: ''
-    }));
+    return $scope.old_data = angular.copy($scope.User);
   };
-  $scope.$watchCollection('[User.new_password, User.new_password_repeat]', function() {
-    var has_pswd_error, j, len, p1, p2, ref, x;
-    p1 = $scope.User.new_password;
-    p2 = $scope.User.new_password_repeat;
-    if (p1 || p2) {
-      $scope.psw_filled = true;
-      ref = [p1, p2];
-      for (j = 0, len = ref.length; j < len; j++) {
-        x = ref[j];
-        has_pswd_error = !x || (x && !(x.match('^[a-zA-Z0-9_]{10,}$') && x.match('[a-zA-Z]+') && x.match('[0-9]+') && x.match('[_]+')));
-        if (has_pswd_error) {
-          break;
-        }
-      }
-      return $scope.has_pswd_error = (p1 !== p2) || has_pswd_error;
-    } else {
-      return $scope.psw_filled = false;
-    }
-  });
   $scope.save = function() {
     ajaxStart();
     return $.post("users/ajax/save", {
-      Users: {
-        102: $scope.User
-      }
+      Users: [$scope.User]
     }, function(response) {
       ajaxEnd();
       $scope.clone_user();
@@ -127,6 +119,7 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
     $scope.clone_user();
     bindCropper();
     bindFileUpload();
+    bindIpMask();
     return $scope.$watchCollection('User', function(new_val) {
       return $scope.form_changed = !angular.equals($scope.old_data, new_val);
     });
@@ -250,28 +243,10 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
     }, 100);
   };
 }).controller("CreateCtrl", function($scope, $http) {
-  $scope.user_exists = false;
-  $scope.has_pswd_error = true;
-  $scope.psw_filled = false;
-  $scope.$watchCollection('[User.new_password, User.new_password_repeat]', function() {
-    var has_pswd_error, j, len, p1, p2, ref, x;
-    p1 = $scope.User.new_password;
-    p2 = $scope.User.new_password_repeat;
-    if (p1 || p2) {
-      $scope.psw_filled = true;
-      ref = [p1, p2];
-      for (j = 0, len = ref.length; j < len; j++) {
-        x = ref[j];
-        has_pswd_error = !x || (x && !(x.match('^[a-zA-Z0-9_]{10,}$') && x.match('[a-zA-Z]+') && x.match('[0-9]+') && x.match('[_]+')));
-        if (has_pswd_error) {
-          break;
-        }
-      }
-      return $scope.has_pswd_error = (p1 !== p2) || has_pswd_error;
-    } else {
-      return $scope.psw_filled = false;
-    }
+  angular.element(document).ready(function() {
+    return set_scope('Users');
   });
+  $scope.user_exists = false;
   $scope.checkExistance = function() {
     if ($scope.User.login.length) {
       return $.post("users/ajax/exists", {
@@ -285,15 +260,14 @@ app = angular.module("Users", ['colorpicker.module', 'ngSanitize']).filter('to_t
     }
   };
   $scope.requiredFilled = function() {
-    return $scope.psw_filled && !$scope.has_pswd_error && $scope.User.login && $scope.User.login.length && !$scope.user_exists;
+    return $scope.User.login && $scope.User.login.length && !$scope.user_exists;
   };
   return $scope.save = function() {
     ajaxStart();
     return $.post("users/ajax/create", {
       user: $scope.User
     }, function(response) {
-      ajaxEnd();
-      return redirect("users/edit/" + response);
+      return ajaxEnd();
     });
   };
 });

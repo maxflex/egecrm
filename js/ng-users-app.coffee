@@ -48,9 +48,10 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 		angular.element(document).ready -> set_scope 'Users'
 	.controller "EditCtrl", ($scope, $timeout, PhoneService) ->
 		$scope.PhoneService     = PhoneService
-		$scope.has_pswd_error   = false
-		$scope.psw_filled       = false
 		$scope.picture_version  = 1
+
+
+		bindIpMask = -> $(".ip-mask").inputmask("Regex", {regex: "[0-9]{1,3}[\.][0-9]{1,3}[\.][0-9]{1,3}[\.][0-9]{1,3}"});
 
 		$scope.toggleRights = (right) ->
 			if $scope.allowed(right)
@@ -58,29 +59,26 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 			else
 				$scope.User.rights.push(right)
 
+		$scope.addIp = ->
+			$scope.User.ips.push
+				ip_from: ''
+				ip_to: ''
+				confirm_by_sms: false
+			$timeout -> bindIpMask()
+
+		$scope.removeIp = (index) ->
+			$scope.User.ips.splice(index, 1)
+
 		$scope.allowed = (right) ->
 			$scope.User.rights.indexOf(right) isnt -1
 
 		$scope.clone_user = ->
-			$scope.old_data = angular.copy $.extend $scope.User, { new_password:'', new_password_repeat:''}
-
-		$scope.$watchCollection '[User.new_password, User.new_password_repeat]', ->
-			p1 = $scope.User.new_password
-			p2 = $scope.User.new_password_repeat
-			if p1 or p2
-				$scope.psw_filled = true
-				for x in [p1, p2]
-					has_pswd_error = !x || (x && !(x.match('^[a-zA-Z0-9_]{10,}$') and x.match('[a-zA-Z]+') and x.match('[0-9]+') and x.match('[_]+')))
-					break if has_pswd_error
-
-				$scope.has_pswd_error = (p1 isnt p2) or has_pswd_error
-			else
-				$scope.psw_filled = false
+			$scope.old_data = angular.copy $scope.User
 
 		$scope.save = ->
 			ajaxStart()
 			$.post "users/ajax/save",
-				Users: { 102 : $scope.User }
+				Users: [$scope.User]
 			, (response) ->
 				ajaxEnd()
 				$scope.clone_user()
@@ -92,6 +90,7 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 			$scope.clone_user()
 			bindCropper()
 			bindFileUpload()
+			bindIpMask()
 			$scope.$watchCollection 'User', (new_val) ->
 				$scope.form_changed = !angular.equals($scope.old_data, new_val)
 
@@ -208,21 +207,9 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 			, 100
 
 	.controller "CreateCtrl", ($scope, $http) ->
-		$scope.user_exists = false
-		$scope.has_pswd_error = true
-		$scope.psw_filled = false
+		angular.element(document).ready -> set_scope 'Users'
 
-		$scope.$watchCollection '[User.new_password, User.new_password_repeat]', ->
-			p1 = $scope.User.new_password
-			p2 = $scope.User.new_password_repeat
-			if p1 or p2
-				$scope.psw_filled = true
-				for x in [p1, p2]
-					has_pswd_error = !x || (x && !(x.match('^[a-zA-Z0-9_]{10,}$') and x.match('[a-zA-Z]+') and x.match('[0-9]+') and x.match('[_]+')))
-					break if has_pswd_error
-				$scope.has_pswd_error = (p1 isnt p2) or has_pswd_error
-			else
-				$scope.psw_filled = false
+		$scope.user_exists = false
 
 		$scope.checkExistance = ->
 			if $scope.User.login.length
@@ -235,7 +222,7 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 				$scope.user_exists = false
 
 		$scope.requiredFilled = ->
-			$scope.psw_filled and !$scope.has_pswd_error and $scope.User.login and $scope.User.login.length and !$scope.user_exists
+			$scope.User.login and $scope.User.login.length and !$scope.user_exists
 
 		$scope.save = ->
 			ajaxStart()
@@ -243,4 +230,4 @@ app = angular.module "Users", ['colorpicker.module', 'ngSanitize']
 				user: $scope.User
 			, (response) ->
 				ajaxEnd()
-				redirect "users/edit/#{response}"
+				# redirect "users/edit/#{response}"

@@ -116,8 +116,6 @@
                     $scope.sms_verification = true
                     $scope.$apply()
                 }
-				$scope.login = 'maksim@kolyadin.com'
-				$scope.password = '184005'
 			});
 
 			//обработка события по enter в форме логина

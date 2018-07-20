@@ -34,7 +34,7 @@ class CreateAdminIps extends AbstractMigration
     {
 		$this->table('admin_ips')
 			->addColumn('id_admin', 'integer', ['signed' => false])
-				->addIndex(['id_admin'], ['unique' => true])
+			->addIndex(['id_admin'])
 			->addColumn('ip_from', 'string', ['limit' => 50])
 			->addColumn('ip_to', 'string', ['limit' => 50])
 			->addColumn('confirm_by_sms', 'boolean', ['default' => false])

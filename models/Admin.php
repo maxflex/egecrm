@@ -2,7 +2,7 @@
 	class Admin extends Model
 	{
 		use HasPhoto;
-		
+
 		/*====================================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ======================================*/
 
 		public static $mysql_table	= "admins";
@@ -17,7 +17,6 @@
 		public function __construct($array)
 		{
 			parent::__construct($array);
-
 
 			$this->salary = $this->salary ? $this->salary : '';
 
@@ -41,7 +40,7 @@
 			foreach($admin_ips as $admin_ip) {
 	            $ip_from = ip2long(trim($admin_ip->ip_from));
 	            $ip_to = ip2long(trim($admin_ip->ip_to ?: $admin_ip->ip_from));
-	            if ($current_ip >= $ip_start && $current_ip <= $ip_end) {
+	            if ($current_ip >= $ip_from && $current_ip <= $ip_to) {
 	                return $admin_ip;
 	            }
 			}
@@ -62,11 +61,27 @@
 
 		 public function beforeSave()
 		 {
-		 	$this->phone = cleanNumber($this->phone);
+			 $this->phone = cleanNumber($this->phone);
 		 }
 
 		 public function allowed($right)
          {
              return in_array($right, $this->rights);
          }
+
+		 public static function edit($User)
+		 {
+			 unset($User['photo_extension']);
+			 unset($User['has_photo_cropped']);
+             $User['updated_at'] = now();
+
+			 // если убрали все права
+			 if (! isset($User['rights'])) {
+				 $User['rights'] = [];
+			 }
+
+			 AdminIp::saveData($User['id_entity'], $User['ips']);
+			 Admin::updateById($User['id_entity'], $User);
+			 User::updateById($User['id'], $User);
+		 }
 	}

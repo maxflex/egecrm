@@ -166,7 +166,7 @@
                 $User->toSession(true); 	// Входим в сессию
 
 				if (User::isStudent() || User::isTeacher() || User::isRepresentative()) {
-					$Entity = User::getEntity();
+					$Entity = $User->getEntity();
 					$Entity->login_count++;
 					$Entity->save("login_count");
 				}

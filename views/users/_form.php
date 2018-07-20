@@ -71,9 +71,6 @@
         <div class="form-group">
             <input class="form-control" ng-model="User.middle_name" placeholder="Отчество">
         </div>
-        <div class="form-group">
-            <input class="form-control" ng-model="User.email" placeholder="email">
-        </div>
     </div>
     <div class="col-sm-3">
         <div class="form-group" ng-class="{ 'has-error' : user_exists}">
@@ -83,24 +80,14 @@
                    ng-model-options='{ debounce: 500 }'
                    ng-change="checkExistance()">
         </div>
-
-        <div class="form-group" ng-class="{ 'has-error' : psw_filled && has_pswd_error, 'has-success' : psw_filled && !has_pswd_error && User.new_password }">
-            <input type="password"
-                   class="form-control"
-                   ng-model="User.new_password"
-                   placeholder="Пароль">
-        </div>
-        <div class="form-group" ng-class="{ 'has-error' : psw_filled && has_pswd_error, 'has-success' : psw_filled && !has_pswd_error && User.new_password }">
-            <input type="password"
-                   class="form-control"
-                   ng-model="User.new_password_repeat"
-                   placeholder="Повторите пароль">
-        </div>
-    </div>
-    <div class="col-sm-3">
         <div class="form-group">
             <phones class="user-phone" entity="User" entity-type="User" without-buttons untrack-duplicate></phones>
         </div>
+        <div class="form-group">
+            <input class="form-control" ng-model="User.email" placeholder="email">
+        </div>
+    </div>
+    <div class="col-sm-3">
         <div class="form-group">
             <input class="form-control"
                    style="background-color:{{User.color}};color:white;"
@@ -119,8 +106,30 @@
     </div>
 </div>
 <!--/user data-->
+
+<!--ip settings -->
+<div class="row panel-body" ng-show="User.id">
+    <div class="col-sm-12">
+		<div class="row">
+			<h4 class="row-header">IP адреса</h4>
+			<div ng-repeat="ip in User.ips" class="ip-wrapper">
+				<img src="/img/svg/rounded-remove-button.svg" ng-click="removeIp($index)">
+				<input class="form-control ip-mask" placeholder="0.0.0.0" ng-model="ip.ip_from"  />
+				<span class="ip-separator">–</span>
+				<input class="form-control ip-mask" placeholder="{{ ip.ip_from ? ip.ip_from : '255.255.255.255' }}" ng-model="ip.ip_to" style='margin-right: 10px' />
+				<label class="ios7-switch" style='top: 4px'>
+			        <input type="checkbox" ng-model="ip.confirm_by_sms" ng-checked="ip.confirm_by_sms">
+			        <span class="switch"></span>
+			        <span class='title'>подтверждение по СМС</span>
+			    </label>
+			</div>
+			<a class='pointer small' ng-click='addIp()'>добавить</a>
+		</div>
+	</div>
+</div>
+
 <!--access settings -->
-<div class="row panel-body">
+<div class="row panel-body" ng-show="User.id">
     <div class="col-sm-4">
         <div class="row">
             <h4 class="row-header">ЕГЭ-Центр</h4>

@@ -43,7 +43,7 @@ class CreateAdmins extends AbstractMigration
 			->addColumn('has_photo_cropped', 'boolean', ['default' => 0])
 			->addColumn('salary', 'integer', ['null' => true, 'signed' => false])
 			->addColumn('rights', 'string', ['limit' => 1000])
-			->addColumn('updated_at', 'datetime')
+			->addColumn('updated_at', 'datetime', ['update' => 'CURRENT_TIMESTAMP'])
 			->create();
     }
 }

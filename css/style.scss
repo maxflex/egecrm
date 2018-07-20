@@ -3979,3 +3979,21 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 	}
 	display: none;
 }
+
+.ip-wrapper {
+	margin-bottom: 8px;
+	& .form-control {
+		width: 135px;
+		display: inline-block;
+	}
+	& .ip-separator {
+		display: inline-block;
+		margin: 0 5px;
+	}
+
+	& img {
+		height: 20px;
+		margin-right: 7px;
+		cursor: pointer;
+	}
+}

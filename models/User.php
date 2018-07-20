@@ -32,35 +32,24 @@
 		{
 			switch ($this->type) {
 				case Admin::USER_TYPE:
-					return Admin::findById(User::id());
+					return Admin::findById($this->id_entity);
 				case Representative::USER_TYPE:
-					return Representative::findById(User::id());
+					return Representative::findById($this->id_entity);
 				case Teacher::USER_TYPE:
-					return Teacher::findById(User::id());
+					return Teacher::findById($this->id_entity);
 				case Student::USER_TYPE:
-					return Student::findById(User::id());
+					return Student::findById($this->id_entity);
 			}
 		}
 
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
-
 		/**
-		 * Обновить время последнего действия.
-		 *
+		 * Выкидывать автоматически
 		 */
-		public function updateLastActionTime()
+		public function trackLogout()
 		{
-			$this->last_action_time = time();
-
-			// если не ajax-действие, записываем ссылку последнего действия
-			if (strpos(strtolower($_GET['action']), "ajax") !== 0) {
-				$this->last_action_link = $_SERVER['REQUEST_URI'];
-				$this->save('last_action_link');
-			}
-			$this->save('last_action_time');
-
 			// не логаутить меня
 			if ($this->id != 69) {
 				Job::dispatch(
@@ -221,13 +210,6 @@
 		}
 
 		/*====================================== ФУНКЦИИ КЛАССА ======================================*/
-
-		public function beforeSave()
-		{
-			if ($this->isNewRecord) {
-				$this->password = self::password($this->password);
-			}
-		}
 
 		/*
 		 * Вход/запись пользователя в сессию

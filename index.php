@@ -61,10 +61,9 @@
 		$_controllerName	= "LoginController";
 		$_actionName		= "actionLogin";
 	} else {
-		// обновить время последнего действия
 		if (User::loggedIn()) {
             try {
-                User::fromSession()->updateLastActionTime();
+                User::fromSession()->trackLogout();
             }
             catch (Exception $e) {
                 header("Location: logout");
