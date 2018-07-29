@@ -6,15 +6,18 @@
 		</div>
 		<div class="input-groups">
 	        <div class="group">
-	            <input ng-disabled="sms_verification" type="text" id="inputLogin" autofocus ng-model="login" placeholder="логин"
+	            <input ng-disabled="sms_verification || verify_birthday" type="text" id="inputLogin" autofocus ng-model="login" placeholder="email"
 				 	autocomplete="off" ng-keyup="enter($event)" ng-model-options="{ allowInvalid: true }" required>
 	        </div>
 	        <div class="group">
-	            <input ng-disabled="sms_verification" type="password" id="inputPassword" ng-model="password" placeholder="пароль"
+	            <input ng-disabled="sms_verification || verify_birthday" type="password" id="inputPassword" ng-model="password" placeholder="пароль"
 					autocomplete="new-password" ng-keyup="enter($event)" ng-model-options="{ allowInvalid: true }" required>
 	        </div>
 	        <div class="group" ng-show="sms_verification">
 	            <input type="text" id="sms-code" placeholder="sms code" ng-model="code" autocomplete="off" ng-keyup="enter($event)">
+	        </div>
+	        <div class="group" ng-show="verify_birthday">
+	            <input type="text" class="verify-birthday" placeholder="дата рождения" ng-model="birthday" autocomplete="off">
 	        </div>
 			<div class="group">
 				<button class="btn btn-submit ladda-button" type="submit" id="login-submit" data-style="zoom-in" ng-disabled="in_process" ng-click="checkFields()">войти</button>

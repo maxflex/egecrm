@@ -55,8 +55,7 @@
 				"score" 				=> $rating['score'],
 				"signature" 			=> $rating['signature'],
 				"max_score" 			=> $rating['max_score'],
-				"expressive_title" 		=> $rating['expressive_title'],
-				"date"					=> now(),
+				"expressive_title" 		=> $rating['expressive_title']
 			];
 
 			$Review = TeacherReview::getInfo($id_student, $id_teacher, $id_subject, $year);
@@ -246,10 +245,12 @@
                         AND vj.year = {$this->year}
                         AND vj.type_entity = 'STUDENT'
                     LIMIT 1")->fetch_object()->grade;
-
-                if ($this->admin_comment_final && ! $this->date) {
-                    $this->date = now();
-                }
             }
+			/**
+			 * дата должна застрявать только однажды при написании admin_comment_final
+			 */
+			if ($this->admin_comment_final && ! $this->date) {
+				$this->date = now();
+			}
         }
 	}

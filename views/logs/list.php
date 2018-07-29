@@ -77,7 +77,7 @@
                     <td width="120">
                         <span ng-if="log.user_id !== null">
                             <span ng-show="log.user.type == 'ADMIN'" style="color: {{ UserService.getColor(log.user_id) }}">{{ log.user.login }}</span>
-                            <span ng-show="log.user.type == 'REPRESENTATIVE'">{{ log.user.email }}</span>
+                            <span ng-show="log.user.type == 'REPRESENTATIVE'">представитель №{{ log.user.id_entity }}</span>
                             <a ng-show="log.user.type == 'TEACHER'" href='/teachers/edit/{{ log.user.id_entity }}' target="_blank">{{ log.teacher.last_name }} {{ log.teacher.first_name[0] }}. {{ log.teacher.middle_name[0] }}.</a>
                             <a ng-show="log.user.type == 'STUDENT'" href='/student/{{ log.user.id_entity }}' target="_blank">ученик №{{ log.user.id_entity }}</a>
 							<i ng-show="log.view_mode_user_id > 0" class="fa fa-eye" aria-hidden="true" title="{{ log.view_mode_user }}"></i>

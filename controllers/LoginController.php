@@ -138,6 +138,38 @@
                 returnJSON('banned');
             }
 
+			// Для учеников, представителей и преподавателей
+			// нужно подтверждение даты рождения
+			if ($User->type != Admin::USER_TYPE) {
+				if (isset($birthday) && ! empty($birthday)) {
+					// проверяем дату рождения
+					switch($User->type) {
+						case Teacher::USER_TYPE:
+							$Teacher = Teacher::getLight($User->id_entity, ['birthday']);
+							$entity_birthday = $Teacher->birthday;
+							break;
+						case Student::USER_TYPE:
+							$Student = Student::getLight($User->id_entity, ['id_passport']);
+							$Passport = Passport::findById($Student->id_passport);
+							$entity_birthday = fromDotDate($Passport->date_birthday);
+							error_log("entity birday: {$entity_birthday}");
+							break;
+						case Representative::USER_TYPE:
+							$Representative = Representative::getLight($User->id_entity, ['id_passport']);
+							$Passport = Passport::findById($Representative->id_passport);
+							$entity_birthday = fromDotDate($Passport->date_birthday);
+							break;
+					}
+					error_log($entity_birthday . " | " . fromDotDate($birthday));
+					if ($entity_birthday != fromDotDate($birthday)) {
+						self::log($user_id, 'failed_login', 'неверная дата рождения');
+						returnJson('wrong_birthday');
+					}
+				} else {
+					returnJson('verify_birthday');
+				}
+			}
+
 			$allowed_to_login = $User->allowedToLogin();
 
 			if ($allowed_to_login) {
@@ -170,7 +202,7 @@
 					$Entity->login_count++;
 					$Entity->save("login_count");
 				}
-
+				setcookie("login_user_type", $User->type, time() + (3600 * 24 * 365), "/");
 				returnJson(true);					// Ответ АЯКСУ, мол, вошли нормально
 			} else {
                 self::log($user_id, 'failed_login', 'нет прав доступа для данного IP');
@@ -178,22 +210,6 @@
 			}
 		}
 
-		public function actionReset()
-		{
-			$client = new Predis\Client();
-			$code = $_GET['code'];
-			$user_id = User::getIdFromCode($code);
-			$key = "egecrm:reset-password:{$user_id}";
-			if ($client->exists($key) && $client->get($key) == $code) {
-				$this->render('reset', ['wallpaper' => Background::get()], 'login');
-			} else {
-				$this->render('link_timeout', ['wallpaper' => Background::get()], 'login');
-			}
-			// $code = $_GET['code'];
-			// $user_id = base64_decode(substr($code, 32, 999));
-			//
-			// return;
-		}
 
 		public function actionAjaxGetPwd()
 		{
@@ -206,25 +222,33 @@
 					returnJsonAng(-2);
 				}
 				$user->resetPassword();
+				returnJson($user->id);
 			} else {
 				returnJsonAng(-1);
 			}
 		}
 
-		public function actionAjaxResetPwd()
+		public function actionAjaxCheckCode()
 		{
 			extract($_POST);
 			$client = new Predis\Client();
-			$user_id = User::getIdFromCode($code);
 			$key = "egecrm:reset-password:{$user_id}";
-			if ($client->exists($key) && $client->get($key) == $code) {
-				$user = User::findById($user_id);
-				$user->password = User::password($password);
-				$user->save('password');
-				$client->del($key);
-			} else {
-				returnJsonAng(-1);
+			if ($client->exists($key)) {
+				$sent_code = $client->get($key);
+				if ($sent_code == $code) {
+					$client->del($key);
+					returnJson(true);
+				}
 			}
+			returnJson(false);
+		}
+
+		public function actionAjaxResetPwd()
+		{
+			extract($_POST);
+			$user = User::findById($user_id);
+			$user->password = User::password($password);
+			$user->save('password');
 		}
 
 

@@ -824,7 +824,9 @@
 			return $date;
 		}
 		list($day, $month, $year) = explode('.', $date);
-		$year = $year < 30 ? sprintf('20%02d', $year) : sprintf('19%02d', $year);
+		if (strlen($year) <= 2) {
+			$year = $year < 30 ? sprintf('20%02d', $year) : sprintf('19%02d', $year);
+		}
 		return implode('-', [$year, $month, $day]);
 	}
 

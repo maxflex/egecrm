@@ -61,9 +61,9 @@
 			$User->ips = AdminIp::getAll($User->id_entity) ?: [];
 
             // если пытаемся отредактировать суперпользователя
-            if ($User->allowed(Shared\Rights::IS_SUPERUSER) && ! allowed(Shared\Rights::IS_SUPERUSER)) {
-                $this->renderRestricted();
-            }
+            // if ($User->allowed(Shared\Rights::IS_SUPERUSER) && ! allowed(Shared\Rights::IS_SUPERUSER)) {
+            //     $this->renderRestricted();
+            // }
 
             // не надо панель рисовать
 			$this->_custom_panel = true;
@@ -102,9 +102,9 @@
 
 			foreach($Users as $User) {
 				# суперпользователя нельзя редактировать
-	            if (in_array(Shared\Rights::IS_SUPERUSER, $User['rights'])) {
-	                exit('superuser');
-	            }
+	            // if (in_array(Shared\Rights::IS_SUPERUSER, $User['rights'])) {
+	            //     exit('superuser');
+	            // }
 
 				Admin::edit($User);
 

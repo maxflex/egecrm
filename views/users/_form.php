@@ -108,6 +108,7 @@
 <!--/user data-->
 
 <!--ip settings -->
+<?php if (allowed(Shared\Rights::EDIT_IPS)) :?>
 <div class="row panel-body" ng-show="User.id">
     <div class="col-sm-12">
 		<div class="row">
@@ -127,6 +128,7 @@
 		</div>
 	</div>
 </div>
+<?php endif ?>
 
 <!--access settings -->
 <div class="row panel-body" ng-show="User.id">
@@ -187,6 +189,7 @@
         <?= partial('right', ['right' => Shared\Rights::ER_ACTIVITY]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_APPROVE_BACKGROUND]) ?>
         <?= partial('right', ['right' => Shared\Rights::SECRET_SMS]) ?>
+        <?= partial('right', ['right' => Shared\Rights::ER_PAYSTREAM]) ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
@@ -200,6 +203,11 @@
         <?= partial('right', ['right' => Shared\Rights::ERC_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::WSTAT_BANNED]) ?>
         <?= partial('right', ['right' => Shared\Rights::EMERGENCY_EXIT]) ?>
+
+		<?php if (allowed(Shared\Rights::IS_SUPERUSER)) :?>
+			<?= partial('right', ['right' => Shared\Rights::EDIT_IPS]) ?>
+        	<?= partial('right', ['right' => Shared\Rights::IS_SUPERUSER]) ?>
+		<?php endif ?>
     </div>
 </div>
 <!--/access settings -->

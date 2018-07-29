@@ -18,9 +18,6 @@
 
 		public static function get()
 		{
-			// эта страница логин-пароль в системе ECCRM должна работать только в случае
-			// если это наш IP офиса и разрешение как на iMac или MacBook Pro 15 inch.
-			// Для остальных синий фон
 			if (true) {
 				$wallpaper = Background::find([
 					"condition" => "status=1 AND date=CURDATE()"
@@ -33,7 +30,9 @@
 	            }
 			}
 
-			return $wallpaper ? $wallpaper : (object)[
+			// отображаем фон только в случае, если последний залогиненный
+			// пользователь был ADMIN
+			return ($_COOKIE['login_user_type'] == Admin::USER_TYPE && $wallpaper) ? $wallpaper : (object)[
 				'image_url' => 'img/background/blue.png'
 			];
 		}
