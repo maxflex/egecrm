@@ -177,7 +177,7 @@
 		public static function loggedIn()
 		{
 			return isset($_SESSION["user"]) && $_SESSION["user"] 	// пользователь залогинен
-                && ! User::fromSession()->isBanned()      			// и не заблокирован
+                && (User::isAdmin() ? !User::fromSession()->isBanned() : true)  // и не заблокирован (разрешаем заблокированным пользователям для режима просмотра)
                 && User::fromSession()->allowedToLogin() 			// и можно входить
                 && User::notChanged();      						// и данные по пользователю не изменились
 		}
