@@ -152,11 +152,6 @@
 								<span class="day-explain exam-day-subject" ng-show="Lesson.is_unplanned && !Lesson.Group.is_unplanned" title="внеплановое"></span>
 								<span class="day-explain" style='background-color: #f690e9' ng-show="Lesson.Group.is_unplanned" title="внеплановое"></span>
 								<span class="day-explain exam-day" ng-show="Lesson.number == 1 && !Lesson.cancelled && !Lesson.Group.is_unplanned" title="старт группы"></span>
-								<span class="day-explain vocation"
-                                      ng-show="Lesson.cabinetLayered || Lesson.studentLayered"
-                                      title="{{ (Lesson.cabinetLayered ? 'Наслоение кабинета:\nКабинет № ' + Lesson.cabinetNumber + '\n': '') +
-                                                (Lesson.studentLayered ? 'Наслоение студентов:\n' + Lesson.studentLayered : '') }}" title="наслоение">
-								</span>
 								<span class="day-explain vocation" ng-show="Lesson.not_registered" title="не зарегистрирован"></span>
 							</td>
 						</tr>

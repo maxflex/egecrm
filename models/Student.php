@@ -1105,6 +1105,35 @@
 				->fetch_object()->cnt ? true : false;
 		}
 
+		public function isLayered()
+		{
+			// 1. получаем все группы ученика
+			$group_ids = self::groups($this->id, 'getIds');
+			$group_ids = implode(',', $group_ids);
+
+			// 2. смотрим нет ли задублированности в полученных записях
+			$query = dbConnection()->query("SELECT id_group, CONCAT(lesson_date, ' ', lesson_time) AS date_time
+				FROM visit_journal
+				WHERE id_group IN ({$group_ids}) AND " . VisitJournal::PLANNED_CONDITION . "
+				ORDER BY date_time ASC
+			");
+
+			// т.к. отсортировано по date_time,
+			// смотрим на следующий и сравниваем с предыдущим
+			// если равны, то есть дубли, выходим
+			$prev = (object)['date_time' => null];
+			while($row = $query->fetch_object()) {
+				if ($row->date_time == $prev->date_time) {
+					// добавляем ID предыдущей группы
+					//  для информативности о задублировании
+					$row->prev_id_group = $prev->id_group;
+					return $row;
+				}
+				$prev = $row;
+			}
+			return false;
+		}
+
 		/**
 		 * Получить все уроки ученика
 		 */

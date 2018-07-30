@@ -87,7 +87,7 @@ app = angular.module "Schedule", ['mwl.calendar']
                     $scope.Lessons.push(response)
                 else
                     index = _.findIndex($scope.Lessons, {id: $scope.modal_lesson.id})
-                    $scope.Lessons[index] = _.clone($scope.modal_lesson)
+                    $scope.Lessons[index] = response
                 $scope.$apply()
             , 'json'
 

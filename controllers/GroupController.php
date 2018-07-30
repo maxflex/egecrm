@@ -296,8 +296,7 @@
 					"Group"			=> $Group,
 					"ang_init_data" => $ang_init_data,
 				]);
-			} else
-				if (User::fromSession()->type == Teacher::USER_TYPE) {
+			} else if (User::fromSession()->type == Teacher::USER_TYPE) {
 					if (! $this->hasAccess('groups', $id_group, null, null , true)) {
 						$this->renderRestricted();
 					}
@@ -344,10 +343,16 @@
 					$this->_custom_panel = true;
 
                     $exams = ExamDay::getExamDates($Group);
+					$Lessons = VisitJournal::getGroupLessons($id_group);
+
+					// проверяем уроки на наслоение кабинетов
+					foreach($Lessons as $Lesson) {
+						$Lesson->layered = $Lesson->isLayered();
+					}
 
 					$ang_init_data = angInit([
 						"Group" 			=> $Group,
-						"Lessons" => VisitJournal::getGroupLessons($id_group),
+						"Lessons" => $Lessons,
 						"special_dates"		=> [
                             'vacations' 	=> Vacation::getDates($Group->year),
                             'exams' 		=> $exams['this_subject'],
@@ -431,11 +436,12 @@
 			extract($_POST);
 
 			if (isset($id)) {
-                $response = VisitJournal::updateById($id, $_POST);
+                $Lesson = VisitJournal::updateById($id, $_POST);
             } else {
-                $response = VisitJournal::add($_POST);
+                $Lesson = VisitJournal::add($_POST);
             }
-			returnJsonAng($response);
+			$Lesson->layered = $Lesson->isLayered();
+			returnJsonAng($Lesson);
 		}
 
 		public function actionAjaxDeleteLesson()
@@ -885,6 +891,7 @@
 				$Student->already_had_lesson	= $Student->alreadyHadLesson($Group->id);
 				$Student->bar					= Freetime::getStudentBar($Student->id, true, $Group->id); // @refactored
 				$Student->markers 				= $Student->getMarkers();
+				$Student->layered				= $Student->isLayered();
 
 				if (array_key_exists($Student->id, $Group->student_statuses)) {
 					$Student->id_status		= $Group->student_statuses[$Student->id]['id_status'];

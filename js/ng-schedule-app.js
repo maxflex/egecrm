@@ -119,7 +119,7 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
         index = _.findIndex($scope.Lessons, {
           id: $scope.modal_lesson.id
         });
-        $scope.Lessons[index] = _.clone($scope.modal_lesson);
+        $scope.Lessons[index] = response;
       }
       return $scope.$apply();
     }, 'json');

@@ -17,7 +17,9 @@
 
 				<table class="table table-divlike">
 					<tr ng-repeat="Lesson in Lessons | orderBy:'date_time' track by $index">
-						<td style="padding:2px 4px 2px 0px;">
+						<td style="padding:2px 4px 2px 0px; position: relative">
+							<span ng-if="Lesson.layered" class="day-explain vocation" title="группа №{{ Lesson.layered.id_group }}"
+								style='position: absolute; top: 11px; left: -13px'></span>
 							<span class="day-explain"
 								  ng-class="{
 									'was-lesson': Lesson.is_conducted,

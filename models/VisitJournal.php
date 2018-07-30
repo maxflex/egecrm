@@ -371,6 +371,21 @@
 		}
 
 		/**
+		 * Проверить урок на наслоение кабинетов
+		 */
+		public function isLayered()
+		{
+			return self::find([
+				'condition' => "
+					lesson_date = '{$this->lesson_date}' AND
+					lesson_time = '{$this->lesson_time}:00' AND
+					cabinet = {$this->cabinet} AND
+					id <> {$this->id} AND
+					" . self::PLANNED_CONDITION
+			]);
+		}
+
+		/**
 		 * Get student group past & planned lessons
 		 */
 		public static function getStudentGroupLessons($id_group, $id_student)

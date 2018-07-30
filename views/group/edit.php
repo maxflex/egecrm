@@ -97,6 +97,7 @@
 											{{Student.last_name}}
 										</a>
 										<span ng-show="Student.Test && Student.Test.isFinished">({{ Student.Test.final_score }}%)</span>
+										<span ng-if="Student.layered" class="day-explain vocation" title="группы №{{ Student.layered.id_group }} и №{{ Student.layered.prev_id_group }}, {{ Student.layered.date_time | formatDateTime }}"></span>
 									</td>
 									<td>
 										<span ng-hide="!enoughSmsParams() || Student.already_had_lesson >= 2">
