@@ -116,7 +116,7 @@
             // логин пользователя
             if ($NewContract->id_user) {
                 $user = findObjectInArray(User::getCached(), ['id' => $NewContract->id_user]);
-                $NewContract->user_login = $user['login'];
+                $NewContract->user_login = $user->login;
             }
 
             // Создаем логин-пароль пользователя
@@ -124,10 +124,6 @@
             if (! User::byType($Student->id, Student::USER_TYPE, 'count')) {
                 User::add([
                     "email" => $Student->email,
-                    "phone" => $Student->phone,
-                    "first_name" => $Student->first_name,
-                    "last_name" => $Student->last_name,
-                    "middle_name" => $Student->middle_name,
                     "type" => Student::USER_TYPE,
                     "id_entity" => $Student->id
                 ]);
@@ -136,10 +132,6 @@
 
                 User::add([
                     "email" => $Representative->email,
-                    "phone" => $Representative->phone,
-                    "first_name" => $Representative->first_name,
-                    "last_name" => $Representative->last_name,
-                    "middle_name" => $Representative->middle_name,
                     "type" => Representative::USER_TYPE,
                     "id_entity" => $Representative->id
                 ]);
