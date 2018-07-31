@@ -132,7 +132,7 @@ class SMS extends Model
 	{
 		if ($this->id_user) {
 			if ($user = findObjectInArray(User::getCached(), ['id' => $this->id_user])) {
- 				$this->user_login = $user['login'];
+ 				$this->user_login = $user->login;
 			} else {
 				$this->user_login = Admin::getLogin($this->id_user);
 			}
