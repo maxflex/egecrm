@@ -68,6 +68,12 @@ app = angular.module "Payments", ["ui.bootstrap"]
                 }
     # @rights-refactored
     .controller "ListCtrl", ($scope, $timeout) ->
+        $scope.getForPagination = ->
+            count = 0
+            Object.entries($scope.counts.mode).forEach (entry) ->
+                count += entry[1] if (not $scope.search.mode.length || entry[0] in $scope.search.mode)
+            count
+
         $scope.initSearch = ->
             $scope.search = mode : 'STUDENT', payment_type : '', confirmed : '', type : '' if not $scope.search
 

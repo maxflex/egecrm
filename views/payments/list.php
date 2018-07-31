@@ -76,10 +76,10 @@
 		        </div>
 
 		        <pagination
-					ng-show='(payments && payments.length) && (counts.mode[search.mode?search.mode:"STUDENT"] > <?= Payment::PER_PAGE ?>)'
+					ng-show='(payments && payments.length) && (getForPagination() > <?= Payment::PER_PAGE ?>)'
 					ng-model="search.current_page"
 					ng-change="pageChanged()"
-					total-items="counts.mode[search.mode ? search.mode : 'STUDENT']"
+					total-items="getForPagination()"
 					max-size="10"
 					items-per-page="<?= Payment::PER_PAGE ?>"
 					first-text="«"

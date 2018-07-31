@@ -1,4 +1,5 @@
-var app;
+var app,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() {
   return function(items) {
@@ -84,6 +85,17 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
   });
 }).controller("ListCtrl", function($scope, $timeout) {
   var loadMutualAccounts;
+  $scope.getForPagination = function() {
+    var count;
+    count = 0;
+    Object.entries($scope.counts.mode).forEach(function(entry) {
+      var ref;
+      if (!$scope.search.mode.length || (ref = entry[0], indexOf.call($scope.search.mode, ref) >= 0)) {
+        return count += entry[1];
+      }
+    });
+    return count;
+  };
   $scope.initSearch = function() {
     if (!$scope.search) {
       return $scope.search = {
