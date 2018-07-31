@@ -349,7 +349,7 @@
     		$client->set("egecrm:reset-password:{$this->id}", $code, 'EX', 5 * 60);
 			$set_or_reset = $this->password ? ['Восстановление', 'восстановления'] : ['Установка', 'установки'];
 			Email::send($this->email, $set_or_reset[0] . ' пароля', "
-				Код для {$set_or_reset[1]} пароля: <b>{$code}</b>
+				Код для {$set_or_reset[1]} пароля: <b>{$code}</b> (активен 5 минут)
 			");
 		}
 
