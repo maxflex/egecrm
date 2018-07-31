@@ -120,6 +120,10 @@
 				loadImage()
 				set_scope("Login")
 				l = Ladda.create(document.querySelector('#login-submit'));
+				if ($scope.logged_user) {
+					$scope.login = $scope.logged_user.email
+				}
+
                 login_data = $.cookie("login_data")
                 if (login_data !== undefined) {
                     login_data = JSON.parse(login_data)
@@ -129,6 +133,12 @@
                     $scope.$apply()
                 }
 			});
+
+			$scope.clearLogged = function() {
+				$scope.logged_user = null
+				$scope.login = ''
+				$.removeCookie('logged_user')
+			}
 
 			//обработка события по enter в форме логина
 			$scope.enter = function($event){

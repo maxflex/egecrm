@@ -202,7 +202,10 @@
 					$Entity->login_count++;
 					$Entity->save("login_count");
 				}
-				setcookie("login_user_type", $User->type, time() + (3600 * 24 * 365), "/");
+				setcookie("logged_user", json_encode([
+					'email' => $User->email,
+					'type'	=> $User->type
+				]), time() + (3600 * 24 * 365), "/");
 				returnJson(true);					// Ответ АЯКСУ, мол, вошли нормально
 			} else {
                 self::log($user_id, 'failed_login', 'нет прав доступа для данного IP');

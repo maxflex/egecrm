@@ -6,7 +6,7 @@
 		</div>
 		<div class="input-groups">
 	        <div class="group">
-	            <input ng-disabled="sms_verification || verify_birthday" type="text" id="inputLogin" autofocus ng-model="login" placeholder="email"
+	            <input ng-disabled="sms_verification || verify_birthday || logged_user" type="text" id="inputLogin" autofocus ng-model="login" placeholder="email"
 				 	autocomplete="off" ng-keyup="enter($event)" ng-model-options="{ allowInvalid: true }" required>
 	        </div>
 	        <div class="group">
@@ -24,6 +24,9 @@
 			</div>
 		</div>
 		<div class="password-controls">
+			<div>
+				<a ng-click="clearLogged()" class="pointer forgot-password" ng-show="logged_user">другой пользователь</a>
+			</div>
 			<div>
 				<a href='/login/forgot-password' class="forgot-password">забыли пароль</a>
 			</div>

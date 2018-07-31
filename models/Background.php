@@ -32,7 +32,8 @@
 
 			// отображаем фон только в случае, если последний залогиненный
 			// пользователь был ADMIN
-			return ($_COOKIE['login_user_type'] == Admin::USER_TYPE && $wallpaper) ? $wallpaper : (object)[
+			$logged_user = isset($_COOKIE['logged_user']) ? json_decode($_COOKIE['logged_user']) : null;
+			return ($logged_user && $logged_user->type == Admin::USER_TYPE && $wallpaper) ? $wallpaper : (object)[
 				'image_url' => 'img/background/blue.png'
 			];
 		}
