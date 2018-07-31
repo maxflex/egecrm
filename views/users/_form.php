@@ -189,7 +189,9 @@
         <?= partial('right', ['right' => Shared\Rights::ER_ACTIVITY]) ?>
         <?= partial('right', ['right' => Shared\Rights::ER_APPROVE_BACKGROUND]) ?>
         <?= partial('right', ['right' => Shared\Rights::SECRET_SMS]) ?>
-        <?= partial('right', ['right' => Shared\Rights::ER_PAYSTREAM]) ?>
+        <?php if (allowed(Shared\Rights::IS_SUPERUSER)) :?>
+            <?= partial('right', ['right' => Shared\Rights::ER_PAYSTREAM]) ?>
+        <?php endif ?>
     </div>
     <div class="col-sm-4">
         <div class="row">
