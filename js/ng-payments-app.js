@@ -87,14 +87,18 @@ app = angular.module("Payments", ["ui.bootstrap"]).filter('reverse', function() 
   var loadMutualAccounts;
   $scope.getForPagination = function() {
     var count;
-    count = 0;
-    Object.entries($scope.counts.mode).forEach(function(entry) {
-      var ref;
-      if (!$scope.search.mode.length || (ref = entry[0], indexOf.call($scope.search.mode, ref) >= 0)) {
-        return count += entry[1];
-      }
-    });
-    return count;
+    if ($scope.counts) {
+      count = 0;
+      Object.entries($scope.counts.mode).forEach(function(entry) {
+        var ref;
+        if (!$scope.search.mode.length || (ref = entry[0], indexOf.call($scope.search.mode, ref) >= 0)) {
+          return count += entry[1];
+        }
+      });
+      return count;
+    } else {
+      return 0;
+    }
   };
   $scope.initSearch = function() {
     if (!$scope.search) {
