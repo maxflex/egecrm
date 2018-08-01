@@ -35,7 +35,7 @@
 		{
 			$current_ip = ip2long($_SERVER['HTTP_X_REAL_IP']);
 
-			$admin_ips = AdminIp::getAll($id_admin);
+			$admin_ips = AdminIp::getAll($id_admin, true);
 
 			foreach($admin_ips as $admin_ip) {
 	            $ip_from = ip2long(trim($admin_ip->ip_from));
