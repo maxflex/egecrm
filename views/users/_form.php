@@ -119,7 +119,7 @@
 				<span class="ip-separator">–</span>
 				<input class="form-control ip-mask" placeholder="{{ ip.ip_from ? ip.ip_from : '255.255.255.255' }}" ng-model="ip.ip_to" style='margin-right: 10px' />
 				<label class="ios7-switch" style='top: 4px'>
-			        <input type="checkbox" ng-model="ip.confirm_by_sms" ng-checked="ip.confirm_by_sms">
+			        <input type="checkbox" ng-model="ip.confirm_by_sms" ng-checked="ip.confirm_by_sms" ng-true-value='1' ng-false-value='0'>
 			        <span class="switch"></span>
 			        <span class='title'>подтверждение по СМС</span>
 			    </label>

@@ -80,7 +80,9 @@
 				 $User['rights'] = [];
 			 }
 
-			 AdminIp::saveData($User['id_entity'], $User['ips']);
+			 if (isset($User['ips'])) {
+				 AdminIp::saveData($User['id_entity'], $User['ips']);
+			 }
 			 Admin::updateById($User['id_entity'], $User);
 			 User::updateById($User['id'], $User);
 		 }
