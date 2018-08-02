@@ -4,15 +4,10 @@ class AdminIp extends Model
 {
 	public static $mysql_table	= "admin_ips";
 
-	// $order_by_confirm_by_sms
-	// Если в IP адресах несколько совпадений, то проверять,
-	// есть ли хотя бы в одном из них подтверждение по смс.
-	// Если да, то подтверждать по смс
-	public static function getAll($id_admin, $order_by_confirm_by_sms = false)
+	public static function getAll($id_admin)
 	{
 		return self::findAll([
 			'condition' => "id_admin={$id_admin}",
-			'order' => $order_by_confirm_by_sms ? 'confirm_by_sms desc' : 'id asc',
 		]);
 	}
 
