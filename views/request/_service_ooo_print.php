@@ -34,7 +34,7 @@
             Исполнитель оказал Заказчику в полном объеме услуги
             на сумму:
 			{{ getContractSum(service_contract) | number }}
-			({{ numToText(getContractSum(service_contract)) }} ) <ng-pluralize count="getContractSum(service_contract)" when="{'one': 'рубль', 'few': 'рубля', 'many': 'рублей'}"></ng-pluralize> 00 копеек.
+			({{ numToText(getContractSum(service_contract)) }}) <ng-pluralize count="getContractSum(service_contract)" when="{'one': 'рубль', 'few': 'рубля', 'many': 'рублей'}"></ng-pluralize> 00 копеек.
             НДС не облагается. Заказчик претензий к Исполнителю не имеет.
         </p>
 
