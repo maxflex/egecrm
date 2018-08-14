@@ -165,20 +165,7 @@
 						l.stop()
                         $scope.sms_verification = true
                         $.cookie("login_data", JSON.stringify({login: $scope.login, password: $scope.password}), { expires: 1 / (24 * 60) * 2, path: '/' })
-					} else if (response === 'verify_birthday') {
-						$scope.verify_birthday = true
-						$scope.in_process = false
-						l.stop()
-						$timeout(function() {
-							$('.verify-birthday').mask("99.99.9999", {clearIfNotMatch: true})
-							$('.verify-birthday').datepicker({
-								language	: 'ru',
-								orientation	: 'top left',
-								format: 'dd.mm.yyyy',
-								autoclose	: true
-							})
-						})
-                    } else {
+					} else {
 						$scope.in_process = false;
 						l.stop()
 						if (response == "banned") {

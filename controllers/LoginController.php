@@ -138,38 +138,6 @@
                 returnJSON('banned');
             }
 
-			// Для учеников, представителей и преподавателей
-			// нужно подтверждение даты рождения
-			if ($User->type != Admin::USER_TYPE) {
-				if (isset($birthday) && ! empty($birthday)) {
-					// проверяем дату рождения
-					switch($User->type) {
-						case Teacher::USER_TYPE:
-							$Teacher = Teacher::getLight($User->id_entity, ['birthday']);
-							$entity_birthday = $Teacher->birthday;
-							break;
-						case Student::USER_TYPE:
-							$Student = Student::getLight($User->id_entity, ['id_passport']);
-							$Passport = Passport::findById($Student->id_passport);
-							$entity_birthday = fromDotDate($Passport->date_birthday);
-							error_log("entity birday: {$entity_birthday}");
-							break;
-						case Representative::USER_TYPE:
-							$Representative = Representative::getLight($User->id_entity, ['id_passport']);
-							$Passport = Passport::findById($Representative->id_passport);
-							$entity_birthday = fromDotDate($Passport->date_birthday);
-							break;
-					}
-					error_log($entity_birthday . " | " . fromDotDate($birthday));
-					if ($entity_birthday != fromDotDate($birthday)) {
-						self::log($user_id, 'failed_login', 'неверная дата рождения');
-						returnJson('wrong_birthday');
-					}
-				} else {
-					returnJson('verify_birthday');
-				}
-			}
-
 			$allowed_to_login = $User->allowedToLogin();
 
 			if ($allowed_to_login) {
