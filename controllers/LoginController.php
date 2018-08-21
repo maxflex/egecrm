@@ -164,7 +164,7 @@
                 self::log($user_id, 'success_login');
 
                 $User->toSession(true); 	// Входим в сессию
-				// SessionService::action($User->type);
+				SessionService::action($User->type);
 
 				if (User::isStudent() || User::isTeacher() || User::isRepresentative()) {
 					$Entity = $User->getEntity();
