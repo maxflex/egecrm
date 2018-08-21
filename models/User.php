@@ -179,7 +179,8 @@
 			return isset($_SESSION["user"]) && $_SESSION["user"] 	// пользователь залогинен
                 && (User::isAdmin() ? !User::fromSession()->isBanned() : true)  // и не заблокирован (разрешаем заблокированным пользователям для режима просмотра)
                 && User::fromSession()->allowedToLogin() 			// и можно входить
-                && User::notChanged();      						// и данные по пользователю не изменились
+				&& User::notChanged();      							// и данные по пользователю не изменились
+				//&& SessionService::exists();						// сессия существует и не истекла
 		}
 
 		/*

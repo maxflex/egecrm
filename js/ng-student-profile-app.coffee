@@ -61,7 +61,7 @@ app = angular.module "StudentProfile", []
 				['Balance', 'years', 'selected_year'].forEach (field) -> $scope[field] = response[field]
 				$scope.$apply()
 			, "json"
-    .controller "PhotoCtrl", ($scope, $timeout) ->
+	.controller "PhotoCtrl", ($scope, $timeout) ->
         $scope.picture_version = 1
 
         $scope.dialog = (id) ->

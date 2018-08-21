@@ -4,6 +4,7 @@
 /node_modules
 /vendor
 /extentions
+/img/students
 deploy.php
 .idea*/
 .idea/workspace.xml

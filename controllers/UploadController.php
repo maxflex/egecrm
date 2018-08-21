@@ -153,13 +153,10 @@
                 $handle->process(Student::UPLOAD_DIR);
 
                 if ($handle->processed) {
-                    $Student = User::find(['condition' => 'id_entity = '.$student_id]);  // User::findById - потому что обновляем таблицу юзерс
+                    $Student = Student::findById($student_id);
                     $Student->photo_extension = $handle->file_src_name_ext;
                     $Student->save('photo_extension');
 
-                    if (!User::isAdmin()) {
-                        $Student->toSession();
-                    }
                     returnJson([
                         'extension' => $handle->file_src_name_ext,
                         'size'      => filesize('' . Student::UPLOAD_DIR .  $student_id . '_original.' . $handle->file_src_name_ext)
@@ -211,14 +208,8 @@
                 $Student = Student::findById($student_id);
                 $this->handleCropped($croppedImage, $student_id, $Student->photo_extension, Student::UPLOAD_DIR);
 
-                $User = User::find(["condition"=>"id_entity = $student_id and type='".Student::USER_TYPE."'"]);
-                $User->update(['has_photo_cropped'=>1]);
-
-                if (!User::isAdmin()) {
-                    $User->toSession();
-                }
-
-                $Student = Student::findById($student_id);
+				$Student->has_photo_cropped = 1;
+                $Student->save('has_photo_cropped');
                 echo $Student->photoCroppedSize();
                 exit();
             }

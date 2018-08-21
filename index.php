@@ -63,7 +63,8 @@
 	} else {
 		if (User::loggedIn()) {
             try {
-                User::fromSession()->trackLogout();
+				// SessionService::action();
+                // User::fromSession()->trackLogout();
             }
             catch (Exception $e) {
                 header("Location: logout");
