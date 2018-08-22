@@ -33,6 +33,9 @@
                 $this->bindPhoto();
             }
 
+			$this->grade_clean = $this->grade;
+			$this->grade = self::getGrade($this);
+			
             if ($this->grade == Grades::EXTERNAL) {
                 $this->grade_label = 'экстернат';
                 $this->grade_short = 'Э';
@@ -48,6 +51,16 @@
         {
             return static::UPLOAD_DIR . $this->id . $addon . '.' . $this->photo_extension;
         }
+
+		public static function getGrade($student)
+		{
+			if ($student->year && $student->grade < 12) {
+				$years_passed = academicYear() - $student->year;
+				$new_grade = $student->grade + $years_passed;
+				return $new_grade > 12 ? 12 : $new_grade;
+			}
+			return $student->grade;
+		}
 
         public function photoUrl()
         {
@@ -839,13 +852,17 @@
 		 */
 		public static function getLight($id, $additional = [])
 		{
-			return dbConnection()->query("
-				SELECT s.id, s.first_name, s.last_name, s.middle_name, s.id_user_review, s.grade, a.login as user_login, a.color" . (count($additional) ? ', ' . implode(',', $additional) : '') .
+			$student = dbConnection()->query("
+				SELECT s.id, s.first_name, s.last_name, s.middle_name, s.id_user_review, s.grade, s.year, a.login as user_login, a.color" . (count($additional) ? ', ' . implode(',', $additional) : '') .
 				" FROM " . static::$mysql_table . " s
 				LEFT JOIN admins a ON a.id = s.id_user_review
 				WHERE s.id = " . $id . "
 				ORDER BY s.last_name, s.first_name, s.middle_name ASC")
 			->fetch_object();
+
+			$student->grade = Student::getGrade($student);
+
+			return $student;
 		}
 
 

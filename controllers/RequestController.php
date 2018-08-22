@@ -422,6 +422,7 @@
 
 			$Student = Student::findById($id_student);
 			$Student->is_banned = Student::isBanned($id_student);
+			$Student->grade = $Student->grade_clean;
 
 			$search = isset($_COOKIE['groups']) ? json_decode($_COOKIE['groups']) : (object)[];
 
@@ -439,6 +440,7 @@
 				"student_phone_level"	=> $Student->phoneLevel(),
 				"branches_brick"		=> Branches::getShortColored(),
 				"academic_year"			=> $search->year,
+				"Years"					=> Years::$all,
                 "Prices"                => Prices::getRecommended(),
 				"Teachers"				=> Teacher::getLight(false),
 				# Данные представителя

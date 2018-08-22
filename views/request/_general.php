@@ -1,3 +1,4 @@
+<div class="custom-dropdown__close" ng-click="grade_year_dropdown = false" ng-show="grade_year_dropdown"></div>
 <div ng-show="current_menu == 0">
 	<div class="row">
 		<?= globalPartial('loading', ['model' => 'student']) ?>
@@ -28,8 +29,28 @@
 			               ]);
 			            ?>
 		            </div>
-		            <div class="form-group">
-		                <?= Grades::buildSelector($Request->Student->grade, "Student[grade]", ["ng-model" => "student.grade"]) ?>
+		            <div class="form-group" style="position: relative">
+						<input type="hidden" name="Student[grade]" value="{{ student.grade }}">
+						<input type="hidden" name="Student[year]" value="{{ student.year }}">
+
+						<select class="form-control" ng-click="grade_year_dropdown = true"></select>
+			            <span class="custom-dropdown__label">
+			                <span ng-show="!student.grade" class="placeholder-gray">класс и год</span>
+			                <span ng-show="student.grade">
+			                    {{ getRealGrade() ? Grades[getRealGrade()] : 'класс не указан' }}
+			                </span>
+			            </span>
+			            <div class="custom-dropdown" ng-show="grade_year_dropdown">
+			                <div ng-repeat="grade in getGradeIds()" class="custom-dropdown__item" ng-click="selectGrade(grade)">
+			                    {{ Grades[grade] }}
+			                    <span class="glyphicon glyphicon-ok check-mark" ng-show="grade == student.grade"></span>
+			                </div>
+			                <div class="custom-dropdown__separator"></div>
+			                <div ng-repeat="year in Years" class="custom-dropdown__item" ng-click="selectYear(year)">
+			                    {{ yearLabel(year) }}
+			                    <span class="glyphicon glyphicon-ok check-mark" ng-show="year == student.year"></span>
+			                </div>
+						</div>
 		            </div>
 		            <div class="form-group">
 			            <div class="input-group" ng-class="{'input-group-with-hidden-span': !emailFull(student.email)}">

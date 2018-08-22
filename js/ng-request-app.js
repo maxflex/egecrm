@@ -259,6 +259,49 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 	.controller("EditCtrl", function ($scope, $log, $timeout, PhoneService, UserService, GroupService) {
 		bindArguments($scope, arguments);
 
+		$scope.selectGrade = function(grade) {
+		  $scope.form_changed = true
+		  $scope.$apply()
+		  if (grade === $scope.student.grade) {
+		    return $scope.student.grade = 0;
+		  } else {
+		    if (!$scope.student.year) {
+		      $scope.student.year = $scope.academic_year;
+		    }
+		    return $scope.student.grade = grade;
+		  }
+		}
+
+		$scope.selectYear = function(year) {
+  		  $scope.form_changed = true
+  		  $scope.$apply()
+		  if (year === $scope.student.year) {
+		    return $scope.student.year = null;
+		  } else {
+		    return $scope.student.year = year;
+		  }
+		}
+
+		$scope.getRealGrade = function() {
+		  var new_grade, years_passed;
+		  if (!$scope.student) {
+		    return;
+		  }
+		  if (!$scope.student.grade) {
+		    return 0;
+		  }
+		  if ($scope.student.year && $scope.student.grade < 12) {
+		    years_passed = $scope.academic_year - $scope.student.year;
+		    new_grade = parseInt($scope.student.grade) + years_passed;
+			return new_grade > 12 ? 12 : new_grade;
+		  }
+		  return $scope.student.grade;
+		}
+
+		$scope.getGradeIds = function() {
+			return Object.keys($scope.Grades)
+		}
+
         $scope.yearLabel = function(year, noLabel) {
             return year + '-' + (parseInt(year) + 1) + (noLabel === undefined ? ' уч. г.' : '')
         }
@@ -2015,7 +2058,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 			if ($scope.student === undefined && menu == 0 && $scope.mode == 'student') {
 				$.post("requests/ajax/LoadStudent", {id_student: $scope.id_student}, function(response) {
 					['FreetimeBar', 'GroupsBar', 'Subjects', 'SubjectsFull', 'SubjectsFull2', 'Prices', 'server_markers', 'contracts', 'student', 'Groups', 'student_phone_level',
-						'branches_brick', 'representative_phone_level', 'representative', 'Teachers'].forEach(function(field) {
+						'branches_brick', 'representative_phone_level', 'Years', 'representative', 'Teachers'].forEach(function(field) {
 						$scope[field] = response[field]
 					})
 
