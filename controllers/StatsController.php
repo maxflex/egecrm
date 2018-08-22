@@ -119,6 +119,8 @@
 
 			$stats['requests'] = $requests_count;
 
+			$stats['incoming_calls'] = CallStats::sum($date_start, $date_end);
+
             $teachers_count = Teacher::count([
 				"condition" =>
 					$date_end 	? "DATE(created_at) > '". $date_start ."' AND DATE(created_at) <= '". $date_end ."' AND egecentr_source=1"

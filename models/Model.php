@@ -249,10 +249,6 @@
 		 */
 		public static function count($params = array())
 		{
-			error_log(
-				"SELECT COUNT(*) as c FROM `".static::$mysql_table."` " .
-				"WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "")
-			);
 			// Получаем количество из условия
 			$result = static::dbConnection()->query(
 				"SELECT COUNT(*) as c FROM `".static::$mysql_table."` " .

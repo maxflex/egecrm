@@ -49,6 +49,9 @@
 					заявок
 				</td>
 				<td>
+					входящих звонков
+				</td>
+				<td>
 					новых договоров
 				</td>
 				<td>
@@ -90,6 +93,9 @@
 				</td>
 				<td>
 					<?= $stat['requests'] ?>
+				</td>
+				<td>
+					<?= $stat['incoming_calls'] ?: '' ?>
 				</td>
 				<td>
 					<?= $stat['contract_new']['basic'] ?> <?= $stat['contract_new']['external'] ? "<span class='text-primary'>+ {$stat['contract_new']['external']}</span>" : "" ?>
