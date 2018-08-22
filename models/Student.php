@@ -35,7 +35,7 @@
 
 			$this->grade_clean = $this->grade;
 			$this->grade = self::getGrade($this);
-			
+
             if ($this->grade == Grades::EXTERNAL) {
                 $this->grade_label = 'экстернат';
                 $this->grade_short = 'Э';
@@ -328,6 +328,13 @@
 			// Очищаем номера телефонов
 			foreach (static::$_phone_fields as $phone_field) {
 				$this->{$phone_field} = cleanNumber($this->{$phone_field});
+			}
+
+			// год по умолчанию
+			if ($this->isNewRecord) {
+				if (! $this->year) {
+					$this->year = academicYear();
+				}
 			}
 		}
 

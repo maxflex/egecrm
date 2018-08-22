@@ -30,6 +30,9 @@ class CallStats extends Model
 	private static function todaySum()
 	{
 		$today = now(true);
+		// $egecentr_numbers = implode(',', array_map(function($e) {
+		// 	return "\'{$e}\'";
+		// }, Call::EGECENTR_NUMBERS));
 		$result = dbEgerep()->query("SELECT count(*) as `cnt` from
                 (select 1
                 from mango m
