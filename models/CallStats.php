@@ -30,7 +30,7 @@ class CallStats extends Model
 	private static function todaySum()
 	{
 		$today = now(true);
-		$result = static::dbConnection()->query("SELECT count(*) as `cnt` from
+		$result = dbEgerep()->query("SELECT count(*) as `cnt` from
                 (select 1
                 from mango m
                 where DATE(FROM_UNIXTIME(m.`start`)) = '{$today}'
