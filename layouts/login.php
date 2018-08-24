@@ -28,5 +28,4 @@
 	    }
 	</style>
   </head>
-  <body class="content animated fadeIn"  ng-app="Login" ng-controller="LoginCtrl"
-    ng-init='wallpaper = <?= json_encode($wallpaper) ?>; logged_user = <?= (isset($_COOKIE['logged_user']) ? $_COOKIE['logged_user'] : 'null') ?>'>
+  <body class="content animated fadeIn"  ng-app="Login" ng-controller="LoginCtrl" ng-init="<?= $ang_init_data ?>">

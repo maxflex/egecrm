@@ -5,6 +5,7 @@ use GuzzleHttp\Client;
 class SessionService
 {
 	private static $client;
+	private static $redis;
 
 	private static function init()
 	{
@@ -13,19 +14,24 @@ class SessionService
 	            'base_uri' => SESSION_SERVICE_URL,
 	        ]);
 		}
+		if (! self::$redis) {
+			self::$redis = new Predis\Client();
+		}
 	}
 
-	public static function action($type = null)
+	public static function action($skip_cache = false)
 	{
 		self::init();
 		// если уже отсылали недавно обновление времени последнего действия
-		if (self::setCache()) {
+		if (!$skip_cache && self::setCache()) {
 			return;
 		}
-		$params = ['user_id' => User::id()];
-		if ($type) {
-			$params['type'] = $type;
-		}
+
+		$params = [
+			'user_id' => User::id(),
+			'type'    => User::fromSession()->type
+		];
+
 		self::$client->post('sessions/action', [
             'form_params' => $params,
         ]);
@@ -34,15 +40,21 @@ class SessionService
 	public static function exists()
 	{
 		self::init();
-		$client = new Predis\Client();
 		$key = "egecrm:session:exists:" . User::id();
-		if ($client->exists($key)) {
-			return $client->get($key);
+		if (self::$redis->exists($key)) {
+			return self::$redis->get($key);
 		}
 		$response = self::$client->get("sessions/exists/" . User::id());
 		$exists = json_decode($response->getBody()->getContents());
-		$client->set($key, $exists ? 1 : 0, 'EX', 60);
+		self::$redis->set($key, $exists ? 1 : 0, 'EX', 60);
 		return $exists;
+	}
+
+	public static function clearCache()
+	{
+		self::init();
+		$key = "egecrm:session:exists:" . User::id();
+		self::$redis->del($key);
 	}
 
 	/**
@@ -51,12 +63,19 @@ class SessionService
 	 */
 	public static function setCache($seconds = 60)
 	{
+		self::init();
 		$key = "egecrm:session:action:" . User::id();
-		$client = new Predis\Client();
-		if ($client->get($key)) {
+		if (self::$redis->get($key)) {
 			return true;
 		}
-		$client->set($key, 1, 'EX', $seconds);
+		self::$redis->set($key, 1, 'EX', $seconds);
 		return false;
+	}
+
+	public static function destroy()
+	{
+		self::init();
+		self::clearCache();
+		self::$client->get("sessions/destroy/" . User::id());
 	}
 }

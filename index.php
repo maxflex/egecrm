@@ -63,7 +63,7 @@
 	} else {
 		if (User::loggedIn()) {
             try {
-				// SessionService::action();
+				SessionService::action();
                 // User::fromSession()->trackLogout();
             }
             catch (Exception $e) {

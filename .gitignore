@@ -5,6 +5,7 @@
 /vendor
 /extentions
 /img/students
+/img/users
 deploy.php
 .idea*/
 .idea/workspace.xml
