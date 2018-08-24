@@ -45,25 +45,11 @@
 
 		/*====================================== СТАТИЧЕСКИЕ ФУНКЦИИ ======================================*/
 
-		/**
-		 * Выкидывать автоматически
-		 */
-		public function trackLogout()
+		public static function logout()
 		{
-			// не логаутить меня
-			if ($this->id != 69) {
-				Job::dispatch(
-					LogoutNotifyJob::class,
-					['user_id' => $this->id],
-					$this->type == Admin::USER_TYPE ? (self::ADMIN_SESSION_DURATION - 1) : (self::OTHER_SESSION_DURATION - 1)
-				);
-
-				// создать отложенную задачу на логаут
-				Job::dispatch(
-					LogoutJob::class,
-					['session_id' => session_id()],
-					$this->type == Admin::USER_TYPE ? self::ADMIN_SESSION_DURATION : self::OTHER_SESSION_DURATION
-				);
+			if (isset($_SESSION["user"]) && $_SESSION["user"]) {
+				SessionService::destroy();
+				unset($_SESSION['user']);
 			}
 		}
 

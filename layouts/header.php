@@ -27,6 +27,9 @@
 	<?= $this->_js_additional ?>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript" src="js/assets.js"></script>
+	<script>
+		listenToSession('<?= SSO_PUSHER_APP_KEY ?>', <?= User::id() ?>)
+	</script>
   </head>
   <body class="content">
 	  <div class="lightbox"></div>

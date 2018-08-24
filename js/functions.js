@@ -1,48 +1,4 @@
-var ajaxEnd, ajaxStart, clearSelect, continueSession, deleteTeacher, emailMode, isMobilePhone, listenToLogout, logoutCountdown, logoutCountdownClose, logout_interval, objectToArray, phoneCorrect, set_scope;
-
-logout_interval = false;
-
-listenToLogout = function(user_id) {
-  var channel, pusher;
-  pusher = new Pusher('a9e10be653547b7106c0', {
-    encrypted: true
-  });
-  channel = pusher.subscribe('user_' + user_id);
-  channel.bind('logout_notify', function() {
-    return logoutCountdown();
-  });
-  return channel.bind('continue_session', function() {
-    return logoutCountdownClose();
-  });
-};
-
-logoutCountdownClose = function() {
-  clearInterval(logout_interval);
-  logout_interval = false;
-  return $('#logout-modal').modal('hide');
-};
-
-logoutCountdown = function() {
-  var seconds;
-  seconds = 60;
-  $('#logout-seconds').html(seconds);
-  $('#logout-modal').modal('show');
-  return logout_interval = setInterval(function() {
-    seconds--;
-    $('#logout-seconds').html(seconds);
-    if (seconds <= 1) {
-      clearInterval(logout_interval);
-      return setTimeout(function() {
-        return location.reload();
-      }, 1000);
-    }
-  }, 1000);
-};
-
-continueSession = function() {
-  $.post("ajax/ContinueSession");
-  return logoutCountdownClose();
-};
+var ajaxEnd, ajaxStart, clearSelect, deleteTeacher, emailMode, isMobilePhone, objectToArray, phoneCorrect, set_scope;
 
 set_scope = function(app_name) {
   return this.ang_scope = angular.element("[ng-app='" + app_name + "']").scope();

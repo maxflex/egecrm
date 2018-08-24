@@ -73,6 +73,12 @@
 		 * Выход пользователя.
 		 *
 		 */
+		public function logout()
+		{
+			User::logout();
+			return redirect('/login');
+		}
+
 		public function actionLogout()
 		{
             self::log(User::id(), 'logout');
