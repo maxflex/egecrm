@@ -37,16 +37,18 @@ class SessionService
         ]);
 	}
 
-	public static function exists()
+	public static function exists($skip_cache = false)
 	{
 		self::init();
-		$key = "egecrm:session:exists:" . User::id();
-		if (self::$redis->exists($key)) {
-			return self::$redis->get($key);
+		if (! $skip_cache) {
+			$key = "egecrm:session:exists:" . User::id();
+			if (self::$redis->exists($key)) {
+				return self::$redis->get($key);
+			}
 		}
 		$response = self::$client->get("sessions/exists/" . User::id());
 		$exists = json_decode($response->getBody()->getContents());
-		self::$redis->set($key, $exists ? 1 : 0, 'EX', 60);
+		self::$redis->set($key, $exists ? 1 : 0, 'EX', 15);
 		return $exists;
 	}
 
@@ -61,7 +63,7 @@ class SessionService
 	 * Закешировать установку ACTION.
 	 * ACTION можно делать раз в минуту
 	 */
-	public static function setCache($seconds = 60)
+	public static function setCache($seconds = 30)
 	{
 		self::init();
 		$key = "egecrm:session:action:" . User::id();

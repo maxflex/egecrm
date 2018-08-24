@@ -174,13 +174,13 @@
 		/*
 		 * Проверяем, залогинен ли пользователь
 		 */
-		public static function loggedIn()
+		public static function loggedIn($skip_cache = false)
 		{
 			return isset($_SESSION["user"]) && $_SESSION["user"] 	// пользователь залогинен
                 && (User::isAdmin() ? !User::fromSession()->isBanned() : true)  // и не заблокирован (разрешаем заблокированным пользователям для режима просмотра)
                 && User::fromSession()->allowedToLogin() 			// и можно входить
 				&& User::notChanged()      							// и данные по пользователю не изменились
-				&& SessionService::exists();						// сессия существует и не истекла
+				&& SessionService::exists($skip_cache);				// сессия существует и не истекла
 		}
 
 		/*
