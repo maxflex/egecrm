@@ -6,7 +6,7 @@
             'few'	: 'занятия',
             'many'	: 'занятий',
         }"></ng-pluralize>) производится
-        <span ng-if='!$index'> при заключении договора</span>
+        <span ng-if='!$index'> при заключении Договора</span>
         <span ng-if='$index'>
              до {{ payment.date }}
         </span>
