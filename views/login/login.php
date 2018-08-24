@@ -2,11 +2,15 @@
 	<center autocomplete="off" id='center' class="animated fadeIn login-form" style='animation-duration: 1.5s'>
 		<div class="g-recaptcha" data-sitekey="<?= RECAPTCHA_SITE ?>" data-size="invisible" data-callback="captchaChecked"></div>
 		<div class="login-logo group">
-			<img src="../img/svg/logo.svg" />
+			<img ng-if="!logged_user || !logged_user.photo" src="../img/svg/logo.svg" />
+			<div ng-if="logged_user && logged_user.photo" class="login-user-ava" style="background-image: url({{ logged_user.photo }})"></div>
 		</div>
 		<div class="input-groups">
-	        <div class="group">
-	            <input ng-disabled="sms_verification || logged_user" type="text" id="inputLogin" autofocus ng-model="login" placeholder="email"
+	        <div class="group" ng-show="logged_user">
+	            <input disabled type="text" ng-model="logged_user.name">
+	        </div>
+	        <div class="group" ng-show="!logged_user">
+	            <input ng-disabled="sms_verification" type="text" id="inputLogin" autofocus ng-model="login" placeholder="email"
 				 	autocomplete="off" ng-keyup="enter($event)" ng-model-options="{ allowInvalid: true }" required>
 	        </div>
 	        <div class="group">
@@ -32,7 +36,7 @@
 			</div>
 		  </div>
 		<div ng-show="error" class="login-errors">
-			{{ error }}
+			в доступе отказано
   		</div>
     </center>
 

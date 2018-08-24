@@ -13,13 +13,17 @@
 		{
 			// Если пользователь уже вошел, либо была галка "запомнить",
 			// то редиректим на ту страницу, куда пользователь шел изначально
-			if (User::loggedIn()) {
+			if (!isset($_GET['access_denied']) && User::loggedIn()) {
 				// Если пользователь залогинен и пытается перейти на страницу логина,
 				// то редиректим его на страницу заявок
 				if ($_GET["controller"] == "login") {
 					switch (User::fromSession()->type) {
 						case Admin::USER_TYPE: {
-							$this->redirect("requests");
+							if (isset($_GET['url'])) {
+								$this->redirect(SsoHandler::handle($_GET['url']));
+							} else {
+								$this->redirect("requests");
+							}
 							break;
 						}
 						case Teacher::USER_TYPE:
@@ -44,14 +48,26 @@
 		// Страница входа
 		public function actionLogin()
 		{
-			$this->render("login", ['wallpaper' => Background::get()], "login");
+			$this->render("login", self::pageData(), "login");
 		}
 
 		public function actionPassword()
 		{
-			$this->render('password', ['wallpaper' => Background::get()], 'login');
+			$this->render('password', self::pageData(), 'login');
 		}
 
+		private static function pageData()
+		{
+			$wallpaper = Background::get();
+			return [
+				'wallpaper' => $wallpaper,
+				'ang_init_data' => angInit([
+					'wallpaper'	=> $wallpaper,
+					'logged_user' => isset($_COOKIE['logged_user']) ? json_decode($_COOKIE['logged_user']) : 0,
+					'error' => isset($_GET['access_denied']) ? 1 : 0,
+				])
+			];
+		}
 
 		/**
 		 * Выход пользователя.
@@ -60,6 +76,8 @@
 		public function actionLogout()
 		{
             self::log(User::id(), 'logout');
+
+			SessionService::destroy();
 
 			// Удаляем сессию
 			session_destroy();
@@ -116,6 +134,7 @@
 
 			// Если входит представитель, подменяем на ученика
 			if ($User->type == Representative::USER_TYPE) {
+				$Representative = $User;
 				$student_id = Student::find(['condition' => "id_representative={$User->id_entity}"])->id;
 				$User = User::find(['condition' => "id_entity={$student_id} AND type='" . Student::USER_TYPE . "'"]);
 			}
@@ -164,17 +183,36 @@
                 self::log($user_id, 'success_login');
 
                 $User->toSession(true); 	// Входим в сессию
-				SessionService::action($User->type);
+				SessionService::action(true);
+				SessionService::clearCache();
 
+				$Entity = $User->getEntity();
 				if (User::isStudent() || User::isTeacher() || User::isRepresentative()) {
-					$Entity = $User->getEntity();
 					$Entity->login_count++;
 					$Entity->save("login_count");
 				}
-				setcookie("logged_user", json_encode([
-					'email' => $User->email,
-					'type'	=> $User->type
-				]), time() + (3600 * 24 * 365), "/");
+
+				$email = $User->email;
+				$type = $User->type;
+				switch($User->type) {
+					case Teacher::USER_TYPE:
+						$name = implode(' ', [$Entity->first_name, $Entity->middle_name]);
+						$photo = $Entity->photo_extension ? (EGEREP_URL . "img/tutors/{$Entity->id}.{$Entity->photo_extension}") : null;
+						break;
+					case Admin::USER_TYPE:
+					case Student::USER_TYPE:
+						$name = implode(' ', [$Entity->first_name, $Entity->last_name]);
+						$photo = $Entity->has_photo_cropped ? $Entity->photo_url : null;
+						break;
+					case Representative::USER_TYPE:
+						$name = implode(' ', [$Representative->first_name, $Representative->last_name]);
+						$photo = $Entity->has_photo_cropped ? $Entity->photo_url : null;
+						$email = $Representative->email;
+						$type = Representative::USER_TYPE;
+						break;
+				}
+
+				setcookie("logged_user", json_encode(compact('email', 'type', 'name', 'photo')), time() + (3600 * 24 * 365), "/");
 				returnJson(true);					// Ответ АЯКСУ, мол, вошли нормально
 			} else {
                 self::log($user_id, 'failed_login', 'нет прав доступа для данного IP');
