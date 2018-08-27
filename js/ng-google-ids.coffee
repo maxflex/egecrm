@@ -5,11 +5,11 @@ app = angular.module "GoogleIds", ["ui.bootstrap"]
 
 		$scope.disabled_payments = {}
 		$scope.google_ids = ''
+		$scope.loading = false
 
 		$scope.show = ->
 			$scope.loading = true
 			$.post 'google-ids/show', {google_ids: $scope.google_ids}, (response) ->
-				console.log(response)
 				$scope.data = response
 				$scope.loading = false
 				$scope.$apply()

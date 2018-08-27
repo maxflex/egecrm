@@ -4,11 +4,12 @@
             <input type='text' ng-model="google_ids" placeholder="google ids" class="form-control" />
         </div>
         <div style='margin-right: 0; width: 200px; flex: none'>
-            <button class="btn btn-primary full-width" ng-click="show()">показать</button>
+            <button class="btn btn-primary full-width" ng-click="show()" ng-disabled="loading">показать</button>
         </div>
     </div>
     <div class="row" style='margin-top: 30px'>
         <div class="col-sm-12">
+			<div class="div-blocker loading" ng-if="loading"></div>
 			<table class="table reverse-borders" ng-if="data">
 				<thead class="table-header">
 					<tr>
@@ -46,7 +47,7 @@
 								'text-green': payment.id_type == 1,
 								'text-danger': payment.id_type == 2,
 								'half-opacity': disabled_payments[payment.id]
-							}" style='margin-right: 10px'>
+							}" style='width: 95px'>
 								{{ payment.id_type == 1 ? '+' : '-' }}{{ payment.sum | number }} руб.
 							</div>
 							<div style='margin-right: 15px' ng-class="{'half-opacity': disabled_payments[payment.id]}">

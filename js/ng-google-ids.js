@@ -7,12 +7,12 @@ app = angular.module("GoogleIds", ["ui.bootstrap"]).controller("IndexCtrl", func
   });
   $scope.disabled_payments = {};
   $scope.google_ids = '';
+  $scope.loading = false;
   $scope.show = function() {
     $scope.loading = true;
     return $.post('google-ids/show', {
       google_ids: $scope.google_ids
     }, function(response) {
-      console.log(response);
       $scope.data = response;
       $scope.loading = false;
       return $scope.$apply();
