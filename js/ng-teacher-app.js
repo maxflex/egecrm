@@ -90,6 +90,22 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     });
     return student_names.join("\n");
   };
+  $timeout(function() {
+    $scope.stats_ec_loading = false;
+    return $scope.search_stats = {
+      id_teacher: $scope.Teacher.id,
+      years: [($scope.academic_year - 1).toString(), $scope.academic_year.toString()],
+      grades: ['9', '10', '11']
+    };
+  });
+  $scope.filterStats = function() {
+    $scope.stats_ec_loading = true;
+    return $.post("teachers/ajax/stats", $scope.search_stats, function(response) {
+      $scope.stats_ec = response;
+      $scope.stats_ec_loading = false;
+      return $scope.$apply();
+    }, 'json');
+  };
   _initReportsModule = function() {
     $scope.search = $.cookie("reports") ? JSON.parse($.cookie("reports")) : {};
     $scope.search.id_teacher = $scope.Teacher.id;
@@ -262,6 +278,9 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     if (menu === 4) {
       _initReportsModule();
     } else {
+      if (menu === 5) {
+        $scope.filterStats();
+      }
       $.each(menus, function(index, value) {
         return _loadData(index, menu, value, complex_data);
       });
@@ -283,6 +302,9 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
           });
         } else {
           $scope[ngModel] = response;
+          $timeout(function() {
+            return $('.watch-select').selectpicker();
+          });
         }
         return $scope.$apply();
       }, "json");

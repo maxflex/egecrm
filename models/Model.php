@@ -258,6 +258,20 @@
 			return $result->fetch_object()->c;
 		}
 
+		/**
+		 * Среднее значение
+		 */
+		public static function avg($field, $params = array())
+		{
+			// Получаем количество из условия
+			$result = static::dbConnection()->query(
+				"SELECT AVG({$field}) as c FROM `".static::$mysql_table."` " .
+				"WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "")
+			);
+			// Возвращаем кол-во
+			return $result->fetch_object()->c;
+		}
+
 
 		/*
 		 * Получаем ID последней записи

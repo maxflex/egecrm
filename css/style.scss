@@ -573,6 +573,10 @@ body {
     width: 100% !important;
     height: 100% !important;
     z-index: 99;
+	&.loading {
+		background: white;
+		opacity: .9;
+	}
 }
 
 .student-dragout {

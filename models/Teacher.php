@@ -489,24 +489,56 @@
 		/**
 		 * Получить статистику преподавателя
 		 */
-		public static function stats($tutor_id)
+		public static function stats($tutor_id, $years = [], $grades = [])
 		{
+			$years_condition = '';
+			$years = array_filter($years);
+			if (count($years)) {
+				$years_string = implode(',', $years);
+				$years_condition = " AND year IN ({$years_string})";
+			}
+
+			$grades_condition = '';
+			$grades = array_filter($grades);
+			if (count($grades)) {
+				$grades_string = implode(',', $grades);
+				$grades_condition = " AND grade IN ({$grades_string})";
+			}
+
+			$filter_condition = $years_condition . $grades_condition;
+
 			$ec_lesson_count = VisitJournal::count([
-                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'"
+                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'" . $filter_condition
             ]);
-			$ec_lesson_count_by_grade[9] = VisitJournal::count([
-                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=9"
+			$ec_avg_price = VisitJournal::avg('price', [
+                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'" . $filter_condition
             ]);
-			$ec_lesson_count_by_grade[10] = VisitJournal::count([
-                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=10"
-            ]);
-			$ec_lesson_count_by_grade[11] = VisitJournal::count([
-                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=11"
-            ]);
+			// $ec_lesson_count_by_grade[9] = VisitJournal::count([
+            //     "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=9"
+            // ]);
+			// $ec_lesson_count_by_grade[10] = VisitJournal::count([
+            //     "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=10"
+            // ]);
+			// $ec_lesson_count_by_grade[11] = VisitJournal::count([
+            //     "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=11"
+            // ]);
 			$ec_review_count = TeacherReview::count([
-                "condition" => "id_teacher = {$tutor_id} AND admin_rating_final <= 5 AND admin_rating_final > 0"
+                "condition" => "id_teacher = {$tutor_id} AND admin_rating_final <= 5 AND admin_rating_final > 0" . $filter_condition
             ]);
-			$result = dbConnection()->query("select avg(admin_rating_final) as cnt from teacher_reviews where id_teacher = {$tutor_id} AND admin_rating_final <= 5 AND admin_rating_final > 0");
+
+			// Доля пропусков
+			$abscent_percent = null;
+			$total_student_visits = VisitJournal::count([
+				"condition" => "type_entity='STUDENT' AND id_teacher=" . $tutor_id . $filter_condition
+			]);
+			if ($total_student_visits) {
+				$abscent_count = VisitJournal::count([
+					"condition" => "id_teacher={$tutor_id} AND type_entity='STUDENT' AND presence=2" . $filter_condition
+				]);
+				$abscent_percent = round($abscent_count / $total_student_visits * 100);
+			}
+
+			$result = dbConnection()->query("select avg(admin_rating_final) as cnt from teacher_reviews where id_teacher = {$tutor_id} AND admin_rating_final <= 5 AND admin_rating_final > 0" . $filter_condition);
 			$ec_review_avg = $result->fetch_assoc();
 			$ec_review_avg = floatval($ec_review_avg['cnt']);
 
@@ -514,8 +546,9 @@
 				'ec_lesson_count' 		=> $ec_lesson_count,
 				'ec_review_count' 		=> $ec_review_count,
 				'ec_review_avg' 		=> $ec_review_avg,
+				'abscent_percent'		=> $abscent_percent,
+				'ec_avg_price'			=> $ec_avg_price,
 			];
-
 		}
 
         /**

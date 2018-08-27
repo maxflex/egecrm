@@ -68,6 +68,21 @@
 				student_names = Lesson.students.map (student_id) -> $scope.getStudentName(student_id)
 				student_names.join("\n")
 
+			# STATS
+			$timeout ->
+				$scope.stats_ec_loading = false
+				$scope.search_stats =
+					id_teacher: $scope.Teacher.id
+					years: [($scope.academic_year - 1).toString(), $scope.academic_year.toString()]
+					grades: ['9', '10', '11']
+			$scope.filterStats = ->
+				$scope.stats_ec_loading = true
+				$.post "teachers/ajax/stats", $scope.search_stats, (response) ->
+					$scope.stats_ec = response
+					$scope.stats_ec_loading = false
+					$scope.$apply()
+				, 'json'
+
 			# REPORTS
 			_initReportsModule = ->
 				$scope.search = if $.cookie("reports") then JSON.parse($.cookie("reports")) else {}
@@ -220,6 +235,7 @@
 				if menu == 4
 					_initReportsModule()
 				else
+					if menu == 5 then $scope.filterStats()
 					$.each menus, (index, value) ->
 						_loadData(index, menu, value, complex_data)
 				$scope.current_menu = menu
@@ -236,6 +252,7 @@
 								$scope[field] = value
 						else
 							$scope[ngModel] = response
+						 $timeout -> $('.watch-select').selectpicker()
 						$scope.$apply()
 					, "json"
 
