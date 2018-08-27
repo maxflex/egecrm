@@ -80,6 +80,7 @@
 		<?php if (User::fromSession()->allowed(Shared\Rights::SHOW_TEACHER_PAYMENTS)) :?>
 			<a href="teachers/salary" class="list-group-item">Оплата преподавателей</a>
 		<?php endif ?>
+		<a href="google-ids" class="list-group-item">Google IDS</a>
 	<?php endif ?>
 
 	<a class="list-group-item active">Настройки</a>

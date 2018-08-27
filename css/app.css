@@ -15991,7 +15991,7 @@ h4 {
     margin-left: 10px;
     font-size: 12px !important; }
 
-.half-black {
+.half-black, .table-header {
   color: rgba(0, 0, 0, 0.5) !important; }
 
 .quater-black {
@@ -17109,6 +17109,12 @@ a[href^="https://www.google.com/maps"] {
 
 .placeholder-gray {
   color: #999999; }
+
+.table-header {
+  font-size: 10px; }
+
+.table-footer {
+  font-weight: bold; }
 
 .control-group {
   display: inline-block;

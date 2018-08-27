@@ -4054,3 +4054,12 @@ a[href^="https://www.google.com/maps"]{display:none !important}
 .placeholder-gray {
 	color: $placeholder_gray;
 }
+
+.table-header {
+	font-size: 10px;
+	@extend .half-black;
+}
+
+.table-footer {
+	font-weight: bold;
+}
