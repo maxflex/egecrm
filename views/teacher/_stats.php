@@ -50,8 +50,8 @@
 				</div>
 				<div ng-show="stats_ec.abscent_percent !== undefined">Доля пропусков: {{ stats_ec.abscent_percent }}%</div>
 				<div ng-show="stats_ec.ec_avg_price">Средняя сумма: {{ stats_ec.ec_avg_price | number}} руб.</div>
-				<div ng-show="Stats.ec_efficency">
-					Расход: {{ Stats.ec_efficency }}%
+				<div ng-show="stats_ec.ec_efficency">
+					Расход: {{ stats_ec.ec_efficency }}%
 				</div>
 			</div>
 		</div>
