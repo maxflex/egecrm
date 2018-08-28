@@ -26,15 +26,12 @@
 				from contract_info
 				where `year`={$year}
 			");
-
 			$ids = [];
-
 			while ($row = $result->fetch_object()) {
 				$ids[] = $row->id_contract;
 			}
-
 			return self::whereIn($ids, 'id_contract');
-		}
+        }
 
         public function getSubjects()
         {
@@ -98,13 +95,13 @@
 						where 1 ".
 						(!isBlank($search->year) ? " and ci.year={$search->year} " : '') .
 						(!isBlank($search->version) ? "
-						   and c.id = (
-							   SELECT " . ($search->version == 1 ? "MIN" : "MAX") . "(id) as min_id FROM " . static::$mysql_table . " c2
-							   JOIN " . static::$info_table. " ci2 on ci2.id_contract = c2.id_contract
-							   WHERE ci2.id_student=s.id AND ci2.year=ci.year
-						   )
+                            and c.id = (
+                                SELECT " . ($search->version == 1 ? "MIN" : "MAX") . "(id) as min_id FROM " . static::$mysql_table . " c2
+                                JOIN " . static::$info_table. " ci2 on ci2.id_contract = c2.id_contract
+                                WHERE ci2.id_student=s.id AND ci2.year=ci.year
+                            )
 						" : "") . "
-						order by r.last_name asc, r.first_name asc, r.middle_name asc";
+						order c.date desc";
 
 
 		   $color_counts = " (select count(id_subject) from contract_subjects cs where cs.id_contract = c.id AND cs.status = 3) as green, " .
