@@ -94,7 +94,7 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     $scope.stats_ec_loading = false;
     return $scope.search_stats = {
       id_teacher: $scope.Teacher.id,
-      years: [($scope.academic_year - 1).toString(), $scope.academic_year.toString()],
+      years: [($scope.academic_year - 2).toString(), ($scope.academic_year - 1).toString()],
       grades: ['9', '10', '11']
     };
   });

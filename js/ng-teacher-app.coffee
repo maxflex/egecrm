@@ -73,7 +73,7 @@
 				$scope.stats_ec_loading = false
 				$scope.search_stats =
 					id_teacher: $scope.Teacher.id
-					years: [($scope.academic_year - 1).toString(), $scope.academic_year.toString()]
+					years: [($scope.academic_year - 2).toString(), ($scope.academic_year - 1).toString()]
 					grades: ['9', '10', '11']
 			$scope.filterStats = ->
 				$scope.stats_ec_loading = true

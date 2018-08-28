@@ -491,27 +491,13 @@
 		 */
 		public static function stats($tutor_id, $years = [], $grades = [])
 		{
-			$years_condition = '';
-			$years = array_filter($years);
-			if (count($years)) {
-				$years_string = implode(',', $years);
-				$years_condition = " AND year IN ({$years_string})";
-			}
-
-			$grades_condition = '';
-			$grades = array_filter($grades);
-			if (count($grades)) {
-				$grades_string = implode(',', $grades);
-				$grades_condition = " AND grade IN ({$grades_string})";
-			}
-
-			$filter_condition = $years_condition . $grades_condition;
+			$filter_condition = self::yearAndGradeFilter($years, $grades);
 
 			$ec_lesson_count = VisitJournal::count([
-                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'" . $filter_condition
+                "condition" => "id_entity = {$tutor_id} AND cancelled=0 AND type_entity = '".Teacher::USER_TYPE."'" . $filter_condition
             ]);
 			$ec_avg_price = VisitJournal::avg('price', [
-                "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."'" . $filter_condition
+                "condition" => "id_entity = {$tutor_id} AND cancelled=0 and type_entity = '".Teacher::USER_TYPE."'" . $filter_condition
             ]);
 			// $ec_lesson_count_by_grade[9] = VisitJournal::count([
             //     "condition" => "id_entity = {$tutor_id} and type_entity = '".Teacher::USER_TYPE."' AND grade=9"
@@ -548,81 +534,45 @@
 				'ec_review_avg' 		=> $ec_review_avg,
 				'abscent_percent'		=> $abscent_percent,
 				'ec_avg_price'			=> $ec_avg_price,
+				'ec_efficency'			=> self::getEfficency($tutor_id, $years, $grades)
 			];
+		}
+
+		private static function yearAndGradeFilter($years, $grades)
+		{
+			$years_condition = '';
+			$years = array_filter($years);
+			if (count($years)) {
+				$years_string = implode(',', $years);
+				$years_condition = " AND year IN ({$years_string})";
+			}
+
+			$grades_condition = '';
+			$grades = array_filter($grades);
+			if (count($grades)) {
+				$grades_string = implode(',', $grades);
+				$grades_condition = " AND grade IN ({$grades_string})";
+			}
+
+			return ($years_condition . $grades_condition);
 		}
 
         /**
          * Сколько процентов приносит компании
          */
-        public static function getEfficency($id_teacher)
+        public static function getEfficency($id_teacher, $years = [], $grades = [])
         {
-			$student_ids = [];
-            $query = dbConnection()->query("SELECT id_entity FROM visit_journal WHERE type_entity = 'STUDENT' AND id_teacher={$id_teacher} GROUP BY id_entity");
+			$filter_condition = self::yearAndGradeFilter($years, $grades);
 
-			while($row = $query->fetch_object()) {
-				$student_ids[] = $row->id_entity;
-			}
+			$teacher_sum = VisitJournal::sum('price', [
+				"condition" => "id_entity=$id_teacher AND type_entity='TEACHER' AND cancelled=0 " . $filter_condition
+			]);
 
-			// сколько всего учитель принес компании (сколько всего ученики заплатили учителю )
-			$total_students_paid = 0;
+			$students_sum = VisitJournal::sum('price', [
+				"condition" => "type_entity='STUDENT' AND cancelled=0 AND id_teacher=" . $id_teacher . $filter_condition
+			]);
 
-			// сколько всего компания заплатила учителю
-			$total_paid_to_teacher = dbConnection()->query("select sum(price) as s from visit_journal where type_entity='TEACHER' and id_entity={$id_teacher}")->fetch_object()->s;
-
-			foreach($student_ids as $id_student) {
-				$payments = Payment::getByStudentId($id_student);
-				$payment_sum = [];
-				$sums = [];
-				$limits = [];
-				foreach($payments as $payment) {
-					if (! isset($payment_sum[$payment->year])) {
-						$payment_sum[$payment->year] = 0;
-					}
-					if ($payment->id_type == 2) {
-						$payment_sum[$payment->year] -= $payment->sum;
-					} else {
-						$payment_sum[$payment->year] += $payment->sum;
-					}
-				}
-
-				// Находим все цепи договоров
-				$contracts = ContractInfo::findAll([
-					'condition' => "id_student={$id_student}"
-				]);
-
-				// Для каждой последней версии из цепи получаем кол-во предметов
-				foreach($contracts as $contract) {
-					$last_contract_id = Contract::getIds([
-						'condition' => "id_contract={$contract->id_contract} AND current_version=1"
-					])[0];
-
-					$contract_subjects = ContractSubject::findAll([
-						'condition' => "id_contract={$last_contract_id}"
-					]);
-
-					foreach($contract_subjects as $cs) {
-						$limits[$contract->year][$cs->id_subject] += $cs->count;
-						$sums[$contract->year] += $cs->count;
-					}
-				}
-
-				foreach($payment_sum as $year => $sum) {
-					// цена за 1 занятие
-					$price_for_one_lesson = $payment_sum[$year] / $sums[$year];
-
-					// сколько занятий было по предмету у учителя
-					foreach($limits[$year] as $id_subject => $limit) {
-						$lesson_count = dbConnection()->query("select count(*) as cnt from (select id_teacher from visit_journal where id_subject={$id_subject} AND type_entity='STUDENT' AND id_entity={$id_student} AND year={$year} limit {$limit}) as x where id_teacher={$id_teacher}")->fetch_object()->cnt;
-						$total_students_paid += ($lesson_count * $price_for_one_lesson);
-					}
-				}
-			}
-
-			if ($total_students_paid > 0) {
-				return round($total_paid_to_teacher / $total_students_paid * 100);
-			} else {
-				return 0;
-			}
+			return round($teacher_sum / $students_sum * 100);
         }
 
 		// получить платежи преподавателя

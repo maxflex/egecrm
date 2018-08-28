@@ -303,8 +303,6 @@
 
 			        $Stats['er_review_avg'] = (4* (($Teacher->lk + $Teacher->tb + $js) / 3) + $review_score_sum)/(4 + $Stats['er_review_count']);
 
-                    $Stats['ec_efficency'] = Teacher::getEfficency($Teacher->id);
-
 					returnJsonAng($Stats);
 				}
 				case 6: {

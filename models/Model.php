@@ -272,6 +272,18 @@
 			return $result->fetch_object()->c;
 		}
 
+		/**
+		 * Сумма
+		 */
+		public static function sum($field, $params = array())
+		{
+			$result = static::dbConnection()->query(
+				"SELECT SUM({$field}) as s FROM `".static::$mysql_table."` " .
+				"WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "")
+			);
+			return $result->fetch_object()->s;
+		}
+
 
 		/*
 		 * Получаем ID последней записи
