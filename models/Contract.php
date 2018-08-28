@@ -100,8 +100,8 @@
                                 JOIN " . static::$info_table. " ci2 on ci2.id_contract = c2.id_contract
                                 WHERE ci2.id_student=s.id AND ci2.year=ci.year
                             )
-						" : "") . "
-						order c.date desc";
+                            " : "") . "
+                        order by c.date desc";
 
 
 		   $color_counts = " (select count(id_subject) from contract_subjects cs where cs.id_contract = c.id AND cs.status = 3) as green, " .
