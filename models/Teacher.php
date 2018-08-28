@@ -535,6 +535,7 @@
 				'abscent_percent'		=> $abscent_percent,
 				'ec_avg_price'			=> round($ec_avg_price),
 				'ec_efficency'			=> self::getEfficency($tutor_id, $years, $grades)
+				'ec_efficency_normalized' => self::getEfficencyNormalized($tutor_id, $years, $grades)
 			];
 		}
 
@@ -573,6 +574,30 @@
 			]);
 
 			return round($teacher_sum / $students_sum * 100);
+        }
+
+        public static function getEfficencyNormalized($id_teacher, $years = [], $grades = [])
+        {
+			$normalize_to = 10;
+
+			$filter_condition = self::yearAndGradeFilter($years, $grades);
+
+			$teacher_sum_condition["condition"] = "id_entity=$id_teacher AND type_entity='TEACHER' AND cancelled=0 " . $filter_condition;
+
+			$group_ids = VisitJournal::pluck('id_group', $teacher_sum_condition);
+
+			$teacher_sum = VisitJournal::sum('price', $teacher_sum_condition);
+
+			$sum = 0;
+			foreach($group_ids as $id_group) {
+				$condition['condition'] = "type_entity='STUDENT' AND cancelled=0 AND id_group={$id_group} AND id_teacher=" . $id_teacher . $filter_condition;
+				$student_ids = VisitJournal::pluck('id_entity', $condition);
+				$group_sum = VisitJournal::sum('price', $condition);
+				$group_sum_normalized = $group_sum * (10 / count($student_ids));
+				$sum += $group_sum_normalized;
+			}
+
+			return round($teacher_sum / $sum * 100);
         }
 
 		// получить платежи преподавателя

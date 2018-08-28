@@ -295,6 +295,29 @@
 		 		->fetch_assoc()["id"];
 		}
 
+		/**
+		 * Получить уникальную коллекцию
+		 */
+		 public static function pluck($field, $params = [])
+ 		{
+ 			// Получаем все данные из таблицы + доп условие, если есть
+ 			$result = static::dbConnection()->query("
+ 				SELECT $field FROM ".static::$mysql_table."
+ 				WHERE true ".(!empty($params["condition"]) ? " AND ".$params["condition"] : "") // Если есть дополнительное условие выборки
+ 				. " GROUP BY {$field} "
+ 				.(!empty($params["order"]) ? " ORDER BY ".$params["order"] : "")				// Если есть условие сортировки
+ 				.(!empty($params["limit"]) ? " LIMIT ".$params["limit"] : "")					// Если есть условие лимита
+ 			);
+
+			// Создаем массив айдишников
+			$result = [];
+
+			while ($array = $result->fetch_assoc()) {
+				$result[] = $array[$field];
+			}
+
+			return $result;
+ 		}
 
 		/**
 		 * Получить только ID объектов по условию.
