@@ -534,7 +534,7 @@
 				'ec_review_avg' 		=> $ec_review_avg,
 				'abscent_percent'		=> $abscent_percent,
 				'ec_avg_price'			=> round($ec_avg_price),
-				'ec_efficency'			=> self::getEfficency($tutor_id, $years, $grades)
+				'ec_efficency'			=> self::getEfficency($tutor_id, $years, $grades),
 				'ec_efficency_normalized' => self::getEfficencyNormalized($tutor_id, $years, $grades)
 			];
 		}
