@@ -310,13 +310,13 @@
  			);
 
 			// Создаем массив айдишников
-			$result = [];
+			$return = [];
 
 			while ($array = $result->fetch_assoc()) {
-				$result[] = $array[$field];
+				$return[] = $array[$field];
 			}
 
-			return $result;
+			return $return;
  		}
 
 		/**
