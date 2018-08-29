@@ -1075,7 +1075,7 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
       tolerance: 'pointer',
       hoverClass: "request-status-drop-hover",
       drop: function(event, ui) {
-        var Group, Student, group_branch_ids, id_group, ref, student_group_index, table, unique_id;
+        var Group, Student, id_group, ref, student_group_index, table, unique_id;
         id_group = $(this).data("id");
         unique_id = $(ui.draggable).data("id");
         Group = $scope.getGroup(id_group);
@@ -1084,11 +1084,6 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
         });
         if (Student.in_group) {
           notifyError("Ученик уже в группе");
-          return false;
-        }
-        group_branch_ids = _.pluck(Group.cabinets, 'id_branch');
-        if (!_.intersection(group_branch_ids, Student.branches).length) {
-          notifyError("Филиалы не соответствуют");
           return false;
         }
         if (Group.year !== Student.year) {

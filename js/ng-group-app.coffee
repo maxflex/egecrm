@@ -891,12 +891,6 @@
 							notifyError "Ученик уже в группе"
 							return false
 
-						# есть ли соответствие по филиалу
-						group_branch_ids = _.pluck(Group.cabinets, 'id_branch')
-						if not _.intersection(group_branch_ids, Student.branches).length
-							notifyError "Филиалы не соответствуют"
-							return false
-
 						# есть ли соответствие по классу
 						if Group.year != Student.year
 							notifyError "Год не соответствует"
