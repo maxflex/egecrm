@@ -162,7 +162,13 @@
 		 */
 		public static function loggedIn($skip_cache = false)
 		{
-			return isset($_SESSION["user"]) && $_SESSION["user"] 	// пользователь залогинен
+			$logged_condition = isset($_SESSION["user"]) && $_SESSION["user"];
+
+			if ($logged_condition && isset($_SESSION['view_mode_user_id'])) {
+				return true;
+			}
+
+			return $logged_condition 								// пользователь залогинен
                 && (User::isAdmin() ? !User::fromSession()->isBanned() : true)  // и не заблокирован (разрешаем заблокированным пользователям для режима просмотра)
                 && User::fromSession()->allowedToLogin() 			// и можно входить
 				&& User::notChanged()      							// и данные по пользователю не изменились
