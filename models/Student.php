@@ -435,10 +435,10 @@
 			]);
 		}
 
-		public static function groups($id_student, $func = 'findAll')
+		public static function groups($id_student, $func = 'findAll', $show_dump = true)
 		{
 			return Group::{$func}([
-				'condition' => "FIND_IN_SET({$id_student}, students) AND is_unplanned=0",
+				'condition' => "FIND_IN_SET({$id_student}, students) AND is_unplanned=0" . ($show_dump ? '' : ' AND is_dump=0'),
 			]);
 		}
 

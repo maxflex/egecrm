@@ -203,7 +203,7 @@
 			} else
 			if (User::fromSession()->type == Student::USER_TYPE) {
 				$this->setTabTitle("Мои группы");
-				$Groups = Student::groups(User::id());
+				$Groups = Student::groups(User::id(), 'findAll', false);
 
 				$ang_init_data = angInit([
 					"Groups" 		=> $Groups,
