@@ -332,7 +332,7 @@
 				return false;
 			}
 			$start_time = (new DateTime($this->date_time))->getTimestamp();
-			$end_time = (new DateTime($this->date_time))->modify('+135 minutes')->getTimestamp();
+			$end_time = (new DateTime($this->date_time))->modify('+' + LESSON_LENGTH + ' minutes')->getTimestamp();
 			return ((time() < $end_time) && (time() > $start_time));
 		}
 

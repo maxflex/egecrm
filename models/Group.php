@@ -7,7 +7,7 @@
 
 		protected $_inline_data = ["students"];
 
-		const DURATION = [135];
+		const DURATION = [LESSON_LENGTH];
 		const PER_PAGE = 1000;
 
 
