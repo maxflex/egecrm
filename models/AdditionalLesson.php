@@ -106,7 +106,6 @@ class AdditionalLesson
 			'is_planned' => $Lesson->is_planned,
 			'cancelled' => $Lesson->cancelled,
 			'is_conducted' => $Lesson->is_conducted,
-			'entry_id' => $Lesson->entry_id,
 			'credentials' => User::findById($Lesson->id_user_saved)->login . ' ' . dateFormat($Lesson->date),
 			'lesson_date_formatted' => date_format(date_create($Lesson->lesson_date), "d.m.y")
 		];

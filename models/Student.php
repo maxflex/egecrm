@@ -1189,7 +1189,10 @@
 			$AdditionalLessons = AdditionalLesson::getByEntity(Student::USER_TYPE, $id_student);
 
 			foreach($AdditionalLessons as $Lesson) {
-				$ConductedLesson = VisitJournal::find(['condition' => "type_entity='STUDENT' AND entry_id=" . $Lesson['entry_id']]);
+				$ConductedLesson = VisitJournal::find([
+					'condition' => "type_entity='STUDENT'"
+						. VisitJournal::entryCondition($Lesson['id_group'], $Lesson['lesson_date'], $Lesson['lesson_time'])
+				]);
 				if ($ConductedLesson) {
 					$L = $ConductedLesson;
 				} else {

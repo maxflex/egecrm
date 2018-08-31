@@ -50,7 +50,12 @@
 				d = parseInt d
 				return d % 2 is 1
 			$scope.getInfo = (id_student,  Lesson) ->
-				_.findWhere($scope.LessonData, {id_entity: id_student, entry_id: Lesson.entry_id})
+				_.findWhere $scope.LessonData,
+					id_entity: id_student,
+					id_group: Lesson.id_group
+					lesson_date: Lesson.lesson_date
+					lesson_time: Lesson.lesson_time
+
 			$scope.formatDate = (date) ->
 				moment(date).format "DD.MM.YY"
 			angular.element(document).ready ->

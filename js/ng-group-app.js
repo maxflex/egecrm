@@ -83,7 +83,9 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
   $scope.getInfo = function(id_student, Lesson) {
     return _.findWhere($scope.LessonData, {
       id_entity: id_student,
-      entry_id: Lesson.entry_id
+      id_group: Lesson.id_group,
+      lesson_date: Lesson.lesson_date,
+      lesson_time: Lesson.lesson_time
     });
   };
   $scope.formatDate = function(date) {

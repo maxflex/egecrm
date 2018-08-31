@@ -108,7 +108,8 @@
 					if ($Lesson->is_conducted) {
                         // @schedule-refactored
 						$LessonData = VisitJournal::findAll([
-							"condition" => "entry_id='{$Lesson->entry_id}' AND type_entity='". Student::USER_TYPE ."'"
+							"condition" => "type_entity='". Student::USER_TYPE ."'"
+								. VisitJournal::entryCondition($Lesson->id_group, $Lesson->lesson_date, $Lesson->lesson_time)
 						]);
 
 						$student_ids = [];

@@ -123,7 +123,6 @@
 					"duration"				=> $Group->duration,
 					"year"					=> static::_academicYear($Lesson->lesson_date),
 					"price"					=> $price,
-					"entry_id"				=> $id_lesson,
 				]);
 			}
 			// @time-refactored @time-checked
@@ -137,17 +136,8 @@
 				"grade"					=> $Group->grade,
 				"duration"				=> $Group->duration,
 				"year"					=> static::_academicYear($Lesson->lesson_date),
-				"entry_id"				=> $id_lesson,
 				"id_teacher"			=> $Group->id_teacher,
 			]);
-		}
-
-		public function afterFirstSave()
-		{
-			if (! $this->entity_type && ! $this->entry_id) {
-				$this->entry_id = $this->id;
-				$this->save('entry_id');
-			}
 		}
 
 		/**
@@ -164,8 +154,8 @@
 				$VisitJournal = VisitJournal::find([
 					'condition' =>
 						"id_entity = " . $id_student . " AND " .
-						"type_entity = '" . Student::USER_TYPE . "' AND " .
-						"entry_id = " . $Lesson->entry_id
+						"type_entity = '" . Student::USER_TYPE
+						. VisitJournal::entryCondition($Lesson->id_group, $Lesson->lesson_date, $Lesson->lesson_time)
 				]);
 
 				if ($VisitJournal) {
@@ -383,6 +373,11 @@
 					id <> {$this->id} AND
 					" . self::PLANNED_CONDITION
 			]);
+		}
+
+		public static function entryCondition($id_group, $lesson_date, $lesson_time)
+		{
+			return " AND lesson_date='$lesson_date' AND lesson_time='$lesson_time:00' AND id_group=$id_group";
 		}
 
 		/**
