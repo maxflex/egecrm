@@ -278,7 +278,7 @@
                 $Lesson = $Lessons[$i];
                 $NextLesson = isset($Lessons[$i + 1]) ? $Lessons[$i + 1] : false;
 
-                $Lesson->cabinet = Cabinet::getBlock($Lesson->cabinet, $Lesson->id_branch);
+                $Lesson->cabinet = Cabinet::getBlock($Lesson->cabinet);
                 $Lesson->group_level = dbConnection()->query("SELECT level FROM groups WHERE id= {$Lesson->id_group}")->fetch_object()->level;
 
                 if (in_array('payments', $with)) {
