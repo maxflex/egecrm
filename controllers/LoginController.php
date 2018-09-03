@@ -69,16 +69,6 @@
 			];
 		}
 
-		/**
-		 * Выход пользователя.
-		 *
-		 */
-		public function logout()
-		{
-			User::logout();
-			return redirect('/login');
-		}
-
 		public function actionLogout()
 		{
             self::log(User::id(), 'logout');
@@ -86,7 +76,7 @@
 			if (isset($_SESSION["user"]) && $_SESSION["user"]) {
 	            SessionService::destroy();
 	            unset($_SESSION['user']);
-				header("Refresh:0");
+				$this->redirect("/login");
 	        }
 		}
 
