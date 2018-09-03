@@ -83,21 +83,11 @@
 		{
             self::log(User::id(), 'logout');
 
-			SessionService::destroy();
-
-			// Удаляем сессию
-			session_destroy();
-			session_unset();
-
-			// Очищаем куку залогиненного пользователя
-			removeCookie("egecrm_token");
-
-			// Очищаем куку сессии PHP
-			removeCookie("PHPSESSID", "/");
-			//setcookie("PHPSESSID","",time()-3600,"/"); // delete session cookie
-
-			// Редирект на страницу LOGOUT с хэшем, чтобы в ангуляре убралось тоже
-			$this->redirect("login");
+			if (isset($_SESSION["user"]) && $_SESSION["user"]) {
+	            SessionService::destroy();
+	            unset($_SESSION['user']);
+				header("Refresh:0");
+	        }
 		}
 
 		##################################################
