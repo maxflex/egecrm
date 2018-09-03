@@ -76,8 +76,8 @@
 			if (isset($_SESSION["user"]) && $_SESSION["user"]) {
 	            SessionService::destroy();
 	            unset($_SESSION['user']);
-				$this->redirect("/login");
 	        }
+			$this->redirect("/login");
 		}
 
 		##################################################
