@@ -86,7 +86,10 @@
 						], "филиалы") ?>
 					</div>
 					<div class="form-group">
-						<?= RequestStatuses::buildSelector($Request->id_status, "Request[id_status]") ?>
+						<?= RequestStatuses::buildSelector($Request->id_status, "Request[id_status]", ['ng-model' => 'Request.id_status']) ?>
+					</div>
+					<div class="form-group" ng-show="Request.id_status == 5">
+						<textarea class="form-control" name="Request[deny_reason]" placeholder="причина отказа" style='height: 100px'><?= $Request->deny_reason ?></textarea>
 					</div>
 				</div>
 
