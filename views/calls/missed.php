@@ -1,6 +1,9 @@
 <div ng-app='Calls' ng-controller='MissedCtrl' ng-init="<?= $ang_init_data ?>">
 	<div ng-show="!missed.length" style="padding: 100px" class="small half-black center">
-		нет пропущенных вызовов за сегодня
+		нет пропущенных вызовов за последние 24 часа
+	</div>
+	<div ng-show="missed.length" style="margin-bottom: 10px">
+		Показаны звонки, пропущенные за последние 24 часа
 	</div>
 	<table class="table border-reverse">
 		<tr ng-repeat='m in missed'>

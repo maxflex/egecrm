@@ -10,6 +10,9 @@
 				* WHERE mango.start > missed.start									дата звонка > даты пропущенного звонка
 				* mango.to_number = missed.from_number								мы перезвонили (неважно ответил ли клиент)
 				* mango.from_number = missed.from_number and mango.answer != 0		клиент сам перезвонил и мы ответили
+				*
+				*
+				* upd: анализируем за последние 24 часа
 		*/
 
         private static function getMissedCallsSql()
@@ -25,7 +28,7 @@
                     FROM (
                         SELECT entry_id, from_number, start
                         FROM `mango`
-                        WHERE DATE(NOW()) = DATE(FROM_UNIXTIME(start)) and from_extension=0 and line_number IN (" . implode(',', self::EGECENTR_NUMBERS) . ") {$excluded_sql}
+                        WHERE `start` > UNIX_TIMESTAMP(now() - interval 24 hour) and from_extension=0 and line_number IN (" . implode(',', self::EGECENTR_NUMBERS) . ") {$excluded_sql}
                         GROUP BY entry_id
                         HAVING sum(answer) = 0
                     ) missed

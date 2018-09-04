@@ -16,7 +16,7 @@
 				<option disabled>──────────────</option>
 				<option
 					ng-selected="user.id == id_user_responsible"
-					ng-repeat="user in UserService.getActiveInAnySystem()"
+					ng-repeat="user in UserService.getActiveInAnySystem(false)"
 					value="{{ user.id }}"
 					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span>"
 				></option>
@@ -97,7 +97,7 @@
 										<option value=''>пользователь</option>
 										<option disabled>──────────────</option>
 										<option
-											ng-repeat="user in UserService.getActiveInAnySystem()"
+											ng-repeat="user in UserService.getActiveInAnySystem(false)"
 											value="{{ user.id }}"
 											ng-selected="user.id == Task.id_user_responsible"
 											data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span>"
