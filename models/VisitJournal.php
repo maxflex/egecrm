@@ -22,7 +22,7 @@
 			// подтягиваем недостающие данные из группы, если занятие планируется
 			if ($this->is_planned) {
 				$Group = Group::getLight($this->id_group);
-				foreach(['id_teacher', 'id_subject', 'grade', 'year'] as $field) {
+				foreach(['id_subject', 'grade', 'year'] as $field) {
 					$this->{$field} = $Group->{$field};
 				}
 			}

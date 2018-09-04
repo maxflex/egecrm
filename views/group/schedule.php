@@ -37,6 +37,9 @@
 						<td>
 							{{ getCabinet(Lesson.cabinet).label }}
 						</td>
+						<td>
+							{{ getTeacher(Lesson.id_teacher).name_short }}
+						</td>
 						<td style='text-align: right'>
                             <?php if (allowed(Shared\Rights::EDIT_GROUP_SCHEDULE)) :?>
                             <span ng-show="Lesson.is_planned">
@@ -79,6 +82,11 @@
                   <option selected value=''>кабинет</option>
                   <option disabled>──────────────</option>
                   <option ng-repeat='cabinet in all_cabinets' value="{{ cabinet.id }}">{{ cabinet.label}}</option>
+              </select>
+          </div>
+          <div class="form-group">
+              <select class='form-control full-width branch-cabinet' ng-model='modal_lesson.id_teacher'>
+                  <option ng-repeat='Teacher in Teachers' value="{{ Teacher.id }}">{{ Teacher.name_short }}</option>
               </select>
           </div>
           <div class="form-group">

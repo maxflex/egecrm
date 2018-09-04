@@ -149,6 +149,7 @@
 					if (isset($row->subjects_ec)) {
 						$row->subjects_ec = explode(',', $row->subjects_ec);
 					}
+					$row->name_short = $row->last_name . ' ' . mb_substr($row->first_name, 0, 1) . '. ' . mb_substr($row->middle_name, 0, 1) . '.';
 					$Teachers[] = $row;
 				}
 				return $Teachers;

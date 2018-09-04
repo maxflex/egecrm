@@ -71,7 +71,7 @@ app = angular.module "Schedule", ['mwl.calendar']
         $scope.lessonModal = (lesson = null) ->
             $('#schedule-modal').modal('show')
             if lesson is null
-                $scope.modal_lesson = {id_group: $scope.Group.id}
+                $scope.modal_lesson = {id_group: $scope.Group.id, id_teacher: $scope.Group.id_teacher}
             else
                 $scope.modal_lesson = _.clone(lesson)
                 $scope.modal_lesson.lesson_date = moment($scope.modal_lesson.lesson_date).format('DD.MM.YY')
@@ -93,6 +93,9 @@ app = angular.module "Schedule", ['mwl.calendar']
 
         $scope.getCabinet = (id) ->
             _.findWhere($scope.all_cabinets, {id: parseInt(id)})
+
+        $scope.getTeacher = (id) ->
+            _.findWhere($scope.Teachers, {id: parseInt(id)})
 
         $scope.deleteLesson = ->
             ajaxStart()

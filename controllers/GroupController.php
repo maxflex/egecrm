@@ -354,6 +354,7 @@
 					$ang_init_data = angInit([
 						"Group" 			=> $Group,
 						"Lessons" => $Lessons,
+						'Teachers' => Teacher::getLight(),
 						"special_dates"		=> [
                             'vacations' 	=> Vacation::getDates($Group->year),
                             'exams' 		=> $exams['this_subject'],

@@ -98,7 +98,8 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
     $('#schedule-modal').modal('show');
     if (lesson === null) {
       return $scope.modal_lesson = {
-        id_group: $scope.Group.id
+        id_group: $scope.Group.id,
+        id_teacher: $scope.Group.id_teacher
       };
     } else {
       $scope.modal_lesson = _.clone(lesson);
@@ -126,6 +127,11 @@ app = angular.module("Schedule", ['mwl.calendar']).controller("MainCtrl", functi
   };
   $scope.getCabinet = function(id) {
     return _.findWhere($scope.all_cabinets, {
+      id: parseInt(id)
+    });
+  };
+  $scope.getTeacher = function(id) {
+    return _.findWhere($scope.Teachers, {
       id: parseInt(id)
     });
   };
