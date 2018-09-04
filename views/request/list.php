@@ -20,9 +20,9 @@
 				<option value=''>все классы</option>
 				<option disabled>──────────────</option>
 				<option
-					ng-repeat="grade in [9, 10, 11]"
+					ng-repeat="grade in [9, 10, 11, 14]"
 					value="{{ grade}}"
-				>{{ grade }} класс</option>
+				>{{ grade == '14' ? 'экстернат' : (grade + ' класс') }}</option>
 			</select>
 		</div>
 		<div class="col-sm-2" id="user-list-fix">
