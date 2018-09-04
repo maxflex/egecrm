@@ -975,8 +975,7 @@ function ExpandSelect(select, maxOptionsVisible)
 
 		if (id_user == undefined) id_user = '';
 
-		if (request_grade) {
-			console.log('setting grade', request_grade)
+		if (request_grade !== undefined) {
 			$.cookie("request_grade", request_grade, { expires: 365, path: '/' });
 		}
 		$.cookie("id_user_list", id_user, { expires: 365, path: '/' });
