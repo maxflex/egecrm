@@ -8,11 +8,16 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
   };
 }).filter('unsafe', function($sce) {
   return $sce.trustAsHtml;
-}).controller("ListCtrl", function($scope, UserService) {
+}).controller("ListCtrl", function($scope, $timeout, UserService) {
   bindArguments($scope, arguments);
   $scope.editing_tasks = [];
   $scope.filterResponsible = function() {
-    return redirect(window.location.pathname + "?user=" + $scope.id_user_responsible);
+    var params;
+    params = '';
+    if ($scope.id_user_responsible !== '') {
+      params = "?user=" + $scope.id_user_responsible;
+    }
+    return redirect(window.location.pathname + params);
   };
   $scope.editTask = function(Task) {
     $scope.editing_task = Task.id;
@@ -87,13 +92,15 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
       Task = {
         id: id_task,
         id_status: 1,
+        id_user_responsible: 69,
         html: "Текст задачи..."
       };
       $scope.Tasks.unshift(Task);
       $scope.$apply();
       $scope.editTask(Task);
       return setTimeout(function() {
-        return $scope.bindFileUpload(Task);
+        $scope.bindFileUpload(Task);
+        return $('.selectpicker').selectpicker('refresh');
       }, 100);
     });
   };

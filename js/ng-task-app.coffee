@@ -11,7 +11,7 @@
 
 			$scope.filterResponsible = ->
 				params = ''
-				params = "?user=" + $scope.id_user_responsible if $scope.id_user_responsible !== ''
+				params = ("?user=" + $scope.id_user_responsible) if $scope.id_user_responsible isnt ''
 				redirect(window.location.pathname + params)
 
 			$scope.editTask = (Task) ->
@@ -76,6 +76,7 @@
 					Task =
 						id: id_task
 						id_status: 1
+						id_user_responsible: 69
 						html: "Текст задачи..."
 
 					$scope.Tasks.unshift Task
@@ -83,6 +84,7 @@
 					$scope.editTask Task
 					setTimeout ->
 						$scope.bindFileUpload Task
+						$('.selectpicker').selectpicker('refresh')
 					, 100
 
 			$scope.bindFileUpload = (Task) ->
