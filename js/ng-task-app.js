@@ -8,9 +8,12 @@ app = angular.module("Task", ['ngSanitize']).filter('reverse', function() {
   };
 }).filter('unsafe', function($sce) {
   return $sce.trustAsHtml;
-}).controller("ListCtrl", function($scope) {
+}).controller("ListCtrl", function($scope, UserService) {
   bindArguments($scope, arguments);
   $scope.editing_tasks = [];
+  $scope.filterResponsible = function() {
+    return redirect(window.location.pathname + "?user=" + $scope.id_user_responsible);
+  };
   $scope.editTask = function(Task) {
     $scope.editing_task = Task.id;
     $scope.old_html = Task.html;

@@ -8,7 +8,28 @@
 		<span class="glyphicon glyphicon-refresh"></span>
 		please reload
 	</div>
-	<div class="panel-body" style="position: relative">
+	<div class="panel-body" style="position: relative" ng-init="id_user_responsible = <?= ($id_user_responsible === null ? 'null' : $id_user_responsible) ?>">
+		<?php if (allowed(Shared\Rights::IS_SUPERUSER)) :?>
+		<div style='width: 250px; float: left; margin-bottom: 30px'>
+			<select ng-highlight class="form-control selectpicker" ng-model='id_user_responsible' ng-change="filterResponsible()" id='change-user'>
+				<option value=''>пользователь</option>
+				<option disabled>──────────────</option>
+				<option
+					ng-selected="user.id == id_user_responsible"
+					ng-repeat="user in UserService.getActiveInAnySystem()"
+					value="{{ user.id }}"
+					data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span>"
+				></option>
+				<option disabled>──────────────</option>
+				<option
+					ng-selected="user.id == id_user_responsible"
+					ng-repeat="user in UserService.getBannedInBothSystems()"
+					value="{{ user.id }}"
+					data-content="<span style='color: black'>{{ user.login }}</span>"
+				></option>
+			</select>
+		</div>
+		<?php endif ?>
 			<div class="top-links pull-right">
 				<?php if ($_GET["list"] != TaskStatuses::CLOSED) { ?>
 				<span style="margin-right: 15px; font-weight: bold">актуальные</span>
@@ -65,12 +86,31 @@
 									<span ng-show="Task.id_status==1">новое</span>
 									<!-- <span ng-show="Task.id_status==2">новое для Макса</span>
 									<span ng-show="Task.id_status==3">новое для Шамшода</span> -->
-									<span ng-show="Task.id_status==4">выгружено на GitHub</span>
-									<span ng-show="Task.id_status==5">выгружено на Production (тестируется)</span>
-									<span ng-show="Task.id_status==6">выгружено на Production (готово)</span>
+									<!-- <span ng-show="Task.id_status==4">выгружено на GitHub</span> -->
+									<span ng-show="Task.id_status==5">выполнено (проверяется)</span>
+									<span ng-show="Task.id_status==6">выполнено</span>
 									<span ng-show="Task.id_status==7">требует доработки</span>
 									<span ng-show="Task.id_status==8">закрыто</span>
 								</span>
+								<div style='display: inline-block; width: 200px; margin-left: 12px'>
+									<select ng-highlight class="form-control selectpicker" ng-model='Task.id_user_responsible' ng-change="saveTask(Task)">
+										<option value=''>пользователь</option>
+										<option disabled>──────────────</option>
+										<option
+											ng-repeat="user in UserService.getActiveInAnySystem()"
+											value="{{ user.id }}"
+											ng-selected="user.id == Task.id_user_responsible"
+											data-content="<span style='color: {{ user.color || 'black' }}'>{{ user.login }}</span>"
+										></option>
+										<option disabled>──────────────</option>
+										<option
+											ng-selected="user.id == Task.id_user_responsible"
+											ng-repeat="user in UserService.getBannedInBothSystems()"
+											value="{{ user.id }}"
+											data-content="<span style='color: black'>{{ user.login }}</span>"
+										></option>
+									</select>
+								</div>
 							</div>
 						</div>
 					</div>

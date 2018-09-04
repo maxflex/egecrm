@@ -22,6 +22,12 @@
 			$list = $_GET["list"];
 			$id = $_GET["id"];
 
+			if (allowed(Shared\Rights::IS_SUPERUSER)) {
+				$id_user_responsible = @$_GET['user'];
+			} else {
+				$id_user_responsible = User::id();
+			}
+
 			// dev only
 			$search = $_GET["search"];
 			$limit = $_GET["limit"];
@@ -32,8 +38,9 @@
 			if ($id) {
 				$Tasks = [Task::findById($id)];
 			} else {
+				$user_responsible_condition = ($id_user_responsible !== null && $id_user_responsible !== '') ? " AND id_user_responsible={$id_user_responsible}" : '';
 				if ($list) {
-					$condition = "html IS NOT NULL AND id_status=" . $list;
+					$condition = "html IS NOT NULL AND id_status=" . $list . $user_responsible_condition;
 					if (isset($search)) {
 						$condition .= " AND html LIKE '%{$search}%'";
 					}
@@ -43,7 +50,7 @@
 						"limit"		=> $list == 8 ? 50 : 50,
 					]);
 				} else {
-					$condition =  "html IS NOT NULL AND id_status!=" . TaskStatuses::CLOSED;
+					$condition =  "html IS NOT NULL AND id_status!=" . TaskStatuses::CLOSED . $user_responsible_condition;
 					if (isset($search)) {
 						$condition .= " AND html LIKE '%{$search}%'";
 					}
@@ -63,7 +70,8 @@
 
 			$this->render("list", [
 				"Tasks" => $Tasks,
-				"ang_init_data" => $ang_init_data
+				"ang_init_data" => $ang_init_data,
+				"id_user_responsible" => $id_user_responsible,
 			]);
 		}
 

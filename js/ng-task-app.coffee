@@ -5,9 +5,14 @@
 					return items.slice().reverse()
 		.filter 'unsafe', ($sce) ->
 			$sce.trustAsHtml
-		.controller "ListCtrl", ($scope) ->
+		.controller "ListCtrl", ($scope, $timeout, UserService) ->
 			bindArguments $scope, arguments
 			$scope.editing_tasks = []
+
+			$scope.filterResponsible = ->
+				params = ''
+				params = "?user=" + $scope.id_user_responsible if $scope.id_user_responsible !== ''
+				redirect(window.location.pathname + params)
 
 			$scope.editTask = (Task) ->
 				$scope.editing_task = Task.id
