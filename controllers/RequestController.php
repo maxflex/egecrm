@@ -331,6 +331,7 @@
             $search = (object)[
                 'id_status' => $id_status,
                 'id_user'   => $_COOKIE['id_user_list'],
+				'grade'		=> @$_COOKIE['request_grade'],
             ];
 
 			returnJSON([

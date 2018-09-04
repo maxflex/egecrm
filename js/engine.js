@@ -967,7 +967,7 @@ function ExpandSelect(select, maxOptionsVisible)
 		});
 	}
 
-	function setRequestListUser(elem) {
+	function setRequestListUser(elem, request_grade) {
 		if (Number.isInteger(elem))
 			id_user = elem
 		else
@@ -975,7 +975,10 @@ function ExpandSelect(select, maxOptionsVisible)
 
 		if (id_user == undefined) id_user = '';
 
-		console.log("here", id_user);
+		if (request_grade) {
+			console.log('setting grade', request_grade)
+			$.cookie("request_grade", request_grade, { expires: 365, path: '/' });
+		}
 		$.cookie("id_user_list", id_user, { expires: 365, path: '/' });
 
 		$("li.active").first().children().first().click();

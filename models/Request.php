@@ -207,7 +207,8 @@
 			$Requests = self::findAll([
 				"condition"	=> "adding=0"
 					. ($id_status == RequestStatuses::ALL ? "" : " AND id_status=".$id_status)
-					. (isBlank($_COOKIE["id_user_list"]) ? "" : " AND IFNULL(id_user,0) = ".$_COOKIE["id_user_list"]) ,
+					. (isBlank($_COOKIE["id_user_list"]) ? "" : " AND IFNULL(id_user,0) = ".$_COOKIE["id_user_list"])
+					. (@$_COOKIE["request_grade"] > 0 ? (" AND grade=" . $_COOKIE["request_grade"]) : ''),
 				"order"		=> "date DESC",
 				"group"		=> ($id_status == RequestStatuses::NEWR ? "id_student" : ""), // если список "неразобранные", то отображать дубликаты
 				"limit" 	=> $start_from. ", " .self::PER_PAGE,

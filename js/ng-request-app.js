@@ -121,7 +121,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			$scope.filter = function() {
 				$timeout(function(){
-					setRequestListUser(parseInt($scope.id_user_list))
+					setRequestListUser(parseInt($scope.id_user_list), $scope.request_grade)
 				}, 100)
 				console.log('filter ended')
 			}
@@ -138,6 +138,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			$(document).ready(function() {
 				$scope.id_user_list = $.cookie("id_user_list") ? $.cookie("id_user_list") : '';
+				$scope.request_grade = $.cookie("request_grade") ? $.cookie("request_grade") : '';
 				$scope.$apply()
 				// draggable only from main requests list (not relevant)
 				if ($scope.counts.requests) {
