@@ -52,7 +52,7 @@ class Task extends Model
         $taskStatusesToShow = implode(',',[TaskStatuses::NEWR]);
 
         return self::count([
-            "condition" => "id_status IN (". $taskStatusesToShow .") AND html!=''"
+            "condition" => "id_status IN (". $taskStatusesToShow .") AND html!=''" . (allowed(Shared\Rights::IS_SUPERUSER) ? '' : (' AND id_user_responsible=' . User::id()))
 		]);
 	}
 
