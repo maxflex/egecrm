@@ -56,6 +56,9 @@
 			$planned_lessons_sum = 0;
 			$planned_debt_sum = 0;
 
+			$total_service_sum = 0;
+			$total_service_count = 0;
+
 			foreach ($teacher_ids as $id_teacher) {
 				$Teacher = Teacher::getLight($id_teacher);
 
@@ -82,8 +85,11 @@
                     $real_total_sum += $OneData->price;
                 }
 
-				$additional_payments_sum = dbConnection()->query("select sum(`sum`) as s from teacher_additional_payments where id_teacher={$id_teacher} and year={$year}")->fetch_object()->s;
-				$sum += $additional_payments_sum;
+				$service_sum = dbConnection()->query("select sum(`sum`) as s from teacher_additional_payments where id_teacher={$id_teacher} and year={$year}")->fetch_object()->s;
+				$total_service_sum += $service_sum;
+
+				$service_count = dbConnection()->query("select count(*) as cnt from teacher_additional_payments where id_teacher={$id_teacher} and year={$year}")->fetch_object()->cnt;
+				$total_service_count += $service_count;
 
 				// получаем планируемые занятия преподавателя
 				$teacher_group_ids = implode(',', Teacher::getGroupIds($id_teacher, $year));
@@ -96,13 +102,6 @@
 				foreach($planned_lessons as $planned_lesson) {
 					$planned_debt += dbConnection()->query("select teacher_price from groups where id={$planned_lesson->id_group}")->fetch_object()->teacher_price;
 				}
-
-				// \получаем планируемые занятия преподавателя
-
-
-				$total_sum += $additional_payments_sum;
-				$real_sum += $additional_payments_sum;
-				$real_total_sum += $additional_payments_sum;
 
 				if ($planned_lessons) {
 					$planned_lessons_sum += count($planned_lessons);
@@ -119,6 +118,8 @@
 					'planned_lessons' => ($planned_lessons ? count($planned_lessons) : 0),
 					'planned_debt' => $planned_debt,
 					"count"		=> ($Data ? count($Data) : 0),
+					'service_count' => $service_count,
+					'service_sum' => $service_sum,
 				];
 
 			}
@@ -147,15 +148,17 @@
 			});
 
 			$ang_init_data = angInit([
-				"Data" 		                     => $return,
-				"total_sum"			             => $total_sum,
-				"real_total_sum"			     => $real_total_sum,
-				"total_payment_sum"	             => $total_payment_sum,
-				"lesson_count"		             => $lesson_count,
-				"planned_lessons_sum"			 => $planned_lessons_sum,
-				"planned_debt_sum"			 	 => $planned_debt_sum,
-				"subjects"	                     => Subjects::$short,
-				"active_year"                    => $year,
+				"Data"                => $return,
+				"total_sum"           => $total_sum,
+				"real_total_sum"      => $real_total_sum,
+				"total_payment_sum"   => $total_payment_sum,
+				"lesson_count"        => $lesson_count,
+				"planned_lessons_sum" => $planned_lessons_sum,
+				"planned_debt_sum"    => $planned_debt_sum,
+				"subjects"            => Subjects::$short,
+				"active_year"         => $year,
+				'total_service_sum'   => $total_service_sum,
+				'total_service_count' => $total_service_count,
 			]);
 
 			$this->setTabTitle('Дебет преподавателей');
