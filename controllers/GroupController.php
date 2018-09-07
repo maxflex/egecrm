@@ -430,6 +430,7 @@
             // @schedule-refactored
 			# Удаляем всё, что связано с группой
 			GroupTime::deleteAll($condition);
+			VisitJournal::deleteAll($condition);
 		}
 
 
