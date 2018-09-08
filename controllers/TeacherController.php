@@ -38,15 +38,31 @@
             $year = ! empty($_GET['year']) ? intval($_GET['year']) : academicYear();
 
 
-            $teacher_ids = explode(',', dbConnection()->query(
-	                "select group_concat(distinct id_entity) as teacher_ids " .
-	                "from visit_journal " .
-	                "where type_entity='" . Teacher::USER_TYPE . "'" .
-					" and year={$year}"
-	            )->fetch_object()->teacher_ids
-			);
+            $query = dbConnection()->query(
+	                "select id_teacher
+	                from visit_journal
+	                where (type_entity='TEACHER' OR " . VisitJournal::PLANNED_CONDITION . ") and year={$year}
+	                group by id_teacher
+			");
 
-            $teacher_ids = array_filter($teacher_ids);
+	        $teacher_ids = [];
+
+	        while($row = $query->fetch_object()) {
+		        $teacher_ids[] = $row->id_teacher;
+	        }
+
+	        $query = dbConnection()->query(
+	                "select id_teacher
+	                from teacher_additional_payments
+	                where year={$year}
+	                group by id_teacher
+			");
+
+			while($row = $query->fetch_object()) {
+				if (! in_array($row->id_teacher, $teacher_ids)) {
+					$teacher_ids[] = $row->id_teacher;
+				}
+	        }
 
 			$real_total_sum = 0;
 			$total_sum = 0;
@@ -110,7 +126,9 @@
 				}
 				$planned_debt_sum += $planned_debt;
 
-				$lesson_count += count($Data);
+				if ($Data) {
+					$lesson_count += count($Data);
+				}
 
 				$return[] = [
 					"Teacher" 	=> $Teacher,
