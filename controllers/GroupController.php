@@ -394,6 +394,7 @@
 			$ang_init_data = angInit([
 				"Group" 	     => $Group,
 				"Grades"		=> Grades::$all,
+				"SubjectsFull"	=> Subjects::$full,
 				"time"			 => Time::get(),
 			]);
 

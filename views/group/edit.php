@@ -163,6 +163,11 @@
 										Договор подписан: <span <?php if (allowed(Shared\Rights::EC_EDIT_GROUP_CONTRACT)) :?>class="link-like" ng-click="toggleBoolean('contract_signed')"<?php endif ?>> {{ Group.contract_signed ? 'да' : 'нет' }}</span>
 									</td>
 								</tr>
+								<tr>
+									<td colspan="5">
+										Печать: <span class="link-like" ng-click="runPrint('agreement')">договор</span>, <span class="link-like" ng-click="runPrint('act')">акт сдачи-приемки</span>
+									</td>
+								</tr>
 							</table>
 						</div>
 					</div>
@@ -186,6 +191,9 @@
 		<?= partial("day_and_time") ?>
 	</div>
 	<sms templates="group" mode="group" mass="1" group-id="Group.id"></sms>
+	<?= partial('print/manual-edit') ?>
+	<?= partial('print/agreement') ?>
+	<?= partial('print/act') ?>
 </div>
 
 <!-- ЛАЙТБОКС КАРТА -->

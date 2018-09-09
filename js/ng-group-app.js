@@ -272,6 +272,38 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     map.setZoom(zoom);
     return map_was_opened = true;
   };
+  $scope.editBeforePrint = function(html) {
+    var editor;
+    $("#contract-manual-edit").val(html);
+    if (CKEDITOR.instances['contract-manual-edit'] !== void 0) {
+      CKEDITOR.instances['contract-manual-edit'].destroy(true);
+    }
+    if (CKEDITOR.instances['contract-manual-edit'] === void 0) {
+      editor = CKEDITOR.replace('contract-manual-edit', {
+        fullPage: true,
+        allowedContent: true,
+        language: 'ru',
+        height: 600
+      });
+    }
+    lightBoxHide();
+    return lightBoxShow('manualedit');
+  };
+  $scope.runPrintManual = function() {
+    var html;
+    html = CKEDITOR.instances['contract-manual-edit'].getData();
+    $("#contract-manual-div").html(html);
+    printDiv('contract-manual-div');
+    return lightBoxHide();
+  };
+  $scope.runPrint = function(id) {
+    var html;
+    return $scope.editBeforePrint(html = $("#" + id + "-print").html());
+  };
+  $scope.todayDate = function() {
+    return moment().format('DD.MM.YYYY г.');
+  };
+  $scope.numToText = numToText;
   $scope.timeClick = function(day, time) {
     if ($scope.timeChecked(day, time)) {
       return timeUncheck(day, time);

@@ -211,6 +211,34 @@
 				map.setZoom(zoom)
 				map_was_opened = true
 
+			## ПЕЧАТЬ
+			$scope.editBeforePrint = (html) ->
+				$("#contract-manual-edit").val(html)
+
+				if CKEDITOR.instances['contract-manual-edit'] != undefined
+					CKEDITOR.instances['contract-manual-edit'].destroy(true)
+
+				if CKEDITOR.instances['contract-manual-edit'] == undefined
+					editor = CKEDITOR.replace('contract-manual-edit', {
+						fullPage: true,
+						allowedContent: true,
+						language: 'ru',
+						height: 600
+					})
+
+				lightBoxHide()
+				lightBoxShow('manualedit')
+
+			$scope.runPrintManual = ->
+				html = CKEDITOR.instances['contract-manual-edit'].getData()
+				$("#contract-manual-div").html(html)
+				printDiv('contract-manual-div')
+				lightBoxHide()
+
+			$scope.runPrint = (id) -> $scope.editBeforePrint(html = $("##{id}-print").html())
+
+			$scope.todayDate = -> moment().format('DD.MM.YYYY г.')
+			$scope.numToText = numToText
 
 			######## ВЫБОР ВРЕМЕНИ ########
 			$scope.timeClick = (day, time) ->
