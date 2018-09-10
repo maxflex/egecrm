@@ -75,7 +75,7 @@
             // логируем проход по URL
             if (User::loggedIn() && $_SERVER['REQUEST_METHOD'] === 'GET' && !($_controller == 'users' && $_action == 'get')) {
                 // error_log($_controller . " | " . $_action . " | " . @$_SERVER['REQUEST_URI']);
-                Log::custom('url', User::id(), ['url' => @$_SERVER['REQUEST_URI']]);
+                Log::custom('url', User::fromSession()->id, ['url' => @$_SERVER['REQUEST_URI']]);
             }
 			if (User::fromSession()->type == Teacher::USER_TYPE || User::fromSession()->type == Student::USER_TYPE) {
 				// sms может отправлять учитель

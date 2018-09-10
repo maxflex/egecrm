@@ -20,6 +20,7 @@ class Log extends Model
      */
     public static function custom($type, $user_id, $data = [])
     {
+		var_dump($user_id);
         parent::add([
             'table'     => null,
             'user_id'   => $user_id,
@@ -40,7 +41,7 @@ class Log extends Model
             if (Log::VERBOSE) var_dump($model->getTable(), 'dirty fields: ' . count($dirty_fields), $dirty_fields);
 
             $log = parent::add([
-                'user_id'   => (($user_id = User::fromSession()->id) ? $user_id : 0),
+                'user_id'   => User::loggedIn() ? User::fromSession()->id : 0,
                 'row_id'    => $model->id,
                 'data'      => $dirty_fields,
                 'table'     => $model->getTable(),
