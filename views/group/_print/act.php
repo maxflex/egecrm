@@ -87,16 +87,16 @@
 				{{ Group.Teacher.last_name }} {{ Group.Teacher.first_name }} {{ Group.Teacher.middle_name }}
 			</div>
 			<div>
-				Паспорт РФ: серия #### №######
+				Паспорт РФ: серия {{ Group.Teacher.passport_series }} №{{ Group.Teacher.passport_number }}
 			</div>
 			<div>
-				Выдан: #########
+				Выдан: {{ Group.Teacher.passport_issue_place }}
 			</div>
 			<div>
-				Код подразделения: ###-###
+				Код подразделения: {{ Group.Teacher.passport_code }}
 			</div>
 			<div>
-				Зарегистрирован по адресу: ###-###
+				Зарегистрирован по адресу: {{ Group.Teacher.passport_address }}
 			</div>
 		</div>
 	</div>

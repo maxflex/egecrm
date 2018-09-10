@@ -390,6 +390,7 @@
 			}
 
 			$Group->bar = Freetime::getGroupBar($Group->id);
+			$Group->Teacher = Teacher::getLight($Group->id_teacher, ['comment', 'passport_series', 'passport_number', 'passport_code', 'passport_issue_place', 'passport_address']);
 
 			$ang_init_data = angInit([
 				"Group" 	     => $Group,
