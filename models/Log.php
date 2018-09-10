@@ -20,7 +20,6 @@ class Log extends Model
      */
     public static function custom($type, $user_id, $data = [])
     {
-		var_dump($user_id);
         parent::add([
             'table'     => null,
             'user_id'   => $user_id,
