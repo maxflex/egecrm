@@ -63,7 +63,7 @@
             if (! ContractInfo::count(['condition' => 'id_contract = ' . $newContract->id_contract])) {
                 $newContract->info = ContractInfo::add(array_merge($data['info'], ['id_contract' => $newContract->id]));
             } else {
-                $newContract->info = new ContractInfo(array_merge($data['info'], ['id_contract' => $newContract->id]));
+                $newContract->info = ContractInfo::get($newContract->id_contract);
             }
         }
 
