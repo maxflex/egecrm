@@ -544,16 +544,15 @@
 			$FirstLesson = Group::getFirstLesson($Group->id, true);
 
 			//=========
-			$date = date("n", strtotime($FirstLesson->date));
+			$date = date("n", strtotime($FirstLesson->lesson_date));
 			$date = russian_month($date);
 
-			$date_day = date("j", strtotime($FirstLesson->date)) . " " . $date;
+			$date_day = date("j", strtotime($FirstLesson->lesson_date)) . " " . $date;
 
 			$date_formatted = $date_day;
 
-			if ($FirstLesson->time) {
-				$time = mb_strimwidth($FirstLesson->time, 0, 5);
-				$date_formatted .= " в " . $time;
+			if ($FirstLesson->lesson_time) {
+				$date_formatted .= " в " . $FirstLesson->lesson_time;
 			}
 			//=========
 
