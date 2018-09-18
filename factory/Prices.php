@@ -14,13 +14,13 @@
             foreach(Grades::$all as $grade => $label) {
                 switch($grade) {
                     case 11:
-                        $prices[$grade] = 1700;
+                        $prices[$grade] = 1900;
                         break;
                     case Grades::EXTERNAL:
                         $prices[$grade] = 1600;
                         break;
                     default:
-                        $prices[$grade] = 1550;
+                        $prices[$grade] = 1700;
                         break;
                 }
             }
