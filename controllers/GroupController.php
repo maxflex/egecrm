@@ -57,16 +57,11 @@
 
 			$this->setTabTitle("Расписание и отчеты");
 
-			$Schedule = Student::getFullSchedule(User::id(), true);
-
 			$ang_init_data = angInit([
 				"Subjects"	=> Subjects::$three_letters,
-				"Lessons"	=> $Schedule->Lessons,
 				"lesson_statuses" => VisitJournal::$statuses,
 				"all_cabinets" =>  Branches::allCabinets(),
 				"months" => Months::get(),
-				"lesson_years" => $Schedule->years,
-				"selected_lesson_year" => end($Schedule->years)
 			]);
 
 

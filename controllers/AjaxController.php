@@ -728,4 +728,15 @@
 				}
 			}
 		}
+
+		public function actionAjaxLoadStudentSchedule()
+		{
+			$Schedule = Student::getFullSchedule(User::id(), true);
+
+			returnJsonAng([
+				"Lessons"	=> $Schedule->Lessons,
+				"lesson_years" => $Schedule->years,
+				"selected_lesson_year" => end($Schedule->years)
+			]);
+		}
 	}

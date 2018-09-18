@@ -27,6 +27,14 @@
 				input
 
 		.controller "YearCtrl", ($scope, $timeout) ->
+			$timeout ->
+				$.post '/ajax/LoadStudentSchedule', {}, (response) ->
+					$scope.Lessons = response.Lessons
+					$scope.lesson_years = response.lesson_years
+					$scope.selected_lesson_year = response.selected_lesson_year
+					$scope.$apply()
+				, 'json'
+
 			$scope.getCabinet = (id) ->
 				_.findWhere($scope.all_cabinets, {id: parseInt(id)})
 

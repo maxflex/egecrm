@@ -47,6 +47,14 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
     return input;
   };
 }).controller("YearCtrl", function($scope, $timeout) {
+  $timeout(function() {
+    return $.post('/ajax/LoadStudentSchedule', {}, function(response) {
+      $scope.Lessons = response.Lessons;
+      $scope.lesson_years = response.lesson_years;
+      $scope.selected_lesson_year = response.selected_lesson_year;
+      return $scope.$apply();
+    }, 'json');
+  });
   $scope.getCabinet = function(id) {
     return _.findWhere($scope.all_cabinets, {
       id: parseInt(id)
