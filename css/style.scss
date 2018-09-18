@@ -3466,9 +3466,10 @@ table.last-item-no-border tr:last-child td {
   align-items: center;
   border-radius: 5px;
   justify-content: center;
+  color: $placeholder_gray;
+  font-size: 12px;
   & span {
-	color: $placeholder_gray;
-	animation-duration: 3s; 
+	animation-duration: 3s;
 	animation-name: frontendLoading;
   }
 }
