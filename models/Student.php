@@ -1081,9 +1081,9 @@
 
 		/**
 		 * Получить ID групп, которые ученик когда-либо посещал
-		 * без учета дополнительных занятий
+		 * и ID групп, которые ученик еще возможно не посещал, но присутствует в них
 		 */
-		public static function getGroupIdsEverVisited($id_student)
+		public static function getAllGroupIds($id_student)
 		{
 			$query = dbConnection()->query("SELECT vj.id_group
 				from visit_journal vj
@@ -1095,7 +1095,10 @@
 			while ($row = $query->fetch_object()) {
 				$group_ids[] = $row->id_group;
 			}
-			return $group_ids;
+
+			$current_group_ids = Student::groups($id_student, 'ids', false);
+
+			return array_unique($group_ids, $current_group_ids);
 		}
 
 		/**
@@ -1163,7 +1166,7 @@
 		 */
 		public static function getFullSchedule($id_student, $with_reports = false)
 		{
-			$group_ids = self::getGroupIdsEverVisited($id_student);
+			$group_ids = self::getAllGroupIds($id_student);
 
 			$Lessons = [];
 			foreach($group_ids as $group_id) {
