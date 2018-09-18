@@ -1098,7 +1098,7 @@
 
 			$current_group_ids = Student::groups($id_student, 'getIds', false);
 
-			return array_unique($group_ids, $current_group_ids);
+			return array_unique(array_merge($group_ids, $current_group_ids));
 		}
 
 		/**
