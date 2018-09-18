@@ -3468,9 +3468,21 @@ table.last-item-no-border tr:last-child td {
   justify-content: center;
   & span {
 	color: $placeholder_gray;
-	animation-duration: 3s;
+	animation-duration: 3s; 
 	animation-name: frontendLoading;
   }
+}
+
+@keyframes frontendLoading {
+	0% {
+		opacity: 0;
+	}
+	70% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 /*player styles */
