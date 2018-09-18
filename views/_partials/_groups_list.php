@@ -52,7 +52,7 @@
 -->
 		<td width="15%">
 			<span ng-show="Group.first_lesson_date">
-				<span ng-show="!Group.lesson_count.conducted">1-й урок {{Group.first_lesson_date | date:"dd.MM"}}</span>
+				<span ng-show="!Group.lesson_count.conducted">1-й урок {{Group.first_lesson_date | date:"dd.MM"}} ({{ Group.lesson_count.all }} всего)</span>
 				<span ng-show="Group.lesson_count.conducted">
 					было {{Group.lesson_count.conducted}} из {{ Group.lesson_count.all }}
 					<ng-pluralize count="Group.lesson_count.all" when="{
