@@ -3,6 +3,7 @@
 	<span ng-click="setLessonsYear(-1)" class="link-like" ng-class="{'active': selected_lesson_year == -1}">сквозная по месяцам</span>
 </div>
 
+<?php if (! isset($hide_reports)) :?>
 <div ng-show="selected_lesson_year != -1">
 	<h4>Отчеты</h4>
 	<div class="visits-block">
@@ -24,6 +25,7 @@
 		</div>
 	</div>
 </div>
+<?php endif ?>
 
 <div ng-show="selected_lesson_year != -1">
 	<div ng-if="Lessons.by_year[selected_lesson_year][-1]">

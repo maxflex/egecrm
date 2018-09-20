@@ -136,11 +136,10 @@
 		 */
 		public static function getLight($id = false, $additional = [])
 		{
-
 			$result = dbEgerep()->query("
 				SELECT id, first_name, last_name, middle_name " . (count($additional) ? ', ' . implode(',', $additional) : '') .
                 " FROM " . static::$mysql_table . "
-				WHERE in_egecentr > 0 AND " . ($id === false ? "true" : (is_array($id) ? " id IN (" . implode(',', $id) . ")" : "id={$id}"))  . "
+				WHERE in_egecentr > 0 AND " . ($id ? (is_array($id) ? " id IN (" . implode(',', $id) . ")" : "id={$id}") : "true")  . "
 				ORDER BY last_name, first_name, middle_name ASC");
 
 			if ($id === false || is_array($id)) {
