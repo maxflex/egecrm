@@ -1366,7 +1366,7 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 			// количество занятий не должно в конкретном предмете превышать количество занятий по программе
 			$.each($scope.current_contract.subjects, function(subject_id, data) {
-				if (data && data.count > data.count_program) {
+				if (data && parseInt(data.count) > parseInt(data.count_program)) {
 					error = true
 					notifyError('кол-во занятий не должно превышать кол-во по программе')
 					return
