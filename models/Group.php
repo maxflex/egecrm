@@ -166,7 +166,10 @@
 
             // Получаем дату последнего запланированного занятия
             // @refactored @schedule-refactored
-            $LastPlanned = VisitJournal::getGroupLessons($Group->id, 'find', 'DESC');
+            $LastPlanned = VisitJournal::getGroupLessons($Group->id, [
+				'func' => 'find',
+				'order' => 'desc'
+			]);
 
             $exam_year = $Group->year + 1;
             // Дату экзамена

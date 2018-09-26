@@ -339,7 +339,7 @@
 					$this->_custom_panel = true;
 
                     $exams = ExamDay::getExamDates($Group);
-					$Lessons = VisitJournal::getGroupLessons($id_group);
+					$Lessons = VisitJournal::getGroupLessons($id_group, ['with_cancelled' => true]);
 
 					// проверяем уроки на наслоение кабинетов
 					foreach($Lessons as $Lesson) {

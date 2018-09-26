@@ -87,7 +87,7 @@ class AdditionalLesson
 		if (is_int($Group) || is_string($Group)) {
 			$Group = Group::findById($Group, true);
 		}
-		$Lesson = VisitJournal::getGroupLessons($Group->id, 'find');
+		$Lesson = VisitJournal::getGroupLessons($Group->id, ['func' => 'find']);
  		return [
 			'id' => $Lesson->id,
 			'teacher_price' => $Group->teacher_price,

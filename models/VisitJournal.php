@@ -8,6 +8,7 @@
 		public static $statuses = ["не указано", "был", "не был"];
 
 		const PLANNED_CONDITION = "((type_entity='' or type_entity IS NULL) and cancelled=0)";
+		const PLANNED_CONDITION_WITH_CANCELLED = "(type_entity='' or type_entity IS NULL)";
 
 		public function __construct($array)
 		{
@@ -351,11 +352,27 @@
 
 		/**
 		 * Get group past & planned lessons
+		 * array $params
+		 *  func (findAll)
+		 *  order (ASC)
+		 *  with_cancelled (false)
 		 */
-		public static function getGroupLessons($id_group, $func = 'findAll', $order = 'ASC')
+		public static function getGroupLessons($id_group, $params = [])
 		{
+			extract($params);
+
+			if (! isset($order)) {
+				$order = 'ASC';
+			}
+			if (! isset($func)) {
+				$func = 'findAll';
+			}
+			if (! isset($with_cancelled)) {
+				$with_cancelled = false;
+			}
+
 			return self::{$func}([
-				'condition' => "id_group={$id_group} and (type_entity='TEACHER' or " . self::PLANNED_CONDITION . ")",
+				'condition' => "id_group={$id_group} and (type_entity='TEACHER' or " . ($with_cancelled ? self::PLANNED_CONDITION_WITH_CANCELLED : self::PLANNED_CONDITION) . ")",
 				'order' => "CONCAT(lesson_date, ' ', lesson_time) {$order}"
 			]);
 		}
