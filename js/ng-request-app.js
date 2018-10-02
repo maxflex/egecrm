@@ -1335,134 +1335,117 @@ app = angular.module("Request", ["ngAnimate", "ngMap", "ui.bootstrap"])
 
 
 		$scope.addContractNew = function() {
-            error = false
+            // error = false
 
 			// валидация параметров договора
-			if (!$scope.current_contract.sum) {
-				$("#contract-sum").addClass("has-error").focus()
-				return false
-			} else {
-				$("#contract-sum").removeClass("has-error")
-			}
-
-			// реальная сумма отклоняется не более 5% от рекомендуемой
-			// recommended_price = $scope.recommendedPrice($scope.current_contract)
-			// min_price = Math.round(recommended_price * 0.95)
-			// max_price = Math.round(recommended_price * 1.05)
-			// if ($scope.current_contract.sum > max_price || $scope.current_contract.sum < min_price) {
+			// if (!$scope.current_contract.sum) {
 			// 	$("#contract-sum").addClass("has-error").focus()
-			// 	notifyError('реальная сумма отклоняется от рекомендуемой на более чем 5%')
 			// 	return false
 			// } else {
 			// 	$("#contract-sum").removeClass("has-error")
 			// }
 
-			if (!$scope.current_contract.date) {
-				$("#contract-date").addClass("has-error").focus()
-				return false
-			} else {
-				$("#contract-date").removeClass("has-error")
-			}
-
-			// количество занятий не должно в конкретном предмете превышать количество занятий по программе
-			$.each($scope.current_contract.subjects, function(subject_id, data) {
-				if (data && parseInt(data.count) > parseInt(data.count_program)) {
-					error = true
-					notifyError('кол-во занятий не должно превышать кол-во по программе')
-					return
-				}
-			})
-
-            if (!$scope.current_contract.info.year) {
-                $("#contract-year").addClass("has-error").focus()
-                return false
-            } else {
-                $("#contract-year").removeClass("has-error")
-            }
-
-            // если предмет желтый или зеленый, то поле «кол-во занятий» не может быть пустым или нулем
-            $.each($scope.current_contract.subjects, function(subject_id, subject) {
-                if (subject === undefined) {
-                    return
-                }
-                if (subject.count_program=='') {
-                    $("#subject-program-" + subject_id).addClass("has-error").focus()
-                    error = true
-                    return false
-                } else {
-                    $("#subject-program-" + subject_id).removeClass("has-error")
-                }
-                if ((subject.status == 2 || subject.status == 3) && subject.count=='') {
-                    $("#subject-" + subject_id).addClass("has-error").focus()
-                    error = true
-                    return false
-                } else {
-                    $("#subject-" + subject_id).removeClass("has-error")
-                }
-            })
-
-            if (!$scope.current_contract.date) {
-				$("#contract-date").addClass("has-error").focus()
-				return false
-			} else {
-				$("#contract-date").removeClass("has-error")
-			}
-
-			if (!$scope.current_contract.info.grade) {
-				$("select[name='grades']").addClass("has-error").focus()
-				return false
-			} else {
-				$("select[name='grades']").removeClass("has-error")
-			}
-
-			// if (!$scope.current_contract.payments || !$scope.current_contract.payments.length) {
-			// 	notifyError('должен быть как минимум 1 платеж')
+			// if (!$scope.current_contract.date) {
+			// 	$("#contract-date").addClass("has-error").focus()
 			// 	return false
+			// } else {
+			// 	$("#contract-date").removeClass("has-error")
 			// }
 
-			if ($scope.current_contract.payments && $scope.current_contract.payments.length) {
-				// если сумма платежей больше суммы по договору
-				payments_sum = 0
-				payment_date = '0000-00-00'
-				total_lessons = 0
-				$scope.current_contract.payments.forEach(function(payment, index) {
-					if (index) {
-						if (! payment.date) {
-							$(".contract-payment-date-" + index).addClass("has-error").focus()
-							error = true
-							return false
-						} else {
-							$(".contract-payment-date-" + index).removeClass("has-error")
-						}
-						if (convertDate(payment.date) < payment_date) {
-							error = true
-							notifyError('даты платежей должны возрастать')
-							return
-						}
-						payment_date = convertDate(payment.date)
-					}
-					payments_sum += $scope.oneSubjectPrice($scope.current_contract) * payment.lesson_count
-					total_lessons += parseInt(payment.lesson_count)
-				})
-				contract_sum = $scope.getContractSum($scope.current_contract)
+			// количество занятий не должно в конкретном предмете превышать количество занятий по программе
+			// $.each($scope.current_contract.subjects, function(subject_id, data) {
+			// 	if (data && parseInt(data.count) > parseInt(data.count_program)) {
+			// 		error = true
+			// 		notifyError('кол-во занятий не должно превышать кол-во по программе')
+			// 		return
+			// 	}
+			// })
 
-				// if (payments_sum != contract_sum) {
-				// 	notifyError('сумма платежей должна быть равна сумме по договору')
-				// 	return false
-				// }
+            // if (!$scope.current_contract.info.year) {
+            //     $("#contract-year").addClass("has-error").focus()
+            //     return false
+            // } else {
+            //     $("#contract-year").removeClass("has-error")
+            // }
 
-				// суммарное количество занятий в платежах равно суммарному количеству занятий в предметах
-				if (total_lessons != $scope.subjectCount($scope.current_contract)) {
-					notifyError('суммарное количество занятий в платежах не равно суммарному количеству занятий в предметах')
-					console.log(total_lessons, $scope.subjectCount($scope.current_contract))
-					return false
-				}
-			}
+            // если предмет желтый или зеленый, то поле «кол-во занятий» не может быть пустым или нулем
+            // $.each($scope.current_contract.subjects, function(subject_id, subject) {
+            //     if (subject === undefined) {
+            //         return
+            //     }
+            //     if (subject.count_program=='') {
+            //         $("#subject-program-" + subject_id).addClass("has-error").focus()
+            //         error = true
+            //         return false
+            //     } else {
+            //         $("#subject-program-" + subject_id).removeClass("has-error")
+            //     }
+            //     if ((subject.status == 2 || subject.status == 3) && subject.count=='') {
+            //         $("#subject-" + subject_id).addClass("has-error").focus()
+            //         error = true
+            //         return false
+            //     } else {
+            //         $("#subject-" + subject_id).removeClass("has-error")
+            //     }
+            // })
+
+            // if (!$scope.current_contract.date) {
+			// 	$("#contract-date").addClass("has-error").focus()
+			// 	return false
+			// } else {
+			// 	$("#contract-date").removeClass("has-error")
+			// }
+			//
+			// if (!$scope.current_contract.info.grade) {
+			// 	$("select[name='grades']").addClass("has-error").focus()
+			// 	return false
+			// } else {
+			// 	$("select[name='grades']").removeClass("has-error")
+			// }
+
+			// if ($scope.current_contract.payments && $scope.current_contract.payments.length) {
+			// 	// если сумма платежей больше суммы по договору
+			// 	payments_sum = 0
+			// 	payment_date = '0000-00-00'
+			// 	total_lessons = 0
+			// 	$scope.current_contract.payments.forEach(function(payment, index) {
+			// 		if (index) {
+			// 			if (! payment.date) {
+			// 				$(".contract-payment-date-" + index).addClass("has-error").focus()
+			// 				error = true
+			// 				return false
+			// 			} else {
+			// 				$(".contract-payment-date-" + index).removeClass("has-error")
+			// 			}
+			// 			if (convertDate(payment.date) < payment_date) {
+			// 				error = true
+			// 				notifyError('даты платежей должны возрастать')
+			// 				return
+			// 			}
+			// 			payment_date = convertDate(payment.date)
+			// 		}
+			// 		payments_sum += $scope.oneSubjectPrice($scope.current_contract) * payment.lesson_count
+			// 		total_lessons += parseInt(payment.lesson_count)
+			// 	})
+			// 	contract_sum = $scope.getContractSum($scope.current_contract)
+			//
+			// 	// if (payments_sum != contract_sum) {
+			// 	// 	notifyError('сумма платежей должна быть равна сумме по договору')
+			// 	// 	return false
+			// 	// }
+			//
+			// 	// суммарное количество занятий в платежах равно суммарному количеству занятий в предметах
+			// 	if (total_lessons != $scope.subjectCount($scope.current_contract)) {
+			// 		notifyError('суммарное количество занятий в платежах не равно суммарному количеству занятий в предметах')
+			// 		console.log(total_lessons, $scope.subjectCount($scope.current_contract))
+			// 		return false
+			// 	}
+			// }
 
 
-            if (error) {
-                return false
-            }
+            // if (error) {
+            //     return false
+            // }
 
 			// обновить contract.info
 			if ($scope.current_contract.id_contract > 0) {
