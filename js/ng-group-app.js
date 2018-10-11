@@ -695,7 +695,10 @@ app = angular.module("Group", ['ngAnimate', 'chart.js']).filter('toArray', funct
         $scope.Group.students.splice(index, 1);
         $timeout(function() {
           if (!remove_without_saving) {
-            return justSave();
+            return $.post('ajax/RemoveStudentFromGroup', {
+              id_group: $scope.Group.id,
+              students: $scope.Group.students
+            });
           }
         });
         $scope.form_changed = true;

@@ -739,4 +739,11 @@
 				"selected_lesson_year" => end($Schedule->years)
 			]);
 		}
+
+		public function actionAjaxRemoveStudentFromGroup()
+		{
+			extract($_POST);
+			$students = implode(',', $students);
+			dbConnection()->query("UPDATE groups SET students='{$students}' WHERE id={$id_group}");
+		}
 	}
