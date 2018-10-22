@@ -197,6 +197,7 @@
 
 	<?php if (! User::isTeacher()) :?>
 		<?= partial('contracts', compact('Request')) ?>
-		<?= partial('groups', compact('Request')) ?>
 	<?php endif ?>
+
+	<?= partial('groups', compact('Request')) ?>
 </div>

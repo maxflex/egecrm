@@ -3,7 +3,7 @@
         <div class="col-sm-12">
             <span class="glyphicon glyphicon-hand-right pull-left" style="height: 50px; vertical-align: middle; top: 1px; margin-right: 14px; font-size: 28px"></span>
             <div style="line-height: 14px">
-                для идентификации вас преподавателем пожалуйста добавьте ваше фото. Желательно использовать качественные фото высокого разрешения. Допускаются файлы до 10мб формата jpg/jpeg, png, gif.
+                для идентификации вас преподавателем, пожалуйста, добавьте ваше фото. Желательно использовать качественные фото высокого разрешения. Допускаются файлы до 10мб формата jpg/jpeg, png, gif.
             </div>
         </div>
 

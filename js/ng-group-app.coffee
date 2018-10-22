@@ -570,7 +570,9 @@
 					if data is id_student
 						$scope.Group.students.splice index, 1
 						$timeout ->
-							justSave() if not remove_without_saving
+							if not remove_without_saving then $.post 'ajax/RemoveStudentFromGroup',
+								id_group: $scope.Group.id
+								students: $scope.Group.students
 						$scope.form_changed = true
 						$scope.$apply()
 				$.each $scope.TmpStudents, (index, data) ->
