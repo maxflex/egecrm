@@ -1228,7 +1228,7 @@
 				$all_reports = [];
 				foreach($LessonsByMonth as $year => $month_data) {
 					foreach(array_keys($month_data) as $month) {
-						$year_month = sprintf("%04d-%02d", $year + 1, $month);
+						$year_month = sprintf("%04d-%02d", ($month >= 8 ? $year : $year + 1), $month);
 						$reports = Report::getForStudent($id_student, $year_month);
 						$LessonsByMonth[$year][$month] = array_merge($LessonsByMonth[$year][$month], $reports);
 						if (! isset($all_reports[$year])) {
