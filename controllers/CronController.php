@@ -295,6 +295,43 @@
 			$ec_connection->query("INSERT INTO groups_count (name, value) VALUES " . implode(",", $values));
 		}
 
+		/**
+		 * Шаблон: напоминание клиенту о внесении платежа
+		 */
+		public function actionNotifyStudentPayment()
+		{
+			// за сколько дней отправлять напоминание
+			$days = 14;
+
+			// получить все платежи через 2 недели
+			$payments = ContractPayment::findAll([
+				'condition' => "`date`=date(date_add(now(), interval {$days} day)) AND sum > 0"
+			]);
+
+			foreach($payments as $payment) {
+				// имя отчество представителя
+				$representative = dbConnection()->query("SELECT r.* FROM contracts c
+					JOIN contract_info ci ON ci.id_contract = c.id_contract
+					JOIN students s ON s.id = ci.id_student
+					JOIN representatives r ON r.id = s.id_representative
+					WHERE c.id = {$payment->id_contract}
+				")->fetch_object();
+
+				$message = Template::get(19, [
+					'name' => $representative->first_name . ' ' . $representative->middle_name,
+					'date' => $payment->date,
+					'sum' => $payment->sum
+				]);
+
+				foreach (Student::$_phone_fields as $phone_field) {
+					$number = $representative->{$phone_field};
+					if (! empty($number)) {
+						SMS::send($number, $message);
+					}
+				}
+			}
+		}
+
         /*
          * Шаблон: занятие завтра
          *
