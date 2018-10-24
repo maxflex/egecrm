@@ -16,7 +16,7 @@
 					{{ Lesson.date | date:"dd.MM.yy" }}
 				</td>
 				<td>
-					<a href="teachers/reports/view/{{ Lesson.id }}">{{ Lesson.label }}</a>
+					<a href="<?= (User::isStudent() ? 'students' : 'teachers') ?>/reports/view/{{ Lesson.id }}">{{ Lesson.label }}</a>
 				</td>
 			</tr>
 		</table>
