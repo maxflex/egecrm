@@ -300,36 +300,73 @@
 		 */
 		public function actionNotifyStudentPayment()
 		{
-			// за сколько дней отправлять напоминание
-			$days = 14;
+			// для экстерната отправлять за 6 дней
+			if (isset($_GET['external']) && $_GET['external']) {
+				$days = 6;
+				$external = true;
+			} else {
+				$days = 12;
+				$external = false;
+			}
 
 			// получить все платежи через 2 недели
 			$payments = ContractPayment::findAll([
-				'condition' => "`date`=date(date_add(now(), interval {$days} day)) AND sum > 0"
+				'condition' => "`date`=date(date_add(now(), interval {$days} day))"
 			]);
 
+			$messages = [];
 			foreach($payments as $payment) {
-				// имя отчество представителя
-				$representative = dbConnection()->query("SELECT r.* FROM contracts c
-					JOIN contract_info ci ON ci.id_contract = c.id_contract
-					JOIN students s ON s.id = ci.id_student
-					JOIN representatives r ON r.id = s.id_representative
-					WHERE c.id = {$payment->id_contract}
-				")->fetch_object();
+				$contract = Contract::findById($payment->id_contract);
+				if ($contract && $contract->current_version == 1) {
+					$contract_info = $contract->getInfo();
+					if (($external && $contract_info->grade == Grades::EXTERNAL) || (!$external && $contract_info->grade != Grades::EXTERNAL)) {
+						// имя отчество представителя
+						$representative = dbConnection()->query("SELECT r.* FROM contracts c
+							JOIN contract_info ci ON ci.id_contract = c.id_contract
+							JOIN students s ON s.id = ci.id_student
+							JOIN representatives r ON r.id = s.id_representative
+							WHERE c.id = {$payment->id_contract}
+						")->fetch_object();
 
-				$message = Template::get(19, [
-					'name' => $representative->first_name . ' ' . $representative->middle_name,
-					'date' => $payment->date,
-					'sum' => $payment->sum
-				]);
+						// сумма договора с учетом скидки
+					   if ($contract->discount) {
+						   $contract->sum = round($contract->sum - ($contract->sum * ($contract->discount / 100)));
+					   }
+					   // сумма платежа
+					   $subject_count = dbConnection()->query("select sum(`count`) as `sum` from contract_subjects where id_contract = " . $payment->id_contract)->fetch_object()->sum;
+					   $sum = round($payment->lesson_count * ($contract->sum / $subject_count));
 
-				foreach (Student::$_phone_fields as $phone_field) {
-					$number = $representative->{$phone_field};
-					if (! empty($number)) {
-						SMS::send($number, $message);
+						$message = Template::get(19, [
+							'representative_name' => $representative->first_name . ' ' . $representative->middle_name,
+							'date' => $payment->date,
+							'sum' => $sum
+						]);
+
+						foreach (Student::$_phone_fields as $phone_field) {
+							$number = $representative->{$phone_field};
+							if (! empty($number)) {
+								$messages[] = [
+									"number" 	=> $number,
+									"message"	=> $message,
+								];
+							}
+						}
 					}
 				}
 			}
+
+			$sent_to = [];
+			foreach ($messages as $message) {
+				if (! in_array($message['number'], $sent_to)) {
+					SMS::send($message['number'], $message['message']);
+					$sent_to[] = $message['number'];
+
+					// debug
+					// $body .= "<b>Номер: </b>" . $message['number']."<br><br>";
+					// $body .= "<b>Сообщение: </b>" . $message['message']."<hr>";
+				}
+			}
+			// echo $body;
 		}
 
         /*
