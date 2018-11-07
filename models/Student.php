@@ -208,7 +208,7 @@
                 SELECT id FROM contracts c
                 JOIN contract_info ci ON ci.id_contract = c.id_contract
                 WHERE ci.id_student={$id_student} AND c.current_version=1 AND ci.year in (" . implode(',', [academicYear(), academicYear() + 1]) . ")
-                ORDER BY ci.year, c.id_contract, c.id DESC
+                ORDER BY ci.year DESC, c.id_contract DESC
                 LIMIT 1
             ");
 			if ($query->num_rows) {
