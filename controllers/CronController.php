@@ -509,7 +509,7 @@
 
 			$prices = Prices::get();
 
-			foreach(Years::all() as $year) {
+			foreach(Years::$all as $year) {
 				$query = dbConnection()->query("SELECT max(id) as id_contract, ci.id_student FROM contracts c
 	                JOIN contract_info ci ON ci.id_contract = c.id_contract
 	                WHERE c.current_version=1 AND ci.year={$year}
