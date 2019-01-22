@@ -188,7 +188,83 @@
 			]);
 		}
 
+		public function actionJournal()
+		{
+			$id_teacher = $_GET['id'];
+			$Teacher = Teacher::getLight($id_teacher);
+						
+			$ang_init_data = angInit([
+				'year' => academicYear(),
+				'id_teacher' => $id_teacher,
+				'Grades' => Grades::$all,
+			]);
 
+			
+			$this->setTabTitle('Посещаемость | ' . getShortName($Teacher));
+			$this->render("journal", [
+				"ang_init_data" => $ang_init_data,
+			]);
+		}
+		
+		public function actionAjaxJournal()
+		{
+			extract($_POST);
+			$date_start = implode('-', [$year, '09', '01']);
+			$date_end = date('Y-m-d', strtotime('first Sunday of September ' . $year));
+			
+			$dates = [];
+			$result = [];
+			$students = [];
+			$name_colors = [];
+			while ($date_end <= ($year + 1) . '-07-01') {
+				$lessons = VisitJournal::findAll([
+					'condition' => "lesson_date > '{$date_start}' AND lesson_date <= '{$date_end}' AND type_entity='STUDENT' AND id_teacher={$id_teacher}" 
+						. (isset($grades) ? " AND grade IN (" . implode(',', $grades) . ")" : ''),
+					'order' => '',
+					'group' => 'id_entity',
+				]);
+				
+				foreach($lessons as $lesson) {
+					if (! isset($result[$lesson->id_entity])) {
+						$result[$lesson->id_entity] = [];
+						$students[] = Student::getLightName($lesson->id_entity);
+						$name_colors[$lesson->id_entity] = $lesson->id_subject;
+					}
+// 					if (! isset($result[$lesson->id_entity][$date])) {
+						$result[$lesson->id_entity][$date_end] = $lesson->presence == 2 ? 'red' : ($lesson->late > 0 ? 'orange' : 'green');
+						
+						// если предметы разные на протяжении всего времени, то цвет серый
+						if ($name_colors[$lesson->id_entity] !== 'grey') {
+							if ($name_colors[$lesson->id_entity] != $lesson->id_subject) {
+								$name_colors[$lesson->id_entity] = 'grey';
+							}
+						}
+// 					}
+				}
+				
+				
+				$dates[] = $date_end;
+				$date_start = $date_end;
+				$date_end = (new DateTime($date_end))->modify('+1 week')->format('Y-m-d');
+			}
+			
+			foreach($name_colors as $id_student => $id_subject) {
+				if ($id_subject !== 'grey') {
+					// получаем догавар по этому предмету в этом году
+					$last_contract_id = Student::getLastContractId($id_student, $year, true);
+					// echo $last_contract_id . " | " . $name_colors[$student->id] . "\n";
+					$contract_subject = ContractSubject::find([
+						'condition' => "id_contract={$last_contract_id} AND id_subject={$id_subject}"
+					]);
+// 					echo $id_student . " | " . $contract_subject->status . "\n";
+					$name_colors[$id_student] = $contract_subject->status;
+				}
+			}
+			
+// 			returnJsonAng(compact('name_colors'));
+			returnJsonAng(compact('dates', 'result', 'students', 'name_colors'));
+		}
+		
 		public function actionList()
 		{
 			$this->_custom_panel = true;
@@ -221,6 +297,7 @@
 			} else {
 				$this->setTabTitle("Редактирование преподавателя " . $Teacher->getFullName());
 				$this->setRightTabTitle("
+					<a class='link-white' style='margin-right: 10px' href='teachers/journal/{$id_teacher}'>посещаемость</a>
 					<a class='link-white' style='margin-right: 10px' href='https://lk.ege-repetitor.ru/tutors/{$id_teacher}/edit'>профиль в системе ЕГЭ-Репетитор</a>
 					<a class='link-white' href='as/teacher/{$id_teacher}'>режим просмотра</a>
 				");

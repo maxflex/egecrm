@@ -42,6 +42,7 @@ RewriteRule ^requests[/]?$ index.php?controller=request&action=list [QSA,L]
 # Учителя
 RewriteRule ^teachers/salary[/]?([0-9]+)?[/]?$ index.php?controller=teacher&action=Salary&year=$1 [QSA,L]
 # RewriteRule ^teachers/salary/([0-9]+)?$ index.php?controller=teacher&action=Salary&id_teacher=$1 [QSA,L]
+RewriteRule ^teachers/journal/([0-9]+)?$ index.php?controller=teacher&action=journal&id=$1 [QSA,L]
 RewriteRule ^teachers/edit/([0-9]+)?$ index.php?controller=teacher&action=edit&id=$1 [QSA,L]
 # RewriteRule ^teachers/student/([0-9]+)?$ index.php?controller=StudentsProfile&action=TeacherLk&id_student=$1 [QSA,L]
 RewriteRule ^teachers/add[/]?$ index.php?controller=teacher&action=add [QSA,L]

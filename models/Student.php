@@ -470,6 +470,26 @@
                 return false;
             }
 		}
+		
+		/**
+		 * Получить постудний договор студента.
+		 *
+		 */
+		public static function getLastContractId($id_student, $year = false, $light = false)
+		{
+            $query = dbConnection()->query("
+                SELECT id FROM contracts c
+                JOIN contract_info ci ON ci.id_contract = c.id_contract
+                WHERE ci.id_student={$id_student} AND c.current_version=1" . ($year ? " AND ci.year={$year}" : '') . "
+                ORDER BY id DESC
+                LIMIT 1
+            ");
+            if ($query->num_rows) {
+                return $query->fetch_object()->id;
+            } else {
+                return false;
+            }
+		}
 
 		/**
 		 * Получить пол.
@@ -901,6 +921,7 @@
 				(select count(*) from contract_subjects where id_contract=c.id and status=2) as yellow_cnt,
 				(select count(*) from contract_subjects where id_contract=c.id and status=1) as red_cnt,
 				s.first_name, s.last_name, s.middle_name " . (! isBlank($search->year) ? ", ss.sum" : '') ));
+				
 			$result = dbConnection()->query($query . ($page == -1 ? "" : " LIMIT {$start_from}, " . Student::PER_PAGE));
 
             $data = [];
@@ -1159,6 +1180,23 @@
 				$prev = $row;
 			}
 			return false;
+		}
+		
+		/*
+		 * Получить легкую версию (имя + id)
+		 */
+		public static function getLightName($id)
+		{
+			$student = dbConnection()->query("
+				SELECT s.id, s.first_name, s.last_name, s.middle_name
+				FROM " . static::$mysql_table . " s
+				WHERE s.id = " . $id . "
+				ORDER BY s.last_name, s.first_name, s.middle_name ASC")
+			->fetch_object();
+			
+			$student->name = getShortName($student);
+
+			return $student;
 		}
 
 		/**
