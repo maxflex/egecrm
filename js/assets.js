@@ -409,7 +409,7 @@ app.service('PhoneService', function($rootScope) {
     if (typeof number !== 'string') {
       number = '' + number;
     }
-    protocol = typeof window.orientation !== 'undefined' ? 'tel' : 'sip';
+    protocol = 'tel';
     return location.href = (protocol + ":") + number.replace(/[^0-9]/g, '');
   };
   this.isMobile = function(number) {

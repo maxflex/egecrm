@@ -2,7 +2,7 @@ var app;
 
 app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
   '$compileProvider', function($compileProvider) {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip):/);
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip|tel):/);
   }
 ]).filter('to_trusted', [
   '$sce', function($sce) {
@@ -973,59 +973,4 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     }
     return total_lessons;
   };
-})
-.controller("JournalCtrl", function($scope, $timeout) {
-	$timeout(function() {
-		$scope.loadData()	
-	})
-	
-	$scope.grades = []
-	$scope.loadData = function() {
-		$scope.loading = true
-		$.post('teachers/ajax/Journal', {
-			year: $scope.year,
-			id_teacher: $scope.id_teacher,
-			grades: $scope.grades,
-		}, function(response) {
-			$scope.dates = response.dates
-			$scope.students = response.students
-			$scope.result = response.result
-			$scope.name_colors = response.name_colors
-			$scope.loading = false
-			$scope.$apply()
-		}, 'json')
-	}
-	
-	$scope.formatDate = function(d) {
-		return moment(d).format('DD.MM.YY');
-	}
-	
-	$scope.grayMonth = function(date) {
-	    var d;
-	    d = moment(date).format("M");
-	    d = parseInt(d);
-	    return d % 2 === 1;
-	  };
-	
-	$scope.yearLabel = function(year) {
-	    return year + '-' + (parseInt(year) + 1) + ' уч. г.';
-	  };
-	  
-	$scope.noMoreDates = function(student_id, date) {
-		return date > Object.keys($scope.result[student_id]).sort().reverse()[0]
-	}
-	 
-	 $scope.setYear = function(year) {
-		 $scope.year = year
-		 $scope.loadData()
-	 }
-	 
-	$scope.emptyResult = function() {
-		return !$scope.result || Object.keys($scope.result).length === 0
-	}
-	
-  return angular.element(document).ready(function() {
-	  $(".watch-select").selectpicker()
-    return set_scope("Teacher");
-  });
 });

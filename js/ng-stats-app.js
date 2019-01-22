@@ -2,7 +2,7 @@ var app;
 
 app = angular.module("Stats", ["ui.bootstrap"]).config([
   '$compileProvider', function($compileProvider) {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip):/);
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip|tel):/);
   }
 ]).filter('to_trusted', [
   '$sce', function($sce) {

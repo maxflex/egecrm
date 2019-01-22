@@ -3,7 +3,8 @@ app.service 'PhoneService', ($rootScope) ->
 
 	@call = (number) ->
 		number = '' + number if typeof number isnt 'string'
-		protocol = if typeof window.orientation isnt 'undefined' then 'tel' else 'sip'
+		# protocol = if typeof window.orientation isnt 'undefined' then 'tel' else 'sip'
+		protocol = 'tel'
 		location.href = "#{protocol}:" + number.replace(/[^0-9]/g, '')
 
 	@isMobile = (number) ->

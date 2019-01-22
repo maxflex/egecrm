@@ -2,7 +2,7 @@ var app;
 
 app = angular.module("Calls", []).config([
   '$compileProvider', function($compileProvider) {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip):/);
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|sip|tel):/);
   }
 ]).controller("MissedCtrl", function($scope, $timeout, $http, PhoneService) {
   bindArguments($scope, arguments);

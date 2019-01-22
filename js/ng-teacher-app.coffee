@@ -2,7 +2,7 @@
 		.config [
 		  '$compileProvider'
 		  ($compileProvider) ->
-		    $compileProvider.aHrefSanitizationWhitelist /^\s*(https?|ftp|mailto|chrome-extension|sip):/
+		    $compileProvider.aHrefSanitizationWhitelist /^\s*(https?|ftp|mailto|chrome-extension|sip|tel):/
 		    # Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
 		    return
 		]
