@@ -458,10 +458,10 @@
 		public function getLastContract($year = false, $light = false)
 		{
             $query = dbConnection()->query("
-                SELECT id FROM contracts c
+                SELECT c.id FROM contracts c
                 JOIN contract_info ci ON ci.id_contract = c.id_contract
                 WHERE ci.id_student={$this->id} AND c.current_version=1" . ($year ? " AND ci.year={$year}" : '') . "
-                ORDER BY id_contract DESC, id DESC
+                ORDER BY c.id_contract DESC, c.id DESC
                 LIMIT 1
             ");
             if ($query->num_rows) {
