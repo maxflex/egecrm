@@ -24,7 +24,8 @@ class AdditionalLesson
 			'lesson_date',
 			'lesson_time',
 			'cabinet',
-			'duration'
+			'duration',
+			'id_teacher'
 		), [
 			'id_group' => $Group->id
 		]));
