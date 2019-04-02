@@ -123,8 +123,8 @@
 
             $teachers_count = Teacher::count([
 				"condition" =>
-					$date_end 	? "DATE(created_at) > '". $date_start ."' AND DATE(created_at) <= '". $date_end ."' AND egecentr_source=1"
-								: "DATE(created_at) = '". $date_start ."' AND egecentr_source=1"
+					$date_end 	? "DATE(created_at) > '". $date_start ."' AND DATE(created_at) <= '". $date_end ."' AND `source`=1"
+								: "DATE(created_at) = '". $date_start ."' AND `source`=1"
 			]);
 
 			$stats['teachers'] = $teachers_count;
