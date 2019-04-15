@@ -30,6 +30,53 @@
 				$.each obj, (index, value) ->
 					arr.push(value)
 				return arr
+		.controller 'JournalCtrl', ($scope, $timeout) ->
+			$timeout -> $scope.loadData()
+			$scope.grades = []
+
+			$scope.loadData = ->
+    			$scope.loading = true
+    			$.post 'teachers/ajax/Journal', {
+    				year: $scope.year
+    				id_teacher: $scope.id_teacher
+    				grades: $scope.grades
+    			}, ((response) ->
+    				$scope.dates = response.dates
+    				$scope.students = response.students
+    				$scope.result = response.result
+    				$scope.name_colors = response.name_colors
+    				$scope.loading = false
+    				$scope.$apply()
+    				return
+    			), 'json'
+    			return
+
+  			$scope.formatDate = (d) ->
+  				moment(d).format 'DD.MM.YY'
+
+  			$scope.grayMonth = (date) ->
+  				d = undefined
+  				d = moment(date).format('M')
+  				d = parseInt(d)
+  				d % 2 == 1
+
+  			$scope.yearLabel = (year) ->
+  				year + '-' + parseInt(year) + 1 + ' уч. г.'
+
+  			$scope.noMoreDates = (student_id, date) ->
+  				date > Object.keys($scope.result[student_id]).sort().reverse()[0]
+
+  			$scope.setYear = (year) ->
+  				$scope.year = year
+  				$scope.loadData()
+  				return
+
+  			$scope.emptyResult = -> !$scope.result or Object.keys($scope.result).length == 0
+
+  			angular.element(document).ready ->
+  				$('.watch-select').selectpicker()
+  				set_scope 'Teacher'
+
 		.controller "FaqCtrl", ($scope) ->
 			$scope.save = ->
 				ajaxStart()

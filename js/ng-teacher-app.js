@@ -42,6 +42,53 @@ app = angular.module("Teacher", ["ngMap", 'angucomplete-alt']).config([
     });
     return arr;
   };
+}).controller('JournalCtrl', function($scope, $timeout) {
+  $timeout(function() {
+    return $scope.loadData();
+  });
+  $scope.grades = [];
+  $scope.loadData = function() {
+    $scope.loading = true;
+    $.post('teachers/ajax/Journal', {
+      year: $scope.year,
+      id_teacher: $scope.id_teacher,
+      grades: $scope.grades
+    }, (function(response) {
+      $scope.dates = response.dates;
+      $scope.students = response.students;
+      $scope.result = response.result;
+      $scope.name_colors = response.name_colors;
+      $scope.loading = false;
+      $scope.$apply();
+    }), 'json');
+  };
+  $scope.formatDate = function(d) {
+    return moment(d).format('DD.MM.YY');
+  };
+  $scope.grayMonth = function(date) {
+    var d;
+    d = void 0;
+    d = moment(date).format('M');
+    d = parseInt(d);
+    return d % 2 === 1;
+  };
+  $scope.yearLabel = function(year) {
+    return year + '-' + parseInt(year) + 1 + ' уч. г.';
+  };
+  $scope.noMoreDates = function(student_id, date) {
+    return date > Object.keys($scope.result[student_id]).sort().reverse()[0];
+  };
+  $scope.setYear = function(year) {
+    $scope.year = year;
+    $scope.loadData();
+  };
+  $scope.emptyResult = function() {
+    return !$scope.result || Object.keys($scope.result).length === 0;
+  };
+  return angular.element(document).ready(function() {
+    $('.watch-select').selectpicker();
+    return set_scope('Teacher');
+  });
 }).controller("FaqCtrl", function($scope) {
   $scope.save = function() {
     ajaxStart();
