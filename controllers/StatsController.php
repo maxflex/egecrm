@@ -5,7 +5,7 @@
 	{
 		public $defaultAction = "list";
 
-		const PER_PAGE = 30; # указтель по скольку выводить на страницу
+		const PER_PAGE = 400; # указтель по скольку выводить на страницу
 
 		// Папка вьюх
 		protected $_viewsFolder	= "stats";
