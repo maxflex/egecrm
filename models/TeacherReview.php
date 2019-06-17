@@ -213,7 +213,7 @@
 		private static function _generateQuery($search, $select, $order = true, $ending = '')
 		{
 			$main_query = "
-				FROM (select distinct id_entity, id_subject, id_teacher, `year` from visit_journal where type_entity='STUDENT') vj
+				FROM (select distinct id_entity, id_subject, id_teacher, `year`, `grade` from visit_journal where type_entity='STUDENT') vj
 				LEFT JOIN teacher_reviews" . static::_connectTables('r')
 				. (isset($search->id_user) ? " JOIN students s ON s.id = vj.id_entity " : "") . "
 				WHERE true "
