@@ -226,7 +226,7 @@
 				. (!isBlank($search->approved) ? " AND r.approved={$search->approved}" : "")
 				. (!isBlank($search->id_user) ? " AND s.id_user_review={$search->id_user}" : "")
 				. (!isBlank($search->rating) ? " AND r.rating={$search->rating}" : "")
-				. (!isBlank($search->grade) ? " AND r.grade={$search->grade}" : "")
+				. (!isBlank($search->grade) ? " AND vj.grade={$search->grade}" : "")
 				. (!isBlank($search->admin_rating) ? " AND r.admin_rating={$search->admin_rating}" : "")
 				. (!isBlank($search->admin_rating_final) ? " AND r.admin_rating_final={$search->admin_rating_final}" : "")
 				. ($order ? "" : "");
