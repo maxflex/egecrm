@@ -7,8 +7,6 @@
             .printable .bold-border-bottom {border-bottom: 3px solid black;}
             .printable .padding {padding: 5px;}
             .printable h3 {margin: 5px;}
-            .printable {font-family: 'Helvetica' !important}
-            table {font-size: 10px; font-family: 'Helvetica' !important}
             .m_title {display:inline-block}
             .m_title:first-letter {text-transform: uppercase}
         }
