@@ -50,8 +50,8 @@
 	$external_requests = ["ApiController", "CronController", "MangoController"];
 
 	if (! LOCAL_DEVELOPMENT) {
-		if ($_SERVER['HTTP_HOST'] != 'lk.ege-centr.ru' && !in_array($_controllerName, $external_requests)) {
-			header("Location: https://lk.ege-centr.ru" . $_SERVER['REQUEST_URI']);
+		if ($_SERVER['HTTP_HOST'] != 'lk2.ege-centr.ru' && !in_array($_controllerName, $external_requests)) {
+			header("Location: https://lk2.ege-centr.ru" . $_SERVER['REQUEST_URI']);
 			exit();
 		}
 	}
