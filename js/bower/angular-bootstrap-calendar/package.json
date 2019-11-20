@@ -17,7 +17,7 @@
     "moment": "2.x.x"
   },
   "devDependencies": {
-    "angular": "~1.6.0",
+    "angular": "~1.7.9",
     "angular-mocks": "~1.6.0",
     "bootstrap": "^3.3.6",
     "calendar-utils": "^0.0.41",
